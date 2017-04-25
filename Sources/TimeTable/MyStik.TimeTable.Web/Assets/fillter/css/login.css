@@ -1,0 +1,15 @@
+﻿/* Überladen des Metronic Frameworks */
+
+.login {
+  background-color: #595f64 !important;
+}
+
+.login .content .input-icon {
+  border-left: 2px solid #f96464 !important;
+}
+
+.red-thunderbird.btn {
+  color: #FFFFFF;
+  background-color: #f96464;
+}
+

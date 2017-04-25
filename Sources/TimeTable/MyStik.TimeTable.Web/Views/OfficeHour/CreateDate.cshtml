@@ -1,0 +1,213 @@
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourCreateModel
+@{
+    ViewBag.Title = "Sprechstunde anlegen";
+}
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Sprechstundentermin anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Zeitraum und Rahmenbedingungen für Eintragungen</div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(model => model.OfficeHourId)
+                            @Html.HiddenFor(model => model.Semester)
+                            @Html.HiddenFor(model => model.Type)
+                            <div class="form-group">
+                                @if (string.IsNullOrEmpty(Model.DozId))
+                                {
+                                    @Html.LabelFor(model => model.DozId, new { @class = "col-sm-3 control-label" })
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.DozId, new { @class = "form-control" })
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Html.HiddenFor(model => model.DozId)
+                                }
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Wochentag und Zeitraum</label>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.EndTime, new {@class = "form-control timepicker timepicker-24"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    @Html.CheckBoxFor(model => model.IsWeekly)
+                                    Termine bis Ende des Semesters wöchentlich generieren
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Rahmenbedingungen für Eintragungen</label>
+                                <div class="col-sm-9">
+                                    <div class="tabbable-line boxless tabbable-reversed">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <a href="#tab_0" data-toggle="tab" id="-1">
+                                                    Offen (keine Slots)
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#tab_1" data-toggle="tab" id="0">
+                                                    Slotbuchung
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="tab_0">
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 control-label">Anzahl Plätze</label>
+                                                    <div class="col-sm-6">
+                                                        @Html.DropDownListFor(model => model.Capacity, (IEnumerable<SelectListItem>)ViewBag.Capacities, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SubscriptionLimit, new { @class = "col-sm-4 control-label" })
+                                                    <div class="col-sm-6">
+                                                        @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>)ViewBag.Limits, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab_1">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SlotDuration, new { @class = "col-sm-4 control-label" })
+                                                    <div class="col-sm-6">
+                                                        @Html.DropDownListFor(model => model.SlotDuration, (IEnumerable<SelectListItem>)ViewBag.SlotDurations, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SpareSlots, new { @class = "col-sm-4 control-label" })
+                                                    <div class="col-sm-6">
+                                                        @Html.DropDownListFor(model => model.SpareSlots, (IEnumerable<SelectListItem>)ViewBag.SpareSlots, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SubscriptionLimit, new { @class = "col-sm-4 control-label" })
+                                                    <div class="col-sm-6">
+                                                        @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>)ViewBag.Limits, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-md-6">
+                                    <input type="submit" value="Termin anlegen" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts
+{
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+        $(function () {
+            $('#DozId').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            name: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    label: item.name + ' (' + item.shortname + ')',
+                                    value: item.shortname
+                                };
+                            }));
+
+                        },
+
+                        error: function (data) { alert(data); },
+                    });
+
+                },
+            });
+
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                //e.target // newly activated tab
+                //e.relatedTarget // previous active tab
+
+                $("#Type").val(e.target.id);
+            });
+        });
+
+
+    </script>
+}

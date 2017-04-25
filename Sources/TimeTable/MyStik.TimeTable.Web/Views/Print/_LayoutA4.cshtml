@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fillter | @ViewBag.Title</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/uniform/css/uniform.default.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css")" />
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+</head>
+<body>
+<div class="container-fluid">
+    @RenderBody()
+</div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Assets/global/plugins/respond.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/excanvas.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-migrate.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-ui/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

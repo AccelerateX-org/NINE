@@ -1,0 +1,33 @@
+﻿@model MyStik.TimeTable.Web.Models.WPMSelectModel
+
+<table class="table table-bordered table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Prio</th>
+            <th>Fach</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var subscription in Model.Subscriptions)
+        {
+            <tr>
+                @if (subscription.Subscription.Priority.HasValue)
+                {
+                    <td>subscription.Subscription.Priority.Value</td>
+                }
+                else
+                {
+                    <td>#n/a</td>;
+                }
+                <td>@subscription.Summary.Activity.Name (@subscription.Summary.Activity.ShortName)</td>
+                <td>@subscription.Subscription.TimeStamp</td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+
+        
+    </tbody>
+</table>

@@ -1,0 +1,86 @@
+﻿@model CalenderEventViewModel
+@using System.Text
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+
+        @if (Model.State != null)
+        {
+            string activityFlag = "Activity_" + @Model.State.Occurrence.Id;
+            <span id="@activityFlag">
+                @if (Model.State.HasError)
+                {
+                    <a href="#" class="btn btn-default btn-xs" data-toggle="popover"
+                       data-title="Fehler bei Eintragung zu @Model.Summary.Name"
+                       data-content="@Model.State.ErrorMessage"
+                       data-container="body" data-placement="top" role="button">
+                        <i class="fa fa-info-circle text-danger"></i>
+                    </a>
+                }
+                else
+                {
+                    if (Model.State.Subscription == null)
+                    {
+                        if (Model.State.HasCapacity && Model.State.CapacityLeft <= 0)
+                        {
+                            if (Model.State.IsFlexible)
+                            {
+                                @Ajax.ActionButton("fa-pencil text-danger", "", "SubscribeActivity", "Activity",
+                                    new { Id = Model.State.Occurrence.Id },
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = activityFlag,
+                                        OnComplete = "UpdateCalendar()",
+                                    },
+                                    new { @class = "btn btn-default btn-xs" })                            }
+                            else
+                            {
+                                <a href="#"><i class="fa fa-pencil disabled btn btn-xs"></i></a>
+                            }
+                        }
+                        else
+                        {
+                            switch (Model.State.State)
+                            {
+                                case SubscriptionState.BeforeSubscriptionPhase:
+                                    <a href="#"><i class="fa fa-pencil disabled btn btn-xs"></i></a>
+                                    break;
+                                case SubscriptionState.DuringSubscriptionPhase:
+                                @Ajax.ActionButton("fa-pencil text-primary", "", "SubscribeActivity", "Activity",
+                                        new { Id = Model.State.Occurrence.Id },
+                                        new AjaxOptions()
+                                        {
+                                            HttpMethod = "Post",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = activityFlag,
+                                            OnComplete = "UpdateCalendar()",
+                                        },
+                                        new { @class = "btn btn-default btn-xs" })
+                                    break;
+                                case SubscriptionState.AfterSubscriptionPhase:
+                                case SubscriptionState.DuringOccurrence:
+                                case SubscriptionState.AfterOccurrence:
+                                <a href="#"><i class="fa fa-pencil disabled btn btn-xs"></i></a>
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @Ajax.ActionButton("fa-times text-danger", "", "DischargeActivity", "Activity",
+                            new { Id = Model.State.Occurrence.Id },
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = activityFlag,
+                                OnSuccess = "UpdateCalendar()"
+                            },
+                            new { @class = "btn btn-default btn-xs" })
+                    }
+                }
+            </span>
+        }
+

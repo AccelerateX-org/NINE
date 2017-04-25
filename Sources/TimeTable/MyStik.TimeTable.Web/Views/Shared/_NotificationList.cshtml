@@ -1,0 +1,43 @@
+﻿@model List<MyStik.TimeTable.Data.ActivityDateChange>
+
+<li class="external"><h3><span style="font-weight: bold;">Notifications der nächsten 7 Tage</span></h3></li>
+@if (Model.Count() > 0)
+{
+    <li>
+            <ul class="dropdown-menu-list scroller"  id="notificationScroller" style="width: auto; height: 250px; overflow: auto;" data-handle-color="#637283" data-initialized="1">
+                @foreach (MyStik.TimeTable.Data.ActivityDateChange a in Model)
+                {
+                    if (a.NotificationStates.SingleOrDefault(s => s.UserId.Equals(ViewBag.UserId)).IsNew)
+                    {
+                        <li id="@a.Id.ToString()" onclick="MarkAsRead('@a.Id.ToString()')" style="background-color: #f3f3f3;">
+                            <a href="javascript:;">
+                                <span class="details">@a.NotificationContent</span>
+                            </a>                           
+                        </li>
+                    }
+                    else
+                    {
+                        <li id="@a.Id.ToString()" onclick="MarkAsRead('@a.Id.ToString()')">
+                            <a href="javascript:;">
+                                <span class="details">@a.NotificationContent</span>
+                            </a>   
+                        </li>
+                    }
+                }
+               
+            </ul>
+    </li>
+}
+else
+{
+    <li>
+            <ul class="dropdown-menu-list scroller" style="width: auto; height: 250px; overflow: hidden;" data-handle-color="#637283" data-initialized="1">
+                 <li>
+                     <a href="javascript:;">
+                         <span class="details">Keine Notifications für die nächsten 7 Tage vorhanden.</span>
+                     </a>
+                 </li>
+            </ul>
+    </li>
+}
+<p id="AnzahlNeueNotifications" style="display: none;">@Model.Where(x => x.NotificationStates.Any(s => s.UserId.Equals(ViewBag.UserId) && s.IsNew == true)).ToList().Count().ToString()</p>

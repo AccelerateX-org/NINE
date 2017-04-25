@@ -1,0 +1,34 @@
+﻿@model MyStik.TimeTable.Web.Models.LecturerListStateModel
+    <table class="table table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Konflikte</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in Model.LecturerStates)
+            {
+                var txtClass = room.HasConflicts ? "danger" : "success";
+                
+                <tr class="@txtClass" id="@room.Lecturer.Id">
+                    <td>@room.Lecturer.Name (@room.Lecturer.ShortName)</td>
+                    <td>
+                        @foreach (var conflict in room.Conflicts)
+                        {
+                            <div>@conflict.Activity.Name [@conflict.Begin - @conflict.End]</div>
+                        }
+                    </td>
+                    <td>
+                        @Ajax.ActionLink("Entfernen", "RemoveLecturer", "Course",
+                         new { id = Model.ActivityDateId, lecturerId = room.Lecturer.Id },
+                         new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = room.Lecturer.Id.ToString(), OnSuccess = "onTimeChanged" },
+                            new { @class = "btn btn-default btn-xs" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+

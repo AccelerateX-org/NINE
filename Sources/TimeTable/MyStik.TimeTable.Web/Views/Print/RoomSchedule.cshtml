@@ -1,0 +1,49 @@
+﻿@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Raumplan";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+}
+
+
+<h2>Belegungsplan Raum @Model.Number
+    <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Id})" style="height: 100px; width: auto" /></span>
+    </h2>
+
+
+<div id="calendar">
+</div>
+
+
+
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            initPrintCalendar();
+            //initCalendar(false);
+
+
+            $('#calendar').fullCalendar('removeEvents');
+
+            $('#calendar').fullCalendar('addEventSource',
+            {
+                url: '@Url.Action("RoomPrintPlan", "Calendar", new { roomId = Model.Id})',
+                type: 'POST'
+            });
+        });
+
+    </script>
+}

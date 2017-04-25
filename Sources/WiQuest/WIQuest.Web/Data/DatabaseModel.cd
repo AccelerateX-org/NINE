@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WIQuest.Web.Data.Question">
+    <Position X="7.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAAAAAAEAAAAAAAAAAgAAAABAAQAAACAAACAA=</HashCode>
+      <FileName>Data\Question.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Image" />
+      <Property Name="Category" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Answers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="WIQuest.Web.Data.QuestionAnswer">
+    <Position X="10" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAABAEAAIACAAAAAA=</HashCode>
+      <FileName>Data\QuestionAnswer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Image" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WIQuest.Web.Data.QuestionCategory">
+    <Position X="4" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAgAAAAIAEAAAAAAAAAAA=</HashCode>
+      <FileName>Data\QuestionCategory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WIQuest.Web.Data.QuestLog">
+    <Position X="5.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAABAAAAAAAAAAAACAAAAAEAAAAAgAAQAA=</HashCode>
+      <FileName>Data\QuestLog.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Question" />
+      <Property Name="Answer" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WIQuest.Web.Data.BinaryStorage">
+    <Position X="12.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Data\BinaryStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

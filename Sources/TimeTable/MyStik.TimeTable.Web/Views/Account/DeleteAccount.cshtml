@@ -1,0 +1,45 @@
+﻿@using System.Collections
+@model MyStik.TimeTable.Web.Models.DeleteUserModel
+
+@{
+    ViewBag.Title = "Benutzerkonto löschen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Benutzerkonto löschen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="alert alert-danger">
+            <h4>Bestätigung</h4>
+            <p>Wollen Sie Ihr Benutzerkonto wirklich löschen?</p>
+            <p>Es werden sämtliche Eintragungen gelöscht, ebenso ihr Profil und das Benutzerkonto.</p>
+
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                <fieldset>
+                    @Html.ValidationSummary()
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-10">
+                            <input type="submit" value="Ja, Benutzerkonto löschen" class="btn btn-danger" />
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-default">Nein, Benutzerkonto behalten</a>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+</div>
+
+
+

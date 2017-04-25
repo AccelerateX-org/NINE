@@ -1,0 +1,90 @@
+﻿@model MyStik.TimeTable.Web.Models.InvitationFileModel
+@{
+    ViewBag.Title = "Einladung";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Alumni - Einladung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Beschreibung</h4>
+                </div>
+
+
+
+                <div class="panel-body">
+                    <p>
+                        Der Regelfall sieht vor, dass sich Studierende mit Ihrer hm.edu E-Mail Adresse selbst registrieren.
+                        Es gibt jedoch Fälle, bei denen die Studierenden keine E-Mail Adresse an der HM haben oder noch nicht haben.
+                        Beispiele:
+                    </p>
+                    <ul>
+                        <li>MBA-Studiengang: Einladung direkt nach der Zulassung, um möglichst rasche Bindung zu erreichen</li>
+                        <li>Internationale Programme</li>
+                        <li>Schülerstudium</li>
+                    </ul>
+                    <p>
+                        Für diese Fällem, können Studierende explizit eingeladen werden, d.h. sie erhalten eine E-Mail mit einem Link, über den noch das Passwort eingegeben werden muss.
+                        Der Studierende ist damit korrekt angemeldet und automatisch der richtigen Studiengruppe zugewiesen.
+                    </p>
+                    <p>Ablauf:</p>
+                    <ol>
+                        <li>Datei auswählen und hochladen</li>
+                        <li>Listen einträge kontrollieren</li>
+                        <li>Einladungen versenden</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Schritt 1: Datei auswählen und hochladen</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-info ">
+                        <strong>Erwartetes Format der Datei:</strong>
+                        <p>CSV-Datei mit Trennzeichen ; sowie Kopfzeile. Aufbau der Spalten:</p>
+                        <p>Name;Vorname;E-Mail;Studiengang;Studiengruppe</p>
+                    </div>
+
+                    @using (Html.BeginForm("Invitation", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                    {
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Datei mit Einladungsdaten</label>
+                                <div class="col-md-10">
+                                    <div>
+                                        <input type="file" name="Attachments" id="Attachment1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Hochladen" class="btn btn-default"/>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

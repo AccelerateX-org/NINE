@@ -1,0 +1,29 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Data.Occurrence
+
+@{
+    string activityFlag = "Activity_" + Model.Id;
+}
+
+<div id="@activityFlag">
+    @if (Model.IsAvailable)
+    {
+        @Ajax.ActionButton("fa-lock text-danger", "Sperren", "LockOccurrence", "Activity",
+                            new { Id = Model.Id },
+                            new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag },
+                            new { @class = "btn btn-default btn-sm" })
+
+
+    }
+    else
+    {
+        @Ajax.ActionButton("fa-unlock text-success", "Freigeben", "UnLockOccurrence", "Activity",
+                        new { Id = Model.Id },
+                        new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag },
+                             new { @class = "btn btn-default btn-sm" })
+    }
+</div>
+
+
+

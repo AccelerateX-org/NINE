@@ -1,0 +1,84 @@
+﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+@{
+    ViewBag.Title = "Mail Teilnehmerliste";
+}
+
+@section styles
+{
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>E-Mail an alle Teilnehmer</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+
+
+        <div class="alert alert-info">
+            <h2>Wichtige Hinweise:</h2>
+            <ul>
+                <li>Die E-mail wird an alle eingetragenen Teilnehmer sowie auch an alle Eintragungen auf der Warteliste gesendet.</li>
+                <li>Zur Kontrolle des Versand wird eine Kopie an den Absender versendet. Diese enthält ein detailliertes Versandprotokoll.</li>
+                <li>Bei ungültigen E-Mail Adressen oder Zustellungsproblemen erhält der Absender entsprechende Fehlermeldungen als E-Mails.</li>
+            </ul>
+        </div>
+
+        @using (Html.BeginForm(null, null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
+        {
+            @Html.ValidationSummary(true)
+            <fieldset>
+                @Html.ValidationSummary()
+                @Html.HiddenFor(m => m.OccurrenceId)
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Subject, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Subject, new {@class = "form-control"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Body, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(m => m.Body, new {@class = "form-control", rows = "10"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Anhänge</label>
+                    <div class="col-md-10">
+                        <div><input type="file" name="Attachments" id="Attachment1"/>
+                        </div>
+                        <div><input type="file" name="Attachments" id="Attachment2"/>
+                        </div>
+                        <div><input type="file" name="Attachments" id="Attachment3"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Senden" class="btn btn-default"/>
+                    </div>
+                </div>
+            </fieldset>
+        }
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+        jQuery(document).ready(function() {
+            $("#Body").cleditor();
+        });
+    </script>
+}

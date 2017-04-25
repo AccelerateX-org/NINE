@@ -1,0 +1,17 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.InfoscreenModel
+
+<input id="tokenPanelRight" type="hidden" name="tokenPanelRight" value="@ViewBag.Token">
+
+<div class="portlet light">
+    <div class="portlet-title">
+        <div class="caption">
+            <h1>HOKO Weeks</h1>
+        </div>
+    </div>
+    <div class="portlet-body infoscreen">
+        <img src="@Url.Content(ViewBag.ImgFileName)" alt="MVG" style="width: 100%;height: auto"/>
+    </div>
+</div>
+
+

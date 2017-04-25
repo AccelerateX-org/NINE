@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNet.Identity
+@using MyStik.TimeTable.Web.Services
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINE - @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    <link href="@Styles.Url("~/Content/print.css")" rel="stylesheet" type="text/css" media="print" />
+
+    @RenderSection("styles", required: false)
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menue-collapase">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand">NINE</a>
+            </div>
+            <div class="navbar-collapse collapse" id="menue-collapase">
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                @Html.AntiForgeryToken()
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Abmelden</a></li>
+                </ul>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

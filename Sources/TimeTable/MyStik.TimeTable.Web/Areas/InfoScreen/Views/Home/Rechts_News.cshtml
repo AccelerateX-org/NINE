@@ -1,0 +1,80 @@
+﻿@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.NachmittagRechtsModel
+<!-- BEGIN CONTENT -->
+
+<h1>@Model.WochenTag</h1>
+    
+                                <div class="panel-body">
+                                    <!--Karussel-->
+
+                                    <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="500" style="width: auto; height: auto; margin: 0 auto">
+                                        <!-- Positionsanzeiger -->
+                                        <!-- Verpackung für die Elemente -->
+
+                                        @foreach (var ev in Model.Events)
+                                        { 
+                                        <div class="carousel-inner" role="listbox">
+                                            <div class="item active">
+                                                <img src="http://4.bp.blogspot.com/-e6D4R-wtDek/VWhejYdIDSI/AAAAAAAAFFE/8JNjovkmyuQ/s1600/gradu.jpg" class="img-responsive">
+                                                <div class="carousel-caption">
+                                                    <h1>@ev.Titel</h1> <h1>Helfer für Absolventenfeier gesucht!</h1>
+                                                    <h2>@ev.Beschreibung <br> Am 27. November braucht das Organisationsteam Eure Hilfe!</h2> 
+                                                    <h2>
+                                                        Liebe Kommilitonen,
+                                                        auch dieses Jahr wollen wir wieder unsere Absolventen gebührend verabschieden und organisieren für sie eine große Absolventenfeier am Freitag, den 27. November 2015.
+                                                        Wie auch die letzten Jahre suchen wir Helfer für diverse Einsatzgebiete
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <img src="http://www.bayern.by/data/mediadb/cms_pictures/%7B7e6e2681-f4c3-5538-661d-80f649a659a9%7D.jpeg" class="img-responsive">
+                                                <div class="carousel-caption">
+                                                    <h1>@ev.Titel</h1><h1>Weißwurst in der Fachschaft!</h1>
+                                                    <h2>@ev.Beschreibung <br> Einmal Freitags jeden Monat:</h2>
+                                                    <h2>
+                                                        Wir von der Fachschaft möchten dich / euch zu einem Gaumenschmauß 1x Freitags im Monat einladen:
+                                                        Aufgedeckt wird Weißwurst mit feinsten süßen Senf + Breze + Weißbier für nur 3€! Wir freuen uns auf zahlreiches Erscheinen :)
+                                                    </h2>
+                                                    <h2>Anmeldung über Nine erforderlich!</h2>
+                                                </div>
+                                            </div>
+                                            <div class="item">
+                                                <img src="http://www.windwardboardshop.com/wp/wp-content/uploads/2013/09/burton-welcome-to-winter.jpg" class="img-responsive">
+                                                <div class="carousel-caption">
+                                                    <h1>@ev.Titel <br> Der Berg ruft!!!</h1>
+                                                    <h2>@ev.Beschreibung <br>
+                                                        Wie jedes Jahr heißt es nach weglegen der Stifte <strong>WINTERSCHOOL'S OUT</strong> bei der Fachschaft!<br />
+                                                        Dieses Jahr finde wir uns im <strong>Pitztal</strong> wieder.<br />
+                                                        Das geplante Datum ist der <strong>27.02-04.03</strong>.<br />
+                                                        <strong>Es heißt wieder hurtig in Nine anmelden, da die Plätze begrenzt sind!</strong>
+                                                    </h2>
+
+
+
+
+                                                </div>
+
+                                                <!-- Schalter -->
+                                                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                                    <span class="sr-only">Zurück</span>
+                                                </a>
+                                                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                                    <span class="sr-only">Weiter</span>
+                                                </a>
+                                            </div>
+                                            <!--END CAROUSEL-->
+                                        </div>
+                                    </div>
+                                </div>
+                                        }
+@section scripts{
+    <script>
+        $(document).ready(function (ev) {
+            $('#custom_carousel').on('slide.bs.carousel', function (evt) {
+                $('#custom_carousel .controls li.active').removeClass('active');
+                $('#custom_carousel .controls li:eq(' + $(evt.relatedTarget).index() + ')').addClass('active');
+            });
+        });
+    </script>
+}

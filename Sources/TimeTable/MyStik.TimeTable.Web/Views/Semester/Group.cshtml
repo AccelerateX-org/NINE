@@ -1,0 +1,9 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.CourseSummaryModel>
+@{
+    ViewBag.Title = ViewBag.GroupName;
+}
+
+<h4>Semestergruppe @ViewBag.GroupName (@ViewBag.Semester.Name)</h4>
+
+@Html.Partial("_CourseListSummary", Model)
+

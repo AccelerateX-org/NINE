@@ -1,0 +1,69 @@
+﻿@using MyStik.TimeTable.Web.Services
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINE - @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    <link href="@Styles.Url("~/Content/print.css")" rel="stylesheet" type="text/css" media="print" />
+
+    @RenderSection("styles", required: false)
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="bg-fillter-default">
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <ul class="list-inline">
+                <li><a href="http://www.wi.hm.edu">&copy; @DateTime.Now.Year FK09</a></li>
+                <li><a href="http://www.hm.edu">Hochschule München</a></li>
+                <li>@Html.ActionLink("Kontakt", "Contact", "Home")</li>
+                <li>@Html.ActionLink("Impressum", "Imprint", "Home")</li>
+            </ul>
+            <div class="pull-right">
+                <a href="https://play.google.com/store/apps/details?id=de.fillter2">
+                    <img alt="Android app on Google Play"
+                         src="https://developer.android.com/images/brand/de_app_rgb_wo_45.png" />
+                </a>
+            </div>
+
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @if (!Request.IsLocal)
+    {
+        <!-- Piwik -->
+        <script type="text/javascript">
+            var _paq = _paq || [];
+            _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+                var u = "//analytics.it09.de/piwik/";
+                _paq.push(['setTrackerUrl', u + 'piwik.php']);
+                _paq.push(['setSiteId', 1]);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript';
+                g.async = true;
+                g.defer = true;
+                g.src = u + 'piwik.js';
+                s.parentNode.insertBefore(g, s);
+            })();
+        </script>
+        <noscript>
+            <p><img src="//analytics.it09.de/piwik/piwik.php?idsite=1" style="border: 0;" alt=""/>
+            </p></noscript>
+        <!-- End Piwik Code -->
+    }
+</body>
+</html>

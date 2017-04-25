@@ -1,0 +1,40 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.RechtsEventsModel
+
+<h1>Aktuelle Veranstaltungen:</h1>
+
+<div>
+   
+
+            
+                <table class="table table-striped">
+
+            <thead>
+
+                <tr>
+                    <th>Wochentag</th>
+                    <th>Datum</th>
+                    <th>Uhrzeit</th>
+                    <th>Titel</th>
+                    <th>Raumnummer</th>
+                </tr>
+                </thead>
+                <tbody>
+
+           @foreach (var cl in Model.InfoscreenEventsRight.OrderBy(d => d.Datum.Begin))
+                {
+                    <tr>
+                        <td>@cl.Datum.Begin.DayOfWeek</td>
+                        <td>@cl.Datum.Begin.ToShortDateString()</td>
+                        <td>@Html.TimeSpan(cl.Datum)</td>
+                        <td>@cl.Titel</td>
+                        <td>@cl.Raumnummer</td>
+                    </tr>
+                }
+
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+  
+

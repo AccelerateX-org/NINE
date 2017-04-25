@@ -1,0 +1,178 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.StudyBookViewModel
+
+
+@if (Model.Courses.Any() || Model.OfficeHour != null || Model.Events.Any())
+{
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-gift"></i> Das habe ich angeboten
+            </div>
+        </div>
+        <div class="portlet-body">
+            <!-- Tab panes -->
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Gruppe(n)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Courses)
+                    {
+                        var linkText = c.Name + " (" + c.ShortName + ")";
+                        <tr>
+                            <td>
+                                @Html.ActionLink(linkText, "Index", "Course", new { id = c.Id }, null)
+                            </td>
+                            <td>
+                                @foreach (var group in c.SemesterGroups)
+                                {
+                                    if (group.CurriculumGroup != null)
+                                    {
+                                        var label = group.CurriculumGroup.Curriculum.ShortName + " - " + group.CurriculumGroup.Name;
+                                        @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
+                                        if (group != c.SemesterGroups.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var label = "Ohne Zuordnung";
+                                        <div class="text-danger">
+                                            <strong>@Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)</strong>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionButton("fa-download text-success", "", "SubscriptionList", "Occurrence", new { id = c.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                @Html.ActionButton("fa-envelope-o", "", "CustomOccurrenceMail", "Mailing", new { id = c.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.OfficeHour != null)
+                    {
+                        <tr>
+                            <td>@Html.ActionLink("Sprechstunde", "History", "OfficeHour", new { id = Model.OfficeHour.Id, semId = Model.Semester.Id }, null)</td>
+                            <td></td>
+                            <td>
+                                @Html.ActionButton("fa-download text-success", "", "SubscriptionList", "OfficeHour", new { id = Model.OfficeHour.Id }, new { @class = "btn btn-default btn-xs" })
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>Keine Sprechstunde angeboten</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                    }
+                    @foreach (var c in Model.Events)
+                    {
+                        var linkText = c.Name + " (" + c.ShortName + ")";
+                        <tr>
+                            <td>
+                                @Html.ActionLink(linkText, "Index", "Event", new { id = c.Id }, null)
+                            </td>
+                            <td>
+                                @foreach (var group in c.SemesterGroups)
+                                {
+                                    if (group.CurriculumGroup != null)
+                                    {
+                                        var label = group.CurriculumGroup.Curriculum.ShortName + " - " + group.CurriculumGroup.Name;
+                                        @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
+                                        if (group != c.SemesterGroups.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var label = "Ohne Zuordnung";
+                                        <div class="text-danger">
+                                            <strong>@Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)</strong>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionButton("fa-download text-success", "", "SubscriptionList", "Occurrence", new { id = c.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                @Html.ActionButton("fa-envelope-o", "", "CustomOccurrenceMail", "Mailing", new { id = c.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (Model.MySubscriptions.Any())
+{
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-pencil"></i> Da war ich eingetragen
+            </div>
+        </div>
+        <div class="portlet-body">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Nächster Termin</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var act in Model.MySubscriptions)
+                    {
+                        var activityFlag = act.State != null ? "Activity_" + act.State.Occurrence.Id : string.Empty;
+                        <tr id="@activityFlag">
+                            <td>
+                                @Html.ActionLink(
+                                            act.Activity.Name + " (" + act.Activity.Activity.ShortName + ")",
+                                            act.Activity.Action, act.Activity.Controller, new { id = act.Activity.Id }, null)
+                            </td>
+                            @if (act.Activity.Summary.CurrentDate != null)
+                            {
+                                <td class="text-danger">jetzt</td>
+                            }
+                            else
+                            {
+                                <td>@act.Activity.NextDateTime</td>
+                            }
+                            @if (act.State.Subscription.OnWaitingList)
+                            {
+                                <td>Warteliste</td>
+                            }
+                            else
+                            {
+                                if (act.State.Subscription.IsConfirmed)
+                                {
+                                    <td>Teilnehmer</td>
+                                }
+                                else
+                                {
+                                    <td>Platz reserviert</td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+
+
+
+

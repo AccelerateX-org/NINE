@@ -1,0 +1,52 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "title";
+}
+
+<h2>Semester Import</h2>
+<div>
+    <div class="btn btn-default">
+        <input type="button" id="btnStart"/>
+    </div>
+    
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/signalr")
+
+    <script type="text/javascript">
+        
+
+        $(document).ready(function () {    // Add handler to Send button
+            var connection = $.connection.importHub;
+            // Some config work
+            connection.client.importUpdated = function (msg) {
+                $("#Progress").append("<p>" + msg + "</p>");
+            }
+
+            $("btnStart").click(function() {
+                connection
+                    .server
+                    .startImport()
+                    .done(function(result) {
+                        $("#callbacks").append("<li>Result: " + result + "</li>");
+                    })
+                    .fail(function(error) {
+                        $("#callbacks").append("<li>Error: " + error + "</li>");
+                    });
+            });
+
+            $.connection.displayMessage = function(message) {
+
+            };
+
+            $.connection.hub.error(function () { alert("Fehler") });
+
+            // Open the connection
+            $.connection.hub.start().done(function () { alert("Verbindung aufgebaut"); }).fail(function () { alert("Fehler bei Verbindung"); });
+        });
+    </script>
+}

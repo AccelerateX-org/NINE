@@ -1,0 +1,94 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseDateInfoModel
+@{
+    ViewBag.Title = "Information";
+}
+
+<h4>Information für Termin</h4>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Datum und Zeitraum ändern</div>
+            <div class="panel-body">
+                    <table class="table table-bordered table-condensed">
+                        <tbody>
+                            <tr>
+                                <td>Bezeichnung</td>
+                                <td>@Model.Course.Name (@Model.Course.ShortName)</td>
+                            </tr>
+                            <tr>
+                                <td>Gruppen</td>
+                                <td>
+                                    @foreach (var group in Model.Course.SemesterGroups)
+                                    {
+                                        if (group.CurriculumGroup != null)
+                                        {
+                                            <div>@group.CurriculumGroup.Curriculum.ShortName - @group.CurriculumGroup.Name</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Ohne Zuordnung</div>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Aktuelles Datum</td>
+                                <td>@Model.Date.Begin.ToShortDateString()</td>
+                            </tr>
+                            <tr>
+                                <td>Aktueller Zeitraum</td>
+                                <td>@Model.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @Model.Date.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+
+        <div class="well well-sm">
+            <a href="@Url.Action("Index", "Course", new {id=Model.Course.Id})" class="btn btn-lg btn-success">Zurück zur Lehrveranstaltung</a>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">Information zu Termin</div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                    {
+                        @Html.ValidationSummary(true)
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(m => m.ActivityDateId)
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Date.Title, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(m => m.Date.Title, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Date.Description, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.TextAreaFor(m => m.Date.Description, new { @class = "form-control", rows = "10" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Date.Occurrence.Information, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.TextAreaFor(m => m.Date.Occurrence.Information, new { @class = "form-control", rows = "10" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Speichern" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

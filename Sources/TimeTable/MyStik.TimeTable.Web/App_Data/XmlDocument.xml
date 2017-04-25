@@ -1,0 +1,2239 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyStik.TimeTable.Web</name>
+    </assembly>
+    <members>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.FacultiesContracts">
+            <summary>
+            Contract für Abfrage der verfügbaren Fakultäten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FacultiesContracts.FacultyId">
+            <summary>
+            Guid der Fakultät als String
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FacultiesContracts.FucultyName">
+            <summary>
+            Name der Fakultät 
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FacultiesContracts.FucultyShortname">
+            <summary>
+            Kürzel der Fakultät z.B. FK09
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudyprogramContract">
+            <summary>
+            Contract zur Abfrage der Studienprogramme
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudyprogramContract.StudyprogramId">
+            <summary>
+            Guid des Studienprograms als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudyprogramContract.StudyprogramName">
+            <summary>
+            Namen des Studienprogramms
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudyprogramContract.StudyprogramShortname">
+            <summary>
+            Kurznamen des Studienprogramms
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudygroupsContract">
+            <summary>
+            Contract zur Abfrage der Studiengruppen
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudygroupsContract.StudygroupId">
+            <summary>
+            Guid der Studiengruppe als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumStudygroupsContract.StudygroupName">
+            <summary>
+            Name der Studiengruppe
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumCourseContract">
+            <summary>
+            Contract zur Abfrage der Kurse einer Studiengruppe
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumCourseContract.LectureId">
+            <summary>
+            Guid der Vorlesung als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumCourseContract.Title">
+            <summary>
+            Name der Vorlesung
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumDateContract">
+            <summary>
+            Conctract zur Abfrage der Termine eines Kurses
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDateContract.LectureId">
+            <summary>
+            Guid der Vorlesung als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDateContract.LectureName">
+            <summary>
+            Name der Vorlesung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDateContract.Dates">
+            <summary>
+            Liste der Termine einer Vorlesung, siehe CurriculumDate
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate">
+            <summary>
+            Contract von Terminen eines Kurses
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate.Rooms">
+            <summary>
+            Liste der Räume, siehe CurriculumRoom
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate.Lecturers">
+            <summary>
+            Liste der Dozenten, siehe CurriculumLecturer
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate.Date">
+            <summary>
+            Datum des Termins im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate.Begin">
+            <summary>
+            Zeit des Begins der Vorlesung am Tag "Date"im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate.End">
+            <summary>
+            Zeit des Endes der Vorlesung am Tag "Date"im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumDate.isCanceled">
+            <summary>
+            Information, ob Vorlesung ausfällt (=true)
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumLecturer">
+            <summary>
+            Contract über Dozenten eines Vorlesungstermins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumLecturer.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumLecturer.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CurriculumRoom">
+            <summary>
+            Contract über Räume eines Vorlesungstermins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumRoom.RoomId">
+            <summary>
+            Guid des Raums als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CurriculumRoom.RoomNumber">
+            <summary>
+            Raumnummer des Raums
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.DatesContract">
+            <summary>
+            Contract zur Abfrage der Infos eines Termins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.DateId">
+            <summary>
+            Guid des Termins als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.Title">
+            <summary>
+            Titel des Termins/Vorlesung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.Start">
+            <summary>
+            Uhrzeit des Starts des Termins am Tag "Date" im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.End">
+            <summary>
+            Uhrzeit des Endes des Termins am Tag "Date" im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.Date">
+            <summary>
+            Datum des Termins im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.IsCanceled">
+            <summary>
+            Information, ob Vorlesung ausfällt (=true)
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.Rooms">
+            <summary>
+            Liste der Räume, siehe DateRoomContract
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DatesContract.Lecturers">
+            <summary>
+            Liste der Dozenten, siehe DateLecturerContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.OwnDatesContract">
+            <summary>
+            Conctract zur Abfrage des persönlichen Stundenplans
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.OwnDatesContract.StatedDate">
+            <summary>
+            Ein Datum im Zeitraum des persönlichen Stundenplans im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.OwnDatesContract.InfoString">
+            <summary>
+            Infostring zum Datum, d.h. bei keinem gebuchten Termin am Tag "Derzeit keine Buchung!", sonst "null"
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.OwnDatesContract.Dates">
+            <summary>
+            Liste der Termine am Tag(StatedDate), siehe DateContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.DateContract">
+            <summary>
+            Contract über Infos eines Termins beim persönlichen Stundenplan
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateContract.StartTime">
+            <summary>
+            Uhrzeit des Starts des Termins am  StatedDate im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateContract.EndTime">
+            <summary>
+            Uhrzeit des Endes des Termins am StatedDate im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateContract.IsCanceled">
+            <summary>
+            Information, ob Vorlesung ausfällt (=true)
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateContract.Titel">
+            <summary>
+            Titel des Termins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateContract.Rooms">
+            <summary>
+            Liste der Räume, siehe DateRoomContract
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateContract.Lecturers">
+            <summary>
+            Liste der Dozenten, siehe DateLecturerContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.DateRoomContract">
+            <summary>
+            Contract über Rauminfos eines Termins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateRoomContract.RoomId">
+            <summary>
+            Guid des Raums als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateRoomContract.RoomNumber">
+            <summary>
+            Nummer des Raums
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.DateLecturerContract">
+            <summary>
+            Contract über Dozenteninfos eines Termins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateLecturerContract.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.DateLecturerContract.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.NextEventContract">
+            <summary>
+            Contract zur Abfrage der nächsten Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.EventId">
+            <summary>
+            Guid des Events als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.Title">
+            <summary>
+            Titel des Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.Description">
+            <summary>
+            Beschreibung des Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.From">
+            <summary>
+            Startzeitpunkt
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.Until">
+            <summary>
+            Endzeitpunkt
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.Location">
+            <summary>
+            Ort
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NextEventContract.Host">
+            <summary>
+            Veranstalter
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.EventContract">
+            <summary>
+            Contract zur Abfrage von Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventContract.EventId">
+            <summary>
+            Guid des Events als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventContract.EventName">
+            <summary>
+            Name des Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventContract.EventDesciption">
+            <summary>
+            Beschreibung des Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventContract.EventSlots">
+            <summary>
+            Anzahl der Slots des Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventContract.AvailableSlots">
+            <summary>
+            Anzahl der bereits belegten Slots des Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventContract.Dates">
+            <summary>
+            Liste der Termine des Events, siehe EventDate
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.EventDate">
+            <summary>
+            Contract über Termininfos eines Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventDate.Start">
+            <summary>
+            Startzeit im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventDate.End">
+            <summary>
+            Endzeit im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventDate.Date">
+            <summary>
+            Datum eines Eventtermins im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventDate.PlaceName">
+            <summary>
+            Name des Veranstaltungsorts, evtl. BMW oder Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventDate.PlaceId">
+            <summary>
+            Falls Raum der Hochschule, Guid des Raums als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.EventDate.EventOrganiser">
+            <summary>
+            Veranstalter des Events
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.LecturerInfoContract">
+            <summary>
+            Contract zur Abfrage von Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerInfoContract.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerInfoContract.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerInfoContract.OfficeRoom">
+            <summary>
+            falls verfügbar, Büro des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerInfoContract.Lectures">
+            <summary>
+            Liste der Termine des Dozenten, siehe Lectures
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourContract">
+            <summary>
+            Contract über die Abfrage der Sprechstunden
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourContract.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourContract.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourContract.LecturerRoomId">
+            <summary>
+            Guid des Raums des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourContract.LecturerRoomNumber">
+            <summary>
+            Nummer des Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourContract.OfficeHours">
+            <summary>
+            Liste der Termine/Slots von Sprechstunden, siehe LecturerOfficeHourDateSlot
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot">
+            <summary>
+            Contract für Listenelemente der Sprechstundentermine
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.OfficeHourSlotId">
+            <summary>
+            Id des Slots
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.from">
+            <summary>
+            Startzeitpunkt
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.until">
+            <summary>
+            Endzeitpunkt
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.NumberOfPossibleSubscribers">
+            <summary>
+            Anzahl an möglichen Buchungen
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.CurrentNumberOfSubscribers">
+            <summary>
+            Anzahl an derzeitigen Buchungen
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.isBookablefrom">
+            <summary>
+            Startzeitpunkt, ab dem die Buchung möglich ist
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerOfficeHourDateSlot.isBookableuntil">
+            <summary>
+            Endzeitpunkt bis zu dem die Buchung möglich ist
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.LecturerCoursesContract">
+            <summary>
+            Contract zur Abfrage der Kurse eines Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerCoursesContract.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerCoursesContract.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerCoursesContract.LecturerShortname">
+            <summary>
+            Kurszname des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerCoursesContract.LectureCourses">
+            <summary>
+            Liste der Vorlesungen eines Dozenten, siehe LectureCourses
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.LectureCourses">
+            <summary>
+            Contract für Listenelement der Kurse eines Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LectureCourses.LectureId">
+            <summary>
+            Guid der Vorlesung als sting
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LectureCourses.Title">
+            <summary>
+            Name der Vorlesung
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.LecturerContract">
+            <summary>
+            Contract zur Abfrage der DOzenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerContract.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerContract.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.LecturerContract.LecturerShortname">
+            <summary>
+            Kurzname des Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NotificationContract.NotificationStateId">
+            <summary>
+            Guid des NotificationStates als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NotificationContract.UserId">
+            <summary>
+            UserId
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NotificationContract.NotificationContent">
+            <summary>
+            Notification Text
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:MyStik.TimeTable.Web.Api.Contracts.NotificationContract.isNew" -->
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NotificationContract.ChangeId">
+            <summary>
+            Id des ActivityDateChanges
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.NotificationContract.Timestamp">
+            <summary>
+            Erstellungsdatum des ActivityDateChanges
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract">
+            <summary>
+            Contract zur Abfrage der freie Räume
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.RoomId">
+            <summary>
+            Guid des Raums als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.RoomNumber">
+            <summary>
+            Nummer des Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.InfoString">
+            <summary>
+            Infostring zum Datum, d.h. bei keinem gebuchten Termin am Tag "Derzeit keine Buchung!", sonst "null"
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.NextOccurrenceDate">
+            <summary>
+            Datum des nächsten Termins im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.NextOccurrenceTime">
+            <summary>
+            Uhrzeit des Starts des nächsten Termins am Tag "Date" im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.RemainingFreeTime">
+            <summary>
+            Restliche freie Zeit hh:mm, wenn keine weitere Belegung vorhanden Maxwert von 99:99
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.NextOccurrenceName">
+            <summary>
+            Name des nächsten Termins, der im Raum stattfindet
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomContract.NextOccurrenceId">
+            <summary>
+            Guid des nächsten Termins
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract">
+            <summary>
+            Contract zur Abfrage der freien Räume mit Zeitspanne
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.RoomId">
+            <summary>
+            Guid des Raums als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.RoomNumber">
+            <summary>
+            Nummer des Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.FreeFrom">
+            <summary>
+            Uhrzeit ab dem der Raum am Tag "Date" frei ist, im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.FreeUntil">
+            <summary>
+            Uhrzeit bis zu dem der Raum am Tag "Date" frei ist, im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.FreeDate">
+            <summary>
+            Datum der Freizeit im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.NextOccurrenceName">
+            <summary>
+            Name der nächsten Veranstaltung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.FreeRoomTimespansContract.NextOccurrenceId">
+            <summary>
+            Guid der nächsten Veranstaltung als string
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.AllRoomContract">
+            <summary>
+            Contract zur Abfrage aller Räume
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.AllRoomContract.RoomId">
+            <summary>
+            Guid des Raums als sting
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.AllRoomContract.RoomNumber">
+            <summary>
+            Nummer des Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.AllRoomContract.RoomCapacity">
+            <summary>
+            Kapazität des Raums
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.RoomDateContract">
+            <summary>
+            Contract zur Abfrage der Termine eines Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDateContract.RoomId">
+            <summary>
+            Guid des Raums als sting
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDateContract.RoomNumber">
+            <summary>
+            Nummer des Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDateContract.RoomCapacity">
+            <summary>
+            Kapazität des Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDateContract.Dates">
+            <summary>
+            Liste der Termine des Raums, siehe RoomDate
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.RoomDate">
+            <summary>
+            Contract über Listenelement der Termine eines Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.DateId">
+            <summary>
+            Guid des Termins als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.Titel">
+            <summary>
+            Titel der Veranstaltung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.Start">
+            <summary>
+            Startzeitpunkt des Termins am Tag "Date", im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.End">
+            <summary>
+            Endzeitpunkt des Termins am Tag "Date", im Format hh:mm
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.Date">
+            <summary>
+            Datum des Termins im Format dd.MM.yyyy
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.IsCanceled">
+            <summary>
+            Information, ob die Vorlesung ausfällt (=true)
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomDate.Lecturers">
+            <summary>
+            Liste der Dozenten, welche die Vorlesung halten, siehe RoomLecturer
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.RoomLecturer">
+            <summary>
+            Contract über Listenelement der Dozenten eines Termins eines Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomLecturer.LecturerId">
+            <summary>
+            Guid des Dozenten als string
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.RoomLecturer.LecturerName">
+            <summary>
+            Name des Dozenten
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.AccountController.GetUserId(System.String,System.String)">
+            <summary>
+            Abfrage der UserId
+            </summary>
+            <param name="UserName">Username oder Email-Adresse</param>
+            <param name="Password">Das zum UserName dazugehörige Passwort</param>
+            <returns>Die zum Account dazugehörige UserId</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ActivityController.GetPersonalDates(System.String)">
+            <summary>
+            Abfrage des persönlichen Stundenplans für eine Woche
+            </summary>
+            <param name="UserId">Die UserId des Accounts in der Datenbank</param>
+            <returns>Liste nach Wochentagen mit den persönlichen/gebuchten Kursterminen</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ActivityController.GetPersonalDatesSpan(System.String,System.String,System.String)">
+            <summary>
+            Abfrage aller eigenen Termine im gewünschten Zeitraum
+            </summary>
+            <param name="UserId">Die UserId des Accounts in der Datenbank</param>
+            <param name="FromDay">Anfangsdatum  des Zeitraums im Format dd.MM.yyyy</param>
+            <param name="UntilDay">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
+            <returns>Persönlichen Termine für jeden Tag im gewählten Zeitraum</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ActivityController.GetDateById(System.String)">
+            <summary>
+            Abfrage aller Informationen eines Termins
+            </summary>
+            <param name="DateId">Id des Termins</param>
+            <returns>Informationen zu einem bestimmten Termin</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ActivityController.GetAllEvents">
+            <summary>
+            Abfrage aller kommenden Events
+            </summary>
+            <returns>Liste aller zukünftigen Events</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ActivityController.GetEvent(System.String)">
+            <summary>
+            Abfrage der speziellen Informationen eines Events
+            </summary>
+            <param name="EventId">EventId des Eventtermins</param>
+            <returns>Informationen zum gewünschten Event</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetAllFaculties">
+            <summary>
+            Abfrage aller verfügbaren Fakultäten
+            </summary>
+            <returns>Liste aller verfügbaren Fakultäten</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetAllStudyprograms">
+            <summary>
+            Abfrage aller Studienprogramme 
+            </summary>
+            <returns>Liste aller Studienprogramme</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetAllStudygroups(System.String)">
+            <summary>
+            Abfrage aller Studiengruppen eines Studienprogramms
+            </summary>
+            <param name="StudyprogramId"> Id des Studienprograms</param>
+            <returns>Liste aller Studiengruppen eines Studienprogramms</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetStudygroupCourses(System.String)">
+            <summary>
+            Abfrage aller Kurse einer Studiengruppe
+            </summary>
+            <param name="StudygroupId">Id der Studiengruppe</param>
+            <returns>Liste aller Kurse einer Studiengruppe</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetLectureDates(System.String)">
+            <summary>
+            Abfrage aller Termine eines Kurses
+            </summary>
+            <param name="LectureId">Id der Vorlesung</param>
+            <returns>Alle Termine einer Vorlesung</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.GetAllLecture">
+            <summary>
+            Abfrage aller Dozenten
+            </summary>
+            <returns>Liste aller verfügbaren Dozenten</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.GetFacLecturer(System.String)">
+            <summary>
+            Abfrage aller Dozenten einer Fakultät
+            </summary>
+            <param name="FacId">Id des Organisationsveranstalters, z.B. von FK09 oder andere</param>
+            <returns>Liste aller Dozenten einer Fakultät</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.GetLecturersStartswith(System.String)">
+            <summary>
+            Abfrage aller Dozenten, deren Namen mit "StartsWith"- string beginnt
+            </summary>
+            <param name="StartsWith">Beliebiger String mit dem der Name anfangen soll</param>
+            <returns>Liste aller Dozenten die mit dem übergebenen String anfangen</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.GetLectureCourses(System.String)">
+            <summary>
+            Abfrage aller Kurse eines Dozenten
+            </summary>
+            <param name="LecturerId">Id des Dozenten</param>
+            <returns>Liste aller Kurse, die ein Dozent hält</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.GetAllWeekOfficeHours(System.String)">
+            <summary>
+            Abfrage aller Sprechstunden aller Dozenten bis zum gewählten Zeitpunkt
+            </summary>
+            <param name="Until">Datum bis zu dem alle Sprechstunden aufgelistet werden sollen; Datum im Format dd.MM.yyyy </param>
+            <returns>Liste aller verfügbaren Sprechstunden bis zum Datum</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.GetOfficeHour(System.String,System.String)">
+            <summary>
+            Abfrage aller noch stattfinden Sprechstunden eines Profs im Semester
+            </summary>
+            <param name="LecturerId">Id des Dozenten</param>
+            <param name="Until">Datum bis zu dem alle Sprechstundentermine aufgelistet werden sollen; Datum im Format dd.MM.yyyy</param>
+            <returns>Liste aller noch stattfindenen Spechstunden eines Dozenten</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.BookOfficeHourAsStudent(System.String,System.String)">
+            <summary>
+            Buchung einer Sprechstunde als Student
+            </summary>
+            <param name="OfficehourId"></param>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.DeletOfficeHourBookingAsStudent(System.String,System.String)">
+            <summary>
+            Absage einer Buchung als Student
+            </summary>
+            <param name="OfficehourId"></param>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LecturerController.DeletOfficeHourBookingAsLecturer(System.String,System.String)">
+            <summary>
+            Absage einer Sprechstunde als Dozent
+            </summary>
+            <param name="OfficehourId"></param>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRoomsNow">
+            <summary>
+            Gibt alle freien Räume eines Tages ab dem Abfragezeitpunkt wieder,die mindestens 30min frei sind
+            </summary>
+            <returns>Liste der freien Räume</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRooms(System.String,System.String,System.String,System.String)">
+            <summary>
+            Abfrage aller Räume die in einen festgelegeten Zeitraum frei sind,d.h. sie sollen von "from" bis "until" frei sein!
+            </summary>
+            <param name="FromDay">Startdatum des Zeitraums im Format dd.MM.yyyy</param>
+            <param name="UntilDay">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
+            <param name="FromTime">Startzeitpunkt am Startdatum des Zeitraums im Format hh:mm</param>
+            <param name="UntilTime">Endzeitpunkt am Enddatum im Format hh:mm</param>
+            <returns>Liste aller Räume, die den gewünschten Zeitraum frei sind</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRoomsSpanOfWeek(System.String,System.String)">
+            <summary>
+            Abfrage aller freien Räume (min X-min(span)frei) für eine Woche(ein tag der Woche dann mo-fr freie räume mit min 30min)
+            </summary>
+            <param name="Span">Die Zeitspanne, die der Raum mindestens frei sein soll</param>
+            <param name="OneDateOfWeek">irgendein Tag der gewünschten Woche</param>
+            <returns>Liste der Räume für alle Tage einer Woche, die den Zeitraum frei sind</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRoomsDaySpan(System.String,System.String)">
+            <summary>
+            Abfrage aller Räume die an einem gewählten Tag eine gewählte TimeSpan frei sind
+            </summary>
+            <param name="Span">Die Zeitspanne, die der Raum mindestens frei sein soll</param>
+            <param name="Day">Der gewünschte Tag im Format dd.MM.yyyy</param>
+            <returns>Liste der Räume, die am übergeben Tag mindestens Span frei sind</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetAllRooms">
+            <summary>
+            Abfrage aller verfügbaren Räume
+            </summary>
+            <returns>Liste aller Räume</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetRoomsStartWith(System.String)">
+            <summary>
+            Abfrage aller Räume die mit einem "StartsWith"-string beginnen
+            </summary>
+            <param name="StartsWith">String mit dem der Raum beginnen soll, d.h. z.B. R für alle R1.021 usw.</param>
+            <returns>Liste aller Räume die mit dem übergebenen String anfangen</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetRoomActivities(System.String)">
+            <summary>
+            Abfrage aller Termine, die in einem Raum stattfinden
+            </summary>
+            <param name="RoomId">Id des Raums</param>
+            <returns>Liste aller Termine, die im gewählten Raum stattfinden</returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.UserIdResponse">
+            <summary>
+            Response zur Abfrage der UserId
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.UserIdResponse.UserId">
+            <summary>
+            Die Guid UserId als String
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.PersonalPlanResponse">
+            <summary>
+            Response zur Abfrage des persönlichen Stundenplans
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.PersonalPlanResponse.Courses">
+            <summary>
+            Liste der einzelnen Termine der gebuchten Kurse, siehe OwnDatesContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.EventInfoResponse">
+            <summary>
+            Response zur Abfrage aller Events und den dazugehörigen Informationen
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.EventInfoResponse.Events">
+            <summary>
+            Liste aller Events, siehe EventContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.EventSingleResponse">
+            <summary>
+            Response zur Abfrage von Informationen eines Events
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.EventSingleResponse.Event">
+            <summary>
+            Infos über das Event, siehe EventContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.DateInfoResponse">
+            <summary>
+            Response zur Abfrage der Informationen eines Termins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.DateInfoResponse.DateInfo">
+            <summary>
+            Infos über Termin, siehe DatesContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.FacultiesResponse">
+            <summary>
+            Response zu Abfragen der Fakultäten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.FacultiesResponse.Faculties">
+            <summary>
+            Liste der Fakultäten, siehe FacultiesContracts
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.CurriculumStudyprogramsResponse">
+            <summary>
+            Response zur Abfrage der Studienprogramme
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.CurriculumStudyprogramsResponse.Studyprograms">
+            <summary>
+            Liste der Studienprogramme einer Fakultät, siehe CurriculumStudyprogramConract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.CurriculumStudygroupsResponse">
+            <summary>
+            Response zur Abfrage der Studiengruppen
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.CurriculumStudygroupsResponse.Studygroups">
+            <summary>
+            Liste der Studiengruppen eines Studienprograms, siehe CurriculumStudygroupsContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.CurriculumStudygroupCoursesResponse">
+            <summary>
+            Response zur Abfrage der Kurse einer Studiengruppe
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.CurriculumStudygroupCoursesResponse.StudygroupLectures">
+            <summary>
+            List der Kurse einer Studiengruppe, siehe CurriculumCourseContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.CurriculumCourseDateResponse">
+            <summary>
+            Response zur Abfrage der Termine eines Kurses
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.CurriculumCourseDateResponse.LectureDates">
+            <summary>
+            Alle Termine die eine Kurs hat, siehe CurriculumDateContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.LecturersOfficeHourResponse">
+            <summary>
+            Response zur Abfrage der Sprechstunden
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.LecturersOfficeHourResponse.OfficeHours">
+            <summary>
+            Liste aller Sprechstunden, siehe LecturerOfficeHourContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.LecturerOfficeHoursResponse">
+            <summary>
+            Response zur Abfrage der Sprechstundentermine eines Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.LecturerOfficeHoursResponse.OfficeHours">
+            <summary>
+            Sprechstunden eines Dozenten, siehe LecturerOfficeHourContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.LecturersResponse">
+            <summary>
+            Response zur Abfrage der Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.LecturersResponse.Lecturers">
+            <summary>
+            Liste aller Dozenten, siehe LecturerContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.LecturerCoursesResponse">
+            <summary>
+            Response zur Abfrage der Kurse eines Dozenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.LecturerCoursesResponse.LecturerCourses">
+            <summary>
+            Alle Kurse, die ein Dozent hält, siehe LecturerCoursesContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.PersonalNotificationResponse">
+            <summary>
+            Response zur Abfrage der persönlichen Notifications
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.PersonalNotificationResponse.Notifications">
+            <summary>
+            Liste der einzelnen Notifications
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.FreeRoomResponse">
+            <summary>
+            Respone zur Abfrage der freien Räume
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.FreeRoomResponse.Rooms">
+            <summary>
+            Liste der freien Räume, siehe FreeRoomContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.AllRoomResponse">
+            <summary>
+            Response zur Abfrage aller Räume
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.AllRoomResponse.Rooms">
+            <summary>
+            Liste aller Räume, siehe AllRoomContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.RoomDateResponse">
+            <summary>
+            Response zur Abfrage der Termine eines Raums
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.RoomDateResponse.RoomDates">
+            <summary>
+            Liste der Termine eines Raums, siehe RoomDateContract
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Responses.FreeRoomTimespansResponese">
+            <summary>
+            Response zur Abfrage der freien Räume mit Zeitraum
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Responses.FreeRoomTimespansResponese.FreeRoomSpans">
+            <summary>
+            Liste der zeitraumfreien Räume, siehe FreeRoomTimespansContract
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.RoomInfoService.GetFreeRoomsNow(System.Int32)">
+            <summary>
+            Ermittelt alle Räume des R-Baus, die zum aktuellen Zeitpunkt noch mindestens x-Minuten frei sind
+            </summary>
+            <param name="minutes">Zeitraum, in der ein Raum mindestestens frei sein muss.</param>
+            <returns>Informationen zu den freien Räumen</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.ApiDescriptionExtensions.GetFriendlyId(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Generates an URI-friendly ID for the <see cref="T:System.Web.Http.Description.ApiDescription"/>. E.g. "Get-Values-id_name" instead of "GetValues/{id}?name={name}"
+            </summary>
+            <param name="description">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The ID as a string.</returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfig">
+            <summary>
+            Use this class to customize the Help Page.
+            For example you can set a custom <see cref="T:System.Web.Http.Description.IDocumentationProvider"/> to supply the documentation
+            or you can provide the samples for the requests/responses.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.Controllers.HelpController">
+            <summary>
+            The controller that will handle requests for the help page.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetDocumentationProvider(System.Web.Http.HttpConfiguration,System.Web.Http.Description.IDocumentationProvider)">
+            <summary>
+            Sets the documentation provider for help page.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="documentationProvider">The documentation provider.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleObjects(System.Web.Http.HttpConfiguration,System.Collections.Generic.IDictionary{System.Type,System.Object})">
+            <summary>
+            Sets the objects that will be used by the formatters to produce sample requests/responses.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sampleObjects">The sample objects.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleRequest(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String)">
+            <summary>
+            Sets the sample request directly for the specified media type and action.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample request.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleRequest(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String,System.String[])">
+            <summary>
+            Sets the sample request directly for the specified media type and action with parameters.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample request.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleResponse(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String)">
+            <summary>
+            Sets the sample request directly for the specified media type of the action.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample response.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleResponse(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String,System.String[])">
+            <summary>
+            Sets the sample response directly for the specified media type of the action with specific parameters.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample response.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleForMediaType(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Sets the sample directly for all actions with the specified media type.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample.</param>
+            <param name="mediaType">The media type.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleForType(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.Type)">
+            <summary>
+            Sets the sample directly for all actions with the specified type and media type.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="type">The parameter type or return type of an action.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualRequestType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String)">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate request samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualRequestType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String,System.String[])">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate request samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualResponseType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String)">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> returned as part of the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate response samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualResponseType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String,System.String[])">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> returned as part of the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            The help page will use this information to produce more accurate response samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.GetHelpPageSampleGenerator(System.Web.Http.HttpConfiguration)">
+            <summary>
+            Gets the help page sample generator.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <returns>The help page sample generator.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.SetHelpPageSampleGenerator(System.Web.Http.HttpConfiguration,MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator)">
+            <summary>
+            Sets the help page sample generator.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sampleGenerator">The help page sample generator.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.GetModelDescriptionGenerator(System.Web.Http.HttpConfiguration)">
+            <summary>
+            Gets the model description generator.
+            </summary>
+            <param name="config">The configuration.</param>
+            <returns>The <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelDescriptionGenerator"/></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageConfigurationExtensions.GetHelpPageApiModel(System.Web.Http.HttpConfiguration,System.String)">
+            <summary>
+            Gets the model that represents an API displayed on the help page. The model is initialized on the first call and cached for subsequent calls.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="apiDescriptionId">The <see cref="T:System.Web.Http.Description.ApiDescription"/> ID.</param>
+            <returns>
+            An <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel"/>
+            </returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelDescription">
+            <summary>
+            Describes a type model.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelDescriptionGenerator">
+            <summary>
+            Generates model descriptions for given types.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelNameAttribute">
+            <summary>
+            Use this attribute to change the name of the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelDescription"/> generated for a type.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel">
+            <summary>
+            The model that represents an API displayed on the help page.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel"/> class.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.ApiDescription">
+            <summary>
+            Gets or sets the <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.ApiDescription"/> that describes the API.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.UriParameters">
+            <summary>
+            Gets or sets the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ParameterDescription"/> collection that describes the URI parameters for the API.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.RequestDocumentation">
+            <summary>
+            Gets or sets the documentation for the request.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.RequestModelDescription">
+            <summary>
+            Gets or sets the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelDescription"/> that describes the request body.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.RequestBodyParameters">
+            <summary>
+            Gets the request body parameter descriptions.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.ResourceDescription">
+            <summary>
+            Gets or sets the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ModelDescriptions.ModelDescription"/> that describes the resource.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.ResourceProperties">
+            <summary>
+            Gets the resource property descriptions.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.SampleRequests">
+            <summary>
+            Gets the sample requests associated with the API.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.SampleResponses">
+            <summary>
+            Gets the sample responses associated with the API.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.Models.HelpPageApiModel.ErrorMessages">
+            <summary>
+            Gets the error messages associated with this model.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator">
+            <summary>
+            This class will generate the samples for the help page.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator"/> class.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.ActualHttpMessageTypes">
+            <summary>
+            Gets CLR types that are used as the content of <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/>.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples">
+            <summary>
+            Gets the objects that are used directly as samples for certain actions.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects">
+            <summary>
+            Gets the objects that are serialized as samples by the supported formatters.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.SampleObjectFactories">
+            <summary>
+            Gets factories for the objects that the supported formatters will serialize as samples. Processed in order,
+            stopping when the factory successfully returns a non-<see langref="null"/> object.
+            </summary>
+            <remarks>
+            Collection includes just <see cref="M:MyStik.TimeTable.Web.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)"/> initially. Use
+            <code>SampleObjectFactories.Insert(0, func)</code> to provide an override and
+            <code>SampleObjectFactories.Add(func)</code> to provide a fallback.</remarks>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.GetSampleRequests(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Gets the request body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.GetSampleResponses(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Gets the response body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.GetSample(System.Web.Http.Description.ApiDescription,MyStik.TimeTable.Web.Areas.HelpPage.SampleDirection)">
+            <summary>
+            Gets the request or response body samples.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.GetActionSample(System.String,System.String,System.Collections.Generic.IEnumerable{System.String},System.Type,System.Net.Http.Formatting.MediaTypeFormatter,System.Net.Http.Headers.MediaTypeHeaderValue,MyStik.TimeTable.Web.Areas.HelpPage.SampleDirection)">
+            <summary>
+            Search for samples that are provided directly through <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples"/>.
+            </summary>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+            <param name="type">The CLR type.</param>
+            <param name="formatter">The formatter.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
+            <returns>The sample that matches the parameters.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.GetSampleObject(System.Type)">
+            <summary>
+            Gets the sample object that will be serialized by the formatters. 
+            First, it will look at the <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects"/>. If no sample object is found, it will try to create
+            one using <see cref="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.DefaultSampleObjectFactory(MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator,System.Type)"/> (which wraps an <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ObjectGenerator"/>) and other
+            factories in <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.SampleObjectFactories"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The sample object.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.ResolveHttpRequestMessageType(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Resolves the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The type.</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.ResolveType(System.Web.Http.Description.ApiDescription,System.String,System.String,System.Collections.Generic.IEnumerable{System.String},MyStik.TimeTable.Web.Areas.HelpPage.SampleDirection,System.Collections.ObjectModel.Collection{System.Net.Http.Formatting.MediaTypeFormatter}@)">
+            <summary>
+            Resolves the type of the action parameter or return value when <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/> is used.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or a response.</param>
+            <param name="formatters">The formatters.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleGenerator.WriteSampleObjectUsingFormatter(System.Net.Http.Formatting.MediaTypeFormatter,System.Object,System.Type,System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Writes the sample object using formatter.
+            </summary>
+            <param name="formatter">The formatter.</param>
+            <param name="value">The value.</param>
+            <param name="type">The type.</param>
+            <param name="mediaType">Type of the media.</param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey">
+            <summary>
+            This is used to identify the place where the sample should be applied.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Creates a new <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey"/> based on media type.
+            </summary>
+            <param name="mediaType">The media type.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue,System.Type)">
+            <summary>
+            Creates a new <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey"/> based on media type and CLR type.
+            </summary>
+            <param name="mediaType">The media type.</param>
+            <param name="type">The CLR type.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.#ctor(MyStik.TimeTable.Web.Areas.HelpPage.SampleDirection,System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates a new <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey"/> based on <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>, controller name, action name and parameter names.
+            </summary>
+            <param name="sampleDirection">The <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue,MyStik.TimeTable.Web.Areas.HelpPage.SampleDirection,System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates a new <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey"/> based on media type, <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>, controller name, action name and parameter names.
+            </summary>
+            <param name="mediaType">The media type.</param>
+            <param name="sampleDirection">The <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.ControllerName">
+            <summary>
+            Gets the name of the controller.
+            </summary>
+            <value>
+            The name of the controller.
+            </value>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.ActionName">
+            <summary>
+            Gets the name of the action.
+            </summary>
+            <value>
+            The name of the action.
+            </value>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.MediaType">
+            <summary>
+            Gets the media type.
+            </summary>
+            <value>
+            The media type.
+            </value>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.ParameterNames">
+            <summary>
+            Gets the parameter names.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.SampleDirection">
+            <summary>
+            Gets the <see cref="P:MyStik.TimeTable.Web.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ImageSample">
+            <summary>
+            This represents an image sample on the help page. There's a display template named ImageSample associated with this class.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.ImageSample.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.ImageSample"/> class.
+            </summary>
+            <param name="src">The URL of an image.</param>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.InvalidSample">
+            <summary>
+            This represents an invalid sample on the help page. There's a display template named InvalidSample associated with this class.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ObjectGenerator">
+            <summary>
+            This class will create an object of a given type and populate it with sample data.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)">
+            <summary>
+            Generates an object for a given type. The type needs to be public, have a public default constructor and settable public properties/fields. Currently it supports the following types:
+            Simple types: <see cref="T:System.Int32"/>, <see cref="T:System.String"/>, <see cref="T:System.Enum"/>, <see cref="T:System.DateTime"/>, <see cref="T:System.Uri"/>, etc.
+            Complex types: POCO types.
+            Nullables: <see cref="T:System.Nullable`1"/>.
+            Arrays: arrays of simple types or complex types.
+            Key value pairs: <see cref="T:System.Collections.Generic.KeyValuePair`2"/>
+            Tuples: <see cref="T:System.Tuple`1"/>, <see cref="T:System.Tuple`2"/>, etc
+            Dictionaries: <see cref="T:System.Collections.Generic.IDictionary`2"/> or anything deriving from <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+            Collections: <see cref="T:System.Collections.Generic.IList`1"/>, <see cref="T:System.Collections.Generic.IEnumerable`1"/>, <see cref="T:System.Collections.Generic.ICollection`1"/>, <see cref="T:System.Collections.IList"/>, <see cref="T:System.Collections.IEnumerable"/>, <see cref="T:System.Collections.ICollection"/> or anything deriving from <see cref="T:System.Collections.Generic.ICollection`1"/> or <see cref="T:System.Collections.IList"/>.
+            Queryables: <see cref="T:System.Linq.IQueryable"/>, <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>An object of the given type.</returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.SampleDirection">
+            <summary>
+            Indicates whether the sample is used for request or response
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.TextSample">
+            <summary>
+            This represents a preformatted text sample on the help page. There's a display template named TextSample associated with this class.
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.XmlDocumentationProvider">
+            <summary>
+            A custom <see cref="T:System.Web.Http.Description.IDocumentationProvider"/> that reads the API documentation from an XML documentation file.
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.XmlDocumentationProvider.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MyStik.TimeTable.Web.Areas.HelpPage.XmlDocumentationProvider"/> class.
+            </summary>
+            <param name="documentPath">The physical path to XML document.</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.InfoScreen.Controllers.HomeController.MVG">
+            <summary>
+            Aktuelle Abfahrtszeiten MVG
+            Haltestelle Lothstrasse (Hochschule München)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.InfoScreen.Controllers.HomeController.Mensa">
+            <summary>
+            Aktueller Mensaspeiseplan
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.GetDateTime(System.String)">
+            <summary>
+            Umwandlung eines UNIX-Dates in ein DateTimeObjekt
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.DBAdmimController.InitDatabase">
+            <summary>
+            Initialisiert eine Datenbank mit Testdaten
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Subscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Bestätigung einer Eintragung
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Discharge(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Bestätigung einer Austragung
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.VerfiyEMail(MyStik.TimeTable.Web.Models.ConfirmEmailMailModel)">
+            <summary>
+            Validierung einer E-Mail Adresse
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.RemoveSubscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Austragen durch anderen Benutzer
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CancelOccurrence(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Wird nur als Dummy zum Erzeugen des Standardtexts verwendet
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ReactivateOccurrence(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Wird nur als Dummy zum Erzeugen des Standardtexts verwendet
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CustomTextEmail(MyStik.TimeTable.Web.Models.CustomMailModel)">
+            <summary>
+            E-Mail durch Benutzereingabe
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailingController.CustomOccurrenceMail(MyStik.TimeTable.Web.Models.OccurrenceMailingModel)">
+            <summary>
+            Versand einer E-Mail an eine Teilnehmerliste
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailingController.AllStudents(MyStik.TimeTable.Web.Models.OccurrenceMailingModel)">
+            <summary>
+            E-Mail an alle Studierenden
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.EventController.SetInfo(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">ActivitiyDateId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.Admin(System.Nullable{System.Guid})">
+            <summary>
+            Administration einer Lehrveranstaltung
+            </summary>
+            <param name="id">CourseId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.CancelAllDates(System.Guid)">
+            <summary>
+            CourseId
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.MoveCourse(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">CourseId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.SetInfo(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">ActivitiyDateId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.CreateDate(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="courseId">Id der zugehörigen Lehrveranstaltung</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.EditOccurrenceRule(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">id des Kurses</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.CreateCourse(System.Nullable{System.Guid})">
+            <summary>
+            
+            </summary>
+            <param name="id">SemesterId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.EditCourse(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">CourseId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.UploadRessource(System.Guid,System.Web.HttpPostedFileBase)">
+            <summary>
+            
+            </summary>
+            <param name="id">CourseId</param>
+            <param name="uploadFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.CancelDate2(System.Guid)">
+            <summary>
+            Absage über Schaltfläche
+            </summary>
+            <param name="dateId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.CancelDateList(System.Collections.Generic.ICollection{System.Guid})">
+            <summary>
+            Absage über Menüpunkt
+            </summary>
+            <param name="dateIds">Liste der ausgewählten Termine</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.RemoveRooms(System.Collections.Generic.ICollection{System.Guid})">
+            <summary>
+            Löscht bei allen angegebenen Terminen die Rauminformation
+            </summary>
+            <param name="dateIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.History(System.Guid,System.Guid)">
+            <summary>
+            Terminliste einer bestimmten Spürechstunde
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.Lecturer(System.Guid)">
+            <summary>
+            Sprechstundentermine des Dozenten im aktuellen Semester
+            </summary>
+            <param name="id">memberId des Dozenten</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateDate(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">Id der zugehörigen Lehrveranstaltung</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.OrganiserController.EditMember(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">MemberId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.RoomController.Index">
+            <summary>
+            Startseite Raumverwaltung
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.SemesterController.Create">
+            <summary>
+            Ein Semester anlegen
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.SemesterController.Edit(System.Guid)">
+            <summary>
+            Semester verändern
+            </summary>
+            <param name="id">SemesterId</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.SemesterController.CreateDate(System.Guid)">
+            <summary>
+            Ein Semesterdatum anlegen
+            </summary>
+            <param name="id">SemesterId</param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Controllers.UserProfileController">
+            <summary>
+            Anzeige der Benutzereinstellungen
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderPartialToString(System.Web.Mvc.HtmlHelper,System.String,System.Object)">
+            <summary>Renders a view to string.</summary> 
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.FakeViewExtensions.RenderViewToString(System.Web.Mvc.Controller,System.String,System.Object)">
+            <summary>Renders a view to string.</summary> 
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Hubs.GpUntisHub.DeleteSemester(System.Guid,System.Guid)">
+            <summary>
+            Löscht alle Kurse aus dem angegebenen Semester, die aus gpUntis importiert wurden
+            </summary>
+            <param name="semId"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Hubs.WpmHub.ExecuteLottery(System.Guid)">
+            <summary>
+            Ad hoc Ausführung einer Platzverlosung
+            </summary>
+            <param name="id">Id der Platzverlosung</param>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Models.CalendarEventModel">
+            <summary>
+            JSON-Model zur Kommunikation mit Kalender-Komponente
+            
+            Referenz: http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.Id">
+            <summary>
+            Uniquely identifies the given event. Different instances of repeating events should all have the same id.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.title">
+            <summary>
+            The text on an event's element.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.start">
+            <summary>
+            The date/time an event begins.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.end">
+            <summary>
+            The date/time an event ends.
+            
+            If an event is all-day...
+            the end date is inclusive. This means an event with start Nov 10 and end Nov 12 will span 3 days on the calendar.
+            
+            If an event is NOT all-day...
+            the end date is exclusive. This is only a gotcha when your end has time 00:00. It means your event ends on midnight, and it will not span through the next day.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.allDay">
+            <summary>
+            Whether an event occurs at a specific time-of-day. This property affects whether an event's time is shown. 
+            Also, in the agenda views, determines if it is displayed in the "all-day" section.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.url">
+            <summary>
+            A URL that will be visited when this event is clicked by the user.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.className">
+            <summary>
+            A CSS class (or array of classes) that will be attached to this event's element.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.editable">
+            <summary>
+            Overrides the master editable option for this single event.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.color">
+            <summary>
+            Sets an event's background and border color just like the calendar-wide eventColor option.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.backgroundColor">
+            <summary>
+            Sets an event's background color just like the calendar-wide eventBackgroundColor option.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.borderColor">
+            <summary>
+            Sets an event's border color just like the the calendar-wide eventBorderColor option.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.textColor">
+            <summary>
+            Sets an event's text color just like the calendar-wide eventTextColor option.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.htmlToolbar">
+            <summary>
+            Toolbar
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.htmlContent">
+            <summary>
+            Inhalt
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Registered">
+            <summary>
+            Datum der Registrierung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.LastLogin">
+            <summary>
+            Datum des letzten Logins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.ExpiryDate">
+            <summary>
+            Wird gesetzt bei der Registrierung bzw. Änderung der E-Mail Adresse (+14 Tage)
+            Nach Validierung der E-Mail Adresse kein Ablaufdatum
+            Automatisch bei Prüfung auf "LastLogin" (+90/450 Tage, je nach MemberState guest/student)
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Submitted">
+            <summary>
+            Datum des Fehlers
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.IsApproved">
+            <summary>
+            Verwendung als "Eingeladen"
+            Entkoppelt das Einlesen vom Einladen, d.h. Einladungsdateien
+            können mehrfach eingelesen werden
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Faculty">
+            <summary>
+            Verwendung als "Wer hat eingeladen"?
+            UserId
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Approved">
+            <summary>
+            Wenn gesetzt, dann Datum der Vorwarnung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Phone">
+            <summary>
+            Telefonnummern des Benutzers
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Curriculum">
+            <summary>
+            Studiengang => sollte nicht mehr verwendet werden
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ApplicationUser.Group">
+            <summary>
+            Studiengruppe (Curriculum) => sollte nicht mehr verwendet werden
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Models.MemberState">
+            <summary>
+            Einordnung des Kontos
+            </summary>
+        </member>
+        <member name="F:MyStik.TimeTable.Web.Models.MemberState.Guest">
+            <summary>
+            Gäste: dürfen sich nur in Sprechstunden eintragen
+            Automatisch jeder, der sich mit einer beliebigen E-Mail Adresse angemeldet hat
+            </summary>
+        </member>
+        <member name="F:MyStik.TimeTable.Web.Models.MemberState.Student">
+            <summary>
+            Automatisch jeder, der sich mit hm.edu E-Mail Adresse angemeldet hat
+            </summary>
+        </member>
+        <member name="F:MyStik.TimeTable.Web.Models.MemberState.Staff">
+            <summary>
+            Mitarbeiter, LBs, Profs etc.
+            Wird manuell zugewiesen, bei Aufnahme in eine nicht studentische Organisation
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserDevice.DeviceId">
+            <summary>
+            Id des Devices für Plattform
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserDevice.DeviceName">
+            <summary>
+            Name des Devices
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserDevice.Platform">
+            <summary>
+            Falls es auf Grund der Plattform unterschiedliche Versandwege geben sollte
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserDevice.Registered">
+            <summary>
+            Datum der Registrierung
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserDevice.IsActive">
+            <summary>
+            Notifications an das gerät senden
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.OccurrenceMailingModel.TemplateName">
+            <summary>
+            Name der Mailvorlage, z.B. falls es mal verschiedene Inhaltsvorlagen gibt
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.OccurrenceMailingModel.TemplateLanguage">
+            <summary>
+            Sprache des verwendeten Kürzels
+            de-DE, etc. nach Standard
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.OccurrenceMailingModel.IsDistributionList">
+            <summary>
+            true: wenn es ein Gruppenverteiler ist
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Models.OfficeHourDatePreviewModel">
+            <summary>
+            Darstellug eines Sprechstundentermins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.OfficeHourViewModel.State">
+            <summary>
+            Status des Termins
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserViewModel.Id">
+            <summary>
+            Die Guid des Profils als "öffentliche Id"
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.WPMSubscriptionModel.IsValid">
+            <summary>
+            Eintragung gültig? Passt der Studiengang
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.WPMSubscriptionModel.IsAvailable">
+            <summary>
+            Kann der Platz angenommen werden
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.ActivityService.GetActivityState(MyStik.TimeTable.Data.Occurrence,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Data.Semester)">
+            <summary>
+            Ermittelt den Eintragungsstatus eines Benutzers
+            </summary>
+            <param name="occurrence"></param>
+            <param name="user"></param>
+            <returns>Der Benutzer ist bereits eingetragen, es ist eine Eintragung möglich. Wenn keine Eintragung möglich, dann wird es als Fehler angegeben (mit Grund).</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.ActivityService.GetStatusText(MyStik.TimeTable.Data.ActivityDate)">
+            <summary>
+            Ermittelt den Text für Eintragungen
+            </summary>
+            <param name="date"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.ChangeService.CreateActivityDateChange(MyStik.TimeTable.Data.ActivityDate,System.DateTime,System.DateTime,System.Collections.Generic.ICollection{System.Guid})">
+            <summary>
+            
+            </summary>
+            <param name="date">Termin mit alten Informationen</param>
+            <param name="newBegin">neuer Begin</param>
+            <param name="newEnd">neues Ende</param>
+            <param name="newRoomIds">Ids der neuen Räume</param>
+            <returns>Das Change Objekt</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.CurriculumService.MoveGroup(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="currName">Name des Studiengangs: WI, MBA</param>
+            <param name="semName">Name des Semesters: WS15</param>
+            <param name="srcCurrGroupName">Name der Studiengruppe (Ausgangslage)</param>
+            <param name="srcSemGroupName">Name in der Semestergruppe (veraltet)</param>
+            <param name="trgCurrGroupName">Name der Studiengruppe (Ziel) - i.d.R. identisch zu Ausgangslage</param>
+            <param name="trgCapGroupName">Name der Kapazitätsgruppe</param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsLecturer(System.String,MyStik.TimeTable.Data.Semester)">
+            <summary>
+            Überprüft, ob der Benutzer im angegebenen Semester Dozent ist
+            d.h. es gibt mindestens eine LV mit mindestens einem Termin,
+            bei der der User als Host eingetragen ist
+            </summary>
+            <param name="userId">Id des Benutzers</param>
+            <param name="semester">Semester</param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Services.OccurrenceService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.OccurrenceService.GetParticipiantList(MyStik.TimeTable.Data.Occurrence,System.String)">
+            <summary>
+            Ermittelt die Teilnehmer aus einem Studiengang
+            </summary>
+            <param name="occurrence"></param>
+            <param name="curriculum"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.OccurrenceService.GetPendingList(MyStik.TimeTable.Data.Occurrence,System.String)">
+            <summary>
+            Ermittelt die Teilnehmer aus einem Studiengang
+            </summary>
+            <param name="occurrence"></param>
+            <param name="curriculum"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.OccurrenceService.GetWaitingList(MyStik.TimeTable.Data.Occurrence,System.String,System.Int32)">
+            <summary>
+            Warteliste nach Studiengang
+            </summary>
+            <param name="occurrence"></param>
+            <param name="curriculum"></param>
+            <param name="minLapCount"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.OccurrenceService.GetCapacity(MyStik.TimeTable.Data.Occurrence,MyStik.TimeTable.Web.Models.WPMSubscriptionModel,System.String,System.Int32)">
+            <summary>
+            Anzahl der verfügbaren Plätze im Studiengang
+            </summary>
+            <param name="occurrence"></param>
+            <param name="curriculum"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Services.OfficeHourInfoService">
+            <summary>
+            Ermittelt freie Termine
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.RoomService.GetFreeRooms(System.DateTime,System.DateTime,System.Boolean)">
+            <summary>
+            Alle Räume, die im angegebenen Zeitraum frei sind
+            </summary>
+            <param name="from">Beginn des Zeitraums</param>
+            <param name="until">Ende des Zeitraums</param>
+            <param name="allAvailable"></param>
+            <returns>Liste der freien Räume</returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.RoomService.GetFreeRooms(System.DayOfWeek,System.TimeSpan,System.TimeSpan,MyStik.TimeTable.Data.Semester,System.Boolean)">
+            <summary>
+            Alle Räume, die im Zeitraum frei sind
+            </summary>
+            <param name="dayOfWeek"></param>
+            <param name="fromTime"></param>
+            <param name="untilTime"></param>
+            <param name="semester"></param>
+            <param name="allAvailable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.RoomService.GetRooms(System.String,System.Boolean)">
+            <summary>
+            Liefert alle Räume, die einem Veranstalter zugeordnet sine
+            </summary>
+            <param name="orgName">Kurzname des Veranstalters</param>
+            <returns>Liste der Räume des Veranstalters</returns>
+        </member>
+    </members>
+</doc>

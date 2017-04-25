@@ -1,0 +1,186 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Course
+@{
+    ViewBag.Title = "EditCourse";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+
+<h4>Einstellungen Lehrveranstaltung</h4>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Allgemeine Informationen</div>
+            <div class="panel-body">
+                @using (Html.BeginForm("UpdateGeneralSettings", "Course", FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(m => m.Id)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ShortName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.ShortName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.UrlMoodleCourse, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.UrlMoodleCourse, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Description, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows="10" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-10">
+                                <input type="submit" value="Änderungen speichern" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Regeln für Eintragung</div>
+            <div class="panel-body">
+                <div class="alert alert-info">
+                    <p>Die Einstellungen der Eintragungssregeln sind ab sofort über die Schaltfläche "Regeln" über die Detailseite erreichbar.</p>
+                    @Html.ActionButton("fa-legal", "Regeln", "SubscriptionRules", "Occurrence", new { id = Model.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">Zuordnung zu Studiengruppen</div>
+                <div class="panel-body">
+                    <div id="GroupList">
+                        @Html.Partial("_GroupList", Model)
+                    </div>
+                    <div class="well well-sm">
+                        <div class="form-inline" role="form">
+                            <div class="form-group">
+                                <div>
+                                    <p class="form-control-static">Weitere Studiengruppe hinzufügen:</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div>
+                                    <input type="text" class="form-control" id="groupId">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">Modulbeschreibung</div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("UploadRessource", "Course", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                    {
+                        @Html.ValidationSummary(true)
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(m => m.Id)
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Modulbeschreibung</label>
+                                <div class="col-md-8">
+                                    <div><input type="file" name="uploadFile" id="uploadFile" /></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-4 col-md-8">
+                                    <input type="submit" value="Hochladen" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+            <div class="well well-sm">
+                <a href="@Url.Action("Index", "Course", new {id=Model.Id})" class="btn btn-lg btn-success">Zurück zur Lehrveranstaltung</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+
+        $(function () {
+            $('#groupId').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("CurriculumGroupList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            name: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    label: item.name,
+                                    value: item.name
+                                };
+                            }));
+
+                        },
+
+                        error: function (data) { alert(data); },
+                    });
+
+                },
+                select: function (event, ui) {
+                    var id = "@Model.Id.ToString()";
+
+                    $.ajax(
+                    {
+                        type: 'POST',
+                        url: '@Url.Action("AddGroup")',
+                        data: {
+                            id: id,
+                            group: ui.item.value
+                        },
+                        success: function (data, success, xhr) {
+                            $('#GroupList').html(data);
+                        },
+                        error: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                        },
+                    });
+
+                }
+            });
+        });
+
+    </script>
+}
+
+
+

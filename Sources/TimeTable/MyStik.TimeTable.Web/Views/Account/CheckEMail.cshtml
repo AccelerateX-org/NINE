@@ -1,0 +1,34 @@
+﻿@model MyStik.TimeTable.Web.Models.CheckEMailViewModel
+@{
+    ViewBag.Title = "Unbestätigte E-Mail Adresse";
+}
+
+
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h2>Ihre E-Mail Adresse wurde noch nicht bestätigt</h2>
+    </div>
+    <div class="panel-body">
+        <p>Damit Sie NINE nutzen können, müssen Sie eine gültige E-Mail Adresse angeben.</p>
+        <p>Bei der Registrierung haben Sie folgende Adresse angegeben: <strong>@Model.EMail</strong></p>
+        <p>An diese Adresse wurde eine E-Mail versendet. Bitte überprüfen Sie Ihr Postfach und die angegebene E-Mail Adresse.</p>
+        <p>Sollten Sie bisher keine E-Mail erhalten haben, dann können Sie hier eine neue Bestätigungs E-Mail anfordern und / oder Ihre E-Mail Adresse verändern.</p>
+
+        @using (Html.BeginForm("CheckEMail", "Account", null, FormMethod.Post, new { @class = "form-inline", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+            @Html.HiddenFor(m => m.UserId)
+            <div class="form-group">
+                <label for="EMail">E-Mail Adresse</label>
+                <input type="email" class="form-control" id="EMail" name="EMail" placeholder="E-Mail Adresse eingeben" value="@Model.EMail">
+            </div>
+            <button type="submit" class="btn btn-primary">Neue Bestätigungs E-Mail anfordern</button>
+        }
+
+    </div>
+
+</div>
+
+
+

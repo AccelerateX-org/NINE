@@ -1,0 +1,53 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomReservationViewModel
+@{
+    ViewBag.Title = "Reservation";
+}
+
+
+@if (Model.Room != null)
+{ 
+    <h2>Belegung für @Model.Room.Number</h2>
+
+    if (Model.CurrentDates.Any())
+    {
+        if (Model.CurrentDate != null)
+        {
+            <h4 class="text-danger"><strong>Belegt</strong>: Aktuell findet statt: @Model.CurrentDate.Activity.Name (@Model.CurrentDate.Activity.ShortName)</h4>
+        }
+
+        if (Model.NextDate != null)
+        {
+            <h4 class="text-success">Noch frei bis @Model.NextDate.Begin.TimeOfDay.ToString(@"hh\:mm")</h4>
+        }
+        
+        <h3>Plan für @DateTime.Today.ToShortDateString()</h3>
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Von</th>
+                    <th>Bis</th>
+                    <th>Was</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var date in Model.CurrentDates)
+                {
+                    <tr>
+                        <td>@date.Begin.TimeOfDay.ToString(@"hh\:mm")</td>
+                        <td>@date.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                        <td>@date.Activity.Name (@date.Activity.ShortName)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }   
+    else
+    {
+        <p>Dieser Raum ist heute frei!</p>    
+    } 
+}
+else
+{
+    <h2>Unbekannter Raum</h2>
+}
+

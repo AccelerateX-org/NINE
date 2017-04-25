@@ -1,0 +1,87 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.ActivityOrganiser
+
+@{
+    ViewBag.Title = "Räume";
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Räume <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.DropDownListFor(model => model.ShortName, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div id="facultyRoomList">
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function() {
+            $('#loading').hide();
+            onFacultyChanged();
+        });
+
+
+        function onFacultyChanged() {
+            var facultyId = $('#ShortName option:selected').val();
+
+            $('#facultyRoomList').html('');
+            $('#loading').show();
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("Faculty", "Room")',
+                data: {
+                    facultyId: facultyId,
+                },
+                success: function(data, success, xhr) {
+                    $('#facultyRoomList').html(data);
+                    $('#loading').hide();
+                },
+                error: function(data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            });
+        }
+
+
+    </script>
+}
+
+
+
+
+
+
+
+
+

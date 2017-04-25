@@ -1,0 +1,168 @@
+﻿@model MyStik.TimeTable.Web.Models.ApplicationUser
+@{
+    ViewBag.Title = "Alumni anlegen";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+<h2>Alumni anlegen</h2>
+<div class="row">
+    <div class="col-lg-5">
+        <div role="tabpanel">
+            <ul class="nav nav-tabs" role="tablist" id="formTabs">
+                <li role="presentation" class="active">
+                    <a href="#single" aria-controls="single" role="tab" data-toggle="tab">Einzeln anlegen</a>
+                </li>
+                <li role="presentation">
+                    <a href="#multi" aria-controls="multi" role="multi" data-toggle="multi">Aus Datei anlegen</a>
+                </li>
+            </ul>
+
+            <div class="tab-content col-md-10">
+                <div role="tabpanel" class="tab-pane active" id="single">
+                    <div style="margin-top:10px;">
+                        @using (Ajax.BeginForm("CreateSingle", new AjaxOptions{UpdateTargetId = "res", LoadingElementId = "loading"}))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary()
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FirstName, new { @class = "col-md-5 control-label" })
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", aria_required = "true" })
+                                        @Html.ValidationMessageFor(model => model.FirstName)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LastName, new { @class = "col-md-5 control-label" })
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", aria_required = "true" })
+                                        @Html.ValidationMessageFor(model => model.LastName)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Email, new { @class = "col-md-5 control-label" })
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control", aria_required = "true" })
+                                        @Html.ValidationMessageFor(model => model.Email)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AlumniSince, new { @class = "col-md-5 control-label" })
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(model => model.AlumniSince, "{0:dd.MM.yyyy}", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.AlumniSince)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Anlegen" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="multi">
+                    <div style="margin-top:10px;">
+                        @using (Html.BeginForm("CreateMulti", "Alumni", FormMethod.Post, new { enctype = "multipart/form-data", target = "upload_target", id="createMulti" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="File" class="control-label col-md-5">Datei</label>
+                                    <div class="col-md-7">
+                                        <input type="file" name="File" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AlumniSince, new { @class = "col-md-5 control-label" })
+                                    <div class="col-md-7">
+                                        @Html.TextBoxFor(model => model.AlumniSince, "{0:dd.MM.yyyy}", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.AlumniSince)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Datei auslesen" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-offset-1 col-lg-6" id="result">
+        <!-- Lade-Icon -->
+        <i id="loading" style="display:none;" class="fa fa-spinner fa-spin fa-3x"></i>
+        <!-- Für dynamischen File-Upload -->
+        <div class="embed-responsive embed-responsive-16by9" id="upload_target_wrap" style="display:none;">
+            <iframe class="embed-responsive-item" id="upload_target" name="upload_target" src="#" style="height:100%; width:100%;"></iframe>
+        </div>
+        <!-- Für den Rest -->
+        <div id="res">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Ausgabe
+                </div>
+                <div class="panel-body">
+                    Nachdem Sie das Formular abgesendet haben, erscheint hier eine Nachricht über den Erfolg.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-ui")
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $('#formTabs a').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show')
+        })
+
+        $("form#createMulti").submit(function () {
+            $("i#loading").show("fast");
+        });
+
+        $("iframe#upload_target").load(function () {
+            $("div#upload_target_wrap").show("fast");
+            $("div#res").hide("fast");
+            $("i#loading").hide("fast");
+        });
+
+        $.validator.methods.date = function (value, element) {
+            var val = Globalize.parseDate(value);
+            return this.optional(element) || (val);
+        };
+
+        $(function () {
+
+            Globalize.culture('de-DE');
+
+            $("*#AlumniSince").datepicker(
+                {
+                    dateFormat: 'dd.mm.yy',
+                    option: 'de-DE'
+                }
+            );
+        })
+    </script>
+}

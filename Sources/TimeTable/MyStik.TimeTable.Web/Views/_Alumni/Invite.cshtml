@@ -1,0 +1,45 @@
+﻿@model MyStik.TimeTable.Web.Models.AlumniMailModel
+
+<div id="result">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Neue User einladen
+        </div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("InviteSend", new AjaxOptions { UpdateTargetId = "result" }))
+            {
+                <div class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.mailTo, new { @class = "control-label col-sm-3" })
+                        <div class="col-sm-5 checkbox">
+                            @foreach(string email in Model.mailTo) 
+                            {
+                                <label>
+                                    <input type="checkbox" name="inviteUser" value="@email" checked="checked" />
+                                    @email
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.subject, new { @class = "control-label col-sm-3" })
+                        <div class="col-sm-5">
+                            @Html.TextBoxFor(model => model.subject, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.message, new { @class = "control-label col-sm-3" })
+                        <div class="col-sm-5">
+                            @Html.TextAreaFor(model => model.message, new { @class = "form-control", rows = "10" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Senden" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

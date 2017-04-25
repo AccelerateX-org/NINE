@@ -1,0 +1,76 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.ActivityPlanModel
+
+@{
+    ViewBag.Title = "Meine Termine";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mein Kalender</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Mein Kalender</span>
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                    <div class="actions">
+                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"></a>
+                        <a href="@Url.Action("PersonalSchedule", "Print")"
+                           onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=500,toolbar=0,resizable=1'); return false;"
+                           class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-print"></i></a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="calendar" class="has-toolbar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            initCalendar(false);
+
+            $('#calendar').fullCalendar('removeEvents');
+
+            $('#calendar').fullCalendar('addEventSource',
+            {
+                url: '@Url.Action("ActivityPlan", "Calendar")',
+                type: 'POST'
+            });
+        });
+
+    </script>
+}

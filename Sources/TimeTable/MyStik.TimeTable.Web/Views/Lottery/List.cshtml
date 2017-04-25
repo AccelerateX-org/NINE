@@ -1,0 +1,153 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.WPMListModel
+@{
+    ViewBag.Title = "List";
+    var currCount = Model.Curricula.Count;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Übersicht der Lehrveransatltungen in der @Model.Lottery.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>WPMs mit Angabe der Kapazität</h4>
+                    <p>obere Reihe: Anzahl freie Pläze (Anzahl Plätze)</p>
+                    <p>untere Reihe: Anzahl Einträge auf Warteliste (Anzahl bestätigte Teilnehmer / Anzahl Reservierungen)</p>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Fach</th>
+                                <th rowspan="2">Dozent(en)</th>
+                                <th rowspan="2">Art</th>
+                                <th class="text-center" colspan="@currCount">Zuordnung bzw. Platzangebot nach Studiengängen</th>
+                                <th rowspan="2"></th>
+                            </tr>
+                            <tr>
+                                @foreach (var curr in Model.Curricula)
+                                {
+                                    <th class="text-center">@curr.ShortName</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in Model.WPM)
+                            {
+                                if ((Model.User.MemberState == MemberState.Student && course.Bookable) ||
+                                    Model.User.MemberState == MemberState.Staff ||
+                                    User.IsInRole("SysAdmin"))
+                                {
+                                    <tr>
+                                        <td rowspan="2">@Html.ActionLink(course.Course.Name + " (" + course.Course.ShortName + ")", "Index", "Course", new { id = course.Course.Id }, null)</td>
+                                        <td rowspan="2">@Html.LecturerList(course.Summary.Lecturers)</td>
+                                        @if (course.Course.Occurrence.UseGroups)
+                                        {
+                                            <td rowspan="2">Nach Studiengängen</td>
+                                            foreach (var curr in Model.Curricula)
+                                            {
+                                                if (course.Capacites.ContainsKey(curr))
+                                                {
+                                                    <td class="@course.Capacites[curr].CapacityState text-center">@course.Capacites[curr].Free (@course.Capacites[curr].Capacity)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (course.Course.Occurrence.Capacity < 0)
+                                            {
+                                                <td class="success text-center">Keine Beschränkung</td>
+                                                foreach (var curr in Model.Curricula)
+                                                {
+                                                    if (course.Capacites.ContainsKey(curr))
+                                                    {
+                                                        <td class="text-center">x</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td class="@course.CapacityState">Gesamt: @course.Free (@course.Capacity)</td>
+                                                foreach (var curr in Model.Curricula)
+                                                {
+                                                    if (course.Capacites.ContainsKey(curr))
+                                                    {
+                                                        <td class="text-center">x</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        @if (course.Bookable)
+                                        {
+                                            <td rowspan="2">@Html.Partial("_SubscriptionState", course.OccurrenceState)</td>
+                                        }
+                                        else
+                                        {
+                                            <td rowspan="2"></td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        @if (course.Course.Occurrence.UseGroups)
+                                        {
+                                            foreach (var curr in Model.Curricula)
+                                            {
+                                                if (course.Capacites.ContainsKey(curr))
+                                                {
+                                                    <td class="@course.Capacites[curr].ChancesState text-center">@course.Capacites[curr].Waiting (@course.Capacites[curr].Participients / @course.Capacites[curr].Pending)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            if (course.Course.Occurrence.Capacity < 0)
+                                            {
+                                                <td class="success">- (@course.Participients / @course.Pending)</td>
+                                                <td colspan="@currCount"></td>
+                                            }
+                                            else
+                                            {
+                                                <td class="@course.ChancesState">@course.Waiting (@course.Participients / @course.Pending)</td>
+                                                <td colspan="@currCount"></td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

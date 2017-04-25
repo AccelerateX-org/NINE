@@ -1,0 +1,700 @@
+﻿@model MyStik.TimeTable.Web.Models.EventCreateSeriesModel
+@{
+    ViewBag.Title = "Eventserie anlegen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">Eventserie anlegen</div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+            <h4>Termin</h4>
+            <!-- Beginn, Ende und Dauer des Events -->
+            @Html.HiddenFor(model => model.OrgId)
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="form-group row">
+                        @Html.LabelFor(m => m.Name, new { @class = "control-label col-sm-3" })
+                        <div class="col-sm-5">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control " })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-5">
+                            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 4 })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Room, new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-5">
+                            @Html.TextBoxFor(model => model.Room, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Group, new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-5">
+                            @Html.TextBoxFor(model => model.Group, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Lecturer, new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-5">
+                            @if (string.IsNullOrEmpty(Model.Lecturer))
+                            {
+                                @Html.TextBoxFor(model => model.Lecturer, new { @class = "form-control" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(model => model.Lecturer, new { @class = "form-control", disabled = "" })
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.IsSubscriptionStartRestricted, new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-2">
+                            @Html.CheckBoxFor(model => model.IsSubscriptionStartRestricted, new { @class = "form-control" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.TextBoxFor(model => model.SubscriptionStartDay, "{0:dd.MM.yyyy}", new { @class = "form-control" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.DropDownListFor(model => model.SubscriptionStartHour, (IEnumerable<SelectListItem>)ViewBag.Hours, new { @class = "form-control" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.DropDownListFor(model => model.SubscriptionStartMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr />
+            
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="form-group row">
+                                @Html.LabelFor(model => model.IsSubscriptionEndRestricted, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-2">
+                                    @Html.CheckBoxFor(model => model.IsSubscriptionEndRestricted, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.SubscriptionEndDay, "{0:dd.MM.yyyy}", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.DropDownListFor(model => model.SubscriptionEndHour, (IEnumerable<SelectListItem>)ViewBag.Hours, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.DropDownListFor(model => model.SubscriptionEndMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="form-group row">
+                                @Html.LabelFor(model => model.Capacity, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.Capacity, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            <hr />
+
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="form-group row">
+                                @Html.LabelFor(model => model.Day, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.Day, "{0:dd.MM.yyyy}", new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-1" style="padding-top:5px;">um</div>
+                                <div class="col-sm-2">
+                                    @Html.DropDownListFor(model => model.StartTimeHour, (IEnumerable<SelectListItem>)ViewBag.Hours, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.DropDownListFor(model => model.StartTimeMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-1" style="padding-top:5px;">Uhr</div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="EndTimeHour" class="col-sm-3 control-label">Endzeit</label>
+                                <div class="col-sm-1 col-sm-offset-2" style="padding-top:5px;">um</div>
+                                <div class="col-sm-2">
+                                    @Html.DropDownListFor(model => model.EndTimeHour, (IEnumerable<SelectListItem>)ViewBag.Hours, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-2">
+                                    @Html.DropDownListFor(model => model.EndTimeMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes, new { @class = "form-control" })
+                                </div>
+                                <div class="col-sm-1" style="padding-top:5px;">Uhr</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 bg-info" style="padding-bottom:15px;">
+                            <h4>Termindauer:</h4>
+                            <span id="dauer" style="font-weight:bold">0 Minuten</span>
+                        </div>
+                    </div>
+
+                    <!-- Seriendauer -->
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <h4>Seriendauer</h4>
+                            <div class="form-group">
+                                <div class="checkbox form-inline">
+                                    <label>
+                                        @Html.RadioButton("endType", "noEnd", false)
+                                        Kein Enddatum (maximal 100 Termine)
+                                    </label>
+                                </div>
+                                <div class="checkbox form-inline">
+                                    <label>
+                                        @Html.RadioButton("endType", "useCountDates", true)
+                                        Endet nach
+                                        @Html.TextBoxFor(model => model.countDates, new { @class="form-control", @style="width:40px", @Value=1})
+                                        Terminen
+                                    </label>
+                                </div>
+                                <div class="checkbox form-inline">
+                                    <label>
+                                        @Html.RadioButton("endType", "useEndDate", false)
+                                        Endet am
+                                        @Html.TextBoxFor(model => model.EndDay,"{0:dd.MM.yyyy}", new { @class="form-control"})
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- Ende Seriendauer-->
+
+
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <label><h4>Serienmuster</h4></label>
+                            <div role="tabpanel" class="form-group">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation"><a id="tabTaeglich" href="#divtaeglich" aria-controls="divtaeglich" role="tab" data-toggle="tab">Täglich</a></li>
+                                    <li role="presentation" class="active"><a id="tabWoechentlich" href="#divwoechentlich" aria-controls="profile" role="tab" data-toggle="tab">Wöchentlich</a></li>
+                                    <li role="presentation"><a id="tabMonatlich" href="#divmonatlich" aria-controls="messages" role="tab" data-toggle="tab">Monatlich</a></li>
+                                    <li role="presentation"><a id="tabJaehrlich" href="#divjaehrlich" aria-controls="settings" role="tab" data-toggle="tab">Jährlich</a></li>
+                                </ul>
+                                <div class="tab-content">
+
+                                    <div role="tabpanel" class="tab-pane" id="divtaeglich">
+                                        <div id="divtaeglich" class="row taeglich">
+                                            <div class="col-md-12">
+                                                <h4>Täglich</h4>
+                                                <div class="form-group">
+                                                    <div class="checkbox">
+                                                        <div class="form-inline">
+                                                            @Html.RadioButtonFor(model => model.MainFrequency, "daily") Jeden/Alle
+                                                            @Html.TextBoxFor(model => model.dailyCount, new { @class = "form-control", @style = "width:40px", @Value = 1 }) Tag(e)
+                                                        </div>
+                                                        <div class="form-inline">
+                                                            @Html.RadioButtonFor(model => model.MainFrequency, "workdays") Jeden Arbeitstag
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div role="tabpanel" class="tab-pane active" id="divwoechentlich">
+                                        <div id="divwoechentlich" class="row woechentlich">
+                                            <div class="col-md-12">
+                                                <h4>Wöchentlich</h4>
+                                                <div class="form-group">
+                                                    <div>
+                                                        <div class="form-inline">
+                                                            @Html.RadioButtonFor(model => model.MainFrequency, "weekly", new { @checked = "checked" })
+                                                            Jede/alle
+                                                            @Html.TextBoxFor(model => model.weeklyCount, new { @class = "form-control", @style = "width:40px", @Value = 1 })
+                                                            Woche(n)
+                                                        </div>
+
+                                                        <!-- Ggf. noch zu implementieren
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="mon" /> Montag
+                                                            </label>
+
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="tue" /> Dienstag
+                                                            </label>
+
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="wed" /> Mittwoch
+                                                            </label>
+
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="thu" /> Donnerstag
+                                                            </label><br />
+
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="fri" /> Freitag
+                                                            </label>
+
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="sat" /> Samstag
+                                                            </label>
+
+                                                            <label>
+                                                                <input type="checkbox" name="weeklyDays" value="sun" /> Sonntag
+                                                            </label>
+                                                        </div>
+                                                            -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div id="divmonatlich" class="tab-pane">
+                                        <div class="col-md-12">
+                                            <h4>Monatlich</h4>
+                                            <div class="form-group">
+                                                <div class="checkbox">
+                                                    <div class="form-inline">
+                                                        <label>
+                                                            @Html.RadioButtonFor(m => m.MainFrequency, "monthly") Jeden Monat
+                                                        </label>
+                                                        <!-- Ggf. noch implementieren
+                                                                    <label>
+                                                                        @Html.TextBoxFor(m => m.countMonthDays, new { @class = "form-control", @style="width:50px", @Value = 1 })
+                                                                        . Tag jedes
+                                                                    </label>
+
+                                                                    <label>
+                                                                        @Html.TextBoxFor(m => m.countMonths, new { @class="form-control", @style="width:50px", @Value = 1})
+                                                                        . Monats
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="checkbox">
+                                                                <div class="form-inline">
+                                                                    <label>
+                                                                        @Html.RadioButtonFor(m => m.MainFrequency, "monthlyPlus")
+                                                                        Am
+                                                                    </label>
+
+                                                                    <label>
+                                                                        <select class="form-control" name="monthDays">
+                                                                            <option value="1">ersten</option>
+                                                                            <option value="2">zweiten</option>
+                                                                            <option value="3">dritten</option>
+                                                                            <option value="4">vierten</option>
+                                                                            <option value="5">letzten</option>
+                                                                        </select>
+                                                                    </label>
+
+                                                                    <label>
+                                                                        <select class="form-control" name="monthDaysKind">
+                                                                            <option value="0">Montag</option>
+                                                                            <option value="1">Dienstag</option>
+                                                                            <option value="2">Mittwoch</option>
+                                                                            <option value="3">Donnerstag</option>
+                                                                            <option value="4">Freitag</option>
+                                                                            <option value="5">Samstag</option>
+                                                                            <option value="6">Sonntag</option>
+                                                                            <option value="7">Arbeitstag</option>
+                                                                            <option value="8">Wochenendtag</option>
+                                                                        </select>
+                                                                    </label>
+
+                                                                    <label>
+
+                                                                        jeden/alle
+                                                                        @Html.TextBoxFor(m => m.countMonths, new { @class = "form-control", @style = "width:50px;", @Value = 1 })
+                                                                        Monat(e)
+
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="divjaehrlich" class="tab-pane">
+                                        <div class="col-md-12">
+                                            <h4>Jährlich</h4>
+
+                                            <div class="form-group">
+                                                <div>
+                                                    <div class="form-inline checkbox">
+                                                        <label>
+                                                            @Html.RadioButtonFor(m => m.MainFrequency, "annual")
+                                                            Jedes/Alle
+                                                        </label>
+
+                                                        <label>
+                                                            <select class="form-control" name="yearCount">
+                                                                <option value="1">1.</option>
+                                                                <option value="2">2.</option>
+                                                                <option value="3">3.</option>
+                                                            </select> Jahr(e)
+                                                        </label>
+                                                    </div>
+
+                                                    <!-- Ggf. noch implementieren
+                                                    <div class="checkbox">
+                                                        <div class="form-inline">
+                                                            <label>
+                                                                @Html.RadioButtonFor(m => m.MainFrequency, "annualPlus")
+                                                                Jedes Jahr am
+                                                            </label>
+
+                                                            <label>
+                                                                <select class="form-control" name="yearDayInMonth">
+                                                                    <option value="1">1.</option>
+                                                                    <option value="2">2.</option>
+                                                                    <option value="3">3.</option>
+                                                                    <option value="4">4.</option>
+                                                                    <option value="5">5.</option>
+                                                                    <option value="6">6.</option>
+                                                                    <option value="7">7.</option>
+                                                                    <option value="8">8.</option>
+                                                                    <option value="9">9.</option>
+                                                                    <option value="10">10.</option>
+                                                                    <option value="11">11.</option>
+                                                                    <option value="12">12.</option>
+                                                                    <option value="13">13.</option>
+                                                                    <option value="14">14.</option>
+                                                                    <option value="15">15.</option>
+                                                                    <option value="16">16.</option>
+                                                                    <option value="17">17.</option>
+                                                                    <option value="18">18.</option>
+                                                                    <option value="19">19.</option>
+                                                                    <option value="20">20.</option>
+                                                                    <option value="21">21.</option>
+                                                                    <option value="22">22.</option>
+                                                                    <option value="23">23.</option>
+                                                                    <option value="24">24.</option>
+                                                                    <option value="25">25.</option>
+                                                                    <option value="26">26.</option>
+                                                                    <option value="27">27.</option>
+                                                                    <option value="28">28.</option>
+                                                                    <option value="29">29.</option>
+                                                                    <option value="30">30.</option>
+                                                                    <option value="31">31.</option>
+                                                                </select>
+                                                            </label>
+
+                                                            <label>
+                                                                <select class="form-control" name="yearMonth">
+                                                                    <option value="1">Januar</option>
+                                                                    <option value="2">Februar</option>
+                                                                    <option value="3">März</option>
+                                                                    <option value="4">April</option>
+                                                                    <option value="5">Mai</option>
+                                                                    <option value="6">Juni</option>
+                                                                    <option value="7">Juli</option>
+                                                                    <option value="8">August</option>
+                                                                    <option value="9">September</option>
+                                                                    <option value="10">Oktober</option>
+                                                                    <option value="11">November</option>
+                                                                    <option value="12">Dezember</option>
+                                                                </select>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-inline">
+                                                            <label>
+                                                                @Html.RadioButtonFor(m => m.MainFrequency, "annualPlusPlus")
+                                                                Jedes Jahr am
+                                                            </label>
+
+                                                            <label>
+                                                                <select class="form-control" name="yearDayCount">
+                                                                    <option value="1">ersten</option>
+                                                                    <option value="2">zweiten</option>
+                                                                    <option value="3">dritten</option>
+                                                                    <option value="4">vierten</option>
+                                                                    <option value="5">letzten</option>
+                                                                </select>
+                                                            </label>
+
+                                                            <label>
+                                                                <select class="form-control" name="yearDayKind">
+                                                                    <option value="0">Montag</option>
+                                                                    <option value="1">Dienstag</option>
+                                                                    <option value="2">Mittwoch</option>
+                                                                    <option value="3">Donnerstag</option>
+                                                                    <option value="4">Freitag</option>
+                                                                    <option value="5">Samstag</option>
+                                                                    <option value="6">Sonntag</option>
+                                                                    <option value="7">Tag</option>
+                                                                    <option value="8">Arbeitstag</option>
+                                                                    <option value="9">Wochenendtag</option>
+                                                                </select>
+                                                            </label>
+
+                                                            <label>
+                                                                im
+                                                                <select class="form-control" name="yearMonth">
+                                                                    <option value="1">Januar</option>
+                                                                    <option value="2">Februar</option>
+                                                                    <option value="3">März</option>
+                                                                    <option value="4">April</option>
+                                                                    <option value="5">Mai</option>
+                                                                    <option value="6">Juni</option>
+                                                                    <option value="7">Juli</option>
+                                                                    <option value="8">August</option>
+                                                                    <option value="9">September</option>
+                                                                    <option value="10">Oktober</option>
+                                                                    <option value="11">November</option>
+                                                                    <option value="12">Dezember</option>
+                                                                </select>
+                                                            </label>
+                                                        </div>
+                                                    </div>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" value="Erstellen" class="btn btn-default" />
+                    }
+                </div>
+            </div>
+            @section styles {
+                @Styles.Render("~/Content/themes/base/css")
+            }
+
+            @section Scripts {
+                @Scripts.Render("~/bundles/jquery-ui")
+                <script type="text/javascript">
+                    // Dauer berechnen
+                    function calcDurance() {
+                        var startHour = $("#StartTimeHour").val();
+                        var startMin = $("#StartTimeMinute").val();
+                        var endHour = $("#EndTimeHour").val();
+                        var endMin = $("#EndTimeMinute").val();
+
+                        var durance = (endHour - startHour) * 60;
+                        var mins = endMin - startMin;
+
+                        durance = durance + mins;
+
+                        if (durance < 0) {
+                            durance = "<span class=\"text-danger\">Die Endzeit liegt VOR der Startzeit.</span>";
+                        } else {
+                            durance = durance + " Minuten";
+                        }
+
+                        $('#dauer').html(durance);
+                    }
+
+                    $("#StartTimeHour").on('change', calcDurance);
+                    $("#StartTimeMinute").on('change', calcDurance);
+                    $("#EndTimeHour").on('change', calcDurance);
+                    $("#EndTimeMinute").on('change', calcDurance);
+
+
+                    // Tabs für Serienmuster
+                    $('#tabTaeglich a').click(function (e) {
+                        e.preventDefault()
+                        $(this).tab('show')
+                    });
+
+                    $('#tabWoechentlich a').click(function (e) {
+                        e.preventDefault()
+                        $(this).tab('show')
+                    });
+
+                    $('#tabMonatlich a').click(function (e) {
+                        e.preventDefault()
+                        $(this).tab('show')
+                    });
+
+                    $('#tabJaehrlich a').click(function (e) {
+                        e.preventDefault()
+                        $(this).tab('show')
+                    });
+
+                    // Datepicker
+                    $(function () {
+
+                        Globalize.culture('de-DE');
+
+                        $("#Day").datepicker(
+                            {
+                                dateFormat: 'dd.mm.yy',
+                                option: 'de-DE'
+                            }
+                        );
+
+                        $("#EndDay").datepicker(
+                            {
+                                dateFormat: 'dd.mm.yy',
+                                option: 'de-DE'
+                            }
+                        );
+                    });
+
+                    $.validator.methods.date = function (value, element) {
+                        var val = Globalize.parseDate(value);
+                        return this.optional(element) || (val);
+                    };
+
+                    $("#Day").on('change', function () {
+
+                        var dateData = $(this).val().split('.');
+                        var date = new Date(dateData[2], dateData[1] - 1, dateData[0]);
+                        $('input[name="weeklyDays"').attr('checked', false);
+
+                        switch (date.getDay()) {
+                            case 0:
+                                $("input[value='sun']").attr('checked', true);
+                                break;
+                            case 1:
+                                $("input[value='mon']").attr('checked', true);
+                                break;
+                            case 2:
+                                $("input[value='tue']").attr('checked', true);
+                                break;
+                            case 3:
+                                $("input[value='wed']").attr('checked', true);
+                                break;
+                            case 4:
+                                $("input[value='thu']").attr('checked', true);
+                                break;
+                            case 5:
+                                $("input[value='fri']").attr('checked', true);
+                                break;
+                            default:
+                                $("input[value='sat']").attr('checked', true);
+                                break;
+                        }
+                    });
+
+                    $('#Room').autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: '@Url.Action("RoomListForDay", "Curriculum")',
+                                type: 'POST',
+                                //dataType: "json",
+
+                                data: {
+                                    number: request.term,
+                                    day: $('#DayOfWeek option:selected').val(),
+                                    from: $('#StartTimeHour option:selected').val() + ':' + $('#StartTimeMinute option:selected').val() + ':00',
+                                    until: $('#EndTimeHour option:selected').val() + ':' + $('#EndTimeMinute option:selected').val() + ':00',
+                                    sem: $('#Semester').val(),
+                                },
+
+                                success: function (data, success, xhr) {
+                                    response($.map(data, function (item) {
+
+                                        return {
+                                            label: item.name + ' (' + item.capacity + ' Plätze)',
+                                            value: item.name
+                                        };
+                                    }));
+
+                                },
+
+                                error: function (data) { alert(data); },
+                            });
+
+                        },
+                    });
+
+                    $('#Lecturer').autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: '@Url.Action("LecturerList", "Curriculum")',
+                                type: 'POST',
+                                //dataType: "json",
+
+                                data: {
+                                    name: request.term
+                                },
+
+                                success: function (data, success, xhr) {
+                                    response($.map(data, function (item) {
+
+                                        return {
+                                            label: item.name + ' (' + item.shortname + ')',
+                                            value: item.shortname
+                                        };
+                                    }));
+
+                                },
+
+                                error: function (data) { alert(data); },
+                            });
+
+                        },
+                    });
+
+
+                    $('#Group').autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: '@Url.Action("CurriculumGroupList", "Curriculum")',
+                                type: 'POST',
+                                //dataType: "json",
+
+                                data: {
+                                    name: request.term
+                                },
+
+                                success: function (data, success, xhr) {
+                                    response($.map(data, function (item) {
+
+                                        return {
+                                            label: item.name,
+                                            value: item.name
+                                        };
+                                    }));
+
+                                },
+
+                                error: function (data) { alert(data); },
+                            });
+
+                        }
+                    });
+                </script>
+            }

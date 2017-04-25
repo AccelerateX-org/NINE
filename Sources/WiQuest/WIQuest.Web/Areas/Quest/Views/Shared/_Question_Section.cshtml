@@ -1,0 +1,47 @@
+﻿
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Orientierung zur Fragenauswahl Hochschule München</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+
+<body>
+
+   
+    <div class="container">
+        <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Orientierungstest der Fakultät für Wirtschaftsingenieurwesen</a>
+            </div>
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="#">Mathematik</a></li>
+                        <li><a href="#">Technik</a></li>
+                        <li><a href="#">Naturwissenschaften</a></li>
+                        <li><a href="#">Wirtschaft</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <img src="https://upload.wikimedia.org/wikipedia/de/thumb/e/e8/Hochschule_Muenchen_Logo.svg/320px-Hochschule_Muenchen_Logo.svg.png" alt="HS München" style="width:180px;height:auto;">
+                </div>
+        </nav>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Hochschule München</p>
+        </footer>
+    </div>
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

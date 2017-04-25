@@ -1,0 +1,98 @@
+﻿@using System.Data
+@model MyStik.TimeTable.Web.Models.MemberUserViewModel
+@{
+    ViewBag.Title = "Mitglied";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+
+<h4>Mitglied @ViewBag.Member.ShortName</h4>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+        ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form-group">
+        @Html.HiddenFor(item => item.MemberId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.UserName, new { @class="col-md-4 control-label"})
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.UserName, new { @class = "form-control", disabled = "" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Role, new { @class="col-md-4 control-label"})
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Role, new { @class = "form-control", disabled = "" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Name, new { @class="col-md-4 control-label"})
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Name, new { @class = "form-control", disabled = "" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Description, new { @class="col-md-4 control-label"})
+        <div class="col-md-8">
+            @Html.TextAreaFor(item => item.Description, new { @class = "form-control", rows=10 })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.UrlProfile, new { @class="col-md-4 control-label"})
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.UrlProfile, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            <input type="submit" value="Übernehmen" class="btn btn-primary" />
+        </div>
+    </div>
+}
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+        $(function() {
+            $('#UserName').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: '@Url.Action("UserList")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            token: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data, function(item) {
+
+                                return {
+                                    label: item.userName + ' (' + item.firstName + ' ' + item.lastName + ')',
+                                    value: item.userName
+                                };
+                            }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) { }
+            });
+        });
+    </script>
+}

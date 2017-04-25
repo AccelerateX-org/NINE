@@ -1,0 +1,103 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.RoomInfoModel>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <ul class="nav">
+                        <li>
+                            <a href="@Url.Action("Free")"><i class="fa fa-building"></i> Aktuell freie Räume</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("LookupDate")"><i class="fa fa-building"></i> Raumsuche nach Datum</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @if (ViewBag.UserRight.IsOrgAdmin)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>
+                                <a href="@Url.Action("Admin")"><i class="fa fa-wrench"></i> Verwaltung</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-10">
+
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Raumnummer</th>
+                            <th>Beschreibung</th>
+                            <th>Plätze</th>
+                            <th>Ausstattung</th>
+                            <th>Raumstatus</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var room in Model)
+                        {
+                            <tr>
+                                @if (room.NeedInternalConfirmation)
+                                {
+                                    <td>@room.Room.Number (***)</td>
+                                }
+                                else
+                                {
+                                    <td>@room.Room.Number</td>
+                                }
+                                <td>@room.Room.Description</td>
+                                <td>@room.Room.Capacity</td>
+                                <td>@room.Room.Owner</td>
+                                @if (room.CurrentDate != null)
+                                {
+                                    <td>Belegt (@room.CurrentDate.Activity.Name)</td>
+                                }
+                                else
+                                {
+                                    if (room.NextDate != null)
+                                    {
+                                        if (room.NextDate.Begin > DateTime.Today.AddDays(1))
+                                        {
+                                            <td>frei bis Abends</td>
+                                        }
+                                        else
+                                        {
+                                            <td>Frei bis @room.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td>frei bis Abends</td>
+                                    }
+                                }
+                                <td>
+                                    <a href="@Url.Action("Calendar", "Room", new {id = room.Room.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i></a>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Room.Id })"
+                                       onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=500,toolbar=0,resizable=1'); return false;"
+                                       class="btn btn-default btn-xs"><i class="fa fa-print"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

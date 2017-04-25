@@ -1,0 +1,255 @@
+﻿@model MyStik.TimeTable.Web.Models.MensaViewModel
+@{
+    ViewBag.Title = "Mensa";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-cantine">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@ViewBag.Title (Lothstr.)</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Tage.Any())
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- START -->
+                <div id="semProfile">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="portlet light bordered">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="fa fa-calendar"></i>Heute, @Model.Tage.ElementAt(0).date
+                                    </div>
+                                    <div class="actions">
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <!-- Element für ein Hauptgericht -->
+                                    <div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Bezeichnung</th>
+                                                    <th>Preis</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var meal in @Model.Tage.ElementAt(0).meals)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <h4>
+                                                                @if (!meal.prices.allPricesAreZero())
+                                                                {
+                                                                    // keine Beilage
+                                                                    <b>@meal.name</b>
+                                                                }
+                                                                else
+                                                                {
+                                                                    // Beilage
+                                                                    @meal.name
+                                                                }
+                                                                @foreach (var Notiz in meal.notes)
+                                                                {
+                                                                    if (Notiz == "fleischloses Gericht")
+                                                                    {
+                                                                        <span class="glyphicon glyphicon-apple" aria-hidden="true"></span>
+                                                                    }
+                                                                    else if (Notiz == "veganes Gericht")
+                                                                    {
+                                                                        <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>
+                                                                    }
+                                                                }
+                                                            </h4>
+                                                            <small>
+                                                                @String.Join(", ", meal.notes)
+                                                            </small>
+                                                        </td>
+                                                        <td width="120">
+                                                            @if (!meal.prices.allPricesAreZero())
+                                                            {
+                                                                <b>@meal.prices.price_student.ToString("0.00€")</b>
+                                                                <small>Studenten</small>
+                                                                <br />
+                                                                @meal.prices.price_employees.ToString("0.00€")
+                                                                <small>Mitarbeiter</small>
+                                                                <br />
+                                                                @meal.prices.price_others.ToString("0.00€")
+                                                                <small>Gäste</small>
+                                                                ;
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--vorschau-->
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+
+                                    <div class="portlet">
+                                        <div class="portlet-title">
+                                            <div class="caption">
+
+                                                <p>
+                                                    <h3> Vorschau </h3>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <table class="table table-striped">
+                                            @foreach (var Vorschautag in Model.Vorschautage)
+                                            {
+                                                if (Vorschautag.closed == false)
+                                                {
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <h2> @Vorschautag.Name, @Vorschautag.Datum </h2>
+                                                            </th>
+                                                            <th>Preise für</th>
+
+                                                        </tr>
+                                                    </thead>
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Gericht</th>
+                                                            <th>Studenten <small>Mitarbeiter,Gäste</small></th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var Gericht in Vorschautag.Gerichte)
+                                                        {
+                                                            if (Gericht.Kategorie != "Beilagen")
+                                                            {
+                                                                if (Gericht.Kategorie != "Aktion")
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Gericht.Name
+                                                                            <small>
+                                                                                @foreach (var Notiz in Gericht.Notizen)
+                                                                                {
+                                                                                    if (Notiz == "fleischloses Gericht")
+                                                                                    {
+                                                                                        <span class="glyphicon glyphicon-apple" aria-hidden="true"></span>
+                                                                                    }
+                                                                                    else if (Notiz == "veganes Gericht")
+                                                                                    {
+                                                                                        <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>
+                                                                                    }
+
+
+                                                                                }
+                                                                            </small>
+
+                                                                        </td>
+                                                                        <td><b>@Gericht.PreisStudent €</b> <small>@Gericht.PreisMitarbeiter €, @Gericht.PreisGaeste €</small></td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                }
+                                            }
+
+
+                                        </table>
+
+                                    </div>
+                                    <!--Legende-->
+                                    <div>
+                                        <small>Legende: vegan = <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>; vegetarisch = <span class="glyphicon glyphicon-apple" aria-hidden="true"></span>; bio = <span class="glyphicon glyphicon-leaf" aria-hidden="true"></span></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--ende Vorschau-->
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Öffnungszeiten</th>
+                                                <th></th>
+                                                <th>Adresse</th>
+                                                <th>Links</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Montag-Donnerstag</th>
+                                                <th>Freitag</th>
+                                                <td>Lothstraße 13d</td>
+                                                <td><a href="@Url.Action("StuCafe", "Cantine")">StuCafe</a></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+
+                                                <td>11.00 - 14.00</td>
+                                                <td>11.00 - 13.45</td>
+                                                <td>1.Stock</td>
+                                                <td><a href="http://openmensa.org/c/141" target="_blank">Mensa Speiseplan</a></td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet box red">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-gift"></i>Kein Speiseplan verfügbar
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div>Leider können wir hier derzeit den aktuellen Speiseplan nicht anzeigen. Wir beziehen die Daten vom externen Anbieter openmensa.org.
+                            Unter diesem <a href="http://openmensa.org/c/141/2016-10-07" target="_blank">Link</a> erfährt man nur wenig mehr, ausser das es derzeit keine Daten gibt.
+                            Wir versuchen hier so bald wie mögich wieder Daten anzeigen zu lassen.
+                        </div>
+                        <div>Vielen Dank für das Verständnis!</div>
+                        <div>Das NINE-Team</div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+}

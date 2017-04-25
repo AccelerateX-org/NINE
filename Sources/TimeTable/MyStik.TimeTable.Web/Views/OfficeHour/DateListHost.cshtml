@@ -1,0 +1,227 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OfficeHourCharacteristicModel
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Sprechstundentermine im @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+                <div class="row">
+                    <div class="panel panel-default">
+                            <ul class="nav">
+                                @if (Model.OfficeHour == null)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("CreateOfficeHour", "OfficeHour", new {id = "FK 09"})"><i class="fa fa-stethoscope fa-2x text-primary list-group-item"></i> Sprechstunden für @Model.Semester.Name anlegen</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                <li>
+                                    <a href="@Url.Action("CreateDate", "OfficeHour", new { id = Model.OfficeHour.Id })">
+                                        <i class="fa fa-plus-circle"></i> Neuer Termin
+                                    </a>
+                                </li>
+                                    <li>
+                                        <a href="@Url.Action("SubscriptionList", "OfficeHour", new {id = Model.OfficeHour.Id})">
+                                            <i class="fa fa-download"></i> Teilnehmerliste
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="@Url.Action("DeleteOfficeHour", "OfficeHour")">
+                                            <i class="fa fa-trash-o"></i> Sprechstunde löschen
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                    </div>
+                </div>
+        </div>
+
+
+        <div class="col-md-10">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Terminliste
+                    </div>
+                    <div class="actions">
+                        <div class="btn-group" data-toggle="buttons">
+                            <button id="toggleHistoryOff" class="btn btn-default active">
+                                nur zukünftige Termine
+                            </button>
+                            <button id="toggleHistoryOn" class="btn btn-default">
+                                alle Termine
+                            </button>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="portlet-body">
+
+
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Zeitraum</th>
+                            <th>#</th>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Datum Eintragung</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var slot in Model.CurrentSlots)
+                        {
+                            var histAttr = "";
+                            if (slot.ActivityDate.End < GlobalSettings.Now)
+                            {
+                                histAttr = "history";
+                            }
+
+                            <tr @histAttr>
+                                @if (slot.RowNo == 1)
+                                {
+                                    if (slot.ActivityDate.Occurrence.IsCanceled)
+                                    {
+                                        <td rowspan="@slot.RowCount"><del>@slot.Date.ToShortDateString()</del></td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="@slot.RowCount">@slot.Date.ToShortDateString()</td>
+                                    }
+                                }
+                                @if (slot.SubscriptionNo == 1)
+                                {
+                                    if (slot.ActivityDate.Occurrence.IsCanceled)
+                                    {
+                                        <td rowspan="@slot.SubscriptionCount"><del>@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</del></td>
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="@slot.SubscriptionCount">@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</td>
+                                        if (slot.Occurrence.IsAvailable)
+                                        {
+                                            <td>@slot.Occurrence.Capacity</td>
+                                            <td>
+                                                @if (!slot.Occurrence.Subscriptions.Any())
+                                                {
+                                                    <a href="@Url.Action("LockOccurrence", "Occurrence", new {id = slot.Occurrence.Id})" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-lock text-danger"></i> Sperren
+                                                    </a>
+                                                }
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                            <td>
+                                                <a href="@Url.Action("UnLockOccurrence", "Occurrence", new {id = slot.Occurrence.Id})" class="btn btn-default btn-xs">
+                                                    <i class="fa fa-unlock text-success"></i> Freigeben
+                                                </a>
+                                            </td>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+                                @if (slot.Member != null)
+                                {
+                                    <td><a href="mailto:@slot.Member.User.Email">@slot.Member.User.FirstName @slot.Member.User.LastName</a></td>
+                                    <td>@slot.Member.Subscription.TimeStamp</td>
+                                    <td>
+                                        @Html.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
+                                            new { Id = slot.Occurrence.Id, userId = slot.Member.User.Id },
+                                            new { @class = "btn btn-default btn-xs" })
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                }
+                                @if (slot.RowNo == 1)
+                                {
+                                    <td rowspan="@slot.RowCount">
+                                        @if (slot.ActivityDate.Occurrence.IsCanceled)
+                                        {
+                                            @Html.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
+                                        }
+                                        else
+                                        {
+                                            if (slot.State.State == SubscriptionState.BeforeSubscriptionPhase ||
+                                                !slot.HasSubscriptions)
+                                            {
+                                                @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionButton("fa-times text-danger", "absagen", "CancelDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
+                                            }
+                                            @Html.ActionButton("fa-calendar", "ändern", "MoveDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
+                                            @Html.ActionButton("fa-legal", "Regeln", "SubscriptionRules", "Occurrence", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
+
+                                            <a href="@Url.Action("OfficeHourDate", "Print", new {id = slot.DateOccurrenceId})"
+                                               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1'); return false;"
+                                               class="btn btn-default btn-xs"><i class="fa fa-print"></i> Drucken</a>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function() {
+
+            $("tr[history]").hide();
+
+
+            $("#toggleHistoryOn").click(function () {
+                $("tr[history]").show();
+                $("#toggleHistoryOff").removeClass("active");
+            });
+
+            $("#toggleHistoryOff").click(function() {
+                $("tr[history]").hide();
+                $("#toggleHistoryOn").removeClass("active");
+            });
+        });
+
+    </script>
+}

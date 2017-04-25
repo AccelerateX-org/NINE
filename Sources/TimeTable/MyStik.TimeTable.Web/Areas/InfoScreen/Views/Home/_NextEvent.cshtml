@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Web.Api.Contracts.NextEventContract
+<h1>Aktuelle Veranstaltungen</h1>
+
+@if (@Model.From.HasValue)
+{
+    <h2>am @Model.From.Value.Date.ToShortDateString() um @Model.From.Value.TimeOfDay.ToString(@"hh\:mm")</h2>
+}
+<h1>@Model.Title</h1>
+<h2>@Html.Raw(@Model.Description)</h2>
+<h2>@Model.Location</h2>

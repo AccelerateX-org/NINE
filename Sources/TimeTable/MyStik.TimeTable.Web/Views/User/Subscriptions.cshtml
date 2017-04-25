@@ -1,0 +1,98 @@
+﻿@model MyStik.TimeTable.Web.Models.UserSubscriptionViewModel
+@{
+    ViewBag.Title = "Subscriptions";
+}
+
+
+<h2>Liste aller Semester</h2>
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+        <tr>
+            <th>Eintragung</th>
+            <th>Semester</th>
+            <th>Semestergruppe</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Semester)
+        {
+            <tr>
+                <td>@item.TimeStamp</td>
+                <td>@item.SemesterGroup.Semester.Name</td>
+                <td>@item.SemesterGroup.FullName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<h2>Liste aller Eintragungen</h2>
+
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+        <tr>
+            <th>Eintragung</th>
+            <th>Ereignis</th>
+            <th>Semester</th>
+            <th>Nächster Termin</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Subscriptions)
+        {
+            <tr>
+                <td>@item.Subscription.TimeStamp</td>
+                @if (item.Summary != null)
+                {
+                    <td>
+                        @Html.ActionLink(item.Summary.Activity.Name + " (" + item.Summary.Activity.ShortName + ")",
+                            item.Summary.Action, item.Summary.Controller, new { id = item.Summary.Id }, null)
+                    </td>
+                    if (item.Summary.Activity.SemesterGroups.Any())
+                    {
+                        <td>@item.Summary.Activity.SemesterGroups.First().Semester.Name</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td>@item.Summary.NextDateTime</td>
+                }
+                else
+                {
+                    <td colspan="2">Keine Verbindung zu einem Ereignis</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Liste aller WPM Eintragungen</h2>
+
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+        <tr>
+            <th>Eintragung</th>
+            <th>Ereignis</th>
+            <th>Nächster Termin</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.WPMSubscriptions)
+        {
+            <tr>
+                <td>@item.Subscription.TimeStamp</td>
+                @if (item.Summary != null)
+                {
+                    <td>@item.Summary.Activity.Name (@item.Summary.Activity.ShortName)</td>
+                    <td>@item.Summary.NextDateTime</td>
+                }
+                else
+                {
+                    <td colspan="2">Keine Verbindung zu einem Ereignis</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Mail versendet";
+}
+
+<h2>Mailversand erfolgreich</h2>
+
+@{
+    string action = ViewBag.ActionName;
+    string ctrl = ViewBag.ControllerName;
+    string cid = ViewBag.Id;
+}
+
+<p>@Html.ActionLink("Zurück", action, ctrl, new {id=cid}, null)</p>
+

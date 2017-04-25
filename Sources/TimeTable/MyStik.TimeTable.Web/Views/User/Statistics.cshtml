@@ -1,0 +1,124 @@
+﻿@using Elmah.ContentSyndication
+@model MyStik.TimeTable.Web.Models.UserStatisticsModel
+@{
+    ViewBag.Title = "Statistics";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Benutzerstatistik</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Anzahl</th>
+                    <th>E-Mail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Benutzer insgesamt</td>
+                    <td>@Model.UserCount</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Benutzer heute registriert</td>
+                    <td>@Html.ActionLink(Model.RegisteredToday.ToString(), "TodayRegistered")</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Benutzer heute bestätigt</td>
+                    <td>@Html.ActionLink(Model.ApprovedToday.ToString(), "TodayApproved")</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Benutzer heute eingeloggt</td>
+                    <td>@Html.ActionLink(Model.LogedInToday.ToString(), "TodayLoggedIn")</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Noch nicht bestätigte Konten (Altfälle)</td>
+                    <td>@Html.ActionLink("Link", "PendingAccounts")</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Alle Konten mit Gaststatus</td>
+                    <td>@Html.ActionLink("Link", "GuestAccounts")</td>
+                    <td>@Html.ActionLink("Auf Gaststatus setzen", "RepairUserAccounts")</td>
+                </tr>
+                <tr>
+                    <td>Inaktive Konten</td>
+                    <td>@Html.ActionLink("Link", "InactiveAccounts")</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Studenten mit externen Adresse</td>
+                    <td>@Html.ActionLink("Link", "ExternalStudents")</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Gruppen korrigieren</td>
+                    <td>@Html.ActionLink("Link", "RepairUserGroups")</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Benutzerrollen</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Rolle</th>
+                    <th>Anzahl</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RoleStatistics)
+                {
+                    <tr>
+                        <td>@item.RoleName</td>
+                        <td>@item.UserCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Veranstalter</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Rolle</th>
+                    <th>Anzahl</th>
+                    <th>Admins</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrgStatistics)
+                {
+                    <tr>
+                        <td>@item.OrgName</td>
+                        <td>@item.UserCount</td>
+                        <td>@item.AdminCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

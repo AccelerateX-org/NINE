@@ -1,0 +1,101 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.ActivityCurrentModel
+@{
+    ViewBag.Title = "Aktuelles";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Aktuell laufende Veranstaltungen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold uppercase"> Aktuell laufen die folgenden Veranstaltungen</span>
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <tbody>
+                        @foreach (var date in Model.CurrentDates)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.RoomList(date.Rooms)
+                                    <div>@Html.TimeSpan(date)</div>
+                                </td>
+                                <td>
+                                    @Html.ActionLink(
+                                        string.IsNullOrEmpty(date.Activity.Name) ? "N.N." : date.Activity.Name,
+                                        "ActivityDetails", "Dashboard", new {id = date.Activity.Id}, null)
+                                    <div>@Html.GroupList(date.Activity.SemesterGroups)</div>
+                                </td>
+                                <td>
+                                    @Html.LecturerList(date.Hosts)
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold uppercase"> Folgende Termine wurden abgesagt</span>
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <tbody>
+                            @foreach (var date in Model.CanceledDates)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.RoomList(date.Rooms)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink(
+                                            date.Activity.Name,
+                                            "Details", "Course", new { id = date.Activity.Id }, null)
+                                        <div>@Html.GroupList(date.Activity.SemesterGroups)</div>
+                                    </td>
+                                    <td>
+                                        @Html.LecturerList(date.Hosts)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

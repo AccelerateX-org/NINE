@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.Title = "NINE Infoscreen";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6 col-md-offset-3">
+                                            <canvas id="clockid" class="CoolClock:swissRail:160:GMTOffset"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="leftInfoscreenPanel"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="rightInfoscreenPanel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts
+        {
+    <script src="~/Assets/global/plugins/CoolClock-master/coolclock.js"></script>
+    <script src="~/Assets/global/plugins/CoolClock-master/moreskins.js"></script>
+
+    <script>
+
+        $(function() {
+            CoolClock.findAndCreateClocks();
+
+            $.ajax({
+                url: '@Url.Action("LeftPanel")',
+                type: 'POST',
+                success: function(result) {
+                    $('#leftInfoscreenPanel').html(result);
+                }
+            });
+
+                
+            $.ajax({
+                url: '@Url.Action("RightPanel")',
+                type: 'POST',
+                success: function (result) {
+                    $('#rightInfoscreenPanel').html(result);
+                }
+            });
+
+            updateLeftPanel();
+            updateRightPanel();
+
+        });
+
+        function updateLeftPanel() {
+            setInterval(function () {
+
+                var tokenLeft = null;
+                if ($("#tokenPanelLeft")) {
+                    tokenLeft = $("#tokenPanelLeft").val();
+                }
+                
+
+                $.ajax({
+                    url: '@Url.Action("LeftPanel")',
+                    type: 'POST',
+                    data: {
+                      token: tokenLeft  
+                    },
+                    success: function (result) {
+                        $('#leftInfoscreenPanel').html(result);
+                    }
+                });
+            }, 20000);
+        }
+
+        function updateRightPanel() {
+
+            setInterval(function () {
+
+                var tokenRight = null;
+                if ($("#tokenPanelRight")) {
+                    tokenRight = $("#tokenPanelRight").val();
+                }
+
+                $.ajax({
+                    url: '@Url.Action("RightPanel")',
+                    type: 'POST',
+                    data: {
+                        token: tokenRight
+                    },
+                    success: function (result) {
+                        $('#rightInfoscreenPanel').html(result);
+                    }
+                });
+            }, 20000);
+        }
+
+
+
+    </script>
+}
+
+
+
+
+

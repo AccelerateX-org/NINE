@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div>
+    @Html.ActionLink("alle freien räume", "GetFreeRoomsNow","api/Room")
+</div>
+
+<div>
+    @Html.ActionLink("Login", "GetUserId", "api/Account", new { userName = "admin", password = "p123456" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Freie Räume in Zeitraum", "GetFreeRooms", "api/Room", new { from = DateTime.Now, until = DateTime.Now.AddHours(1) }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Persönlicher Stundenplan", "GetPersonalDates", "api/Activity", new { userId = "5188774e-b224-49ec-bab3-c19d12b1624e" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Liste aller Räume", "GetAllRooms","api/Room")
+</div>
+
+<div>
+    @Html.ActionLink("RoomsStartWith", "GetRoomsStartWith", "api/Room", new { startsWith = "R" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("PersonalDateSpan", "GetPersonalDatesSpan", "api/Activity", new { userId = "5188774e-b224-49ec-bab3-c19d12b1624e", from = DateTime.Now, until = DateTime.Now.AddDays(7) }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle zukünftigen Events", "GetAllEvents", "api/Activity")
+</div>
+
+<div>
+    @Html.ActionLink("Alle Termine eines Raumes", "GetRoomActivities", "api/Room", new { roomId = "568781a4-6466-e411-a40e-60eb69b89927" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle freien Räume aufgrund von TimeSpan", "GetFreeRoomsDaySpan", "api/Room", new { span =TimeSpan.FromHours(6), day =DateTime.Now.AddHours(12) },null)
+</div>
+
+<div>
+    @Html.ActionLink("Termin by Id", "GetDateById", "api/Activity", new { dateId = "098881a4-6466-e411-a40e-60eb69b89927" }, null)
+</div>
+<div>
+    @Html.ActionLink("Einzelnes Event by Id", "GetEvent", "api/Activity", new { eventId = "86bd456a-a378-e411-9805-60eb69b89927" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Gesamten Freizeiten der Woche", "GetFreeRoomsSpanOfWeek", "api/Room", new { span = TimeSpan.FromHours(3), OneDayOfWeek = DateTime.Now }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle Sprechstunden bis Zeitpunkt", "GetAllWeekOfficeHours", "api/Lecturer", new { until = DateTime.Now.AddDays(4)}, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle zukünftigen Sprechstunden eines Profs", "GetOfficeHour", "api/Lecturer", new { LecturerId = "4ff33492-6466-e411-a40e-60eb69b89927", until = DateTime.Now.AddDays(4) }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle verfügbaren Studienprogramme einer Fakultät", "GetAllStudyprograms", "api/Curriculum", new { FacId = "4ad34280-6466-e411-a40e-60eb69b89927" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle verfügbaren Studiengruppen eines Studienprograms", "GetAllStudygroups", "api/Curriculum", new { StudyprogramId = "4cd34280-6466-e411-a40e-60eb69b89927" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle verfügbaren Fakultäten", "GetAllFaculties", "api/Curriculum")
+</div>
+
+<div>
+    @Html.ActionLink("Dozenten die mit x anfangen", "GetLecturersStartswith", "api/Lecturer", new { startsWith="H" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Vorlesungen eines Dozenten abfragen", "GetLectureCourses", "api/Lecturer", new { LecturerId = "ba36d2bc-6466-e411-a40e-60eb69b89927" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle dozenten einer Fakultät abfragen", "GetFacLecturer", "api/Lecturer", new { FacId = "ba36d2bc-6466-e411-a40e-60eb69b89927" }, null)
+</div>
+
+<div>
+    @Html.ActionLink("Alle Dozenten abfragen", "GetAllLecture", "api/Lecturer")
+</div>

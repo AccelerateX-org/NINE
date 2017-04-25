@@ -1,0 +1,36 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    Layout = "~/Views/Shared/_LayoutNewPublic.cshtml";
+    ViewBag.Title = "Error";
+}
+
+<h1 class="text-danger">Fehler.</h1>
+<h2 class="text-danger">Es ist ein Fehler aufgetreten.</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Details</h3>
+    </div>
+    <table class="table table-bordered table-condensed">
+        <tbody>
+            <tr>
+                <td>Aktion</td>
+                <td>@Model.ActionName</td>
+            </tr>
+            <tr>
+                <td>Bereich</td>
+                <td>@Model.ControllerName</td>
+            </tr>
+            <tr>
+                <td>Fehlermeldung</td>
+                <td>@Model.Exception.Message</td>
+            </tr>
+            <tr>
+                <td>Aufrufhierarchie</td>
+                <td>@Model.Exception.StackTrace</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

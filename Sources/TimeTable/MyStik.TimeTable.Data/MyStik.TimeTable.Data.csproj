@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2C1BDFEC-D9E1-492E-B4DC-1FCD0EF25567}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MyStik.TimeTable.Data</RootNamespace>
+    <AssemblyName>MyStik.TimeTable.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SystemTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\SystemTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Doc">
+      <HintPath>..\..\..\packages\Spire.Doc.5.4\lib\net40\Spire.Doc.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.License">
+      <HintPath>..\..\..\packages\Spire.Doc.5.4\lib\net40\Spire.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Pdf">
+      <HintPath>..\..\..\packages\Spire.Doc.5.4\lib\net40\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activity.cs" />
+    <Compile Include="ActivityDateChange.cs" />
+    <Compile Include="ActivityOrganiser.cs" />
+    <Compile Include="ActivityOwner.cs" />
+    <Compile Include="Alumnus.cs" />
+    <Compile Include="BinaryStorage.cs" />
+    <Compile Include="BookingConfirmation.cs" />
+    <Compile Include="CapacityGroup.cs" />
+    <Compile Include="Course.cs" />
+    <Compile Include="CoursePlan.cs" />
+    <Compile Include="CurriculumGroup.cs" />
+    <Compile Include="CurriculumModule.cs" />
+    <Compile Include="DefaultData\InfrastructureData.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="GroupAlias.cs" />
+    <Compile Include="InfoAnnouncement.cs" />
+    <Compile Include="Infoscreen.cs" />
+    <Compile Include="InfoText.cs" />
+    <Compile Include="Initializers\InitDevDatabase.cs" />
+    <Compile Include="Initializers\InitNewDatabase.cs" />
+    <Compile Include="Lottery.cs" />
+    <Compile Include="LotteryDrawing.cs" />
+    <Compile Include="Migrations\201411090617524_SeemsterGroup.cs" />
+    <Compile Include="Migrations\201411090617524_SeemsterGroup.Designer.cs">
+      <DependentUpon>201411090617524_SeemsterGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201411210710165_InfoscreenPublishing.cs" />
+    <Compile Include="Migrations\201411210710165_InfoscreenPublishing.Designer.cs">
+      <DependentUpon>201411210710165_InfoscreenPublishing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501101644232_OccurrenceGroup.cs" />
+    <Compile Include="Migrations\201501101644232_OccurrenceGroup.Designer.cs">
+      <DependentUpon>201501101644232_OccurrenceGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501190915588_Faculty.cs" />
+    <Compile Include="Migrations\201501190915588_Faculty.Designer.cs">
+      <DependentUpon>201501190915588_Faculty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501201728278_Occurrence.cs" />
+    <Compile Include="Migrations\201501201728278_Occurrence.Designer.cs">
+      <DependentUpon>201501201728278_Occurrence.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501250940554_GroupTemplates.cs" />
+    <Compile Include="Migrations\201501250940554_GroupTemplates.Designer.cs">
+      <DependentUpon>201501250940554_GroupTemplates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201502010654193_OccSemGroups.cs" />
+    <Compile Include="Migrations\201502010654193_OccSemGroups.Designer.cs">
+      <DependentUpon>201502010654193_OccSemGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201503211534117_RoomReservations.cs" />
+    <Compile Include="Migrations\201503211534117_RoomReservations.Designer.cs">
+      <DependentUpon>201503211534117_RoomReservations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510190548052_Alumnae.cs" />
+    <Compile Include="Migrations\201510190548052_Alumnae.Designer.cs">
+      <DependentUpon>201510190548052_Alumnae.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510251754102_ChangeLogs.cs" />
+    <Compile Include="Migrations\201510251754102_ChangeLogs.Designer.cs">
+      <DependentUpon>201510251754102_ChangeLogs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511171821530_Notifications.cs" />
+    <Compile Include="Migrations\201511171821530_Notifications.Designer.cs">
+      <DependentUpon>201511171821530_Notifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512301403257_Curriculum.cs" />
+    <Compile Include="Migrations\201512301403257_Curriculum.Designer.cs">
+      <DependentUpon>201512301403257_Curriculum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602100849187_Lottery.cs" />
+    <Compile Include="Migrations\201602100849187_Lottery.Designer.cs">
+      <DependentUpon>201602100849187_Lottery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603170611396_Studienverlauf.cs" />
+    <Compile Include="Migrations\201603170611396_Studienverlauf.Designer.cs">
+      <DependentUpon>201603170611396_Studienverlauf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201607130719061_MemberRights.cs" />
+    <Compile Include="Migrations\201607130719061_MemberRights.Designer.cs">
+      <DependentUpon>201607130719061_MemberRights.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608010616597_SemesterDate.cs" />
+    <Compile Include="Migrations\201608010616597_SemesterDate.Designer.cs">
+      <DependentUpon>201608010616597_SemesterDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="ModuleCourse.cs" />
+    <Compile Include="ModuleExam.cs" />
+    <Compile Include="ModuleMapping.cs" />
+    <Compile Include="Newsletter.cs" />
+    <Compile Include="ActivityDate.cs" />
+    <Compile Include="NotificationState.cs" />
+    <Compile Include="Occurrence.cs" />
+    <Compile Include="OccurrenceGroup.cs" />
+    <Compile Include="OccurrenceSubscription.cs" />
+    <Compile Include="OfficeHour.cs" />
+    <Compile Include="OrganiserMember.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reservation.cs" />
+    <Compile Include="Room.cs" />
+    <Compile Include="RoomAllocationChange.cs" />
+    <Compile Include="RoomAssignment.cs" />
+    <Compile Include="RoomBooking.cs" />
+    <Compile Include="Semester.cs" />
+    <Compile Include="SemesterDate.cs" />
+    <Compile Include="SemesterGroup.cs" />
+    <Compile Include="ActivitySlot.cs" />
+    <Compile Include="Curriculum.cs" />
+    <Compile Include="SemesterSubscription.cs" />
+    <Compile Include="Subscription.cs" />
+    <Compile Include="TimeTableDbContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Diagrams\Activities.cd" />
+    <None Include="Diagrams\ClassDiagram.cd" />
+    <None Include="Diagrams\Curriculum.cd" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201411090617524_SeemsterGroup.resx">
+      <DependentUpon>201411090617524_SeemsterGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201411210710165_InfoscreenPublishing.resx">
+      <DependentUpon>201411210710165_InfoscreenPublishing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501101644232_OccurrenceGroup.resx">
+      <DependentUpon>201501101644232_OccurrenceGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501190915588_Faculty.resx">
+      <DependentUpon>201501190915588_Faculty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501201728278_Occurrence.resx">
+      <DependentUpon>201501201728278_Occurrence.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501250940554_GroupTemplates.resx">
+      <DependentUpon>201501250940554_GroupTemplates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201502010654193_OccSemGroups.resx">
+      <DependentUpon>201502010654193_OccSemGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503211534117_RoomReservations.resx">
+      <DependentUpon>201503211534117_RoomReservations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510190548052_Alumnae.resx">
+      <DependentUpon>201510190548052_Alumnae.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510251754102_ChangeLogs.resx">
+      <DependentUpon>201510251754102_ChangeLogs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511171821530_Notifications.resx">
+      <DependentUpon>201511171821530_Notifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512301403257_Curriculum.resx">
+      <DependentUpon>201512301403257_Curriculum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602100849187_Lottery.resx">
+      <DependentUpon>201602100849187_Lottery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603170611396_Studienverlauf.resx">
+      <DependentUpon>201603170611396_Studienverlauf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607130719061_MemberRights.resx">
+      <DependentUpon>201607130719061_MemberRights.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608010616597_SemesterDate.resx">
+      <DependentUpon>201608010616597_SemesterDate.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

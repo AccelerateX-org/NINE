@@ -1,0 +1,43 @@
+﻿@model MyStik.TimeTable.Data.Course
+@using (Ajax.BeginForm("ChangeGeneralSettings", null,
+                        new AjaxOptions()
+                        {
+                            HttpMethod = "Post",
+                            OnSuccess = "onSaved"
+                        }, new { @class = "form-horizontal", role = "form" }))
+{
+    <fieldset>
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Name des Kurses" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ShortName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control", placeholder = "Kurzbezeichnung des Kurses" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.Description, new { @class = "form-control", placeholder = "Beschreibung des Kurses" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.UrlMoodleCourse, new { @class = "col-md-2 control-label" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.UrlMoodleCourse, new { @class = "form-control", placeholder = "URL des Moodle-Kurses" })
+            </div>
+        </div>
+        <div class="form-group">
+
+            <div class="col-md-offset-2 col-md-8">
+                <button type="submit" class="btn btn-primary">Speichern</button>
+                <a href="#" class="btn btn-default">Abbrechen</a>
+            </div>
+        </div>
+    </fieldset>
+}

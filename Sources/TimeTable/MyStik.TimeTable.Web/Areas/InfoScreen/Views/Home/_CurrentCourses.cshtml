@@ -1,0 +1,58 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.InfoscreenModel
+
+<input id="tokenPanelRight" type="hidden" name="tokenPanelRight" value="@ViewBag.Token">
+
+<div class="portlet light">
+    <div class="portlet-title">
+        <div class="caption">
+            <h1>Derzeit läuft...</h1>
+        </div>
+    </div>
+    <div class="portlet-body infoscreen">
+        @if (Model.NowPlayingDates.Any())
+        {
+            <div class="infoscreen">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Zeitraum</th>
+                        <th>Raum</th>
+                        <th>Name</th>
+                        <th>Dozent</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var date in Model.NowPlayingDates)
+                    {
+                        if (date.Occurrence.IsCanceled)
+                        {
+                            <tr class="danger">
+                                <td>@Html.TimeSpan(date)</td>
+                                <td>abgesagt</td>
+                                <td>@date.Activity.Name</td>
+                                <td>@Html.LecturerList(date.Hosts)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>@Html.TimeSpan(date)</td>
+                                <td>@Html.RoomList(date.Rooms)</td>
+                                <td>@date.Activity.Name</td>
+                                <td>@Html.LecturerList(date.Hosts)</td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h1 class="text-success">...nix</h1>
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,9 @@
+﻿@model MyStik.TimeTable.Web.Models.ConfirmEmailMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Sie möchten NINE als Studierender der HM benutzern. Dazu haben Sie Ihre hm.edu Adresse angegeben.</p>
+<p>Zur Bestätigung Ihres Studierendenstatus folgen Sie bitte dem folgenden Link: <a href="@Url.Action("ConfirmHmEmail", "Account", new { userId = Model.User.Id, code = Model.Token }, Request.Url.Scheme)">Ich bin Studierender der HM</a></p>

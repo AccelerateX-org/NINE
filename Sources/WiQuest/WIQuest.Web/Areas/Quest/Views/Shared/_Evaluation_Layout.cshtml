@@ -1,0 +1,38 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Auswertung</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+
+
+
+
+        <div class="container">
+            <h2 class="text-center">Auswertung der Testergebnisse</h2>       
+            <p class="text-center">Sie haben die verschiedenen Bereiche wie folgt abgeschlossen:</p>
+            <br />
+            <br />
+
+            <div class="container body-content">
+                @RenderBody()
+                <br />
+                <footer>
+                    <p class="text-center">&copy; @DateTime.Now.Year - Hochschule München</p>
+                </footer>
+            </div>
+
+        </div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
+
+
+
+</html>

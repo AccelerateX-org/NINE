@@ -1,0 +1,66 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model IEnumerable<MyStik.TimeTable.Web.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Alumni";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Alumni</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>Aktionen</th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @if (ViewBag.UserRight.IsOrgAdmin)
+                        {
+                            @Html.ActionButton("fa-times", "Austragen", "Delete", "Alumni", new {id = item.Id}, new {@class = "btn btn-default"})
+                            @Html.ActionButton("fa-envelope", "E-Mail senden", "SingleMail", "Alumni", new {id = item.Id}, new {@class = "btn btn-default"})
+                        }
+                    </td>
+                </tr>
+            }
+
+        </table>
+        @if (ViewBag.UserRight.IsOrgAdmin)
+        {
+            @Html.ActionButton("fa-plus", "Anlegen", "Create", "Alumni", null, new {@class = "btn btn-default"})
+            @Html.ActionButton("fa-envelope", "E-Mail an Gruppe", "GroupMail", "Alumni", null, new {@class = "btn btn-default"})
+        }
+    </div>
+</div>

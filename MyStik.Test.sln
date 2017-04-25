@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.Data", "Sources\TimeTable\MyStik.TimeTable.Data\MyStik.TimeTable.Data.csproj", "{2C1BDFEC-D9E1-492E-B4DC-1FCD0EF25567}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.Test", "Sources\TimeTable\MyStik.TimeTable.Test\MyStik.TimeTable.Test.csproj", "{B859E608-27F2-4536-A6EF-5323A20FC426}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.Contracts", "Sources\TimeTable\MyStik.TimeTable.Contracts\MyStik.TimeTable.Contracts.csproj", "{11CB6560-B6FC-481A-BDAC-70326D835E64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.DataServices", "Sources\TimeTable\MyStik.TimeTable.DataServices\MyStik.TimeTable.DataServices.csproj", "{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://vsl004:8080/tfs/it09
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Sources\\TimeTable\\MyStik.TimeTable.Data\\MyStik.TimeTable.Data.csproj
+		SccProjectName1 = Sources/TimeTable/MyStik.TimeTable.Data
+		SccLocalPath1 = Sources\\TimeTable\\MyStik.TimeTable.Data
+		SccProjectUniqueName2 = Sources\\TimeTable\\MyStik.TimeTable.Test\\MyStik.TimeTable.Test.csproj
+		SccProjectName2 = Sources/TimeTable/MyStik.TimeTable.Test
+		SccLocalPath2 = Sources\\TimeTable\\MyStik.TimeTable.Test
+		SccProjectUniqueName3 = Sources\\TimeTable\\MyStik.TimeTable.Contracts\\MyStik.TimeTable.Contracts.csproj
+		SccProjectName3 = Sources/TimeTable/MyStik.TimeTable.Contracts
+		SccLocalPath3 = Sources\\TimeTable\\MyStik.TimeTable.Contracts
+		SccProjectUniqueName4 = Sources\\TimeTable\\MyStik.TimeTable.DataServices\\MyStik.TimeTable.DataServices.csproj
+		SccProjectName4 = Sources/TimeTable/MyStik.TimeTable.DataServices
+		SccLocalPath4 = Sources\\TimeTable\\MyStik.TimeTable.DataServices
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C1BDFEC-D9E1-492E-B4DC-1FCD0EF25567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C1BDFEC-D9E1-492E-B4DC-1FCD0EF25567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C1BDFEC-D9E1-492E-B4DC-1FCD0EF25567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C1BDFEC-D9E1-492E-B4DC-1FCD0EF25567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B859E608-27F2-4536-A6EF-5323A20FC426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B859E608-27F2-4536-A6EF-5323A20FC426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B859E608-27F2-4536-A6EF-5323A20FC426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B859E608-27F2-4536-A6EF-5323A20FC426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11CB6560-B6FC-481A-BDAC-70326D835E64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11CB6560-B6FC-481A-BDAC-70326D835E64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11CB6560-B6FC-481A-BDAC-70326D835E64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11CB6560-B6FC-481A-BDAC-70326D835E64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

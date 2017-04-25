@@ -1,0 +1,13 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.OfficeHourDateViewModel>
+@{
+    ViewBag.Title = "Abgesagte Sprechstunden";
+}
+
+<div class="row">
+    @Html.Partial("_MenuLeft")
+    <div class="col-xs-6 col-sm-9">
+        <h4>Heutige abgesagte Sprechstunden</h4>
+        @Html.Partial("_OfficeHourDateList", Model)
+    </div>
+</div>
+

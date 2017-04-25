@@ -1,0 +1,28 @@
+﻿@model CourseDateStateModel
+
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+{
+    if (Model.Summary.Date.Occurrence.IsCanceled)
+    {
+        @Html.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+    }
+    else
+    {
+        if (Model.State == SubscriptionState.BeforeSubscriptionPhase ||
+            !Model.Summary.Subscriptions.Any())
+        {
+            @Html.ActionButton("fa-trash-o text - danger", "löschen", "DeleteDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+            @Html.ActionButton("fa-calendar", "ändern", "MoveDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+        }
+        else
+        {
+            @Html.ActionButton("fa-times text-danger", "absagen", "CancelDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+            @Html.ActionButton("fa-calendar", "ändern", "MoveDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+        }
+    }
+    @Html.ActionButton("fa-info-circle btnTextPrimary", "Infos eingeben", "SetInfo", Model.Summary.Controller, new { id = Model.Summary.Date.Id }, new { @class = "btn btn-default" })
+}
+
+

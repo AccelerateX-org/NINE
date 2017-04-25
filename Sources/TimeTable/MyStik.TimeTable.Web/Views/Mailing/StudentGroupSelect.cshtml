@@ -1,0 +1,118 @@
+﻿@model MyStik.TimeTable.Data.Semester
+
+@{
+    ViewBag.Title = "Auswahl Semestergruppen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Mailing - Auswahl Semestergruppen</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+        @{
+            var nStud = 0;
+            <div id="dlgBody">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet light bordered">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-calendar"></i>Semestergruppen im @Model.Name
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div id="groupTable">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Name</th>
+                                                        <th>Anzahl Studierende</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var group in Model.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                                                    {
+                                                        nStud += group.Subscriptions.Count;
+
+                                                        <tr>
+                                                            <td><input id="@group.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
+                                                            <td>@group.FullName</td>
+                                                            <td>
+                                                                @group.Subscriptions.Count
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    <tr>
+                                                        <td><strong>Total</strong></td>
+                                                        <td><strong>@nStud</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <a class="btn btn-default" id="send" href="#"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+</div>
+
+@section Scripts {
+
+    <script>
+
+        $(function () {
+        });
+
+
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+
+        $("#send").click(function () {
+
+
+            var list = $("#groupTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+            var n = list.length;
+            var groupList = new Array();
+            var i;
+            for (i = 0; i < n; i++) {
+                groupList[i] = list[i].id;
+            }
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("StudentGroupSelect")',
+                data: {
+                    GroupIds: groupList
+                },
+                success: function (data, success, xhr) {
+                    $("#dlgBody").html(data);
+                }
+            });
+        });
+
+
+    </script>
+}

@@ -1,0 +1,13 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.CourseDateInfoModel>
+@{
+    ViewBag.Title = "Aktive Vorlesungen";
+}
+
+<div class="row">
+    @Html.Partial("_MenuLeft")
+    <div class="col-xs-6 col-sm-9">
+        <h4>Heutige Lehrveranstaltungen</h4>
+        @Html.Partial("_CourseDateList", Model)
+    </div>
+</div>
+

@@ -1,0 +1,38 @@
+﻿@using System.Web.Razor.Text
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.OfficeHourCharacteristicModel
+@{
+    ViewBag.Title = "OfficeHourDate";
+    var userService = new UserInfoService();
+}
+
+<h2>Sprechstunde @Model.Host.Name</h2>
+<h4>@Model.Date.Begin.ToShortDateString()</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Zeitraum</th>
+            <th>Name</th>
+            <th>Eingetragen am</th>
+            <th>Bemerkung</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var slot in Model.Date.Slots)
+        {
+            foreach (var subscription in slot.Occurrence.Subscriptions)
+            {
+                var user = userService.GetUserName(subscription.UserId);
+                <tr>
+                    <td>@Html.TimeSpan(slot)</td>
+                    <td>@user</td>
+                    <td>@subscription.TimeStamp</td>
+                    <td></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

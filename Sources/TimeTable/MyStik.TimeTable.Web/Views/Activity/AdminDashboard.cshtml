@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = ViewBag.Organiser +  " Dashboard";
+}
+
+<h2>Verwaltung @ViewBag.Organiser</h2>
+
+<div class="row">
+    <div class="col-xs-6 col-sm-3" id="sidebar" role="navigation">
+        <div class="list-group">
+            <a href="#" class="list-group-item">
+                Abgesagte Lehrveranstaltungen
+                <span class="badge">14</span>
+            </a>
+            <a href="#" class="list-group-item">
+                Lehrveranstaltungen heute
+                <span class="badge">14</span>
+            </a>
+            <a href="#" class="list-group-item">
+                Sprechstunden heute
+                <span class="badge">14</span>
+            </a>
+            <a href="#" class="list-group-item">
+                Raumreservierungen
+            </a>
+            <a href="#" class="list-group-item">
+                
+            </a>
+            <a href="#" class="list-group-item">Link</a>
+            <a href="#" class="list-group-item">Link</a>
+            <a href="#" class="list-group-item">Link</a>
+            <a href="#" class="list-group-item">Link</a>
+            <a href="#" class="list-group-item">Link</a>
+        </div>
+        
+        
+        @Ajax.ActionLink("Entfernen", "RemoveRoom", "Course",
+                            new { id = Model.ActivityDateId, roomId=room.Room.Id },
+                         new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = room.Room.Id.ToString(), OnSuccess = "onTimeChanged" },
+                            new { @class = "btn btn-default btn-xs" })
+
+
+    </div>
+    <div class="col-xs-6 col-sm-9">
+        <div id="admincontent"></div>
+    </div>
+</div>

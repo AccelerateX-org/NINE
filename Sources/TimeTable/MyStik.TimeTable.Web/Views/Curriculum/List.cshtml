@@ -1,0 +1,92 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>Gruppen</h2>
+@foreach (var cur in Model)
+{
+    <h4>@cur.ShortName</h4>
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Semester</th>
+            <th>Name</th>
+            <th>Aktivitäten</th>
+            <th>Gruppen</th>
+        </tr>
+        </thead>
+        <tbody>
+    @foreach (var group in cur.CurriculumGroups)
+    {
+        var n = group.SemesterGroups.Count;
+        var orderedList = group.SemesterGroups.OrderBy(g => g.Semester.Name).ThenBy(g => g.Name).ToList();
+
+        if (n == 0)
+        {
+            <tr>
+                <td>@group.Name</td>
+                <td colspan="4">keine Semestergruppen</td>
+            </tr>
+        }
+        else
+        {
+                foreach (var semGroup in orderedList)
+                {
+                    <tr>
+                        @if (semGroup == orderedList.First())
+                        {
+                        <td rowspan="@n">@group.Name</td>
+                        }
+
+                        <td>@semGroup.Semester.Name</td>
+                        <td>@semGroup.Name</td>
+                        <td>@semGroup.Activities.Count</td>
+                        <td>@semGroup.OccurrenceGroups.Count</td>
+                    </tr>
+                }
+        }
+
+    }
+        </tbody>
+    </table>
+}
+
+<h2>Gruppentemplate</h2>
+ @foreach (var cur in Model)
+{
+    <h4>@cur.ShortName</h4>
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var alias in cur.GroupAliases)
+        {
+            var n = alias.GroupTemplates.Count;
+            foreach (var template in alias.GroupTemplates)
+            {
+                <tr>
+                    @if (template == alias.GroupTemplates.First())
+                    {
+                        <td rowspan="@n">@alias.Name</td>
+                    }
+                    <td>@template.CurriculumGroupName</td>
+                    <td>@template.SemesterGroupName</td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+}
+
+
+
+
+

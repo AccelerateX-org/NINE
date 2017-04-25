@@ -1,0 +1,133 @@
+﻿@using System.Globalization
+@using System.Web.Mvc.Html
+@using Microsoft.AspNet.Identity
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.OfficeHour
+@{
+    ViewBag.Title = "Inspect";
+    var userService = new UserInfoService();
+    var actService = new ActivityService();
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Sprechstundentermine @Model.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="panel panel-default">
+                    <ul class="nav">
+                        <li>
+                            <a href="@Url.Action("CreateDate", "OfficeHour", new { id = Model.Id })">
+                                <i class="fa fa-plus-circle"></i> Neuer Termin
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SubscriptionList", "OfficeHour", new {id = Model.Id})">
+                                <i class="fa fa-download"></i> Teilnehmerliste
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("DeleteOfficeHour", "OfficeHour")">
+                                <i class="fa fa-trash-o"></i> Sprechstunde löschen
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-10">
+
+            @foreach (var date in Model.Dates.OrderBy(d => d.Begin))
+            {
+                var occStateText = actService.GetStatusText(date);
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <address>
+                                        <strong>@date.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</strong><br>
+                                        @Html.TimeSpan(date)<br>
+                                        @occStateText
+                                    </address>
+                                    @Html.ActionButton("fa-times text-danger", "absagen", "CancelDate", "OfficeHour", new { id = date.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                    @Html.ActionButton("fa-calendar", "ändern", "MoveDate", "OfficeHour", new { id = date.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                    @Html.ActionButton("fa-legal", "Regeln", "SubscriptionRules", "Occurrence", new { id = date.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                </div>
+                                <div class="col-md-9">
+                                    @if (date.Slots.Any())
+                                    {
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                                @foreach (var slot in date.Slots)
+                                                {
+                                                    if (slot.Occurrence.Subscriptions.Any())
+                                                    {
+                                                        foreach (var sub in slot.Occurrence.Subscriptions)
+                                                        {
+                                                            var name = userService.GetUserName(sub.UserId);
+                                                            
+                                                            <tr>
+                                                                <td>@Html.TimeSpan(slot)</td>
+                                                                <td>@name</td>
+                                                                <td>@sub.TimeStamp</td>
+                                                                <td>
+                                                                    @Html.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
+                                                                        new {Id = slot.Occurrence.Id, userId = sub.UserId},
+                                                                        new {@class = "btn btn-default btn-xs"})
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td>@Html.TimeSpan(slot)</td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    }
+                                    else
+                                    {
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                                @foreach (var sub in date.Occurrence.Subscriptions)
+                                                {
+                                                    <tr>
+                                                        <td>@sub.TimeStamp</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

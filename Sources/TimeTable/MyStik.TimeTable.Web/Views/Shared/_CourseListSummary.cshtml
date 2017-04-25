@@ -1,0 +1,51 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.CourseSummaryModel>
+
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Bezeichnung</th>
+                <th>Gruppe(n)</th>
+                <th>Zeit(en)</th>
+                <th>Raum</th>
+                <th>Dozent(en)</th>
+                @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
+                {
+                    <th></th>
+                }
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                var linkText = c.Course.Name + " (" + c.Course.ShortName + ")";
+                <tr>
+                    <td>
+                        @Html.ActionLink(linkText, "Index", "Course", new { id = c.Course.Id }, null)
+                    </td>
+                    <td>
+                        @Html.GroupList(c.Course.SemesterGroups)
+                    </td>
+                    <td>
+                        @Html.DateList(c.Dates)
+                    </td>
+                    <td>
+                        @Html.RoomList(c.Rooms)
+                    </td>
+                    <td>
+                        @Html.LecturerList(c.Lecturers)
+                    </td>
+                    @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
+                    {
+                        <td>@c.Course.Occurrence.Subscriptions.Count</td>
+                    }
+                    <td>
+                        @Html.Partial("_SubscriptionState", c.State)
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>

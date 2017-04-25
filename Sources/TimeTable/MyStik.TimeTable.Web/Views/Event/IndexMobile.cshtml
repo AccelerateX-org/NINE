@@ -1,0 +1,211 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.EventMobileViewModel
+
+@{
+    ViewBag.Title = "Veranstaltungen";
+}
+
+
+                <!-- Hier kommt der Seiteninhalt hinein -->
+                <!-- Hier kommt der Seiteninhalt hinein -->
+                <!--Das ist das Farbige Panel oben-->
+                <div class="panel-body bg-fillter-events">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2>Veranstaltungen &amp; Termine</h2>
+                        </div>
+                    </div>
+                </div>
+                <!--Das ist das Farbige Panel oben-->
+
+                <p>
+                    </p><div class="container">
+
+
+
+
+
+                        <!--1. Collapse-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        Feiertage
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                                <div class="panel-body">
+                                    <div class="portlet-body">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Datum</th>
+                                                    <th>Feiertag</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var DF in Model.DatumFeiertage)
+                                                {
+                                                    <tr>
+                                                        <td>@DF.Datum</td>
+                                                        <td>@DF.Feiertage</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--2. Collapse Leer, ohne Datenbankverknüpfung-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingTwo">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Allgemeine Veranstaltungen
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                <div class="panel-body">
+
+                                    <!--Untercollapse-->
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                      
+                                      <!-- foreach (var ev in Model.EventVeranstaltung)
+                                        {     
+                                            
+                                                                                 
+                                          <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="headingTwo1">
+                                                <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo1" aria-expanded="true" aria-controls="collapseTwo1">
+                                                        Allgemeine Veranstaltungen
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseTwo1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo1">
+                                                <div class="panel-body">
+                                                    <!--Hier ist die ganze Information über die Fachschaftssitzung
+
+
+                                                    <div class="panel-body">
+                                                      ev -->
+                                                         
+                                                     </div>
+
+                                 </div>
+                             </div>
+                         </div>
+   
+                                            
+                                             
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!--3. Collapse DummyDaten nicht Dynamisch erscheint nicht im Browser-->
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Veranstaltungen für Bachelorstudenten
+                </a>
+            </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div class="panel-body">
+
+                <!--Untercollapse DummyDaten nicht Dynamisch-->
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree1">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree1" aria-expanded="false" aria-controls="collapseThree1">
+                                    Infoveranstaltung "1 Name einfügen"
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree1">
+                            <div class="panel-body">
+                                Kurzinformation über Veranstaltung
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree2">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree2" aria-expanded="false" aria-controls="collapseThree2">
+                                    Infoveranstaltung "2 Name einfügen"
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree2">
+                            <div class="panel-body">
+                                Kurzinformation über Veranstaltung
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--4. Collapse Dummydaten nicht Dynamisch-->
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFour">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    Veranstaltungen für Masterstudenten
+                </a>
+            </h4>
+        </div>
+        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+            <div class="panel-body">
+                <!--Untercollapse-->
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour1">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour1" aria-expanded="false" aria-controls="collapseFour1">
+                                    1. Veranstaltung
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour1">
+                            <div class="panel-body">
+                                Information über Veranstaltung            
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour2">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour2" aria-expanded="false" aria-controls="collapseFour2">
+                                    2. Veranstaltung
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour2">
+                            <div class="panel-body">
+                                Information über Veranstaltung
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+-->
+    </div>
+    </div>
+    </div>
+

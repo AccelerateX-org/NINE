@@ -1,0 +1,32 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.RoomConflictViewModel
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Konflikte für Raum @Model.Room.Number</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Benötigt</th>
+                    <th>Veranstaltung</th>
+                    <th>Belegt</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var conflictDate in Model.ConflictDates)
+                {
+                    foreach (var conflict in conflictDate.Conflicts)
+                    {
+                        <tr>
+                            <td>@Html.TimeSpanWithDate(conflictDate.Begin, conflictDate.End)</td>
+                            <td>@conflict.Activity.Name</td>
+                            <td>@Html.TimeSpan(conflict)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

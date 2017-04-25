@@ -1,0 +1,18 @@
+﻿@model MyStik.TimeTable.Web.Models.ForgotPasswordMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+@Html.Raw(Model.CustomBody)
+
+@if (Model.IsNewAccount)
+{
+    <p>Ihr Benutzerkonto wurde angelegt. Als Benutzername verwenden Sie bitte die E-Mail Adresse, an die diese Nachricht gesendet wurde.</p>
+    <p>
+        Zur Eingabe Ihres persönlichen Passworts verwenden Sie bitte den folgenden Link 
+        <a href="@Url.Action("ResetPassword", "Account", new {userId = Model.User.Id, code = Model.Token}, Request.Url.Scheme)">Passwort setzen</a>
+        oder nutzen die Funktion <a href="@Url.Action("ForgotPassword", "Account")">Passwort vergessen</a> auf der Anmeldeseite.
+    </p>
+    <p><strong>Wichtiger Hinweis:</strong> Das Passwort muss eine Länge von mindestens 8 Zeichen besitzen, Klein- und Großbuchstaben, Ziffern sowie Sonderzeichen enthalten, z.B. Pas12345?.</p>
+}

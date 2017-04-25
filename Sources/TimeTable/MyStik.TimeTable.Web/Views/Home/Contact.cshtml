@@ -1,0 +1,46 @@
+﻿@model MyStik.TimeTable.Web.Models.ContactMailModel
+@{
+    Layout = "~/Views/Shared/_LayoutNewPublic.cshtml";
+    ViewBag.Title = "Kontakt";
+}
+<div class="row">
+    <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Kontakt</h4>
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                {
+                    @Html.ValidationSummary(true)
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Subject, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Body, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @Html.TextAreaFor(m => m.Body, new { @class = "form-control", rows = "10" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Senden" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>

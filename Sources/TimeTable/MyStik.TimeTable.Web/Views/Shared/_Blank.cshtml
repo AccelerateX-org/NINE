@@ -1,0 +1,36 @@
+﻿@using MyStik.TimeTable.Web.Services
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINE - @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    <link href="@Styles.Url("~/Content/print.css")" rel="stylesheet" type="text/css" media="print" />
+
+    @RenderSection("styles", required: false)
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="container-fluid">
+        @RenderBody()
+        <hr />
+        <footer>
+            <ul class="list-inline">
+                <li><a href="http://www.wi.hm.edu">&copy; @DateTime.Now.Year FK09</a></li>
+                <li><a href="http://www.hm.edu">Hochschule München</a></li>
+                <li>@Html.ActionLink("Kontakt", "Contact", "Home")</li>
+                <li>@Html.ActionLink("Impressum", "Imprint", "Home")</li>
+            </ul>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,23 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.RoomInfoModel>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Nummer</th>
+            <th>Plätze</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model.OrderBy(r => r.Room.Number))
+        {
+            <tr id="@room.Room.Id">
+                <td>@room.Room.Number</td>
+                <td>@room.Room.Capacity</td>
+                <td><button class="btn btn-default btn-sm" onclick="selectRoom('@room.Room.Id', '@room.Room.Number')">auswählen</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

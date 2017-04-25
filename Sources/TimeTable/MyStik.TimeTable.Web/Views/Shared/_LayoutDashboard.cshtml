@@ -1,0 +1,492 @@
+﻿@using Microsoft.AspNet.Identity
+@using MyStik.TimeTable.Web.Services
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fillter | @ViewBag.Title</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/uniform/css/uniform.default.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css")" />
+    @RenderSection("styles", required: false)
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/css/components.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/css/plugins.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/layout.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/themes/fillter.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/custom.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/fillter/css/fillter.css")" />
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+</head>
+<body class="page-header-fixed page-quick-sidebar-over-content page-sidebar-closed-hide-logo page-container-bg-solid">
+    <!-- BEGIN HEADER -->
+    <div class="page-header navbar navbar-fixed-top">
+        <!-- BEGIN HEADER INNER -->
+        <div class="page-header-inner">
+            <!-- BEGIN LOGO -->
+            <div class="page-logo">
+                <a href="@Url.Action("Index", "Home")">
+                    <img class="fillter-logo-sm" src="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+                </a>
+                <div class="menu-toggler sidebar-toggler hide">
+                </div>
+            </div>
+            <!-- END LOGO -->
+            <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+            <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+            </a>
+            <!-- END RESPONSIVE MENU TOGGLER -->
+            <!-- BEGIN TOP NAVIGATION MENU -->
+            <div class="top-menu">
+                <ul class="nav navbar-nav pull-right">
+
+
+                    <!-- BEGIN NOTIFICATION DROPDOWN -->
+                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                  
+                    <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                            <i class="icon-bell"></i>
+                            <span class="badge badge-default" id="AnzahlNeue" style="display: none">
+
+                            </span>
+                        </a>
+                            <ul id="NotificationList" class="dropdown-menu"></ul>
+
+
+                    </li>
+
+                    <!-- END NOTIFICATION DROPDOWN -->
+
+                    <!-- BEGIN USER LOGIN DROPDOWN -->
+                    <li class="dropdown dropdown-user">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                            <img alt="" class="img-circle" src="../../assets/admin/layout/img/avatar.png" />
+                            <span class="username username-hide-on-mobile">
+                                @User.Identity.GetUserName()
+                            </span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-default">
+                            <li>
+                                <a href="@Url.Action("Index", "Activity")">
+                                    <i class="icon-calendar"></i> Mein Kalender
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "StudyBook")">
+                                    <i class="icon-book-open"></i> Mein Studienbuch
+                                </a>
+                            </li>
+                            <li class="divider">
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "UserProfile")">
+                                    <i class="icon-settings"></i> Meine Einstellungen
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Manage")">
+                                    <i class="icon-user"></i> Mein Benutzerkonto
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("DeleteAccount", "Account")">
+                                    <i class="icon-trash"></i> Benutzerkonto löschen
+                                </a>
+                            </li>
+                            <li class="divider">
+                            </li>
+                            <li>
+                                <a href="javascript:document.getElementById('logoutForm').submit()">
+                                    <i class="icon-key"></i> Abmelden
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- END USER LOGIN DROPDOWN -->
+                    <!-- BEGIN QUICK SIDEBAR TOGGLER -->
+                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                    <li class="dropdown dropdown-quick-sidebar-toggler">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class="icon-calendar"></i>
+                        </a>
+                    </li>
+                    <!-- END QUICK SIDEBAR TOGGLER -->
+                </ul>
+            </div>
+            <!-- END TOP NAVIGATION MENU -->
+        </div>
+        <!-- END HEADER INNER -->
+    </div>
+    <!-- END HEADER -->
+    <div class="clearfix">
+    </div>
+
+    <!-- BEGIN CONTAINER -->
+    <div class="page-container">
+        <!-- BEGIN SIDEBAR -->
+        <div class="page-sidebar-wrapper">
+            <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+            <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+            <div class="page-sidebar navbar-collapse collapse">
+                <!-- BEGIN SIDEBAR MENU -->
+                <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+                <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+                <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+                <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+                <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+                <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+                <ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+                    <li class="sidebar-toggler-wrapper">
+                        <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                        <div class="sidebar-toggler">
+                        </div>
+                        <!-- END SIDEBAR TOGGLER BUTTON -->
+                    </li>
+                    <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+                    <li class="sidebar-search-wrapper">
+                        <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+                        <!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
+                        <!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered & solid search box -->
+                        <form class="sidebar-search " action="@Url.Action("Index", "Search")">
+                            <a href="javascript:;" class="remove">
+                                <i class="icon-close"></i>
+                            </a>
+                            <div class="input-group">
+                                <input name="searchText" type="text" class="form-control" placeholder="Suchen...">
+                                <span class="input-group-btn">
+                                    <a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
+                                </span>
+                            </div>
+                        </form>
+                        <!-- END RESPONSIVE QUICK SEARCH FORM -->
+                    </li> 
+                    <li id="menu-dashboard" class="start">
+                        <a href="@Url.Action("Index", "Dashboard")">
+                            <i class="icon icon-menu icon-dashboard"></i>
+                            <span class="title">STARTSEITE</span>
+                            <span class="selected"></span>
+                        </a>
+                    </li>
+                    <li id="menu-study">
+                        <a href="javascript:;">
+                            <i class="icon icon-menu icon-studium"></i>
+                            <span class="title">STUDIUM</span>
+                            <span class="arrow open"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li id="menu-study-courses">
+                                <a href="@Url.Action("Index", "Planer")">
+                                    Vorlesungsplaner
+                                </a>
+                            </li>
+                            <li id="menu-study-semester">
+                                <a href="@Url.Action("Index", "Semester")">
+                                    Semesterablauf
+                                </a>
+                            </li>
+                                <li id="menu-study-curriculum">
+                                <a href="@Url.Action("Index", "Curricula")">
+                                        Studiengänge
+                                    </a>
+                                </li>
+                        </ul>
+                    </li>
+                    <li id="menu-current">
+                        <a href="javascript:;">
+                            <i class="icon icon-menu icon-mensa"></i>
+                            <span class="title">AKTUELLES</span>
+                            <span class="arrow open"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li id="menu-current-events">
+                                <a href="@Url.Action("Index", "Event")">
+                                    Veranstaltungen
+                                </a>
+                            </li>
+                            <li id="menu-current-newsletter">
+                                <a href="@Url.Action("Index", "Newsletter")">
+                                    Newsletter & Mailing
+                                </a>
+                            </li>
+                            <li id="menu-current-jobs">
+                                <a href="@Url.Action("Index", "Jobs")">
+                                    Jobangebote
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="menu-cantine">
+                        <a href="javascript:;">
+                            <i class="icon icon-menu icon-aktuelles"></i>
+                            <span class="title">ESSEN & TRINKEN</span>
+                            <span class="arrow open"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li id="menu-current-events">
+                                <a href="@Url.Action("Index", "Cantine")">
+                                    Mensa
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="menu-rooms">
+                        <a href="@Url.Action("Index","Room")">
+                            <i class="icon icon-menu icon-raeume"></i>
+                            <span class="title">RÄUME</span>
+                        </a>
+                    </li>
+                    <li id="menu-persons">
+                        <a href="javascript:;">
+                            <i class="icon icon-menu icon-dozenten"></i>
+                            <span class="title">PERSONEN</span>
+                            <span class="arrow open"></span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li id="menu-persons-lecturers">
+                                <a href="@Url.Action("Index", "Lecturer")">
+                                    Dozenten
+                                </a>
+                            </li>
+                        @*
+    <li id="menu-persons-contacts">
+        <a href="@Url.Action("Index", "Contacts")">
+            Ansprechpartner
+        </a>
+    </li>
+                        *@
+                            <li id="menu-persons-students">
+                                <a href="@Url.Action("Index", "Students")">
+                                    Studierende
+                                </a>
+                            </li>
+                            <li id="menu-persons-alumni">
+                                <a href="@Url.Action("Index", "Alumni")">
+                                    Alumni
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @if (User.IsInRole("SysAdmin"))
+                    {
+                        <li id="menu-system">
+                            <a href="javascript:;">
+                                <i class="fa fa-database"></i>
+                                <span class="title">System</span>
+                                <span class="arrow open"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li id="menu-system-users">
+                                    <a href="@Url.Action("Index", "User")">
+                                        Benutzerverwaltung
+                                    </a>
+                                </li>
+                                <li id="menu-system-log">
+                                    <a href="@Url.Action("Index", "Log")">
+                                        Logs
+                                    </a>
+                                </li>
+                                <li id="menu-system-changes">
+                                    <a href="@Url.Action("Index", "Change")">
+                                        Änderungen
+                                    </a>
+                                </li>
+                                <li id="menu-system-repair">
+                                    <a href="@Url.Action("Index", "SysAdmin")">
+                                        Reparaturen
+                                    </a>
+                                </li>
+                                <li id="menu-system-data">
+                                    <a href="@Url.Action("Index", "Organiser")">
+                                        Veranstalter
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+                <!-- END SIDEBAR MENU -->
+            </div>
+        </div>
+        <!-- END SIDEBAR -->
+        <!-- BEGIN CONTENT -->
+        <div class="page-content-wrapper">
+            <div class="page-content">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- END CONTENT -->
+        <!-- BEGIN QUICK SIDEBAR -->
+        <a href="javascript:;" class="page-quick-sidebar-toggler"><i class="icon-close"></i></a>
+        <div class="page-quick-sidebar-wrapper">
+            <div id="agenda" class="page-quick-sidebar">
+            </div>
+        </div>
+        <!-- END QUICK SIDEBAR -->
+    </div>
+    <!-- END CONTAINER -->
+    <!-- BEGIN FOOTER -->
+    <div class="page-footer">
+        <div class="page-footer-inner">
+            <ul class="list-inline">
+                <li><a href="http://www.wi.hm.edu">&copy; @DateTime.Now.Year FK09</a></li>
+                <li><a href="http://www.hm.edu">Hochschule München</a></li>
+                <li>@Html.ActionLink("Kontakt", "Contact", "Home")</li>
+                <li>@Html.ActionLink("Impressum", "Imprint", "Home")</li>
+            </ul>
+        </div>
+        <div class="scroll-to-top">
+            <i class="icon-arrow-up"></i>
+        </div>
+    </div>
+    <!-- END FOOTER -->
+    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Assets/global/plugins/respond.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/excanvas.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-migrate.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-ui/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery.blockui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery.cokie.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/uniform/jquery.uniform.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js")"></script>
+    @RenderSection("scripts", required: false)
+    <script src="@Url.Content("~/Assets/global/scripts/metronic.js")"></script>
+    <script src="@Url.Content("~/Assets/admin/layout/scripts/layout.js")"></script>
+    <script src="@Url.Content("~/Assets/admin/layout/scripts/quick-sidebar.js")"></script>
+    <script>
+        jQuery(document).ready(function () {
+            Metronic.init(); // init metronic core componets
+            Layout.init(); // init layout
+            QuickSidebar.init(); // init quick sidebar
+
+            // Inhalt Quicksidebar laden
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Agenda", "Activity")",
+                success: function (data) {
+                    $("#agenda").html(data);
+                }
+            });
+
+            var menuId = "@ViewBag.MenuId";
+            if (menuId != null) {
+                $("#" + menuId).addClass("active");
+            }
+
+            $("#AnzahlNeue").hide();
+            //$("#NotificationList").hide();
+
+            // Inhalt für die NotificationList laden
+            
+                $.ajax({
+                  type: "POST",
+                  data: { userId: "@User.Identity.GetUserId()" },
+                  url: "@Url.Action("GetNotificationList", "Dashboard")",
+                    success: function (data) {                        
+
+                        //$("#NotificationList").show();
+                        $("#NotificationList").html(data);
+
+                        var n = $("#AnzahlNeueNotifications").text();
+
+                        // welches Element ist das, was den slimscroll bekommen soll?
+                        // init aufrufen
+                        //Metronic.initSlimScroll('.scroller');
+                        $('#notificationScroller').slimScroll({
+                            color: '#444444',
+                            height: '250px',
+                            alwaysVisible: true,
+                            size: '7px'
+                        });
+
+                        if (n > 0) {
+                            $("#AnzahlNeue").show();
+                            $("#AnzahlNeue").html($("#AnzahlNeueNotifications").text());
+                        }
+                  }
+        });
+        
+
+        });
+
+        function MarkAsRead(ChangeId) {
+            $.ajax({
+                    type: "POST",
+                data: { userId: "@User.Identity.GetUserId()", changeId: ChangeId },
+                    url: "@Url.Action("MarkAsRead", "Dashboard")",
+                    success: function (data) {
+                        $("#NotificationList").html(data);
+
+                        var n = $("#AnzahlNeueNotifications").text();
+
+                        $('#notificationScroller').slimScroll({
+                            color: '#444444',
+                            height: '250px',
+                            alwaysVisible: true,
+                            size: '7px'
+                        });
+
+                        if (n > 0) {
+                            $("#AnzahlNeue").show();
+                            $("#AnzahlNeue").html($("#AnzahlNeueNotifications").text());
+                        }
+                        else {
+                            $("#AnzahlNeue").hide();
+                        }
+                    }
+            });
+         }
+
+    </script>
+
+    @if (!Request.IsLocal)
+    {
+        <!-- Piwik -->
+        <script type="text/javascript">
+            var _paq = _paq || [];
+            _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                var u = "//analytics.it09.de/piwik/";
+                _paq.push(['setTrackerUrl', u + 'piwik.php']);
+                _paq.push(['setSiteId', 1]);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript';
+                g.async = true;
+                g.defer = true;
+                g.src = u + 'piwik.js';
+                s.parentNode.insertBefore(g, s);
+            })();
+        </script>
+        <noscript>
+            <p>
+                <img src="//analytics.it09.de/piwik/piwik.php?idsite=1" style="border: 0;" alt="" />
+            </p>
+        </noscript>
+        <!-- End Piwik Code -->
+    }
+</body>
+</html>
+

@@ -1,0 +1,165 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.UserAdminViewModel
+
+    <td>@Model.User.LastName @Model.User.FirstName</td>
+    <td>
+        @if (Model.User.EmailConfirmed)
+        {
+            <i class="fa fa-check text-success"></i>
+        }
+        else
+        {
+            <i class="fa fa-question text-warning"></i>
+        }
+    </td>
+<td>
+    @if (!string.IsNullOrEmpty(Model.User.Email))
+    {
+        <a href="mailto:@Model.User.Email"> @Model.User.Email</a>
+
+    }
+    @if (!Model.User.UserName.Equals(Model.User.Email))
+    {
+        <span>(@Model.User.UserName)</span>
+    }
+    @if (!Model.MailConfirmed && !string.IsNullOrEmpty(Model.User.Remark))
+    {
+        <p>
+            <strong>@Model.User.AccountErrorMessage</strong>
+        </p>
+    }
+    @if (Model.User.ExpiryDate.HasValue)
+    {
+        if (Model.User.ExpiryDate.Value <= DateTime.Today)
+        {
+            <p class="text-danger">Konto verfällt am @Model.User.ExpiryDate.Value.ToShortDateString()</p>
+        }
+        else
+        {
+            <p>Konto verfällt am @Model.User.ExpiryDate.Value.ToShortDateString()</p>
+        }
+    }
+</td>
+    <td>
+        @switch (Model.User.MemberState)
+        {
+            case MemberState.Student:
+                <i class="fa fa-graduation-cap"></i>
+                break;
+            case MemberState.Staff:
+            <i class="fa fa-university text-info"></i>
+                break;
+            case MemberState.Guest:
+            <i class="fa fa-user text-info"></i>
+                break;
+        }
+    </td>
+    <td>
+        @if (Model.User.LikeEMails)
+        {
+            <i class="fa fa-envelope-o text-success"></i>
+        }
+    </td>
+    <td>
+        @foreach (var member in Model.Members)
+        {
+            if (member.Organiser != null)
+            {
+                @Html.ActionLink(member.Organiser.ShortName, "Members", "Organiser", new { id = member.Organiser.Id }, null)
+                if (member != Model.Members.Last())
+                {
+                    @Html.Raw(", ")
+                }
+            }
+            else
+            {
+                @Html.Raw("Fehler!")
+            }
+        }
+    </td>
+    <td>
+        @Html.ActionLink(Model.SubscriptionCount.ToString(), "Subscriptions", "User", new { id = Model.User.Id }, null)
+
+        @if (Model.SemesterGroup != null)
+        {
+            @Html.Raw(" (")
+            @Model.SemesterGroup.FullName
+            @Html.Raw(")")
+        }
+    </td>
+    <td>@Model.User.Registered</td>
+    <td>@Model.User.LastLogin</td>
+<td>
+    @if (User.IsInRole("SysAdmin"))
+    {
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-gears"></i> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    @Ajax.ActionButton("fa-graduation-cap", "Student", "MakeStudent", "User",
+                        new {id = Model.User.Id},
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    @Ajax.ActionButton("fa-university", "Staff", "MakeStaff", "User",
+                        new {id = Model.User.Id},
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    @Ajax.ActionButton("fa-user", "Gast", "MakeGuest", "User",
+                        new {id = Model.User.Id},
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    @Ajax.ActionButton("fa-wrench", "RepairUser", "RepairUser", "User",
+                        new { id = Model.User.Id },
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteUser", "User",
+                        new {id = Model.User.Id},
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = Model.User.Id
+                        },
+                        null)
+                </li>
+                <li>
+                    <a href="@Url.Action("ChangeUserName", new {id=Model.User.Id})">Benutzernamen ändern</a>
+                </li>
+            </ul>
+        </div>
+    }
+</td>
+
+
+

@@ -1,0 +1,31 @@
+﻿@model MyStik.TimeTable.Web.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "Löschen";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Erfolgreich gelöscht
+    </div>
+    <div class="panel-body">
+        Folgender Benutzer wurde erfolgreich aus der Gruppe "ALUMNI" ausgetragen:
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Vorname</th>
+                    <th>Nachname</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.FirstName</td>
+                    <td>@Model.LastName</td>
+                    <td>@Model.Email</td>
+                </tr>
+            </tbody>
+        </table>
+        @Html.ActionLink("Zurück zur Übersicht", "Index")
+    </div>
+</div>

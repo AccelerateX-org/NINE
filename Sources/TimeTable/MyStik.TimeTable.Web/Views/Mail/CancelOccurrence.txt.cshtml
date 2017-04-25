@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Web.Models.SubscriptionMailModel
+@{
+    Layout = "~/Views/Mail/_CustomTextTemplate.cshtml";
+}
+
+Folgendes Ereignis wurde von @Html.Raw(@Model.SenderUser.FirstName) @Html.Raw(Model.SenderUser.LastName) abgesagt:
+@Html.Raw(Model.Summary.Name)
+@Html.Raw(Model.Summary.TimeFrame)
+
+

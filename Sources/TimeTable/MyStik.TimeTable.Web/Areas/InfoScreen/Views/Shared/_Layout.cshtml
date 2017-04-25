@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fillter | Infoscreen</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/uniform/css/uniform.default.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css")" />
+    @RenderSection("styles", required: false)
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/css/components.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/css/plugins.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/layout.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/themes/fillter.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/custom.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/fillter/css/fillter.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/fillter/css/fillter-infoscreen.css")" />
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="shortcut icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+</head>
+<body class="page-header-fixed page-container-bg-solid">
+<!-- BEGIN HEADER -->
+<!--
+    <div class="page-header navbar navbar-fixed-top">
+        <div class="page-header-inner">
+            <div class="page-logo">
+                <a href="#">
+                    <img class="fillter-logo-sm" src="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+                </a>
+            </div>
+            <div class="top-menu">
+                <ul class="nav navbar-nav pull-right">
+                    <li class="dropdown dropdown-user">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                            <span class="username username-hide-on-mobile">
+                                <strong>Testbetrieb</strong>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+        </div>
+
+        </div>
+    </div>
+-->
+        <!-- END HEADER -->
+    <div class="clearfix">
+    </div>
+
+    <!-- BEGIN CONTAINER -->
+    <div class="page-container">
+        <!-- BEGIN CONTENT -->
+        <div class="page-content-wrapper">
+            @RenderBody()
+        </div>
+     
+        <!-- END CONTENT -->
+        </div>
+        <!-- END CONTAINER -->
+        <!-- BEGIN FOOTER -->
+        <div class="page-footer">
+            <div class="page-footer-inner">
+                <ul class="list-inline">
+                    <li class="page-logo">
+                        <a href="#">
+                            <img class="fillter-logo-sm" src="@Url.Content("~/Assets/fillter/img/logo.svg")"/>
+                        </a>
+                    </li>
+                    <li>fillter Infoscreen</li>
+                    <li>Fakultät für Wirtschaftsingenieurwesen</li>
+                    <li>Hochschule München</li>
+                </ul>
+            </div>
+            <div class="scroll-to-top">
+                <i class="icon-arrow-up"></i>
+            </div>
+        </div>
+        <!-- END FOOTER -->
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Assets/global/plugins/respond.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/excanvas.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-migrate.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-ui/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery.blockui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery.cokie.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/uniform/jquery.uniform.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js")"></script>
+    @RenderSection("scripts", required: false)
+    <script src="@Url.Content("~/Assets/global/scripts/metronic.js")"></script>
+    <script src="@Url.Content("~/Assets/admin/layout/scripts/layout.js")"></script>
+    <script src="@Url.Content("~/Assets/admin/layout/scripts/quick-sidebar.js")"></script>
+        <script>
+            jQuery(document).ready(function () {
+                Metronic.init(); // init metronic core componets
+                Layout.init(); // init layout
+            });
+        </script>
+
+</body>
+</html>

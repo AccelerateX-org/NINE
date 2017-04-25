@@ -1,0 +1,84 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+@{
+    ViewBag.Title = "Studiengänge";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studiengänge</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+    @if (ViewBag.HasEditRights)
+            {
+                <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <ul class="nav">
+                    <li><a href="@Url.Action("Create")">Studiengang anlegen</a></li>
+                    <li><a href="@Url.Action("Index", "Untis")">Stundenplan einlesen</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+                if (User.IsInRole("SysAdmin"))
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <ul class="nav">
+                                    <li><a href="@Url.Action("ImportData")">Curriculum einlesen</a></li>
+                                    <li><a href="@Url.Action("CorrectGroups")">Gruppen umhängen</a></li>
+                                    <li><a href="@Url.Action("CheckGroups")">Gruppen prüfen</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            }
+            </div>
+            <div class="col-md-10">
+                <div class="panel panel-default">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Kurzname</th>
+                                <th>Name</th>
+                                <th>Fakultät</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var curr in Model)
+                        {
+                                <tr>
+                                    <td><a href="@Url.Action("Details", new {id=curr.Id})">@curr.ShortName</a></td>
+                                    <td>@curr.Name</td>
+                                    <td>@curr.Organiser.Name</td>
+                                    <td>
+                                        @if (ViewBag.HasEditRights)
+                                    {
+
+                                    }
+                                    </td>
+                                </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+

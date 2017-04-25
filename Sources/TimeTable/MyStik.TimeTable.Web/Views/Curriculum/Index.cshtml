@@ -1,0 +1,86 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+@using System.Data.Entity.Migrations.Infrastructure
+@using MyStik.TimeTable.Web.Helpers
+@{
+    ViewBag.Title = "Studienfortschritt";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studiengänge</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="semProfile">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    @section scripts
+{
+        <script>
+
+            $(document).ready(function () {
+                onCurriculumChanged();
+            });
+
+
+            function onCurriculumChanged() {
+                var group = $('#Curriculum option:selected').val();
+
+                $('#semProfile').html('');
+                $('#loading').show();
+                $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("Details", "Curriculum")',
+                    data: {
+                        currId: group,
+                    },
+                    success: function (data, success, xhr) {
+                        $('#semProfile').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+            }
+
+
+
+        </script>
+    }
+
+
+
+
+
+

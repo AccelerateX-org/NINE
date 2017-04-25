@@ -1,0 +1,41 @@
+﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.OccurrenceId)
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DisplayTextFor(m => m.Name)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Subject, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Body, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.Body, new { @class = "form-control", rows = "10" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Anhänge</label>
+            <div class="col-md-10">
+                <div><input type="file" name="Attachments" id="Attachment1" /></div>
+                <div><input type="file" name="Attachments" id="Attachment2" /></div>
+                <div><input type="file" name="Attachments" id="Attachment3" /></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Senden" class="btn btn-default" />
+            </div>
+        </div>
+    </fieldset>
+}

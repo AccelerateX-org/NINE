@@ -1,0 +1,116 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomLookUpModel
+@{
+    ViewBag.Title = "Datum";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+
+
+<h4>Raumsuche nach Wochentag</h4>
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Wochentag und Zeitraum</div>
+            <div class="panel-body">
+                <table class="table table-bordered table-condensed">
+                    <tbody>
+                        <tr class="active">
+                            <td>Tag</td>
+                            <td>@Html.DropDownListFor(model => model.DayOfWeek, (IEnumerable<SelectListItem>)ViewBag.WeekDays)</td>
+                        </tr>
+                        <tr class="active">
+                            <td>Von</td>
+                            <td>
+                                @Html.DropDownListFor(model => model.BeginHour, (IEnumerable<SelectListItem>)ViewBag.Hours)
+                                @Html.DropDownListFor(model => model.BeginMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes)
+                            </td>
+                        </tr>
+                        <tr class="active">
+                            <td>Bis</td>
+                            <td>
+                                @Html.DropDownListFor(model => model.EndHour, (IEnumerable<SelectListItem>)ViewBag.Hours)
+                                @Html.DropDownListFor(model => model.EndMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Liste der freien Räume</div>
+            <div class="panel-body">
+                <div id="RoomList"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+        $(function() {
+
+            $("#DayOfWeek").change(function () {
+                onTimeChanged();
+            });
+
+            $("#BeginHour").change(function() {
+                onTimeChanged();
+            });
+
+            $("#BeginMinute").change(function() {
+                onTimeChanged();
+            });
+
+            $("#EndHour").change(function () {
+                onTimeChanged();
+            });
+
+            $("#EndMinute").change(function () {
+                onTimeChanged();
+            });
+
+            onTimeChanged();
+        });
+
+
+        function onTimeChanged() {
+            var day = $('#DayOfWeek option:selected').val();
+            var beginNewHour = $('#BeginHour option:selected').val();
+            var beginNewMinute = $('#BeginMinute option:selected').val();
+            var endNewHour = $('#EndHour option:selected').val();
+            var endNewMinute = $('#EndMinute option:selected').val();
+            var from = beginNewHour + ":" + beginNewMinute;
+            var to = endNewHour + ":" + endNewMinute;
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("RoomListByDayOfWeek")',
+                data: {
+                    day: day,
+                    from: from,
+                    to: to
+                },
+                success: function(data, success, xhr) {
+                    $('#RoomList').html(data);
+                }
+            });
+
+        };
+
+    </script>
+}

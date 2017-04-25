@@ -1,0 +1,116 @@
+﻿@using System.Globalization
+@using System.Web.UI.WebControls
+@using MyStik.TimeTable.Web.Helpers
+@using PagedList
+@using PagedList.Mvc
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Lehrveranstaltungen " + Model.Organiser.ShortName;
+}
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+<h4>Lehrveranstaltungen</h4>
+
+<div class="panel panel-default">
+    <div class="panel panel-default">
+        <div class="panel-heading">Alle Lehrveranstaltungen (@ViewBag.Semester.Name)</div>
+        <div class="panel-body">
+            <div>
+                @Html.ActionLink("A", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "A" }, null)
+                @Html.ActionLink("B", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "B" }, null)
+                @Html.ActionLink("C", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "C" }, null)
+                @Html.ActionLink("D", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "D" }, null)
+                @Html.ActionLink("E", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "E" }, null)
+                @Html.ActionLink("F", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "F" }, null)
+                @Html.ActionLink("G", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "G" }, null)
+                @Html.ActionLink("H", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "H" }, null)
+                @Html.ActionLink("I", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "I" }, null)
+                @Html.ActionLink("J", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "J" }, null)
+                @Html.ActionLink("K", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "K" }, null)
+                @Html.ActionLink("L", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "L" }, null)
+                @Html.ActionLink("M", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "M" }, null)
+                @Html.ActionLink("N", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "N" }, null)
+                @Html.ActionLink("O", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "O" }, null)
+                @Html.ActionLink("P", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "P" }, null)
+                @Html.ActionLink("Q", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "Q" }, null)
+                @Html.ActionLink("R", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "R" }, null)
+                @Html.ActionLink("S", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "S" }, null)
+                @Html.ActionLink("T", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "T" }, null)
+                @Html.ActionLink("U", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "U" }, null)
+                @Html.ActionLink("V", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "V" }, null)
+                @Html.ActionLink("W", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "W" }, null)
+                @Html.ActionLink("X", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "X" }, null)
+                @Html.ActionLink("Y", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "Y" }, null)
+                @Html.ActionLink("Z", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "Z" }, null)
+            </div>
+            
+
+            <table class="table table-striped table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Gruppe(n)</th>
+                        <th>Zeit(en)</th>
+                        <th>Raum</th>
+                        <th>Dozent(en)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.Courses)
+                    {
+                        <tr>
+                            <td>
+                                @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new { id = c.Course.Id }, null)
+                            </td>
+                            <td>
+                                @foreach (var group in c.Course.SemesterGroups)
+                                {
+                                    if (group.CurriculumGroup != null)
+                                    {
+                                        var label = group.CurriculumGroup.Curriculum.ShortName + " - " + group.CurriculumGroup.Name;
+                                        @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
+                                        if (group != c.Course.SemesterGroups.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var label = "Ohne Zuordnung";
+                                        <div class="text-danger"><strong>@Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)</strong></div>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @foreach (var courseDate in c.Dates)
+                                {
+                                    <div>@courseDate.DefaultDate.ToString("dd.MM.yyyy", new CultureInfo("de-DE")) [@courseDate.StartTime.ToString(@"hh\:mm") - @courseDate.EndTime.ToString(@"hh\:mm")]</div>
+                                }
+                            </td>
+                            <td>
+                                @Html.RoomList(c.Rooms)
+                            </td>
+                            <td>
+                                @Html.LecturerList(c.Lecturers)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>            
+            
+            @Html.PagedListPager((IPagedList)ViewBag.CoursePage, page => Url.Action("Courses", new { id = Model.Organiser.ShortName, page }))
+
+
+            @if (ViewBag.UserRight.IsOrgMember)
+            {
+                <div class="well well-sm">
+                    <a href="@Url.Action("CreateCourse", "Course")" class="btn btn-default"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Lehrveranstaltung anlegen</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+

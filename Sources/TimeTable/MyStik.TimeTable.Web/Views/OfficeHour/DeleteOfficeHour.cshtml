@@ -1,0 +1,92 @@
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourCreateModel
+@{
+    ViewBag.Title = "Sprechstunde löschen";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+<h4>Alle Sprechstundentermine löschen</h4>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Basisdaten für Sprechstunde</div>
+            <div class="panel-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(model => model.OfficeHourId)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DozId, new { @class = "col-sm-6 control-label" })
+                            <div class="col-sm-6">
+                                @if (string.IsNullOrEmpty(Model.DozId))
+                                {
+                                    @Html.TextBoxFor(model => model.DozId, new { @class = "form-control" })
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(model => model.DozId, new { @class = "form-control", disabled = "" })
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Semester, new { @class = "col-sm-6 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.Semester, new { @class = "form-control", disabled = "" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-6 col-md-6">
+                                <input type="submit" value="Sprechstunde löschen" class="btn btn-danger" />
+                            </div>
+                        </div>
+
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+        $(function () {
+            $('#DozId').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            name: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    label: item.name + ' (' + item.shortname + ')',
+                                    value: item.shortname
+                                };
+                            }));
+
+                        },
+
+                        error: function (data) { alert(data); },
+                    });
+
+                },
+            });
+        });
+
+    </script>
+}

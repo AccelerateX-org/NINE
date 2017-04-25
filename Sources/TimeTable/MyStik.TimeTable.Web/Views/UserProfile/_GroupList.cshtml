@@ -1,0 +1,6 @@
+﻿@model ICollection<SelectListItem>
+
+@foreach (var group in Model)
+{
+    <option value="@group.Value">@group.Text</option>
+}

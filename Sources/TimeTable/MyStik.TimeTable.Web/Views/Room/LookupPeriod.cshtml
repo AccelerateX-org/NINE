@@ -1,0 +1,183 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomLookUpModel
+@{
+    ViewBag.Title = "Datum";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+
+
+<h4>Raumsuche nach Zeitraum</h4>
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Datum und Zeitraum</div>
+            <div class="panel-body">
+                <table class="table table-bordered table-condensed">
+                    <tbody>
+                        <tr class="active">
+                            <td>Beginn (Datum)</td>
+                            <td>@Html.TextBoxFor(model => model.Date1, "{0:dd.MM.yyyy}")</td>
+                        </tr>
+                        <tr class="active">
+                            <td>Beginn (Uhrzeit)</td>
+                            <td>
+                                @Html.DropDownListFor(model => model.BeginHour, (IEnumerable<SelectListItem>)ViewBag.Hours)
+                                @Html.DropDownListFor(model => model.BeginMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes)
+                            </td>
+                        </tr>
+                        <tr class="active">
+                            <td>Ende (Datum)</td>
+                            <td>@Html.TextBoxFor(model => model.Date2, "{0:dd.MM.yyyy}")</td>
+                        </tr>
+                        <tr class="active">
+                            <td>Ende (Uhrzeit)</td>
+                            <td>
+                                @Html.DropDownListFor(model => model.EndHour, (IEnumerable<SelectListItem>)ViewBag.Hours)
+                                @Html.DropDownListFor(model => model.EndMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Liste der freien Räume</div>
+            <div class="panel-body">
+                <div id="RoomList"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+        (function ($, Globalize) {
+
+            // Clone original methods we want to call into
+            var originalMethods = {
+                min: $.validator.methods.min,
+                max: $.validator.methods.max,
+                range: $.validator.methods.range
+            };
+
+            // Tell the validator that we want numbers parsed using Globalize
+
+            $.validator.methods.number = function (value, element) {
+                var val = Globalize.parseFloat(value);
+                return this.optional(element) || ($.isNumeric(val));
+            };
+
+            // Tell the validator that we want dates parsed using Globalize
+
+            $.validator.methods.date = function (value, element) {
+                var val = Globalize.parseDate(value);
+                return this.optional(element) || (val);
+            };
+
+            // Tell the validator that we want numbers parsed using Globalize,
+            // then call into original implementation with parsed value
+
+            $.validator.methods.min = function (value, element, param) {
+                var val = Globalize.parseFloat(value);
+                return originalMethods.min.call(this, val, element, param);
+            };
+
+            $.validator.methods.max = function (value, element, param) {
+                var val = Globalize.parseFloat(value);
+                return originalMethods.max.call(this, val, element, param);
+            };
+
+            $.validator.methods.range = function (value, element, param) {
+                var val = Globalize.parseFloat(value);
+                return originalMethods.range.call(this, val, element, param);
+            };
+
+        }(jQuery, Globalize));
+
+        $(function() {
+            Globalize.culture('de-DE');
+            $("#Date1").datepicker(
+                {
+                    dateFormat: 'dd.mm.yy',
+                    option: 'de-DE'
+                }
+            );
+
+            $("#Date2").datepicker(
+                {
+                    dateFormat: 'dd.mm.yy',
+                    option: 'de-DE'
+                }
+            );
+
+            $("#Date1").change(function() {
+                onTimeChanged();
+            });
+
+            $("#Date2").change(function () {
+                onTimeChanged();
+            });
+
+            $("#BeginHour").change(function() {
+                onTimeChanged();
+            });
+
+            $("#BeginMinute").change(function() {
+                onTimeChanged();
+            });
+
+            $("#EndHour").change(function () {
+                onTimeChanged();
+            });
+
+            $("#EndMinute").change(function () {
+                onTimeChanged();
+            });
+
+            onTimeChanged();
+        });
+
+
+        function onTimeChanged() {
+            var date1 = $('#Date1').val();
+            var date2 = $('#Date2').val();
+            var beginNewHour = $('#BeginHour option:selected').val();
+            var beginNewMinute = $('#BeginMinute option:selected').val();
+            var endNewHour = $('#EndHour option:selected').val();
+            var endNewMinute = $('#EndMinute option:selected').val();
+            var from = beginNewHour + ":" + beginNewMinute;
+            var to = endNewHour + ":" + endNewMinute;
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("RoomListByPeriod")',
+                data: {
+                    date1: date1,
+                    from: from,
+                    date2: date2,
+                    to: to
+                },
+                success: function(data, success, xhr) {
+                    $('#RoomList').html(data);
+                }
+            });
+
+        };
+
+    </script>
+}

@@ -1,0 +1,118 @@
+﻿@model MyStik.TimeTable.Web.Models.InvitationCheckModel
+@{
+    ViewBag.Title = "Einladung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studierende - Einladung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger">
+                    <h4>FEHLER BEIM EINLESEN DER DATEI</h4>
+                    <p>@Model.Error</p>
+                </div>
+            }
+
+            @{
+                var noInvitations = Model.Invitations.Where(i => i.Invite == false);
+                var invitations = Model.Invitations.Where(i => i.Invite);
+            }
+
+            @if (noInvitations.Any())
+            {
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Folgende Studierenden werden nicht eingeladen</h4>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Vorname</th>
+                                    <th>E-Mail</th>
+                                    <th>Curr.</th>
+                                    <th>Grp.</th>
+                                    <th>Bemerkung</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var invitation in noInvitations)
+                                {
+                                    <tr>
+                                        <td>@invitation.LastName</td>
+                                        <td>@invitation.FirstName</td>
+                                        <td>@invitation.Email</td>
+                                        <td>@invitation.Curriculum</td>
+                                        <td>@invitation.Group</td>
+                                        <td>@invitation.Remark</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success">
+                    <h4>Alle Daten in Ordnung</h4>
+                </div>
+            }
+
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Folgende Studierenden werden eingeladen</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>E-Mail</th>
+                                <th>Curr.</th>
+                                <th>Grp.</th>
+                                <th>Bemerkung</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var invitation in invitations)
+                            {
+                                <tr>
+                                    <td>@invitation.LastName</td>
+                                    <td>@invitation.FirstName</td>
+                                    <td>@invitation.Email</td>
+                                    <td>@invitation.Curriculum</td>
+                                    <td>@invitation.Group</td>
+                                    <td>@invitation.Remark</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <a class="btn btn-default pull-left" href="@Url.Action("Invitation")">< zurück (andere Datei hochladen)</a>
+            <a class="btn btn-default pull-right" href="@Url.Action("SendInvitations")">weiter (Einladungen versenden) ></a>
+        </div>
+    </div>
+</div>
+

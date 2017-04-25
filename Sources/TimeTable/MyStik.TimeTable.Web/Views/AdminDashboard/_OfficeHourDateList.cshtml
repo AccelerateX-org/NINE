@@ -1,0 +1,33 @@
+﻿@using System.Data.Entity.Core.Metadata.Edm
+@model ICollection<MyStik.TimeTable.Web.Models.OfficeHourDateViewModel>
+
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Zeitraum</th>
+            <th>Dozent</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @item.Date.End.TimeOfDay.ToString(@"hh\:mm")                    
+                </td>
+                <td>
+                    @foreach (var lecturer in item.Date.Hosts)
+                    {
+                        var linkText = lecturer.Name + " (" + lecturer.ShortName + ")";
+                        @Html.ActionLink(linkText, "Member", "Organiser", new {orgId = lecturer.Organiser.ShortName, shortName = lecturer.ShortName}, null)
+                        if (lecturer != item.Date.Hosts.Last())
+                        {
+                            @Html.Raw(", ")
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

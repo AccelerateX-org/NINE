@@ -1,0 +1,102 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+@{
+    ViewBag.Title = "Meine Termine";
+}
+
+@section styles
+{
+
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Das Wichtigste auf einen Blick</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row" id="sortable_portlets">
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <ul class="nav">
+                                    <li>
+                                        <a href="@Url.Action("CreateCourse", "Course", new {id = Model.Semester.Id})"><i class="fa fa-microphone"></i> Vorlesung anlegen</a>
+                                        <a href="@Url.Action("CreateOfficeHour", "OfficeHour")"><i class="fa fa-headphones"></i> Sprechstunde anlegen</a>
+                                        <a href="@Url.Action("Index", "Reservation")"><i class="fa fa-building"></i> Raumreservierung</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="col-md-6 column sortable">
+                        <div id="portletCanceled">
+                            @Html.Partial("_PortletCanceled", Model)
+                        </div>
+                        <div id="portletCurrent">
+                            @Html.Partial("_PortletCurrent", Model)
+                        </div>
+                        <!-- empty sortable porlet required for each columns! -->
+                        <div class="portlet portlet-sortable-empty">
+                        </div>
+                    </div>
+                    <div class="col-md-4 column sortable">
+                        <div id="portletFreeRooms">
+                            @Html.Partial("_PortletFreeRooms", Model)
+                        </div>
+
+                        <!-- empty sortable porlet required for each columns! -->
+                        <div class="portlet portlet-sortable-empty">
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Assets/admin/pages/scripts/portlet-draggable.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        PortletDraggable.init();
+    });
+
+    function onCurriculumChanged() {
+
+        var prog = $('#Curriculum option:selected').val();
+
+        $.ajax(
+        {
+            type: 'POST',
+            url: '@Url.Action("GroupList", "Dashboard")',
+            data: {
+                currId: prog
+            },
+            success: function (data, success, xhr) {
+                $('#CurrGroup').html(data);
+            }
+        });
+    }
+
+
+</script>
+
+
+}

@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Jobs";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Jobs</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default ">
+                <div class="panel-heading">
+                    <h4>Angebote von Unternehmen</h4>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <a href="https://fk09-hm.jobonaut.de/" target="_blank">Job Portal der FK09 bei Jobonaut</a> <i class="fa fa-external-link"></i>
+                        </td>
+                        <td>
+                            Die Unternehmen stellen direkt die Stellenanzeigen im Portal ein. Eine SHK der FK 09 kümmert sich um die Qualitätssicherung.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="@Url.Action("Index", "Newsletter")">Job Newsletter der FK09</a></td>
+                        <td>Jobangebote, die per E-Mail bei Profs, Sekretariat und/oder Fachschaft landen werden von einer SHK der FK09 gesammelt und von Zeit zu Zeit über den Newsletter versendet.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

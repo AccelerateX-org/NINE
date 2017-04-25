@@ -1,0 +1,145 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryLotPotModel
+@{
+    ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Platzverlosung für @Model.Lottery.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-random"></i>
+                                <span class="caption-subject bold uppercase"> Kurse in Lostopf</span>
+                            </div>
+                            <div class="inputs">
+                                <form id="searchForm" action="/">
+                                    <div class="portlet-input input-inline input-small">
+                                        <div class="input-group">
+                                            <span><input type="text" class="form-control" name="semester" placeholder="Semester..."></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-circle-left" name="searchText" placeholder="Name...">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-circle-right btn-default" type="submit">Suchen</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="portlet-body">
+                                <div id="CourseTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Bezeichnung</th>
+                                                <th>Gruppen</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="activityTable">
+                                            @foreach (var activity in Model.LotPotActivities)
+                                            {
+                                                <tr id="@activity.Activity.Occurrence.Id">
+                                                    <td>@activity.Name</td>
+                                                    <td>@Html.GroupList(activity.Activity.SemesterGroups)</td>
+                                                    <td><button class="btn btn-default btn-sm" onclick="deleteRow('@activity.Activity.Occurrence.Id');"><i class="fa fa-trash-o"></i></button></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                                <button class="btn btn-default" onclick="saveLotPot()"><i class="fa fa-save"></i> speichern</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+    $("#searchForm").submit(function(event) {
+
+        /* stop form from submitting normally */
+        event.preventDefault();
+
+        /* get some values from elements on the page: */
+        var $form = $(this),
+            semester = $form.find('input[name="semester"]').val(),
+            term = $form.find('input[name="searchText"]').val();
+
+        $.ajax(
+        {
+            type: 'POST',
+            url: '@Url.Action("Search")',
+                data: {
+                    semester: semester,
+                    term: term
+                },
+                success: function (data, success, xhr) {
+                    $('#activityTable').append(data);
+                }
+            });
+
+        });
+
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+        function saveLotPot() {
+            var groupList = new Array();
+
+            var list = $("#CourseTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    groupList[i] = list[i].id;
+                }
+            }
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("ChangeLotPot")',
+                data: {
+                    LotteryId: "@Model.LotteryId",
+                    CourseIds: groupList
+                },
+                success: function(data, success, xhr) {
+                    window.location.replace("@Url.Action("Index")");
+                }
+            });
+
+        }
+
+    </script>
+}
+
+
+

@@ -1,0 +1,176 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OfficeHourCharacteristicModel
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+@if (Model.OfficeHour == null)
+{
+    <h4>Keine Sprechstunde in Semster @Model.Semester.Name</h4>
+    <a href="@Url.Action("CreateOfficeHour", "OfficeHour", new {id = "FK 09"})" class="btn btn-default"><i class="fa fa-stethoscope fa-2x text-primary"></i> Sprechstunden für @Model.Semester.Name anlegen</a>
+}
+else
+{
+    <h4>Sprechstunden @Model.Host.Name im Semester @Model.Semester.Name</h4>
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">aktuelle Termine</h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Zeitraum</th>
+                            @if (ViewBag.UserRight.IsHost)
+                            {
+                                <th></th>
+                                <th>Name</th>
+                                <th>Datum Eintragung</th>
+                            }
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var slot in Model.CurrentSlots)
+                        {
+                            <tr>
+                                @if (slot.RowNo == 1)
+                                {
+                                    if (slot.ActivityDate.Occurrence.IsCanceled)
+                                    {
+                                        <td rowspan="@slot.RowCount"><del>@slot.Date.ToShortDateString()</del></td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="@slot.RowCount">@slot.Date.ToShortDateString()</td>
+                                    }
+                                }
+                                @if (slot.SubscriptionNo == 1)
+                                {
+                                    if (slot.ActivityDate.Occurrence.IsCanceled)
+                                    {
+                                        <td rowspan="@slot.SubscriptionCount"><del>@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</del></td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="@slot.SubscriptionCount">@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</td>
+                                        if (ViewBag.UserRight.IsHost)
+                                        {
+                                            if (slot.Occurrence.IsAvailable)
+                                            {
+                                                <td>
+                                                    @if (!slot.Occurrence.Subscriptions.Any())
+                                                    {
+                                                        <a href="@Url.Action("LockOccurrence", "Occurrence", new {id = slot.Occurrence.Id})" class="btn btn-default btn-xs">
+                                                            <i class="fa fa-lock text-danger"></i> Sperren
+                                                        </a>
+                                                    }
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    <a href="@Url.Action("UnLockOccurrence", "Occurrence", new {id = slot.Occurrence.Id})" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-unlock text-success"></i> Freigeben
+                                                    </a>
+                                                </td>
+                                            }
+                                        }
+                                    }
+                                }
+                                @if (ViewBag.UserRight.IsHost)
+                                {
+                                    if (slot.Member != null)
+                                    {
+                                        <td><a href="mailto:@slot.Member.User.Email">@slot.Member.User.FirstName @slot.Member.User.LastName</a></td>
+                                        <td>@slot.Member.Subscription.TimeStamp</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                }
+                                @if (ViewBag.UserRight.IsHost)
+                                {
+                                    if (slot.Member != null)
+                                    {
+                                        <td>
+                                            @Html.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
+                                                new {Id = slot.Occurrence.Id, userId = slot.Member.User.Id},
+                                                new {@class = "btn btn-default btn-xs"})
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                                else
+                                {
+                                    if (slot.SubscriptionNo == 1)
+                                    {
+                                        if (Model.OfficeHour.ByAgreement)
+                                        {
+                                            <td>Terminvereinbarung per e-mail</td>
+                                        }
+                                        else
+                                        {
+                                            <td rowspan="@slot.SubscriptionCount">@Html.Partial("_SubscriptionState", slot.State)</td>
+                                        }
+                                    }
+                                }
+                                @if (slot.RowNo == 1)
+                                {
+                                    <td rowspan ="@slot.RowCount">
+                                        @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                                        {
+                                            if (slot.ActivityDate.Occurrence.IsCanceled)
+                                            {
+                                                @Html.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate", "OfficeHour", new {id = slot.DateOccurrenceId}, new {@class = "btn btn-default btn-xs"})
+                                            }
+                                            else
+                                            {
+                                                if (slot.State.State == SubscriptionState.BeforeSubscriptionPhase ||
+                                                    !slot.HasSubscriptions)
+                                                {
+                                                    @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "OfficeHour", new {id = slot.DateOccurrenceId}, new {@class = "btn btn-default btn-xs"})
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionButton("fa-times text-danger", "absagen", "CancelDate", "OfficeHour", new {id = slot.DateOccurrenceId}, new {@class = "btn btn-default btn-xs"})
+                                                }
+                                                @Html.ActionButton("fa-calendar", "ändern", "MoveDate", "OfficeHour", new {id = slot.DateOccurrenceId}, new {@class = "btn btn-default btn-xs"})
+                                                @Html.ActionButton("fa-legal", "Regeln", "SubscriptionRules", "Occurrence", new {id = slot.DateOccurrenceId}, new {@class = "btn btn-default btn-xs"})
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                {
+                    <div class="well well-sm">
+                        @Html.ActionButton("fa-plus-circle text-success", "Neuer Termin", "CreateDate", "OfficeHour", new {id = Model.OfficeHour.Id}, new {@class = "btn btn-default"})
+                        @*@Html.ActionButton("fa-calendar text-danger", "Alle Termine verschieben", "MoveOfficeHour", "OfficeHour", new { id = Model.OfficeHour.Id }, new { @class = "btn btn-default" })*@
+                        @Html.ActionButton("fa-download text-success", "Teilnehmerliste", "SubscriptionList", "OfficeHour", new {id = Model.OfficeHour.Id}, new {@class = "btn btn-default"})
+                        @*@Html.ActionButton("fa-times text-danger", "Alle absagen/löschen", "DeleteAllDates", "OfficeHour", new { id = Model.OfficeHour.Id }, new { @class = "btn btn-default" })*@
+                        <a href="@Url.Action("DeleteOfficeHour", "OfficeHour")" class="btn btn-default">
+                            <i class="fa fa-trash-o text-danger"></i> Sprechstunde komplett löschen</a>
+                        <a href="@Url.Action("CreateOfficeHour", "OfficeHour", new {id = "FK 09"})" class="btn btn-default">
+                            <i class="fa fa-stethoscope text-primary"></i> Neue Terminserie
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+}

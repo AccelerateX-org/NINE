@@ -1,0 +1,144 @@
+﻿@model MyStik.TimeTable.Web.Models.EventDetailViewModel
+@{
+    ViewBag.Title = "EditEvent";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+
+<h4>Einstellungen Lehrveranstaltung</h4>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Allgemeine Informationen</div>
+            <div class="panel-body">
+                @using (Html.BeginForm("UpdateGeneralSettings", "Event", FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(m => m.Event.Id)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Event.Name, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Event.Name, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Event.ShortName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Event.ShortName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Event.Description, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextAreaFor(model => model.Event.Description, new { @class = "form-control", rows="10" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Event.Published, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.CheckBoxFor(model => model.Event.Published, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-10">
+                                <input type="submit" value="Änderungen speichern" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">Zuordnung zu Studiengruppen</div>
+                <div class="panel-body">
+                    <div id="GroupList">
+                        @Html.Partial("_GroupList", Model.Groups)
+                    </div>
+                    <form class="form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="Curriculum" class="col-md-4 control-label">Studienprogramm</label>
+                                <div class="col-md-8">
+                                    @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Group" class="col-md-4 control-label">Semestergruppe</label>
+                                <div class="col-md-8">
+                                    @Html.DropDownListFor(model => model.Group, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-4 col-md-8">
+                                    <a href="#" id="btnAdd" class="btn btn-default"><i class="fa fa-plus-circle text-success"></i> HINZUFÜGEN / AKTUALISIEREN</a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="well well-sm">
+                <a href="@Url.Action("Index", "Event", new {id=Model.Event.Id})" class="btn btn-lg btn-success">Zurück zur Veranstaltung</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+
+        $(document).ready(function() {
+            $("#btnAdd").click(function() {
+                var group = $("#Group option:selected").val();
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("AddGroup")',
+                    data: {
+                        eventId: "@Model.Event.Id",
+                        semGroupId: group
+                    },
+                    success: function(data, success, xhr) {
+                        $("#GroupList").html(data);
+                    }
+                });
+            });
+        });
+
+        function onCurriculumChanged() {
+            var prog = $('#Curriculum option:selected').val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList", "Curriculum")',
+                data: {
+                    currId: prog
+                },
+                success: function (data, success, xhr) {
+                    $('#Group').html(data);
+                }
+            });
+        }
+
+    </script>
+}
+
+
+

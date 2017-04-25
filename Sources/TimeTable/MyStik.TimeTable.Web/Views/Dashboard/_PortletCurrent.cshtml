@@ -1,0 +1,35 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+<div class="portlet portlet-sortable light bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-film"></i>
+            <span class="caption-subject bold uppercase"> Was läuft gerade (wo)?</span>
+        </div>
+        <div class="actions">
+            <a href="@Url.Action("Index", "Reservation", null)" class="btn btn-circle btn-icon-only btn-default">
+                <i class="fa fa-plus"></i>
+            </a>
+            <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-circle btn-icon-only btn-default">
+                <i class="fa fa-calendar"></i>
+            </a>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div class="list-group">
+            <a href="@Url.Action("Current", "Activity")" class="list-group-item">
+                <span class="badge">@Model.CurrentDates.Count</span>
+                Aktuell laufende Veranstaltungen
+            </a>
+            <a href="@Url.Action("Free", "Room")" class="list-group-item">
+                <span class="badge">@Model.AvailableRooms.Count</span>
+                Aktuell freie Räume
+            </a>
+        </div>
+
+    </div>
+</div>
+
+

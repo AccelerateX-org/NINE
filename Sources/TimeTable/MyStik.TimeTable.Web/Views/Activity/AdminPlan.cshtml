@@ -1,0 +1,83 @@
+﻿@using System.Web.UI.WebControls
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "Tagesplan";
+}
+
+@section styles
+{
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Tagesplan</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Tagesplan</span>
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                    <div class="actions">
+                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="calendar" class="has-toolbar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    @section scripts
+    {
+        <script src="~/Assets/global/plugins/moment.min.js"></script>
+        <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+        <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+        <script src="~/Assets/fillter/scripts/calendar.js"></script>
+        <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                $('#loading').hide();
+
+                initAdminCalendar2();
+
+                $('#calendar').fullCalendar({
+                    defaultView: 'agendaDay'
+                });
+
+
+                $('#calendar').fullCalendar('removeEvents');
+
+                $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("DailyRota", "Calendar")',
+                    type: 'POST'
+                });
+            });
+
+
+        </script>
+    }

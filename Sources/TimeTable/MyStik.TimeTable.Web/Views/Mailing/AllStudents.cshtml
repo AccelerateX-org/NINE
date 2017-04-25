@@ -1,0 +1,106 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+
+@{
+    ViewBag.Title = "Alle Studierenden";
+}
+
+@section styles
+{
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Mailing - alle Studierende</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+
+    @if (ViewBag.UserRight.IsOrgMember)
+    {
+        <div class="col-md-12">
+            @using (Html.BeginForm("AllStudents", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+            {
+                @Html.ValidationSummary(true)
+                <fieldset>
+                    @Html.ValidationSummary()
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Subject, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Body, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(m => m.Body, new { @class = "form-control", placeholder = "Nachricht", rows = "10" })
+                            @*Html.TextAreaFor(m => m.Body, new {@class = "form-control", rows = "10"})*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.IsImportant)
+                                    Diese Nachricht als <strong>"WICHTIG FÜR DAS STUDIUM"</strong> an alle Studierenden senden. <br />
+                                    Die individuellen Einstellungen im Benutzerprofil der Studierenden zur Steuerung der Benachrichtungen werden nicht berücksichtigt.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Anhänge</label>
+                        <div class="col-md-10">
+                            <div>
+                                <input type="file" name="Attachments" id="Attachment1" />
+                            </div>
+                            <div>
+                                <input type="file" name="Attachments" id="Attachment2" />
+                            </div>
+                            <div>
+                                <input type="file" name="Attachments" id="Attachment3" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Senden" class="btn btn-default" />
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <h4>Zugriff verweigert</h4>
+            <p>Sie haben keinen Zugriff auf diese Funktion!</p>
+        </div>
+    }
+</div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+        jQuery(document).ready(function() {
+            $("#Body").cleditor();
+        });
+    </script>
+}

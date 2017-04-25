@@ -1,0 +1,208 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.GroupSelectionViewModel
+@{
+    ViewBag.Title = "Vorlesungsplaner";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Vorlesungsplaner</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Mein Stundenplan</span>
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                    <div class="actions">
+                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Faculty)
+                                @Html.DropDownListFor(model => model.Faculty, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control", disabled = "" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Semester)
+                                @Html.DropDownListFor(model => model.Semester, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control", disabled = "" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Curriculum)
+                                @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Group)
+                                @Html.DropDownListFor(model => model.Group, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control", onchange = "onGroupChanged()" })
+                            </div>
+                        </div>
+                        <div id="DisplayOptionBox" class="col-md-2">
+                            <div class="form-group">
+                                <label for="displayId">Anzeige als</label>
+                                <div class="btn-group" id="displayId">
+                                    <button type="button" class="btn btn-default active" id="displayCalendar" onclick=" switchDisplay(true) "><i class="fa fa-calendar"></i></button>
+                                    <button type="button" class="btn btn-default" id="displayTable" onclick=" switchDisplay(false) "><i class=" fa fa-table"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="PersonalDateOptionBox" class="col-md-2">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="displayPersonalDates" type="checkbox" value="" onclick="togglePersonalDateDisplay()">
+                                        Persönliche Termine anzeigen
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="calendar" class="has-toolbar">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            initCalendar(true, false);
+
+
+            onCurriculumChanged();
+        });
+
+
+        function onCurriculumChanged() {
+
+            var prog = $('#Curriculum option:selected').val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList", "Curriculum")',
+                data: {
+                    currId: prog,
+                },
+                success: function(data, success, xhr) {
+                    $('#Group').html(data);
+                    onGroupChanged();
+                }
+            });
+
+            if ($('#displayCalendar').hasClass('active')) {
+                $('#calendar').fullCalendar('removeEvents');
+            } else {
+                $('#calendar').html('');
+            }
+        }
+
+        function onGroupChanged() {
+            var group = $('#Group option:selected').val();
+
+            var personalDates = ($('#displayPersonalDates').attr('checked') == 'checked');
+
+            if ($('#displayCalendar').hasClass('active')) {
+
+                $('#calendar').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
+
+                $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("CourseEventsByProgram", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: group,
+                        showPersonalDates: personalDates
+                    }
+                });
+            } else {
+
+                $('#calendar').html('');
+                $('#loading').show();
+                $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListByProgram", "Curriculum")',
+                    data: {
+                        semGroupId: group,
+                        compact: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#calendar').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+            }
+        }
+
+
+        function switchDisplay(showCalendar) {
+            if (showCalendar == true) {
+                $('#displayCalendar').addClass('active');
+                $('#displayTable').removeClass('active');
+                initCalendar(true, false);
+            } else {
+                $('#displayCalendar').removeClass('active');
+                $('#displayTable').addClass('active');
+                $('#calendar').fullCalendar('destroy');
+            }
+            onGroupChanged();
+        }
+
+        function togglePersonalDateDisplay() {
+            onGroupChanged();
+        }
+
+
+    </script>
+}
+
+
+ 

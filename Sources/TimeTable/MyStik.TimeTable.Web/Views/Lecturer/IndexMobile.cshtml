@@ -1,0 +1,134 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LecturerViewModelMobil
+@{
+    ViewBag.Title = "Dozenten"; 
+}
+
+
+
+
+        <!-- Hier kommt der Seiteninhalt hinein oberer Teil -->
+        <div class="panel panel-default">
+            <div class="panel-body bg-fillter-lecturer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1>Dozenten</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Fakultätsbox-->
+        <div class="panel panel-default panel-menu">
+            <div class="panel-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <select class="form-control" disabled="" id="Organiser" name="Organiser">
+                                    <option value="c0960307-6199-e311-a236-00155d6e1e1c">Fakult&#228;t 09</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Meine Professoren-->
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-10">
+                    <div class="panel panel-default">
+
+
+                        <div class="panel-body">
+                            <div class="caption">
+                                <div class="portlet title">
+                                    <h1>Meine Dozenten</h1>
+                                </div>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Kontakt</th>
+                                        <th>Sprechstunde</th>
+                                        <th>Raum</th>  <!-- erste Änderung -->
+                                    </tr>
+                                </thead>
+                                
+                                <tbody>
+                                    @foreach (var meineDozenten in Model.myLecturer)
+                                    {            
+                                        <tr>
+                                            <td>@meineDozenten.DozentName</td>
+                                            <td>@meineDozenten.Kontakt<a  class=" btn btn-default btn-xs"><i class="fa fa-calendar-o"></i></a></td>
+                                            <td>@meineDozenten.Sprechstunde.<a  class=" btn btn-default btn-xs"></a>Sprechstunde</td>
+                                            <td>@meineDozenten.Raum</td>
+                                            <td>
+                                                
+</tr>}</tbody> </table>
+                        </div>   <!--dieeinzelnendivszumachen-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <tbody>
+        <tbody>
+            <!--AlleDozenten-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="panel panel-default">
+
+
+                            <div class="panel-body">
+                                <div class="caption">
+                                    <div class="portlet title">
+                                        <h1>       Dozenten</h1>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Kontakt</th>
+                                            <th>Sprechstunde</th>
+                                            <th>Raum</th>  <!-- erste Änderung Grundquellcode aus der Filter Hauptseite -->
+                                        </tr>
+                                    </thead>
+                                 
+                                    <tbody>
+    @foreach (var Dozenten in Model.Lecturer)
+    {                                               
+        <tr>
+            <td>@Dozenten.DozentName</td>
+            <td>@Dozenten.Kontakt<a  class=" btn btn-default btn-xs"><i class="fa fa-calendar-o"></i></a></td>
+            <td>@Dozenten.Sprechstunde.<a  class=" btn btn-default btn-xs"></a>Sprechstunde</td>
+            <td>@Dozenten.Raum</td>
+            <td>
+                
+
+</tr> }
+                   </tbody>
+
+      
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+

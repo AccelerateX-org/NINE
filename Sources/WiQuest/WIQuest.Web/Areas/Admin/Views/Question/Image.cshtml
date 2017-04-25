@@ -1,0 +1,72 @@
+﻿@model WIQuest.Web.Data.Question
+
+
+@{
+    ViewBag.Title = "Ein Bild";
+}
+
+<h2>Image</h2>
+
+{
+<label for="file">Upload Image:</label>
+<input type="file" name="file" id="file" style="width: 100%;" />
+<input type="submit" value="Upload" class="submit" />
+}
+
+@model ImageUploadApp.Models.Image
+@{
+    ViewBag.Title = "Create";
+}
+<h2>Create</h2>
+@using (Html.BeginForm("Create", "Image", null, FormMethod.Post,
+                              new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Image</legend>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Image)
+        </div>
+        <div class="editor-field">
+            <input id="ImagePath" title="Upload a product image"
+                   type="file" name="file" />
+        </div>
+        <p><input type="submit" value="Create" /></p>
+    </fieldset>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+@model ImageUploadApp.Models.Ein Bild
+@{
+    ViewBag.Title = "Create";
+}
+<h2>Create</h2>
+@using (Html.BeginForm("Create", "Image", null, FormMethod.Post,
+                              new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Image</legend>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Ein Bild)
+        </div>
+        <div class="editor-field">
+            <input id="ImagePath" title="Upload a product image"
+                   type="file" name="file" />
+        </div>
+        <p><input type="submit" value="Create" /></p>
+    </fieldset>
+}
+<div>
+    
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

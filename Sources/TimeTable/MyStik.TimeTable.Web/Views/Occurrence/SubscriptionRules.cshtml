@@ -1,0 +1,137 @@
+﻿@model MyStik.TimeTable.Web.Models.SubscriptionRuleModel
+@{
+    ViewBag.Title = "Regeln für Eintragungen";
+}
+
+@section styles
+{
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body @Model.Summary.BannerColor">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Regeln für Eintragung in @Model.Summary.Name</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Regeln für Eintragung</div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("SubscriptionRules", "Occurrence", FormMethod.Post, new {@class = "form-horizontal"}))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(m => m.OccurrenceId)
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CapacityOption, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.CapacityOption, (IEnumerable<SelectListItem>) ViewBag.Capacities, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Capacity, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.Capacity, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubscriptionBeginLimitOption, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.SubscriptionBeginLimitOption, (IEnumerable<SelectListItem>) ViewBag.Limits, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubscriptionBegin, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.SubscriptionBegin, new {@class = "form-control datepicker"})
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubscriptionBeginTime, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.SubscriptionBeginTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubscriptionEndLimitOption, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.SubscriptionEndLimitOption, (IEnumerable<SelectListItem>) ViewBag.Limits, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubscriptionEnd, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.SubscriptionEnd, new {@class = "form-control datepicker"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubscriptionEndTime, new {@class = "col-sm-6 control-label"})
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.SubscriptionEndTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-6 col-md-6">
+                                    <input type="submit" value="Änderungen speichern" class="btn btn-primary"/>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+        <div>
+
+        </div>
+    </div>
+</div>
+
+
+
+    @section Scripts {
+        <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+        <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+        <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+        <script>
+
+
+            $(function () {
+                $('.datepicker').datepicker({
+                    orientation: "left",
+                    autoclose: true,
+                    format: "dd.mm.yyyy",
+                    weekStart: 1,
+                    calendarWeeks: true,
+                    language: "de"
+                });
+
+                $('.timepicker-24').timepicker({
+                    autoclose: true,
+                    minuteStep: 15,
+                    showSeconds: false,
+                    showMeridian: false
+                });
+
+                $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                    e.preventDefault();
+                    $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+                });
+            });
+
+        </script>
+    }

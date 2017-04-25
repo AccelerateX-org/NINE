@@ -1,0 +1,162 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.EventCreateModel2
+@{
+    ViewBag.Title = "Veranstaltung anlegen";
+}
+
+@section styles
+{
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Neue Veranstaltung in @Model.Semester.Name anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a class="btn btn-default" id="cancelAll" href="#"><i class="fa fa-save"></i> anlegen</a>
+                    <div id="createResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Angaben</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="form-horizontal">
+                        @Html.HiddenFor(m => m.OrgId)
+                        @Html.HiddenFor(m => m.SemesterId)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ShortName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.ShortName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Soll für folgende Semestergruppen angeboten werden</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="groupTable">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th>Aktivitäten</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var group in Model.Semester.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                                {
+                                    <tr>
+                                        <td><input id="@group.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
+                                        <td>@group.FullName</td>
+                                        <td>@group.Activities.Count</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+
+        $("#cancelAll").click(function () {
+            var list = $("#groupTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+            var n = list.length;
+
+            if (n > 0) {
+
+                var semId = $("#SemesterId").val();
+                var orgId = $("#OrgId").val();
+                var shortName = $("#ShortName").val();
+                var name = $("#Name").val();
+
+
+                var dateList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    dateList[i] = list[i].id;
+                }
+
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("CreateEvent")',
+                    data: {
+                        SemesterId: semId,
+                        OrgId: orgId,
+                        ShortName: shortName,
+                        Name: name,
+                        GroupIds: dateList
+                    },
+                    success: function (data, success, xhr) {
+                        $("#createResult").html(data);
+
+                        $("#ShortName").val("");
+                        $("#Name").val("");
+
+                        $("#groupTable input[type='checkbox']").attr('checked', false);
+                    }
+                });
+            } else {
+                alert("Es muss mindestens eine Gruppe ausgewählt sein.");
+            }
+        });
+
+
+
+
+
+    </script>
+}

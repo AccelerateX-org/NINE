@@ -1,0 +1,324 @@
+﻿@model MyStik.TimeTable.Web.Models.ReservationCreateModel
+@{
+    ViewBag.Title = "Raumreservierung anlegen";
+}
+
+@section styles
+{
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Neue Raumreservierung anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-left"></i> zurück</a>
+                    <a class="btn btn-default" id="saveAll" href="#"><i class="fa fa-save"></i> anlegen</a>
+                    <div id="saveResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Angaben</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Description, new {@class = "col-sm-4 control-label"})
+                            <div class="col-sm-8">
+                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Beschreibung des Kurses" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+
+                                @Html.ValidationMessageFor(m => m.NewDate)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
+                                @Html.ValidationMessageFor(m => m.NewBegin)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
+                                @Html.ValidationMessageFor(m => m.NewEnd)
+                            </div>
+                        </div>
+                        <div>
+                            <label>
+                                <input id="IsDaily" name="IsDaily" type="checkbox" value="false" />
+                                Termine bis zum Datum täglich generieren
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DailyEnd, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.DailyEnd, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+
+                                @Html.ValidationMessageFor(m => m.DailyEnd)
+                            </div>
+                        </div>
+                        <div>
+                            <label>
+                                <input id="IsWeekly" name="IsWeekly" type="checkbox" value="false" />
+                                Alle täglichen Termine bis zum Datum auf Wochenbasis generieren
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.WeeklyEnd, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.WeeklyEnd, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+
+                                @Html.ValidationMessageFor(m => m.WeeklyEnd)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Räume</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="roomTable">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nummer</th>
+                                    <th>Plätze</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
+                                {
+                                    <tr>
+                                        <td><input id="@room.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
+                                        <td>@room.Number</td>
+                                        <td>@room.Capacity</td>
+                                        <td id="state_@room.Id">unbekannt</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+<script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+        $(function () {
+            $("#Description").cleditor();
+
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+
+        });
+
+
+        function onDateChanged() {
+            onUpdateRoomState();
+        }
+
+        function onBeginChanged() {
+            onUpdateRoomState();
+        }
+
+        function onEndChanged() {
+            onUpdateRoomState();
+        }
+
+
+        function onUpdateRoomState() {
+
+            var newDate = $("#NewDate").val();
+            var newBegin = $("#NewBegin").val();
+            var newEnd = $("#NewEnd").val();
+            var isWeekly = $("#IsWeekly").val();
+
+
+            var list = $("#roomTable > table > tbody > tr input[type='checkbox']").get();
+            var n = list.length;
+            var i;
+            for (i = 0; i < n; i++) {
+
+                $("#state_" + list[i].id).html("<i class=\"fa fa-spinner fa-spin\"></i>");
+
+
+                if (isWeekly == "true") {
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("GetStateWeekly", "Room")',
+                        data: {
+                            dateId: null,
+                            roomId: list[i].id,
+                            date: newDate,
+                            begin: newBegin,
+                            end: newEnd
+                        },
+                        success: function (data, success, xhr) {
+                            $("#state_" + data.RoomId).html(data.State);
+                        }
+                    });
+                } else {
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("GetState", "Room")',
+                        data: {
+                            dateId: null,
+                            roomId: list[i].id,
+                            date: newDate,
+                            begin: newBegin,
+                            end: newEnd
+                        },
+                        success: function(data, success, xhr) {
+                            $("#state_" + data.RoomId).html(data.State);
+                        }
+                    });
+
+                }
+            }
+
+
+        }
+
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+        $("#IsWeekly").change(function() {
+            // this block sets value to checkbox control for "true" / "false"
+            var chkVal = $("input[type='checkbox'][name='IsWeekly']").val();
+            if (chkVal == 'false') $("input[type='checkbox'][name='IsWeekly']").val(true);
+            else $("input[type='checkbox'][name='IsWeekly']").val(false);
+
+            onUpdateRoomState();
+        });
+
+
+        $("#saveAll").click(function() {
+
+            var name = $("#Name").val();
+            var desc = $("#Description").val();
+            var newDate = $("#NewDate").val();
+            var newBegin = $("#NewBegin").val();
+            var newEnd = $("#NewEnd").val();
+            var isWeekly = $("#IsWeekly").is(':checked');
+            var isDaily = $("#IsDaily").is(':checked');
+            var dailyEnd = $("#DailyEnd").val();
+            var weeklyEnd = $("#WeeklyEnd").val();
+
+            var list = $("#roomTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+            var n = list.length;
+            var roomList = new Array();
+            var i;
+            for (i = 0; i < n; i++) {
+                roomList[i] = list[i].id;
+            }
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("CreateReservation")',
+                data: {
+                    name: name,
+                    description: desc,
+                    NewDate: newDate,
+                    NewBegin: newBegin,
+                    NewEnd: newEnd,
+                    IsWeekly: isWeekly,
+                    IsDaily: isDaily,
+                    DailyEnd: dailyEnd,
+                    WeeklyEnd: weeklyEnd,
+                    RoomIds: roomList
+                },
+                success: function(data, success, xhr) {
+                    $("#saveResult").html(data);
+                }
+            });
+        });
+
+
+    </script>
+}

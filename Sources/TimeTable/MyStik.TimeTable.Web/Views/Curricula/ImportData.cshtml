@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Datenimport";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Datenimport</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Datei mit Studiengruppen</label>
+                            <div class="col-md-10">
+                                <div>
+                                    <input type="file" name="importFile" id="importFile" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Hochladen" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

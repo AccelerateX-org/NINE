@@ -1,0 +1,369 @@
+﻿@charset "UTF-8";
+/* CSS Document */
+
+/* globale Einstellungen */
+body{
+  color: #000;
+}
+
+
+.page-container-bg-solid .page-content {
+  background: #e1e1e1;
+}
+
+.page-content-wrapper .page-content {
+  padding: 0px;
+}
+
+.panel-menu {
+    margin-top: -20px;
+}
+
+
+/* banner */
+.page-banner {
+  width: 100%;
+  height: 56px;
+}
+
+.banner-hm {
+  color: #fff;
+  background-color: #f96464;
+}
+
+.banner-study {
+  color: #fff;
+  background-color: #47aba1;
+}
+
+.banner-events {
+  color: #fff;
+  background-color: #a56585;
+}
+
+.banner-cantine {
+  color: #fff;
+  background-color: #77bd90;
+}
+
+.banner-rooms {
+  color: #fff;
+  background-color: #feb151;
+}
+
+.banner-lecturer {
+  color: #fff;
+  background-color: #78a3aa;
+}
+
+.page-banner-inner-content {
+    padding: 0px 0px 25px 10px;
+}
+
+
+/* Eigentliche Inhalt*/
+.page-inner-content {
+    padding: 25px 10px 25px 20px;
+}
+
+
+h1, .h1 {
+    font-size: 29px;
+    font-weight: 900;
+}
+
+
+
+/* fillter logo in verschiedenen Größen */
+.fillter-logo img {
+    display: block;
+    background-color: #595f64 !important;
+}
+
+.fillter-logo img:nth-of-type(2) {
+    padding-bottom: 8px;
+}
+
+.fillter-logo-sm {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.fillter-logo-md {
+  margin-left: auto;
+  margin-right: auto;
+    margin-top: 50px;
+    margin-bottom: 5px;
+  display: block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.nine-logo-text {
+  margin-left: auto;
+  margin-right: auto;
+    margin-bottom: 30px;
+  display: block;
+  position: relative;
+  width: 120px;
+  height: 15px;
+    color: #fff;
+    text-align: center;
+}
+
+
+.nine-logo-sm {
+  margin-left: auto;
+  margin-right: auto;
+    margin-bottom: 20px;
+  display: block;
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+
+/* Quick sidebar */
+.page-quick-sidebar-wrapper .page-quick-sidebar .list-items > li {
+  padding: 0px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  border-bottom-width: 0px;
+}
+
+/* Login Box */
+.login-form {
+    margin-top: 50px;
+}
+
+
+/* icon fonts für Menü */
+@font-face {
+  font-family: 'icomoon';
+  src: url('../fonts/icomoon.eot?741mq1');
+  src: url('../fonts/icomoon.eot?#iefix741mq1') format('embedded-opentype'), url('../fonts/icomoon.svg') format('svg'), url('../fonts/icomoon.woff') format('woff'), url('../fonts/icomoon.ttf') format('truetype');
+}
+
+
+.icon-menu {
+  display: inline-block;
+  font-family: 'icomoon';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1.2;
+  font-size: 26px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+}
+.icon-dashboard:before {
+  content: "\e600";
+}
+
+.icon-studium:before {
+  content: "\e601";
+}
+.icon-aktuelles:before {
+  content: "\e602";
+}
+.icon-mensa:before {
+  content: "\e603";
+}
+.icon-raeume:before {
+  content: "\e604";
+}
+.icon-dozenten:before {
+  content: "\e605";
+}
+.icon-notifications:before {
+  content: "\e607";
+}
+.icon-calender:before {
+  content: "\e608";
+}
+.icon-message:before {
+  content: "\e606";
+}
+.icon-cross:before {
+  content: "\e609";
+}
+.icon-beamer:before {
+  content: "\e610";
+}
+.icon-chair:before {
+  content: "\e60d";
+}
+.icon-pc:before {
+  content: "\e60f";
+}
+.icon-table:before {
+  content: "\e60e";
+}
+.icon-clock:before {
+  content: "\e60b";
+}
+.icon-arrow:before {
+  content: "\e614";
+}
+.icon-arrow-right:before {
+  content: "\e615";
+}
+.icon-arrow-left:before {
+  content: "\e616";
+}
+.icon-script:before {
+  content: "\e60a";
+}
+
+
+
+
+/* Agenda */
+.agenda {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+.agenda li {
+  background-color: #fff; /* das wirkt nicht */
+  color: #82949a;
+  margin-bottom: 7px;
+}
+.agenda li:before, .agenda li:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+.agenda li:after {
+  clear: both;
+}
+.agenda li:last-child {
+  margin-bottom: 0px;
+}
+.agenda li .col1 {
+  background-color: #fff; /* das wirkt */
+  float: left;
+  width: 100%;
+  clear: both;
+}
+.agenda li .col1 > .cont {
+  float: left;
+  margin-right: 75px;
+  overflow: hidden;
+}
+.agenda li .col1 > .cont > .cont-col1 {
+  color: #000;
+  float: left;
+  margin-right: -100%;
+}
+.agenda li .col1 > .cont > .cont-col1 > .label {
+  display: inline-block;
+  padding: 5px 4px 6px 5px;
+  vertical-align: middle;
+  text-align: center;
+}
+.agenda li .col1 > .cont > .cont-col1 > .label > i {
+  text-align: center;
+  font-size: 14px;
+}
+.agenda li .col1 > .cont > .cont-col2 {
+  float: left;
+  width: 100%;
+}
+.agenda li .col1 > .cont > .cont-col2 > .desc {
+  margin-left: 50px;
+  padding-top: 4px;
+  padding-bottom: 5px;
+  overflow: hidden;
+}
+.agenda li .col2 {
+  float: left;
+  width: 75px;
+  margin-left: -75px;
+}
+.agenda li .col2 > .date {
+  padding: 4px 9px 5px 4px;
+  text-align: right;
+  font-style: italic;
+  color: #000;
+}
+
+
+/* label */
+.label {
+  color: #000;
+}
+
+
+/* notes */
+.note.note-hm {
+  background-color: #eef7ea;
+  border-color: #fa6464;
+  color: #000;
+}
+
+.note.note-course {
+  background-color: #fff;
+  border-color: #47aba1;
+  color: #000;
+}
+
+.note.note-event {
+  background-color: #fff;
+  border-color: #a56585;
+  color: #000;
+}
+
+.note.note-officehour {
+  background-color: #fff;
+  border-color: #78a3aa;
+  color: #000;
+}
+
+.page-quick-sidebar-wrapper .page-quick-sidebar .list-heading {
+  font-weight: 700;
+}
+
+.portlet.calendar .fc-button {
+    top: 0px;
+    color: #000;
+}
+
+.page-sidebar .page-sidebar-menu > li > a > i, .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > i {
+    font-size: 26px;
+}
+
+.bg-fillter-hm {
+  color: #fff;
+  background-color: #fa6666;
+}
+
+.bg-fillter-study {
+  color: #fff;
+  background-color: #47aba1;
+}
+
+.bg-fillter-events {
+  color: #fff;
+  background-color: #a56585;
+}
+
+.bg-fillter-cantine {
+  color: #fff;
+  background-color: #77bd90;
+}
+
+.bg-fillter-rooms {
+  color: #fff;
+  background-color: #feb151;
+}
+
+.bg-fillter-lecturer {
+  color: #fff;
+  background-color: #78a3aa;
+}

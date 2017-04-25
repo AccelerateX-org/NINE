@@ -1,0 +1,155 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Course
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th><input id="checkAll" type="checkbox" onclick="toggleAllCheck(this)" value=" "></th>
+            <th>Datum</th>
+            <th>Zeitraum</th>
+            <th>Ort</th>
+            <th>Dozent</th>
+            <th>Titel/Beschreibung</th>
+            <th>Kurzinfo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var date in Model.Dates.OrderBy(d => d.Begin))
+        {
+            var histAttr = "";
+            if (date.End < GlobalSettings.Now)
+            {
+                histAttr = "history";
+            }
+            if (date.Occurrence.IsCanceled)
+            {
+                <tr @histAttr>
+                    <td>
+                        @if (date.End >= GlobalSettings.Now)
+                        {
+                            <input id="@date.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="">
+                        }
+                    </td>
+                    <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
+                    <td><del>@Html.TimeSpan(date)</del></td>
+                    <td colspan="4">abgesagt</td>
+                    <td>
+                        @if (date.End >= GlobalSettings.Now)
+                        {
+                            <div class="btn-group pull-right" role="group">
+                                @Ajax.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate2", "Course",
+                                    new {dateId = date.Id},
+                                    new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
+                                    new {@class = "btn btn-default btn-sm"}
+                                    )
+
+                                @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                    new {dateId = date.Id},
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "modalDelete",
+                                        OnSuccess = "showEditDateInformation()"
+                                    },
+                                    new {@class = "btn btn-default btn-sm"}
+                                    )
+
+
+                                @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                    new {dateId = date.Id},
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "modalDelete",
+                                        OnSuccess = "showConfirmDeleteDate()"
+                                    },
+                                    new {@class = "btn btn-danger btn-sm"}
+                                    )
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr @histAttr>
+                    <td>
+                        @if (date.End >= GlobalSettings.Now)
+                        {
+                            <input id="@date.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="">
+                        }
+                    </td>
+                    <td>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
+                    <td>@Html.TimeSpan(date)</td>
+                    <td>@Html.RoomList(date.Rooms)</td>
+                    <td>@Html.LecturerList(date.Hosts)</td>
+                    @if (string.IsNullOrEmpty(date.Title) && string.IsNullOrEmpty(date.Title))
+                    {
+                        <td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td><i class="fa fa-info-circle text-primary"></i></td>
+                    }
+                    @if (string.IsNullOrEmpty(date.Occurrence.Information))
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td><i class="fa fa-info-circle text-primary"></i></td>
+                    }
+                    <td>
+                        @if (date.End >= GlobalSettings.Now)
+                        {
+
+                            <div class="btn-group pull-right" role="group">
+                                @Ajax.ActionButton("fa-times text-warning", "absagen", "CancelDate2", "Course",
+                                    new {dateId = date.Id},
+                                    new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
+                                    new {@class = "btn btn-default btn-xs"}
+                                    )
+
+                                @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new {id = date.Occurrence.Id}, new {@class = "btn btn-default btn-xs"})
+
+
+                                @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                    new {dateId = date.Id},
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "modalDelete",
+                                        OnSuccess = "showEditDateInformation()"
+                                    },
+                                    new {@class = "btn btn-default btn-xs"}
+                                    )
+
+
+                                @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                    new {dateId = date.Id},
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "modalDelete",
+                                        OnSuccess = "showConfirmDeleteDate()"
+                                    },
+                                    new {@class = "btn btn-danger btn-xs"}
+                                    )
+
+                            </div>
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+

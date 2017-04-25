@@ -1,0 +1,26 @@
+﻿@model MyStik.TimeTable.Web.Models.VerifyEMailModel
+@{
+    Layout = "~/Views/Shared/_LayoutNewPublic.cshtml";
+    ViewBag.Title = "Bestätigung E-Mail Adresse";
+}
+
+<div class="row">
+    <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4 class="panel-title">Registrierung erfolgreich</h4>
+            </div>
+            <div class="panel-body">
+                <h4>Ihre E-Mail Adresse @Model.EMail wurde erfolgreich bestätigt. Ihr Benutzerkonto ist aktiviert.</h4>
+                <p>Sie können sich jetzt  @Html.ActionLink("anmelden", "Login", "Account").</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

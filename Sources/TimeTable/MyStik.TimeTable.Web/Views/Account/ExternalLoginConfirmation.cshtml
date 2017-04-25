@@ -1,0 +1,51 @@
+﻿@model MyStik.TimeTable.Web.Models.ExternalLoginConfirmationViewModel
+@{
+    ViewBag.Title = "Register";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>Associate your @ViewBag.LoginProvider account.</h3>
+
+@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <h4>Association Form</h4>
+    <hr />
+    @Html.ValidationSummary(true)
+    <p class="text-info">
+        Sie haben sich erfolgreich mit <strong>@ViewBag.LoginProvider</strong> authentifiziert.
+           Bitte füllen Sie das folgende Formular aus und bestätigen Sie mit dem Button "Registrieren".
+    </p>
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserName)
+
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+
+            @Html.TextBoxFor(m => m.FirstName, new{ @class = "form-control" })
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">Wichtiger Hinweis</div>
+        <div class="panel-body">
+            <p>
+                Wenn Sie über eine E-Mail Adresse der HM verfügen, sollten Sie diese auch verwenden.
+                Bitte prüfen Sie in diesem Fall zuerst, ob Sie auf Ihr E-Mail Postfach zugreifen können.
+            </p>
+            <p>
+                <strong>Für alle Erstsemester</strong>: Ihr E-Mail Konto wird i.d.R. 1 Tag nach Ihrer Immatrikulation eingerichtet.
+                Weitere Informationen dazu finden Sie <a href="http://w3rz-n.hm.edu/startseite_1/index.de.html">auf den Seiten der zentralen IT</a>.
+            </p>
+            <p>Benutzerkonten mit einer anderen externen E-Mail Adresse werden nach <strong>90 Tagen automatisch gelöscht</strong>.</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Register" />
+        </div>
+    </div>
+}
+

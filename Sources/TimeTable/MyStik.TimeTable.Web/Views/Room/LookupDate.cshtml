@@ -1,0 +1,182 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomLookUpModel
+@{
+    ViewBag.Title = "Freie Räume";
+}
+
+@section styles
+{
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Suche nach freien Räumen - nach Zeitraum</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Datum und Zeitraum</div>
+                <div class="panel-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+
+                                @Html.ValidationMessageFor(m => m.NewDate)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
+
+                                @Html.ValidationMessageFor(m => m.NewBegin)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
+
+                                @Html.ValidationMessageFor(m => m.NewEnd)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">Liste der verfügbaren Räume</div>
+                <div class="panel-body">
+                    <div id="roomTable">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Nummer</th>
+                                    <th>Plätze</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
+                                {
+                                    <tr id="@room.Id">
+                                        <td>@room.Number</td>
+                                        <td>@room.Capacity</td>
+                                        <td id="state_@room.Id">unbekannt</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+
+    @section Scripts {
+
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+        <script>
+
+            $(function () {
+                $('.datepicker').datepicker({
+                    orientation: "left",
+                    autoclose: true,
+                    format: "dd.mm.yyyy",
+                    weekStart: 1,
+                    calendarWeeks: true,
+                    language: "de"
+                });
+
+                $('.timepicker-24').timepicker({
+                    autoclose: true,
+                    minuteStep: 15,
+                    showSeconds: false,
+                    showMeridian: false
+                });
+
+                $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                    e.preventDefault();
+                    $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+                });
+            });
+
+    function onDateChanged() {
+        onUpdateRoomState();
+    }
+
+    function onBeginChanged() {
+        onUpdateRoomState();
+    }
+
+    function onEndChanged() {
+        onUpdateRoomState();
+    }
+
+
+    function onUpdateRoomState() {
+
+        var newDate = $("#NewDate").val();
+        var newBegin = $("#NewBegin").val();
+        var newEnd = $("#NewEnd").val();
+            
+
+        var list = $("#roomTable > table > tbody > tr").get();
+        var n = list.length;
+        var i;
+        for (i = 0; i < n; i++) {
+
+            $("#state_" + list[i].id).html("<i class=\"fa fa-spinner fa-spin\"></i>");
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("GetState", "Room")',
+                data: {
+                    dateId: null,
+                    roomId: list[i].id,
+                    date: newDate,
+                    begin: newBegin,
+                    end: newEnd
+                },
+                success: function (data, success, xhr) {
+                    $("#state_" + data.RoomId).html(data.State);
+                }
+            });
+
+
+
+        }
+
+            
+    }
+
+
+
+        </script>
+    }

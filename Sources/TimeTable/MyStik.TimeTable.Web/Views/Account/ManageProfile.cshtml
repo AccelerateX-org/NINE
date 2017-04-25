@@ -1,0 +1,99 @@
+﻿@using System.Collections
+@model MyStik.TimeTable.Web.Models.ProfileViewModel
+<h4>Benutzerprofil verwalten</h4>
+
+<div class="row">
+    <div class="col-md-8">
+        <section id="profileForm">
+            @using (Html.BeginForm("ManageProfile", "Account", null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                <div class="form-group">
+                    @Html.LabelFor(m => m.UserName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.HiddenFor(item => item.UserName)
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", disabled = "" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.FirstName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.FirstName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.LastName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.LastName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.EMail, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @(User.IsInRole("SysAdmin") ? 
+                              Html.TextBoxFor(m => m.EMail, new {@class = "form-control"}) : 
+                              Html.TextBoxFor(m => m.EMail, new {@class = "form-control", disabled = ""}))
+                    </div>
+                    @if (!Model.EMail.EndsWith("hm.edu"))
+                    {
+                        <div>@Html.ActionLink("E-Mail Adresse ändern", "CheckEMail", null, new {@class = "form-control btn btn-primary"})</div>
+                    }
+                </div>
+                if (!User.IsInRole("SysAdmin"))
+                {
+                     if (string.IsNullOrEmpty(Model.Curriculum) || string.IsNullOrEmpty(Model.Group))
+                     {
+                         <div class="alert alert-warning">
+                             <p>Bitte wählen Sie Ihr Studienprogramm und Ihre Studiengruppe für dieses Semester aus. Nach der Auswahl bitte die Schaltfläche speichern betätigen.</p>
+                         </div>
+                     }
+                     <div class="form-group">
+                         @Html.LabelFor(m => m.Curriculum, new {@class = "col-md-4 control-label"})
+                         <div class="col-md-8">
+                             @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>) ViewBag.Curriculums, new {@class = "form-control", onchange = "onCurriculumChanged()"})
+                             @Html.ValidationMessageFor(m => m.Curriculum)
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         @Html.LabelFor(m => m.Group, new {@class = "col-md-4 control-label"})
+                         <div class="col-md-8">
+                             @Html.DropDownListFor(model => model.Group, (IEnumerable<SelectListItem>) ViewBag.Groups, new {@class = "form-control"})
+                             @Html.ValidationMessageFor(m => m.Group)
+                         </div>
+                     </div>
+                 }
+                <div class="form-group">
+                    <div class="col-md-offset-4 col-md-8">
+                        <input type="submit" value="Speichern" class="btn btn-primary" />
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+
+        function onCurriculumChanged() {
+
+            var prog = $('#Curriculum option:selected').val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList")',
+                data: {
+                    currId: prog,
+                },
+                success: function(data, success, xhr) {
+                    $('#Group').html(data);
+                }
+            });
+        }
+    </script>
+}

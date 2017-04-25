@@ -1,0 +1,94 @@
+﻿@using System.Globalization
+@using System.Web.Mvc.Html
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.EventDetailViewModel
+@{
+    ViewBag.Title = "Veranstaltungsdetails";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>@Model.Event.Name.ToUpper() (@Model.Event.ShortName.ToUpper())</h4>
+                <p>
+                    @foreach (var lec in Model.Lecturers)
+                    {
+                        @Html.Raw(lec.Name.ToUpper())
+                        if (lec != Model.Lecturers.Last())
+                        {
+                            @Html.Raw(", ")
+                        }
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+            {
+
+                <div class="row">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>
+                                <a href="@Url.Action("Admin", new {id = Model.Event.Id})"><i class="fa fa-wrench"></i> Verwaltung</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+
+
+
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>@Model.Event.Name</h4>
+                    <p>
+                        @if (string.IsNullOrEmpty(Model.Event.Description))
+                        {
+                            @Html.Raw("Keine Beschreibung vorhanden.")
+                        }
+                        else
+                        {
+                            @Html.Raw(Model.Event.Description)
+                        }
+                    </p>
+
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Uhrzeit</th>
+                            <th>Raum</th>
+                            <th>Veranstalter</th>
+                            <th>Beschreibung</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var date in Model.Event.Dates)
+                        {
+                            <tr>
+                                <td>@date.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</td>
+                                <td>@Html.TimeSpan(date)</td>
+                                <td>@Html.RoomList(date.Rooms)</td>
+                                <td>@Html.LecturerList(date.Hosts)</td>
+                                <td>@date.Description</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

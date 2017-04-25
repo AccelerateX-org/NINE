@@ -1,0 +1,94 @@
+﻿@using System.Web.Razor.Text
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Host.Name - Sprechstundentermine im Semester @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Meine Termine
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Zeitraum</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var slot in Model.Slots.Where(x => x.IsSubscribed))
+                            {
+                                <tr>
+                                    <td>@slot.Date.ToShortDateString()</td>
+                                    <td>@Html.TimeSpan(slot.Begin, slot.End)</td>
+                                    <td>@slot.Remark</td>
+                                    <td>@Html.Partial("_SubscriptionState", slot.State)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Verfügbare Termine
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Zeitraum</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var slot in Model.Slots.Where(x => !x.IsSubscribed && x.Occurrence.IsAvailable))
+                        {
+                            <tr>
+                                <td>@slot.Date.ToShortDateString()</td>
+                                <td>@Html.TimeSpan(slot.Begin, slot.End)</td>
+                                <td>@slot.Remark</td>
+                                <td>@Html.Partial("_SubscriptionState", slot.State)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

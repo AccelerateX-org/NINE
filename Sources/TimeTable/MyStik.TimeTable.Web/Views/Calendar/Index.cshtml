@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "iCal";
+}
+
+<h2>Persönliche Termine über iCal</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">iCal - Datei</div>
+    <div class="panel-body">
+        <p>Die iCal-Datei läßt sich in verschiedene Mailprogramme einlesen, z.B. MS-Outlook.</p>
+        <p><strong>Hinweis:</strong> Die iCal Datei enthält nur die Termine zum Zeitpunkt des Downloads. Wer ständig auf dem laufenden gehalten werden möchte, kann den iCal-Feed verwenden.</p>
+        <div><a href="@Url.Action("File", "Calendar")" class="btn btn-default"><i class="fa fa-download text-success"></i> Download iCal-Datei für <strong>@ViewBag.CalendarPeriod</strong></a></div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">iCal - Feed</div>
+    <div class="panel-body">
+        <p>Die iCal-Feed läßt sich als Kalender, z.B. in MS-Outlook oder google Calendar einbinden. Das jeweilige Programm ruft dann je nach Einstellungen die aktuellen Termine ab.</p>
+        <div>URL für iCal Client Feed (<strong>@ViewBag.CalendarPeriod</strong>): <span class="text-primary">@Url.Action("Feed", "Calendar", new { token = ViewBag.CalendarToken }, "http")</span></div>
+    </div>
+</div>
+

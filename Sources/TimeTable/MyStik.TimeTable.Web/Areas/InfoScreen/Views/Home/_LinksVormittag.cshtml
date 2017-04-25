@@ -1,0 +1,155 @@
+﻿@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.LinksVormittagsModel
+<!--Inhalt linke Seite genannt "Facts:
+-hier sollen Information dauerhaft stehen: d.h. BEI MIR von 5.00 Uhr morgens bis Mittags 13.30 Uhr,
+-die Woche ist geplant von Freitag bis Donnerstag, um die Infos auf Gegenwart und Zukunft beziehen zu können.-->
+
+<!--Aufteilung des panel-body in "rows"-->
+<div class="row">
+
+    <div class="col-xs-12 col-sm-12">
+        <!--Die HTML-Seite soll hauptsächlich auf großen Monitoren laufen, daher werden kleine Monitore beim "Rastern" nicht berücksichtigt-->
+        <!--Inhalt 1: ausfallende Vorlesungen-->
+        <h2>ausfallende Vorlesungen</h2>                   
+       <div class="table-responsive">
+            <table class="table">   
+                <thead>
+                    <tr>
+                        <th>Vorlesung</th>
+                        <th>Uhrzeit</th>
+                        <th>Dozent</th>
+                        <th>Std.-gr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var cl in Model.CanceledLectures.Take(5))
+                        { 
+                    <tr>
+                        <td>@cl.Vorlesung</td>
+                        <td>@cl.Beginn.ToShortTimeString() - @cl.Ende.ToShortTimeString()</td>
+                    <!--<td>@cl.Dozent</td> Ausgabe nach Variante 1-->
+                        
+                    <!--Ausgabe nach Variante 2 -->
+                        <td>
+                            @foreach (var doz in cl.Dozenten)
+                            {
+                                @doz.Name
+                            }
+                        </td>
+                        <td>
+                            @foreach (var Std in cl.Studiengruppe)
+                            {
+                                @Std.FullNameCompact//Die Groupnames sollen noch durch Kommata getrennt werden
+                                string punctuationmark = ", ";
+                                @punctuationmark
+                            }
+                      
+                        </td>
+                    </tr>
+                        }             
+                </tbody>
+                <tfoot></tfoot>
+            </table>
+          </div> 
+    </div>
+
+    <!--Inhalt 2: Datum und Uhrzeit-->
+    @*
+    <div class="col-md-4">
+        <canvas id="clockid" class="CoolClock:Babosa:80:GMTOffset"></canvas> <!--wird nicht angezeigt-->
+
+        <h4>@ViewBag.Datum</h4>
+    </div>
+    *@
+</div>
+
+<!--<div class="row">
+    <div class="col-md-5">
+        <h4>Kühlschrankbestand</h4>
+        <iframe width="350" height="150" scrolling="no" frameborder="0" src="http://www.selfhtml5.org/html5-diagramme/saeulendiagramm/index.php?id=14472603236448&"></iframe>
+    </div>
+</div>-->   <!--Zu wenig Platz auf der Seite, nur gadget-->
+
+<!--Inhalt 3: Speiseplan Mensa-->
+
+<div class="row">
+    <div class="col-xs-10 col-sm-12">
+        
+        <h2>Mensa Speiseplan</h2>
+        <br />
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead></thead>
+                <tbody>
+                    
+                    
+                    @foreach (var meal in Model.MensaSpeiseplan.Tage.ElementAt(0).meals.Take(5)) //<!--Die Aktionsessen müssen noch nach oben sortiert werden, da sie sonst unten angezeigt und aus der Liste fallen-->
+                    {
+                    <tr>
+                        <td>
+                            @if (!meal.prices.allPricesAreZero())
+                            {
+                                // keine Beilage
+                                <b>@meal.name</b>
+                            }
+                            else
+                            {
+                                // Beilage
+                                @meal.name
+                            }
+                            @foreach (var Notiz in meal.notes)
+                            {
+                                if (Notiz == "fleischloses Gericht")
+                                {
+                                    <span class="glyphicon glyphicon-apple" aria-hidden="true"></span>
+                                }
+                                else if (Notiz == "veganes Gericht")
+                                {
+                                    <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (!meal.prices.allPricesAreZero())
+                            {
+                                <b>@meal.prices.price_student.ToString("0.00€")</b> <small>Studenten</small><br />
+                                @meal.prices.price_employees.ToString("0.00€") <small>Mitarbeiter</small><br />
+                                @meal.prices.price_others.ToString("0.00€") <small>Gäste</small>;
+                            }
+                        </td>                        
+                    </tr>
+                    } 
+                </tbody>
+                <tfoot></tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts
+        {
+    <script src="~/Assets/global/plugins/jQuery.Marquee-master/jquery.marquee.min.js"></script>
+    <script src="~/Assets/global/plugins/CoolClock-master/coolclock.js"></script>
+    <script src="~/Assets/global/plugins/CoolClock-master/moreskins.js"></script>
+
+    <script>
+
+                $(function() {
+                    CoolClock.findAndCreateClocks();
+
+                    $('.marquee').marquee({
+                        //speed in milliseconds of the marquee
+                        duration: 15000,
+                        //gap in pixels between the tickers
+                        gap: 50,
+                        //time in milliseconds before the marquee will start animating
+                        delayBeforeStart: 0,
+                        //'left' or 'right'
+                        direction: 'left',
+                        //true or false - should the marquee be duplicated to show an effect of continues flow
+                        duplicated: false
+                    });
+                });
+
+
+    </script>
+}

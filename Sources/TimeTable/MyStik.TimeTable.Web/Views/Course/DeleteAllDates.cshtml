@@ -1,0 +1,28 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseDeleteModel
+@{
+    ViewBag.Title = "Alle Termine löschen";
+}
+
+<h4>Alle Termine von @Model.Course.Name löschen</h4>
+
+<div class="alert alert-danger">
+    <h4>Bestätigung</h4>
+    <p>Wollen Sie alle Termine dieser Lehrveranstaltung löschen?</p>
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <fieldset>
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.Course.Id)
+            <div class="form-group">
+                <div class="col-md-offset-4 col-md-10">
+                    <input type="submit" value="Ja" class="btn btn-danger" />
+                    <a href="@Url.Action("Index", "Course", new { id = Model.Course.Id})" class="btn btn-default">Nein</a>
+                </div>
+            </div>
+        </fieldset>
+    }
+</div>
+
+
+

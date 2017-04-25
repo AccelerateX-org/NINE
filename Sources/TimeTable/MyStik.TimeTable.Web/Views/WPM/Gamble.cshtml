@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Gamble";
+}
+
+<h2>Durchführung der Platzverlosung</h2>
+
+
+<input type="button" value="Verlosung starten" id="btnrun" class="btn btn-danger"/>
+<a href="@Url.Action("Reset")" class="btn btn-default">Verlosung zurücksetzen</a>
+<a href="@Url.Action("List")">Liste aller WPMS</a>
+
+
+<div id="pogresslabel"></div>
+<div class="progress">
+    <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+        0%
+    </div>
+</div>
+<div class="progress">
+    <div id="progressbar2" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+        0%
+    </div>
+</div>
+
+
+<ul id="discussion"></ul>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/signalr")
+
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    
+        $(function() {
+            var connection = $.connection.wpmHub;
+
+            connection.client.updateProgress = function (message, perc1, perc2) {
+                /*
+                $('#discussion').append('<li><strong>' + perc
+                    + '</strong>: ' + message + '</li>');
+                */
+
+                $("#pogresslabel").html("<p>" + message + "</p>");
+                $("#progressbar1").html(perc1 + "%");
+                $("#progressbar1").css("width", perc1 + "%");
+                $("#progressbar2").html(perc2 + "%");
+                $("#progressbar2").css("width", perc2 + "%");
+            };
+
+            $("#btnrun").click(function() {
+                connection.server.executeLottery().done(function () {
+//                    alert("habe fertig");
+                });
+            });
+
+            $.connection.hub.start();
+        })
+
+    </script>
+}

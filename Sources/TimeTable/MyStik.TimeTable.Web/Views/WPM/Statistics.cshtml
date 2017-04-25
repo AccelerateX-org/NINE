@@ -1,0 +1,36 @@
+﻿@model MyStik.TimeTable.Web.Models.WPMSummaryModel
+@{
+    ViewBag.Title = "Statistik";
+}
+
+<h2>Statistik zur WPM-Wahl</h2>
+
+<table class="table table-bordered table-condensed table-striped">
+    <tbody>
+        <tr>
+            <td>Anzahl der WPMs</td>
+            <td>@Model.WPMTotalCount</td>
+        </tr>
+        <tr>
+            <td>Anzahl der WPMs mit Eintragungen</td>
+            <td>@Model.WPMSubscribedCount</td>
+        </tr>
+        <tr>
+            <td>Anzahl Eintragungen insgesamt</td>
+            <td>@Model.SubscriptionCount</td>
+        </tr>
+        <!-- Anzahl Eintragungen mit Prio -->
+        @for (var i = 1; i <= Model.PriorityList.Count(); i++)
+        {
+            <tr>
+                <td>Anzahl Eintragungen mit Priorität @i</td>
+                <td>@Model.PriorityList[i]</td>
+            </tr>
+        }
+        <tr>
+            <td>Anzahl Studierende mit Eintragungen</td>
+            <td>@Model.SubscriberCount</td>
+        </tr>
+    </tbody>
+</table>
+

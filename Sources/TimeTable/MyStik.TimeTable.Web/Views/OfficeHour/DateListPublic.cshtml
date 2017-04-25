@@ -1,0 +1,82 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OfficeHourCharacteristicModel
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Host.Name - Sprechstundentermine im Semester @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Zeitraum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var slot in Model.CurrentSlots)
+                        {
+                            if (!slot.IsHistory)
+                            {
+                                <tr>
+                                    @if (slot.RowNo == 1)
+                                    {
+                                        if (slot.ActivityDate.Occurrence.IsCanceled)
+                                        {
+                                            <td rowspan="@slot.RowCount"><del>@slot.Date.ToShortDateString()</del></td>
+                                        }
+                                        else
+                                        {
+                                            <td rowspan="@slot.RowCount">@slot.Date.ToShortDateString()</td>
+                                        }
+                                    }
+                                    @if (slot.SubscriptionNo == 1)
+                                    {
+                                        if (slot.ActivityDate.Occurrence.IsCanceled)
+                                        {
+                                            <td rowspan="@slot.SubscriptionCount"><del>@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</del></td>
+                                        }
+                                        else
+                                        {
+                                            <td rowspan="@slot.SubscriptionCount">@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</td>
+                                        }
+                                    }
+                                    @if (slot.SubscriptionNo == 1)
+                                    {
+                                        if (Model.OfficeHour.ByAgreement)
+                                        {
+                                            <td>Terminvereinbarung per e-mail</td>
+                                        }
+                                        else
+                                        {
+                                            <td rowspan="@slot.SubscriptionCount">@Html.Partial("_SubscriptionState", slot.State)</td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

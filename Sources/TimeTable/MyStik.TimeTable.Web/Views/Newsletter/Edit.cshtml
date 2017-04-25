@@ -1,0 +1,41 @@
+﻿@model MyStik.TimeTable.Data.Newsletter
+@{
+    ViewBag.Title = "Newsletter ändern";
+}
+
+<h4>Newsletter ändern</h4>
+
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">Allgemeine Informationen</div>
+        <div class="panel-body">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                @Html.ValidationSummary(true)
+                <fieldset>
+                    @Html.ValidationSummary()
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.Organiser.ShortName)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "10" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Speichern" class="btn btn-default" />
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,31 @@
+﻿@model CalenderEventViewModel
+@using System.Text
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+        @if (Model.Summary.Date.Occurrence != null && (
+            !string.IsNullOrEmpty(Model.Summary.Date.Occurrence.Information) ||
+             Model.Summary.Date.Occurrence.IsCanceled))
+        {
+            var sb = new StringBuilder();
+            if (Model.Summary.Date.Occurrence.IsCanceled)
+            {
+                sb.Append("Abgesagt!");
+            }
+
+            if (!string.IsNullOrEmpty(Model.Summary.Date.Occurrence.Information))
+            {
+                if (Model.Summary.Date.Occurrence.IsCanceled)
+                {
+                    sb.Append(" - ");
+                }
+                sb.Append(Model.Summary.Date.Occurrence.Information);
+            }
+
+            <a href="#" class="btn btn-default btn-xs" data-toggle="popover"
+               data-title="Aktuelle Informationen zu @Model.Summary.Name"
+               data-content="@sb.ToString()"
+               data-container="body" data-placement="top" role="button">
+                <i class="fa fa-info-circle text-primary"></i>
+            </a>
+        }

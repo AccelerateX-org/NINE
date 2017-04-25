@@ -1,0 +1,15 @@
+﻿@model MyStik.TimeTable.Web.Models.UserProfileViewModel
+
+@if (Model.SemesterGroup == null)
+{
+    <div class="alert alert-danger">
+        <h4>Bin im aktuellen Semester <strong>(@Model.Semester.Name)</strong> bei keiner Semestergruppe dabei!</h4>
+        <p>Solange ich in keiner Semestergruppe bin erhalte ich keine Benachrichtigungen per E-Mail und bin bei Platzverlosungen, z.B. WPMs nicht dabei!</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-success">
+        <h4>Meine aktuelle Semstergruppe im @Model.SemesterGroup.Semester.Name: @Model.SemesterGroup.FullName</h4>
+    </div>
+}

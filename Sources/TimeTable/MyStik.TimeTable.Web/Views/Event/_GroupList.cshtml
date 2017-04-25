@@ -1,0 +1,27 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.OccurrenceGroupCapacityModel>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Studienprogramm</th>
+            <th>Semestergruppe</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var group in Model)
+        {
+            <tr id="@group.SemesterGroupId">
+                <td>@group.Curriculum</td>
+                <td>@group.Group</td>
+                <td>
+                    @Ajax.ActionButton("fa-trash-o", "Entfernen", "RemoveGroup", "Event",
+                        new { courseId = group.CourseId, groupId = group.SemesterGroupId },
+                        new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = group.SemesterGroupId.ToString() },
+                        new { @class = "btn btn-danger btn-xs" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

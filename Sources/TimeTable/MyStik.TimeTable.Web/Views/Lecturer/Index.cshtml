@@ -1,0 +1,85 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Dozenten";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Dozenten @ViewBag.Organiser <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.DropDownListFor(model => model.Organiser, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", disabled = "", onchange = "onFacultyChanged()" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="profileList"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function() {
+            $('#loading').hide();
+            onFacultyChanged();
+        });
+
+
+        function onFacultyChanged() {
+            var facultyId = $('#Organiser option:selected').val();
+
+            $('#profileList').html('');
+            $('#loading').show();
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("Faculty", "Lecturer")',
+                data: {
+                    facultyId: facultyId,
+                },
+                success: function(data, success, xhr) {
+                    $('#profileList').html(data);
+                    $('#loading').hide();
+                },
+                error: function(data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            });
+        }
+
+
+    </script>
+}
+
+
+
+
+
+
+
+
+

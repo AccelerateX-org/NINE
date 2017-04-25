@@ -1,0 +1,21 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.LecturerViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lec in Model)
+        {
+            <tr>
+                <td>@lec.Lecturer.Name</td>
+                <td>@Html.ActionLink("> zum Profil", "Profile", "Lecturer", new { id = @lec.Lecturer.Id })</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

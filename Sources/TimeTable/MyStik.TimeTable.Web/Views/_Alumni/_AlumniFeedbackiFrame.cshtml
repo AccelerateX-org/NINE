@@ -1,0 +1,129 @@
+﻿
+@model MyStik.TimeTable.Web.Models.AlumniFeedbackViewModel
+<html>
+<head>
+    @Styles.Render("~/Content/css")
+    <link href="@Styles.Url("~/Content/print.css")" rel="stylesheet" type="text/css" media="print" />
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body style="margin:0; padding:0; padding-right:10px; height:100%; width:100%;">
+    <div class="panel panel-@Model.panelClass">
+        <div class="panel-heading">
+            @Model.panelHeading
+        </div>
+        <div class="panel-body">
+            @if (Model.success.Count > 0)
+            {
+                <!-- Erfolgreich-->
+                <p class="text-success">Folgende Person(en) wurden erfolgreich als Alumni gespeichert:</p>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Vorname</th>
+                            <th>Nachname</th>
+                            <th>E-Mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (MyStik.TimeTable.Web.Models.ApplicationUser user in Model.success)
+                        {
+                            <tr class="success">
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                <td>@user.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (Model.error.Count > 0)
+            {
+                <!-- Fehlerausgabe -->
+                <p class="text-danger">Folgende Person(en) konnten nicht als Alumni gespeichert werden:</p>
+                using (Html.BeginForm("Invite", "Alumni", FormMethod.Post, new { target = "_top" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="checkAllErrors" />
+                                </th>
+                                <th>Vorname</th>
+                                <th>Nachname</th>
+                                <th>E-Mail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (MyStik.TimeTable.Web.Models.ApplicationUser user in Model.error)
+                            {
+                                <tr class="danger">
+                                    <td>
+                                        <input type="checkbox" name="mailTo" value="@user.Email" />
+                                    </td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.LastName</td>
+                                    <td>@user.Email</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="col-md-offset-2 col-md-10">
+                        <button id="invite" type="submit" class="btn btn-default"><i class="fa fa-plus"></i> Einladen</button>
+                    </div>
+                }
+            }
+            @if (Model.suggestion.Count > 0)
+            {
+                <!-- Vorschläge -->
+                <p class="text-info">Meinten Sie eine der folgenden Personen?</p>
+                using (Html.BeginForm("TakeSuggestion", "Alumni"))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" value="@Model.AlumniSince" name="AlumniSince" id="AlumniSince" />
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Vorname</th>
+                                <th>Nachname</th>
+                                <th>E-Mail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (MyStik.TimeTable.Web.Models.ApplicationUser user in Model.suggestion)
+                            {
+                                <tr class="info">
+                                    <td>
+                                        <input type="checkbox" name="suggestedIDs" value="@user.Id" />
+                                    </td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.LastName</td>
+                                    <td>@user.Email</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-check"></i> Vorschläge übernehmen</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <script type="text/javascript">
+        $("input#checkAllErrors").click(function () {
+            if ($(this).is(':checked')) {
+                $("input[name='mailTo']").prop('checked', true);
+            } else {
+                $("input[name='mailTo']").prop('checked', false);
+            }
+        });
+    </script>
+</body>
+</html>

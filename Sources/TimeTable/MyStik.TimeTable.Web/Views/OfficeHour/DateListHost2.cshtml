@@ -1,0 +1,113 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OfficeHourDateSlotViewModel
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Sprechstundentermine im @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            @if (Model.OfficeHour == null)
+                            {
+                                <li>
+                                    <a href="@Url.Action("CreateOfficeHour", "OfficeHour", new {id = "FK 09"})"><i class="fa fa-stethoscope fa-2x text-primary list-group-item"></i> Sprechstunden für @Model.Semester.Name anlegen</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href="@Url.Action("CreateDate", "OfficeHour", new {id = Model.OfficeHour.Id})">
+                                        <i class="fa fa-plus-circle"></i> Neuer Termin
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("SubscriptionList", "OfficeHour", new {id = Model.OfficeHour.Id})">
+                                        <i class="fa fa-download"></i> Teilnehmerliste
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("DeleteOfficeHour", "OfficeHour")">
+                                        <i class="fa fa-trash-o"></i> Sprechstunde löschen
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-10">
+            <div id="dateView"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function() {
+
+            $("tr[history]").hide();
+
+
+            $("#toggleHistoryOn").click(function () {
+                $("tr[history]").show();
+                $("#toggleHistoryOff").removeClass("active");
+            });
+
+            $("#toggleHistoryOff").click(function() {
+                $("tr[history]").hide();
+                $("#toggleHistoryOn").removeClass("active");
+            });
+
+            // per ajax das aktuelle Datum laden
+            showDate("@Model.CurrentDate.Id");
+        });
+
+        function showDate(dateId) {
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("DateDetails", "OfficeHour")',
+                data: {
+                    dateId: dateId
+                },
+                success: function (data, success, xhr) {
+                    $('#dateView').html(data);
+                    //$('#loading').hide();
+                },
+                error: function (data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    //$('#loading').hide();
+                }
+            });
+        }
+
+</script>
+}

@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MyStik.TimeTable.Data.Activity">
+    <Position X="4.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACAgiAAAAAAAAAIYAABAAAYIAAAAAAAACAAA=</HashCode>
+      <FileName>Activity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Occurrence" />
+      <Property Name="Organiser" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Dates" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.ActivityOrganiser">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAEAAAAAAAAAAAEQEAAAAAIAAAAAEAIAAAAA=</HashCode>
+      <FileName>ActivityOrganiser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Activities" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Course">
+    <Position X="6.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAEAAAAAAAAAQAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Course.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Curriculum">
+    <Position X="11.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAIAAAAAAAAAYAABAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Curriculum.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="CurriculumGroups" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.CurriculumGroup">
+    <Position X="9" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAgAAAAAAAgAAAQQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CurriculumGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Occurrence">
+    <Position X="1" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAACEEAAAAQAAAAAAQgAAAACAAIAAAAAECBGBIAAAQA=</HashCode>
+      <FileName>Occurrence.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.OfficeHour">
+    <Position X="2.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>OfficeHour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Room">
+    <Position X="8.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAACAAAAgAAAAAEAAAAQCAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Room.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Semester">
+    <Position X="9" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAiAEAAAAAAAAAAAAAAAAQAAAAAAAAAAAACAAICAAA=</HashCode>
+      <FileName>Semester.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Dates" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.SemesterDate" Collapsed="true">
+    <Position X="11.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgACAAAAAAAgAAAAIAAAAAAAAAAIAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>SemesterDate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Subscription">
+    <Position X="2.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEACAACAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Subscription.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.SemesterGroup">
+    <Position X="6.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAAAAAAKAAIAAAAAQAAAAAAAAAAAAEAIAAAAE=</HashCode>
+      <FileName>SemesterGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Semester" />
+      <Property Name="CurriculumGroup" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.ActivitySlot">
+    <Position X="3.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAAAAAiAAAAAAAAAAQAAAAAEIAAAAIAAAAAAAA=</HashCode>
+      <FileName>ActivitySlot.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Occurrence" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.ActivityDate">
+    <Position X="6.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAAAAAihEAAAAAAEAACAAAAEIAAAAAAAEAAAAA=</HashCode>
+      <FileName>ActivityDate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Occurrence" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Rooms" />
+      <Property Name="Hosts" />
+      <Property Name="Slots" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.OrganiserMember">
+    <Position X="11.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAAAEAAAAAwACJAAAIAAAAAAAAACAAA=</HashCode>
+      <FileName>OrganiserMember.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Object">
+    <Position X="13.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

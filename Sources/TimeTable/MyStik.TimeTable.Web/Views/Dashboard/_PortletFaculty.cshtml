@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+<div class="portlet portlet-sortable light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-university"></i>
+                <span class="caption-subject bold uppercase"> Fakultät</span>
+            </div>
+            <div class="actions">
+                <a href="@Url.Action("Index", "Reservation", null)" class="btn btn-circle btn-icon-only btn-default">
+                    <i class="fa fa-cog"></i>
+                </a>
+            </div>
+        </div>
+    <div class="portlet-body">
+        <div class="list-group">
+            <a href="@Url.Action("Members", "Organiser", new {id = "FK 09"})" class="list-group-item">
+                <span class="badge">@Model.Organiser.Members.Count</span>
+                Kolleginnen und Kollegen
+            </a>
+            <a href="@Url.Action("Members", "Organiser", new {id = "FK 09"})" class="list-group-item">
+                <span class="badge">@Model.Organiser.Members.Count</span>
+                Lehrbeauftragte und Gäste
+            </a>
+        </div>
+
+    </div>
+</div>
+

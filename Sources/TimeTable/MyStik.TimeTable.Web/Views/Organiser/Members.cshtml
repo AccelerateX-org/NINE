@@ -1,0 +1,181 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using PagedList.Mvc;
+@using PagedList;
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Mitglieder " + Model.Organiser.ShortName;
+}
+
+@section styles
+{
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Alle Mitglieder @Model.Organiser.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Mitglieder @Model.Organiser.Name</h4>
+                <div>
+                    @Html.ActionLink("A", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "A"}, null)
+                    @Html.ActionLink("B", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "B"}, null)
+                    @Html.ActionLink("C", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "C"}, null)
+                    @Html.ActionLink("D", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "D"}, null)
+                    @Html.ActionLink("E", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "E"}, null)
+                    @Html.ActionLink("F", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "F"}, null)
+                    @Html.ActionLink("G", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "G"}, null)
+                    @Html.ActionLink("H", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "H"}, null)
+                    @Html.ActionLink("I", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "I"}, null)
+                    @Html.ActionLink("J", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "J"}, null)
+                    @Html.ActionLink("K", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "K"}, null)
+                    @Html.ActionLink("L", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "L"}, null)
+                    @Html.ActionLink("M", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "M"}, null)
+                    @Html.ActionLink("N", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "N"}, null)
+                    @Html.ActionLink("O", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "O"}, null)
+                    @Html.ActionLink("P", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "P"}, null)
+                    @Html.ActionLink("Q", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "Q"}, null)
+                    @Html.ActionLink("R", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "R"}, null)
+                    @Html.ActionLink("S", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "S"}, null)
+                    @Html.ActionLink("T", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "T"}, null)
+                    @Html.ActionLink("U", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "U"}, null)
+                    @Html.ActionLink("V", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "V"}, null)
+                    @Html.ActionLink("W", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "W"}, null)
+                    @Html.ActionLink("X", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "X"}, null)
+                    @Html.ActionLink("Y", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "Y"}, null)
+                    @Html.ActionLink("Z", "Members", "Organiser", new {id = Model.Organiser.ShortName, startWith = "Z"}, null)
+                    @Html.ActionLink("alle", "Members")
+                    @Html.ActionButton("fa-download text-success", "Adressliste", "MemberList", "Organiser", new {id = Model.Organiser.ShortName}, new {@class = "btn btn-default"})
+                    @if (ViewBag.UserRight.IsOrgAdmin)
+                    {
+                        @Html.ActionButton("fa-plus fa-2x text-success", "Neues Mitglied<br>anlegen", "CreateMember", "Organiser", new {id = Model.Organiser.Id}, new {@class = "btn btn-default btn-sm"})
+                    }
+                </div>
+            </div>
+
+
+
+            <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Rolle</th>
+                    @if (ViewBag.UserRight.IsOrgMember)
+                    {
+                        <th>Beschreibung</th>
+                        <th>@ViewBag.ThisSemester</th>
+                        <th>@ViewBag.LastSemester</th>
+                        <th>@ViewBag.LastYear</th>
+                        if (ViewBag.UserRight.IsOrgAdmin)
+                        {
+                            <th>Benutzerinformationen</th>
+                            <th>Member</th>
+                        }
+                    }
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Members)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(item.Member.Name + " (" + item.Member.ShortName + ")", "Member", new {orgId = Model.Organiser.ShortName, shortName = item.Member.ShortName}) </td>
+                        <td>@item.Member.Role</td>
+                        @if (ViewBag.UserRight.IsOrgMember)
+                        {
+                            <td>@item.Member.Description</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-times text-muted"></i>
+                                }
+                            </td>
+                            <td>
+                                @if (item.WasActiveLastSemester)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-times text-muted"></i>
+                                }
+                            </td>
+                            <td>
+                                @if (item.WasActiveLastYear)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-times text-muted"></i>
+                                }
+                            </td>
+                            if (ViewBag.UserRight.IsOrgAdmin)
+                            {
+                                if (item.User != null)
+                                {
+                                    <td>@item.User.FirstName @item.User.LastName</td>
+                                    <td>@item.User.MemberState</td>
+                                }
+                                else
+                                {
+                                    <td colspan="2"></td>
+                                }
+                            }
+                        }
+                        <td>
+                            @if (ViewBag.UserRight.IsOrgMember)
+                            {
+                                if (item.User != null)
+                                {
+                                    <a href="mailto:@item.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                                }
+                                <a href="@Url.Action("Calendar", "Lecturer", new {id=item.Member.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Plan</a>
+                            }
+                            @if (ViewBag.UserRight.IsOrgAdmin || item.ItsMe)
+                            {
+                                if (ViewBag.UserRight.IsOrgAdmin)
+                                {
+                                    @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMember", "Organiser", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
+                                }
+                                else
+                                {
+                                    @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMemberDescription", "Organiser", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
+                                }
+                            }
+                            @if (User.IsInRole("SysAdmin"))
+                            {
+                                @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
+                            }
+                        </td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+            <div class="panel-footer">
+                @Html.PagedListPager((IPagedList) ViewBag.MemberPage, page => Url.Action("Members", new {id = Model.Organiser.ShortName, page}))
+            </div>
+        </div>
+    </div>
+</div>
+
+

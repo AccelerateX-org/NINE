@@ -1,0 +1,99 @@
+﻿@model MyStik.TimeTable.Web.Models.StuCafeViewModel
+@{
+    ViewBag.Title = "StuCafe";
+    var show = true;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-cantine">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Name (Test)</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        @if (show)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Gerichte</th>
+                                <th>Preis</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var e in Model.Gerichte)
+                            {
+                                <tr>
+                                    <td>@e.Name</td>
+                                    <td>@e.Preis</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Snacks</th>
+                                <th>Preis</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var s in Model.Snacks)
+                            {
+                                <tr>
+                                    <td>@s.Name</td>
+                                    <td>@s.Preis</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Getränke</th>
+                                <th>Preis</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var g in Model.Getraenke)
+                            {
+                                <tr>
+                                    <td>@g.Name</td>
+                                    <td>@g.Preis</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-12">
+                <h1>Demnächst mehr</h1>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,155 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.EventCreateModel2
+@{
+    ViewBag.Title = "Gruppenzuordnung";
+}
+
+@section styles
+{
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Gruppenzugehörigkeit im aktuellen Semester ändern</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a class="btn btn-default" id="cancelAll" href="#"><i class="fa fa-save"></i> speichern</a>
+                    <a class="btn btn-default" href="@Url.Action("Admin", new {id = Model.EventId})"><i class="fa fa-left"></i> zurück</a>
+                    <div id="saveResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Soll für folgende Semestergruppen angeboten werden</h4>
+                </div>
+                <div class="panel-body">
+                    @Html.HiddenFor(m => m.EventId)
+                    <div id="groupTable">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Aktivitäten</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var group in Model.Semester.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                            {
+                                <tr>
+                                    @if (Model.Event.SemesterGroups.Any(r => r.Id == group.Id))
+                                    {
+                                        <td><input id="@group.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="" checked="checked"></td>
+                                    }
+                                    else
+                                    {
+                                        <td><input id="@group.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
+                                    }
+                                    <td>@group.FullName</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Wurde in den vergangenen Semester in folgenden Gruppen angeboten</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Semester</th>
+                            <th>Gruppe</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var group in Model.Event.SemesterGroups.Where(g => 
+                            g.Semester.Id != Model.Semester.Id &&
+                            g.CurriculumGroup != null).OrderBy(g => g.Semester.Name).ThenBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                        {
+                            <tr>
+                                <td>@group.Semester.Name</td>
+                                <td>@group.FullName</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+
+        $("#cancelAll").click(function () {
+            var list = $("#groupTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+            var n = list.length;
+
+
+                var semId = $("#EventId").val();
+
+
+                var dateList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    dateList[i] = list[i].id;
+                }
+
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("ChangeGroups")',
+                    data: {
+                        EventId: semId,
+                        GroupIds: dateList
+                    },
+                    success: function (data, success, xhr) {
+                        $("#saveResult").html(data);
+                    }
+                });
+        });
+
+
+
+
+
+    </script>
+}

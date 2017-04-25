@@ -1,0 +1,222 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseCreateModel
+@{
+    ViewBag.Title = "LV verschieben";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+
+<h4>Alle Termine neu anlegen</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Basisdaten für Lehrveranstaltung</div>
+            <div class="panel-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(m => m.CourseId)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control", disabled="" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ShortName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.ShortName, new { @class = "form-control", disabled = "" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Group, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Group, new { @class = "form-control", disabled = "" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Semester, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Semester, new { @class = "form-control", disabled="" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DayOfWeek, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(model => model.DayOfWeek, (IEnumerable<SelectListItem>)ViewBag.WeekDays, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.StartTimeHour, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-3">
+                                @Html.DropDownListFor(model => model.StartTimeHour, (IEnumerable<SelectListItem>)ViewBag.Hours, new { @class = "form-control" })
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.DropDownListFor(model => model.StartTimeMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.EndTimeHour, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-3">
+                                @Html.DropDownListFor(model => model.EndTimeHour, (IEnumerable<SelectListItem>)ViewBag.Hours, new { @class = "form-control" })
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.DropDownListFor(model => model.EndTimeMinute, (IEnumerable<SelectListItem>)ViewBag.Minutes, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Room, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Room, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Lecturer, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @if (string.IsNullOrEmpty(Model.Lecturer))
+                                {
+                                    @Html.TextBoxFor(model => model.Lecturer, new { @class = "form-control" })
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(model => model.Lecturer, new { @class = "form-control", disabled = "" })
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-10">
+                                <input type="submit" value="Alle Termine neu erzeugen" class="btn btn-primary" />
+                            </div>
+                        </div>
+
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Hinweise</div>
+            <div class="panel-body">
+                <div class="alert alert-danger">
+                    <h4>Wichtige Hinweise</h4>
+                    <ul>
+                        <li>Änderung betrifft nur zukünftige Termine</li>
+                        <li>Die bestehendnen Termine werden gelöscht</li>
+                        <li>Bei der Anzeige der verfügbaren Räume wird der aktuelle nicht berücksichtigt</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+@Scripts.Render("~/bundles/jquery-ui")
+
+<script>
+    $(function () {
+
+        $('#Room').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("RoomListForDay", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        number: request.term,
+                        day: $('#DayOfWeek option:selected').val(),
+                        from: $('#StartTimeHour option:selected').val() + ':' + $('#StartTimeMinute option:selected').val() + ':00',
+                        until: $('#EndTimeHour option:selected').val() + ':' + $('#EndTimeMinute option:selected').val() + ':00',
+                        sem: $('#Semester').val(),
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.name + ' (' + item.capacity + ' Plätze)',
+                                value: item.name
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+        });
+
+        $('#Lecturer').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("LecturerList", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        name: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.name + ' (' + item.shortname + ')',
+                                value: item.shortname
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+        });
+
+
+        $('#Group').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("CurriculumGroupList", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        name: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.name,
+                                value: item.name
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+        });
+    });
+</script>
+}

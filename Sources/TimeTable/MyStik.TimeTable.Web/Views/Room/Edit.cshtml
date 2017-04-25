@@ -1,0 +1,51 @@
+﻿@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Raum ändern";
+}
+
+<h4>Raum @Model.Number ändern</h4>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+        ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form-group">
+        @Html.HiddenFor(item => item.Id)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Number, new { @class = "col-md-4 control-label" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Number, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Name, new { @class = "col-md-4 control-label" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Description, new { @class = "col-md-4 control-label" })
+        <div class="col-md-8">
+            @Html.TextAreaFor(item => item.Description, new { @class = "form-control", rows="10" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Owner, new { @class = "col-md-4 control-label" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Owner, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Capacity, new { @class = "col-md-4 control-label" })
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Capacity, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            <input type="submit" value="Übernehmen" class="btn btn-primary" />
+        </div>
+    </div>
+}

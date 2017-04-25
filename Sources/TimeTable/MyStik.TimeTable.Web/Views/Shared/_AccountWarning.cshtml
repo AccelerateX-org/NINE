@@ -1,0 +1,11 @@
+﻿@if (Request.IsAuthenticated)
+{
+    if (ViewBag.Warning != null)
+    {
+        <div class="alert alert-danger">
+            <h4>Ihr Benutzerkonto läuft am @ViewBag.Warning.ExpiryDate.ToShortDateString() ab und wird automatisch gelöscht.</h4>
+            <p>Sollten Sie über eine hm.edu E-Mail Adresse verfügen, ändern Sie bitte Ihre E-Mail Adresse in Ihren Profileinstellungen.</p>
+            @Html.ActionLink("Profileinstellungen", "ManageProfile", "Account", null, new {@class="btn btn-danger"})
+        </div>
+    }
+}

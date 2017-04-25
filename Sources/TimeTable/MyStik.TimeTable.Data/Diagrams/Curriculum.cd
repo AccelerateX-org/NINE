@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MyStik.TimeTable.Data.Curriculum">
+    <Position X="0.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAIAAAAAAAAAYAABAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Curriculum.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="CurriculumGroups" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.CurriculumGroup">
+    <Position X="3.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACACAAAAgAAAAAAAgAAAQQAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>CurriculumGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Curriculum" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="SemesterGroups" />
+      <Property Name="Modules" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.SemesterGroup">
+    <Position X="6.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAACAEAAAAAAAKAAIAAAAAQCAAAAAAAAAAAEAIAIAAE=</HashCode>
+      <FileName>SemesterGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Semester" />
+      <Property Name="CurriculumGroup" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Activities" />
+      <Property Name="Subscriptions" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Semester">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAiAEAAAAAAAAAAAAAAAAQAAAAAAAAAAAACAAICAAA=</HashCode>
+      <FileName>Semester.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Groups" />
+      <Property Name="Dates" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.SemesterDate">
+    <Position X="0.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgACAAAAAAAgAAAAIAAAAAAAAAAIAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>SemesterDate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Semester" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.SemesterSubscription">
+    <Position X="6.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SemesterSubscription.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SemesterGroup" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.CurriculumModule">
+    <Position X="2" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AABCAEAAAAAgAAAAAAAAAASAAAAAAIAAgAAAAAAAAIA=</HashCode>
+      <FileName>CurriculumModule.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Group" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ModuleCourses" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.ModuleCourse">
+    <Position X="6.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAgAAAAAAAAAAAQAAQAAAAIAAAAACBAAAAA=</HashCode>
+      <FileName>ModuleCourse.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Module" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Courses" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Activity">
+    <Position X="9.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAACACAgiAAAAAAAAAIYAABAAAYIAAAAAAAACAAA=</HashCode>
+      <FileName>Activity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SemesterGroups" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MyStik.TimeTable.Data.Course">
+    <Position X="9.5" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAEAAAAAAAAAAAAAAAAIAAAAAAAAAAIA=</HashCode>
+      <FileName>Course.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ModuleCourses" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,39 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+<div class="portlet portlet-sortable light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-microphone-slash"></i>
+                <span class="caption-subject bold uppercase"> Was wurde abgesagt?</span>
+            </div>
+            <div class="actions">
+                <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-default btn-sm">
+                    <i class="fa fa-calendar"></i>
+                </a>
+            </div>
+        </div>
+        <table class="table table-condensed">
+            <tbody>
+                @foreach (var date in Model.CanceledDates)
+                {
+                    <tr>
+                        <td>
+                            @Html.RoomList(date.Rooms)
+                        </td>
+                        <td>
+                            @Html.ActionLink(
+                                            date.Activity.Name,
+                                            "Details", "Course", new { id = date.Activity.Id }, null)
+                            <div>@Html.GroupList(date.Activity.SemesterGroups)</div>
+                        </td>
+                        <td>
+                            @Html.LecturerList(date.Hosts)
+                        </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+

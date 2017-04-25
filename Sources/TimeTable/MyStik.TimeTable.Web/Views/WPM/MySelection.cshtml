@@ -1,0 +1,278 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.WPMAdminModel
+@{
+    ViewBag.Title = "Meine WPMs";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>WPM-Wahl</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Meine Eintragungen in Kursen mit Platzbeschränkungen</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    @if (Model.Curriculum != null)
+                    {
+
+                        <h2>
+                            Mein Studiengang: <strong>@Model.Curriculum.ShortName</strong>
+                        </h2>
+                        <h4><a href="@Url.Action("List")">Liste aller WPMs meines Studiengangs</a></h4>
+                    }
+                    else
+                    {
+                        <h2>Ich bin in keinem Studiengang eingetragen, daher kann ich auch keine WPMs belegen.</h2>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <strong>Res.</strong>: Anzahl Reservierungen
+                    </p>
+                    <p>
+                        <strong>WL</strong>: Anzahl Eintragungen auf Warteliste für meinen Studiengang.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (Model.Curriculum != null)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>In diesen Kursen habe ich einen bestätigten Platz!</h4>
+                    <p>
+                        Bestätigte Plätze bleiben bei der Platzverlosung erhalten.
+                        Bis zum Beginn der Vorlesungszeit kann ich maximal in <strong>@Model.MaxConfirmed Kursen</strong> einen Platz belegen.
+                        Eine Woche nach Beginn der Vorlesungszeit kann ich in weiteren Kursen Plätze belegen.
+                        Wenn ich einen Platz zurückgebe, dann landet meine Eintragung am Ende der Warteliste.
+                    </p>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Fach</th>
+                            <th>Dozent</th>
+                            <th>Zeitpunkt</th>
+                            <th>Freie Plätze (Gesamt)</th>
+                            <th>Warteliste (Teilnehmer / Reservierung)</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var subscription in Model.Subscriptions.Where(s => s.Subscription.OnWaitingList == false && s.Subscription.IsConfirmed))
+                        {
+                            <tr>
+                                <td>@Html.ActionLink(subscription.Course.Name + " (" + subscription.Course.ShortName + ")", "Index", "Course", new {id = subscription.Course.Id}, null)</td>
+                                <td>@Html.LecturerList(subscription.Summary.Lecturers)</td>
+                                <td>@Html.DateList(subscription.Summary.Dates)</td>
+                                @if (!subscription.IsRestricted)
+                                {
+                                    <td colspan="2">Keine Platzbeschränkung</td>
+                                }
+                                else
+                                {
+                                    <td>@subscription.Free (@subscription.Capacity)</td>
+                                    <td>@subscription.Waiting (@subscription.Participients / @subscription.Pending)</td>
+                                }
+                                <td>
+                                    <div class="btn-group pull-right" role="group">
+                                        @Html.ActionLink("Platz zurückgeben", "Release", new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-danger btn-sm"})
+                                        @Html.ActionButton("fa-times text-danger",
+                                            "Austragen", "Discharge", "WPM",
+                                            new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-default btn-sm"})
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>In diesen Kursen ist für mich ein Platz reserviert.</h4>
+                    <p class="text-danger">
+                        <strong>
+                            Wenn ich einen Platz nicht bestätige,
+                            dann verfällt die Reservierung bei der nächsten Platzverlosung.
+                        </strong>
+                        Die Platzverlosung findet täglich, jeweils in der Nacht, statt.
+                    </p>
+                </div>
+                <div class="panel-body">
+                    @if (Model.Confirmed >= Model.MaxConfirmed)
+                    {
+                        <div class="alert alert-danger">
+                            Ich habe bereits in @Model.Confirmed Kursen einen Platz belegt.
+                            Wenn ich einen der untenstehenden Plätze annehmen möchte,
+                            muss ich zuerst einen meiner bestätigten Plätze zurückgeben.
+                        </div>
+                    }
+
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Fach</th>
+                            <th>Dozent</th>
+                            <th>Zeitpunkt</th>
+                            <th>Freie Plätze (Gesamt)</th>
+                            <th>Warteliste (Teilnehmer / Reservierung)</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var subscription in Model.Subscriptions.Where(s => s.Subscription.OnWaitingList == false && s.Subscription.IsConfirmed == false))
+                        {
+                            <tr>
+                                <td>@Html.ActionLink(subscription.Course.Name + " (" + subscription.Course.ShortName + ")", "Index", "Course", new {id = subscription.Course.Id}, null)</td>
+                                <td>@Html.LecturerList(subscription.Summary.Lecturers)</td>
+                                <td>@Html.DateList(subscription.Summary.Dates)</td>
+                                @if (!subscription.IsRestricted)
+                                {
+                                    <td colspan="2">Keine Platzbeschränkung</td>
+                                }
+                                else
+                                {
+                                    <td>@subscription.Free (@subscription.Capacity)</td>
+                                    <td>@subscription.Waiting (@subscription.Participients / @subscription.Pending)</td>
+                                }
+                                @if (Model.Confirmed < Model.MaxConfirmed)
+                                {
+                                    <td>
+                                        <div class="btn-group pull-right" role="group">
+
+                                            @Html.ActionLink("Reservierung bestätigen", "Confirm", new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-success btn-sm"})
+                                            @Html.ActionButton("fa-times text-danger",
+                                                "Austragen", "Discharge", "WPM",
+                                                new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-default btn-sm"})
+                                        </div>
+
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <div class="btn-group pull-right" role="group">
+
+                                            @Html.ActionButton("fa-times text-danger",
+                                                "Austragen", "Discharge", "WPM",
+                                                new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-default btn-sm"})
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Bei diesen Kursen bin ich auf der Warteliste</h4>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Fach</th>
+                            <th>Dozent</th>
+                            <th>Zeitpunkt</th>
+                            <th>Freie Plätze (Gesamt)</th>
+                            <th>Warteliste (Teilnehmer / Reservierung)</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var subscription in Model.Subscriptions.Where(s => s.Subscription.OnWaitingList == true))
+                        {
+                            if (subscription.IsValid)
+                            {
+                                <tr>
+                                    <td>@Html.ActionLink(subscription.Course.Name + " (" + subscription.Course.ShortName + ")", "Index", "Course", new {id = subscription.Course.Id}, null)</td>
+                                    <td>@Html.LecturerList(subscription.Summary.Lecturers)</td>
+                                    <td>@Html.DateList(subscription.Summary.Dates)</td>
+                                    @if (!subscription.IsRestricted)
+                                    {
+                                        <td colspan="2">Keine Platzbeschränkung</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@subscription.Free (@subscription.Capacity)</td>
+                                        <td>@subscription.Waiting (@subscription.Participients / @subscription.Pending)</td>
+                                    }
+                                    <td>
+                                        <div class="btn-group pull-right" role="group">
+
+                                            @Html.ActionButton("fa-times text-danger",
+                                                "Austragen", "Discharge", "WPM",
+                                                new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-default btn-sm"})
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="danger">
+                                    <td>@Html.ActionLink(subscription.Course.Name + " (" + subscription.Course.ShortName + ")", "Index", "Course", new {id = subscription.Course.Id}, null)</td>
+                                    <td colspan="4">Das Fach gehört nicht zum meinem Studiengang. Diese Eintragung nimmt daher nicht an der Platzverlosung teil.</td>
+                                    <td>
+                                        <div class="btn-group pull-right" role="group">
+
+                                            @Html.ActionButton("fa-times text-danger",
+                                                "Austragen", "Discharge", "WPM",
+                                                new {occId = subscription.Subscription.Occurrence.Id}, new {@class = "btn btn-default btn-sm"})
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+</div>
+
+

@@ -1,0 +1,51 @@
+﻿@model WIQuest.Web.Areas.Quest.Models.QuizQuestionViewModel
+
+<div id="questionArea">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="btn-group pull-right">
+                <button id="btnBack" class="btn btn-default" onclick="prevQuestion()">zurück</button>
+                <button id="btnForward" class="btn btn-default" onclick="nextQuestion()">weiter</button>
+            </div>
+            <h4>Frage @Model.Question.Reihenfolge von @Model.NumQuestions in Kategorie @Model.Question.Category.Name</h4>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    @if (Model.Question.Image != null)
+                    {
+                        <div>
+                            <img src="@Url.Action("ShowImage", "Image", new {area = "", id = Model.Question.Image.Id})"
+                                 alt="@Model.Question.Title"
+                                 style="height: auto; width: 400px"/>
+                        </div>
+                    }
+                    else
+                    {
+                        <h4>Kein Bild vorhanden</h4>
+                    }
+                    @Html.HiddenFor(m => m.Question.Id)
+                    @Html.HiddenFor(m => m.User.Id)
+                    @Html.HiddenFor(m => m.IsFirstQuestion)
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <h4>@Model.Question.Title</h4>
+                        <p>@Model.Question.Text</p>
+                        <div id="answerArea">
+                            @foreach (var answer in Model.Question.Answers.OrderBy(a => a.Reihenfolge))
+                            {
+                                var isChecked = Model.Answer != null && Model.Answer.Id == answer.Id;
+                                <p>@Html.RadioButton("Antwort", answer.Id, isChecked) @answer.Text</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,105 @@
+﻿@using System.Web.UI.WebControls
+@model ICollection<MyStik.TimeTable.Web.Models.WpmSubscriptionDetailModel>
+@{
+    ViewBag.Title = "Subscribers";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>WPM-Wahl: Liste der Studierenden</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Aktueller Status der Eintragungen</h4>
+                    <p><strong>Legende</strong>: TN: Teilnehmer, R: Reservierung, WL: Warteliste</p>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nachname</th>
+                                <th>Vorname</th>
+                                <th>Studiengruppe</th>
+                                <th>TN</th>
+                                <th>R</th>
+                                <th>WL</th>
+                                <th>Erste Eintragung</th>
+                                <th>Letzte Eintragung</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var i = 0;
+                                var totalConfirmations = 0;
+                                var totalReservations = 0;
+                                var totalWaitings = 0;
+                                var waitingOnly = 0;
+                            }
+                            @foreach (var detail in Model)
+                            {
+                                i++;
+                                totalConfirmations += detail.Confirmed;
+                                totalReservations += detail.Reservations;
+                                totalWaitings += detail.Waiting;
+
+                                if (detail.Confirmed == 0 && detail.Reservations == 0)
+                                {
+                                    waitingOnly++;
+                                }
+                                
+                                
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@detail.User.LastName</td>
+                                    <td>@detail.User.FirstName</td>
+                                    @if (detail.Group != null)
+                                    {
+                                        <td>@detail.Group.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Keine Zuordnung</td>
+                                    }
+                                    <td>@detail.Confirmed</td>
+                                    <td>@detail.Reservations</td>
+                                    <td>@detail.Waiting</td>
+                                    <td>@detail.FirstAction</td>
+                                    <td>@detail.LastAction</td>
+                                    <td>
+                                        <a href="@Url.Action("CoursePlan", "Students", new {id = detail.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Kursplan</a>
+                                        <a href="mailto:@detail.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                                    </td>
+                                </tr>
+                            }
+                        <tr>
+                            <td colspan="4">Total</td>
+                            <td><strong>@totalConfirmations</strong></td>
+                            <td><strong>@totalReservations</strong></td>
+                            <td><strong>@totalWaitings</strong></td>
+                            <td colspan="3"></td>
+                        </tr>
+                            <tr>
+                                <td colspan="6">kein Platz/Reservierung, nur Warteliste</td>
+                                <td><strong>@waitingOnly</strong></td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

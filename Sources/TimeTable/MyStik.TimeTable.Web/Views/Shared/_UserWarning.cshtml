@@ -1,0 +1,40 @@
+﻿<div class="row">
+    <div class="alert alert-info">
+        <h4>Ihr derzeitiger Status ist <strong>Gast</strong>.</h4>
+        <p>Für das Eintragen in Lehrveranstaltungen müssen Sie Mitglied der Hochschule München sein. Dazu ist die Angabe Ihrer HM E-Mail Adresse erforderlich.</p>
+        <p>Zur Sicherstellung, dass die angegebene Adresse korrekt ist und von Ihnen gelesen werden kann, wird eine Validierungs E-Mail gesendet.</p>
+        @using (Html.BeginForm("UpgradeAccount", "Account", null, FormMethod.Post, new { @class = "form-inline", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+            <div class="form-group">
+                <label class="sr-only" for="EMail">Email address</label>
+                <input type="email" class="form-control" id="EMail" name="EMail" placeholder="Ihre hm.edu Adresse">
+            </div>
+            <button type="submit" class="btn btn-default">Absenden</button>
+        }
+
+    </div>
+    <div class="alert alert-danger">
+        <h4>Wichtige Hinweise</h4>
+        <ul>
+            <li>
+                Unter Umständen haben Sie bereits eine hm.edu Adresse angegeben, aber diese nicht bestätigt.
+                Bitte prüfen Sie in diesem Fall Ihre E-Mail Einstellungen beim <a href="https://w3-o.hm.edu/rz/online-service/" target="_blank">Portal der zentralen Accounts</a>.
+            </li>
+            <li>
+                Sollten Sie sich bereits in Lehrveranstaltungen eingeschrieben haben: Die Eintragungen sind nach wie vor gültig, werden aber derzeit nicht auf dieser Seite angezeigt.
+            </li>
+            <li>
+                Eintragungen in Sprechstunden werden angezeigt.
+            </li>
+            <li>
+                So lange Sie Gast-Status haben, werden Sie keine E-Mails über die Mailverteiler sowie bei Terminänderungen der Lehrveranstaltungen erhalten.
+            </li>
+        </ul>
+        <p>Für Rückfragen senden Sie bitte eine E-Mail an: hinz (at) hm.edu.</p>
+        <p><strong>Vielen Dank für Ihr Verständnis!</strong></p>
+    </div>
+</div>
+
+

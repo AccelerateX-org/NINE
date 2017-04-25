@@ -1,0 +1,59 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumCreateAliasModel
+@{
+    ViewBag.Title = "AddAlias";
+}
+
+<div class="row">
+    <div class="col-md-offset-3 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Neuen Alias anlegen</h4>
+            </div>
+            <div class="panel-body">
+
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary(true)
+                        @Html.HiddenFor(m => m.CurriculumId)
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.AliasName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.AliasName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.AliasName)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.CurrGroupName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.CurrGroupName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.CurrGroupName)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.SemGroupName, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.SemGroupName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.SemGroupName)
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-10">
+                                <input type="submit" value="anlegen" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

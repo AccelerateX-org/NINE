@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "AccountManagement";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Verwaltung Benutzerkonten</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <tr>
+                            <td>Inaktive Konten (letzte Anmeldung liegt mehr als 120 Tage zurück)</td>
+                            <td>@ViewBag.Inactive</td>
+                            <td>
+                                @Ajax.ActionLink("Liste ansehen", "InactiveStage1", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable"
+                                }, null)
+                            </td>
+                            <td><a href="">Mail senden</a></td>
+                        </tr>
+                        <tr>
+                            <td>Inaktive Konten mit Vorwarnung</td>
+                            <td>@ViewBag.InactiveWithWarning</td>
+                            <td>
+                                @Ajax.ActionLink("Liste ansehen", "InactiveWarned", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable"
+                                }, null)
+                            </td>
+                            <td><a href="">Mail senden</a></td>
+                        </tr>
+                        <tr>
+                            <td>Konten die gesperrt werden können</td>
+                            <td>@ViewBag.InactiveStage2</td>
+                            <td>
+                                @Ajax.ActionLink("Liste ansehen", "InactiveStage2", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable"
+                                }, null)
+                            </td>
+                            <td><a href="">Mail senden</a></td>
+                        </tr>
+                        <tr>
+                            <td>Gesperrte Konten</td>
+                            <td>@ViewBag.InactiveDeactivated</td>
+                            <td>
+                                @Ajax.ActionLink("Liste ansehen", "InactiveDeactivated", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable"
+                                }, null)
+                            </td>
+                            <td><a href="">Mail senden</a></td>
+                        </tr>
+                        <tr>
+                            <td>Abgelaufene Konten</td>
+                            <td>@ViewBag.Expired</td>
+                            <td>
+                                @Ajax.ActionLink("Liste ansehen", "InactiveExpired", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable"
+                                }, null)
+                            </td>
+                            <td><a href="">Mail senden</a></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>@Html.ActionLink("Warnungen zurücksetzen", "ResetWarnings")</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="userTable">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

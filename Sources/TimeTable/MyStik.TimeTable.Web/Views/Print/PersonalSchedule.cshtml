@@ -1,0 +1,44 @@
+﻿@model MyStik.TimeTable.Data.OrganiserMember
+@{
+    ViewBag.Title = "PersonalSchedule";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+}
+
+
+<h2>Vorlesungsplan (@Model.Name) - Semester @ViewBag.Semester.Name</h2>
+
+        <div id="calendar">
+        </div>
+
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            initPrintCalendar();
+            //initCalendar(false);
+
+
+            $('#calendar').fullCalendar('removeEvents');
+
+            $('#calendar').fullCalendar('addEventSource',
+            {
+                url: '@Url.Action("ActivityPrintPlan", "Calendar", new { dozId = Model.Id})',
+                type: 'POST'
+            });
+        });
+
+    </script>
+}

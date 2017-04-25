@@ -1,0 +1,77 @@
+﻿body {
+    padding:0;
+	margin:0;
+	background:#eee;
+}
+/*
+.container-fluid {
+	padding:0;
+	margin:0;
+}
+*/
+.graph {
+	margin-top: 10px;
+	box-sizing: border-box;
+	border-radius: 4px;
+	background-clip: padding-box;
+    background-color:#fff;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 2px 5px 0 rgba(0, 0, 0, 0.12);
+}
+.graph-content {
+	padding: 10px;
+	position: relative;
+	overflow: hidden;
+}
+.graph-content img {
+	background-clip: padding-box;
+	position: relative;
+}
+.carousel-inner { 
+    padding-bottom:20px;
+}
+.carousel-inner h2 { 
+	display:inline;
+}
+.carousel-inner p { 
+	display:inline;
+	padding-left:10px;
+}
+#custom_carousel .item {
+    color:#000;
+    background-color:#eee;
+    padding:20px 0;
+}
+.controls img{
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 2px 5px 0 rgba(0, 0, 0, 0.12);
+	}
+#custom_carousel .controls{
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-top:60px;
+    margin:0;
+    text-align: center;
+    position: relative;
+    background:#E0E0E0;
+}
+#custom_carousel .controls li {
+    border-left:3px solid #616161;
+	
+}
+#custom_carousel .controls li.active {
+    background-color:#eee;
+    border-left:3px solid #e94a50;
+}
+#custom_carousel .controls a small {
+    overflow:hidden;
+    display:block;
+    font-size:10px;
+    margin-top:5px;
+    font-weight:bold;
+}
+
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.65);
+    postion: relative;
+    left: 10px;
+    right: 10px;
+}

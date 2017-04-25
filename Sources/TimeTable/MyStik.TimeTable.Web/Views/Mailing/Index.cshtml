@@ -1,0 +1,99 @@
+﻿@using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+
+@{
+    ViewBag.Title = "Mailing";
+    var orgName = "FK 09";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Mailing</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default ">
+                <div class="panel-heading">
+                    <i class="fa fa-envelope-o"></i> E-Mail Verteiler
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Wer erhält E-Mails</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><a href="@Url.Action("AllStudents")">Alle Studierenden</a></td>
+                        <td>
+                            <p>Status "Student", validierte hm.edu E-Mail Adresse und Eintragung im Benutzerprofil, dass Empfang von E-Mails erwünscht ist.</p>
+                            <p>Status "Staff" (Mitarbeiter, Dozenten, etc,) mit Eintragung im Benutzerprofil, dass Empfang von E-Mails erwünscht ist.</p>
+                        </td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(orgName))
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("AllMembers")">Alle Mitglieder @orgName</a></td>
+                            <td>Die Empfänger sind Mitglied des "Veranstalters" @orgName</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><a href="@Url.Action("StudentGroup")">Gruppe von Studierenden</a></td>
+                        <td>
+                            Die Liste der Empfänger ermittelt sich aus den Profildaten der Benutzer. Diese Daten können die Benutzer freiwillig eingegeben. Ausgewertet werden die Felder Studienprogramm und Studiengruppe.
+                            Jeder Benutzer kann über das Benutzerprofil einstellen, ob der Empfang über E-Mail gewünscht ist.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default ">
+                <div class="panel-heading"><i class="fa fa-download"></i> Adresslisten (@ViewBag.Semester.Name)
+                </div>
+
+                @if (ViewBag.UserRight.User.MemberState != MemberState.Staff)
+                {
+                    <div class="alert alert-dangerer">
+                        <h4><i class="fa fa-ban"></i> Nicht verfügbar</h4>
+                    </div>
+
+                }
+                else
+                {
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Studiengang</th>
+                            <th>Liste</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in ViewBag.Curricula)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@Html.ActionLink("Alle Studierenden", "AdressList", new {id = item.Id})</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

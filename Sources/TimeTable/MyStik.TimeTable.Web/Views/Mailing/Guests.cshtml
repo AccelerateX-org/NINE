@@ -1,0 +1,56 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+
+@{
+    ViewBag.Title = "Alle Gäste";
+}
+
+<h2><i class="fa fa-envelope-o fa-2x"></i> Mail an Gäste</h2>
+
+
+@if (User.IsInRole("SysAdmin"))
+{
+    <div class="row">
+        @using (Html.BeginForm("Guests", null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
+        {
+            @Html.ValidationSummary(true)
+            <fieldset>
+                @Html.ValidationSummary()
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Subject, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Subject, new {@class = "form-control"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Body, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(m => m.Body, new {@class = "form-control", rows = "10"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Anhänge</label>
+                    <div class="col-md-10">
+                        <div><input type="file" name="Attachments" id="Attachment1" /></div>
+                        <div><input type="file" name="Attachments" id="Attachment2" /></div>
+                        <div><input type="file" name="Attachments" id="Attachment3" /></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Senden" class="btn btn-default" />
+                    </div>
+                </div>
+            </fieldset>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        <h4>Zugriff verweigert</h4>
+        <p>Sie haben keinen Zugriff auf diese Funktion!</p>
+    </div>
+}
+
+

@@ -1,0 +1,9 @@
+﻿@model MyStik.TimeTable.Web.Models.ConfirmEmailMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Sie haben sich bei NINE erfolgreich registriert.</p>
+<p>Zum Aktivieren Ihres Benutzerkontos folgen Sie bitte dem folgenden Link: <a href="@Url.Action("ConfirmEmail", "Account", new { userId = Model.User.Id, code = Model.Token }, Request.Url.Scheme)">E-Mail Adresse bestätigen und Konto aktivieren</a></p>

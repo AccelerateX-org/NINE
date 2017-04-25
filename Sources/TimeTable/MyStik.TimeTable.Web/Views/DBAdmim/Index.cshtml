@@ -1,0 +1,62 @@
+﻿@model MyStik.TimeTable.Web.Models.ActivityAnalysisModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Administration der Datenbank</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Aspekt</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Anzahl Kurse</td>
+            <td>@Model.CourseCount</td>
+            <td>@Model.CourseDateCount</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Anzahl Sprechstunden</td>
+            <td>@Model.OfficeHourCount</td>
+            <td>@Model.OfficeHourDateCount</td>
+            <td>@Model.OfficeHourSlotCount</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Anzahl Veranstaltungen</td>
+            <td>@Model.EventCount</td>
+            <td>@Model.EventDateCount</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Anzahl Newsletter</td>
+            <td>@Model.NewsletterCount</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Anzahl Ereignisse</td>
+            <td>@Model.OccurrenceCount</td>
+            <td>@Model.SubscriptionCount</td>
+            <td>@Model.DanglingSubscriptionCount</td>
+            <td>
+                <a href="@Url.Action("DeleteDanglingSubscriptions")" class="btn btn-default">Tote Eintragungen löschen</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div>
+    <a href="@Url.Action("InitDatabase")" class="btn btn-success">Datenbank initialisieren</a>
+    <a href="@Url.Action("ClearDatabase")" class="btn btn-danger">Datenbank Löschen</a>
+</div>

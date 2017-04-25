@@ -1,0 +1,27 @@
+﻿@section styles
+{
+    @Styles.Render("~/Content/fullcalendar/css")
+}
+
+
+<div id='calendar'></div>
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+
+            // page is now ready, initialize the calendar...
+
+            $('#calendar').fullCalendar({
+                // put your options and callbacks here
+                
+            });
+
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/fullcalendar")
+
+}

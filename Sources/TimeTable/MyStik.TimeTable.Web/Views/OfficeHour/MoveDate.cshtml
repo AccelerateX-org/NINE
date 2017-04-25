@@ -1,0 +1,114 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourMoveDateModel
+@{
+    ViewBag.Title = "Termin ändern";
+}
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Sprechstundentermin ändern</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Datum und Zeitraum ändern</div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(m => m.ActivityId)
+                            @Html.HiddenFor(m => m.ActivityDateId)
+                            <div class="form form-horizontal">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.NewDate, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.NewDate, new {@class = "form-control datepicker"})
+
+                                        @Html.ValidationMessageFor(m => m.NewDate)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.NewBegin, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.NewBegin, new {@class = "form-control timepicker timepicker-24"})
+
+                                        @Html.ValidationMessageFor(m => m.NewBegin)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.NewEnd, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.NewEnd, new {@class = "form-control timepicker timepicker-24"})
+
+                                        @Html.ValidationMessageFor(m => m.NewEnd)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Termin verschieben" class="btn btn-default" />
+                                        <a class="btn btn-default" href="@Url.Action("Index", new {id=Model.ActivityId})"><i class="fa fa-left"></i> zurück</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+        $(function () {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+        });
+    </script>
+
+
+}

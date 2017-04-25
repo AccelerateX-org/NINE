@@ -1,0 +1,73 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterImportModel
+@{
+    ViewBag.Title = "Import Stundenplandaten";
+}
+
+@section styles{
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Import von Stundenplandaten aus Untis</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-database"></i>
+                        <span class="caption-subject bold uppercase"> Schritt 1 von 4: Auswahl Fakultät und Semester</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    @using (Html.BeginForm("CheckDatabase", null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                    {
+                        <fieldset>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.OrganiserId, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SemesterId, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-right"></i> Weiter</button>
+                                </div>
+                            </div>
+                            
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    
+}
+
+
+
+
+
+
+
+

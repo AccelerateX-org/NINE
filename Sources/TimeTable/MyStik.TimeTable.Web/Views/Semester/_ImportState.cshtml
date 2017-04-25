@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.DataServices.GpUntis.Data.ImportContext    
+
+
+<p>Anzahl Dozenten: @Model.Dozenten.Count</p>
+<p>Anzahl Fächer: @Model.Faecher.Count</p>
+<p>Anzahl Gruppen: @Model.Gruppen.Count</p>
+<p>Anzahl Kurse: @Model.Kurse.Count</p>
+<p>Anzahl Räume: @Model.Raeume.Count</p>
+
+@if (Model.ErrorMessages.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Fehler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var msg in Model.ErrorMessages)
+            {
+                <tr>
+                    <td>@msg</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+

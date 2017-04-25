@@ -1,0 +1,146 @@
+Nummer;Hörsaal;Bestuhlung
+A 104;A 104 Senatssaal;1
+A 224;A 224 Hör-/Lehrsaal;50
+A 304;A 304 Hör-/Lehrsaal ansteigend;90
+A 308;A 308 Hör-/Lehrsaal ansteigend;90
+A 310;A 310 Hör-/Lehrsaal ansteigend;90
+A 316;A 316 Hör-/Lehrsaal;55
+A 319;A 319 Hör-/Lehrsaal;80
+A 320;A 320 Seminarraum;1
+A 406;A 406 Hör-/Lehrsaal;40
+A 408;A 408 Hör-/Lehrsaal;48
+A 409;A 409 Hör-/Lehrsaal;43
+A 414;A 414 Hör-/Lehrsaal;48
+A 415;A 415 Hör-/Lehrsaal;42
+C 300;C 300 Hör-/Lehrsaal;1
+D 107;D 107 Hör-/Lehrsaal;43
+D 108;D 108 Hör-/Lehrsaal;48
+D 109;D 109 Hör-/Lehrsaal;42
+D 212;D 212 Hör-/Lehrsaal ansteigend;160
+D 306;D 306 Hör-/Lehrsaal;48
+D 307;D 307 Hör-/Lehrsaal;48
+D 308;D 308 Hör-/Lehrsaal;48
+D 309;D 309 Hör-/Lehrsaal;42
+D 4;D 4 Hör-/Lehrsaal;48
+G 001;G 001 Hör-/Lehrsaal ansteigend;342
+G 043;G 043 Hör-/Lehrsaal ansteigend;124
+G 127;G 127 Hör-/Lehrsaal ansteigend;93
+G 137;G 137 Hör-/Lehrsaal;44
+G 138;G 138 Hör-/Lehrsaal;45
+G 230;G 230 Hör-/Lehrsaal;42
+G 231;G 231 Hör-/Lehrsaal;42
+G 236+38;G 236+38 Hör-/Lehrsaal;58
+G 242;G 242 Hör-/Lehrsaal;45
+G 244;G 244 Hör-/Lehrsaal ansteigend;52
+G 330;G 330 Hör-/Lehrsaal;40
+G 331;G 331 Hör-/Lehrsaal;44
+G 338;G 338 Hör-/Lehrsaal;38
+G 342;G 342 Hör-/Lehrsaal;42
+G. 345;G. 345 Hör-/Lehrsaal ansteigend;52
+G. 347;G. 347 Hör-/Lehrsaal ansteigend;54
+G003+3.1;G003+3.1 Übungsraum;1
+R 0.001;R 0.001 Hörsaal;20
+R 0.002;R 0.002 Hörsaal;56
+R 0.003;R 0.003 Hörsaal;58
+R 0.004;R 0.004 Hörsaal;38
+R 0.005;R 0.005;35
+R 0.006;R 0.006 Hörsaal;50
+R 0.007;R 0.007 Hörsaal;40
+R 0.009;R 0.009 Hörsaal;40
+R 0.010;R 0.010 Hörsaal;40
+R 0.011;R 0.011 Hörsaal;45
+R 0.012;R 0.012 Hörsaal;44
+R 0.055;R 0.055 Hörsaal ansteigend;105
+R 0.056;R 0.056 Hörsaal ansteigend;108
+R 0.058;R 0.058 Hörsaal ansteigend;126
+R 0.099;R 0.099;35
+R 1.001;R 1.001 Hörsaal;40
+R 1.002;R 1.002 Hörsaal;45
+R 1.003;R 1.003 Hörsaal;64
+R 1.004;R 1.004 Hörsaal;64
+R 1.005;R 1.005 Hörsaal;45
+R 1.006;R 1.006 Hörsaal;37
+R 1.007;R 1.007 Hörsaal;47
+R 1.008;R 1.008 Hörsaal;56
+R 1.046;R 1.046 Roter Würfel;286
+R 1.049;R 1.049 Blaue Tonne;369
+R 1.084;R 1.084 Hörsaal FK 09;38
+R 1.085;R 1.085 Hörsaal FK 09;42
+R 1.086;R 1.086 Hörsaal FK 09;34
+R 1.087;R 1.087 Hörsaal FK 09;62
+R 2.001;R 2.001 Hörsaal;48
+R 2.002;R 2.002 Hörsaal;33
+R 2.003;R 2.003 Hörsaal;72
+R 2.004;R 2.004 Hörsaal;71
+R 2.005;R 2.005 Hörsaal;83
+R 2.006;R 2.006 Hörsaal;56
+R 2.007;R 2.007 Hörsaal;55
+R 2.073;R 2.073 Seminarraum;26
+R 2.077;R 2.077 Hörsaal;44
+R 2.078;R 2.078 Hörsaal;52
+R 2.082;R 2.082 Hörsaal;45
+R 2.088;R 2.088 Hörsaal FK 09;78
+R 2.089;R 2.089 Hörsaal FK 09;41
+R 2.090;R 2.090 Hörsaal FK 09;43
+R 2.091;R 2.091;62
+R 2.092;R 2.092 Hörsaal;52
+R 2.093;R 2.093 Hörsaal;54
+R 3.011;R 3.011 Hörsaal;66
+R 3.012;R 3.012 Hörsaal;50
+R 3.086;R 3.086 Hörsaal;52
+R 3.087;R 3.087 Hörsaal;52
+R 3.088;R 3.088;36
+R 3.089;R 3.089 Hörsaal;48
+R 3.090;R 3.090 Hörsaal;48
+R 3.091;R 3.091;40
+R 3.097;R 3.097 Hörsaal;36
+R 3.098;R 3.098 Hörsaal;50
+R 3.099;R 3.099 Hörsaal;39
+R 3.100;R 3.100 Hörsaal;49
+R 3.101;R 3.101 Hörsaal;53
+R 4.066;R 4.066;43
+R 4.067;R 4.067;47
+R 4.067;R 4.067 Hörsaal;47
+R 4.068;R 4.068 Hörsaal;48
+R 4.068;R 4.068;40
+R 4.069;R 4.069 Hörsaal;46
+R 4.070;R 4.070;40
+R 4.071;R 4.071;40
+R 4.075;R 4.075 Seminarraum;1
+R 4.076;R 4.076 Seminarraum;1
+R 4.077;R 4.077 Hörsaal;39
+R 4.078;R 4.078 Hörsaal;52
+R 4.079;R 4.079 Hörsaal;39
+R 4.080;R 4.080 Hörsaal;50
+T 0.010;T 0.010 Unterrichtsraum;30
+T 0.011;T 0.011 Unterrichtsraum;50
+T 0.012;T 0.012 Unterrichtsraum;50
+T 0.013;T 0.013 Unterrichtsraum;50
+T 0.020;T 0.020 Hör-/Lehrsaal ansteigend;145
+T 0.022;T 0.022 Hör-/Lehrsaal;50
+T 1.012;T 1.012 Besprechungsraum;14
+T 1.014;T 1.014 Unterrichtsraum;1
+T 1.015;T 1.015 Unterrichtsraum;60
+T 1.016;T 1.016 Unterrichtsraum;1
+T 1.017;T 1.017 Unterrichtsraum;60
+T 1.018;T 1.018 Unterrichtsraum;42
+T 1.019;T 1.019 Unterrichtsraum;1
+T 1.020;T 1.020 Unterrichtsraum;60
+T 1.021;T 1.021 Unterrichtsraum;60
+T 1.022;T 1.022 Unterrichtsraum;60
+T 1.023;T 1.023 Unterrichtsraum;60
+T 2.013;T 2.013 Unterrichtsraum;60
+T 2.014;T 2.014 Unterrichtsraum;60
+T 2.015;T 2.015 Unterrichtsraum;77
+T 2.016;T 2.016 Unterrichtsraum;77
+T 2.017;T 2.017 Unterrichtsraum;77
+T 2.018;T 2.018 Unterrichtsraum;42
+T 2.019;T 2.019 Unterrichtsraum;42
+T 2.020;T 2.020 Unterrichtsraum;77
+T 2.021;T 2.021 Unterrichtsraum;77
+T 2.022;T 2.022 Unterrichtsraum;77
+T 2.023;T 2.023 Unterrichtsraum;42
+T 3.025;T 3.025 Unterrichtsraum;42
+Y 103;Y 103 Hör-/Lehrsaal ansteigend inkl. Vorbereitung;65
+Y 116;Y 116 Übungsraum;60
+Y 211;Y 211 Übungsraum;40

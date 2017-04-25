@@ -1,0 +1,58 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
+
+
+<div class="panel panel-default">
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Nachname</th>
+            <th>Vorname</th>
+            <th>@ViewBag.CurrentSemester.Name</th>
+            <th>@ViewBag.LastSemester.Name</th>
+            <th>LVs</th>
+            <th>Fit</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.User.LastName</td>
+                <td>@user.User.FirstName</td>
+                @if (user.CurrentSubscription != null)
+                {
+                    <td>@user.CurrentSubscription.SemesterGroup.FullName</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                @if (user.LastSubscription != null)
+                {
+                    <td>@user.LastSubscription.SemesterGroup.FullName</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@user.AllCourses.Count</td>
+                <td>@user.CoursesFit.Count</td>
+                <td>
+                    <a href="@Url.Action("CoursePlan", "Students", new {id = user.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Kursplan</a>
+                    <a href="mailto:@user.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                </td>
+
+            </tr>
+        }
+        </tbody>
+
+    </table>
+    <div class="alert alert-info">
+        <strong>Legende</strong>
+        <p>LVs: Anzahl der Lehveranstaltungen in der der Studierende insgesamt eingetragen ist</p>
+        <p>Fit: Anzahl der Lehrveranstaltungen in der der Studierende eingetragen ist und die zur selben Semestergruppe gehören, der sich der Studierende selbst zugeordnet hat.</p>
+
+    </div>
+</div>

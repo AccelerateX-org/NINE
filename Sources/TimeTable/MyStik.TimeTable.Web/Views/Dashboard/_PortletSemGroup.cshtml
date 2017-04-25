@@ -1,0 +1,75 @@
+﻿@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+<div class="portlet portlet-sortable light bordered">
+    @if (Model.SemesterGroups.Any())
+    {
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-graduation-cap"></i>
+                <span class="caption-subject bold uppercase">  Meine Semestergruppe im @Model.Semester.Name</span>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <table class="table table-condensed">
+                <tbody>
+                @foreach (var group in Model.SemesterGroups)
+                {
+                    <tr>
+                        <td>@group.FullName</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            @using (Ajax.BeginForm("RemoveSemesterGroup", "Dashboard", null,
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "portletSemGroup",
+                                    }, new { @class = "form-horizontal", @role = "form" }))
+            {
+                <button type="submit" class="btn btn-default">ENTFERNEN</button>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="portlet-title">
+            <div class="caption font-red-flamingo">
+                <i class="icon-graduation-cap font-red-flamingo"></i>
+                <span class="caption-subject bold uppercase"> Meine Semestergruppe im @Model.Semester.Name</span>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div class="note note-danger">
+                <p>
+                    <strong>Hinweis:</strong> Ohne Angabe einer Semestergruppe ist keine Eintragung in Lehrveranstaltungen möglich.
+                </p>
+            </div>
+            @using (Ajax.BeginForm("UpdateSemesterGroup", "Dashboard", null,
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "portletSemGroup",
+                                    }, new { @class = "form-horizontal", @role = "form" }))
+            {
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Curriculum)
+                    @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CurrGroup)
+                    @Html.DropDownListFor(model => model.CurrGroup, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control" })
+                </div>
+
+                <button type="submit" class="btn btn-default">SPEICHERN</button>
+            }
+        </div>
+    }
+</div>
+

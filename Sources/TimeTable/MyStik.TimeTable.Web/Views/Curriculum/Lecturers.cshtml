@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "Dozenten";
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/fullcalendar/css")
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+<h2>Dozenten <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h2>
+
+<div class="row">
+    <div class="form-group col-md-4">
+        <label for="dozId">Name</label>
+        <input type="text" class="form-control" id="dozId">
+    </div>
+    <div id="DisplayOptionBox" class="form-group col-md-3">
+        <label for="displayId">Anzeige als</label>
+        <div class="btn-group" id="displayId">
+            <button type="button" class="btn btn-default active" id="displayCalendar" onclick="switchDisplay(true)"><i class="fa fa-calendar"></i> Kalender</button>
+            <button type="button" class="btn btn-default" id="displayTable" onclick="switchDisplay(false)"><i class=" fa fa-table"></i> Tabelle</button>
+        </div>
+    </div>
+    <div id="PersonalDateOptionBox" class="col-md-1">
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input id="displayPersonalDates" type="checkbox" value="" onclick="togglePersonalDateDisplay()">
+                    Persönliche Termine anzeigen
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="CourseList"></div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jquery-ui")
+    @Scripts.Render("~/bundles/fullcalendar")
+
+    <script>
+
+        function switchDisplay(showCalendar) {
+            if (showCalendar == true) {
+                $('#displayCalendar').addClass('active');
+                $('#displayTable').removeClass('active');
+                initCalendar();
+            } else {
+                $('#displayCalendar').removeClass('active');
+                $('#displayTable').addClass('active');
+                $('#CourseList').fullCalendar('destroy');
+            }
+            var prog = $('#dozId').val();
+            onGroupChanged(prog);
+        }
+
+        function togglePersonalDateDisplay() {
+            var prog = $('#dozId').val();
+            onGroupChanged(prog);
+        }
+
+
+        function onGroupChanged(dozId) {
+
+            var personalDates = ($('#displayPersonalDates').attr('checked') == 'checked');
+
+
+            if ($('#displayCalendar').hasClass('active')) {
+
+                $('#CourseList').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByLecturer", "Calendar")');
+
+                $('#CourseList').fullCalendar('addEventSource',
+                    {
+                        url: '@Url.Action("CourseEventsByLecturer", "Calendar")',
+                        type: 'POST',
+                        data: {
+                            dozId: dozId,
+                            showPersonalDates: personalDates,
+                        },
+                    });
+            } else {
+                $('#CourseList').html('');
+                $('#loading').show();
+                $.ajax(
+                    {
+                        type: 'POST',
+                        url: '@Url.Action("CourseListByLecturer")',
+                        data: {
+                            dozId: dozId,
+                        },
+                        success: function(data, success, xhr) {
+                            $('#CourseList').html(data);
+                            $('#loading').hide();
+                        },
+                        error: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten.");
+                            $('#loading').hide();
+                        },
+                    });
+            }
+        }
+
+
+        $(function() {
+            $('#dozId').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: '@Url.Action("LecturerList")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            name: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data, function(item) {
+
+                                return {
+                                    label: item.name + ' (' + item.shortname + ')',
+                                    value: item.shortname
+                                };
+                            }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) {
+                    onGroupChanged(ui.item.value);
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#DisplayOptionBox').hide();
+            $('#loading').hide();
+            // page is now ready, initialize the calendar...
+            if ($('#displayCalendar').hasClass('active'))
+                initCalendar();
+        });
+    </script>
+}

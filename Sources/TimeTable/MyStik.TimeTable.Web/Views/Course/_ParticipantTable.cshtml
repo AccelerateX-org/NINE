@@ -1,0 +1,91 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Vorname</th>
+        <th>Semestergruppe</th>
+        <th>Status</th>
+        <th>Eingetragen am</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="course-subscriptions">
+    @{ var i = 0;}
+    @foreach (var participiant in Model.ParticipantList.OrderBy(m => m.Subscription.TimeStamp))
+    {
+        i++;
+        <tr id="@participiant.User.Id">
+            <td>@i</td>
+            <td>@participiant.User.LastName</td>
+            <td>@participiant.User.FirstName</td>
+            @if (participiant.SemesterGroup != null)
+            {
+                <td>@participiant.SemesterGroup.FullName</td>
+            }
+            else
+            {
+                <td>keine Angabe</td>
+            }
+            @if (participiant.Subscription.OnWaitingList)
+            {
+                <td>Auf Warteliste</td>
+            }
+            else
+            {
+                if (!participiant.Subscription.IsConfirmed)
+                {
+                    <td>Teilnehmer (unbestätigt)</td>
+                }
+                else
+                {
+                    <td>Teilnehmer</td>
+                }
+            }
+            <td>@participiant.Subscription.TimeStamp</td>
+            <td>
+                <div class="btn-group pull-right" role="group">
+                    @if (!participiant.Subscription.OnWaitingList && participiant.Subscription.IsConfirmed)
+                    {
+                        @Ajax.ActionButton("fa-thumbs-o-down pull-left text-warning", "Warteliste", "SetOnWaitingList", "Course",
+                            new {Id = Model.Course.Occurrence.Id, userId = participiant.User.Id},
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "participiantTable"
+                            },
+                            new {@class = "btn btn-default btn-xs"})
+                    }
+                    else
+                    {
+                        @Ajax.ActionButton("fa-thumbs-o-up pull-left text-success", "Teilnehmerliste", "SetOnParticipiantList", "Course",
+                            new {Id = Model.Course.Occurrence.Id, userId = participiant.User.Id},
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "participiantTable"
+                            },
+                            new {@class = "btn btn-default btn-xs"})
+                    }
+                    <a href="mailto:@participiant.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail</a>
+                    <a href="@Url.Action("CoursePlan", "Students", new {id = participiant.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Kursplan</a>
+                    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                    {
+                        @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "Course",
+                            new {Id = Model.Course.Occurrence.Id, userId = participiant.User.Id},
+                            new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = participiant.User.Id},
+                            new {@class = "btn btn-default btn-xs"})
+                    }
+                </div>
+
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

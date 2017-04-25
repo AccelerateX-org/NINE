@@ -1,0 +1,71 @@
+﻿@model MyStik.TimeTable.Web.Models.EventDateInfoModel
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "Teilnehmer";
+}
+
+<h2>Teilnehmer von @Model.Course.Name für @Model.Date.Begin</h2>
+
+@if (Request.IsAuthenticated && ViewBag.UserRight.IsOrgMember)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Teilnehmer</div>
+                <div class="panel-body">
+                    <table class=" table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>Studienprogramm</th>
+                                <th>Studiengruppe</th>
+                                <th>Datum Eintragung</th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="course-subscriptions">
+                            @foreach (var member in Model.Member)
+                            {
+                                <tr id="@member.User.Id">
+                                    <td>@member.Number</td>
+                                    <td>@member.User.LastName</td>
+                                    <td>@member.User.FirstName</td>
+                                    <td>@member.User.Curriculum</td>
+                                    <td>@member.User.Group</td>
+                                    <td>@member.Subscription.TimeStamp</td>
+                                    <td>
+                                        @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                                        {
+                                            @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "Event",
+                                                new { Id = Model.Date.Occurrence.Id, userId = member.User.Id },
+                                                new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = member.User.Id },
+                                                new { @class = "btn btn-default btn-xs" })
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+
+                    <div class="well well-sm">
+                        @Html.ActionButton("fa-envelope-o", "E-mail an alle", "CustomOccurrenceMail", "Mailing", new { id = Model.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                        @Html.ActionButton("fa-download text-success", "Teilnehmerliste", "SubscriptionList", "Occurrence", new { id = Model.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                        @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                        {
+
+                            @Ajax.ActionButton("fa-eraser text-danger", "Alle austragen", "ClearSubscriptions", "Event",
+                                    new { occurrenceId = Model.Date.Occurrence.Id },
+                                    new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "course-subscriptions" },
+                                    new { @class = "btn btn-default" })
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

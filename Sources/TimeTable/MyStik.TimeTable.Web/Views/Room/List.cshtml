@@ -1,0 +1,27 @@
+﻿@using Elmah.ContentSyndication
+@model ICollection<MyStik.TimeTable.Data.ActivityDate>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Vorlesung</th>
+            <th>Veranstaltung</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Begin - @item.End</td>
+                <td>@item.Activity.Name (@item.Activity.ShortName)</td>
+                <td>@item.Title</td>
+            </tr>
+        }
+    </tbody>
+</table>

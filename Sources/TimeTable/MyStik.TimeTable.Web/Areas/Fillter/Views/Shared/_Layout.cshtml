@@ -1,0 +1,122 @@
+﻿@using MyStik.TimeTable.Web.Services
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINE - @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    <link href="@Styles.Url("~/Content/print.css")" rel="stylesheet" type="text/css" media="print" />
+
+    @RenderSection("styles", required: false)
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menue-collapase">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="@Url.Action("Index", "Home")" class="navbar-brand">NINE</a>
+            </div>
+            <div class="navbar-collapse collapse" id="menue-collapase">
+                <ul class="nav navbar-nav">
+                    <li><a href="@Url.Action("Index", "Activity")">Meine Termine</a></li>
+                    @RenderSection("menuaddon", required: false)
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Informationen <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Studienangebote", "Programs", "Curriculum")</li>
+                            <li>@Html.ActionLink("Vorlesungsverzeichnis", "Index", "Curriculum")</li>
+                            <li>@Html.ActionLink("Veranstaltungen", "Index", "Event")</li>
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Dozenten", "Lecturers", "Curriculum")</li>
+                            <li>@Html.ActionLink("Sprechstunden", "Index", "OfficeHour")</li>
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Raumbelegungen", "Rooms", "Curriculum")</li>
+                            <li>@Html.ActionLink("Freie Räume", "Free", "Room")</li>
+                            <li class="divider"></li>
+                            <li>@Html.ActionLink("Newsletter", "Index", "Newsletter")</li>
+                            <li>@Html.ActionLink("Mailing", "Index", "Mailing")</li>
+                        </ul>
+                    </li>
+                    @{
+                        var orgName = new MemberService().GetOrganisation(User.Identity.Name);
+                    }
+                    @if (!string.IsNullOrEmpty(orgName))
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">@orgName <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Mitglieder", "Members", "Organiser", new { id = orgName }, null)</li>
+                                <li>@Html.ActionLink("Lehrveranstaltungen", "Courses", "Organiser", new { id = orgName }, null)</li>
+                                <li>@Html.ActionLink("Veranstaltungen", "Events", "Organiser", new { id = orgName }, null)</li>
+                                <li>@Html.ActionLink("Newsletter", "Newsletter", "Organiser", new { id = orgName }, null)</li>
+                                <li class="divider"></li>
+                                @if (orgName.Equals("FK 09"))
+                                {
+                                    <li>@Html.ActionLink("Räume", "Index", "Room")</li>
+                                }
+                                <li>@Html.ActionLink("Personensuche", "Persons", "Organiser")</li>
+                            </ul>
+                        </li>
+                    }
+
+                    @if (User.IsInRole("SysAdmin"))
+                    { 
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">SysAdmin <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Räume", "Index", "Room")</li>
+                                <li>@Html.ActionLink("Semester", "Index", "Semester")</li>
+                                <li>@Html.ActionLink("WPM", "Index", "WPM")</li>
+                                <li>@Html.ActionLink("Studienangebote", "Missing", "Home")</li>
+                                <li>@Html.ActionLink("Veranstalter", "Index", "Organiser")</li>
+                                <li>@Html.ActionLink("Mitglieder", "Index", "OrganiserMembers")</li>
+                                <li>@Html.ActionLink("Alle Sprechstunden löschen", "DeleteAll", "OfficeHour")</li>
+                                <li class="divider"></li>
+                                <li>@Html.ActionLink("Benutzer", "Index", "User")</li>
+                                <li>@Html.ActionLink("Statistik", "Statistics", "User")</li>
+                                @if (User.Identity.Name.Equals("admin"))
+                                {
+                                    <li class="divider"></li>
+                                    <li>@Html.ActionLink("ELMAH", "Index", "elmah")</li>
+                                    <li>@Html.ActionLink("Logs", "Index", "Log")</li>
+                                }
+                                <li class="divider"></li>
+                                <li>@Html.ActionLink("Datenbank", "Index", "DBAdmim")</li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </nav>
+<div class="container body-content">
+    @Html.Partial("_AccountWarning")
+    @RenderBody()
+    <hr/>
+    <footer>
+        <ul class="list-inline">
+            <li><a href="http://www.wi.hm.edu">&copy; @DateTime.Now.Year FK09</a></li>
+            <li><a href="http://www.hm.edu">Hochschule München</a></li>
+            <li>@Html.ActionLink("Kontakt", "Contact", "Home")</li>
+            <li>@Html.ActionLink("Impressum", "Imprint", "Home")</li>
+        </ul>
+    </footer>
+</div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

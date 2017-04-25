@@ -1,0 +1,93 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.SemesterViewModel
+
+@{
+    ViewBag.Title = "Semester";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Semesterablauf</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.DropDownListFor(model => model.Semester, (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                    </div>
+                    @if (User.IsInRole("SysAdmin"))
+                    {
+                        <div class="row">
+                             <a href="@Url.Action("Create")"><i class="fa fa-plus"></i> Semester anlegen</a>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="semProfile">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            onSemesterChanged();
+        });
+
+
+        function onSemesterChanged() {
+            var group = $('#Semester option:selected').val();
+
+            $('#semProfile').html('');
+            $('#loading').show();
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("DateList", "Semester")',
+                data: {
+                    semGroupId: group,
+                },
+                success: function (data, success, xhr) {
+                    $('#semProfile').html(data);
+                    $('#loading').hide();
+                },
+                error: function (data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            });
+        }
+
+
+
+    </script>
+}
+
+
+
+
+
+

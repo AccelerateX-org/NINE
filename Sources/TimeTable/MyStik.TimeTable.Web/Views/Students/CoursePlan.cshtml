@@ -1,0 +1,82 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.UserCoursePlanViewModel
+@{
+    ViewBag.Title = "Subscriptions";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Kursplan - @Model.User.FirstName @Model.User.LastName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Belegte Kurse im Semester @Model.Semester.Name</h4>
+                </div>
+                <table class="table table-bordered table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Bezeichnung</th>
+                            <th>Gruppe(n)</th>
+                            <th>Zeit(en)</th>
+                            <th>Raum</th>
+                            <th>Dozent(en)</th>
+                            <th>Eingeschrieben am</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CourseSubscriptions)
+                        {
+                            var linkText = item.CourseSummary.Course.Name + " (" + item.CourseSummary.Course.ShortName + ")";
+                            <tr>
+                                <td>
+                                    @Html.ActionLink(linkText, "Index", "Course", new { id = item.CourseSummary.Course.Id }, null)
+                                </td>
+                                <td>
+                                    @Html.GroupList(item.CourseSummary.Course.SemesterGroups)
+                                </td>
+                                <td>
+                                    @Html.DateList(item.CourseSummary.Dates)
+                                </td>
+                                <td>
+                                    @Html.RoomList(item.CourseSummary.Rooms)
+                                </td>
+                                <td>
+                                    @Html.LecturerList(item.CourseSummary.Lecturers)
+                                </td>
+                                <td>@item.Subscription.TimeStamp</td>
+                                @if (item.Subscription.IsConfirmed)
+                                {
+                                    <td>Teilnehmer</td>
+                                }
+                                else
+                                {
+                                    if (item.Subscription.OnWaitingList)
+                                    {
+                                        <td>Warteliste</td>
+
+                                    }
+                                    else
+                                    {
+                                        <td>Reservierung</td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

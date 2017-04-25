@@ -1,0 +1,42 @@
+﻿@model CourseDateStateModel
+
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+{
+    const string btnStyleDefault = "btn btn-default btn-xs";
+    const string btnStyleDanger = "btn btn-default btn-xs";
+    const string btnStyleSuccess = "btn btn-default btn-xs";
+    const string btnStylePrimary = "btn btn-default btn-xs";
+    const string btnTextDanger = " text-danger";
+    const string btnTextSuccess = " text-success";
+    const string btnTextPrimary = " text-primary";
+
+
+    if (Model.Summary.Date.Occurrence.IsCanceled)
+    {
+        @Html.ActionButton("fa-refresh" + btnTextSuccess, "reaktivieren", "ReactivateDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = btnStyleSuccess })
+    }
+    else
+    {
+        if (Model.State == SubscriptionState.BeforeSubscriptionPhase ||
+            !Model.Summary.Subscriptions.Any() ||
+            User.IsInRole("SysAdmin"))
+        {
+            @Html.ActionButton("fa-trash-o" + btnTextDanger, "löschen", "DeleteDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = btnStyleDanger })
+            @Html.ActionButton("fa-calendar", "ändern", "MoveDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = btnStyleDefault })
+        }
+        else
+        {
+            if (ViewBag.UserRight.IsOrgAdmin)
+            {
+                @Html.ActionButton("fa-trash-o" + btnTextDanger, "löschen", "DeleteDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = btnStyleDanger })
+            }
+            @Html.ActionButton("fa-times" + btnTextDanger, "absagen", "CancelDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = btnStyleDanger })
+            @Html.ActionButton("fa-calendar", "ändern", "MoveDate", Model.Summary.Controller, new { id = Model.Summary.Date.Occurrence.Id }, new { @class = btnStyleDefault })
+        }
+    }
+    @Html.ActionButton("fa-info-circle" + btnTextPrimary, "Infos eingeben", "SetInfo", Model.Summary.Controller, new { id = Model.Summary.Date.Id }, new { @class = btnStylePrimary })
+}
+
+

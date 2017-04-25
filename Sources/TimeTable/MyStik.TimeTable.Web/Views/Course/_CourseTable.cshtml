@@ -1,0 +1,16 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Course>
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th># Termine</th>
+            <th>Erster Termin</th>
+        </tr>
+    </thead>
+    <tbody id="CourseList">
+        @foreach (var course in Model)
+        {
+            @Html.Partial("_CreateCourseSuccess", course)
+        }
+    </tbody>
+</table>

@@ -1,0 +1,65 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.Room>
+
+
+<table class="table table-striped table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th><input id="checkAll" type="checkbox" onclick="toggleAllCheck(this)" value=" "></th>
+            <th>Nummer</th>
+            <th>Name</th>
+            <th>Beschreibung</th>
+            <th>Anzahl Plätze</th>
+            <th>Zuordnungen</th>
+            <th>Buchungen</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td><input id="@room.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
+                <td>@room.Number</td>
+                <td>@room.Name</td>
+                <td>@room.Description</td>
+                <td>@room.Capacity</td>
+                <td>
+                    @foreach (var assignment in room.Assignments)
+                    {
+                        if (assignment.Organiser != null)
+                        {
+                            if (assignment.InternalNeedConfirmation)
+                            {
+                                <div>@assignment.Organiser.ShortName***</div>
+                            }
+                            else
+                            {
+                                <div>@assignment.Organiser.ShortName</div>
+                            }
+
+                        }
+                        else
+                        {
+                            <div>ohne Zuordnung</div>
+                        }
+                    }
+                </td>
+                <td>@room.Dates.Count</td>
+                <td>
+                    @if (ViewBag.UserRight.IsOrgAdmin)
+                    {
+                        @Html.ActionButton("fa-pencil text-primary", "Ändern", "Edit", "Room", new { id = room.Id }, new { @class = "btn btn-default btn-xs" })
+                        <a href="@Url.Action("List", "Room", new {id = room.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Belegung</a>
+                        if (room.Dates.Count == 0)
+                        {
+                            @Html.ActionButton("fa-trash-o text-danger", "Löschen", "Delete", "Room", new { id = room.Id }, new { @class = "btn btn-default btn-xs" })
+                        }
+                    }
+                    <a href="@Url.Action("Reservation", "Public", new {id = room.Id})" class="btn btn-default btn-xs"><i class="fa fa-qrcode"></i> Aktuell</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

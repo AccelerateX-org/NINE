@@ -1,0 +1,20 @@
+﻿@model MyStik.TimeTable.Web.Models.AlumniSingleMailModel
+
+@{
+    ViewBag.Title = "E-Mail verschicken";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-group">
+        @Html.LabelFor(m => m.mailTo, new { @class = "control-label col-sm-3"})
+        <div class="col-sm-9">
+            @Html.TextBoxFor(m => m.mailTo, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.mailTo)
+    </div>
+}

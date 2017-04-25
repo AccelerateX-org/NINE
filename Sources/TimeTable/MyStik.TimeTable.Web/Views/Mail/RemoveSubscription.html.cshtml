@@ -1,0 +1,9 @@
+﻿@model MyStik.TimeTable.Web.Models.SubscriptionMailModel
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+<p>Sie wurden von @Model.SenderUser.FirstName @Model.SenderUser.LastName aus folgender Veranstaltung ausgetragen:</p>
+<p>@Model.Summary.Name</p>
+<p>@Model.Summary.TimeFrame</p>
+

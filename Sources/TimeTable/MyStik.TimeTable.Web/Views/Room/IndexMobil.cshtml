@@ -1,0 +1,286 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.RoomMobileViewModel
+
+@{
+    ViewBag.Title = "Räume";
+}
+
+
+
+<!-- Hier kommt der Seiteninhalt hinein -->
+<!--hier ist das orange Panel-->
+
+<div class="panel-body bg-fillter-rooms">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Räume der @Model.Faculty</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p>
+
+<!--Hier kommt das Collapse-->
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo1">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo1" aria-expanded="false" aria-controls="collapseTwo1">
+                    Aktuell freie Räume
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo1">
+            <div class="panel-body">
+
+
+                <!--Statt dem Collapse-Text fügen wir hier 2 Untercollapse ein-->
+
+
+
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Seminarräume
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+
+                                <!--Hier kommt der Inhalt von Seminarräume rein-->
+
+
+                                <div id="portletFreeRooms">
+
+                                    <div class="portlet portlet-sortable light bordered">
+                                        <div class="portlet-title ui-sortable-handle">
+                                            <div class="caption">
+                                                <i class="fa fa-building"></i>
+                                                <span class="caption-subject bold uppercase"> Momentan freie Räume</span>
+                                            </div>
+                                            <div class="actions">
+                                                <a href="/Room/Free" class="btn btn-default btn-sm">
+                                                    <i class="fa fa-calendar"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nummer</th>
+                                                        <th>Plätze</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var seminarRaum in Model.SeminarRooms)
+                                                    { 
+                                                    <tr>
+                                                        <td>@seminarRaum.Room.Number</td>
+                                                        <td>@seminarRaum.AnzahlTische</td>  
+                                                        <td>@seminarRaum.Status</td>
+                                                        <td>
+                                                            <a href="@Url.Action("Calendar", "Room", new { id = seminarRaum.Room.Id }) class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- empty sortable porlet required for each columns! -->
+                                <div class="portlet portlet-sortable-empty">
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    EDV-Labore
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+
+                                <!--Hier kommt der Inhalt von EDV-Labore rein-->
+
+                                <div id="portletFreeRooms">
+
+                                    <div class="portlet portlet-sortable light bordered">
+                                        <div class="portlet-title ui-sortable-handle">
+                                            <div class="caption">
+                                                <i class="fa fa-building"></i>
+                                                <span class="caption-subject bold uppercase"> Momentan freie Räume</span>
+                                            </div>
+                                            <div class="actions">
+                                                <a href="/Room/Free" class="btn btn-default btn-sm">
+                                                    <i class="fa fa-calendar"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nummer</th>
+                                                        <th>Plätze</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var seminarRaum in Model.EDVRooms)
+                                                    {
+                                                        <tr>
+                                                            <td>@seminarRaum.Room.Number</td>
+                                                            <td>@seminarRaum.AnzahlTische</td>
+                                                            <td>@seminarRaum.Status</td>
+                                                            <td>
+                                                                <a href="@Url.Action("Calendar", "Room", new { id = seminarRaum.Room.Id }) class=" btn btn-default btn-xs"><i class="fa fa-calendar-o"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- empty sortable porlet required for each columns! -->
+                                <div class="portlet portlet-sortable-empty">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Hier kommt ein collapse für die Raumsuche nach Datum-->
+
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Raumsuche nach Datum
+                </a>
+            </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div class="panel-body">
+
+
+                <!--inhalt raumsuche nach datum-->
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Datum und Zeitraum</div>
+                        <div class="panel-body">
+                            <div class="form form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="NewDate">Datum</label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control datepicker" id="NewDate" name="NewDate" onchange="onDateChanged()" value="05.11.2015" type="text">
+                                        <span class="field-validation-valid" data-valmsg-for="NewDate" data-valmsg-replace="true"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="NewBegin">Beginn</label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control timepicker timepicker-24" id="NewBegin" name="NewBegin" onchange="onBeginChanged()" value="15:55" type="text">
+                                        <span class="field-validation-valid" data-valmsg-for="NewBegin" data-valmsg-replace="true"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="NewEnd">Ende</label>
+                                    <div class="col-sm-6">
+                                        <input class="form-control timepicker timepicker-24" id="NewEnd" name="NewEnd" onchange="onEndChanged()" value="17:25" type="text">
+                                        <span class="field-validation-valid" data-valmsg-for="NewEnd" data-valmsg-replace="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Collapse Raumsuche nach Datum Ende-->
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFour">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    Alle Räume im Überblick
+                </a>
+            </h4>
+        </div>
+        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+            <div class="panel-body">
+
+                <!--Hier kommt der Inhalt der Collapse "Alle Räume im Überblick"-->
+
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Raumnummer</th>
+                            <th>Plätze</th>
+                            <th>Beschreibung</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var seminarRaum in Model.AllRooms)
+                        {
+                            <tr>
+                                <td>@seminarRaum.Room.Number</td>
+                                <td>@seminarRaum.AnzahlTische</td>
+                                <td>@seminarRaum.Beschreibung</td>
+                                <td>
+                                    <a href="@Url.Action("Calendar", "Room", new { id = seminarRaum.Room.Id }) class=" btn btn-default btn-xs"><i class="fa fa-calendar-o"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+
+                </table>
+
+                <!--Inhalt Ende-->
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--Ende der Collapsecodierung-->
+</div>
+</p>
+<!--dieses div hier drüber schliesst den container damit die collapse schön bündig sind-->
+<!--Hier ist meine HTML Codierung zu Ende!!!!!!!!!!!!!!!!!!!!!!!!!-->
+
+
+
+
+
+
+
+

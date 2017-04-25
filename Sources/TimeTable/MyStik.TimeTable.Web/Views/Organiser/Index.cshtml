@@ -1,0 +1,78 @@
+﻿@model IEnumerable<MyStik.TimeTable.Web.Models.OrganiserViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h4>Veranstalter</h4>
+
+@if (User.IsInRole("SysAdmin"))
+{
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+}
+<table class="table table-bordered table-condensed table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Organiser.ShortName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Organiser.Name)
+        </th>
+        <th>Stud</th>
+        <th>Fak</th>
+        <th>Mitglieder</th>
+        <th>Lehrveranstaltungen</th>
+        <th>Veranstaltungen</th>
+        <th>Newsletter</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        @if (string.IsNullOrEmpty(item.Organiser.ShortName))
+        {
+            <td></td>
+            <td>@item.Organiser.Name</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        }
+        else
+        {
+            <td>
+                @Html.ActionLink(item.Organiser.ShortName, "Index", "Organiser", new { id = item.Organiser.ShortName }, null)
+            </td>
+            <td>@item.Organiser.Name</td>
+            <td>@item.Organiser.IsStudent</td>
+            <td>@item.Organiser.IsFaculty</td>
+            <td></td>
+            <td></td>
+                       <td>
+                @Html.ActionLink("Mitglieder", "Members", "Organiser", new { id = item.Organiser.ShortName }, null)
+            </td>
+            <td>
+                @Html.ActionLink("Lehrveranstaltungen", "Courses", "Organiser", new { id = item.Organiser.ShortName }, null)
+            </td>
+            <td>
+                @Html.ActionLink("Veranstaltungen", "Events", "Organiser", new { id = item.Organiser.ShortName }, null)
+            </td>
+            <td>
+                @Html.ActionLink("Newsletter", "Newsletter", "Organiser", new { id = item.Organiser.ShortName }, null)
+            </td>
+        }
+        <td>
+            @if (User.IsInRole("SysAdmin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new {id = item.Organiser.Id})
+                @Html.ActionLink("Delete", "Delete", new {id = item.Organiser.Id})
+            }
+        </td>
+    </tr>
+}
+
+</table>

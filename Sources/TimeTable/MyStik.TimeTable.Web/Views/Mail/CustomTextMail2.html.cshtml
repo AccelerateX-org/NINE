@@ -1,0 +1,53 @@
+﻿@model MyStik.TimeTable.Web.Models.UserMailModel
+@{
+    Layout = null;
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title></title>
+    <style type="text/css">
+        .mail-warning-style {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0000FF;
+        }
+
+        .mail-text-style {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .mail-stationary-style {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: xx-small;
+        }
+    </style>
+</head>
+<body>
+    <div class="mail-text-style">
+        @Html.Raw(Model.CustomBody)
+        <hr />
+    </div>
+    <div class="mail-stationary-style">Dies ist eine manuell erstellte E-Mail. Bei Fragen zum Inhalt wenden Sie sich bitte an den Absender.</div>
+    @if (Model.IsImportant && Model.IsDistributionList)
+    {
+        <div class="mail-stationary-style">
+            Diese E-Mail wurde vom Absender als <strong><i>"wichtig für Ihr Studium"</i></strong> gekennzeichnet.
+            Sie erhalten diese Art von Benachrichtungen unabhängig von den Einstellungen in Ihrem Benutzerprofil.
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ListName))
+    {
+        <div class="mail-stationary-style">Diese E-Mail wurde an den Verteiler "@Model.ListName" gesendet.</div>
+    }
+    <div class="mail-stationary-style">
+        Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:itsupport@wi.hm.edu">IT-Support der FK09</a>.
+    </div>
+</body>
+</html>
+
+

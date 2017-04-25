@@ -1,0 +1,42 @@
+﻿<div class="col-xs-6 col-sm-3" id="sidebar" role="navigation">
+    <div class="list-group">
+        <a href="#" class="list-group-item disabled">
+            Tagesprogramm @DateTime.Today.ToShortDateString()
+        </a>
+        <a href="@Url.Action("ActiveCoursesToday")" class="list-group-item">
+            Aktive Lehrveranstaltungen
+            <span class="badge">@ViewBag.CoursesActive</span>
+        </a>
+        <a href="@Url.Action("CanceledCoursesToday")" class="list-group-item">
+            Abgesagte Lehrveranstaltungen
+            <span class="badge">@ViewBag.CoursesCanceled</span>
+        </a>
+        <a href="@Url.Action("ActiveOfficeHoursToday")" class="list-group-item">
+            Aktive Sprechstunden
+            <span class="badge">@ViewBag.OfficeHourActive</span>
+        </a>
+        <a href="@Url.Action("CanceledOfficeHoursToday")" class="list-group-item">
+            Abgesagte Sprechstunden
+            <span class="badge">@ViewBag.OfficeHourCanceled</span>
+        </a>
+        <a href="@Url.Action("AdminPlan", "Activity")" class="list-group-item">
+            Tagesansicht Kalendar
+        </a>
+        <a href="#" class="list-group-item disabled">
+            Verwaltung
+        </a>
+        <a href="@Url.Action("Courses", "Organiser", new { id="FK 09"})" class="list-group-item">
+            <i class="fa fa-fw fa-book"></i> Lehrveranstaltungen
+        </a>
+        <a href="@Url.Action("CreateCourse", "Course", new { id="FK 09"})" class="list-group-item">
+            <i class="fa fa-fw fa-lightbulb-o text-primary"></i> Lehrveranstaltung anlegen
+        </a>
+        <a href="@Url.Action("CreateOfficeHour", "OfficeHour", new { id="FK 09"})" class="list-group-item">
+            <i class="fa fa-fw fa-stethoscope text-primary"></i> Sprechstunde anlegen
+        </a>
+        <a href="#" class="list-group-item">
+            <i class="fa fa-fw fa-building"></i> Raumreservierungen
+        </a>
+    </div>
+
+</div>

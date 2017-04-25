@@ -1,0 +1,134 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Data.CurriculumGroup
+@{
+    ViewBag.Title = Model.Curriculum.ShortName + " - " + Model.Name;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studiengruppe @Model.Curriculum.ShortName - @Model.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-10">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Module
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Kurzname</th>
+                                    <th>Beschreibung</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var module in Model.Modules)
+                                {
+                                    <tr>
+                                        <td><a href="@Url.Action("ModuleDetails", new {id = module.Id})">@module.ModuleId</a></td>
+                                        <td>@module.Name</td>
+                                        <td>@module.ShortName</td>
+                                        <td>@module.Description</td>
+                                        <td>
+                                            @if (ViewBag.HasEditRights)
+                                            {
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff)
+            {
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-calendar"></i>Semestergruppen
+                        </div>
+                        <div class="actions">
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <table class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th>Semester</th>
+                                        <th>Name</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var group in Model.SemesterGroups.OrderBy(g => g.Semester.StartCourses).ThenBy(g => g.GroupName))
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Ajax.ActionLink(group.Semester.Name, "CourseListByProgram", "Curriculum", new {semGroupId = group.Id, compact = true},
+                                                    new AjaxOptions
+                                                    {
+                                                        HttpMethod = "Post",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        UpdateTargetId = "courseList"
+                                                    })
+
+                                            </td>
+                                            <td>@group.FullName</td>
+                                            <td>
+                                                @if (ViewBag.HasEditRights)
+                                                {
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-8">
+                                <div id="courseList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

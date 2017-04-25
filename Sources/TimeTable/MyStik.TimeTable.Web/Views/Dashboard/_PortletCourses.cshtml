@@ -1,0 +1,46 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+<div class="portlet portlet-sortable light bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-microphone"></i>
+            <span class="caption-subject bold uppercase"> Meine Vorlesungen</span>
+        </div>
+        <div class="actions">
+            <a href="@Url.Action("CreateCourse", "Course")" class="btn btn-circle btn-icon-only btn-default">
+                <i class="fa fa-plus"></i>
+            </a>
+            <a href="@Url.Action("Index", "Activity")" class="btn btn-circle btn-icon-only btn-default">
+                <i class="fa fa-calendar"></i>
+            </a>
+            <a href="@Url.Action("PersonalSchedule", "Print")"
+               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=500,toolbar=0,resizable=1'); return false;"
+               class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-print"></i></a>
+        </div>
+    </div>
+    <table class="table table-condensed">
+        <tbody>
+        @foreach (var act in Model.MyActivities)
+        {
+            var txt = string.Format("({0})", act.Subscriptions.Count);
+            <tr>
+                <td>
+                    @Html.ActionLink(
+                        act.Activity.Name + " (" + act.Activity.ShortName + ")",
+                        "Admin", act.Controller, new {id = act.Id}, null)
+                    <div>@Html.GroupList(act.Activity.SemesterGroups)</div>
+                </td>
+                <td>
+                    
+                    @Html.ActionButton("fa-envelope-o", txt, "CustomOccurrenceMail", "Mailing", new { id = act.Summary.Activity.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                </td>
+            </tr>
+
+        }
+        </tbody>
+    </table>
+</div>
+
+

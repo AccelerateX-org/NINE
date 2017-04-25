@@ -1,0 +1,68 @@
+﻿@using System.Web.UI.WebControls
+@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.OfficeHourDateViewModel>
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-faculty">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>SPRECHSTUNDENTERMINE</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th rowspan="2">Dozent</th>
+            <th colspan="2">Nächster freier Termin</th>
+            <th rowspan="2"></th>
+            <th rowspan="2"></th>
+        </tr>
+        <tr>
+            <th>Datum</th>
+            <th>Uhrzeit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Lecturer.Name</td>
+                @if (item.OfficeHour.ByAgreement)
+                {
+                    <td colspan="4">Terminvereinbarung per e-mail</td>
+                }
+                else
+                {
+                    if (item.Date != null)
+                    {
+                        <td>@item.Date.Begin.Date.ToShortDateString()</td>
+                        if (item.Slot != null)
+                        {
+                            <td>@item.Slot.Begin.TimeOfDay.ToString(@"hh\:mm") - @item.Slot.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                        }
+                        else
+                        {
+                            <td>@item.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @item.Date.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                        }
+                        <td>
+                            @Html.Partial("_SubscriptionState", item.State)
+                        </td>
+                        <td>
+                            @Html.ActionLink("weitere Termine", "Lecturer", "OfficeHour", new {id = item.Lecturer.Id}, null)
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="4">Keine Termine mehr im laufenden Semester</td>
+                    }
+                }
+            </tr>            
+        }
+    </tbody>
+</table>

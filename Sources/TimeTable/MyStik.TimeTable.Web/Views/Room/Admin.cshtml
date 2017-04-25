@@ -1,0 +1,214 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.Room>
+
+@{
+    ViewBag.Title = "Raumverwaltung";
+}
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            $("#removeAssignments").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("RemoveAssignments")',
+                        data: {
+                            roomIds: dateList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+            $("#addAssignment").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgAddAssignment').modal("show");
+                } else {
+                    alert("Es sind keine Räume markiert");
+                }
+            });
+
+            $("#btnAddAssignment").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var orgName = $("#orgName").val();
+                    var needExternal = $("#needExternal").val();
+                    var needInternal = $("#needInternal").val();
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("AddAssignment")',
+                        data: {
+                            roomIds: dateList,
+                            orgName: orgName,
+                            needExternal: needExternal,
+                            needInternal: needInternal
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+
+
+                    $('#dlgAddAssignment').modal("hide");
+                }
+            });
+
+
+
+
+        });
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+        function toggleAllCheck(elem) {
+            $("#checkAll").attr("checked", elem.checked);
+
+            if ($("#checkAll").is(':checked'))
+                $("#dateTable input[type='checkbox']").attr('checked', true);
+            else
+                $("#dateTable input[type='checkbox']").attr('checked', false);
+
+        }
+
+        $("#needExternal").change(function () {
+            // this block sets value to checkbox control for "true" / "false"
+            var chkVal = $("input[type='checkbox'][name='needExternal']").val();
+            if (chkVal == 'false') $("input[type='checkbox'][name='needExternal']").val(true);
+            else $("input[type='checkbox'][name='needExternal']").val(false);
+        });
+
+        $("#needInternal").change(function () {
+            // this block sets value to checkbox control for "true" / "false"
+            var chkVal = $("input[type='checkbox'][name='needInternal']").val();
+            if (chkVal == 'false') $("input[type='checkbox'][name='needInternal']").val(true);
+            else $("input[type='checkbox'][name='needInternal']").val(false);
+        });
+
+    </script>
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Raumverwaltung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            @if (ViewBag.UserRight.IsOrgAdmin)
+            {
+
+                <div class="row">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li><a href="@Url.Action("Create")"><i class="fa fa-2x fa-plus-circle"></i> Raum anlegen</a></li>
+                            <li><a href="@Url.Action("Transfer")"><i class="fa fa-2x fa-random"></i> Umhängen</a></li>
+                            <li><a href="@Url.Action("RoomBook")"><i class="fa fa-2x fa-qrcode"></i> Türschilder</a></li>
+                            <li id="removeAssignments"><a href="#"> Zuordnungen löschen</a></li>
+                            <li id="addAssignment"><a href="#"> Zuordnung hinzufügen</a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="dateTable">
+                        @Html.Partial("_RoomInfoList", Model)
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="dlgAddAssignment" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel2">Zuordnung hinzufügen</h4>
+            </div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="orgName" class="col-sm-2 control-label">Name der Fakultät</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="orgName" placeholder="Name Fakultät">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label>
+                                <input id="needExternal" name="needExternal" type="checkbox" value="false"/> Externe benötigen Zustimmung
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label>
+                                <input name="needInternal" id="needInternal" type="checkbox" value="false"/> Interne benötigen Zustimmung
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnAddAssignment" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

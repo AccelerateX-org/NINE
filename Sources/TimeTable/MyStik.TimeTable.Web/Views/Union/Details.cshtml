@@ -1,0 +1,79 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+@{
+    ViewBag.Title = "Mitglieder";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mitglieder @Model.Organiser.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        @if (ViewBag.UserRight.IsOrgMember || ViewBag.UserRight.IsOrgAdmin)
+        {
+            <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>Rolle</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Members)
+                    {
+                        <tr>
+                            @if (item.Member.IsAdmin)
+                            {
+                                <td>Admin</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            @if (item.User != null)
+                            {
+                                <td>@item.User.LastName</td>
+                                <td>@item.User.FirstName</td>
+                            }
+                            else
+                            {
+                                <td colspan="2">@item.Member.Name (Benutzer existiert nicht!!!)</td>
+                            }
+                            <td>@item.Member.Role</td>
+                            <td>
+                                @if (item.User != null)
+                                {
+                                    <a href="mailto:@item.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                                }
+                                @if (ViewBag.UserRight.IsOrgAdmin)
+                                {
+                                    @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMember", "Union", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
+                                    @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Union", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h1>Sorry, nur für Mitglieder!</h1>
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,38 @@
+﻿@using System.Data
+@model MyStik.TimeTable.Web.Models.MemberUserViewModel
+@{
+    ViewBag.Title = "Mitglied";
+}
+
+
+<h4>Mitglied @ViewBag.Member.ShortName</h4>
+
+
+@using (Html.BeginForm("EditMember", "Union", FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+        ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form-group">
+        @Html.HiddenFor(item => item.MemberId)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.Role, new { @class="col-md-4 control-label"})
+        <div class="col-md-8">
+            @Html.TextBoxFor(item => item.Role, new { @class="form-control"})
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(item => item.IsAdmin, new { @class = "col-md-4 control-label" })
+        <div class="col-md-8">
+            @Html.CheckBoxFor(item => item.IsAdmin)
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            <input type="submit" value="Übernehmen" class="btn btn-primary" />
+        </div>
+    </div>
+}
+
+

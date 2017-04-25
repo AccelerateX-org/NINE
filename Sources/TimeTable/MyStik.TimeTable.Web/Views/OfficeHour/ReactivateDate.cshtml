@@ -1,0 +1,18 @@
+﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+@{
+    ViewBag.Title = "Termin reaktivieren";
+}
+
+<h2>Termin reaktivieren</h2>
+<p>@Model.Summary.Name</p>
+<p>@Model.Summary.TimeFrame</p>
+
+
+<div class="row">
+    <div class="col-lg-offset-2 col-md-8">
+        @Html.Partial("_CustomMailForm", Model)
+        
+
+        <p>@Html.ActionLink("Zurück", Model.Summary.Action, Model.Summary.Controller, new { id = Model.Summary.Id }, new { @class="btn btn-default"})</p>
+    </div>
+</div>

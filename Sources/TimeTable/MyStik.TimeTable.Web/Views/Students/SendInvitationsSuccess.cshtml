@@ -1,0 +1,59 @@
+﻿@model MyStik.TimeTable.Web.Models.InvitationCheckModel
+@{
+    ViewBag.Title = "Versand der Einladungen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studierende - Versand der Einladungen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Abschlussbericht Versand der Einladungen</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>E-Mail</th>
+                            <th>Einladung</th>
+                            <th>Eingeladen</th>
+                            <th>Bemerkung</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var invitation in Model.Invitations)
+                        {
+                            <tr>
+                                <td>@invitation.LastName</td>
+                                <td>@invitation.FirstName</td>
+                                <td>@invitation.Email</td>
+                                <td>@invitation.Invite</td>
+                                <td>@invitation.Invited</td>
+                                <td>@invitation.Remark</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

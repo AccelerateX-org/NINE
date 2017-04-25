@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "NINE Infoscreen";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <canvas id="clockid" class="CoolClock:swissRail:180:GMTOffset"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="leftInfoscreenPanel"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h1>Aktuelle Lehrveranstaltungen...</h1>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h2>Derzeit läuft</h2>
+                                            <div class="infoscreen">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Zeitraum</th>
+                                                            <th>Raum</th>
+                                                            <th>Name</th>
+                                                            <th>Dozent</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h2>Demnächst beginnt</h2>
+                                            <div class="infoscreen">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Zeitraum</th>
+                                                            <th>Raum</th>
+                                                            <th>Name</th>
+                                                            <th>Dozent</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+        @section scripts
+        {
+            <script src="~/Assets/global/plugins/jQuery.Marquee-master/jquery.marquee.min.js"></script>
+            <script src="~/Assets/global/plugins/CoolClock-master/coolclock.js"></script>
+            <script src="~/Assets/global/plugins/CoolClock-master/moreskins.js"></script>
+
+            <script>
+
+    $(function () {
+        CoolClock.findAndCreateClocks();
+        /*
+        $('.marquee').marquee({
+            //speed in milliseconds of the marquee
+            duration: 15000,
+            //gap in pixels between the tickers
+            gap: 50,
+            //time in milliseconds before the marquee will start animating
+            delayBeforeStart: 0,
+            //'left' or 'right'
+            direction: 'left',
+            //true or false - should the marquee be duplicated to show an effect of continues flow
+            duplicated: false
+        });
+        */
+
+        $.ajax({
+            url: '@Url.Action("LeftPanel")',
+            type: 'GET',
+            success: function(result) {
+                $('#leftInfoscreenPanel').html(result);
+            }
+        });
+
+        @*
+                    $.ajax({
+                        url: '@Url.Action("RightPanel")',
+                        type: 'GET',
+                        success: function (result) {
+                            $('#rightInfoscreenPanel').html(result);
+                        }
+                    });
+                        *@
+
+
+        // Auto Update ausgeschaltet
+        updatePanelFreeRooms();
+        //updatePanelNextEvent();
+
+    });
+
+    function updatePanelFreeRooms() {
+        setInterval(function () {
+            $.ajax({
+                url: '@Url.Action("LeftPanel")',
+                type: 'GET',
+                success: function (result) {
+                    $('#leftInfoscreenPanel').html(result);
+                }
+            });
+        }, 30000);
+    }
+
+    function updatePanelNextEvent() {
+
+
+        setInterval(function () {
+            $.ajax({
+                url: '@Url.Action("RightPanel")',
+                type: 'GET',
+                success: function (result) {
+                    $('#rightInfoscreenPanel').html(result);
+                }
+            });
+        }, 20000);
+    }
+
+
+
+            </script>
+        }
+
+
+
+
+

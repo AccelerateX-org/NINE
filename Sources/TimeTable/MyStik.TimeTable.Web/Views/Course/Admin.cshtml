@@ -1,0 +1,869 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+
+@{
+    ViewBag.Title = "Verwaltung";
+}
+
+@section styles
+{
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("tr[history]").hide();
+
+            $("#Description2").cleditor();
+
+            $("#btnAdd").click(function () {
+                var group = $("#GroupId option:selected").val();
+                var capacity = $("#Capacity").val();
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("AddGroup")',
+                    data: {
+                        courseId: "@Model.Course.Id",
+                        semGroupId: group,
+                        capacity: capacity
+                    },
+                    success: function (data, success, xhr) {
+                        $("#GroupList").html(data);
+                    }
+                });
+            });
+
+            $("#toggleHistoryOn").click(function () {
+                $("tr[history]").show();
+                $("#toggleHistoryOff").removeClass("active");
+            });
+
+            $("#toggleHistoryOff").click(function () {
+                $("tr[history]").hide();
+                $("#toggleHistoryOn").removeClass("active");
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+
+            /*
+            $("#checkAll").click(function() {
+                if ($(this).is(':checked'))
+                    $("#dateTable input[type='checkbox']").attr('checked', true);
+                else
+                    $("#dateTable input[type='checkbox']").attr('checked', false);
+            });
+            */
+
+
+            $("#cancelAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("CancelDateList")',
+                        data: {
+                            dateIds: dateList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+                } else {
+                    alert("Es sind keine Termine zum Absagen markiert");
+                }
+            });
+
+
+            $("#refreshAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("ReactivateDateList")',
+                        data: {
+                            dateIds: dateList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+
+
+            $("#deleteAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#confirmDeleteAllDates').modal("show");
+                } else {
+                    alert("Es sind keine Termine zum Löschen markiert");
+                }
+            });
+
+
+            $("#deleteAllConfirmed").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("DeleteDateList")',
+                        data: {
+                            dateIds: dateList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+
+
+                    $('#confirmDeleteAllDates').modal("hide");
+                }
+            });
+
+            $("#removeRooms").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("RemoveRooms")',
+                        data: {
+                            dateIds: dateList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+            $("#addRoom").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgAddRoom').modal("show");
+                } else {
+                    alert("Es sind keine Termine markiert");
+                }
+            });
+
+            $("#btnAddRoom").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var roomNo = $("#roomNumber").val();
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("AddRoomToDates")',
+                        data: {
+                            dateIds: dateList,
+                            roomNumber: roomNo
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+
+
+                    $('#dlgAddRoom').modal("hide");
+                }
+            });
+
+            $("#removeHosts").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("RemoveHosts")',
+                        data: {
+                            dateIds: dateList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+
+            $("#addHost").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgAddHost').modal("show");
+                } else {
+                    alert("Es sind keine Termine markiert");
+                }
+            });
+
+            $("#btnAddHost").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var hostName = $("#lecName").val();
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("AddHostToDates")',
+                        data: {
+                            dateIds: dateList,
+                            hostName: hostName
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+
+
+                    //$('#dlgAddHost').modal("hide");
+                }
+            });
+
+
+            $("#moveAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgMoveDates').modal("show");
+                } else {
+                    alert("Es sind keine Termine markiert");
+                }
+            });
+
+            $("#btnMoveDates").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var newBegin = $("#NewBegin").val();
+                    var newEnd = $("#NewEnd").val();
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("MoveDates")',
+                        data: {
+                            dateIds: dateList,
+                            newBegin: newBegin,
+                            newEnd: newEnd
+                        },
+                        success: function (data, success, xhr) {
+                            $("#dateTable").html(data);
+                        }
+                    });
+
+
+                    //$('#dlgAddRoom').modal("hide");
+                }
+            });
+
+
+        });
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+        function toggleAllCheck(elem) {
+            $("#checkAll").attr("checked", elem.checked);
+
+            if ($("#checkAll").is(':checked'))
+                $("#dateTable input[type='checkbox']").attr('checked', true);
+            else
+                $("#dateTable input[type='checkbox']").attr('checked', false);
+
+        }
+
+        function onSaved() {
+            alert("Gespeichert");
+        }
+
+        function onSemesterChanged() {
+            var sem = $("#SemesterId option:selected").val();
+            var curr = $("#CurriculumId option:selected").val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList", "Curriculum")',
+                data: {
+                    semId: sem,
+                    currId: curr
+                },
+                success: function (data, success, xhr) {
+                    $('#GroupId').html(data);
+                }
+            });
+        }
+
+        function onOrganiserChanged() {
+            var org = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("CurriculaList", "Curriculum")',
+                data: {
+                    orgId: org
+                },
+                success: function (data, success, xhr) {
+                    $('#CurriculumId').html(data);
+                    onSemesterChanged();
+                }
+            });
+        }
+
+        function showConfirmDeleteDate() {
+            $('#confirmDeleteDate').modal("show");
+        }
+
+        function hideConfirmDeleteDate() {
+            $('#confirmDeleteDate').modal("hide");
+        }
+
+        function showEditDateInformation() {
+            $('#confirmDeleteDate').modal("show");
+        }
+
+        function hideEditDateInformation() {
+            $('#confirmDeleteDate').modal("hide");
+        }
+
+
+
+    </script>
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    @Model.CourseType <i class="fa fa-calendar"></i> @Model.DefaultDay <i class="fa fa-clock-o"></i> @Model.DefaultTimespan <i class="fa fa-building"></i> @Model.DefaultRoom
+                </p>
+                <h4>@Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper())</h4>
+                <p>
+                    @foreach (var lec in Model.Lecturers)
+                    {
+                        @Html.Raw(lec.Name.ToUpper())
+                        if (lec != Model.Lecturers.Last())
+                        {
+                            @Html.Raw(", ")
+                        }
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>
+                                <a href="@Url.Action("Details", new {id = Model.Course.Id})"><i class="fa fa-sign-out"></i> Beenden</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-envelope-o"></i> E-Mail</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-download"></i> Teilnehmerliste</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("DeleteCourse", new {id = Model.Course.Id})"><i class="fa fa-trash-o"></i> Löschen</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            @if (!string.IsNullOrEmpty(Model.Course.ExternalSource))
+                            {
+                                <li>
+                                    Importiert aus: @Model.Course.ExternalSource (@Model.Course.ExternalId)
+                                </li>
+                            }
+                            @if (Model.Course.Owners.Any())
+                            {
+                                <li>
+                                    Angelegt von @Model.Course.Owners.First().Member.ShortName
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h4>Gruppen</h4>
+                            <ul class="nav">
+                                @foreach (var group in Model.Course.SemesterGroups)
+                                {
+                                    <li>@group.Semester.Name @group.FullName</li>
+                                }
+                            </ul>
+                            <a href="@Url.Action("ChangeGroups", new {id = Model.Course.Id})">ändern</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="tabbable-line" role="tabpanel">
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Beschreibung</a></li>
+                            <li role="presentation"><a href="#dates" aria-controls="dates" role="tab" data-toggle="tab">Termine</a></li>
+                            <li role="presentation"><a href="#subscriber" aria-controls="subscriber" role="tab" data-toggle="tab">Teilnehmer</a></li>
+                            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Platzvergabe</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home">
+                                <div class="panel">
+                                    <div class="panel-body">
+                                        @using (Ajax.BeginForm("ChangeGeneralSettings", null,
+                new AjaxOptions()
+                {
+                    HttpMethod = "Post",
+                    OnSuccess = "onSaved"
+                }, new { @class = "form-horizontal", role = "form" }))
+                                        {
+                                            <fieldset>
+                                                @Html.HiddenFor(m => m.Course.Id)
+                                                <div class="form-group">
+                                                    @Html.LabelFor(m => m.Course.Name, new { @class = "col-md-2 control-label" })
+                                                    <div class="col-md-8">
+                                                        @Html.TextBoxFor(m => m.Course.Name, new { @class = "form-control", placeholder = "Name des Kurses" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(m => m.Course.ShortName, new { @class = "col-md-2 control-label" })
+                                                    <div class="col-md-8">
+                                                        @Html.TextBoxFor(m => m.Course.ShortName, new { @class = "form-control", placeholder = "Kurzbezeichnung des Kurses" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(m => m.Description2, new { @class = "col-md-2 control-label" })
+                                                    <div class="col-md-8">
+                                                        @Html.TextAreaFor(m => m.Description2, new { @class = "form-control", placeholder = "Beschreibung des Kurses", rows = "10" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(m => m.Course.UrlMoodleCourse, new { @class = "col-md-2 control-label" })
+                                                    <div class="col-md-8">
+                                                        @Html.TextBoxFor(m => m.Course.UrlMoodleCourse, new { @class = "form-control", placeholder = "URL des Moodle-Kurses" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(m => m.Course.KeyMoodleCourse, new { @class = "col-md-2 control-label" })
+                                                    <div class="col-md-8">
+                                                        @Html.TextBoxFor(m => m.Course.KeyMoodleCourse, new { @class = "form-control", placeholder = "Zugangsschlüssel des Moodle-Kurses" })
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-offset-2 col-md-8">
+                                                        <button type="submit" class="btn btn-default"><i class="fa fa-save text-primary"></i> SPEICHERN</button>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="dates">
+                                <div class="panel">
+                                    <div class="panel-body">
+                                        <div class="alert alert-warning">
+                                            <h4>Wichtiger Hinweis</h4>
+                                            <p>
+                                                Bisher wurden bei Terminänderungen, Absagen etc. automatisch Mails versendet. Dies führte im Einzelfall zu einer "E-Mail Flut" für die Studierenden.
+                                                Aktuell werden daher bei <strong>Änderungen an den Terminen keine automatischen E-Mails</strong> mehr versendet.
+                                            </p>
+                                        </div>
+                                        <div class="btn-group" role="group" data-toggle="buttons">
+                                            <button id="toggleHistoryOff" type="button" class="btn btn-default active">Nur zukünftige Termine anzeigen</button>
+                                            <button id="toggleHistoryOn" type="button" class="btn btn-default">Alle Termine anzeigen</button>
+                                        </div>
+                                        <div class="btn-group pull-right" role="group">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-check"></i> ausgewählte Termine <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li id="cancelAll"><a href="#"><i class="fa fa-times"></i> absagen</a></li>
+                                                    <li id="refreshAll"><a href="#"><i class="fa fa-refresh"></i> reaktivieren</a></li>
+                                                    <li id="moveAll"><a href="#"><i class="fa fa-calendar"></i> verschieben</a></li>
+                                                    <li id="deleteAll"><a href="#"><i class="fa fa-trash-o"></i> löschen</a></li>
+                                                    <li class="divider"></li>
+                                                    <li id="addRoom"><a href="#"><i class="fa fa-building"></i> Raum hinzufügen</a></li>
+                                                    <li id="removeRooms"><a href="#"><i class="fa fa-building-o"></i> Räume löschen</a></li>
+                                                    <li class="divider"></li>
+                                                    <li id="addHost"><a href="#"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a></li>
+                                                    <li id="removeHosts"><a href="#"><i class="fa fa-user-times"></i> Dozenten löschen</a></li>
+                                                </ul>
+                                            </div>
+                                            @Html.ActionButton("fa-plus-circle text-success", "neuer Termin", "CreateDate2", "Course", new { courseId = Model.Course.Id }, new { @class = "btn btn-default" })
+                                        </div>
+                                        <div id="dateTable">
+                                            @Html.Partial("_DateTable", Model.Course)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="subscriber">
+                                <div class="panel">
+                                    <div class="panel-body">
+                                        <div class="btn-group pull-right" role="group">
+                                            @Html.ActionButton("fa-envelope-o", "E-mail an alle", "CustomOccurrenceMail", "Mailing", new { id = Model.Course.Occurrence.Id }, new { @class = "btn btn-default" })
+                                            @Html.ActionButton("fa-download text-success", "Teilnehmerliste", "SubscriptionList", "Occurrence", new { id = Model.Course.Occurrence.Id }, new { @class = "btn btn-default" })
+                                            @Ajax.ActionButton("fa-eraser text-danger", "Alle austragen", "ClearSubscriptions", "Course",
+                    new { occurrenceId = Model.Course.Occurrence.Id },
+                    new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "course-subscriptions" },
+                    new { @class = "btn btn-default" })
+                                        </div>
+                                        <div id="participiantTable">
+                                            @Html.Partial("_ParticipantTable", Model)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="settings">
+                                <div class="panel">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">Zuordnung zu Studienprogramm und Semestergruppen</div>
+                                                    <div class="panel-body">
+                                                        <div id="GroupList">
+                                                            @Html.Partial("_GroupList", Model.Groups)
+                                                        </div>
+                                                        <form class="form-horizontal">
+                                                            <fieldset>
+                                                                <div class="form-group">
+                                                                    <label for="SemesterId" class="col-md-4 control-label">Semester</label>
+                                                                    <div class="col-md-8">
+                                                                        @Html.DropDownListFor(model => model.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="OrganiserId" class="col-md-4 control-label">Fakultät</label>
+                                                                    <div class="col-md-8">
+                                                                        @Html.DropDownListFor(model => model.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control", onchange = "onOrganiserChanged()" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="CurriculumId" class="col-md-4 control-label">Studiengang</label>
+                                                                    <div class="col-md-8">
+                                                                        @Html.DropDownListFor(model => model.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="GroupId" class="col-md-4 control-label">Gruppenname</label>
+                                                                    <div class="col-md-8">
+                                                                        @Html.DropDownListFor(model => model.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="Capacity" class="col-md-4 control-label">Anzahl Plätze</label>
+                                                                    <div class="col-md-8">
+                                                                        @Html.TextBoxFor(m => m.Capacity, new { @class = "form-control", placeholder = "Anzahl Plätze" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="col-md-offset-4 col-md-8">
+                                                                        <a href="#" id="btnAdd" class="btn btn-default"><i class="fa fa-plus-circle text-success"></i> HINZUFÜGEN / AKTUALISIEREN</a>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">Regeln der Platzvergabe</div>
+                                                    <div class="panel-body">
+                                                        @using (Ajax.BeginForm("ChangeCapacitySettings", null,
+                                                            new AjaxOptions()
+                                                            {
+                                                                HttpMethod = "Post",
+                                                                OnSuccess = "onSaved"
+                                                            }, new {@role = "form"}))
+                                                        {
+                                                            <fieldset>
+                                                                @Html.HiddenFor(m => m.Course.Id)
+                                                                <div class="radio-list">
+                                                                    @foreach (var option in Model.CapacitySettings)
+                                                                    {
+                                                                        <label>
+                                                                            @Html.RadioButtonFor(m => m.SelectedOption.Id, option.Id)
+                                                                            @option.Text
+                                                                        </label>
+                                                                        if (option.HasValue)
+                                                                        {
+                                                                            <div>
+                                                                                Anzahl der Plätze
+                                                                                @Html.TextBoxFor(m => m.SelectedOption.Capacity, new {@class = "form-control"})
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                                <button type="submit" class="btn btn-default"><i class="fa fa-save text-primary"></i> SPEICHERN</button>
+                                                            </fieldset>
+                                                        }
+                                                        <div class="alert alert-info">
+                                                            <strong>Hinweis!</strong> Für die Zusammenstellungen und Durchführung von Platzverlosungen aktuell direkt an Olav Hinz wenden
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="modalDelete"></div>
+
+<div class="modal fade" id="confirmDeleteAllDates" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Löschen bestätigen</h4>
+            </div>
+            <div class="modal-body">
+                <p>Sollen alle markierten Termine gelöscht werden?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteAllConfirmed" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Löschen</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlgAddRoom" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel2">Raum hinzufügen</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="roomNumber">Vollständige Raumnummer, z.B. R 1.087</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="roomNumber" name="roomNumber" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnAddRoom" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlgMoveDates" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel3">Termine verschieben</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="NewBegin">Beginn</label>
+                        <div class="col-sm-4">
+                            <input class="form-control timepicker timepicker-24" id="NewBegin" name="NewBegin" type="text" value="18:30:00" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="NewEnd">Ende</label>
+                        <div class="col-sm-4">
+                            <input class="form-control timepicker timepicker-24" id="NewEnd" name="NewEnd" type="text" value="18:30:00" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnMoveDates" type="button" class="btn btn-danger" data-dismiss="modal">Verschieben</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlgAddHost" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel4">Dozent hinzufügen</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="lecName">Nachname oder Kurzname (Untis)</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="lecName" name="lecName" type="text" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnAddHost" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

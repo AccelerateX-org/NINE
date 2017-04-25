@@ -1,0 +1,72 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Semester
+
+@{
+    ViewBag.Title = "Zeitplan";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Detailinformationen zu Semester @Model.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>
+                    Vorlesungszeit von @Model.StartCourses.Date.ToShortDateString() bis @Model.EndCourses.Date.ToShortDateString()
+                    @Html.ActionButton("fa-plus", "Neuer Termin", "CreateDate", "Semester", new {id = Model.Id}, new {@class = "btn btn-default"})
+                    @Html.ActionButton("fa-wrench", "Ändern", "Edit", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
+                    @if (Model.BookingEnabled)
+                    {
+                        @Html.ActionButton("fa-power-off", "abschalten", "Switch", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
+                    }
+                    else
+                    {
+                        @Html.ActionButton("fa-bullhorn", "freischalten", "Switch", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
+                    }
+                </h4>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Bezeichnung</th>
+                    <th>Zeitraum</th>
+                    <th>Bemerkung</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Dates)
+                {
+                    <tr>
+                        <td>@item.Description</td>
+                        <td>@item.From.ToShortDateString() bis @item.To.ToShortDateString()</td>
+                        @if (item.HasCourses)
+                        {
+                            <td></td>
+                        }
+                        else
+                        {
+                            <td>vorlesungsfrei</td>
+                        }
+                        <td>
+                            @Html.ActionButton("fa-pencil text-danger", "ändern", "EditDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
+                            @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "Semester", new {id = item.Id}, new {@class = "btn btn-default btn-xs"})
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,52 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Semester
+@{
+    ViewBag.Title = "Semestergruppen";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Detailinformationen zu Semester @Model.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>
+                    Vorlesungszeit von @Model.StartCourses.Date.ToShortDateString() bis @Model.EndCourses.Date.ToShortDateString()
+                    @Html.ActionButton("fa-plus", "Initialisieren", "InitGroups", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
+                    @Html.ActionLink("Gruppe anlegen", "CreateGroup")
+                    @Html.ActionLink("Gruppe transferieren", "TransferGroup")
+                </h4>
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Vorlesungen</th>
+                        <th>Eintragungen</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in Model.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                    {
+                        <tr>
+                            <td>@group.FullName</td>
+                            <td>@group.Activities.Count</td>
+                            <td>@group.Subscriptions.Count</td>
+                            <td>@Html.ActionLink("Gruppe löschen", "DeleteGroup", null, new {id = group.Id})</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,86 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.EventViewModel>
+@{
+    ViewBag.Title = "Veranstaltungen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Veranstaltungen</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            @if (ViewBag.UserRight.IsOrgMember || ViewBag.UserRight.IsOrgAdmin)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <ul class="nav">
+                                <li>
+                                    <a href="@Url.Action("Admin", "Event")"><i class="fa fa-tag text-primary"></i> Verwaltung</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("CreateEvent", "Event")"><i class="fa fa-tag text-primary"></i> Veranstaltung anlegen</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("CreateSeriesEvent", "Event")"><i class="fa fa-tag text-primary"></i> Serie anlegen </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-10">
+            @foreach (var ev in Model)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>@ev.Event.Organiser.Name.ToUpper()</h6>
+                                <address>
+                                    <strong>@ev.NextDate.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</strong><br>
+                                    @Html.TimeSpan(ev.NextDate)<br>
+                                    @Html.RoomList(ev.NextDate.Rooms)<br>
+                                </address>
+                                <p>@Html.Partial("_SubscriptionState", ev.State)</p>
+                            </div>
+                            <div class="col-md-9">
+                                <h4><a href="@Url.Action("Admin", new {id=ev.Event.Id})">@ev.Event.Name</a></h4>
+                                <p>
+                                    @if (string.IsNullOrEmpty(ev.Event.Description))
+                                         {
+                                             @Html.Raw("Keine Beschreibung vorhanden.")
+                                         }
+                                         else
+                                         {
+                                             @Html.Raw(ev.Event.Description)
+                                         }
+                                </p>
+                                <p>@ev.NextDate.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+﻿@model MyStik.TimeTable.Web.Models.AlumniMailModel
+
+@if (Model.sendException != null)
+{
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            Oh Nein!
+        </div>
+        <div class="panel-body">
+            Die Nachricht konnte nicht gesendet werden. Fehlermeldung:<br />
+            "@Model.sendException.Message".
+        </div>
+    </div>
+}
+else {
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            Erfolgreich gesendet!
+        </div>
+        <div class="panel-body">
+            <p class="text-success">Ihre Nachricht wurde erfolgreich gesendet.</p>
+            <table class="table">
+                <tr>
+                    <td><strong>An:</strong></td>
+                    <td>
+                        @string.Join("; ", Model.inviteUser)
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Betreff:</strong></td>
+                    <td>
+                        @Model.subject
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Nachricht:</strong></td>
+                    <td>
+                        @Model.message
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}
+@Html.ActionLink("Zurück zur Übersicht", "Index", "Alumni")

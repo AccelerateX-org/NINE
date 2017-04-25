@@ -1,0 +1,19 @@
+﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+@{
+    ViewBag.Title = "News senden";
+}
+
+<h4>Neuigkeit senden</h4>
+
+<p>@Model.Summary.Name</p>
+
+
+<div class="row">
+    <div class="col-lg-offset-2 col-md-8">
+        @Html.Partial("_CustomMailForm", Model)
+
+
+        <p>@Html.ActionLink("Zurück", Model.Summary.Action, Model.Summary.Controller, new { id = Model.Summary.Id }, new { @class = "btn btn-default" })</p>
+    </div>
+</div>
+

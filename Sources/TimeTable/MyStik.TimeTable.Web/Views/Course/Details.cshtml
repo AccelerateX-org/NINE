@@ -1,0 +1,371 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+@{
+    ViewBag.Title = "Kursdetails";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        @Model.CourseType <i class="fa fa-calendar"></i> @Model.DefaultDay <i class="fa fa-clock-o"></i> @Model.DefaultTimespan <i class="fa fa-building"></i> @Model.DefaultRoom
+                    </p>
+                    <h4>@Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper())</h4>
+                    <p>
+                        @foreach (var lec in Model.Lecturers)
+                        {
+                            @Html.Raw(lec.Name.ToUpper())
+                            if (lec != Model.Lecturers.Last())
+                            {
+                                @Html.Raw(", ")
+                            }
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-2">
+    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <ul class="nav">
+                        <li>
+                            <a href="@Url.Action("Admin", new {id = Model.Course.Id})"><i class="fa fa-wrench"></i> Verwaltung</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-envelope-o"></i> E-Mail</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-download"></i> Teilnehmerliste</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <ul class="nav">
+                        @if (!string.IsNullOrEmpty(Model.Course.ExternalSource))
+                        {
+                            <li>
+                                Importiert aus: @Model.Course.ExternalSource (@Model.Course.ExternalId)
+                            </li>
+                        }
+                        @if (Model.Course.Owners.Any())
+                        {
+                            <li>
+                                Angelegt von @Model.Course.Owners.First().Member.ShortName
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <div class="btn-group" role="group">
+                        @Html.Partial("_SubscriptionState", Model.State, new ViewDataDictionary {{"Style", "Large"}})
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="col-md-10">
+
+<div class="tabbable-line" role="tabpanel">
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Beschreibung</a></li>
+    <li role="presentation"><a href="#dates" aria-controls="dates" role="tab" data-toggle="tab">Termine</a></li>
+    <li role="presentation"><a href="#subscriber" aria-controls="subscriber" role="tab" data-toggle="tab">Teilnehmer</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Platzvergabe</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+<div role="tabpanel" class="tab-pane active" id="home">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="col-md-3">
+                <h4>@Model.Title</h4>
+                @if (string.IsNullOrEmpty(Model.Course.UrlMoodleCourse))
+                {
+                    <div>Kein Moodle-Kurs vorhanden</div>
+                }
+                else
+                {
+                    <div>
+                        <a href="@Model.Course.UrlMoodleCourse" target="_blank"><i class="fa fa-mortar-board"></i> Moodle</a> <i class="fa fa-external-link"></i> (<i class="fa fa-key"></i> <strong>@Model.Course.KeyMoodleCourse</strong>)
+                    </div>
+                }
+            </div>
+            <div class="col-md-9">
+                @if (string.IsNullOrEmpty(Model.Course.Description))
+                {
+                    @Html.Raw("Keine Beschreibung vorhanden.")
+                }
+                else
+                {
+                    @Html.Raw(Model.Course.Description)
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div role="tabpanel" class="tab-pane" id="dates">
+    <div class="panel">
+        <div class="panel-header">
+            <div class="btn-group" role="group">
+                <button id="toggleHistoryOn" type="button" class="btn btn-default">Alle Termine anzeigen</button>
+                <button id="toggleHistoryOff" type="button" class="btn btn-default">Nur zukünftige Termine anzeigen</button>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            @if (Model.NextDate == null)
+            {
+                <div class="note note-info">
+                    <h4>Die Veranstaltung ist beendet!</h4>
+                </div>
+            }
+            else
+            {
+                foreach (var date in Model.Course.Dates.OrderBy(d => d.Begin))
+                {
+                    var histAttr = "";
+                    if (date.End < GlobalSettings.Now)
+                    {
+                        histAttr = "history";
+                    }
+                    <div class="row" @histAttr>
+                        <div class="col-md-2">
+                            @if (date.Id == Model.NextDate.Id)
+                            {
+                                <h4><span class="label label-primary">Nächster Termin</span></h4>
+                            }
+                            <address>
+                                <strong>@date.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</strong><br>
+                                @Html.TimeSpan(date)<br>
+                                @Html.RoomList(date.Rooms)<br>
+                                @Html.LecturerList(date.Hosts)
+                            </address>
+                        </div>
+                        <div class="col-md-10">
+                            <h4>@date.Title</h4>
+                            <p>@date.Description</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<div role="tabpanel" class="tab-pane" id="subscriber">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><i class="fa fa-users"></i> Teilnehmer <span class="badge">@Model.ParticipantList.Count</span></div>
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>Semestergruppe</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @{ var anonymousCount = 0;}
+                        @foreach (var paricipiant in Model.ParticipantList)
+                        {
+                            bool showItem = ViewBag.UserRight.IsOrgMember ||
+                                            (ViewBag.UserRight.IsSubscriber && !ViewBag.UserRight.User.IsAnonymous && !paricipiant.User.IsAnonymous) ||
+                                            paricipiant.User.Id.Equals(ViewBag.UserRight.User.Id);
+
+                            if (showItem)
+                            {
+                                <tr>
+                                    <td>@paricipiant.User.LastName</td>
+                                    <td>@paricipiant.User.FirstName</td>
+                                    @if (paricipiant.SemesterGroup != null)
+                                    {
+                                        <td>@paricipiant.SemesterGroup.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td>keine Angabe</td>
+                                    }
+                                </tr>
+                            }
+                            else
+                            {
+                                anonymousCount++;
+                            }
+                        }
+                        </tbody>
+                    </table>
+                    <div class="panel-body">und @anonymousCount weitere</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><i class="fa fa-user"></i> Warteliste <span class="badge">@Model.WaitingList.Count</span></div>
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>Semestergruppe</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @{ var anonymousCountW = 0;}
+                        @foreach (var waiting in Model.WaitingList)
+                        {
+                            bool showItem = ViewBag.UserRight.IsOrgMember ||
+                                            (ViewBag.UserRight.IsSubscriber && !ViewBag.UserRight.User.IsAnonymous && !waiting.User.IsAnonymous) ||
+                                            waiting.User.Id.Equals(ViewBag.UserRight.User.Id);
+
+                            if (showItem)
+                            {
+                                <tr>
+                                    <td>@waiting.User.LastName</td>
+                                    <td>@waiting.User.FirstName</td>
+                                    @if (waiting.SemesterGroup != null)
+                                    {
+                                        <td>@waiting.SemesterGroup.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td>keine Angabe</td>
+                                    }
+                                </tr>
+                            }
+                            else
+                            {
+                                anonymousCountW++;
+                            }
+                        }
+                        </tbody>
+                    </table>
+                    <div class="panel-body">und @anonymousCountW weitere</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div role="tabpanel" class="tab-pane" id="settings">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Zuordnung zu Semestergruppen</div>
+                    <div class="panel-body">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Studiengang</th>
+                                <th>Studiengruppe</th>
+                                @if (Model.SelectedOption.Id > 2)
+                                {
+                                    <th>Anzahl Plätze</th>
+                                }
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var group in Model.Groups)
+                            {
+                                <tr>
+                                    <td>@group.Curriculum</td>
+                                    <td>@group.Group</td>
+                                    @if (Model.SelectedOption.Id > 2)
+                                    {
+                                        <td>@group.Capacity</td>
+                                    }
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Regeln der Platzvergabe</div>
+                    <div class="panel-body">
+                        @if (Model.SelectedOption.Id == 1)
+                        {
+                            <p>Der Kurs hat keine Platzbeschränkungen.</p>
+                        }
+                        else if (Model.SelectedOption.Id == 2)
+                        {
+                            <p>Für den Kurs stehen insgesamt @Model.Course.Occurrence.Capacity Plätze zur Verfügung.</p>
+                        }
+                        else if (Model.SelectedOption.Id == 3)
+                        {
+                            <p>Für den Kurs werden die Plätze je Studiengang vergeben (siehe Tabelle links).</p>
+                        }
+                        else if (Model.SelectedOption.Id == 4)
+                        {
+                            <p>Für den Kurs werden die Plätze je Studiengang und Studiengruppe vergeben (siehe Tabelle links).</p>
+                        }
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {
+            $("#toggleHistoryOn").click(function () {
+                $("tr[history]").show();
+            });
+
+            $("#toggleHistoryOff").click(function () {
+                $("tr[history]").hide();
+            });
+
+        });
+
+    </script>
+}

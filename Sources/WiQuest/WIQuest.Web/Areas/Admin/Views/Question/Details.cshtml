@@ -1,0 +1,89 @@
+﻿@model WIQuest.Web.Data.Question
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Question</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        <dt>
+            @Html.DisplayNameFor(model => model.Uberschrift)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Uberschrift)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Reihenfolge)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Reihenfolge)
+        </dd>
+    </dl>
+
+   
+
+    @if (Model.Image != null)
+    {
+        <div><img src="@Url.Action("ShowImage", "Image", new { area="", id = Model.Image.Id})" alt="@Model.Title" style="height: 150px; width: auto"/>
+        </div>
+    }
+
+    <h4>Antworten zur Frage</h4>
+    <p>
+        @Html.ActionLink("Neue Antwort für Frage anlegen", "Create", "Answer", new {id = Model.Id }, null)
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>
+                Titel
+            </th>
+            <th>
+                Ist Richtig?
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.Answers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsCorrect)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Answer", new { id = item.Id }, null) |
+                    @Html.ActionLink("Bild hochladen", "UploadImage", "Answer", new { id = item.Id }, null) |
+                    @Html.ActionLink("Details", "Details", "Answer", new { id = item.Id }, null) |
+                    @Html.ActionLink("Delete", "Delete", "Answer", new { id = item.Id }, null)
+                </td>
+            </tr>
+        }
+        </table>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

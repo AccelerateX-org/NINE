@@ -1,0 +1,75 @@
+﻿@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.NachmittagRechtsModel
+<!-- BEGIN CONTENT -->
+
+
+<div class="infoscreen-content">
+    <div id="carousel-example-generic" class="carousel slide"  data-interval="100">
+        <!-- Indicators -->
+       <ol class="carousel-indicators">
+           @{
+               var Zähler = 0;
+            }
+
+           @foreach (var ev in Model.Events)
+            {
+                var isActive = "";
+                if (ev == Model.Events.First())
+                {
+                    isActive = "active";
+                }
+
+                <li data-target="#carousel-example-generic" data-slide-to="@Zähler" class="@isActive"></li>
+               
+                Zähler++;
+            }
+    </ol>
+
+        <!-- Wrapper for slides -->
+
+        <div class="carousel-inner" role="listbox">
+            @foreach (var ev in Model.Events)
+            {
+                var isActive = "";
+
+                if (ev == Model.Events.First())
+                {
+                    isActive = "active";
+                }
+
+                <div class="@isActive item">
+                    <img src="@ev.Bild" height="100%" width="100%">
+                    <div class="carousel-caption">
+                        <h1>@ev.Titel</h1>
+                        <h2>@ev.Beschreibung</h2>
+                    </div>
+                </div>
+            }
+
+        </div>
+        
+        <!--
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+        -->
+
+    </div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('.carousel').carousel({
+            interval: 4000,
+            cycle: true
+        });
+    });
+    </script>
+</div>
+
+
+
+

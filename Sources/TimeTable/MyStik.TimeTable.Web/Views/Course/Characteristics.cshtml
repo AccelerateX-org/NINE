@@ -1,0 +1,466 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.CourseCharacteristicModel
+
+@{
+    ViewBag.Title = "Lehrveranstaltung";
+}
+
+<h4>Lehrveranstaltung @Model.Course.Name (@Model.Course.ShortName)</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Allgemeine Informationen zur Lehrveranstaltung</div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td>Name</td>
+                            <td>@Model.Course.Name</td>
+                        </tr>
+                        <tr>
+                            <td>Kurzname</td>
+                            <td>@Model.Course.ShortName</td>
+                        </tr>
+                        <tr>
+                            <td>Modulbeschreibung</td>
+                            <td>
+                                @if (Model.ModuleDescription != null)
+                                {
+                                    <a href="@Url.Action("GetRessource", "Storage", new { id=Model.ModuleDescription.Id})" target="_blank">@Model.Course.Name</a>
+                                }
+                                else
+                                {
+                                    @Html.Raw("Nicht verfügbar")
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Semestergruppe(n)</td>
+                            <td>
+                                @foreach (var group in Model.Course.SemesterGroups)
+                                {
+                                    if (group.CurriculumGroup != null)
+                                    {
+                                        var label = group.CurriculumGroup.Curriculum.ShortName + " - " + group.CurriculumGroup.Name;
+                                        @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
+                                        if (group != Model.Course.SemesterGroups.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var label = "Ohne Zuordnung";
+                                        <div class="text-danger"><strong>@Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)</strong></div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        @if (Request.IsAuthenticated)
+                        {
+                        <tr>
+                            <td>Moodle-Kurs</td>
+                            <td>
+                                @if (string.IsNullOrEmpty(Model.Course.UrlMoodleCourse))
+                                {
+                                    @Html.Raw("Nicht bekannt")
+                                }
+                                else
+                                {
+                                    <a href="@Model.Course.UrlMoodleCourse" target="_blank">@Model.Course.UrlMoodleCourse</a> <i class="fa fa-external-link"></i>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Beschreibung</td>
+                            <td>@Model.Course.Description</td>
+                        </tr>
+                        <tr>
+                            <td>Regelungen für Eintragung</td>
+                            <td>@Model.OccurrenceDescription</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Request.IsAuthenticated)
+                {
+                    <div class="well well-sm">
+                        @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                        {
+                            @Html.ActionButton("fa-gear", "Einstellungen", "EditCourse", "Course", new {id = Model.Course.Id}, new {@class = "btn btn-default"})
+                            @Html.ActionButton("fa-legal", "Regeln", "SubscriptionRules", "Occurrence", new {id = Model.Course.Occurrence.Id}, new {@class = "btn btn-default"})
+                            @Html.ActionButton("fa-envelope-o", "E-mail an alle", "CustomOccurrenceMail", "Mailing", new {id = Model.Course.Occurrence.Id}, new {@class = "btn btn-default"})
+                            @Html.ActionButton("fa-download text-success", "Teilnehmerliste", "SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id}, new {@class = "btn btn-default"})
+                            if (!Model.Course.Occurrence.Subscriptions.Any() || User.IsInRole("SysAdmin"))
+                            {
+                                @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteCourse", "Course", new {id = Model.Course.Id}, new {@class = "btn btn-default"})
+                            }
+                        }
+                        @Html.Partial("_SubscriptionState", Model.State, new ViewDataDictionary {{"Style", "Large"}})
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @if (Request.IsAuthenticated)
+    {
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Informationen zum nächsten Termin</div>
+                <div class="panel-body">
+                    @if (Model.NextDate.Summary.Date != null)
+                    {
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Datum / Uhrzeit</td>
+                                <td>@Model.NextDate.Summary.Date.Begin.ToShortDateString() [@Model.NextDate.Summary.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @Model.NextDate.Summary.Date.End.TimeOfDay.ToString(@"hh\:mm")]</td>
+                            </tr>
+                            <tr>
+                                <td>Raum</td>
+                                <td>
+                                    @foreach (var room in Model.NextDate.Summary.Date.Rooms)
+                                    {
+                                        @Html.ActionLink(room.Number, "Index", "Room", new { id = room.Id }, null)
+                                        if (room != Model.NextDate.Summary.Date.Rooms.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dozent</td>
+                                <td>
+                                    @foreach (var lec in Model.NextDate.Summary.Date.Hosts)
+                                    {
+                                        var lecName = lec.Name + " (" + lec.ShortName + ")";
+                                        @Html.ActionLink(lecName, "Member", "Organiser", new { orgId = lec.Organiser.ShortName, shortName = lec.ShortName }, null)
+                                        if (lec != Model.NextDate.Summary.Date.Hosts.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Titel</td>
+                                <td>@Model.NextDate.Summary.Date.Title</td>
+                            </tr>
+                            <tr>
+                                <td>Beschreibung</td>
+                                <td>@Model.NextDate.Summary.Date.Description</td>
+                            </tr>
+                            <tr>
+                                <td>Kurzinfo</td>
+                                <td>@Model.NextDate.Summary.Date.Occurrence.Information</td>
+                            </tr>
+                        </table>
+                        <div class="well well-sm">
+                            @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                            {
+                                if (Model.NextDate.Summary.Date.Occurrence.IsCanceled)
+                                {
+                                    @Html.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate", Model.NextDate.Summary.Controller, new { id = Model.NextDate.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                                }
+                                else
+                                {
+                                    if (Model.NextDate.State == SubscriptionState.BeforeSubscriptionPhase ||
+                                        !Model.NextDate.Summary.Subscriptions.Any())
+                                    {
+                                        @Html.ActionButton("fa-trash-o text - danger", "löschen", "DeleteDate", Model.NextDate.Summary.Controller, new { id = Model.NextDate.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                                        @Html.ActionButton("fa-calendar", "ändern", "MoveDate", Model.NextDate.Summary.Controller, new { id = Model.NextDate.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionButton("fa-times text-danger", "absagen", "CancelDate", Model.NextDate.Summary.Controller, new { id = Model.NextDate.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                                        @Html.ActionButton("fa-calendar", "ändern", "MoveDate", Model.NextDate.Summary.Controller, new { id = Model.NextDate.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default" })
+                                    }
+                                }
+                                @Html.ActionButton("fa-info-circle btnTextPrimary", "Infos eingeben", "SetInfo", Model.NextDate.Summary.Controller, new { id = Model.NextDate.Summary.Date.Id }, new { @class = "btn btn-default" })
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">Veranstaltung ist beendet.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (User.IsInRole("SysAdmin"))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Unterlagen</div>
+                <div class="panel-body">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Beschreibung</th>
+                                @if (ViewBag.UserRight.IsHost)
+                                {
+                                    <th></th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var doc in Model.Course.Ressources)
+                            {
+                                <tr id="@doc.Id">
+                                    <td>
+                                        <a href="@Url.Action("GetDocument", "Storage", new { id=doc.Id})" target="_blank">@doc.Name</a>
+                                    </td>
+                                    <td>@doc.Description</td>
+                                    @if (ViewBag.UserRight.IsHost)
+                                    {
+                                        <td>
+                                            @Ajax.ActionButton("fa-trash-o pull-left text-danger", "Löschen", "DeleteDocument", "Course",
+                                                new { CourseId = Model.Course.Id, DocId = doc.Id },
+                                                new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = doc.Id.ToString() },
+                                                new { @class = "btn btn-default btn-xs" })
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (ViewBag.UserRight.IsHost)
+                    {
+                        <div class="well well-sm">
+                            @Html.ActionButton("fa-upload text-success", "Datei hochladen", "UploadDocument", "Course", new {id = Model.Course.Id}, new {@class = "btn btn-default"})
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">aktuelle Termine</div>
+                <div class="panel-body">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Zeitraum</th>
+                                <th>Raum</th>
+                                <th>Dozent</th>
+                                <th>Titel</th>
+                                <th>Beschreibung</th>
+                                <th>Kurzinfo</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var date in Model.ExpiredDates)
+                            {
+                                <tr>
+                                    @if (date.Summary.Date.Occurrence.IsCanceled)
+                                    {
+                                        <td><del>@date.Summary.Date.Begin.ToShortDateString()</del></td>
+                                        <td><del>@date.Summary.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @date.Summary.Date.End.TimeOfDay.ToString(@"hh\:mm")</del></td>
+                                        <td colspan="4">abgesagt</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@date.Summary.Date.Begin.ToShortDateString()</td>
+                                        <td>@date.Summary.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @date.Summary.Date.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            @foreach (var room in date.Summary.Date.Rooms)
+                                            {
+                                                @Html.ActionLink(room.Number, "Index", "Room", new { id = room.Id }, null)
+                                                if (room != date.Summary.Date.Rooms.Last())
+                                                {
+                                                    @Html.Raw(", ")
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @foreach (var host in date.Summary.Date.Hosts)
+                                            {
+                                                @Html.ActionLink(host.ShortName, "Member", "Organiser", new { orgId = host.Organiser.ShortName, shortName = host.ShortName }, null)
+                                                if (host != date.Summary.Date.Hosts.Last())
+                                                {
+                                                    @Html.Raw(", ")
+                                                }
+                                            }
+                                        </td>
+                                        <td>@date.Summary.Date.Title</td>
+                                        <td>@date.Summary.Date.Description</td>
+                                    }
+                                    <td>
+                                        @date.Summary.Date.Occurrence.Information
+                                    </td>
+                                    <td>
+                                        @if (ViewBag.UserRight.IsOrgAdmin)
+                                        {
+                                            @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", date.Summary.Controller, new { id = date.Summary.Date.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var date in Model.CurrentDates)
+                            {
+                                <tr>
+                                    @if (date.Summary.Date.Occurrence.IsCanceled)
+                                    {
+                                        <td><del>@date.Summary.Date.Begin.ToShortDateString()</del></td>
+                                        <td><del>@date.Summary.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @date.Summary.Date.End.TimeOfDay.ToString(@"hh\:mm")</del></td>
+                                        <td colspan="4">abgesagt</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@date.Summary.Date.Begin.ToShortDateString()</td>
+                                        <td>@date.Summary.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @date.Summary.Date.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                                        <td>
+                                            @foreach (var room in date.Summary.Date.Rooms)
+                                            {
+                                                @Html.ActionLink(room.Number, "Index", "Room", new { id = room.Id }, null)
+                                                if (room != date.Summary.Date.Rooms.Last())
+                                                {
+                                                    @Html.Raw(", ")
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @foreach (var host in date.Summary.Date.Hosts)
+                                            {
+                                                @Html.ActionLink(host.ShortName, "Member", "Organiser", new { orgId = host.Organiser.ShortName, shortName = host.ShortName }, null)
+                                                if (host != date.Summary.Date.Hosts.Last())
+                                                {
+                                                    @Html.Raw(", ")
+                                                }
+                                            }
+                                        </td>
+                                        <td>@date.Summary.Date.Title</td>
+                                        <td>@date.Summary.Date.Description</td>
+                                    }
+                                    <td>
+                                        @date.Summary.Date.Occurrence.Information
+                                    </td>
+                                    <td>
+                                        @Html.Partial("_CourseDateActions", date)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                    {
+                        <div class="well well-sm">
+                            @Html.ActionButton("fa-plus-circle text-success", "Neuer Termin", "CreateDate", "Course", new { id = Model.Course.Id }, new { @class = "btn btn-default" })
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-calendar"></i> Alle Termine verändern <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="@Url.Action("MoveCourseTime", "Course", new {id = Model.Course.Id})">Nur Zeiten anpassen</a></li>
+                                    <li><a href="@Url.Action("MoveCourse", "Course", new {id = Model.Course.Id})">Raum und Zeit ändern</a></li>
+                                    @if (!Model.Course.Occurrence.Subscriptions.Any())
+                                    {
+                                        if (ViewBag.UserRight.IsOrgAdmin)
+                                        {
+                                            <li class="divider"></li>
+                                            <li><a href="@Url.Action("DeleteAllDates", "Course", new {id = Model.Course.Id})">Alle Termine löschen</a></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="divider"></li>
+                                        <li><a href="@Url.Action("CancelAllDates", "Course", new {id = Model.Course.Id})">Alle Termine absagen</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (Request.IsAuthenticated && ViewBag.UserRight.IsOrgMember)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Teilnehmer</div>
+                <div class="panel-body">
+                    <table class=" table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>Studienprogramm</th>
+                                <th>Studiengruppe</th>
+                                <th>Datum der Eintragung</th>
+                                @if (Model.IsWPM)
+                                {
+                                    <th>Position laut Platzverlosung</th>
+                                    <th>Bemerkung</th>
+                                    <th>Priorität der Eintragung</th>
+                                }               
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="course-subscriptions">
+                            @foreach (var member in Model.Member)
+                            {
+                                <tr id="@member.User.Id">
+                                    <td>@member.Number</td>
+                                    <td>@member.User.LastName</td>
+                                    <td>@member.User.FirstName</td>
+                                    <td>@member.User.Curriculum</td>
+                                    <td>@member.User.Group</td>
+                                    <td>@member.Subscription.TimeStamp</td>
+                                    @if (Model.IsWPM)
+                                    {
+                                        <td>@member.Subscription.Position</td>
+                                        <td>@member.Subscription.PositionRemark</td>
+                                        <td>@member.Subscription.Priority</td>
+                                    }
+                                    <td>
+                                        <a href="mailto:@member.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                                        <a href="@Url.Action("CoursePlan", "User", new {id=member.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Kursplan</a>
+                                        @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                                        {
+                                            @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "Course",
+                                                new { Id = Model.Course.Occurrence.Id, userId = member.User.Id },
+                                                new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = member.User.Id },
+                                                new { @class = "btn btn-default btn-xs" })
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+
+                    <div class="well well-sm">
+                        @Html.ActionButton("fa-envelope-o", "E-mail an alle", "CustomOccurrenceMail", "Mailing", new { id = Model.Course.Occurrence.Id }, new { @class = "btn btn-default" })
+                        @Html.ActionButton("fa-download text-success", "Teilnehmerliste", "SubscriptionList", "Occurrence", new { id = Model.Course.Occurrence.Id }, new { @class = "btn btn-default" })
+                        @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+                        {
+
+                            @Ajax.ActionButton("fa-eraser text-danger", "Alle austragen", "ClearSubscriptions", "Course",
+                                    new { occurrenceId = Model.Course.Occurrence.Id },
+                                    new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "course-subscriptions" },
+                                    new { @class = "btn btn-default" })
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

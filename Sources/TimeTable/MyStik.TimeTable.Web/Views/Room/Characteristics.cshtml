@@ -1,0 +1,135 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomCharacteristicModel
+@{
+    ViewBag.Title = "Raum " + Model.Room.Number;
+}
+
+<h2>Raum @Model.Room.Number</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Allgemeine Informationen</div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Anzahl Plätze</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">@Model.Room.Capacity</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Bestuhlung</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">@Model.Room.Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Aktuelle Belegung</div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    @if (Model.CurrentOccurrences.Count == 0)
+                    {
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Aktuell</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">keine (Raum frei)</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Aktuell</label>
+                            <div class="col-sm-9">
+                                <table class ="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Von</th>
+                                            <th>Bis</th>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var occurrence in @Model.CurrentOccurrences)
+                                        {
+                                            <tr>
+                                                <td>@occurrence.Begin</td>
+                                                <td>@occurrence.End</td>
+                                                <td>@occurrence.Title</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.NextOccurrences.Count == 0)
+                    {
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Nächste</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">keine (Raum frei)</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Nächste</label>
+                            <div class="col-sm-9">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Von</th>
+                                            <th>Bis</th>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var occurrence in @Model.NextOccurrences)
+                                        {
+                                            <tr>
+                                                <td>@occurrence.Begin</td>
+                                                <td>@occurrence.End</td>
+                                                <td>@occurrence.Title</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">Veranstaltungen</div>
+        <div class="panel-body">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Nächster Termin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.Courses)
+                    {
+                        <tr>
+                            <td>@course.Course.Name</td>
+                            <td>TODO</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+
+@foreach (var group in Model.Curricula)
+{
+    <option value="@group.Id">@group.ShortName</option>
+}

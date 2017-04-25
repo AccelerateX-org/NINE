@@ -1,0 +1,45 @@
+﻿@model MyStik.TimeTable.Web.Areas.InfoScreen.Models.InfoscreenModel
+
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <img src="@Url.Content("~/Assets/fillter/img/logo-mvg.jpg")" alt="MVG"/>
+        Aktuelle Abfahrtszeiten in [min]
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="infoscreen">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Linie</th>
+                                <th>Ziel</th>
+                                <th class="text-right">min</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var l in Model.MVVallDepartures.Take(5))
+                            {
+                                <tr>
+                                    <td>@l.Liniennummer</td>
+                                    <td>@l.Richtung</td>
+                                    <td class="text-right">@l.AbfahrtszeitInMin</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    
+
+

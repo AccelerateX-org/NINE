@@ -1,0 +1,53 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDateInformationModel
+           
+<div class="modal fade" id="confirmDeleteDate" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Information zu Termin @Model.Date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE")) @Html.TimeSpan(Model.Date) </h4>
+            </div>
+                @using (Ajax.BeginForm("ChangeDateInformationConfirmed", "Course", null,
+                    new AjaxOptions()
+                    {
+                        HttpMethod = "Post",
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "dateTable",
+                        OnSuccess = "hideEditDateInformation()"
+                    }, new { @class = "form-horizontal", role = "form" }))
+                {
+                    <div class="modal-body">
+                        <fieldset>
+                            @Html.HiddenFor(m => m.DateId)
+
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Title, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Titel des Termins" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.DateDescription, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextAreaFor(m => m.DateDescription, new { @class = "form-control", placeholder = "Beschreibung des Termins", rows="9" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShortInfo, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.ShortInfo, new { @class = "form-control", placeholder = "Kurzinfo (erscheint in Kalenderansicht)" })
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-save text-primary"></i> SPEICHERN</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    </div>
+                }
+        </div>
+    </div>
+</div>
+

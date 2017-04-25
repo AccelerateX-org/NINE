@@ -1,0 +1,95 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+@section styles
+{
+
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Das Wichtigste im @Model.Semester.Name auf einen Blick</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12"><div class="row" id="sortable_portlets">
+                <div class="col-md-4 column sortable">
+                    @if (Model.OfficeHours.Any())
+                    {
+                        <div id="portletSubOfficeHour">
+                            @Html.Partial("_PortletSubOfficeHour", Model)
+                        </div>
+                    }
+                    <div id="portletSemGroup">
+                        @Html.Partial("_PortletSemGroup", Model)
+                    </div>
+                    <!-- empty sortable porlet required for each columns! -->
+                    <div class="portlet portlet-sortable-empty">
+                    </div>
+                </div>
+            <div class="col-md-4 column sortable">
+                <div id="portletSubCourse">
+                    @Html.Partial("_PortletSubCourse", Model)
+                </div>
+                <!-- empty sortable porlet required for each columns! -->
+                <div class="portlet portlet-sortable-empty">
+                </div>
+            </div>
+                <div class="col-md-4 column sortable">
+                    <div id="portletFreeRooms">
+                        @Html.Partial("_PortletFreeRooms", Model)
+                    </div>
+                    <!-- empty sortable porlet required for each columns! -->
+                    <div class="portlet portlet-sortable-empty">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Assets/admin/pages/scripts/portlet-draggable.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        PortletDraggable.init();
+    });
+
+    function onCurriculumChanged() {
+
+        var prog = $('#Curriculum option:selected').val();
+
+        $.ajax(
+        {
+            type: 'POST',
+            url: '@Url.Action("GroupList", "Dashboard")',
+            data: {
+                currId: prog
+            },
+            success: function (data, success, xhr) {
+                $('#CurrGroup').html(data);
+            }
+        });
+    }
+
+
+</script>
+
+
+}

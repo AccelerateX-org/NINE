@@ -1,0 +1,167 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model ICollection<MyStik.TimeTable.Data.ActivityDateChange>
+@{
+    ViewBag.Title = "Terminänderungen";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Terminänderungen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>@Html.ActionLink("Löschen", "DeleteAll")
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="col-lg-12 panel panel-default">
+                            <p style="margin-top:20px; font-weight: bold;">Alle Notifications erzeugen</p>
+                            <div id="SavedDiv"></div>
+                            <div id="AnalysisDiv"></div>
+                            <button onclick="CreateAllNotifications()" class="col-md-10 col-md-offset-1" style="margin-bottom: 20px; margin-top: 20px;">Go!</button>
+                        </div>
+                                            
+                </div>
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-md-12">                    
+                    <div class="panel panel-default">
+                        <div class="col-lg-12 panel panel-default" >
+                            <div id="SavedDiv2" style="margin-top: 20px; display: none;"></div>
+                            <div id="NotificationViewer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Zeit</th>
+                                <th>Benutzer</th>
+                                <th>Aktivität</th>
+                                <th>Zeitraum (aktuell)</th>
+                                <th>Zeitraum (alt)</th>
+                                <th>Zeitraum (neu)</th>
+                                <th>Zeit</th>
+                                <th>Status</th>
+                                <th>Raum</th>
+                                <th>Trigger</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var i = 0;
+                                var userService = new UserInfoService();
+                            }
+                            @foreach (var change in Model)
+                            {
+                                i++;
+                                var name = userService.GetUserName(change.UserId);
+                                
+                                <tr id="@change.Id">
+                                    <td>@i</td>
+                                    <td>@change.TimeStamp.ToString()</td>
+                                    <td>@name</td>
+                                    @if (change.Date != null && change.Date.Activity != null)
+                                    {
+                                    <td>@change.Date.Activity.Name</td>
+                                    <td>@Html.TimeSpanWithDate(change.Date)</td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="2">Termin ohne Datum oder Aktivität</td>
+                                    }
+                                    @if (change.HasTimeChange)
+                                    {
+                                    <td>@Html.TimeSpanWithDate(change.OldBegin, change.OldEnd)</td>
+                                    <td>@Html.TimeSpanWithDate(change.NewBegin, change.NewEnd)</td>
+                                        <td>x</td>
+
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    }
+
+                                    @if (change.HasStateChange)
+                                    {
+                                        <td>x</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
+                                    @if (change.HasRoomChange)
+                                    {
+                                        <td>x</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td><button onclick="CreateNotification('@change.Id.ToString()')">Notification</button></td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script>
+    function CreateNotification(id) {
+        $.ajax({
+            type: "POST",
+            data: {changeId: id},
+            url: "@Url.Action("CreateNotification", "Change")",
+            success: function (result) {
+                $('#SavedDiv2').html("<div class='note note-success'>Funktion erfolgreich ausgeführt.</div>");
+                $('#SavedDiv2').css('display', 'block');
+                $("#NotificationViewer").html(result);
+            }
+        });
+    };
+
+    function CreateAllNotifications() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("CreateAllNotifications", "Change")",
+            success: function (result) {
+                $('#SavedDiv').html("<div class='note note-success'>Funktion erfolgreich ausgeführt.</div>");
+                $('#AnalysisDiv').html("<span style='font-weight: bold;'>Details:</span></br>" + result);
+            }
+    });
+    };
+</script>
+}

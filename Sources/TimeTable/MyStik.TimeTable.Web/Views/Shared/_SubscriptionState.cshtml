@@ -1,0 +1,33 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OccurrenceStateModel
+
+
+@if (Request.IsAuthenticated && Model.Occurrence.IsAvailable)
+{
+    string activityFlag = "Activity_" + Model.Occurrence.Id;
+    <div id="@activityFlag">
+            @if (Model.HasError)
+            {
+                <div class="text-danger">@Model.ErrorMessage</div>
+            }
+            else
+            {
+                // Keine Eintragung für den Benutzer vorhanden
+                if (Model.Subscription == null)
+                {
+                    @Ajax.ActionButton("fa-pencil text-primary", Model.Label, "SubscribeActivity", "Activity",
+                            new { Id = Model.Occurrence.Id },
+                            new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag },
+                            new { @class = "btn btn-default btn-sm" })
+                }
+                else
+                {
+                    @Ajax.ActionButton("fa-times text-danger", Model.Label, "DischargeActivity", "Activity",
+                        new {Id = Model.Occurrence.Id},
+                        new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag},
+                             new { @class = "btn btn-default btn-sm" })
+                }
+            }
+    </div>
+}

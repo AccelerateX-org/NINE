@@ -1,0 +1,14 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.SubTestModel>
+@{
+    ViewBag.Title = "RepairSubscriptions";
+}
+
+<h2>RepairSubscriptions</h2>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.User.FullName</td>
+        <td>@item.Subscription.SemesterGroup.FullName</td>
+    </tr>
+}

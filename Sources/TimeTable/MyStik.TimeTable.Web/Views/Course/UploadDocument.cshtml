@@ -1,0 +1,43 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseDocumentUploadModel
+@{
+    ViewBag.Title = "Dokument hochladen";
+}
+
+
+<h4>Dokument hochladen</h4>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">Modulbeschreibung</div>
+        <div class="panel-body">
+            @using (Html.BeginForm("UploadDocument", "Course", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+            {
+                @Html.ValidationSummary(true)
+                <fieldset>
+                    @Html.ValidationSummary()
+                    @Html.HiddenFor(m => m.CourseId)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Description, new { @class = "col-md-4 control-label" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Document, new { @class = "col-md-4 control-label" })
+                        <div class="col-md-8">
+                            <div><input type="file" name="Document" id="Document" /></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-8">
+                            <input type="submit" value="Hochladen" class="btn btn-default" />
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+</div>
+
+
+

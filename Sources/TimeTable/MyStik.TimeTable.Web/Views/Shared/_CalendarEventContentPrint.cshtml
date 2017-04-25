@@ -1,0 +1,26 @@
+﻿@model CalenderEventPrintViewModel
+@using System.Text
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+<div>
+    @foreach (var r in Model.Course.SemesterGroups)
+    {
+        @r.GroupName
+        if (r != Model.Course.SemesterGroups.Last())
+        {
+            @Html.Raw(", ")
+        }
+    }
+</div>
+<div>
+    @foreach (var r in Model.Rooms)
+    {
+        @r.Number
+        if (r != Model.Rooms.Last())
+        {
+            @Html.Raw(", ")
+        }
+    }
+</div>
+
