@@ -61,3 +61,11 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+###############################################################################
+# override vendor file recognition by Linguist
+###############################################################################
+jquery*.js linguist-vendored
+modernizr*.js linguist-vendored
+Sources/TimeTable/MyStik.TimeTable.Web/Assets/admin/pages/scripts/* linguist-vendored
+Sources/TimeTable/MyStik.TimeTable.Web/Assets/global/* linguist-vendored
