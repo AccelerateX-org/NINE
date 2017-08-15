@@ -26,6 +26,7 @@
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -2171,25 +2172,6 @@
     <Content Include="Assets\global\plugins\gritter\js\jquery.gritter.js" />
     <Content Include="Assets\global\plugins\gritter\js\jquery.gritter.min.js" />
     <Content Include="Assets\global\plugins\holder.js" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\banner.jpg" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\custom.css" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\icheck.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\arrow-bottom.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\arrow-top.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\header-line.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\icon-fork.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\icon-github.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\icon-lab.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\icon-options.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\ie\icon-star.png" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-bold.svg" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-regular.svg" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\normalize.css" />
-    <Content Include="Assets\global\plugins\icheck\demo\index.html" />
-    <Content Include="Assets\global\plugins\icheck\demo\js\custom.js" />
-    <Content Include="Assets\global\plugins\icheck\demo\js\custom.min.js" />
-    <Content Include="Assets\global\plugins\icheck\demo\js\jquery.js" />
-    <Content Include="Assets\global\plugins\icheck\demo\js\zepto.js" />
     <Content Include="Assets\global\plugins\icheck\icheck.js" />
     <Content Include="Assets\global\plugins\icheck\icheck.min.js" />
     <Content Include="Assets\global\plugins\icheck\skins\all.css" />
@@ -3204,13 +3186,6 @@
     <Content Include="Assets\global\plugins\icheck\.gitignore" />
     <Content Include="Assets\global\plugins\icheck\bower.json" />
     <Content Include="Assets\global\plugins\icheck\CHANGELOG.md" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\custom.styl" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-bold.eot" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-bold.ttf" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-bold.woff" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-regular.eot" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-regular.ttf" />
-    <Content Include="Assets\global\plugins\icheck\demo\css\montserrat-regular.woff" />
     <Content Include="Assets\global\plugins\icheck\icheck.jquery.json" />
     <Content Include="Assets\global\plugins\icheck\README.md" />
     <Content Include="Assets\global\plugins\ion.rangeslider\js\.DS_Store" />
