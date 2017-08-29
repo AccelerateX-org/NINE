@@ -1,0 +1,59 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Room>
+@{
+    ViewBag.Title = "Räume";
+}
+
+
+<div class="page-header">
+    <h1>
+        Raumverwaltung
+    </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="@Url.Action("Index")" class="btn btn-primary"><i class="fa fa-list"></i> Liste</a>
+                <a href="@Url.Action("DeleteUnAssigned")" class="btn btn-primary"><i class="fa fa-trash-o"></i> Alle Löschen</a>
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Nummer</th>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                        <th>Kapazität</th>
+                        <th>Buchungen</th>
+                        <th>Termine</th>
+                        <th>Aktivitäten</th>
+                        <th>Raumzuordnungen</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var room in Model)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Details", new {id = room.Id})">@room.Number</a></td>
+                            <td>@room.Name</td>
+                            <td>@room.Description</td>
+                            <td>@room.Capacity</td>
+                            <td>@room.Bookings.Count</td>
+                            <td>@room.Dates.Count</td>
+                            <td>
+                                @foreach (var org in room.Assignments)
+                                {
+                                    <div>@org.Organiser.ShortName (@org.InternalNeedConfirmation / @org.InternalNeedConfirmation)</div>
+                                }
+                            </td>
+                            <td><a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-default btn-xs"><i class="fa fa-trash"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

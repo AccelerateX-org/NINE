@@ -1,40 +1,53 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Areas.InfoScreen.Models.RechtsEventsModel
 
-<h1>Aktuelle Veranstaltungen:</h1>
 
-<div>
-   
 
-            
-                <table class="table table-striped">
+@foreach (var cl in Model.InfoscreenEventsRight.OrderBy(d => d.Datum.Begin))
+{
+            //@cl.Datum.Begin.DayOfWeek
+            //@cl.Datum.Begin.ToShortDateString()
+            //@Html.TimeSpan(cl.Datum)
+            //@cl.Kurzbeschreibung
+            //@cl.Raumnummer
+            //@cl.Titel
+            //Anmeldung noch möglich oder nicht
 
-            <thead>
 
-                <tr>
-                    <th>Wochentag</th>
-                    <th>Datum</th>
-                    <th>Uhrzeit</th>
-                    <th>Titel</th>
-                    <th>Raumnummer</th>
-                </tr>
-                </thead>
-                <tbody>
 
-           @foreach (var cl in Model.InfoscreenEventsRight.OrderBy(d => d.Datum.Begin))
-                {
-                    <tr>
-                        <td>@cl.Datum.Begin.DayOfWeek</td>
-                        <td>@cl.Datum.Begin.ToShortDateString()</td>
-                        <td>@Html.TimeSpan(cl.Datum)</td>
-                        <td>@cl.Titel</td>
-                        <td>@cl.Raumnummer</td>
-                    </tr>
-                }
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light">
 
-            </tbody>
-            <tfoot></tfoot>
-        </table>
+                <div class="portlet-title">
+                    <h2>
+                        <a href="/Event">@cl.Titel</a>
+                    </h2>
+                </div>
+
+
+                <img src="https://www.pmone.com/fileadmin/user_upload/logos/partner/hs-muenchen/hochschule.jpg" class="img-thumbnail">
+              
+
+                <div class="col-md-2">
+                    <p>@cl.Fakultät</p>
+                    <p>@cl.Wochentag</p>
+                    <p>@cl.Datum.Begin.ToShortDateString()</p>
+                    <p>@Html.TimeSpan(cl.Datum)</p>
+                    <a href="/Room">@cl.Raumnummer</a>
+
+                    <div class="text-danger">@cl.Infotext</div>
+</div>
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-4">
+                    <p>@cl.Kurzbeschreibung</p>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+            </div>
+        </div>
     </div>
-  
-
+}

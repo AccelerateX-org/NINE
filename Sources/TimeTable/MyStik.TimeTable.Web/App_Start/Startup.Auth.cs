@@ -8,9 +8,15 @@ using Owin;
 
 namespace MyStik.TimeTable.Web
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class Startup
     {
-        // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
+        /// <summary>
+        /// For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
+        /// </summary>
+        /// <param name="app"></param>
         public void ConfigureAuth(IAppBuilder app)
         {
             // Configure the db context, user manager and signin manager to use a single instance per request
@@ -63,6 +69,7 @@ namespace MyStik.TimeTable.Web
             app.UseGoogleAuthentication(
                 clientId: "563733444568-hr161m7gijet73a81r2g58jcfioenh2a.apps.googleusercontent.com",
                 clientSecret: "_ksB7M4Af62GppxoO5gB2owd");
+
         }
     }
 }

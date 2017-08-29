@@ -1,0 +1,72 @@
+﻿@model MyStik.TimeTable.Web.Models.ChangeEMailModel
+@{
+    ViewBag.Title = "E-Mail Adresse ändern";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>@Resources.ManageProfileHeading <small>Ändern der E-Mail Adresse</small></h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4>Wichtige Information</h4>
+                @if (ViewBag.User.Email.Equals(ViewBag.User.UserName))
+                {
+                    <p>
+                        Sie melden Sie mit Ihrer E-Mail Adresse bei NINE an.
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        Sie haben noch einen Benutzernamen und können sich daher mit diesem oder Ihrer E-Mail Adresse bei NINE anmelden.
+                    </p>
+                    <p>
+                        <strong>
+                            WICHTIG: Nach der Änderung der E-Mail Adresse könenn Sie sich nur noch mit der E-Mail Adresse anmelden.
+                            Der Benutzername wird gelöscht.
+                        </strong>
+                    </p>
+
+                }
+                <hr/>
+                <p>Nach der Änderung der E-Mail Adresse hier erhalten Sie an die neue Adresse eine E-Mail mit einem Bestätigungslink.
+                   Die Änderung Ihrer E-Mail Adresse und damit auch des Benutzernamens wird erst wirksam, wenn Sie den Bestätigungslink ausgeführt haben.
+                    Mit anderen Worten: <strong>Die Änderung wird erst nach Bestätigung der neuen Adresse wirksam.</strong>
+                </p>
+            </div>
+
+            <div class="panel panel-default">
+
+                @using (Html.BeginForm("ChangeEMail", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.EMail, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.EMail, new { @class = "form-control", placeholder="Neue E-Mail Adresse eingeben" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="E-Mail Adresse ändern" class="btn btn-default" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            @section Scripts {
+                @Scripts.Render("~/bundles/jqueryval")
+            }

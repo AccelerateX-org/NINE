@@ -1,0 +1,77 @@
+﻿@model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="page-header">
+    <h1>
+        Veranstalter <small>Organisationen, Abteilungen</small>
+    </h1>
+</div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Kurzname</th>
+                            <th>Name</th>
+                            <th>Typ</th>
+                            <th>Mitglieder</th>
+                            <th>Admins</th>
+                            <th>Studiengänge</th>
+                            <th>Aktivitäten</th>
+                            <th>Raumzuordnungen</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var org in Model)
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("Details", new {id = org.Id})">@org.ShortName</a></td>
+                                <td>@org.Name</td>
+                                <td>
+                                    @if (org.IsFaculty)
+                                    {
+                                        if (org.IsStudent)
+                                        {
+                                            <div>Fachschaft</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Fakultät</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (org.IsStudent)
+                                        {
+                                            <div>Zentrale Studierendenvertretung</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Zentrale Abteilung</div>
+                                        }
+                                    }
+                                </td>
+                                <td>@org.Members.Count</td>
+                                <td>@org.Members.Count(x => x.IsAdmin)</td>
+                                <td>@org.Curricula.Count</td>
+                                <td>@org.Activities.Count</td>
+                                <td>@org.RoomAssignments.Count</td>
+                                <td><a href="@Url.Action("Delete", new {id = org.Id})" class="btn btn-default btn-xs"><i class="fa fa-trash"></i></a></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+

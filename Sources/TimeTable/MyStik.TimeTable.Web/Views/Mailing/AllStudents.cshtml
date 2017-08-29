@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Web.Services
-@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
+﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
 
 @{
     ViewBag.Title = "Alle Studierenden";
@@ -17,7 +16,7 @@
     <div class="panel-body bg-fillter-events">
         <div class="row">
             <div class="col-md-12">
-                <h2>Mailing - alle Studierende</h2>
+                <h1>Mailing - alle Studierende</h1>
             </div>
         </div>
     </div>
@@ -44,7 +43,6 @@
                         @Html.LabelFor(m => m.Body, new { @class = "col-md-2 control-label" })
                         <div class="col-md-10">
                             @Html.TextAreaFor(m => m.Body, new { @class = "form-control", placeholder = "Nachricht", rows = "10" })
-                            @*Html.TextAreaFor(m => m.Body, new {@class = "form-control", rows = "10"})*@
                         </div>
                     </div>
                     <div class="form-group">

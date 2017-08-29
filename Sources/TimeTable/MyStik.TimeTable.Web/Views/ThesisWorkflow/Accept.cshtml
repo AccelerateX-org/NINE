@@ -1,0 +1,77 @@
+﻿@model MyStik.TimeTable.Web.Models.Thesis
+   
+
+@{
+    ViewBag.Title = "Anfrage Abschlussarbeit";
+}
+
+
+
+<h2>@ViewBag.Title</h2>
+<h3> von @Model.Name</h3>
+<br />
+
+<div class="panel panel-default">
+    <div class="panel-heading">Daten des Studenten</div>
+    <div class="panel-body">
+        <address>
+            Name:<strong> @Model.Name</strong>
+                <br>
+                Matrikelnummer: @Model.Matrikelnr <br>
+                E-Mail: @Model.E_Mail<br>
+                Studiengang: @Model.Studiengang <br />
+                Studienrichtung: @Model.Richtung<br />
+                Semester: @Model.Semester<br />
+                Abgabetermin: @Model.Abgabe<br />
+                Notenbekanntgabetermin: @Model.Bekanntgabe<br />
+
+                Bei Kooperation mit einer Firma:<br />
+                Name: @Model.FirmaName<br />
+                Abteilung: @Model.FirmaAbteilung <br />
+                Kontaktperson: @Model.FirmaPerson <br />
+                Kontaktdaten: @Model.FirmaKontakt <br />
+
+
+
+</address>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Infos zur Arbeit</h3>
+    </div>
+    <div class="panel-body">
+        Thema der Arbeit: <strong>@Model.Thema</strong> <br />
+        In Kooperation mit <em>@Model.FirmaName </em><br />
+
+        <button type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Expose der Arbeit
+        </button>
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Ihre Antwort</h3>
+    </div>
+    <div class="panel-body">
+
+        <form action="/Home/Bestätigungsseite">
+            <input type="text" placeholder="E-Mail an den Studierenden" id="MailStu" name="MailStu" rows="5" />
+
+    </div>
+</div>
+</form>
+
+
+<a href="@Url.Action("Accepted", "ThesisWorkflow")" <button class="btn btn-success" data-toggle="confirmation" aria-label="Left Align">
+        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Annehmen und absenden
+    </button>
+
+    <a href="@Url.Action("Denied", "ThesisWorkflow")" <button class="btn btn-danger" data-toggle="confirmation" aria-label="Left Align">
+        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Ablehnen und absenden
+    </button>
+
+

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MyStik.TimeTable.Web.Api.Contracts;
 
 namespace MyStik.TimeTable.Web.Api.Responses
@@ -50,4 +46,14 @@ namespace MyStik.TimeTable.Web.Api.Responses
         public LecturerCoursesContract LecturerCourses { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public class LecturersResponseExtended
+    {
+        /// <summary>
+        /// Liste aller Dozenten, siehe LecturerContract
+        /// </summary>
+        public IEnumerable<LecturerContractExtended> Lecturers { get; set; }
+    }
 }

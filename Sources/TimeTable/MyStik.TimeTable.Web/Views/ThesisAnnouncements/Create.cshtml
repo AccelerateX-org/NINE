@@ -1,0 +1,286 @@
+﻿@model MyStik.TimeTable.Data.ThesisAnnouncement
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@section styles{
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/fillter/css/style.css")" />
+
+    }
+
+
+@*<h2>Create</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>ThesisAnnouncement</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Department, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Company, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Company, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}*@
+
+
+
+<form action="#Contact" id="theme1">
+    <h2>Einstellen einer Masterarbeit</h2>
+    <h5>Zur Verfügung gestellt durch:</h5>
+    <div class="row">
+        <div class="radio">
+            <input id="radio-1" name="radio" type="radio" checked>
+            <label for="radio-1" class="radio-label">Firma</label>
+        </div>
+        <div class="radio">
+            <input id="radio-2" name="radio" type="radio">
+            <label for="radio-2" class="radio-label">Professor</label>
+        </div>
+    </div>
+    <br>
+    <h5>Anschrift</h5>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Straße</i>
+                </div>
+                <input type="text" class="form-control" placeholder="Musterweg" title="Straße">
+                <div class="input-group-addon">
+                    <i>Nr.</i>
+                </div>
+                <input type="number" class="form-control" placeholder="5" title="Hausnummer">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Postleitzahl</i>
+                </div>
+                <input type="number" class="form-control" placeholder="82211" title="Postleitzahl">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Stadt</i>
+                </div>
+                <input type="text" class="form-control" placeholder="München" title="Stadt">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Land</i>
+                </div>
+                <input type="text" class="form-control" placeholder="Deutschland" title="Land">
+            </div>
+        </div>
+    </div>
+    <br>
+    <h5>Ansprechpartner</h5>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <select name="anrede">
+                <option value="none" selected>Anrede</option>
+                <option value="heer">Herr</option>
+                <option value="frau">Frau</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="fa fa-tag"></i>
+                </div>
+                <input type="text" class="form-control" placeholder="Name" title="Name">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="fa fa-tag"></i>
+                </div>
+                <input type="text" class="form-control" placeholder="Vorname" title="Vorname">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="glyphicon glyphicon-earphone"></i>
+                </div>
+                <input type="email" class="form-control" placeholder="Telefonnummer" title="Telefonnummer">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i class="fa fa-at"></i>
+                </div>
+                <input type="email" class="form-control" placeholder="Email-Adresse" title="Email-Adresse">
+            </div>
+        </div>
+    </div>
+    <br>
+    <h5>Beschreibung Masterarbeit</h5>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Titel</i>
+                </div>
+                <input type="text" class="form-control" placeholder="Titel der Masterarbeit" title="Titel">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <select name="anrede">
+                <option value="none" selected>Abteilung</option>
+                <option value="Entwicklung">Entwicklung</option>
+                <option value="Einkauf">Einkauf</option>
+                <option value="Vertrieb">Vertrieb</option>
+                <option value="Produktion">Produktion</option>
+                <option value="Sostiges">Sonstiges</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Standort</i>
+                </div>
+                <input type="text" class="form-control" placeholder="Standort, an dem die Masterarbeit ausgeführt wird" title="Standort">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <i>Stelle</i>
+                </div>
+                <input type="text" class="form-control" placeholder="z.B. Entwickler" title="Stelle">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <select name="Startzeitpunkt">
+                <option value="none" selected>Startzeitpunkt</option>
+                <option value="1617">SS 17</option>
+                <option value="1718">WS 17/18</option>
+                <option value="1718">SS 18</option>
+                <option value="1718">WS 17/18</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <textarea placeholder="Kurzbeschreibung der Masterarbeit"></textarea>
+        </div>
+    </div>
+    <br>
+    <h5>Anhang</h5>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <label for="file2"><input type="file" id="file2" required></label><br />
+        </div>
+    </div>
+    <br>
+    <br>
+    <input type="button" value="Arbeit abschicken">
+    <br>
+    <br>
+</form>
+
+
+
+
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+@section scripts{
+    @*
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+            $(document).ready(function() {
+                $('#loading').hide();
+
+                initCalendar(false);
+
+                $('#calendar').fullCalendar('removeEvents');
+
+                $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("ActivityPlan", "Calendar")',
+                    type: 'POST'
+                });
+            });
+
+    </script>
+    *@
+    
+    }

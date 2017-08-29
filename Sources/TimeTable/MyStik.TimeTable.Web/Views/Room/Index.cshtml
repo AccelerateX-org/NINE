@@ -1,8 +1,7 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Data.ActivityOrganiser
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
 
 @{
-    ViewBag.Title = "Räume";
+    ViewBag.Title = Resources.RoomsHeading;
 }
 
 
@@ -12,7 +11,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Räume <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
+                    <h1>@Resources.RoomsHeading <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
                 </div>
             </div>
         </div>
@@ -25,7 +24,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        @Html.DropDownListFor(model => model.ShortName, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
+                        @Html.DropDownListFor(model => model.Id, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
                     </div>
                 </div>
             </div>
@@ -51,7 +50,7 @@
 
 
         function onFacultyChanged() {
-            var facultyId = $('#ShortName option:selected').val();
+            var facultyId = $('#Id option:selected').val();
 
             $('#facultyRoomList').html('');
             $('#loading').show();

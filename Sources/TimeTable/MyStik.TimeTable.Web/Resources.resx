@@ -1,0 +1,744 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccreditationsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AddressCantine" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AddressString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AllCurriculas" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AllEventsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AllModules" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AvailableLoginServices" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BusinessHoursString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BusinessHoursTimeFriday" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BusinessHoursTimeMondaytoThursday" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CantineHyperlink" xml:space="preserve">
+    <value>http://www.studentenwerk-muenchen.de/mensa/speiseplan/speiseplan_431_-en.html#heute</value>
+  </data>
+  <data name="CantineMenuString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CantineNoMenuAvailable" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChangeButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChangePasswordButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CommunicationSettingsHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ContactHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ContactLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ContactMailBody" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ContactMailSubject" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CoursePlanPanelHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreateCoursePlanButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CriteriaString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CurriculumField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CurriculumNGroupEmptyMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DashboardStudentHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteAccountButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Description2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeviceId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DeviceName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ECTSString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EmployeesString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FacultyField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FacultyWebsiteHyperlink" xml:space="preserve">
+    <value>http://www.wi.hm.edu/en/index.en.html</value>
+  </data>
+  <data name="FacultyWebsiteShortDescriptionLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FeedString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForgotPasswordHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForgotPasswordLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForgotPasswordMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForgotPasswordSubmitButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeFromString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeRoomsForString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeRoomsHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeRoomsNow" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeRoomsSoonString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeUntilEveningString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FreeUntilString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FridayString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GlobalCatalogString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GroupsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GuestsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HMJobonautDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="HMJobonautDescription2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="iCalFeedExplanation" xml:space="preserve">
+    <value />
+  </data>
+  <data name="iCalFeedURL" xml:space="preserve">
+    <value />
+  </data>
+  <data name="iCalFileDownload" xml:space="preserve">
+    <value />
+  </data>
+  <data name="iCalString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ImprintHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ImprintHyperlink" xml:space="preserve">
+    <value>https://www.hm.edu/en/secondarynavigation/impressum_1/legal_notice_1.en.html</value>
+  </data>
+  <data name="ImprintLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InactiveNoContactInf" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InactiveUseEmail" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IsReserved" xml:space="preserve">
+    <value />
+  </data>
+  <data name="JobsNewsletterFK09Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="JobsNewsletterFK09Description2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="JobsPanelHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="JobsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="KeyString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LectureSchedulerHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LecturesHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LinkString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LocalUserAccountHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LoginAppLinksHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LoginHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LoginProviderHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LoginTab" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LVsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageLoginsLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageProfileHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageProfileHeading2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MealString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MeatLoafBreadString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MenuCantine" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MenuCurrent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MenuDashboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MenuPersons" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MenuRooms" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MenuStudies" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ModuleCatalogString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ModulesString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MondayToThursdayString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MVString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyCalendar" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyCoursePlan" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyCoursePlanHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyPersonalData" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MySettings" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyStudyBook" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyTimeTableHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MyUserProfile" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NewsletterHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NextDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NextLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NextOccupancyString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoDates" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoDeviceRegisteredMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NowLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NumberSeatsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NumberString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OccupiedByString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OfficeHour" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OfficeHourByAgreement" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OfficeHourWithDates" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OrganicString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OrganizerString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PersonalDataHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PlanButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PreviewString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PricesforString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PriceString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfileListActiveLecturer" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickAccessFreeRooms" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickAccessHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickAccessOfficeHour" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickAccessTimeTablePlaner" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterEmailField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterEmailPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterFirstNameField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterFirstNamePlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterLastNameField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterLastNamePlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterPasswordAgainPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterPasswordConfirmErrorMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterPasswordConfirmField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterPasswordLengthErrorMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterPasswordPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterSubmitButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterTabHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterValidationSummaryMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RoomNumberString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RoomOwnerString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RoomsHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RoomStatusString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SchnitzelBreadString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SemesterString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SemGroupField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SetMailingSettingCheckbox" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SetPasswordButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShortNameString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShowAsLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShowSubscribedDates" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SnacksString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SnacksTableContent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SoftDrinksString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StuCafeEmptyMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StuCafeHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StudyBook" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StudyBookSemProfileSubscriptionsHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StudyProcessComment" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StudyProcessHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuAlumni" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuCantine" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuCurrentEvents" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuCurrentJobs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuCurrentNewsletter" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuLecturer" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuRoomsFreeRooms" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuRoomsOccupancy" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuStudents" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuStudiesCurricula" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuStudiesModules" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuStudiesPlaner" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuStudiesSemester" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubMenuStudiesThesis" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Subscriber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SubscribersString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TodayString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UniversityWebsiteHyperlink" xml:space="preserve">
+    <value>https://www.hm.edu/en/index.en.html</value>
+  </data>
+  <data name="UniversityWebsiteShortDescriptionLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UserDevicesControlHeading" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VeganString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VegetarianString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VisibleForString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WaitingList" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PrivacyLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisterPrivacyField" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChangeEMailButton" xml:space="preserve">
+    <value />
+  </data>
+</root>

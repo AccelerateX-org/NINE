@@ -1,0 +1,61 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel>
+
+@{
+    ViewBag.Title = "Meine Sprechstundentermine";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Sprechstundentermine im @ViewBag.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-pencil"></i>
+                        <span class="caption-subject bold uppercase"> Meine Termine</span>
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Dozent</th>
+                            <th>Termin(e)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var oh in Model)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Lecturer", "OfficeHour", new {id = oh.Host.Id})">@oh.Host.Name</a></td>
+                            <td>
+                                @foreach (var date in oh.MyDates)
+                                {
+                                    <div>@Html.TimeSpanWithDate(date)</div>
+                                }
+                                @foreach (var slot in oh.MySlots)
+                                {
+                                    <div>@Html.TimeSpanWithDate(slot)</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

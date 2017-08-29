@@ -1,16 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Security.Policy;
-using System.Text;
 using log4net;
-using log4net.Repository.Hierarchy;
 using MyStik.TimeTable.Data;
 using System;
 using System.Linq;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.GpUntis.Data;
-using Spire.Pdf.General.Render.Decode.Jpeg2000.j2k.util;
 
 namespace MyStik.TimeTable.DataServices.GpUntis
 {
@@ -18,19 +12,12 @@ namespace MyStik.TimeTable.DataServices.GpUntis
     {
         private ImportContext _import;
 
-        //private Semester _semester;
-        //private ActivityOrganiser _organiser;
-        //private TimeTableDbContext db = new TimeTableDbContext();
-
         private Guid _semId;
         private Guid _orgId;
+        private DateTime? _firstDate;
+        private DateTime? _lastDate;
 
 
-        // Nur die Uhrzeit der ersten Stunde
-        // Tagesdatum ist egal
-        DateTime _firstHour = new DateTime(2013, 1, 1, 8, 15, 0);
-
-        private int _numCourse;
         private int _numRooms;
         private int _numLecturers;
 
@@ -38,35 +25,52 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
         private readonly ILog _Logger = LogManager.GetLogger("Import");
 
-        public SemesterImport(ImportContext import)
-        {
-            _import = import;
-        }
 
-        public SemesterImport(ImportContext import, Guid semId, Guid orgId)
+
+        public SemesterImport(ImportContext import, Guid semId, Guid orgId, string firstDate=null, string lastDate=null)
         {
             _import = import;
             _semId = semId;
             _orgId = orgId;
+
+            DateTime date;
+            if (!string.IsNullOrEmpty(firstDate))
+            {
+                var isOK = DateTime.TryParse(firstDate, out date);
+                if (isOK)
+                {
+                    _firstDate = date;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(lastDate))
+            {
+                var isOK = DateTime.TryParse(lastDate, out date);
+                if (isOK)
+                {
+                    _lastDate = date;
+                }
+            }
         }
 
 
         public string ImportCourse(Kurs k)
         {
             string msg;
-            // Konvention: Wochenendtermine = Blockunterricht
-            // wird nicht importiert
-            var isWeekEnd = k.Termine.Any(t => t.Tag == 6 || t.Tag == 7);
+            if (!k.IsValid)
+            {
+                msg = string.Format("Kurs {0} ist nicht konsistent und wird nicht importiert.", k.Id);
+                return msg;
+            }
 
-            if (isWeekEnd)
+            if (k.Fach == null)
             {
-                msg = string.Format("Blockunterricht {0} wird nicht importiert.", k.Fach.FachID);
+                msg = string.Format("Kurs ohne Fach. Id={0}, wird nicht importiert.", k.Id);
+                return msg;
             }
-            else
-            {
-                ImportKurs(k);
-                msg = string.Format("Kurs {0} mit Terminen importiert", k.Fach.FachID);
-            }
+
+            ImportKurs(k);
+            msg = string.Format("Kurs {0} mit Terminen importiert", k.Fach.FachID);
 
             return msg;
         }
@@ -106,6 +110,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                 // diesen Semestergruppen soll der Kurs zugeordnet werden
                 var semGroups = InitSemesterGroups(db, g.GruppenID);
 
+                // TODO: Was macht eigentlich die OccurrenceGroup?
                 foreach (var semesterGroup in semGroups)
                 {
                     course.SemesterGroups.Add(semesterGroup);
@@ -142,25 +147,54 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                 // jetzt die Termine für diesen Kurs anlegen
                 foreach (var termin in kurs.Termine)
                 {
-                    // Die Zeiten
-                    // Generelle Regel: Nach jeder Doppelstunde (=90 min.) 15 min. Pause - keine explizite Mittagspause!
-                    // Berechnung des Startzeitpunkts
-                    //    Anzahl der Stunden + Anzahl der Pausen aus Start
-                    // Berechnung des Endzeitpunkts:
-                    //    Startzeitpunkt + Anzahl der Stunden aus Dauer + Anzahl der Pausen aus Dauer
+                    // Die Zeiten werden jetzt aus dem Kontext gelesen
+                    if (!_import.Stunden.ContainsKey(termin.VonStunde))
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Stunde {0} nicht definiert", termin.VonStunde), false);
+                        continue;
+                    }
+                    if (!_import.Stunden.ContainsKey(termin.BisStunde))
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Stunde {0} nicht definiert", termin.BisStunde), false);
+                        continue;
+                    }
 
-                    var anzStunden = termin.BisStunde - termin.VonStunde + 1;
-                    var anzPausen = ((anzStunden + 1) /2) - 1;
+                    // Termin liegt an einem Tag, der nicht importiert werden soll
+                    if (!_import.Tage.ContainsKey(termin.Tag))
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Tag {0} nicht definiert", termin.Tag), false);
+                        continue;
+                    }
 
-                    var occBegin = _firstHour.AddMinutes((termin.VonStunde - 1)*45 + ((termin.VonStunde - 1)/2)*15);
-                    // Bisher: hat nicht immer gepasst
-                    //DateTime occEnd = _firstHour.AddMinutes((termin.BisStunde) * 45 + ((termin.BisStunde - 1) / 2) * 15);
-                    var occEnd = occBegin.AddMinutes(anzStunden*45 + anzPausen*15);
+                    if (!_import.Tage[termin.Tag])
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Tag {0} soll nicht importiert werden", termin.Tag), false);
+                        continue;
+                    }
+
+
+                    var occBegin = _import.Stunden[termin.VonStunde].Start;
+                    var occEnd = _import.Stunden[termin.BisStunde].Ende;
+
+                    // den wahren zeitraum bestimmen
+                    // Hypothese: immer Vorlesungszeitraum des Semesters
+                    var semesterAnfang = semester.StartCourses;
+                    var semesterEnde = semester.EndCourses;
+
+                    // abweichende Angaben? dann diese nehmen
+                    if (_firstDate.HasValue)
+                    {
+                        semesterAnfang = _firstDate.Value;
+                    }
+
+                    if (_lastDate.HasValue)
+                    {
+                        semesterEnde = _lastDate.Value;
+                    }
 
                     // Tag der ersten Veranstaltung nach Vorlesungsbeginn ermitteln
-                    var semesterStartTag = (int) semester.StartCourses.DayOfWeek;
+                    var semesterStartTag = (int)semesterAnfang.DayOfWeek;
                     var day = termin.Tag;
-
                     int nDays = day - semesterStartTag;
                     if (nDays < 0)
                         nDays += 7;
@@ -170,7 +204,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
                     //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
                     int numOcc = 0;
-                    while (occDate <= semester.EndCourses)
+                    while (occDate <= semesterEnde)
                     {
                         bool isVorlesung = true;
                         foreach (var sd in semester.Dates)
@@ -283,18 +317,27 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                     Owner = raum.Nutzer,
                 };
                 db.Rooms.Add(room);
+                db.SaveChanges();
 
-                var assignment = new RoomAssignment
+                _numRooms++;
+            }
+
+
+            var assignment = db.RoomAssignments.SingleOrDefault(x => 
+                x.Room.Id == room.Id &&
+                x.Organiser.Id == organiser.Id);
+            if (assignment == null)
+            {
+                assignment = new RoomAssignment
                 {
                     Organiser = organiser,
-                    InternalNeedConfirmation = true,
-                    ExternalNeedConfirmation = true
+                    InternalNeedConfirmation = false,   // offen für interne
+                    ExternalNeedConfirmation = true     // geschlossen für externe
                 };
 
                 room.Assignments.Add(assignment);
-
+                db.RoomAssignments.Add(assignment);
                 db.SaveChanges();
-                _numRooms++;
             }
 
             return room;
@@ -304,30 +347,90 @@ namespace MyStik.TimeTable.DataServices.GpUntis
         /// 
         /// </summary>
         /// <param name="db"></param>
-        /// <param name="fachId">Untis</param>
+        /// <param name="gruppenId">Gruppenalias nach dem in der Datenbank gesucht wird</param>
         /// <returns></returns>
         private List<SemesterGroup> InitSemesterGroups(TimeTableDbContext db, string gruppenId)
         {
+            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            var org = db.Organisers.SingleOrDefault(x => x.Id == _orgId);
+
             // Annahme, die Semestergruppen existieren!
             var semGroupList = new List<SemesterGroup>();
             
             // Annahme, die Semestergruppen existieren nicht alle und müssen ggf. angelegt werden
 
-
-
-            // TODO: hier muss irgenwann noch die Fakultätsinfo rein
             // damit man nach den Alias namen in Abhängigkeit der Studiengänge / Fakultät suchen kann
             // so müssen die Namen derzeit auf globale Ebene eindeutig sein
             var aliasList = db.GroupAliases.Where(g => g.Name.ToUpper().Equals(gruppenId.ToUpper())
                 && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == _orgId).ToList();
 
-            
-            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            // falls leer, jetzt in Zuordnungen nachsehen
+            if (!aliasList.Any())
+            {
+                var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(gruppenId));
 
+                foreach (var zuordnung in zuordnungen)
+                {
+                    // Studiengang finden
+                    var curr = db.Curricula.SingleOrDefault(x =>
+                        x.ShortName.Equals(zuordnung.Studiengang) &&
+                        x.Organiser.Id == org.Id);
+                    if (curr == null)
+                    {
+                        curr = new TimeTable.Data.Curriculum
+                        {
+                            Organiser = org,
+                            ShortName = zuordnung.Studiengang,
+                            Name = zuordnung.Studiengang
+                        };
+                        db.Curricula.Add(curr);
+                    }
 
-            var isSS = semester.Name.StartsWith("SS");
-            var isWS = semester.Name.StartsWith("WS");
+                    var sg = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Studiengruppe));
+                    if (sg == null)
+                    {
+                        sg = new CurriculumGroup
+                        {
+                            Name = zuordnung.Studiengruppe,
+                            IsSubscribable = true,
+                            Curriculum = curr
+                        };
+                        db.CurriculumGroups.Add(sg);
+                        curr.CurriculumGroups.Add(sg);
+                    }
 
+                    var cg = string.IsNullOrEmpty(zuordnung.Kapazitätsgruppe) ?
+                        sg.CapacityGroups.SingleOrDefault(x => string.IsNullOrEmpty(x.Name)) :
+                        sg.CapacityGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Kapazitätsgruppe));
+                    if (cg == null)
+                    {
+                        cg = new CapacityGroup
+                        {
+                            InSS = true,
+                            InWS = true,
+                            Name = zuordnung.Kapazitätsgruppe,
+                            CurriculumGroup = sg
+                        };
+                        db.CapacityGroups.Add(cg);
+                        sg.CapacityGroups.Add(cg);
+                    }
+
+                    var al = cg.Aliases.SingleOrDefault(x => x.Name.Equals(zuordnung.Alias));
+                    if (al == null)
+                    {
+                        al = new GroupAlias
+                        {
+                            Name = zuordnung.Alias,
+                            CapacityGroup = cg
+                        };
+                        db.GroupAliases.Add(al);
+                        cg.Aliases.Add(al);
+                    }
+
+                    aliasList.Add(al);
+                }
+                db.SaveChanges();
+            }
 
 
             foreach (var groupAlias in aliasList)
@@ -340,38 +443,22 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
                 if (semGroup == null)
                 {
-                    // fehlt sie wirklich?
-                    if ((isSS && capGroup.InSS) || (isWS && capGroup.InWS))
+                    // semestergruppe gibt es nicht => auf jeden Fall anlegen
+                    semGroup = new SemesterGroup
                     {
-                        _import.ErrorMessages.Add("Unbekannte Semestergruppe");
+                        CapacityGroup = capGroup,
+                        Semester = semester,
+                    };
 
+                    _Logger.InfoFormat("Semestergruppe {0} angelegt {1}", semGroup.FullName, gruppenId);
 
-                        // Gruppe anlegen
-                        /*
-                        semGroup = new SemesterGroup
-                        {
-                            CurriculumGroup = currGroup,
-                            Semester = semester,
-                            Name = groupTemplate.SemesterGroupName
-                        };
-
-                        _Logger.InfoFormat("Semestergruppe {0} angelegt {1}", semGroup.FullName, aliasName);
-
-                        currGroup.SemesterGroups.Add(semGroup);
-                        db.SemesterGroups.Add(semGroup);
-                        db.SaveChanges();
-                     */
-                    }
+                    capGroup.SemesterGroups.Add(semGroup);
+                    db.SemesterGroups.Add(semGroup);
+                    db.SaveChanges();
                 }
 
-                if (semGroup != null)
-                {
-                    semGroupList.Add(semGroup);
-                }
-
+                semGroupList.Add(semGroup);
             }
-
-
 
             return semGroupList;
         }
@@ -383,7 +470,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
             if (org == null)
             {
-                _import.ErrorMessages.Add("Unbekannte Organisationseinheit");
+                _import.AddErrorMessage("Import", "Unbekannte Organisationseinheit", true);
                 return;
             }
 
@@ -392,17 +479,17 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                     var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(raum.Nummer));
                     if (room == null)
                     {
-                        _import.ErrorMessages.Add(
+                        _import.AddErrorMessage("Import", 
                             string.Format(
                                 "Raum [{0}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {1} zugeordnet",
-                                raum.Nummer, org.ShortName));
+                                raum.Nummer, org.ShortName), false);
                     }
                     else
                     {
                         if (room.Assignments.All(a => a.Organiser.Id != org.Id))
                         {
-                            _import.ErrorMessages.Add(string.Format("Raum [{0}] hat keine Zurodnung zu {1}. Zuordnung wird bei Import automatisch angelegt.",
-                                raum.Nummer, org.ShortName));
+                            _import.AddErrorMessage("Import", string.Format("Raum [{0}] existiert hat aber keine Zurodnung zu {1}. Zuordnung wird bei Import automatisch angelegt.",
+                                raum.Nummer, org.ShortName), false);
                         }
                     }
 
@@ -417,7 +504,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
             if (org == null)
             {
-                _import.ErrorMessages.Add("Unbekannte Organisationseinheit");
+                _import.AddErrorMessage("Import", "Unbekannte Organisationseinheit", true);
                 return;
             }
 
@@ -426,34 +513,51 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                 var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz.DozentID));
                 if (lec == null)
                 {
-                    _import.ErrorMessages.Add(string.Format("Dozent [{0} ({1})] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz.Name, doz.DozentID));
+                    _import.AddErrorMessage("Import", string.Format("Dozent [{0} ({1})] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz.Name, doz.DozentID), false);
                 }
             }
         }
 
         /// <summary>
         /// Überprüfung der externen Gruppen
-        /// Innerhalb einer Untis Datei ist die GruppenId eindeutig
-        /// In der Datenbank muss sie innerhalb der Studiengänge bzw. deren Gruppen eindeutig sein
+        /// Zu jeder gruppe muss es in der Datenbank einen Alias geben.
+        /// 
         /// </summary>
-        public void CheckGroupConsistency()
+        public void CheckGroups()
         {
             var db = new TimeTableDbContext();
 
             foreach (var gruppe in _import.Gruppen.Where(g => g.IsTouched))
             {
-                // gibt es einen Alias?
+                // alias in den Studiengängen des Veranstalters suchen
                 var aliasList = db.GroupAliases.Where(g => g.Name.ToUpper().Equals(gruppe.GruppenID.ToUpper())
                     && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == _orgId).ToList();
 
-                // für jeden Alias prüfen, ob es die Semestergruppe gibt
                 if (!aliasList.Any())
                 {
-                    // Alias existiert nicht
-                    _import.ErrorMessages.Add(string.Format("Gruppenalias [{0}] existiert nicht! Diese Gruppe wird nicht zugeordnet", gruppe.GruppenID));
+                    // Alias existiert nicht in der Datenbank
+                    // wenn es im Context eine Vorgabe gibt, dann wäre diese jetzt zu verwenden!
+
+                    // gibt es eine Zuordnung?
+                    var z = _import.GruppenZuordnungen.Any(x => x.Alias.Equals(gruppe.GruppenID));
+                    if (!z)
+                    {
+                        // auch kein Alias => diese Gruppe passt nicht
+                        gruppe.IsValid = false;
+                        _import.AddErrorMessage("Import", string.Format("Alias für Gruppe [{0}] existiert nicht! Gruppe wird nicht importiert.", gruppe.GruppenID), true);
+                    }
+                    else
+                    {
+                        // Alias vorhanden => wird angelegt
+                        _import.AddErrorMessage("Import", string.Format("Alias für Gruppe [{0}] wird angelegt.", gruppe.GruppenID), false);
+                    }
+
                 }
                 else
                 {
+                    // es ist egal, ob die Semestergruppe vorhanden ist
+                    // sie wird später beim import angelegt
+                    /*
                     var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
 
                     var isSS = semester.Name.StartsWith("SS");
@@ -470,44 +574,32 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                                 isWS && groupAlias.CapacityGroup.InWS)
                             {
                                 // Semestergruppe existiert nicht - muss angelegt werden
-                                _import.ErrorMessages.Add(
+                                _import.AddErrorMessage("Import", 
                                     string.Format(
                                         "Semestergruppe [{0}] für Gruppenalias [{1}] existiert nicht! Semestergruppe wird automatisch angelegt.",
                                         groupAlias.CapacityGroup.FullName, gruppe.GruppenID));
                             }
                         }
                     }
+                     * */
                    
                 }
             }
         }
 
-
-        public void InitWPMs()
+        public void CheckCourses()
         {
-            var db = new TimeTableDbContext();
+            //var db = new TimeTableDbContext();
 
-            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
-
-            var wpmList = db.Activities.OfType<Course>()
-                .Where(a =>
-                    a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
-                    a.SemesterGroups.Any(g => g.CapacityGroup.Name.Equals("WPM")) &&
-                    !string.IsNullOrEmpty(a.ExternalSource) && a.ExternalSource.Equals("GPUNTIS"))
-                .OrderBy(a => a.Name)
-                .ToList();
-
-
-            foreach (var wpm in wpmList)
+            foreach (var kurs in _import.Kurse)
             {
-                // Standard: 15 Plätze, ohne Gruppen
-                wpm.Occurrence.Capacity = 15;
-                wpm.Occurrence.LotteryEnabled = true;
-                wpm.Occurrence.UseGroups = false;
-                wpm.Occurrence.UseExactFit = false;
+                // es genügt, wenn ein Kurs mindestens eine gültige Gruppe hat
+                if (!kurs.Gruppen.Any(x => x.IsValid))
+                {
+                    _import.AddErrorMessage("Import", string.Format("Kurs [{0}] hat keine gültigen Gruppen. wird nicht importiert", kurs.ToString()), true);
+                    kurs.IsValid = false;
+                }
             }
-
-            db.SaveChanges();
         }
 
         /// <summary>

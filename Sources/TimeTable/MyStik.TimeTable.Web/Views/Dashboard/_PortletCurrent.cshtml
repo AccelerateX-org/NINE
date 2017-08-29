@@ -2,33 +2,72 @@
 @model MyStik.TimeTable.Web.Models.DashboardViewModel
 
 
-<div class="portlet portlet-sortable light bordered">
+@{
+    var now = DateTime.Now;
+}
+<div class="portlet light bordered">
     <div class="portlet-title">
         <div class="caption">
             <i class="fa fa-film"></i>
-            <span class="caption-subject bold uppercase"> Was läuft gerade (wo)?</span>
+            <span class="caption-subject bold uppercase"> Was läuft heute wann und wo?</span>
         </div>
         <div class="actions">
-            <a href="@Url.Action("Index", "Reservation", null)" class="btn btn-circle btn-icon-only btn-default">
-                <i class="fa fa-plus"></i>
-            </a>
             <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-circle btn-icon-only btn-default">
                 <i class="fa fa-calendar"></i>
             </a>
         </div>
     </div>
     <div class="portlet-body">
-        <div class="list-group">
-            <a href="@Url.Action("Current", "Activity")" class="list-group-item">
-                <span class="badge">@Model.CurrentDates.Count</span>
-                Aktuell laufende Veranstaltungen
-            </a>
-            <a href="@Url.Action("Free", "Room")" class="list-group-item">
-                <span class="badge">@Model.AvailableRooms.Count</span>
-                Aktuell freie Räume
-            </a>
-        </div>
-
+        @if (Model.NowPlayingDates.Any())
+        {
+            <div class="infoscreen">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Zeitraum</th>
+                        <th>Raum</th>
+                        <th>Name</th>
+                        <th>Dozent</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var date in Model.NowPlayingDates)
+                        {
+                            var iconName = "fa fa-check text-warning";
+                            if (date.Begin > now)
+                            {
+                                iconName = "fa fa-clock-o text-info";
+                            }
+                            if (date.Occurrence.IsCanceled)
+                            {
+                                <tr class="danger">
+                                    <td><i class="@iconName"></i></td>
+                                    <td>@Html.TimeSpan(date)</td>
+                                    <td>abgesagt</td>
+                                    <td>@date.Activity.Name</td>
+                                    <td>@Html.LecturerList(date.Hosts, false)</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td><i class="@iconName"></i></td>
+                                    <td>@Html.TimeSpan(date)</td>
+                                    <td>@Html.RoomList(date.Rooms, false, false)</td>
+                                    <td>@date.Activity.Name</td>
+                                    <td>@Html.LecturerList(date.Hosts, false)</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h1 class="text-success">...heute nix mehr</h1>
+        }
     </div>
 </div>
 

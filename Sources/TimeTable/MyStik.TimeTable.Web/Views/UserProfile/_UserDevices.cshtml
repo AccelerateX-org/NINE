@@ -5,6 +5,7 @@
     <thead>
         <tr>
             <th>Gerätename</th>
+            <th>OS</th>
             <th>Notifications Aktiviert</th>
         </tr>
     </thead>
@@ -15,6 +16,9 @@
             <tr>
                 <td>
                     @device.DeviceName
+                </td>
+                <td>
+                    @device.DeviceType
                 </td>
                 <td>
                     @if (device.Activated)

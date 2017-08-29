@@ -9,6 +9,10 @@ namespace MyStik.TimeTable.Web
 {
     public partial class Startup
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="app"></param>
         public void Configuration(IAppBuilder app)
         {
             app.MapSignalR();
@@ -21,7 +25,7 @@ namespace MyStik.TimeTable.Web
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                AuthorizationFilters = new[] { new HangFireAuthFilter() }
+                Authorization = new[] { new HangFireAuthFilter() }
             });
 
 

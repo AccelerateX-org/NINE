@@ -1,8 +1,5 @@
 ﻿using MyStik.TimeTable.Web.Api.Contracts;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace MyStik.TimeTable.Web.Api.Responses
 {
@@ -18,8 +15,14 @@ namespace MyStik.TimeTable.Web.Api.Responses
         public IEnumerable<NotificationContract> Notifications { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class TokenRegistryResponse
     {   
+        /// <summary>
+        /// 
+        /// </summary>
         // Bool, ob der Token erfolgreich in der DB abgelegt wurde
         public bool tokenSaved { get; set; }
     }

@@ -1,0 +1,6 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+
+@foreach (var group in Model)
+{
+    <option value="@group.Id">@group.Name</option>
+}

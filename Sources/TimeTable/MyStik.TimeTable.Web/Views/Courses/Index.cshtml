@@ -1,0 +1,274 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Lehrveranstaltungen " + Model.Organiser.ShortName;
+}
+
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName im @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Index")" class="btn btn-default active">
+                                <i class="fa fa-group"></i> nach Gruppen
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("List")" class="btn btn-default">
+                                <i class="fa fa-list"></i> als Liste
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("CreateCourse", "Course")" class="btn btn-default">
+                                <i class="fa fa-plus-circle"></i> LV anlegen
+                            </a>
+                        </div>
+                        @if (ViewBag.UserRight.IsCourseAdmin)
+                        {
+                            <div class="form-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-cog"></i> Verwaltung <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="@Url.Action("UnLockCourses", new {id = Model.Semester.Id})">
+                                            <i class="fa fa-unlock"></i> LVs für Änderungen freigeben
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("LockCourses", new {id=Model.Semester.Id})">
+                                            <i class="fa fa-lock"></i> LVs für Änderungen sperren
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a href="@Url.Action("InitGroups", new {id=Model.Semester.Id})">
+                                            <i class="fa fa-plus"></i> Semestergruppen anlegen
+                                        </a>
+                                    </li>
+                                    @if (Model.Semester.Groups.Any(x => 
+                                    x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id &&
+                                    x.Semester.Id == Model.Semester.Id))
+                                    {
+                                    <li>
+                                        <a href="@Url.Action("Enable", new {id=Model.Semester.Id})">
+                                            <i class="fa fa-check"></i> Semestergruppen freigeben
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Disable", new {id = Model.Semester.Id})">
+                                            <i class="fa fa-ban"></i> Semestergruppen zurückziehen
+                                        </a>
+                                    </li>
+                                    }
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "Import")">
+                                            <i class="fa fa-upload"></i> Import Stundenpläne
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        @if (ViewBag.NextSemester != null)
+                        {
+                        <div class="form-group">
+                            <a href="@Url.Action("Index", new {id=ViewBag.NextSemester.Id})" class="btn btn-info">
+                                <i class="fa fa-chevron-right"></i> @ViewBag.NextSemester.Name
+                            </a>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    var nLV = 0;
+    var nStud = 0;
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Lehrangebot</span>
+                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th>LVs</th>
+                                    <th>Stud</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var group in Model.Semester.Groups.Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name))
+                                    {
+                                        var lvCount = group.Activities.OfType<Course>().Count();
+                                        var grCount = group.Subscriptions.Count;
+                                        nLV += lvCount;
+                                        nStud += grCount;
+
+
+                                        <tr id="@group.Id">
+                                            @if (group.IsAvailable)
+                                            {
+                                                <td><i class="fa fa-check text-success"></i></td>
+                                            }
+                                            else
+                                            {
+                                                <td><i class="fa fa-ban text-danger"></i></td>
+                                            }
+                                            <td>@group.FullName</td>
+                                            <td>
+                                                <a href="javascript:onShowGroup('@group.Id')">@lvCount</a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:onShowGroupStudents('@group.Id')">@grCount</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td></td>
+                                        <td><strong>Total</strong></td>
+                                        <td><strong>@nLV</strong></td>
+                                        <td><strong>@nStud</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="calendar"></div>
+                            <div id="courseList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            initCalendar(false, false, true);
+            $('#calendar').hide();
+        });
+
+
+        function onShowGroup(id) {
+
+            $('#loading').show();
+            $('#calendar').show();
+
+            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
+            $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("CourseEventsByProgram", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: id,
+                        topicId: null,
+                        showPersonalDates: true
+                    }
+                });
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListByProgram", "Curriculum")',
+                    data: {
+                        semGroupId: id,
+                        topicId: null,
+                        compact: true
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseList').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+
+        function onShowGroupStudents(id) {
+
+            $('#loading').show();
+            $('#calendar').hide();
+            $('#courseList').html('');
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("ListByGroup", "Organiser")',
+                    data: {
+                        semGroupId: id
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseList').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+
+    </script>
+
+}
+
+
+
+
+
+
+
+

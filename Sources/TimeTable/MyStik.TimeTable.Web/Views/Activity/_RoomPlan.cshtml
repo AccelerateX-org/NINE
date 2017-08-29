@@ -1,0 +1,64 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Web.Models.RoomActivityModel>
+           
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Raum</th>
+            <th>Zeitraum</th>
+            <th>Name</th>
+            <th>Dozent(en)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            var nDates = room.Dates != null ? room.Dates.Count : 0;
+            if (nDates == 0)
+            {
+                <tr>
+                    <td>@room.Room.FullName</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Keine Belegung</td>
+                </tr>
+            }
+
+            else
+            {
+                foreach (var date in room.Dates)
+                {
+                    var summary = new ActivitySummary(date.Activity);
+                    
+                    <tr>
+                        @if (date == room.Dates.First())
+                        {
+                            <td rowspan="@nDates">@room.Room.FullName</td>
+                        }
+                        <td>@Html.TimeSpan(date)</td>
+                        <td>
+                            @Html.ActionLink(
+                                date.Activity.Name,
+                                "Details", summary.Controller, new { id = summary.Id }, null)
+                        </td>
+                        <td>@Html.LecturerList(date.Hosts)</td>
+                        @if (date.Occurrence != null && date.Occurrence.IsCanceled)
+                        {
+                            <td>abgesagt</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+
+                }
+
+            }
+        }
+    </tbody>
+</table>
+

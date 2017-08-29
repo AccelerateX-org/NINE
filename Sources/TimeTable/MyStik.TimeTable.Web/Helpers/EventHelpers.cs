@@ -2,20 +2,27 @@
 using MyStik.TimeTable.Web.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Web;
 
 namespace MyStik.TimeTable.Web.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class EventHelpers
     {
         DateTime start; // Starttermin
         DateTime end; // Endtermin
         EventCreateSeriesModel model; // Model
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<ActivityDate> dates = new List<ActivityDate>(); // Liste für Einzeltermine
 
-        // Constructor
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="event"></param>
+        /// <param name="model"></param>
         public EventHelpers(Event @event, EventCreateSeriesModel model)
         {
             // Übertragung des Models
@@ -48,7 +55,9 @@ namespace MyStik.TimeTable.Web.Helpers
             
         }
 
-        // Logik für Hauptfrequenz
+        /// <summary>
+        /// 
+        /// </summary>
         public void CreateDates()
         {
             switch (model.MainFrequency.ToUpper())
@@ -71,6 +80,9 @@ namespace MyStik.TimeTable.Web.Helpers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void createDailyDates()
         {
             if (model.endType == "useEndDate")
@@ -107,6 +119,9 @@ namespace MyStik.TimeTable.Web.Helpers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void createWorkdayDates()
         {
             if (model.endType == "useEndDate")
@@ -155,6 +170,9 @@ namespace MyStik.TimeTable.Web.Helpers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void createWeeklyDates()
         {
             if (model.endType == "useEndDate")
@@ -193,6 +211,9 @@ namespace MyStik.TimeTable.Web.Helpers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void createMonthlyDates()
         {
             if (model.endType == "useEndDate")
@@ -229,6 +250,9 @@ namespace MyStik.TimeTable.Web.Helpers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void createAnnualDates()
         {
             if (model.endType == "useEndDate")

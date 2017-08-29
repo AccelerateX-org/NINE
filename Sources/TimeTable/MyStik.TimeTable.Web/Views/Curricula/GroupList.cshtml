@@ -1,0 +1,179 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+@{
+    ViewBag.Title = Model.ShortName;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studiengang @Model.ShortName (@Model.Name)</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>
+                                <a href="@Url.Action("CreateGroup", new {id = Model.Id})"><i class="fa fa-plus"></i> Anlegen</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-10">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Studiengruppen
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Teilgruppe(n)</th>
+                                        <th>WS</th>
+                                        <th>SS</th>
+                                        <th>GruppenID (extern)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var group in Model.CurriculumGroups.OrderBy(g => g.Name))
+                                    {
+                                        var n = group.CapacityGroups.Count;
+
+                                        if (n > 0)
+                                        {
+                                            foreach (var capacityGroup in group.CapacityGroups)
+                                            {
+                                                if (capacityGroup == group.CapacityGroups.First())
+                                                {
+                                                    <tr>
+                                                        <td rowspan="@n">
+                                                            <a href="@Url.Action("GroupDetails", new {id = group.Id})">@group.Name</a>
+                                                            @if (!group.IsSubscribable)
+                                                            {
+                                                                <div>(Studierende können diese Gruppe nicht als Semestergruppe auswählen)</div>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @capacityGroup.Name
+                                                        </td>
+                                                        <td>
+                                                            @if (capacityGroup.InWS)
+                                                            {
+                                                                <i class="fa fa-check text-success"></i>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (capacityGroup.InSS)
+                                                            {
+                                                                <i class="fa fa-check text-success"></i>
+                                                            }
+
+                                                        </td>
+                                                        <td>
+                                                            @foreach (var groupAlias in capacityGroup.Aliases)
+                                                            {
+                                                                <div>@groupAlias.Name</div>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (ViewBag.HasEditRights)
+                                                            {
+                                                                <a href="@Url.Action("EditCapacityGroup", new {id = capacityGroup.Id})" class="text-primary"><i class="fa fa-edit"></i></a>
+                                                                <a href="@Url.Action("DeleteCapacityGroup", new {id = capacityGroup.Id})" class="text-danger"><i class="fa fa-trash-o"></i></a>
+                                                            }
+                                                        </td>
+                                                        <td rowspan="@n">
+                                                            @if (ViewBag.HasEditRights)
+                                                            {
+                                                                <a href="@Url.Action("CreateCapacityGroup", new {id = group.Id})" class="text-primary"><i class="fa fa-plus"></i></a>
+                                                                <a href="@Url.Action("EditCurriculumGroup", new {id = group.Id})" class="text-primary"><i class="fa fa-edit"></i></a>
+                                                                <a href="@Url.Action("DeleteCurriculumGroup", new {id = group.Id})" class="text-danger"><i class="fa fa-trash-o"></i></a>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @capacityGroup.Name
+                                                        </td>
+                                                        <td>
+                                                            @if (capacityGroup.InWS)
+                                                            {
+                                                                <i class="fa fa-check text-success"></i>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (capacityGroup.InSS)
+                                                            {
+                                                                <i class="fa fa-check text-success"></i>
+                                                            }
+
+                                                        </td>
+                                                        <td>
+                                                            @foreach (var groupAlias in capacityGroup.Aliases)
+                                                            {
+                                                                <div>@groupAlias.Name</div>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (ViewBag.HasEditRights)
+                                                            {
+                                                                <a href="@Url.Action("EditCapacityGroup", new {id = capacityGroup.Id})" class="text-primary"><i class="fa fa-edit"></i></a>
+                                                                <a href="@Url.Action("DeleteCapacityGroup", new {id = capacityGroup.Id})" class="text-danger"><i class="fa fa-trash-o"></i></a>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>@group.IsSubscribable</td>
+                                                <td><a href="@Url.Action("GroupDetails", new {id = group.Id})">@group.Name</a></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>
+                                                    @if (ViewBag.HasEditRights)
+                                                    {
+                                                        <a class="text-primary"><i class="fa fa-edit"></i></a>
+                                                        <a href="@Url.Action("DeleteGroup", new {id = group.Id})" class="text-danger"><i class="fa fa-trash-o"></i></a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

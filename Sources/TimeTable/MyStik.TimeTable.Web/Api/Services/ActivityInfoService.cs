@@ -1,19 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Web.Api.Contracts;
-using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityInfoService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly TimeTableDbContext Db = new TimeTableDbContext();
 
-        //Persönliche Termine abfragen am Tagen abfragen
+        /// <summary>
+        /// Persönliche Termine abfragen am Tagen abfragen
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public IEnumerable<OwnDatesContract> GetPersonalDates(string UserId, DateTime from, DateTime until)
         {
             var days = new List<DateTime>();
@@ -161,7 +170,11 @@ namespace MyStik.TimeTable.Web.Api.Services
             return dates;
         }
 
-        //Gibt die info zu einem Termin zurück
+        /// <summary>
+        /// Gibt die info zu einem Termin zurück
+        /// </summary>
+        /// <param name="DateId"></param>
+        /// <returns></returns>
         public DatesContract GetDateInfo(string DateId)
         {
             var dates = Db.ActivityDates.Where(d => d.Id.ToString().Equals(DateId)).FirstOrDefault();

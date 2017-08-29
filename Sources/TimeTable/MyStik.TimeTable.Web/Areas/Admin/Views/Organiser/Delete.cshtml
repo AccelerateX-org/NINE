@@ -1,0 +1,24 @@
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+
+@{
+    ViewBag.Title = "Löschen";
+}
+
+<div class="page-header">
+    <h1>
+        Veranstalter @Model.ShortName <small>@Model.Name</small> löschen
+    </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <a href="@Url.Action("DeleteOrg", new {id = Model.Id})" class="btn btn-danger">Komplett löschen</a>
+                <a href="@Url.Action("ClearOrg", new {id = Model.Id})" class="btn btn-danger">Nur leeren</a>
+            </div>
+        </div>
+    </div>
+</div>
+

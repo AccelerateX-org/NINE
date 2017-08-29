@@ -1,52 +1,74 @@
-﻿@model dynamic
-
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Import";
 }
 
-<h2>Semester Import</h2>
-<div>
-    <div class="btn btn-default">
-        <input type="button" id="btnStart"/>
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Import von Stundenplandaten für @Model.Organiser.ShortName</h1>
+            </div>
+        </div>
     </div>
-    
 </div>
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                    <i class="fa fa-globe fa-5x text-success"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h3 class="media-heading">Untis</h3>
+                                    <h4>Plaungswerkzeug</h4>
+                                    <p>6 Textdateien aus Untis plus 3 individuell an die jeweilige Situation angepasste Konfigurationsdateien.</p>
+                                    <form class="form-inline" action="@Url.Action("Index", "Untis")">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-upload"></i> Import starten</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                    <i class="fa fa-globe fa-5x text-info"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h3 class="media-heading">Generisch</h3>
+                                    <h4>JSON</h4>
+                                    <p>Hochladen einer einzigen Datei</p>
+                                    <form class="form-inline" action="@Url.Action("Select")">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-upload"></i> Import starten</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-@section Scripts {
-
-    @Scripts.Render("~/bundles/signalr")
-
-    <script type="text/javascript">
-        
-
-        $(document).ready(function () {    // Add handler to Send button
-            var connection = $.connection.importHub;
-            // Some config work
-            connection.client.importUpdated = function (msg) {
-                $("#Progress").append("<p>" + msg + "</p>");
-            }
-
-            $("btnStart").click(function() {
-                connection
-                    .server
-                    .startImport()
-                    .done(function(result) {
-                        $("#callbacks").append("<li>Result: " + result + "</li>");
-                    })
-                    .fail(function(error) {
-                        $("#callbacks").append("<li>Error: " + error + "</li>");
-                    });
-            });
-
-            $.connection.displayMessage = function(message) {
-
-            };
-
-            $.connection.hub.error(function () { alert("Fehler") });
-
-            // Open the connection
-            $.connection.hub.start().done(function () { alert("Verbindung aufgebaut"); }).fail(function () { alert("Fehler bei Verbindung"); });
-        });
-    </script>
-}

@@ -1,0 +1,62 @@
+﻿@model MyStik.TimeTable.Web.Models.BuildingCreateModel
+@{
+    ViewBag.Title = "CreateBuilding";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Neues Gebäude anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-database"></i>
+                        <span class="caption-subject bold uppercase"> Gebäude</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                    {
+                        <fieldset>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Name, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Address, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Institution, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(m => m.Institution, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-save"></i> Anlegen</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

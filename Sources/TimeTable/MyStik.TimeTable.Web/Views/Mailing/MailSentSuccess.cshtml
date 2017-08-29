@@ -2,7 +2,17 @@
     ViewBag.Title = "Mail versendet";
 }
 
-<h2>Mailversand erfolgreich</h2>
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Mailversand erfolgreich</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @{
     string action = ViewBag.ActionName;
@@ -10,5 +20,12 @@
     string cid = ViewBag.Id;
 }
 
-<p>@Html.ActionLink("Zurück", action, ctrl, new {id=cid}, null)</p>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="@Url.Action(action, ctrl, new { id = cid }, null)" class="btn btn-default"><i class="fa fa-back"></i> Zurück</a>
+        </div>
+    </div>
+</div>
 

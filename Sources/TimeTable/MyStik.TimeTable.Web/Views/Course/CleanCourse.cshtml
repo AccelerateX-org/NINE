@@ -1,0 +1,56 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseDeleteModel
+@{
+    ViewBag.Title = "LV löschen";
+}
+
+<h4>Lehrveranstaltung @Model.Course.Name bereinigen</h4>
+
+<div class="alert alert-danger">
+    <h4>Bereinigung</h4>
+    <p>Hier lassen sich die personenabhängigen Verbindungen löschen.</p>
+    <p><strong>Die Lehrveranstaltung als solche wird nicht gelöscht</strong>.</p>
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <fieldset>
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.Course.Id)
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(m => m.DeleteCancelled) abgesagte Termine löschen
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(m => m.DeleteHosting) Beteiligung an Terminen löschen
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(m => m.KeepOwnership) Bezug zur Lehrveranstaltung beibehalten
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-4 col-md-10">
+                    <input type="submit" value="Bereinigen" class="btn btn-danger" />
+                    <a href="@Url.Action("Index", "Course", new { id = Model.Course.Id})" class="btn btn-default">Zurück zur Lehrveranstaltung</a>
+                </div>
+            </div>
+        </fieldset>
+    }
+</div>
+
+
+

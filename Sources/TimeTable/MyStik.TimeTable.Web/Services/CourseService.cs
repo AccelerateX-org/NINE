@@ -1,31 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseService
     {
         private TimeTableDbContext db = new TimeTableDbContext();
         private Course _course;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager UserManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public CourseService()
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
 
         public CourseService(IdentifyConfig.ApplicationUserManager userManager)
         {
             UserManager = userManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="courseId"></param>
         public CourseService(IdentifyConfig.ApplicationUserManager userManager, Guid courseId)
         {
             UserManager = userManager;
             _course = db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semesterName"></param>
+        /// <param name="lecturer"></param>
+        /// <returns></returns>
         public List<CourseSummaryModel> GetCourses(string semesterName, OrganiserMember lecturer)
         {
             var list = new List<CourseSummaryModel>();
@@ -74,6 +102,11 @@ namespace MyStik.TimeTable.Web.Services
             return list;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lecturer"></param>
+        /// <returns></returns>
         public List<CourseHistoryModel> GetCourseHistory(OrganiserMember lecturer)
         {
             var list = new List<CourseHistoryModel>();
@@ -119,7 +152,12 @@ namespace MyStik.TimeTable.Web.Services
             return list.OrderBy(l => l.Semester.Name).ThenBy(l => l.Course.Name).ToList();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semesterName"></param>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
         public List<CourseSummaryModel> SearchCourses(string semesterName, string searchString)
         {
             var semester = db.Semesters.SingleOrDefault(l => l.Name.ToUpper().Equals(semesterName.ToUpper()));
@@ -145,6 +183,11 @@ namespace MyStik.TimeTable.Web.Services
             return new List<CourseSummaryModel>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
         public List<CourseSummaryModel> SearchUnassignedCourses(string searchString)
         {
             var courses =
@@ -191,7 +234,98 @@ namespace MyStik.TimeTable.Web.Services
             return list;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
+        public CourseSummaryModel CreateCourseSummary(Course course)
+        {
+            var summary = new CourseSummaryModel { Course = course };
 
+            var days = (from occ in course.Dates
+                select
+                new
+                {
+                    Day = occ.Begin.DayOfWeek,
+                    Begin = occ.Begin.TimeOfDay,
+                    End = occ.End.TimeOfDay,
+                }).Distinct();
+
+            foreach (var day in days)
+            {
+                var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
+
+                var courseDate = new CourseDateModel
+                {
+                    DayOfWeek = day.Day,
+                    StartTime = day.Begin,
+                    EndTime = day.End,
+                    DefaultDate = defaultDay.Begin
+                };
+                summary.Dates.Add(courseDate);
+            }
+
+            return summary;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lecturer"></param>
+        /// <param name="sem"></param>
+        /// <returns></returns>
+        public OfficeHour GetOfficeHour(OrganiserMember lecturer, Semester sem)
+        {
+            // zuerst richtg
+            var officeHour =
+                db.Activities.OfType<OfficeHour>().FirstOrDefault(x =>
+                    x.Semester.Id == sem.Id &&
+                    x.Owners.Any(k => k.Member.Id == lecturer.Id)
+                );
+
+            if (officeHour != null)
+                return officeHour;
+
+            // jetzt irgendwie suchen
+            // alle mit Terminen
+            var allOfficeHours =
+                db.Activities.OfType<OfficeHour>().Where(
+                        c =>
+                            c.Semester.Id == sem.Id &&
+                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)))
+                    .ToList();
+            
+            // keine mit Terminen
+            if (!allOfficeHours.Any())
+            {
+                // alle ohne Termine
+                allOfficeHours =
+                    db.Activities.OfType<OfficeHour>().Where(
+                            c =>
+                                c.Semester.Id == sem.Id &&
+                                c.Name.Equals("Sprechstunde") &&
+                                c.ShortName.Equals(lecturer.ShortName))
+                        .ToList();
+
+                // ok! wirklich keine
+                if (!allOfficeHours.Any())
+                    return null;
+
+                // wenn mhr als 1, dann reparieren
+                return allOfficeHours.First();
+            }
+
+            // wenn mehr als 1 => dann reparieren
+            return allOfficeHours.First();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lecturer"></param>
+        /// <returns></returns>
         public List<OfficeHourSummaryModel> GetOfficeHours(OrganiserMember lecturer)
         {
             var list = new List<OfficeHourSummaryModel>();
@@ -238,6 +372,10 @@ namespace MyStik.TimeTable.Web.Services
             return list;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
         public void DeleteAllDates(Guid courseId)
         {
             var course = db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
@@ -249,6 +387,11 @@ namespace MyStik.TimeTable.Web.Services
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="dateTime"></param>
         public void DeleteAllDatesAfter(Guid courseId, DateTime dateTime)
         {
             var course = db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
@@ -440,7 +583,7 @@ namespace MyStik.TimeTable.Web.Services
                     Semester = semGroup.Semester.Name,
                     Curriculum = semGroup.CapacityGroup.CurriculumGroup.Curriculum.ShortName,
                     Group = semGroup.GroupName,
-                    Organiser = semGroup.CurriculumGroup.Curriculum.Organiser.ShortName,
+                    Organiser = semGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName,
                     Capacity = occGroup.Capacity
                 });
             }
@@ -488,7 +631,12 @@ namespace MyStik.TimeTable.Web.Services
             return model;
         }
 
-        internal CourseSummaryModel GetCourseSummary(Activity course)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
+        public CourseSummaryModel GetCourseSummary(Activity course)
         {
             var summary = new CourseSummaryModel();
 

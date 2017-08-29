@@ -1,0 +1,51 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.NewsletterViewModel>
+
+
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>@Resources.OrganizerString</th>
+                                <th>@Resources.Name</th>
+                                <th>@Resources.Description2</th>
+                                <th>@Resources.SubscribersString</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ev in @Model)
+                            {
+                                <tr>
+                                    <td>@ev.Newsletter.Organiser.Name (@ev.Newsletter.Organiser.ShortName)</td>
+                                    <td>@ev.Newsletter.Name</td>
+                                    <td>@ev.Newsletter.Description</td>
+                                    <td>@ev.Newsletter.Occurrence.Subscriptions.Count</td>
+                                    <td>
+                                        @Html.Partial("_SubscriptionState", ev.State)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Keine Newsletter verfügbar</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+}

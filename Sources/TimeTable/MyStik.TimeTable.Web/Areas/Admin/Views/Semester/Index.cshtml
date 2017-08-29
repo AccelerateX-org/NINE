@@ -1,0 +1,54 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.Semester>
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="page-header">
+    <h1>
+        Semester <small>Vorlesungszeiten</small>
+    </h1>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Vorlesungsbeginn</th>
+                        <th>Vorlesungsende</th>
+                        <th>Vorlesungsfreie Zeiten</th>
+                        <th>Semestergruppen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var org in Model)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Details", new {id = org.Id})">@org.Name</a></td>
+                            <td>@org.StartCourses</td>
+                            <td>@org.EndCourses</td>
+                            <td>
+                                @foreach (var date in org.Dates.Where(x => x.Organiser == null))
+                                {
+                                    <div>@Html.TimeSpan(date): @date.Description</div>
+                                }
+                            </td>
+                            <td>@org.Groups.Count</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+

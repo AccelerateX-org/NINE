@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize(Roles = "SysAdmin")]
     public class LogController : Controller
     {
-        //
-        // GET: /Log/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var db = new LogDbContext();
@@ -22,6 +25,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public FileResult GetLogs()
         {
             var start = new DateTime(2014, 2, 22);
@@ -56,6 +63,10 @@ namespace MyStik.TimeTable.Web.Controllers
         
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GetErrors()
         {
             var db = new LogDbContext();
@@ -64,6 +75,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Index", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GetMails()
         {
             var db = new LogDbContext();
@@ -72,6 +87,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Index", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Clear()
         {
             var db = new LogDbContext();
@@ -85,6 +104,21 @@ namespace MyStik.TimeTable.Web.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult Search(string searchText)
+        {
+            var db = new LogDbContext();
+
+            var oldLogs = db.Log.Where(l => l.Thread.Equals(searchText)).ToList();
+
+            return PartialView("_LogTable", oldLogs);
         }
     }
 }

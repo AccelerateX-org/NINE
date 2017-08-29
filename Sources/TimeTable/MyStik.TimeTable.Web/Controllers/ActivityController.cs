@@ -1,43 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.EnterpriseServices;
+using System.IO;
 using System.Linq;
-using System.Net.Configuration;
-using System.Threading;
-using System.Web;
+using System.Text;
 using System.Web.Mvc;
 using log4net;
-using log4net.Repository.Hierarchy;
 using Microsoft.AspNet.Identity;
-using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize]
     public class ActivityController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             return RedirectToAction("PersonalPlan");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult AdminPlan()
         {
             ViewBag.Semester = GetSemester();
+            ViewBag.Organiser = GetMyOrganisation();
             return View();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult AdminDashboard()
         {
             ViewBag.Organiser = "FK 09";
             return View();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult PersonalPlan()
         {
             var user = AppUser;
@@ -143,23 +156,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             //}
 
-            var userRight = GetUserRight(User.Identity.Name, "FK 09", true);
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(User.Identity.Name, org.ShortName, true);
 
             ViewBag.CalendarToken = user.Id;
             ViewBag.CalendarPeriod = GetSemester().Name;
             ViewBag.UserRight = userRight;
-            ViewBag.IsProf = HasUserRole(User.Identity.Name, "FK 09", "Prof");
+            ViewBag.IsProf = HasUserRole(User.Identity.Name, org.ShortName, "Prof");
 
             if (userRight.IsOrgMember)
             {
-                var member = GetMember(User.Identity.Name, "FK 09");
+                var member = GetMember(User.Identity.Name, org.ShortName);
                 if (member != null)
                 {
                     ViewBag.ShortName = member.ShortName;
 
                     if (ViewBag.IsProf)
                     {
-                        var officeHour = new OfficeHourService().GetOfficeHour(member.ShortName, semester.Name);
+                        var officeHour = new OfficeHourService().GetOfficeHour(member, semester);
                         ViewBag.HasOfficeHour = (officeHour != null);
                         ViewBag.HostId = member.Id;
                     }
@@ -172,16 +186,28 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult PersonalPlanMobile()
         {
             return View();
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult SubscribeActivity(Guid Id)
         {
+            //Db.Database.BeginTransaction()
+
+
+
             var activity = Db.Occurrences.SingleOrDefault(ac => ac.Id == Id);
 
             var model = new OccurrenceStateModel();
@@ -233,6 +259,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_SubscriptionState", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DischargeActivity(Guid Id)
         {
@@ -245,6 +276,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_SubscriptionState", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult LockOccurrence(Guid id)
         {
@@ -259,6 +295,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_LockState", occurrence);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult UnLockOccurrence(Guid id)
         {
@@ -273,13 +314,21 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_LockState", occurrence);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public ActionResult RemoveActivity(Guid Id)
         {
             DeleteSubscription(Id);
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
         public void DeleteSubscription(Guid Id)
         {
             var activity = Db.Occurrences.SingleOrDefault(ac => ac.Id == Id);
@@ -300,6 +349,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (subscription != null)
                 {
+                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
+                    foreach (var drawing in allDrawings)
+                    {
+                        Db.SubscriptionDrawings.Remove(drawing);
+                    }
+
                     activity.Subscriptions.Remove(subscription);
                     Db.Subscriptions.Remove(subscription);
                     Db.SaveChanges();
@@ -329,6 +384,68 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        public void Subscribe(Guid Id)
+        {
+            var activity = Db.Occurrences.SingleOrDefault(ac => ac.Id == Id);
+
+            var model = new OccurrenceStateModel();
+
+            if (activity != null)
+            {
+                model.Occurrence = activity;
+
+                var userProfile = UserManager.FindByName(User.Identity.Name);
+
+
+                var occService = new OccurrenceService(UserManager);
+                var msg = occService.SubscribeOccurrence(activity.Id, userProfile);
+
+                model.HasError = msg.HasError;
+                model.ErrorMessage = msg.Message;
+                model.Subscription = msg.Subscription;
+
+
+                var logger = LogManager.GetLogger("SubscribeActivity");
+                var ac = new ActivityService();
+                var summary = ac.GetSummary(Id);
+                if (msg.HasError)
+                {
+                    logger.InfoFormat("{0} ({1}) by [{2}]: {3}",
+                        summary.Activity.Name, summary.Activity.ShortName, User.Identity.Name, msg.Message);
+                }
+                else
+                {
+                    logger.InfoFormat("{0} ({1}) by [{2}]",
+                        summary.Activity.Name, summary.Activity.ShortName, User.Identity.Name);
+                }
+
+
+                if (new SystemConfig().MailSubscriptionEnabled)
+                {
+                    var mailModel = new SubscriptionMailModel
+                    {
+                        Summary = summary,
+                        Subscription = model.Subscription,
+                        User = userProfile,
+                    };
+
+                    var mail = new MailController();
+                    mail.Subscription(mailModel).Deliver();
+                }
+            }
+
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Agenda()
         {
@@ -400,6 +517,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Current()
         {
             var model = new ActivityCurrentModel();
@@ -416,6 +537,187 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-    
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DailyRota()
+        {
+            var org = GetMyOrganisation();
+
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+
+            ViewBag.Organiser = org;
+
+            return View();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult RoomPlan(string date)
+        {
+            var day =  string.IsNullOrEmpty(date) ? DateTime.Today  : DateTime.ParseExact(date, "dd.MM.yyyy", null);
+            var nextDay = day.AddDays(1);
+
+            var org = GetMyOrganisation();
+
+            var model = new List<RoomActivityModel>();
+
+            // Alle Aktivitäten, die in Räumen des aktuellen
+            // Veranstalters stattfinden
+            /*
+            var allActivities = Db.ActivityDates.Where(x => 
+                x.Begin >= day && x.End < nextDay &&
+                x.Rooms.Any(r => r.Assignments.Any(a => a.Organiser.Id == org.Id))
+                ).ToList();
+
+            // oder
+            // Alle Räume, die durch Veranstaltungen belegt sind
+            var allRooms = Db.Rooms.Where(r =>
+                r.Assignments.Any(a => a.Organiser.Id == org.Id) &&
+                r.Dates.Any(x => x.Begin >= day && x.End < nextDay)
+                )
+                .OrderBy(r => r.Number)
+                .ToList();
+            */
+
+            // Alle Räume des Veranstalters
+            var allRooms = Db.Rooms.Where(r =>
+                r.Assignments.Any(a => a.Organiser.Id == org.Id))
+                .OrderBy(r => r.Number)
+                .ToList();
+
+            foreach (var room in allRooms)
+            {
+                // Alle Termine in diesem Raum
+                var allActivities = room.Dates.Where(x =>
+                    x.Begin >= day && x.End < nextDay)
+                    .OrderBy(d => d.Begin)
+                    .ToList();
+
+                var roomModel = new RoomActivityModel
+                {
+                    Room = room,
+                    Dates = allActivities
+                };
+
+                model.Add(roomModel);
+
+            }
+
+
+
+
+            return PartialView("_RoomPlan", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public FileResult RoomPlanData(string date)
+        {
+            var day = string.IsNullOrEmpty(date) ? DateTime.Today : DateTime.ParseExact(date, "dd.MM.yyyy", null);
+            var nextDay = day.AddDays(1);
+
+            var org = GetMyOrganisation();
+
+            var model = new List<RoomActivityModel>();
+
+
+            // Alle Räume des Veranstalters
+            var allRooms = Db.Rooms.Where(r =>
+                r.Assignments.Any(a => a.Organiser.Id == org.Id))
+                .OrderBy(r => r.Number)
+                .ToList();
+
+            foreach (var room in allRooms)
+            {
+                // Alle Termine in diesem Raum
+                var allActivities = room.Dates.Where(x =>
+                    x.Begin >= day && x.End < nextDay)
+                    .OrderBy(d => d.Begin)
+                    .ToList();
+
+                var roomModel = new RoomActivityModel
+                {
+                    Room = room,
+                    Dates = allActivities
+                };
+
+                model.Add(roomModel);
+
+            }
+
+
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+
+            writer.Write(
+                "Raum;Von;Bis;Bezeichnung;Dozenten;Status");
+
+            writer.Write(Environment.NewLine);
+
+            foreach (var room in model)
+            {
+                if (room.Dates.Any())
+                {
+                    foreach (var activityDate in room.Dates)
+                    {
+                        writer.Write(room.Room.Number);
+                        writer.Write(";");
+                        writer.Write(activityDate.Begin.ToShortTimeString());
+                        writer.Write(";");
+                        writer.Write(activityDate.End.ToShortTimeString());
+                        writer.Write(";");
+                        writer.Write(activityDate.Activity.Name);
+                        writer.Write(";");
+                        foreach (var dateHost in activityDate.Hosts)
+                        {
+                            writer.Write(dateHost.Name);
+                            if (dateHost != activityDate.Hosts.Last())
+                            {
+                                writer.Write(", ");
+                            }
+                        }
+                        writer.Write(";");
+                        if (activityDate.Occurrence.IsCanceled)
+                        {
+                            writer.Write("abgesagt");
+                        }
+                        writer.Write(Environment.NewLine);
+                    }
+                }
+                else
+                {
+                    writer.Write(room.Room.Number);
+                    writer.Write(";");
+                    writer.Write(";;;;keine Belegung");
+                    writer.Write(Environment.NewLine);
+                }
+
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Belegungsplan");
+            sb.Append("_");
+            sb.Append(day.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
     }
 }

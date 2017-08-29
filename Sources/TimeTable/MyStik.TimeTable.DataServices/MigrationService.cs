@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.DataServices
@@ -44,7 +40,7 @@ namespace MyStik.TimeTable.DataServices
             // Ergänze ein Studienprogramm Export => so lange wir nicht wissen wohin damit
             if (export == null)
             {
-                export = new Curriculum
+                export = new Data.Curriculum
                 {
                     Name = "Export",
                     ShortName = "Export",

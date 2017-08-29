@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -51,6 +46,15 @@ namespace MyStik.TimeTable.Data
 
         public IDbSet<ModuleCourse> ModuleCourses { get; set; }
 
+        public IDbSet<CapacityCourse> CapacityCourses { get; set; }
+
+        public  IDbSet<CurriculumChapter> CurriculumChapters { get; set; }
+
+        public IDbSet<CurriculumTopic> CurriculumTopics { get; set; }
+
+        public IDbSet<SemesterTopic> SemesterTopics { get; set; }
+
+
         public IDbSet<ModuleExam> ModuleExams { get; set; }
 
         public IDbSet<SemesterGroup> SemesterGroups { get; set; }
@@ -74,15 +78,56 @@ namespace MyStik.TimeTable.Data
         
         public IDbSet<InfoText> InfoTexts { get; set; }
 
+        public IDbSet<Level> Levels { get; set; }
+
         public IDbSet<Lottery> Lotteries { get; set; }
 
         public IDbSet<LotteryDrawing> LotteryDrawings { get; set; }
+
+        public IDbSet<OccurrenceDrawing> OccurrenceDrawings { get; set; }
+
+        public IDbSet<SubscriptionDrawing> SubscriptionDrawings { get; set; }
+
 
         public IDbSet<CoursePlan> CoursePlans { get; set; }
 
         public IDbSet<ModuleMapping> ModuleMappings { get; set; }
 
-        
+        public IDbSet<ModuleTrial> ModuleTrials { get; set; }
+
+        //public IDbSet<Thesis> Thesis { get; set;  }
+
+        public IDbSet<Institution> Institutions { get; set; }
+
+        public IDbSet<Building> Buildings { get; set; }
+
+        public IDbSet<CurriculumCriteria> Criterias { get; set; }
+
+        public IDbSet<ModuleAccreditation> Accreditations { get; set; }
+
+        public IDbSet<CriteriaRule> Rules { get; set; }
+
+        public IDbSet<ThesisAnnouncement> ThesisAnnouncements { get; set; }
+
+        public IDbSet<ThesisProvider> ThesisProvider { get; set; }
+
+        public IDbSet<ThesisWorkflow> ThesisWorkflows { get; set; }
+
+        public IDbSet<ThesisFeedback> ThesisFeedbacks { get; set; }
+
+        public IDbSet<Student> Students { get; set; }
+        public IDbSet<StudentExam> StudentExams { get; set; }
+        public IDbSet<ExamPaper> ExamPapers { get; set; }
+
+        public IDbSet<CorporateContact> CorporateContacts { get; set; }
+
+        public IDbSet<PersonalContact> PersonalContacts { get; set; }
+
+        public IDbSet<Advertisement> Advertisements { get; set; }
+
+        public IDbSet<AdvertisementRole> AdvertisementRoles { get; set; }
+
+
         public TimeTableDbContext() : base()
         {
         }
@@ -96,6 +141,5 @@ namespace MyStik.TimeTable.Data
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
-
     }
 }

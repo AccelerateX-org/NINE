@@ -15,10 +15,21 @@
         </div>
     </div>
 </div>
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>
+                                <a href="@Url.Action("CreateModule")"><i class="fa fa-plus"></i> Anlegen</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="col-md-10">
             <div class="portlet light bordered">
@@ -35,10 +46,10 @@
                             <table class="table table-condensed">
                                 <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Kurzname</th>
-                                    <th>Beschreibung</th>
+                                    <th>Modulbezeichung</th>
+                                    <th>Modulverantwortliche(r)</th>
+                                    <th>Kontakt</th>
+                                    <th>Lehrveranstaltungen</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -46,10 +57,19 @@
                                 @foreach (var module in Model.Modules)
                                 {
                                     <tr>
-                                        <td><a href="@Url.Action("ModuleDetails", new {id = module.Id})">@module.ModuleId</a></td>
-                                        <td>@module.Name</td>
-                                        <td>@module.ShortName</td>
-                                        <td>@module.Description</td>
+                                        <td><a href="@Url.Action("ModuleDetails", new {id = module.Id})">@module.Name</a></td>
+                                        @if (module.MV != null)
+                                        { 
+                                        <td>@module.MV.Name</td>
+                                        }
+                                        else
+                                        {
+                                            <td>unbekannt</td>
+                                        }
+                                        <td>
+                                            <a href="mailto:" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                                        </td>
+                                        <td>@module.ModuleCourses</td>
                                         <td>
                                             @if (ViewBag.HasEditRights)
                                             {
@@ -121,10 +141,6 @@
         </div>
     </div>
 </div>
-
-
-
-
 
 
 

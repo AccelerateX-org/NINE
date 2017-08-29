@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
@@ -12,8 +11,16 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OccurrenceController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public FileResult SubscriptionList(Guid id)
         {
             var summary = ActivityService.GetSummary(id);
@@ -76,13 +83,17 @@ namespace MyStik.TimeTable.Web.Controllers
             sb.Append("Teilnehmer_");
             sb.Append(summary.Activity.ShortName);
             sb.Append("_");
-            sb.Append(DateTime.Today.ToString("yyMMdd"));
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
             sb.Append(".csv");
 
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult SubscriptionRules(Guid id)
         {
 
@@ -180,6 +191,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SubscriptionRules(SubscriptionRuleModel model)
         {
@@ -256,39 +272,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction(summary.Action, summary.Controller, new { id = summary.Id });
         }
-
-        public ActionResult LockOccurrence(Guid id)
-        {
-            var occurrence = Db.Occurrences.SingleOrDefault(occ => occ.Id == id);
-
-            if (occurrence != null)
-            {
-                occurrence.IsAvailable = false;
-                Db.SaveChanges();
-            }
-
-            var summary = ActivityService.GetSummary(id);
-
-
-            return RedirectToAction(summary.Action, summary.Controller, new { id = summary.Id });
-        }
-
-        public ActionResult UnLockOccurrence(Guid id)
-        {
-            var occurrence = Db.Occurrences.SingleOrDefault(occ => occ.Id == id);
-
-            if (occurrence != null)
-            {
-                occurrence.IsAvailable = true;
-                Db.SaveChanges();
-            }
-
-            var summary = ActivityService.GetSummary(id);
-
-
-            return RedirectToAction(summary.Action, summary.Controller, new { id = summary.Id });
-        }
-
 
         private void SetRestrictionSelections()
         {

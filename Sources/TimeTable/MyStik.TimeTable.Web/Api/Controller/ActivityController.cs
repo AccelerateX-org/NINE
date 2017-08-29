@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
@@ -12,6 +7,9 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityController : ApiBaseController
     {
         //VorlesungsAPI
@@ -27,6 +25,77 @@ namespace MyStik.TimeTable.Web.Api.Controller
             //Alle eigenen Termine von jetzt bis zur nächsten Woche
             var from = GlobalSettings.Now;
             var until = from.AddDays(7);
+
+            var userService = new UserInfoService();
+            var user = userService.GetUser(UserId);
+            if (user != null  && user.UserName.Equals("demo@fillter.de"))
+            {
+                // Demodaten
+                var dateList = new List<OwnDatesContract>();
+                var courseList = new List<DateContract>();
+                var roomList = new List<DateRoomContract>();
+                var lecturerList = new List<DateLecturerContract>();
+
+                var demoRoom = new DateRoomContract
+                {
+                    RoomId = Guid.NewGuid().ToString(),
+                    RoomNumber = "R 1.083"
+                };
+                roomList.Add(demoRoom);
+
+                var demoLecturer = new DateLecturerContract
+                {
+                    LecturerId = Guid.NewGuid().ToString(),
+                    LecturerName = "Demo Dozent"
+                };
+                lecturerList.Add(demoLecturer);
+
+                var demoCourse = new DateContract
+                {
+                    StartTime = "10:00",
+                    EndTime = "11:30",
+                    IsCanceled = false,
+                    Titel = "Demovorlesung",
+                    Rooms = roomList,
+                    Lecturers = lecturerList
+                };
+
+                courseList.Add(demoCourse);
+
+                var today = DateTime.Today;
+
+                var demoDate = new OwnDatesContract
+                {
+                    StatedDate = today.ToString("dd.MM.yyyy"),
+                    InfoString = null,
+                    Dates = courseList
+                };
+                dateList.Add(demoDate);
+
+                var date = today;
+                var endOfWeek = today.AddDays(7);
+                while (date <= endOfWeek)
+                {
+                    demoDate = new OwnDatesContract
+                    {
+                        StatedDate = date.ToString("dd.MM.yyyy"),
+                        InfoString = null,
+                        Dates = new List<DateContract>()
+                    };
+                    dateList.Add(demoDate);
+
+                    date = date.AddDays(1);
+                }
+
+
+                var demoResponse = new PersonalPlanResponse
+                {
+                    Courses = dateList,
+                };
+                //Rückgabe der Response
+                return demoResponse;
+
+            }
 
             //Initialisierung des ActivityInfoService
             var activityService = new ActivityInfoService();
@@ -48,8 +117,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// Abfrage aller eigenen Termine im gewünschten Zeitraum
         /// </summary>
         /// <param name="UserId">Die UserId des Accounts in der Datenbank</param>
-        /// <param name="FromDay">Anfangsdatum  des Zeitraums im Format dd.MM.yyyy</param>
-        /// <param name="UntilDay">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
+        /// <param name="From">Anfangsdatum  des Zeitraums im Format dd.MM.yyyy</param>
+        /// <param name="Until">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
         /// <returns>Persönlichen Termine für jeden Tag im gewählten Zeitraum</returns>
         public PersonalPlanResponse GetPersonalDatesSpan(string UserId, string From, string Until)
         {

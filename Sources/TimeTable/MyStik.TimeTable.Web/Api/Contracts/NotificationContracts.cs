@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace MyStik.TimeTable.Web.Api.Contracts
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NotificationContract
     {
         /// <summary>
@@ -19,7 +19,6 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// Notification Text
         /// </summary>
         public string NotificationContent { get; set; }
-        /// <summary>
         /// <summary>
         /// Schon gelesen?
         /// </summary>

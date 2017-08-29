@@ -1,68 +1,118 @@
-﻿@using System.Web.UI.WebControls
-@using MyStik.TimeTable.Web.Helpers
-@model ICollection<MyStik.TimeTable.Web.Models.OfficeHourDateViewModel>
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourOverviewModel
 @{
-    ViewBag.Title = "Sprechstunde";
+    ViewBag.Title = "Sprechstunden";
 }
 
 <div class="panel panel-default">
-    <div class="panel-body bg-fillter-faculty">
-        <div class="row">
-            <div class="col-md-8">
-                <h4>SPRECHSTUNDENTERMINE</h4>
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Lehrende @Model.Organiser.ShortName mit Sprechstunde im @Model.Semester.Name</h1>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<table class="table table-condensed">
-    <thead>
-        <tr>
-            <th rowspan="2">Dozent</th>
-            <th colspan="2">Nächster freier Termin</th>
-            <th rowspan="2"></th>
-            <th rowspan="2"></th>
-        </tr>
-        <tr>
-            <th>Datum</th>
-            <th>Uhrzeit</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Lecturer.Name</td>
-                @if (item.OfficeHour.ByAgreement)
-                {
-                    <td colspan="4">Terminvereinbarung per e-mail</td>
-                }
-                else
-                {
-                    if (item.Date != null)
-                    {
-                        <td>@item.Date.Begin.Date.ToShortDateString()</td>
-                        if (item.Slot != null)
+
+@if (ViewBag.UserRight.IsOrgMember)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            @if (Model.MyOfficeHour == null)
+                            {
+                                <div class="form-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            <i class="fa fa-plus-circle"></i> Eigene Sprechstunde anlegen
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            <li><a href="@Url.Action("CreateOpenSystem", "OfficeHour")">Offene Sprechstunde</a></li>
+                                            <li><a href="@Url.Action("CreateSlotSystem", "OfficeHour")">Slotbuchung</a></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="@Url.Action("CreateByAgreement", "OfficeHour")">Nach Vereinbarung</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("OfficeHour", "Lecturer")" class="btn btn-default">
+                                        <i class="fa fa-cog"></i> Eigene Sprechstunde bearbeiten
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        Lehrende mit Sprechstunden
+                    </div>
+                </div>
+                <div class="portlet-body"></div>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Bemerkung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OfficeHours.OrderBy(x => x.Lecturer.Name))
                         {
-                            <td>@item.Slot.Begin.TimeOfDay.ToString(@"hh\:mm") - @item.Slot.End.TimeOfDay.ToString(@"hh\:mm")</td>
+                            <tr>
+                                <td>@item.Lecturer.Name</td>
+                                @if (item.OfficeHour.ByAgreement)
+                                {
+                                    if (string.IsNullOrEmpty(item.OfficeHour.Description))
+                                    {
+                                        <td>Sprechstunde nach Vereinbarung</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Sprechstunde nach Vereinbarung 
+                                            <a href="@Url.Action("Lecturer", "OfficeHour", new { id = item.Lecturer.Id })"><i class="fa fa-info text-primary"></i> weitere Informationen</a>
+                                        </td>
+                                    }
+                                }
+                                else
+                                {
+                                    if (item.Date != null)
+                                    {
+                                        <td>
+                                            @Html.ActionLink("zur Terminliste", "Lecturer", "OfficeHour", new { id = item.Lecturer.Id }, null)
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>Keine Termine mehr im laufenden Semester</td>
+                                    }
+                                }
+                            </tr>
                         }
-                        else
-                        {
-                            <td>@item.Date.Begin.TimeOfDay.ToString(@"hh\:mm") - @item.Date.End.TimeOfDay.ToString(@"hh\:mm")</td>
-                        }
-                        <td>
-                            @Html.Partial("_SubscriptionState", item.State)
-                        </td>
-                        <td>
-                            @Html.ActionLink("weitere Termine", "Lecturer", "OfficeHour", new {id = item.Lecturer.Id}, null)
-                        </td>
-                    }
-                    else
-                    {
-                        <td colspan="4">Keine Termine mehr im laufenden Semester</td>
-                    }
-                }
-            </tr>            
-        }
-    </tbody>
-</table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

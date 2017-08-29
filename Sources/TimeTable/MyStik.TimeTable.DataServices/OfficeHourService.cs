@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Contracts;
 using MyStik.TimeTable.Data;
 
@@ -15,12 +12,15 @@ namespace MyStik.TimeTable.DataServices
         {
             var db = new TimeTableDbContext();
 
-            var lecturer = db.Members.SingleOrDefault(l => l.ShortName.Equals(request.DozId));
-            var organizer = db.Organisers.SingleOrDefault(o => o.ShortName.Equals(request.OrgId));
-            if (lecturer == null || organizer == null)
+            var organizer = db.Organisers.SingleOrDefault(o => o.Id == request.OrgId);
+            if (organizer == null)
+                return null;
+            
+            var lecturer = organizer.Members.SingleOrDefault(l => l.Id == request.DozId);
+            if (lecturer == null)
                 return null;
 
-            var semester = db.Semesters.SingleOrDefault(s => (s.Name.ToUpper().Equals(request.SemesterId.ToUpper())));
+            var semester = db.Semesters.SingleOrDefault(s => s.Id == request.SemesterId);
 
             var officeHour = db.Activities.OfType<OfficeHour>()
                 .SingleOrDefault(oh => oh.Semester.Id == semester.Id &&
@@ -33,18 +33,37 @@ namespace MyStik.TimeTable.DataServices
                     Name = "Sprechstunde",
                     ShortName = lecturer.ShortName,
                     ByAgreement = request.ByAgreement,
+                    Description = request.Text,
                     Organiser = organizer,
                     Semester = semester,
+                    SlotsPerDate = request.SlotsPerDate,
+                    FutureSubscriptions = request.FutureSlots,
                     Occurrence = new Occurrence
                     {
                         IsAvailable = true,
                         Capacity = request.SlotDuration > 0 ? -1 : request.Capacity,
                         FromIsRestricted = false,
-                        UntilIsRestricted = false,
+                        UntilIsRestricted = (request.SubscriptionLimit > 0),
+                        UntilTimeSpan =
+                            (request.SubscriptionLimit > 0)
+                                ? new TimeSpan(request.SubscriptionLimit - 1, 59, 0)
+                                : new TimeSpan?(),
                         IsCanceled = false,
                         IsMoved = false,
                     }
                 };
+
+                // den Anbieter als Owner eintragen
+                ActivityOwner owner = new ActivityOwner
+                {
+                    Activity = officeHour,
+                    Member = lecturer,
+                    IsLocked = false
+                };
+
+                officeHour.Owners.Add(owner);
+                db.ActivityOwners.Add(owner);
+
                 db.Activities.Add(officeHour);
                 db.SaveChanges();
             }
@@ -146,13 +165,26 @@ namespace MyStik.TimeTable.DataServices
             return officeHour;
         }
 
-        public OfficeHour GetOfficeHour(string dozId, string semesterName)
+        public OfficeHour GetOfficeHour(OrganiserMember member, Semester semester)
         {
             var db = new TimeTableDbContext();
-            var semester = db.Semesters.SingleOrDefault(s => s.Name.ToUpper().Equals(semesterName));
-            return db.Activities.OfType<OfficeHour>().SingleOrDefault(a =>
+
+            // zuerst das neue suchen
+            // der activity owner
+            var officeHour = db.Activities.OfType<OfficeHour>().FirstOrDefault(x =>
+                x.Semester.Id == semester.Id &&
+                x.Owners.Any(m => m.Member.Id == member.Id));
+            if (officeHour != null)
+                return officeHour;
+
+            // so jetzt das alte
+            // den Namen
+            officeHour = db.Activities.OfType<OfficeHour>().SingleOrDefault(a =>
                                 (a.Semester == null || a.Semester.Id == semester.Id) &&
-                                a.Dates.Any(d => d.Hosts.Any(m => m.ShortName.Equals(dozId))));            
+                                (a.Dates.Any(d => d.Hosts.Any(m => m.Id == member.Id || 
+                                (a.ByAgreement && a.ShortName.Equals(member.ShortName))))));
+
+            return officeHour;
         }
     }
 }

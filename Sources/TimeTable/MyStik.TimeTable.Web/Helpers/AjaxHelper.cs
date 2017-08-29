@@ -1,15 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 
 namespace MyStik.TimeTable.Web.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class AjaxHelperExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ajaxHelper"></param>
+        /// <param name="linkIcon"></param>
+        /// <param name="linkText"></param>
+        /// <param name="actionName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="routeValues"></param>
+        /// <param name="ajaxOptions"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         public static MvcHtmlString ActionButton(this AjaxHelper ajaxHelper, string linkIcon, string linkText, string actionName, string controllerName, object routeValues, AjaxOptions ajaxOptions, object htmlAttributes)
         {
             var repId = Guid.NewGuid().ToString();

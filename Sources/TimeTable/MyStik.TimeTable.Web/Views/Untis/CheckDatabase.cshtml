@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.SemesterImportModel
+﻿@model MyStik.TimeTable.Web.Models.SemesterImportModel
 @{
     ViewBag.Title = "Import Stundenplandaten";
 }
@@ -35,6 +34,10 @@
                         <fieldset>
                             @Html.HiddenFor(m => m.OrganiserId)
                             @Html.HiddenFor(m => m.SemesterId)
+                            @Html.HiddenFor(m => m.SlotLength)
+                            @Html.HiddenFor(m => m.BreakLength)
+                            @Html.HiddenFor(m => m.BreakFrequency)
+                            @Html.HiddenFor(m => m.BeginFirstSlot)
                             <div class="form-group">
                                 @Html.LabelFor(model => model.OrganiserId, new {@class = "col-sm-3 control-label"})
                                 <div class="col-sm-6">

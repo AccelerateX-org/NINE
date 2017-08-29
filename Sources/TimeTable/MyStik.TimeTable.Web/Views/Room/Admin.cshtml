@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model ICollection<MyStik.TimeTable.Data.Room>
+﻿@model ICollection<MyStik.TimeTable.Data.Room>
 
 @{
     ViewBag.Title = "Raumverwaltung";
@@ -152,6 +151,7 @@
                             <li><a href="@Url.Action("RoomBook")"><i class="fa fa-2x fa-qrcode"></i> Türschilder</a></li>
                             <li id="removeAssignments"><a href="#"> Zuordnungen löschen</a></li>
                             <li id="addAssignment"><a href="#"> Zuordnung hinzufügen</a></li>
+                            <li><a href="@Url.Action("OpenAll")"><i class="fa fa-2x fa-eraser"></i> Alle freigeben</a></li>
                         </ul>
                     </div>
                 </div>

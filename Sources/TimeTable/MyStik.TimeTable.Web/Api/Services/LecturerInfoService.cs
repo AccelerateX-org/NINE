@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Web.Api.Contracts;
-using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LecturerInfoService
     {
-        //Alle zukünftigen Sprechstunden bis Zeitpunkt
-        public IEnumerable<LecturerOfficeHourContract>GetAllOfficehours(DateTime until)
+
+        /// <summary>
+        /// Alle zukünftigen Sprechstunden bis Zeitpunkt
+        /// </summary>
+        /// <param name="until"></param>
+        /// <returns></returns>
+        public IEnumerable<LecturerOfficeHourContract> GetAllOfficehours(DateTime until)
         {
             var db = new TimeTableDbContext();
 
@@ -63,7 +68,14 @@ namespace MyStik.TimeTable.Web.Api.Services
             return officeHourContract.OrderBy(oh => oh.LecturerName);
         }
 
-        //alle zukünftigen Sprechstunden eines Profs
+
+
+        /// <summary>
+        /// alle zukünftigen Sprechstunden eines Profs
+        /// </summary>
+        /// <param name="lecturerId"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public LecturerOfficeHourContract GetLecturerOfficehours(string lecturerId, DateTime until)
         {
             var db = new TimeTableDbContext();
@@ -111,7 +123,11 @@ namespace MyStik.TimeTable.Web.Api.Services
             return officehoursContract;
         }
 
-        //Alle Dozenten abfragen
+
+        /// <summary>
+        /// Alle Dozenten abfragen
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<LecturerContract> GetAllLecturers()
         {
             var db = new TimeTableDbContext();
@@ -135,7 +151,11 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
-        //Alle Dozenten einer Fakultät
+        /// <summary>
+        /// Alle Dozenten einer Fakultät
+        /// </summary>
+        /// <param name="FacId"></param>
+        /// <returns></returns>
         public IEnumerable<LecturerContract> GetFacLecturers (string FacId)
         {
             var db = new TimeTableDbContext();
@@ -158,17 +178,21 @@ namespace MyStik.TimeTable.Web.Api.Services
             }
             return lecturerContract.OrderBy(l => l.LecturerName);
         }
-        //TODO FacId
-        //Dozenten deren Name/vorname mit x startet einer Fakultät
-        public IEnumerable<LecturerContract> GetLecturersStartwith (string Startswith)
+
+        /// <summary>
+        /// Dozenten deren Name/vorname mit x startet einer Fakultät
+        /// </summary>
+        /// <param name="Startswith"></param>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
+        public IEnumerable<LecturerContract> GetLecturersStartwith (string Startswith, string orgName)
         {
             var db = new TimeTableDbContext();
 
             //Member sind alle Organisationsmitglieder?
             var lecturers = db.Members.Where(l => l.ShortName.StartsWith(Startswith) ||
-                                              l.Name.StartsWith(Startswith));//&&
-                                              
-                                              //l.Organiser.ShortName.Equals("FK 09"));
+                                              l.Name.StartsWith(Startswith) &&
+                                              l.Organiser.ShortName.Equals(orgName));
 
             var lecturerContract = new List<LecturerContract>();
             foreach(var lecturer in lecturers)
@@ -185,7 +209,12 @@ namespace MyStik.TimeTable.Web.Api.Services
             }
             return lecturerContract.OrderBy(l=>l.LecturerName);
         }
-        //Alle Vorlesungen eines Dozenten
+
+        /// <summary>
+        /// Alle Vorlesungen eines Dozenten
+        /// </summary>
+        /// <param name="LecturerId"></param>
+        /// <returns></returns>
         public LecturerCoursesContract GetLecturerCourses(string LecturerId)
         {
             var db = new TimeTableDbContext();
@@ -222,7 +251,131 @@ namespace MyStik.TimeTable.Web.Api.Services
             
             return lecturerCourseContract;
         }
-        //evtl später TODO:
-        //Alle kommenden Termine eines Dozenten
+
+
+        /// <summary>
+        /// Persönlichen Token in der DB hinterlegen
+        /// </summary>
+        /// <param name="lecturer"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
+        public ICollection<AvailableSlotModel> GetAvailabeSlots(OrganiserMember lecturer, Semester semester)
+        {
+            var db = new TimeTableDbContext();
+
+            var list = new List<AvailableSlotModel>();
+
+            var officeHour =
+                db.Activities.OfType<OfficeHour>().SingleOrDefault(a =>
+                    a.Semester.Id == semester.Id &&
+                    a.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)));
+
+            if (officeHour == null)
+                return list;
+
+            var futureDates = officeHour.Dates.Where(x => x.Begin > DateTime.Now).OrderBy(x => x.Begin).ToList();
+
+            foreach (var date in futureDates)
+            {
+                if (date.Slots.Any())
+                {
+                    // bin ich in in einem Slot eingetragen?
+                    // ja => dazufügen (Status kommt später)
+                    // nein => ist noch ein Platz frei
+                    foreach (var slot in date.Slots)
+                    {
+                        var isSubscribed = false;
+                        if (isSubscribed)
+                        {
+                            var ohSlot = new AvailableSlotModel
+                            {
+                                Begin = slot.Begin,
+                                End = slot.End,
+                                OccurrenceId = slot.Occurrence.Id,
+                                IsSubscribed = true
+                            };
+                            list.Add(ohSlot);
+                        }
+                        else
+                        {
+                            if (slot.Occurrence.Capacity < 0)
+                            {
+                                // keine Platzbeschränkung
+                                var ohSlot = new AvailableSlotModel
+                                {
+                                    Begin = slot.Begin,
+                                    End = slot.End,
+                                    OccurrenceId = slot.Occurrence.Id
+                                };
+                                list.Add(ohSlot);
+                            }
+                            else if (slot.Occurrence.Subscriptions.Count < slot.Occurrence.Capacity)
+                            {
+                                // Platzbeschränkung mit noch freien Plätzen
+                                var n = slot.Occurrence.Capacity - slot.Occurrence.Subscriptions.Count;
+
+                                var ohSlot = new AvailableSlotModel
+                                {
+                                    Begin = slot.Begin,
+                                    End = slot.End,
+                                    OccurrenceId = slot.Occurrence.Id,
+                                    Remark = string.Format("Noch {0} Plätze verfügbar", n)
+                                };
+                                list.Add(ohSlot);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var isSubscribed = false;
+                    if (isSubscribed)
+                    {
+                        var ohSlot = new AvailableSlotModel
+                        {
+                            Begin = date.Begin,
+                            End = date.End,
+                            OccurrenceId = date.Occurrence.Id,
+                            IsSubscribed = true
+                        };
+                        list.Add(ohSlot);
+                    }
+                    else
+                    {
+
+                        if (date.Occurrence.Capacity < 0)
+                        {
+                            var ohSlot = new AvailableSlotModel
+                            {
+                                Begin = date.Begin,
+                                End = date.End,
+                                OccurrenceId = date.Occurrence.Id
+                            };
+                            list.Add(ohSlot);
+                        }
+                        else if (date.Occurrence.Subscriptions.Count < date.Occurrence.Capacity)
+                        {
+                            var n = date.Occurrence.Capacity - date.Occurrence.Subscriptions.Count;
+
+                            var ohSlot = new AvailableSlotModel
+                            {
+                                Begin = date.Begin,
+                                End = date.End,
+                                OccurrenceId = date.Occurrence.Id,
+                                Remark = string.Format("Noch {0} Plätze verfügbar", n)
+                            };
+                            list.Add(ohSlot);
+                        }
+                    }
+                }
+            }
+
+
+
+            return list;
+        }
+    
     }
+
+
 }

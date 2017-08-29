@@ -1,0 +1,160 @@
+﻿@{
+    ViewBag.Title = "Tagesplan";
+}
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Tagesplan @ViewBag.Organiser.ShortName 
+                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="myDate">Datum</label>
+                            <div class="input-icon">
+                                <i class="fa fa-calendar"></i>
+                                <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("AdminPlan")" class="btn btn-default">
+                                <i class="fa fa-calendar"></i> Kalendersicht
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("LookupDate","Room")" class="btn btn-default">
+                                <i class="fa fa-search"></i> Raumsuche
+                            </a>
+                        </div>
+                        @if (ViewBag.UserRight.IsRoomAdmin)
+                        {
+                            <div class="form-group">
+                                <a href="javascript:getRoomData();" class="btn btn-default">
+                                    <i class="fa fa-download"></i> .csv Datei
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        Raumbelegungen
+                    </div>
+                </div>
+                <div class="portlet-body"></div>
+                <div id="roomPlan"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+
+    <script>
+
+    $(function() {
+
+        loadPlan4Today();
+
+
+        $('.datepicker').datepicker({
+            orientation: "right",
+            autoclose: true,
+            format: "dd.mm.yyyy",
+            weekStart: 1,
+            calendarWeeks: true,
+            language: "de"
+        });
+        $('.datepicker').datepicker()
+            .on('changeDate',
+                function(e) {
+
+                    $("#loading").show();
+
+                    var x = $('#myDate').val();
+
+                    $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("RoomPlan")',
+                        data: {
+                            date: x
+                        },
+                        success: function(data, success, xhr) {
+                            $("#roomPlan").html(data);
+                            $("#loading").hide();
+                        }
+                    });
+
+                });
+    });
+
+    function loadPlan4Today() {
+        $("#loading").show();
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("RoomPlan")',
+                data: {
+                    date: null
+                },
+                success: function(data, success, xhr) {
+                    $("#roomPlan").html(data);
+                    $("#loading").hide();
+                }
+            });
+
+        }
+
+        function getRoomData() {
+            var x = $('#myDate').val();
+
+            var url = '@Url.Action("RoomPlanData")';
+            var key = 'date';
+            var data = x;
+
+            var form = $('<form></form>').attr('action', url).attr('method', 'post');
+            // Add the one key/value
+            form.append($("<input></input>").attr('type', 'hidden').attr('name', key).attr('value', data));
+            //send request
+            form.appendTo('body').submit().remove();
+        }
+
+    </script>
+}

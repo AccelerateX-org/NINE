@@ -1,0 +1,135 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
+@{
+    ViewBag.Title = "Termine";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Host.Name - Sprechstundentermine im Semester @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-legal"></i>Regelungen für diese Sprechstunde
+                        </div>
+                        <div class="actions">
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <ul>
+                            <li>Pro Termin nur ein Slot buchbar.</li>
+                            @if (Model.OfficeHour.Occurrence.FromIsRestricted && Model.OfficeHour.Occurrence.UntilTimeSpan.HasValue)
+                            {
+                                <li>Eintragungen bis spätestens @Model.OfficeHour.Occurrence.UntilTimeSpan.Value vorher. Nach dem Ende der Eintragungsfrist ist kein Austragen mehr möglich.</li>
+                            }
+                            @if (Model.OfficeHour.FutureSubscriptions.HasValue)
+                            {
+                                if (Model.OfficeHour.FutureSubscriptions.Value > 0)
+                                {
+                                    <li>Die Anzahl an zukünftigen Eintragungen ist beschränkt. Maximal @Model.OfficeHour.FutureSubscriptions.Value Slots können "auf Vorrat" gebucht werden.</li>
+                                }
+                                else
+                                {
+                                    <li>Es können beliebig viele Termine "auf Vorrat" gebucht werden.</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.OfficeHour.Description))
+            {
+                <div class="col-md-6">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-info"></i>Weitere Informationen
+                            </div>
+                            <div class="actions">
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            @Html.Raw(Model.OfficeHour.Description)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-calendar"></i>Alle Termine
+                            </div>
+                            <div class="actions">
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Zeitraum</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var date in Model.Dates)
+                                {
+                                    <tr>
+                                        <td>@date.Date.Begin.Date.ToShortDateString()</td>
+                                        @if (date.AvailableSlots != null && date.AvailableSlots.Any())
+                                        {
+                                            <td>@Html.TimeSpan(date.Date)</td>
+                                            <td><a href="@Url.Action("SubscribeDate", new {dateId = date.Date.Id})" class="btn btn-default"> @date.AvailableSlots.Count Slots verfügbar</a></td>
+                                        }
+                                        else
+                                        {
+                                            if (date.Slot != null)
+                                            {
+                                                <td>@Html.TimeSpan(date.Slot)</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@Html.TimeSpan(date.Date)</td>
+                                            }
+                                            if (date.Subscription != null && date.Slot != null)
+                                            {
+                                                <td><a href="@Url.Action("Unsubscribe", new {slotId = date.Slot.Id})" class="btn btn-default"><i class="fa fa-times"></i> austragen</a></td>
+                                            }
+                                            else
+                                            {
+                                                <td>@date.Remark</td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

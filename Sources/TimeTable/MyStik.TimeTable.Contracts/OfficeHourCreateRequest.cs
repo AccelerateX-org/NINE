@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Contracts
 {
     public class OfficeHourCreateRequest
     {
-        public string SemesterId { get; set; }
+        public Guid SemesterId { get; set; }
 
-        public string DozId { get; set; }
+        public Guid DozId { get; set; }
 
-        public string OrgId { get; set; }
+        public Guid OrgId { get; set; }
 
         public DayOfWeek DayOfWeek { get; set; }
 
@@ -31,5 +27,11 @@ namespace MyStik.TimeTable.Contracts
         public int SubscriptionLimit { get; set; }
 
         public bool CreateDates { get; set; }
+
+        public string Text { get; set; }
+
+        public int SlotsPerDate { get; set; }
+
+        public int FutureSlots { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿@using System.Web.Razor.Text
-@using MyStik.TimeTable.Web.Helpers
-@using MyStik.TimeTable.Web.Models
+﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
 @{
     ViewBag.Title = "Sprechstunde";
@@ -59,7 +57,7 @@
             <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption">
-                        <i class="fa fa-calendar"></i>Verfügbare Termine
+                        <i class="fa fa-calendar"></i>Zukünftige Termine
                     </div>
                     <div class="actions">
                     </div>
@@ -75,14 +73,28 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var slot in Model.Slots.Where(x => !x.IsSubscribed && x.Occurrence.IsAvailable))
+                        @foreach (var slot in Model.Slots.Where(x => !x.IsSubscribed))
                         {
-                            <tr>
-                                <td>@slot.Date.ToShortDateString()</td>
-                                <td>@Html.TimeSpan(slot.Begin, slot.End)</td>
-                                <td>@slot.Remark</td>
-                                <td>@Html.Partial("_SubscriptionState", slot.State)</td>
-                            </tr>
+                            if (slot.Occurrence == null)
+                            {
+                                <tr>
+                                    <td>@slot.Date.ToShortDateString()</td>
+                                    <td>@Html.TimeSpan(slot.Begin, slot.End)</td>
+                                    <td colspan="2">@slot.Remark</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                if (slot.Occurrence.IsAvailable)
+                                {
+                                    <tr>
+                                        <td>@slot.Date.ToShortDateString()</td>
+                                        <td>@Html.TimeSpan(slot.Begin, slot.End)</td>
+                                        <td>@slot.Remark</td>
+                                        <td>@Html.Partial("_SubscriptionState", slot.State)</td>
+                                    </tr>
+                                }
+                            }
                         }
                         </tbody>
                     </table>

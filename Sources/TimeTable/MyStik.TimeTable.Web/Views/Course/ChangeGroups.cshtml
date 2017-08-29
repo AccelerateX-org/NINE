@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Data
-@model MyStik.TimeTable.Web.Models.CourseCreateModel3
+﻿@model MyStik.TimeTable.Web.Models.CourseCreateModel3
 @{
     ViewBag.Title = "Gruppenzuordnung";
 }
@@ -9,7 +8,7 @@
 }
 
 <div class="panel panel-default">
-    <div class="panel-body bg-fillter-events">
+    <div class="panel-body bg-fillter-lecturer">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
@@ -40,42 +39,42 @@
                                     <table class="table table-condensed">
                                         <thead>
                                         <tr>
-                                            <th>Semester</th>
                                             <th>Fakultät</th>
+                                            <th>Semester</th>
                                             <th>Studiengang</th>
                                             <th>Gruppenname</th>
                                             <th>
                                             </th>
                                         </tr>
-                                            <tr>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
-                                                </th>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm", onchange = "onOrganiserChanged()" })
-                                                </th>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
-                                                </th>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control  input-sm" })
-                                                </th>
-                                                <th>
-                                                    <button class="btn btn-default btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
-                                                </th>
-                                            </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control  input-sm", onchange = "onFacultyChanged()" })
+                                            </th>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
+                                            </th>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control  input-sm", onchange = "onCurriculumChanged()" })
+                                            </th>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control  input-sm" })
+                                            </th>
+                                            <th>
+                                                <button class="btn btn-default btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
+                                            </th>
+                                        </tr>
                                         </thead>
                                         <tbody id="groupList">
-                                            @foreach (var group in Model.Course.SemesterGroups)
-                                            {
-                                                <tr id="@group.Id">
-                                                    <td>@group.Semester.Name</td>
-                                                    <td>@group.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName</td>
-                                                    <td>@group.CapacityGroup.CurriculumGroup.Curriculum.ShortName</td>
-                                                    <td>@group.CapacityGroup.GroupName</td>
-                                                    <td><button class="btn btn-default btn-sm" onclick="deleteRow('@group.Id');"><i class="fa fa-trash-o"></i></button></td>
-                                                </tr>
-                                            }
+                                        @foreach (var group in Model.Course.SemesterGroups)
+                                        {
+                                            <tr id="@group.Id">
+                                                <td>@group.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName</td>
+                                                <td>@group.Semester.Name</td>
+                                                <td>@group.CapacityGroup.CurriculumGroup.Curriculum.ShortName</td>
+                                                <td>@group.CapacityGroup.GroupName</td>
+                                                <td><button class="btn btn-default btn-sm" onclick="deleteRow('@group.Id');"><i class="fa fa-trash-o"></i></button></td>
+                                            </tr>
+                                        }
                                         </tbody>
                                     </table>
                                 </div>
@@ -91,46 +90,89 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold">Erläuterungen</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <p>Die Zuordnung der Semestergruppen bietet die folgenden Möglichkeiten:</p>
+                    <ul>
+                        <li>Die Lehrveranstaltung lässt sich über das Vorlesungsverzeichnis finden.</li>
+                        <li>Bei Platzbeschränkungen kann eine Zuteilung der Plätze nach Studiengang und -gruppe erfolgen.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
 
     <script>
-        function onSemesterChanged() {
-            var sem = $("#SemesterId option:selected").val();
-            var curr = $("#CurriculumId option:selected").val();
-
-            $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("GroupList", "Curriculum")',
-                data: {
-                    semId: sem,
-                    currId: curr
-                },
-                success: function(data, success, xhr) {
-                    $('#GroupId').html(data);
-                }
-            });
-        }
-
-        function onOrganiserChanged() {
+        function onFacultyChanged() {
             var org = $("#OrganiserId option:selected").val();
 
             $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("CurriculaList", "Curriculum")',
-                data: {
-                    orgId: org
-                },
-                success: function(data, success, xhr) {
-                    $('#CurriculumId').html(data);
-                    onSemesterChanged();
-                }
-            });
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SemesterList", "Curriculum")',
+                    data: {
+                        orgId: org,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#SemesterId').html(data);
+                        onSemesterChanged();
+                    }
+                });
         }
+
+
+        function onSemesterChanged() {
+            var sem = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CurriculaList", "Curriculum")',
+                    data: {
+                        semId: sem,
+                        orgId: orgId,
+                        activeOnly: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#CurriculumId').html(data);
+                        onCurriculumChanged();
+                    }
+                });
+        }
+
+
+        function onCurriculumChanged() {
+
+            var prog = $('#CurriculumId option:selected').val();
+            var sem = $('#SemesterId option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("GroupList", "Curriculum")',
+                    data: {
+                        currId: prog,
+                        semId: sem,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#GroupId').html(data);
+                    }
+                });
+        }
+
+
 
         function addGroup() {
             var groupId = $("#GroupId option:selected").val();
@@ -142,8 +184,8 @@
 
             $("#groupList").append("<tr id=\""
                 + groupId + "\"><td>"
-                + semText + "</td><td>"
                 + orgText + "</td><td>"
+                + semText + "</td><td>"
                 + currText + "</td><td>"
                 + groupText + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
                 + groupId + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
@@ -179,17 +221,17 @@
 
 
             $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("ChangeGroups")',
-                data: {
-                    CourseId: courseId,
-                    GroupIds: groupList
-                },
-                success: function(data, success, xhr) {
-                    window.location.replace("@Url.Action("Admin", new {id = Model.Course.Id})");
-                }
-            });
+                {
+                    type: "POST",
+                    url: '@Url.Action("ChangeGroups")',
+                    data: {
+                        CourseId: courseId,
+                        GroupIds: groupList
+                    },
+                    success: function(data, success, xhr) {
+                        window.location.replace("@Url.Action("Admin", new {id = Model.Course.Id})");
+                    }
+                });
         }
 
 

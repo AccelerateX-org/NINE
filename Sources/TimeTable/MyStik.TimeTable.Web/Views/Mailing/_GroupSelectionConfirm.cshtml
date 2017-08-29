@@ -1,49 +1,50 @@
 ﻿@model ICollection<MyStik.TimeTable.Data.SemesterGroup>
 
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="portlet light bordered">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-calendar"></i>Die Mail soll an folgende Gruppen gesendet werden
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Die Mail soll an folgende Gruppen gesendet werden
+                    </div>
                 </div>
-            </div>
-            <div class="portlet-body">
-                <div class="row">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Anzahl Studierende</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                var nStud = 0;
-                            }
-                            @foreach (var group in Model.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
-                            {
-                                nStud += group.Subscriptions.Count;
-
+                <div class="portlet-body">
+                    <div class="row">
+                        <table class="table table-condensed">
+                            <thead>
                                 <tr>
-                                    <td>@group.FullName</td>
-                                    <td>
-                                        @group.Subscriptions.Count
-                                    </td>
+                                    <th>Name</th>
+                                    <th>Anzahl Studierende</th>
                                 </tr>
-                            }
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td><strong>@nStud</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var nStud = 0;
+                                }
+                                @foreach (var group in Model.Where(g => g.CapacityGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
+                                {
+                                    nStud += group.Subscriptions.Count;
+
+                                    <tr>
+                                        <td>@group.FullName</td>
+                                        <td>
+                                            @group.Subscriptions.Count
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td><strong>@nStud</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
 
 
 
 
-                    <a class="btn btn-default" id="send" href="@Url.Action("StudentGroupMail")"><i class="fa fa-save"></i> Auswahl bestätigen. Weiter zur Eingabe der Nachricht</a>
+                        <a class="btn btn-default" id="send" href="@Url.Action("StudentGroupMail")"><i class="fa fa-save"></i> Auswahl bestätigen. Weiter zur Eingabe der Nachricht</a>
+                    </div>
                 </div>
             </div>
         </div>

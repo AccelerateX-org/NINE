@@ -1,5 +1,4 @@
-﻿@using System.Globalization
-@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.CourseDetailViewModel
 
 @{
@@ -8,6 +7,7 @@
 
 @section styles
 {
+<link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
     <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
@@ -30,18 +30,18 @@
                 var capacity = $("#Capacity").val();
 
                 $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("AddGroup")',
-                    data: {
-                        courseId: "@Model.Course.Id",
-                        semGroupId: group,
-                        capacity: capacity
-                    },
-                    success: function (data, success, xhr) {
-                        $("#GroupList").html(data);
-                    }
-                });
+                    {
+                        type: "POST",
+                        url: '@Url.Action("AddGroup")',
+                        data: {
+                            courseId: "@Model.Course.Id",
+                            semGroupId: group,
+                            capacity: capacity
+                        },
+                        success: function (data, success, xhr) {
+                            $("#GroupList").html(data);
+                        }
+                    });
             });
 
             $("#toggleHistoryOn").click(function () {
@@ -61,20 +61,25 @@
                 showMeridian: false
             });
 
-            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
-                e.preventDefault();
-                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
-            });
+            $('.timepicker').parent('.input-group').on('click',
+                '.input-group-btn',
+                function (e) {
+                    e.preventDefault();
+                    $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+                });
 
 
-            /*
-            $("#checkAll").click(function() {
-                if ($(this).is(':checked'))
-                    $("#dateTable input[type='checkbox']").attr('checked', true);
-                else
-                    $("#dateTable input[type='checkbox']").attr('checked', false);
-            });
-            */
+
+            /* die geht einmal
+            $('#checkAll').on("click",
+                function() {
+                    $('.chk').trigger("click");
+                    if ($(this).is(':checked'))
+                        $('.chk').attr('checked', true);
+                    else
+                        $('.chk').attr('checked', false);
+                });
+                */
 
 
             $("#cancelAll").click(function () {
@@ -90,16 +95,16 @@
 
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("CancelDateList")',
-                        data: {
-                            dateIds: dateList
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("CancelDateList")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
                 } else {
                     alert("Es sind keine Termine zum Absagen markiert");
                 }
@@ -119,21 +124,20 @@
 
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("ReactivateDateList")',
-                        data: {
-                            dateIds: dateList
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("ReactivateDateList")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
                 } else {
                     alert("Es sind keine Termine zum Reaktivieren markiert");
                 }
             });
-
 
 
             $("#deleteAll").click(function () {
@@ -161,16 +165,16 @@
 
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("DeleteDateList")',
-                        data: {
-                            dateIds: dateList
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("DeleteDateList")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
 
 
                     $('#confirmDeleteAllDates').modal("hide");
@@ -190,20 +194,57 @@
 
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("RemoveRooms")',
-                        data: {
-                            dateIds: dateList
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("RemoveRooms")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
                 } else {
                     alert("Es sind keine Termine zum Reaktivieren markiert");
                 }
             });
+
+            $('#roomNumber').autocomplete({
+                appendTo: "#myModalLabel2",
+                source: function (request, response) {
+                    var org = '@Model.OrganiserId';
+
+                    $.ajax({
+                        url: '@Url.Action("RoomListByOrg", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            number: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name,
+                                    value: item.name
+                                };
+                            }));
+                        },
+
+                        error: function (data) { alert(data); },
+                    });
+                },
+                select: function (event, ui) {
+                    $('#hiddenRoomId').val(ui.item.text);
+                }
+            });
+
+
+
 
             $("#addRoom").click(function () {
                 var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
@@ -227,20 +268,20 @@
                         dateList[i] = list[i].id;
                     }
 
-                    var roomNo = $("#roomNumber").val();
+                    var roomNo = $("#hiddenRoomId").val();
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("AddRoomToDates")',
-                        data: {
-                            dateIds: dateList,
-                            roomNumber: roomNo
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("AddRoomToDates")',
+                            data: {
+                                dateIds: dateList,
+                                roomId: roomNo
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
 
 
                     $('#dlgAddRoom').modal("hide");
@@ -260,20 +301,59 @@
 
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("RemoveHosts")',
-                        data: {
-                            dateIds: dateList
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("RemoveHosts")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function(data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
                 } else {
                     alert("Es sind keine Termine zum Reaktivieren markiert");
                 }
             });
+
+
+
+            $('#dozId').autocomplete({
+                appendTo: "#myModalLabel4",
+                source: function (request, response) {
+                    var org = '@Model.OrganiserId';
+
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            name: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name + " (" + item.shortname + ")",
+                                    value: item.name + " (" + item.shortname + ")"
+                                };
+                            }));
+
+                        },
+
+                        error: function (data) { alert(data); }
+                    });
+                },
+                select: function(event, ui) {
+                    $('#hiddenDozId').val(ui.item.text);
+                }
+            });
+
+
 
 
             $("#addHost").click(function () {
@@ -298,20 +378,20 @@
                         dateList[i] = list[i].id;
                     }
 
-                    var hostName = $("#lecName").val();
+                    var hostName = $("#hiddenDozId").val();
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("AddHostToDates")',
-                        data: {
-                            dateIds: dateList,
-                            hostName: hostName
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("AddHostToDates")',
+                            data: {
+                                dateIds: dateList,
+                                hostId: hostName
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
 
 
                     //$('#dlgAddHost').modal("hide");
@@ -345,18 +425,18 @@
                     var newEnd = $("#NewEnd").val();
 
                     $.ajax(
-                    {
-                        type: "POST",
-                        url: '@Url.Action("MoveDates")',
-                        data: {
-                            dateIds: dateList,
-                            newBegin: newBegin,
-                            newEnd: newEnd
-                        },
-                        success: function (data, success, xhr) {
-                            $("#dateTable").html(data);
-                        }
-                    });
+                        {
+                            type: "POST",
+                            url: '@Url.Action("MoveDates")',
+                            data: {
+                                dateIds: dateList,
+                                newBegin: newBegin,
+                                newEnd: newEnd
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
 
 
                     //$('#dlgAddRoom').modal("hide");
@@ -374,54 +454,80 @@
             $("#" + elem.id).attr("checked", elem.checked);
         }
 
-        function toggleAllCheck(elem) {
-            $("#checkAll").attr("checked", elem.checked);
-
-            if ($("#checkAll").is(':checked'))
-                $("#dateTable input[type='checkbox']").attr('checked', true);
+        function toggleDateCheckAll(elem) {
+            $('.chk').trigger("click");
+            if ($("#" + elem.id).is(':checked'))
+                $('.chk').attr('checked', true);
             else
-                $("#dateTable input[type='checkbox']").attr('checked', false);
-
+                $('.chk').attr('checked', false);
         }
+
 
         function onSaved() {
             alert("Gespeichert");
-        }
-
-        function onSemesterChanged() {
-            var sem = $("#SemesterId option:selected").val();
-            var curr = $("#CurriculumId option:selected").val();
-
-            $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("GroupList", "Curriculum")',
-                data: {
-                    semId: sem,
-                    currId: curr
-                },
-                success: function (data, success, xhr) {
-                    $('#GroupId').html(data);
-                }
-            });
         }
 
         function onOrganiserChanged() {
             var org = $("#OrganiserId option:selected").val();
 
             $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("CurriculaList", "Curriculum")',
-                data: {
-                    orgId: org
-                },
-                success: function (data, success, xhr) {
-                    $('#CurriculumId').html(data);
-                    onSemesterChanged();
-                }
-            });
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SemesterList", "Curriculum")',
+                    data: {
+                        orgId: org,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#SemesterId').html(data);
+                        onSemesterChanged();
+                    }
+                });
         }
+
+
+
+        function onSemesterChanged() {
+            var sem = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CurriculaList", "Curriculum")',
+                    data: {
+                        semId: sem,
+                        orgId: orgId,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#CurriculumId').html(data);
+                        onCurriculumChanged();
+                    }
+                });
+        }
+
+        function onCurriculumChanged() {
+
+            var prog = $('#CurriculumId option:selected').val();
+            var sem = $('#SemesterId option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("GroupList", "Curriculum")',
+                    data: {
+                        currId: prog,
+                        semId: sem,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#GroupId').html(data);
+                    }
+                });
+        }
+
+
 
         function showConfirmDeleteDate() {
             $('#confirmDeleteDate').modal("show");
@@ -438,7 +544,6 @@
         function hideEditDateInformation() {
             $('#confirmDeleteDate').modal("hide");
         }
-
 
 
     </script>
@@ -486,8 +591,14 @@
                                 <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-download"></i> Teilnehmerliste</a>
                             </li>
                             <li>
-                                <a href="@Url.Action("DeleteCourse", new {id = Model.Course.Id})"><i class="fa fa-trash-o"></i> Löschen</a>
+                                <a href="@Url.Action("CleanCourse", new {id = Model.Course.Id})"><i class="fa fa-eraser"></i> Bereinigen</a>
                             </li>
+                            @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DeleteCourse", new {id = Model.Course.Id})"><i class="fa fa-trash-o"></i> Löschen</a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -542,7 +653,7 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
                             <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Beschreibung</a></li>
-                            <li role="presentation"><a href="#dates" aria-controls="dates" role="tab" data-toggle="tab">Termine</a></li>
+                            <li role="presentation" ><a href="#dates" aria-controls="dates" role="tab" data-toggle="tab">Termine</a></li>
                             <li role="presentation"><a href="#subscriber" aria-controls="subscriber" role="tab" data-toggle="tab">Teilnehmer</a></li>
                             <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Platzvergabe</a></li>
                         </ul>
@@ -604,13 +715,6 @@
                             <div role="tabpanel" class="tab-pane" id="dates">
                                 <div class="panel">
                                     <div class="panel-body">
-                                        <div class="alert alert-warning">
-                                            <h4>Wichtiger Hinweis</h4>
-                                            <p>
-                                                Bisher wurden bei Terminänderungen, Absagen etc. automatisch Mails versendet. Dies führte im Einzelfall zu einer "E-Mail Flut" für die Studierenden.
-                                                Aktuell werden daher bei <strong>Änderungen an den Terminen keine automatischen E-Mails</strong> mehr versendet.
-                                            </p>
-                                        </div>
                                         <div class="btn-group" role="group" data-toggle="buttons">
                                             <button id="toggleHistoryOff" type="button" class="btn btn-default active">Nur zukünftige Termine anzeigen</button>
                                             <button id="toggleHistoryOn" type="button" class="btn btn-default">Alle Termine anzeigen</button>
@@ -672,21 +776,21 @@
                                                         <form class="form-horizontal">
                                                             <fieldset>
                                                                 <div class="form-group">
-                                                                    <label for="SemesterId" class="col-md-4 control-label">Semester</label>
-                                                                    <div class="col-md-8">
-                                                                        @Html.DropDownListFor(model => model.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-control", onchange = "onSemesterChanged()" })
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group">
                                                                     <label for="OrganiserId" class="col-md-4 control-label">Fakultät</label>
                                                                     <div class="col-md-8">
                                                                         @Html.DropDownListFor(model => model.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control", onchange = "onOrganiserChanged()" })
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group">
+                                                                    <label for="SemesterId" class="col-md-4 control-label">Semester</label>
+                                                                    <div class="col-md-8">
+                                                                        @Html.DropDownListFor(model => model.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
                                                                     <label for="CurriculumId" class="col-md-4 control-label">Studiengang</label>
                                                                     <div class="col-md-8">
-                                                                        @Html.DropDownListFor(model => model.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                                                                        @Html.DropDownListFor(model => model.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group">
@@ -743,10 +847,6 @@
                                                                 <button type="submit" class="btn btn-default"><i class="fa fa-save text-primary"></i> SPEICHERN</button>
                                                             </fieldset>
                                                         }
-                                                        <div class="alert alert-info">
-                                                            <strong>Hinweis!</strong> Für die Zusammenstellungen und Durchführung von Platzverlosungen aktuell direkt an Olav Hinz wenden
-                                                        </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -801,6 +901,7 @@
                         </div>
                     </div>
                 </div>
+                <input id="hiddenRoomId" type="text" hidden/>
             </div>
             <div class="modal-footer">
                 <button id="btnAddRoom" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
@@ -851,12 +952,13 @@
             <div class="modal-body">
                 <div class="form form-horizontal">
                     <div class="form-group">
-                        <label class="col-sm-6 control-label" for="lecName">Nachname oder Kurzname (Untis)</label>
+                        <label class="col-sm-6 control-label" for="dozId">Nachname oder Kurzname (Untis)</label>
                         <div class="col-sm-4">
-                            <input class="form-control" id="lecName" name="lecName" type="text" />
+                            <input class="form-control" id="dozId" name="dozId" type="text" />
                         </div>
                     </div>
                 </div>
+                <input id="hiddenDozId" type="text" hidden/>
             </div>
             <div class="modal-footer">
                 <button id="btnAddHost" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>

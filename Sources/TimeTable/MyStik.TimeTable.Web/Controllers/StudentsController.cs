@@ -2,25 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
 using System.Text;
-using System.Web;
-using System.Web.Http.Results;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
-using Microsoft.SqlServer.Server;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using RazorEngine.Compilation.ImpromptuInterface;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class StudentsController : BaseController
     {
-        // GET: Students
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             ViewBag.UserRight = GetUserRight();
@@ -34,12 +36,20 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Invitation()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Invitation(InvitationFileModel model)
         {
@@ -137,6 +147,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("InvitationList", invitationList);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult SendInvitations()
         {
             ViewBag.Languages = new []
@@ -147,6 +161,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SendInvitations(OccurrenceMailingModel model)
         {
@@ -196,8 +215,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     Remark = "Einladung von " + host.FullName,
                     ExpiryDate = null,              // Einladung bleibt dauerhaft bestehen - Deprovisionierung automatisch
                     Submitted = now,
-                    EmailConfirmed = true,          // damit ist auch ein "ForgotPassword" möglich, auch wenn er die Einladung nicht angenommen hat.
-                    IsApproved = true,              // Markiert Konto als "wurde eingeladen"
+                    EmailConfirmed = true, // damit ist auch ein "ForgotPassword" möglich, auch wenn er die Einladung nicht angenommen hat.
+                    IsApproved = true, // Damit bekommt der Nutzer von Anfang an E-Mails
                     Faculty = host.Id               // Benutzer der eingeladen hat
                 };
 
@@ -303,6 +322,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult CoursePlan(string id)
         {
             var model = new UserCoursePlanViewModel();
@@ -356,6 +380,9 @@ namespace MyStik.TimeTable.Web.Controllers
                     summary.Dates.Add(courseDate);
                 }
 
+                summary.HasLottery = Db.Lotteries.Any(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+
                 var subscriptions = course.Occurrence.Subscriptions.Where(s => s.UserId.Equals(id));
                 foreach (var subscription in subscriptions)
                 {
@@ -364,6 +391,25 @@ namespace MyStik.TimeTable.Web.Controllers
                         CourseSummary = summary,
                         Subscription = subscription
                     });
+                }
+
+                // jetzt die Tage rausholen und anfügen
+                // nur für die mit Platz
+                var sub = course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(id));
+                if (sub.OnWaitingList == false)
+                {
+
+                    foreach (var courseDate in course.Dates)
+                    {
+                        var dayPlan = model.CourseDates.SingleOrDefault(x => x.Day == courseDate.Begin.Date);
+                        if (dayPlan == null)
+                        {
+                            dayPlan = new UserCourseDatePlanModel {Day = courseDate.Begin.Date};
+                            model.CourseDates.Add(dayPlan);
+                        }
+
+                        dayPlan.Dates.Add(courseDate);
+                    }
                 }
             }
 

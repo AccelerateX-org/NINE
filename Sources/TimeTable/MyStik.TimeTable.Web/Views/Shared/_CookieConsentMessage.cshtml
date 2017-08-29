@@ -1,0 +1,11 @@
+﻿<div id="cookie-alert">
+    <div class="alert">
+        <p><strong>Cookies:</strong> please allow us to use cookies for Facebook Like buttons and Google analytics.</p>
+        <form class="btn-group-vertical" action="@Url.Action("NoCookies", "Site", new { ReturnUrl = Request.RawUrl })" method="post" data-async="true" data-target="#cookie-alert">
+            <input type="submit" name="decline" class="btn btn-warning" value="Decline" />
+        </form>
+        <form class="btn-group-vertical" action="@Url.Action("AllowCookies", "Site", new { ReturnUrl = Request.RawUrl })" method="post">
+            <input type="submit" name="allow" class="btn btn-success" value="Allow" />
+        </form>
+    </div>
+</div>

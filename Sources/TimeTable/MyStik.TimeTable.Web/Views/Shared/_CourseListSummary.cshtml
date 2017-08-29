@@ -1,5 +1,4 @@
-﻿@using System.Globalization
-@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Web.Models.CourseSummaryModel>
 
     <table class="table table-condensed">
@@ -9,7 +8,7 @@
                 <th>Gruppe(n)</th>
                 <th>Zeit(en)</th>
                 <th>Raum</th>
-                <th>Dozent(en)</th>
+                <th>Lehrende</th>
                 @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
                 {
                     <th></th>

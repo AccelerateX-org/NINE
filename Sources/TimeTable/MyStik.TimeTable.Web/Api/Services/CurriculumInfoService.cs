@@ -1,19 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Web.Api.Contracts;
-using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CurriculumInfoService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly TimeTableDbContext Db = new TimeTableDbContext();
-        //Abfrage aller Fakultäten
+
+        /// <summary>
+        /// Abfrage aller Fakultäten
+        /// </summary>
         public IEnumerable<FacultiesContracts> GetAllFaculties()
         {
             //var faculties = Db.Organisers.Where(ao => ao.IsStudent == false).ToList();
@@ -35,7 +39,10 @@ namespace MyStik.TimeTable.Web.Api.Services
             }
             return facultiesList.OrderBy(f=>f.FucultyName);
         }
-        //abfrage aller verfügbaren Studienprogramme
+        /// <summary>
+        /// abfrage aller verfügbaren Studienprogramme
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CurriculumStudyprogramContract> GetAllStudyprograms()
         {
 
@@ -58,7 +65,9 @@ namespace MyStik.TimeTable.Web.Api.Services
             return StudyprogramList.OrderBy(s => s.StudyprogramShortname);
         }
 
-        //Abfrage aller Studiengruppen eines Studienprograms
+        /// <summary>
+        /// Abfrage aller Studiengruppen eines Studienprograms
+        /// </summary>
         public IEnumerable<CurriculumStudygroupsContract> GetAllStudygroups(string StudyprogramId)
         {
             //alle gruppen des Programms
@@ -78,7 +87,12 @@ namespace MyStik.TimeTable.Web.Api.Services
             }
             return StudygroupList.OrderBy(sg => sg.StudygroupName);
         }
-        //Abfrage aller Kurse einer Studiengruppe
+
+        /// <summary>
+        /// Abfrage aller Kurse einer Studiengruppe
+        /// </summary>
+        /// <param name="StudygroupId"></param>
+        /// <returns></returns>
         public IEnumerable<CurriculumCourseContract> GetAllStudygroupCourses(string StudygroupId)
         {
             //Semestergruppe zur dazugehörigem Studiengruppe finden
@@ -102,7 +116,11 @@ namespace MyStik.TimeTable.Web.Api.Services
             return courselist.OrderBy(c=>c.Title);
         }
 
-        //Abfrage aller Termine eines Kurses
+        /// <summary>
+        /// Abfrage aller Termine eines Kurses
+        /// </summary>
+        /// <param name="LectureId"></param>
+        /// <returns></returns>
         public CurriculumDateContract GetCourseDates(string LectureId)
         {
             //Liste aller ActivityDates des Vorlesung

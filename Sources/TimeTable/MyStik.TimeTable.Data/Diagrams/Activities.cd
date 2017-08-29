@@ -31,7 +31,7 @@
   <Class Name="MyStik.TimeTable.Data.Occurrence">
     <Position X="4.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAACEEAAAAQAAAAAAQgAAAACAAIAAAAAECBGBIAAAQA=</HashCode>
+      <HashCode>YAACEEAAAAQAAAAAAQgAAAACAAIAAAAAECBGBIAAAQA=</HashCode>
       <FileName>Occurrence.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -39,7 +39,7 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="MyStik.TimeTable.Data.OccurrenceSubscription">
-    <Position X="7.25" Y="6.75" Width="1.5" />
+    <Position X="7.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAACAAAkAAAIAAJAAEAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>OccurrenceSubscription.cs</FileName>
@@ -61,17 +61,17 @@
   <Class Name="MyStik.TimeTable.Data.OrganiserMember">
     <Position X="6.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAgAAAAEAAAAAwACJAAAIAAAAAAAAACAAA=</HashCode>
+      <HashCode>QAgCAAAAQAEgAAACEAECAAwQWJAAAIAAAAAAAQACAAA=</HashCode>
       <FileName>OrganiserMember.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Dates" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="MyStik.TimeTable.Data.Course" Collapsed="true">
+  <Class Name="MyStik.TimeTable.Data.Course">
     <Position X="0.5" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAEAAAAAAAAAQAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAEAAAAAAAAAAAAAAAAIAAAAAAAAAAIA=</HashCode>
       <FileName>Course.cs</FileName>
     </TypeIdentifier>
   </Class>

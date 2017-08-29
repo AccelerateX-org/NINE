@@ -1,24 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyStik.TimeTable.DataServices
+﻿namespace MyStik.TimeTable.DataServices
 {
+
+
     public partial class InfrastructureDataService
     {
+        
+        private string FK01 = "FK 01";
+        private string FS01 = "FK 01";
+        private string FK03 = "FK 03";
+        private string FS03 = "FS 03";
+        private string FK04 = "FK 04";
+        private string FS04 = "FK 04";
+        private string FK06 = "FK 06";
+        private string FS06 = "FS 06";
         private string FK09 = "FK 09";
         private string FS09 = "FS 09";
         private string HM = "HM";
 
+        /*
+        private string AR = "AR";
+        private string FAB = "FAB";
+        private string LRB = "LRB";
+        private string MBB = "MBB";
+        private string FEM_TBM_FAM_LRM_MBM = "FEM_TBM_FAM_LRM_MBM";
+        private string BA = "BA";
+        private string EIB = "EIB";
+        private string REB = "REB";
+        private string EMB = "EMB";
+        private string ELM = "ELM";
+        private string EEM = "EEM";
+        private string SSM = "SSM";
+        */
         private string WI = "WI";
         private string AU = "AU";
         private string LM = "LM";
         private string WIM = "WIM";
         private string MBA = "MBA";
+        //Fakultät 06
+        private string AOB = "AOB";
+        private string BBM = "BBM";
+        private string BOB = "BOB";
+        private string CHB = "CHB";
+        private string MFB = "MFB";
+        private string MFM = "MFM";
+        private string MNM = "MNM";
+        private string PAB = "PAB";
+        private string PAA = "PAA";
+        //private string PHB = "PHB";
+        private string PNB = "PNB";
+        private string POM = "POM";
 
-        public void InitData()
+        /// <summary>
+        /// 
+        /// </summary>
+        public void InitDataFK09()
         {
             AddOrganiser(HM, "Hochschule München", false, false);
             AddOrganiser(FK09, "Fakultät 09", true, false);
@@ -40,7 +75,7 @@ namespace MyStik.TimeTable.DataServices
             AddCurriculumGroup(WI, "1", "1A", "A");
             AddCurriculumGroup(WI, "1", "1B", "B");
             AddCurriculumGroup(WI, "1", "1C", "C");
-            
+
             AddCurriculumGroup(WI, "2", "2A", "A");
             AddCurriculumGroup(WI, "2", "2B", "B");
             AddCurriculumGroup(WI, "2", "2C", "C");
@@ -189,5 +224,73 @@ namespace MyStik.TimeTable.DataServices
 
 
         }
+
+
+        public void InitDataFK01()
+        {
+            AddOrganiser(HM, "Hochschule München", false, false);
+            AddOrganiser(FK01, "Fakultät 01", true, false);
+            AddOrganiser(FS01, "Fachschaft 01", false, true);
+
+            AddCurriculum(WI, "Bachelor Architektur", FK01);
+        }
+
+        public void InitDataFK03()
+        {
+            AddOrganiser(HM, "Hochschule München", false, false);
+            AddOrganiser(FK03, "Fakultät 03", true, false);
+            AddOrganiser(FS03, "Fachschaft 03", false, true);
+
+            AddCurriculum(WI, "Bachelor Fahrzeugtechnik", FK03);
+            AddCurriculum(AU, "Bachelor Luft- und Raumfahrtechnik", FK03);
+            AddCurriculum(LM, "Bachelor Maschinenbau", FK03);
+            AddCurriculum(WIM, "Master FEM_TBM_FAM_LRM_MBM", FK03);
+            AddCurriculum("CIE", "Courses in English", FK03);
+            /*AddCurriculum(MBA, "Master of Business Administration and Engineering", FK03);         
+            AddCurriculum("Export", "Export", HM);
+            */
+        }
+        public void InitDataFK04()
+        {
+            AddOrganiser(HM, "Hochschule München", false, false);
+            AddOrganiser(FK04, "Fakultät 04", true, false);
+            AddOrganiser(FS04, "Fachschaft 04", false, true);
+
+            AddCurriculum(WI, "Bachelor Erstsemestergruppen", FK04);
+            AddCurriculum(AU, "Bachelor Luft- und Raumfahrtechnik", FK04);
+            AddCurriculum(LM, "Bachelor Elektro- & Informationtechnik", FK04);
+            AddCurriculum(WIM, "Bachelor Regenerative Energien", FK04);
+            AddCurriculum(WIM, "Bachelor Elektromobilität", FK04);
+            AddCurriculum(WIM, "Master Elektrotechnik", FK04);
+            AddCurriculum(WIM, "Master Electrical Engineering", FK04);
+            AddCurriculum(WIM, "Master Systems Engineering", FK04);
+            AddCurriculum("CIE", "Courses in English", FK04);
+            /*AddCurriculum(MBA, "Master of Business Administration and Engineering", FK03);         
+            AddCurriculum("Export", "Export", HM);
+            */
+        }
+        public void InitDataFK06()
+        {
+            AddOrganiser(HM, "Hochschule München", false, false);
+            AddOrganiser(FK06, "Fakultät 06", true, false);
+            AddOrganiser(FS06, "Fachschaft 06", false, true);
+
+            AddCurriculum(AOB, "Bachelor Augenoptik und Optometrie", FK06);
+            AddCurriculum(BBM, "Master  Biotechnologie und Bioingenieurwesen", FK06);
+            AddCurriculum(BOB, "Bachelor Bioingenieurwesen", FK06);
+            AddCurriculum(CHB, "Bachelor  Chemische Technik", FK06);
+            AddCurriculum(MFB, "Bachelor  Mechatronik und Feinwerktechnik", FK06);
+            AddCurriculum(MFM, "Master  Mechatronik und Feinwerktechnik", FK06);
+            AddCurriculum(MNM, "Master  Mikotechnik und Nanotechnik", FK06);
+            AddCurriculum(PAB, "Bachelor Produktion und Automatisierung", FK06);
+            AddCurriculum(PAA, "Bachelor Produktion und Automatisierung (D/F)", FK06);
+            AddCurriculum(PNB, "Bachelor Produktion und Automatisierung (national)", FK06);
+            AddCurriculum(POM, "Master Photonik", FK06);
+
+
+
+        }
+
+
     }
 }

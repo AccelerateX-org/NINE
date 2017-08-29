@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ReservationController : BaseController
     {
-        // GET: Reservation
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
-            var reservationList = Db.Activities.OfType<Reservation>().Where(r => r.Organiser.ShortName.Equals("FK 09")).ToList();
+            var org = GetMyOrganisation();
+
+            var reservationList = Db.Activities.OfType<Reservation>().Where(r => r.Organiser.Id == org.Id).ToList();
 
             var model = new List<ReservationViewModel>();
 
@@ -34,6 +40,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CreateReservation()
         {
             var semester = GetSemester();
@@ -41,14 +51,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var memberService = new MemberService(Db, UserManager);
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
 
-            var orgName = User.IsInRole("SysAdmin") ?
-                "FK 09" :
-                memberService.GetOrganisationName(semester, User.Identity.Name);
+            var org = GetMyOrganisation();
 
-            var userRight = GetUserRight(User.Identity.Name, "FK 09");
+            var userRight = GetUserRight(User.Identity.Name, org.ShortName);
 
             // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetRooms(orgName, userRight.IsOrgAdmin);
+            var rooms = roomService.GetRooms(org.ShortName, userRight.IsRoomAdmin);
 
             var now = DateTime.Now;
             var minute = DateTime.Now.Minute;
@@ -71,11 +79,16 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult CreateReservation(ReservationCreateModel model)
         {
             // Doppelungen von Namen pro Organiser vermeiden
-            var org = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
+            var org = GetMyOrganisation();
 
             var reservation =
                 Db.Activities.OfType<Reservation>().SingleOrDefault(r => r.Organiser.Id == org.Id &&
@@ -178,6 +191,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_CreateReservationSuccess");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DateList(Guid id)
         {
@@ -188,6 +206,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteReservation(Guid id)
         {
             var reservation = Db.Activities.OfType<Reservation>().SingleOrDefault(r => r.Id == id);
@@ -207,6 +230,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteReservationDate(Guid id)
         {

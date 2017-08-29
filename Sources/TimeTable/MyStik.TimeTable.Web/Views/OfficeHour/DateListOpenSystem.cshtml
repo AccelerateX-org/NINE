@@ -1,0 +1,128 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
+@{
+    ViewBag.Title = "Termine";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Host.Name - Sprechstundentermine im Semester @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-legal"></i>Regelungen für diese Sprechstunde
+                        </div>
+                        <div class="actions">
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <ul>
+                            @if (Model.OfficeHour.Occurrence.Capacity > 0)
+                            {
+                                <li>Pro Termin @Model.OfficeHour.Occurrence.Capacity Plätze buchbar.</li>
+                            }
+                            else
+                            {
+                                <li>Keine Platzbeschränkung</li>
+                            }
+                            @if (Model.OfficeHour.Occurrence.FromIsRestricted && Model.OfficeHour.Occurrence.UntilTimeSpan.HasValue)
+                            {
+                                <li>Eintragungen bis spätestens @Model.OfficeHour.Occurrence.UntilTimeSpan.Value vorher. Nach dem Ende der Eintragungsfrist ist kein Austragen mehr möglich.</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.OfficeHour.Description))
+            {
+                <div class="col-md-6">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-info"></i>Weitere Informationen
+                            </div>
+                            <div class="actions">
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            @Html.Raw(Model.OfficeHour.Description)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-calendar"></i>Alle Termine
+                            </div>
+                            <div class="actions">
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Zeitraum</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var date in Model.Dates)
+                                {
+                                    var rowClass = "";
+                                    if (date.Date.Occurrence.IsCanceled && date.Subscription != null)
+                                    {
+                                        rowClass = "danger";
+                                    }
+
+                                    <tr class="@rowClass">
+                                        <td>@date.Date.Begin.Date.ToShortDateString()</td>
+                                        <td>@Html.TimeSpan(date.Date)</td>
+                                        @if (date.Subscription != null)
+                                        {
+                                            <td>@Html.Partial("_SubscriptionState", date.State)</td>
+                                        }
+                                        else
+                                        {
+                                            if (date.AvailableDate != null)
+                                            {
+                                                <td>@Html.Partial("_SubscriptionState", date.State)</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@date.Remark</td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

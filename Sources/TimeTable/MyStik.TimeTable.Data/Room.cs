@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -58,6 +55,8 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<RoomBooking> Bookings { get; set; }
 
 
-        public virtual ICollection<RoomAssignment> Assignments { get; set; } 
+        public virtual ICollection<RoomAssignment> Assignments { get; set; }
+
+        public string FullName => string.IsNullOrEmpty(Name) ? Number : $"{Number} ({Name})";
     }
 }

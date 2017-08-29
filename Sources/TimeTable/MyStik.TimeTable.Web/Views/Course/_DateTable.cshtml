@@ -4,7 +4,8 @@
 <table class="table table-condensed">
     <thead>
         <tr>
-            <th><input id="checkAll" type="checkbox" onclick="toggleAllCheck(this)" value=" "></th>
+            <th><input id="checkAll" type="checkbox" onclick="toggleDateCheckAll(this)"></th>
+            <th>Tag</th>
             <th>Datum</th>
             <th>Zeitraum</th>
             <th>Ort</th>
@@ -14,7 +15,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="dateList2">
         @foreach (var date in Model.Dates.OrderBy(d => d.Begin))
         {
             var histAttr = "";
@@ -28,9 +29,10 @@
                     <td>
                         @if (date.End >= GlobalSettings.Now)
                         {
-                            <input id="@date.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="">
+                            <input id="@date.Id" type="checkbox" onclick="toggleDateCheck(this)" value="" class="chk">
                         }
                     </td>
+                    <td>@date.Begin.DayOfWeek</td>
                     <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
                     <td><del>@Html.TimeSpan(date)</del></td>
                     <td colspan="4">abgesagt</td>
@@ -79,9 +81,10 @@
                     <td>
                         @if (date.End >= GlobalSettings.Now)
                         {
-                            <input id="@date.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="">
+                            <input id="@date.Id" type="checkbox" onclick="toggleDateCheck(this)" value="" class="chk">
                         }
                     </td>
+                    <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
                     <td>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
                     <td>@Html.TimeSpan(date)</td>
                     <td>@Html.RoomList(date.Rooms)</td>

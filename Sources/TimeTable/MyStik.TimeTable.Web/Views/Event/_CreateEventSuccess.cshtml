@@ -1,6 +1,21 @@
-﻿@model MyStik.TimeTable.Data.Event
-<div class="note note-success">
-    <p>Die Veranstaltung wurde erfolgreich angelegt. 
-    Termine, Räume, Dozenten können <a href="@Url.Action("Admin", new {id=Model.Id})">hier</a> eingegeben werden</p>
-</div>
-
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Event
+<tr>
+    @if (string.IsNullOrEmpty(Model.Name))
+    {
+        <td><a href="@Url.Action("Admin", new {id = Model.Id})">Keine Bezeichnung</a></td>
+    }
+    else
+    {
+        <td><a href="@Url.Action("Admin", new {id = Model.Id})">@Model.Name</a></td>
+    }
+    <td>@Model.Dates.Count</td>
+    @if (Model.Dates.Count > 0)
+    {
+        <td>@Html.TimeSpanWithDate(Model.Dates.OrderBy(d => d.Begin).First())</td>
+    }
+    else
+    {
+        <td>keine Termine vorhanden</td>
+    }
+</tr>

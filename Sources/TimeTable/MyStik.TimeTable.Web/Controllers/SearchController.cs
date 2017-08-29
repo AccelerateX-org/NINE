@@ -1,33 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SearchController : BaseController
     {
-        // GET: Search
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <returns></returns>
         public ActionResult Index(string searchText)
         {
-
             var semester = GetSemester();
 
-            var courseList = new CourseService(UserManager).SearchCourses(semester.Name, searchText);
-
-
-            if (User.IsInRole("SysAdmin"))
+            if (string.IsNullOrEmpty(searchText))
             {
-                var courseList2 = new CourseService(UserManager).SearchUnassignedCourses(searchText);
-                
-                courseList.AddRange(courseList2);
+                var defaultModel = new SearchViewModel
+                {
+                    SearchText = searchText,
+                    Semester = semester,
+                    Courses = new List<CourseSummaryModel>(),
+                    Lecturers = new List<LecturerViewModel>()
+                };
+
+                ViewBag.UserRight = GetUserRight();
+
+
+                return View(defaultModel);
             }
-            
-            
+
+            var courseList = new CourseService(UserManager).SearchCourses(semester.Name, searchText);
             foreach (var course in courseList)
             {
                 var lectures =
@@ -42,11 +51,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser, semester);
             }
 
-
+            // alle Mitglieder
             var activeLecturers =
             Db.Members.Where(m => 
-                (m.Name.Contains(searchText) || m.ShortName.Contains(searchText)) &&
-                m.Dates.Any(d => d.Activity.SemesterGroups.Any(s => s.Semester.Id == semester.Id)))
+                (m.Name.Contains(searchText) || m.ShortName.Contains(searchText)))
                 .OrderBy(m => m.Name)
                 .ToList();
 
@@ -57,9 +65,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 lecturerList.Add(viewModel);
             }
-
-
-
 
             var model = new SearchViewModel
             {

@@ -1,0 +1,45 @@
+﻿@model MyStik.TimeTable.Data.CoursePlan
+@{
+    ViewBag.Title = "Details2";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mein Studienplan @Model.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Modul</th>
+            <th>Semester</th>
+            <th>Versuche</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var mapping in Model.ModuleMappings.OrderBy(m => m.Semester.StartCourses))
+        {
+            <tr>
+                <td>@mapping.Module.Name</td>
+                @if (mapping.Semester != null)
+                { 
+                    <td>@mapping.Semester.Name</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@mapping.Trials.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

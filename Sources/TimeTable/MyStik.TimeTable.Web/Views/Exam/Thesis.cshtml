@@ -1,0 +1,83 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.ThesisListViewModel>
+@{
+    ViewBag.Title = "Abschlussarbeiten";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Übersicht Abschlussarbeiten</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.UserRight != null && ViewBag.UserRight.IsExamAdmin)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("RegisterThesis")" class="btn btn-default">
+                                    <i class="fa fa-plus"></i> Anmeldung erfassen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-group"></i> Laufende Abschlussarbeiten
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Studierender</th>
+                            <th>Lehrende(r)</th>
+                            <th>Angemeldet</th>
+                            <th>Abgabe</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var thesis in Model)
+                            {
+                                <tr>
+                                    <td>@thesis.Curriculum.ShortName</td>
+                                    <td>
+                                        @foreach (var lec in thesis.Exam.Examiners)
+                                        {
+                                            <div>@lec.Member.ShortName (@lec.Role)</div>
+                                        }
+                                    </td>
+                                    <td>@thesis.Exam.Start</td>
+                                    <td>@thesis.Exam.End</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

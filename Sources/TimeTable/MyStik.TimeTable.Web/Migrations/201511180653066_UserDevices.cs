@@ -1,10 +1,12 @@
 namespace MyStik.TimeTable.Web.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class UserDevices : DbMigration
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Up()
         {
             CreateTable(
@@ -25,6 +27,9 @@ namespace MyStik.TimeTable.Web.Migrations
             
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Down()
         {
             DropForeignKey("dbo.UserDevices", "User_Id", "dbo.AspNetUsers");

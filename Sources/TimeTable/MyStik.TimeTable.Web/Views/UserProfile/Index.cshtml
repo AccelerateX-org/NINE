@@ -1,7 +1,6 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model MyStik.TimeTable.Web.Models.UserProfileViewModel
+﻿@model MyStik.TimeTable.Web.Models.UserProfileViewModel
 @{
-    ViewBag.Title = "Einstellungen";
+    ViewBag.Title = Resources.SettingsString;
     var homeActive = "";
     var semesterActive = "";
 }
@@ -11,7 +10,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Meine Einstellungen</h1>
+                    <h1>@Resources.MySettings</h1>
                 </div>
             </div>
         </div>
@@ -22,126 +21,151 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="row" id="sortable_portlets">
-                <div class="col-md-8 column sortable">
-                        <div class="portlet portlet-sortable light bordered">
-                            <div class="portlet-title">
-                                <div class="caption font-green-sharp">
-                                    <i class="icon-graduation-cap font-green-sharp"></i>
-                                    <span class="caption-subject bold uppercase"> Persönliche Daten</span>
-                                </div>
-                            </div>
-                            <div class="portlet-body">
-                                @using (Ajax.BeginForm("SaveContactData", null,
-                        new AjaxOptions()
-                        {
-                            HttpMethod = "Post",
-                            OnSuccess = "onSaved"
-                        }, new { @role = "form" }))
-                                {
-                                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(m => m.Profile.FirstName)
-                                        @Html.TextBoxFor(m => m.Profile.FirstName, new { @class = "form-control", placeholder = "Vorname eingeben" })
-                                        @Html.ValidationMessageFor(m => m.Profile.FirstName)
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(m => m.Profile.LastName)
-                                        @Html.TextBoxFor(m => m.Profile.LastName, new { @class = "form-control", placeholder = "Nachname eingeben" })
-                                        @Html.ValidationMessageFor(m => m.Profile.LastName)
-                                    </div>
-
-                                    <button type="submit" class="btn btn-default">SPEICHERN</button>
-                                }
-                            </div>
-                        </div>
-                    <div class="portlet portlet-sortable light bordered">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
                         <div class="portlet-title">
-                            <div class="caption font-green-sharp">
-                                <i class="icon-graduation-cap font-green-sharp"></i>
-                                <span class="caption-subject bold uppercase"> Kommunikationseinstellungen</span>
+                            <div class="caption">
+                                <i class="fa fa-user"></i> @Resources.PersonalDataHeading
                             </div>
                         </div>
                         <div class="portlet-body">
-                            @using (Ajax.BeginForm("SaveMsgData", null,
+                            @using (Ajax.BeginForm("SaveContactData", null,
                                 new AjaxOptions()
                                 {
                                     HttpMethod = "Post",
                                     OnSuccess = "onSaved"
-                                }, new {@role = "form"}))
+                                }, new {@role = "form", @class = "form-horizontal"}))
                             {
                                 @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
 
-                                <div class="checkbox">
-                                    @Html.CheckBoxFor(m => m.MsgProfile.LikeEmailOnGlobalLevel)
-                                    <label for="MsgProfile_LikeEmailOnGlobalLevel">Ich möchte E-Mails erhalten, die über die Funktion "Aktuelles / Mailing" versendet werden.</label>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Profile.FirstName, new {@class="col-sm-3 control-label"})
+                                    <div class="col-sm-9">
+                                        @Html.TextBoxFor(m => m.Profile.FirstName, new { @class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder })
+                                        @Html.ValidationMessageFor(m => m.Profile.FirstName)
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-default">SPEICHERN</button>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Profile.LastName, new { @class = "col-sm-3 control-label" })
+                                    <div class="col-sm-9">
+                                        @Html.TextBoxFor(m => m.Profile.LastName, new {@class = "form-control", placeholder = Resources.RegisterLastNamePlaceholder})
+                                        @Html.ValidationMessageFor(m => m.Profile.LastName)
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-offset-3 col-sm-9">
+
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-save"></i> @Resources.SaveButton</button>
+                                    </div>
+                                </div>
                             }
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
 
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-envelope-o"></i> @Resources.CommunicationSettingsHeading
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            @using (Ajax.BeginForm("SaveMsgData", null,
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                OnSuccess = "onSaved"
+                            }, new {@role = "form"}))
+                        {
+                                @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
+                                
+                                <div class="alert alert-info">
+                                    <strong>Hinweis:</strong> Über die Funktion "Aktuelles / Mailing" werden unregelmäßig alle Art von Informationen rund um das Studium versendet, z.B. vom Sekretariat oder der Fachschaft.
+                                    Diese "unwichtigen" E-Mails erhalte ich nur, wenn ích das Häckchen unten setze. Wichtige E-Mails z.B. zur Prüfungsanmeldung erhalte ich unabhängig davon in jedem Fall.
+                                </div>
+
+                                <div class="checkbox">
+                                    @Html.CheckBoxFor(m => m.MsgProfile.LikeEmailOnGlobalLevel)
+                                    <label for="MsgProfile_LikeEmailOnGlobalLevel">@Resources.SetMailingSettingCheckbox</label>
+                                </div>
+                                <button type="submit" class="btn btn-default">@Resources.SaveButton</button>
+                        }
+                        </div>
                     </div>
                 </div>
-                
-                <div class="col-md-4 column sortable">
-                    <div class="portlet portlet-sortable light bordered">
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="portlet light bordered">
                         <div class="portlet-title">
-                            <div class="caption font-green-sharp">
-                                <i class="icon-graduation-cap font-green-sharp"></i>
-                                <span class="caption-subject bold uppercase"> Geräteverwaltung</span>
+                            <div class="caption">
+                                <i class="fa fa-mobile"></i> @Resources.UserDevicesControlHeading
                             </div>
                         </div>
                         <div class="portlet-body" id="UserDevicesDiv">
 
-                            @if (Model.UserDevices.Count() == 0)
+                            @if (!Model.UserDevices.Any())
                             {
-                                <p>Kein Gerät registriert. Um ein Gerät für Push-Notifications zu registrieren, ist eine Anmeldung in der Fillter-App auf dem gewünschten Gerät erforderlich.</p>
+                                <p>@Resources.NoDeviceRegisteredMessage</p>
                             }
                             else
                             {
+                                <div class="alert alert-info">
+                                    <strong>Hinweis:</strong> Bei Nutzung der fillter Apps werden an die hier aufgezählten und mit Häckchen markierten Geräte Push-Notifications versendet.
+                                </div>
                                 <div id="SavedDiv"></div>
                                 <div>
                                     @Html.Partial("_UserDevices", Model)
                                 </div>
-                                <button onclick="saveUserDevices()" class="btn btn-default">SPEICHERN</button>
+                                <button onclick="saveUserDevices()" class="btn btn-default">@Resources.SaveButton</button>
                             }
 
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
 
-                    <div class="portlet portlet-sortable light bordered">
-                        <div class="portlet-title">
-                            <div class="caption font-green-sharp">
-                                <i class="icon-graduation-cap font-green-sharp"></i>
-                                <span class="caption-subject bold uppercase"> iCAL-Datei</span>
+                    <div class="portlet light bordered">
+                        <div class="portlet-title  tabbable-line">
+                            <div class="caption">
+                                <i class="fa fa-feed"></i> @Resources.iCalString
                             </div>
+                            <ul class="nav nav-tabs">
+                                <li>
+                                    <a href="#portlet_tab2" data-toggle="tab"> @Resources.FileString</a>
+                                </li>
+                                <li class="active">
+                                    <a href="#portlet_tab1" data-toggle="tab"> @Resources.FeedString </a>
+                                </li>
+                            </ul>
                         </div>
                         <div class="portlet-body">
-                            <p>Die iCal-Datei läßt sich in verschiedene Mailprogramme einlesen, z.B. MS-Outlook.</p>
-                            <p><strong>Hinweis:</strong> Die iCal Datei enthält nur die Termine zum Zeitpunkt des Downloads. Wer ständig auf dem laufenden gehalten werden möchte, kann den iCal-Feed verwenden.
-                            </p>
-                            <div><a href="@Url.Action("File", "Calendar")" class="btn btn-default"><i class="fa fa-download text-success"></i> Download iCal-Datei für <strong>@ViewBag.CalendarPeriod</strong></a>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="portlet_tab1">
+                                    <div class="alert alert-info">
+                                        <p>@Resources.iCalFeedExplanation</p>
+                                    </div>
+                                    <div>@Resources.iCalFeedURL (<strong>@ViewBag.CalendarPeriod</strong>): <span class="text-primary">@Url.Action("Feed", "Calendar", new {token = ViewBag.CalendarToken}, "http")</span></div>
+                                </div>
+                                <div class="tab-pane" id="portlet_tab2">
+
+                                    <strong>iCal_Datei:</strong> Die iCal-Datei läßt sich in verschiedene Mailprogramme einlesen, z.B. MS-Outlook.
+                                    <div class="alert alert-info">
+                                        <strong>Hinweis:</strong> Die iCal Datei enthält nur die Termine zum Zeitpunkt des Downloads. Wer ständig auf dem laufenden gehalten werden möchte, kann den iCal-Feed verwenden.
+                                    </div>
+                                    <a href="@Url.Action("File", "Calendar")" class="btn btn-default"><i class="fa fa-download text-success"></i> @Resources.iCalFileDownload <strong>@ViewBag.CalendarPeriod</strong></a>
+                                </div>
                             </div>
+
                         </div>
-                    </div>
-                    <div class="portlet portlet-sortable light bordered">
-                        <div class="portlet-title">
-                            <div class="caption font-green-sharp">
-                                <i class="icon-graduation-cap font-green-sharp"></i>
-                                <span class="caption-subject bold uppercase"> iCAL-Feed</span>
-                            </div>
-                        </div>
-                        <div class="portlet-body">
-                            <p>Die iCal-Feed läßt sich als Kalender, z.B. in MS-Outlook oder google Calendar einbinden. Das jeweilige Programm ruft dann je nach Einstellungen die aktuellen Termine ab.</p>
-                            <div>URL für iCal Client Feed (<strong>@ViewBag.CalendarPeriod</strong>): <span class="text-primary">@Url.Action("Feed", "Calendar", new {token = ViewBag.CalendarToken}, "http")</span></div>
-                        </div>
-                    </div>
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
                     </div>
                 </div>
             </div>
@@ -151,257 +175,9 @@
 
 
 
-
-
-
-
-
-@*
-    <div role="tabpanel">
-
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            @if (Model.MemberState == MemberState.Student || Model.MemberState == MemberState.Guest)
-            {
-                semesterActive = "active";
-
-                <li role="presentation" class="active"><a href="#semester" aria-controls="messages" role="tab" data-toggle="tab">Aktuelles Semester</a></li>
-                <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Benutzerkonto</a></li>
-                <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Benachrichtigungen</a></li>
-            }
-            else
-            {
-                homeActive = "active";
-
-                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Benutzerkonto</a></li>
-                <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Benachrichtigungen</a></li>
-            }
-        </ul>
-
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane @homeActive" id="home">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <p>Die Angaben zur Person werden gemäß den Einstellungen rechts in folgenden Funktionen verwendet:</p>
-                                <ul>
-                                    <li>Teilnehmerlisten und E-Mail Verteiler von Vorlesungen, Veranstaltungen und Newslettern</li>
-                                    <li>Sprechstundentermine (nur der Dozent kann die Daten sehen)</li>
-                                </ul>
-                                <p>
-                                    Generell gilt: Die Kontaktdaten werden nur Mitarbeitern der Hochschule München und Lehrbeauftragten angezeigt.
-                                    Ausnahme: Veranstaltungen, die von Studierenden angelegt werden, z.B. Fachschaft
-                                </p>
-                            </div>
-                            <div class="col-md-8">
-                                @using (Ajax.BeginForm("SaveContactData", null,
-                                    new AjaxOptions()
-                                    {
-                                        HttpMethod = "Post",
-                                        OnSuccess = "onSaved"
-                                    }, new {@role = "form"}))
-                                {
-                                    @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                @Html.LabelFor(m => m.Profile.FirstName)
-                                                @Html.TextBoxFor(m => m.Profile.FirstName, new {@class = "form-control", placeholder = "Vorname eingeben"})
-                                                @Html.ValidationMessageFor(m => m.Profile.FirstName)
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(m => m.Profile.EMail)
-                                                @Html.TextBoxFor(m => m.Profile.EMail, new {@class = "form-control", placeholder = "E-Mail Adresse eingeben"})
-                                                @Html.ValidationMessageFor(m => m.Profile.EMail)
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                @Html.LabelFor(m => m.Profile.LastName)
-                                                @Html.TextBoxFor(m => m.Profile.LastName, new {@class = "form-control", placeholder = "Vorname eingeben"})
-                                                @Html.ValidationMessageFor(m => m.Profile.LastName)
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Status</label>
-                                                <p class="form-control-static">
-                                                    <i class="fa fa-check text-success"></i> bestätigt
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 text-center">
-                                            <div class="form-group">
-                                                <label>Profilbild</label>
-                                                <div class="thumbnail"></div>
-                                                <button type="submit" class="btn btn-default">BILD ÄNDERN</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="checkbox">
-                                                <label>
-                                                    @Html.CheckBoxFor(m => m.Profile.IsPublic)
-                                                    <label for="Profile_IsPublic">Ich möchte, dass meine Kontaktdaten in den Teilnehmerlisten für andere Teilnehmer sichtbar sind.</label>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#dlgChangeName">SPEICHERN</button>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div role="tabpanel" class="tab-pane" id="messages">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        @using (Ajax.BeginForm("SaveMsgData", null,
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "Post",
-                                OnSuccess = "onSaved"
-                            }, new {@role = "form"}))
-                        {
-                            @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <p>
-                                        Neben den E-Mail Verteilern von Veranstaltungen gibt es gruppenbasierte E-Mail Verteiler, z.B. "an alle Erstsemester", "an alle Studierenden im Studiengang WI".
-                                    </p>
-                                    <p>E-Mails über gruppenbasierte Verteiler werden grundsätzlich nur an hm.edu Adressen versendet.</p>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="checkbox">
-                                        @Html.CheckBoxFor(m => m.MsgProfile.LikeEmailOnGlobalLevel)
-                                        <label for="MsgProfile_LikeEmailOnGlobalLevel">Ich möchte E-Mails über die gruppenbasierten E-Mail Verteiler erhalten.</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-offset-4 col-md-8">
-                                    <button type="submit" class="btn btn-default">SPEICHERN</button>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-            @if (Model.MemberState == MemberState.Student || Model.MemberState == MemberState.Guest)
-            {
-
-                <div role="tabpanel" class="tab-pane @semesterActive" id="semester">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <p>Die Angaben zur Semestergruppe müssen jedes Semester neue angegeben werden. Sie werden bei folgenden Funktionen benötigt</p>
-                                    <ul>
-                                        <li>Anzeige in Teilnehmerlisten</li>
-                                        <li>Bei Vorlesungen und Veranstaltungen mit Platzkontingenten</li>
-                                        <li>Gruppenspezifische E-Mail Verteiler, z.B. Fakultät, Studiengang oder -gruppe</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-8">
-                                    @using (Ajax.BeginForm("SaveSemesterData", null,
-                                        new AjaxOptions()
-                                        {
-                                            HttpMethod = "Post",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = "semesterState",
-                                            OnSuccess = "onSaved"
-                                        }, new {@role = "form"}))
-                                    {
-                                        @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="semesterState">
-                                                    @Html.Partial("_SemesterState", Model)
-                                                </div>
-
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.SemesterProfile.Faculty)
-                                                    @Html.DropDownListFor(model => model.SemesterProfile.Faculty, (IEnumerable<SelectListItem>) ViewBag.Faculties, new {@class = "form-control", disabled = "", onchange = "onFacultyChanged()"})
-                                                </div>
-
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.SemesterProfile.Curriculum)
-                                                    @Html.DropDownListFor(model => model.SemesterProfile.Curriculum, (IEnumerable<SelectListItem>) ViewBag.Curricula, new {@class = "form-control", onchange = "onCurriculumChanged()"})
-                                                </div>
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.SemesterProfile.Group)
-                                                    @Html.DropDownListFor(model => model.SemesterProfile.Group, (IEnumerable<SelectListItem>) ViewBag.Groups, new {@class = "form-control"})
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#dlgChangeName">SPEICHERN / ÄNDERN</button>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-
-        </div>
-    </div>
-
-
-
-    @section scripts
-    {
-        <script type="text/javascript">
-
-        function onSaved() {
-            alert("Gespeichert");
-        }
-
-        function onCurriculumChanged() {
-
-            var prog = $('#Curriculum option:selected').val();
-
-            $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("GroupList", "Dashboard")',
-                data: {
-                    currId: prog
-                },
-                success: function (data, success, xhr) {
-                    $('#Group').html(data);
-                }
-            });
-        }
-
-
-        </script>
-    }
-
-*@
-
 @section scripts
 {
-    <script src="~/Assets/admin/pages/scripts/portlet-draggable.js"></script>
-
     <script type="text/javascript">
-
-        $(document).ready(function () {
-            PortletDraggable.init();
-        });
 
         function onSaved() {
             alert("Gespeichert");

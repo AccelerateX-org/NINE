@@ -1,0 +1,79 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.BuildingViewModel>
+@{
+    ViewBag.Title = "Gebäude";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Gebäudeverwaltung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col-md-12" style="margin-left: 15px;">
+                <div class="panel panel-default">
+                    <ul class="nav">
+                        @if (User.IsInRole("SysAdmin"))
+                        {
+                            <li>
+                                <a href="@Url.Action("CreateBuilding", "Building")"><i class="fa fa-building"></i>Neues Gebäude anlegen</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-md-10">
+
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Adresse</th>
+                            <th>Institution</th>
+                            <th>Räume</th>
+                            <th>Ressources</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var gebäude in Model)
+                    {
+                    <tr>
+
+                        <td>@gebäude.Name</td>
+                        <td>@gebäude.Address</td>
+                        <td>@gebäude.Institution</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a href="@Url.Action("EditBuilding","Building", new { id=gebäude.Name })" class="btn btn-default btn-xs"><i class="fa fa-pencil-square-o"></i></a>
+                            <a href="@Url.Action("Index","Level")" class="btn btn-default btn-xs"><i class="fa fa-bars"></i></a>
+                            <a href="@Url.Action("DeleteBuilding", "Building", new { id=gebäude.Name })" class="btn btn-default btn-xs"><i class="fa fa-trash-o"></i></a>
+                            
+                        </td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

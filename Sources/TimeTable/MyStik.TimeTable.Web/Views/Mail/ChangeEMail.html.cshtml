@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Web.Models.ConfirmEmailMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Sie haben Ihre E-Mail Adresse geändert.</p>
+<p>Die Änderung der E-Mail Adresse und damit des Benutzernamens wird erst aktiviert, wenn Sie die Änderung bestätigen:
+     <a href="@Url.Action("ChangeEmail", "Account", new { userId = Model.User.Id }, Request.Url.Scheme)">E-Mail Adresse bestätigen und Konto ändern</a></p>

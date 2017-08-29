@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Overview";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Was steht dieses Semester an?</h1>
+                    <h3>Relevante Module im zweiten Semester</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+  
+  <div class="panel-body">
+      <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Anzeigen <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+              <li><a href="#">Nur Pflichtmodule</a></li>
+              <li><a href="#">Nur geschobene Module</a></li>
+              <li><a href="#">Noch nicht bestanden</a></li>
+              <li><a href="#">Freiwillige Module</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#">Alle anzeigen</a></li>
+          </ul>
+      </div>
+  </div>
+</div>
+
+<div style="float: left; width: 33%;">
+
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <div>
+                    <i class="glyphicon glyphicon-ok"></i>
+                    <span class="caption-subject bold uppercase"> Mathe 1</span><br>
+                    <span class="caption-helper"> 5 ECTS</span>
+                </div>
+            </div>
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active">
+                    <a href="#">
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">
+                            <i class="glyphicon glyphicon-info-sign"></i>
+                        </button></a></li> <!-- Hier könnte stehen: Pflichtmodul 3. Semester; Anwesenheitspflicht; Voraussetzung für 3. Semester; usw.-->
+                <li role="presentation"><a href="#">
+                    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">
+                    <i class="glyphicon glyphicon-pencil"></i>
+                    </button></a></li>
+                <li role="presentation"><a href="#">
+                    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">
+                    <i class="glyphicon glyphicon-trash"></i>
+                    </button></a></li>
+                <li role="presentation"><a href="#">
+                    <div class="dropdown">
+                        <button id="dLabel" type="button" class="btn btn-default btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                        </button>
+                           <ul class="dropdown-menu" aria-labelledby="dLabel">
+                           <li>Auswahl 1</li>
+                           <li>Auswahl 2</li>
+                          </ul>
+                    </div>
+                </a></li>          
+            </ul>
+ </div>
+        <ul>
+            <li>Belegt WS 16/17</li>
+            <li>Dienstag 13:30-16:00</li>
+            <li>Raum R 1.089</li>
+            <li>Prof. Stumpp</li>
+        </ul>
+            </div>    
+</div>

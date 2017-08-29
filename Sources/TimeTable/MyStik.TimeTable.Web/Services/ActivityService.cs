@@ -1,23 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
-using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityService
     {
         private TimeTableDbContext _db = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityService()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="db"></param>
         public ActivityService(TimeTableDbContext db)
         {
             _db = db;
@@ -28,12 +34,22 @@ namespace MyStik.TimeTable.Web.Services
             get { return _db ?? (_db = new TimeTableDbContext()); }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public IActivitySummary GetSummary(Guid Id)
         {
             Occurrence occ = DB.Occurrences.SingleOrDefault(o => o.Id == Id);
             return GetSummary(occ);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occ"></param>
+        /// <returns></returns>
         public IActivitySummary GetSummary(Occurrence occ)
         {
             if (occ != null)
@@ -74,6 +90,7 @@ namespace MyStik.TimeTable.Web.Services
         /// </summary>
         /// <param name="occurrence"></param>
         /// <param name="user"></param>
+        /// <param name="semester"></param>
         /// <returns>Der Benutzer ist bereits eingetragen, es ist eine Eintragung möglich. Wenn keine Eintragung möglich, dann wird es als Fehler angegeben (mit Grund).</returns>
         public OccurrenceStateModel GetActivityState(Occurrence occurrence, ApplicationUser user, Semester semester)
         {
@@ -142,9 +159,19 @@ namespace MyStik.TimeTable.Web.Services
 
             if (user.MemberState == MemberState.Student && summary.Activity is Course)
             {
+                /*
+                 * Überprüfung, ob eine Einschreibung für das im Parameter angegebene Semester vorliegt
                 var hasSubscription =
                     DB.SemesterGroups.Any(
                         g => g.Semester.Id == semester.Id && g.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+                        */
+
+                // Überprüfen, ob zu den Semestern des Kurses auch eine Einschreibung vorliegt
+                var allSemIds = summary.Activity.SemesterGroups.Select(x => x.Semester.Id).ToList();
+                var allSubIds = DB.Subscriptions.OfType<SemesterSubscription>().Where(x => x.UserId.Equals(user.Id))
+                    .Select(x => x.SemesterGroup.Semester.Id).ToList();
+
+                var hasSubscription = allSemIds.Any(x => allSubIds.Contains(x));
 
                 if (!hasSubscription)
                 {
@@ -225,6 +252,13 @@ namespace MyStik.TimeTable.Web.Services
             return state;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public SubscriptionState GetSubscriptionState(Occurrence occurrence, DateTime start, DateTime end)
         {
             var now = GlobalSettings.Now;

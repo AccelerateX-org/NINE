@@ -1,0 +1,126 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+<div class="portlet light bordered">
+    <div class="portlet-title">
+        <div class="caption">
+              <span class="caption-subject bold uppercase"><i class="icon-calendar"></i> Die wichtigsten Termine im @Model.Semester.Name</span>
+        </div>
+        <div class="actions">
+            <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-default btn-sm">
+                <i class="fa fa-calendar"></i>
+            </a>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Datum / Zeitraum</th>
+                    <th>Beschreibung</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var date in Model.Semester.Dates.OrderBy(x => x.From))
+    {
+                        if(date.To>DateTime.Now || date.NoDate)
+                        { 
+                        <tr>
+                            @if (date.IsImportant)
+                            {
+                                if (date.NoDate)
+                                {
+
+                                    <td class="danger"><b>Wird noch bekannt gegeben</b></td>
+
+                                    if (date.HasCourses == false)
+                                    {
+                                        <td class="danger"><b>@date.Description</b> <i>(Vorlesungsfrei)</i></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="danger"><b>@date.Description</b></td>
+                                    }
+
+                                }
+                                else if (date.OneDay)
+                                {
+                                    <td class="danger"><b>@date.From.ToShortDateString()</b></td>
+
+                                    if (date.HasCourses == false)
+                                    {
+                                        <td class="danger"><b>@date.Description</b> <i>(Vorlesungsfrei)</i></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="danger"><b>@date.Description</b></td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td class="danger"><b>@Html.TimeSpan(date)</b></td>
+
+                                    if (date.HasCourses == false)
+                                    {
+                                        <td class="danger"><b>@date.Description</b> <i>(Vorlesungsfrei)</i></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="danger"><b>@date.Description</b></td>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (date.NoDate)
+                                {
+                                    <td>Wird noch bekannt gegeben</td>
+
+                                    if (date.HasCourses == false)
+                                    {
+                                        <td>@date.Description <i>(Vorlesungsfrei)</i></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@date.Description</td>
+                                    }
+                                }
+                                else if (date.OneDay)
+                                {
+                                    <td>@date.From.ToShortDateString()</td>
+
+                                    if (date.HasCourses == false)
+                                    {
+                                        <td>@date.Description <i>(Vorlesungsfrei)</i></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@date.Description</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>@Html.TimeSpan(date)</td>
+
+                                    if (date.HasCourses == false)
+                                    {
+                                        <td>@date.Description <i>(Vorlesungsfrei)</i></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@date.Description</td>
+                                    }
+                                 }
+                            }
+                        </tr>
+                        }
+    }
+                    
+            </tbody>
+        </table>
+        
+        @Html.ActionButton("", "Alle Termine", "Index", "Semester", null , new { @class = "btn btn-default btn-xs" })
+    </div>
+</div>
+

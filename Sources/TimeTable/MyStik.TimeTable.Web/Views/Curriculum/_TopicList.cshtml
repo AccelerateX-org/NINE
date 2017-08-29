@@ -1,0 +1,13 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+
+@if (Model.Topics.Any())
+{
+    foreach (var group in Model.Topics)
+    {
+        <option value="@group.Id">@group.TopicName</option>
+    }
+}
+else
+{
+    <option value="@Guid.Empty">Alle Themen</option>
+}

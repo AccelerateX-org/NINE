@@ -5,16 +5,28 @@ using MyStik.TimeTable.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NotificationService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly TimeTableDbContext Db = new TimeTableDbContext();
+        /// <summary>
+        /// 
+        /// </summary>
         private ApplicationDbContext _db = new ApplicationDbContext();
 
-        // Persönliche Notifications abfragen
+        /// <summary>
+        /// Persönliche Notifications abfragen
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public IEnumerable<NotificationContract> GetPersonalNotifications(string userId)
         {
             List<NotificationContract> contracts = new  List<NotificationContract>();
@@ -40,7 +52,13 @@ namespace MyStik.TimeTable.Web.Api.Services
             return contracts.OrderBy(x => x.Timestamp);
         }
 
-        // Persönlichen Token in der DB hinterlegen
+        /// <summary>
+        /// Persönlichen Token in der DB hinterlegen
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="token"></param>
+        /// <param name="deviceName"></param>
+        /// <returns></returns>
         public TokenRegistryResponse SaveToken(string userId, string token, string deviceName)
         {
             // Überprüfen, ob der User in der DB hinterlegt ist

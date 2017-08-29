@@ -1,6 +1,4 @@
 ﻿@using MyStik.TimeTable.Data
-@using MyStik.TimeTable.Web.Models
-@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
 
 @{
@@ -21,7 +19,7 @@
     <div class="panel-body bg-fillter-events">
         <div class="row">
             <div class="col-md-12">
-                <h2>Mailing - Semestergruppen</h2>
+                <h1>Mailing - Semestergruppen</h1>
             </div>
         </div>
     </div>
@@ -53,7 +51,7 @@
                             }
                             @if (groupList != null)
                             {
-                                foreach (var group in groupList.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                                foreach (var group in groupList.Where(g => g.CapacityGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
                                 {
                                     nStud += group.Subscriptions.Count;
 

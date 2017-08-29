@@ -2,17 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CantineController : Controller
     {
-        // GET: Cantine
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             ViewBag.MenuId = "menu-cantine";
@@ -135,24 +139,27 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult StuCafe()
         {
             StuCafeViewModel model = new StuCafeViewModel();
 
-            model.Name = "StuCafé im Roten Würfel";
+            model.Name = Resources.StuCafeHeading;
 //Gerichte
             model.Gerichte = new List<StuCafeGerichteViewModel>();
 
             var ls = new StuCafeGerichteViewModel
             {
-                Name = "Leberkassemmel",
+                Name = Resources.MeatLoafBreadString,
                 Preis = "1,50 €"
             };
             model.Gerichte.Add(ls);
             var ss = new StuCafeGerichteViewModel
             {
-                Name = "Schnitzelsemmel",
+                Name = Resources.SchnitzelBreadString,
                 Preis = "2,00 €"
             };
 
@@ -165,7 +172,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var balisto = new StuCafeSnacksViewModel
             {
-                Name = "Balisto ver. Sorten",
+                Name = Resources.SnacksTableContent,
                 Preis = "0,80 €"
             };
 

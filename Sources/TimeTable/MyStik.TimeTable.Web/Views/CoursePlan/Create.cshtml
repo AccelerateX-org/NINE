@@ -1,0 +1,121 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-personal">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studienplan erzeugen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-university"></i>Auswahlmöglichkeiten
+                            </div>
+                            <div class="actions">
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
+                            {
+                                <fieldset>
+                                    <div class="form-group">
+                                        <label for="nameofplan" class="col-sm-3 control-label">Name</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Hauptplan" name="nameofplan" id="nameofplan">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description" class="col-sm-3 control-label">Beschreibung</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Auslandspraktikum im 6. Semester" name="description" id="description">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="semester" class="col-sm-3 control-label">Studienbeginn</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="semester" id="semester">
+                                                <option>WS16</option>
+                                                <option>SS16</option>
+                                                <option>WS15</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="Schwerpunkt" class="col-sm-3 control-label">Studienrichtung</label>
+                                        <div class="col-sm-offset-3 col-sm-9">
+                                            <div class="radio-list">
+                                                <label>
+                                                    <input type="radio" name="Schwerpunkt" id="TEC" value="TEC" checked> Industrielle Technik
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="Schwerpunkt" id="INF" value="INF"> Informationstechnik
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="Schwerpunkt" id="BIO" value="BIO"> Biotechnologie
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Konzept1" class="col-sm-3 control-label">Sprachkonzept</label>
+                                        <div class="col-sm-offset-3 col-sm-9">
+                                            <div class="radio-list">
+                                                <label>
+                                                    <input type="radio" name="Sprachkonzept" id="Konzept1" value="Konzept1" checked>"3 + 0" (3 WPMs, 3 x Fachsprache A)
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="Sprachkonzept" id="Konzept2" value="Konzept2"> "3 + 1" (2 WPMs, 3x Fachsprache A, 1x Fachsprache B)
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="Sprachkonzept" id="Konzept3" value="Konzept3">"2 + 2" (2 WPMs, 2 x Fachsprache A, 2 x Fachsprache B)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Fachsprache" class="col-sm-3 control-label">Fachsprache&nbspA</label>
+                                        <div class="col-sm-offset-3 col-sm-9">
+                                            <div class="radio-list">
+                                                <label>
+                                                    <input type="radio" name="Fachsprache" id="EN" value="EN" checked>Englisch
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="Fachsprache" id="FR" value="FR">Französisch
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="submit" value="Plan anlegen" class="btn btn-primary btn-lg btn-block" />
+                                </fieldset>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+       
+

@@ -1,0 +1,497 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomReportResponseModel
+@{
+    ViewBag.Title = "TimeLine";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Raumauswertung</h1>
+                    <h4>@Model.Room.Number</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-building"></i>Auswertung Raumbelegung
+                            </div>
+                            <div class="actions">
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Datum</th>
+                                        <th>Wochentag</th>
+                                        <th>Anzahl Termine</th>
+                                        <th>Belegungsdauer [min]</th>
+                                        <th>Belegungsdauer [h]</th>
+                                        <th>Auslastung</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        //Ermittlung der gesamten Minuten, Termine,... zur Ausgabe am Ende der Tabelle
+                                        var totalDates = 0;
+                                        var totalMinutes = 0;
+                                        var totalHours = 0;
+                                        var partMinutes = 0;
+
+                                        //Variable in der später die gesamte Auslastung berechnet wird
+                                        double Gesamtauslastung = 0;
+                                        //letzendliche Ausgabe des Stringwerts von Gesamtauslastung
+                                        string Ausgabe;
+
+                                        //zählt die einzelnen Auslastungswerte zusammen
+                                        double Auslastungswerte = 0;
+                                        double Zwischenwert = 0;
+                                        //zählt die Anzahl an Werktagen zur Ermittlung der Gesamtauslastung
+                                        var Werktage = 0;
+                                        //Zählt die Länge eines Auslastungswertes um Fehler bei der Ausgabe zu verhindern
+                                        int Länge = 0;
+
+                                        //Der Auslastungswert eines Tages
+                                        string AuslastungTag = "0";
+
+                                        //Zur Ermittlung der Zeit in Stunden
+                                        double Hours = 0;
+                                        double value = 0;
+
+                                        //Erstellung einer String-Liste, die alle Daten enthält
+                                        //Für Übernahme in graphische Benutzerausgabe
+                                        //List sind die Tabellen die die WErte enthalten
+                                        var Datumsliste = new List<string>();
+                                        var Minutenliste = new List<string>();
+                                        var Auslastungsliste = new List<string>();
+                                        string datum;
+                                        string minute;
+
+                                        foreach (var statistics in Model.Statistics)
+                                        {
+                                            //füllen einer Liste, die im Stringformat alle Werte enthält zur graphischen Übergabe
+                                            datum = statistics.Date.ToString();
+                                            Datumsliste.Add(datum);
+                                            minute = statistics.TotalMinutes.ToString();
+                                            Minutenliste.Add(minute);
+
+
+                                            //Gesamtwerte hochzählen
+                                            totalDates += statistics.DateCount;
+                                            totalMinutes += statistics.TotalMinutes;
+
+                                            value = statistics.TotalMinutes;
+                                            Hours = value / 60;
+
+                                            //Ermittelt ob es sich um einen Werktag handelt, um die Gesamtauslastung ermittelbar zu machen
+                                            if (statistics.Werktag == true)
+                                            {
+                                                Werktage += 1;
+                                                Auslastungswerte += statistics.Auslastung;
+
+                                                Zwischenwert = statistics.Auslastung * 100;
+                                            }
+                                            else
+                                            {
+                                                Zwischenwert = 0;
+                                            }
+
+                                            //Umwandelung des Zahlenwertes in String zur besseren Ausgabe
+                                            AuslastungTag = Zwischenwert.ToString();
+                                            Länge = AuslastungTag.Length;
+
+                                            //Längenbestimmung um Fehler bei der Ausgabe zu verhindern
+                                            if (Länge > 5)
+                                            {
+                                                AuslastungTag = AuslastungTag.Remove(5, Länge - 5);
+                                            }
+
+                                            //hinzufügen der Auslastungswerte
+                                            Auslastungsliste.Add(AuslastungTag);
+
+                                            //Ausgabe der verschiedenen ermittelten Werte pro Tag, solange es sich um einen werktag handelt und keine Veranstatlung am WE vorliegt
+                                            if (statistics.Werktag == true)
+                                            {
+                                                <tr>
+                                                    <td>@statistics.Date</td>
+                                                    <td>@statistics.Wochentag</td>
+                                                    <td>@statistics.DateCount</td>
+                                                    <td>@statistics.TotalMinutes</td>
+                                                    <td>@Hours</td>
+                                                    <td>@AuslastungTag %</td>
+                                                </tr>
+                                            }
+                                        }
+
+                                        // Ermittlung der Werte, die zusammenfassenden am Ende der Tabelle ausgegeben werden
+                                        Gesamtauslastung = Auslastungswerte / Werktage * 100;
+                                        Ausgabe = Gesamtauslastung.ToString();
+                                        Länge = Ausgabe.Length;
+                                        if (Länge > 5)
+                                        {
+                                            Ausgabe = Ausgabe.Remove(5, Länge - 5);
+                                        }
+
+                                        totalHours = totalMinutes / 60;
+                                        partMinutes = (totalMinutes % 60);
+
+                                        <tr>
+                                            <td><strong>Anzahl über gesamten Zeitraum</strong></td>
+                                            <td></td>
+                                            <td><strong>@totalDates</strong></td>
+                                            <td><strong>@totalMinutes</strong></td>
+                                            <td><strong>@totalHours:@partMinutes</strong></td>
+                                            <td><strong>@Ausgabe %</strong></td>
+                                        </tr>
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="row">
+        <h2>Flot-Dummy</h2>
+        <div id="placeholder" style="width:auto;height:300px"></div>
+   
+    
+</div>
+
+
+@section Scripts
+    {
+
+    
+    <script src="~/Assets/global/plugins/flot/jquery.flot.min.js"></script>
+    <script src="~/Assets/global/plugins/flot/jquery.flot.time.js"></script>
+    <script src="~/Assets/global/plugins/flot/jquery.flot.axislabels.js"></script>
+    <script src="~/Assets/global/plugins/flot/jquery.flot.categories.js"></script>
+    <script src="~/Assets/global/plugins/flot/jquery.flot.tooltips.source.js"></script>
+
+    <script>
+
+
+    var data2 = [];
+    var data = [];
+    var param = 14;
+
+        $.ajax({
+            url: "@Url.Action("GetTestData")",
+            data: {
+                roomId: '@Model.Room.Number',
+                DaysValue: '@Model.DayAmountValue',
+                fromCalendar: '@Model.untilCalendarTransport',
+                untilCalendar:'@Model.fromCalendarTransport'
+            },
+            type: "POST",
+        dataType: "json",
+        success: onDataReceived
+    });
+
+
+    function onDataReceived(series) {
+
+        // Extract the first coordinate pair; jQuery has parsed it, so
+        // the data is now just an ordinary JavaScript object
+
+        // Push the new data onto our existing data array
+
+
+
+        //https://de.wikipedia.org/wiki/Rube-Goldberg-Maschine
+
+        data.push(series.data);
+        console.log(data);
+
+
+        for (var i = 0; i < data[0].length; i++) {
+            var floor = Math.floor;
+            var x = floor(parseInt(data[0][i][1]));
+            data2.push([data[0][i][0], x]);
+
+        }
+
+        console.log(data2);
+
+        return data2;
+
+
+
+    };
+
+
+
+    function Execute(param, Daten) {
+
+        if (Daten.length < param) {
+            smallData(Daten);
+
+        }
+
+        else {
+
+            bigData(Daten);
+
+
+
+        }
+    }
+
+
+    //____________________________________
+
+
+    function printFunction(Daten, Optionen, statement) {
+        $(function () {
+
+
+
+            var data = [
+                { label: statement, data: Daten }, ];
+
+
+            $.plot($("#placeholder"), data, Optionen);
+
+
+        });
+    }
+
+
+
+
+
+    //BIG DATA________________________________________________________
+
+    function bigData(Daten) {
+
+        var splitArray = [];
+        var sortedData = [];
+        var dateContainer = [];
+        var color = "#3F48CC";
+
+        /*Change Length to 13*/
+        /*Preparing for sorting*/
+        for (var i = 0; i < Daten.length; i++) {
+            splitArray.push(Daten[i][1]);
+
+        }
+
+        /*Sorting*/
+        function num_sort(a, b) {
+            return b - a;
+
+        }
+
+        splitArray.sort(num_sort);
+
+        /*Deleting doubles and appending to Date-Container*/
+        splitArray = splitArray.filter(function (value, index, array) {
+            return array.indexOf(value) == index;
+
+        });
+
+
+        /*Probably yet checking for length; splitArray still too long?*/
+        /*Appending to Date-Container*/
+
+        /*Umschichten von Daten */
+
+        for (i = 0; i < splitArray.length; i++) {
+
+            dateContainer.push([i, splitArray[i]]);
+
+
+        }
+
+
+        /* Zu allen Maximalauslastungen die zugehörigen Daten! */
+
+        var obj = {};
+        for (var i = 0; i < splitArray.length; i++) {
+            var con = [];
+            obj['key' + i] = splitArray[i];
+            for (var n = 0; n < data2.length; n++) {
+                if (splitArray[i] == data2[n][1]) {
+                    con.push(data2[n][0]);
+                };
+
+
+            };
+            obj['value' + i] = con;
+
+
+
+        };
+
+        var chartOptions = {
+            series: {
+                bars: {
+                    show: true,
+                    barWidth: 0.8,
+                    lineWidth: 1,
+                    order: 1,
+                    fillColor: {
+                        colors: [{
+                            opacity: 1
+                        }, {
+                            opacity: 1
+                        }]
+                    }
+                }
+            },
+            xaxis: {
+                mode: "categories"
+            },
+            grid: {
+                borderWidth: 0,
+                hoverable: true
+            },
+            colors: [color],
+            tooltip: {
+                show: true,
+                content: function (label, xval, yval, flotItem) {
+                    var store = [];
+                    for (var i = 0; i < splitArray.length; i++) {
+
+
+                        if (obj['key' + i] == yval) {
+
+
+                            store.push(obj['value' + i]);
+
+                        };
+
+
+
+
+                    };
+
+                    console.log(store);
+                    return '<div style="background-color: rgba(255,255,255,0.75); border: 1px solid #000; padding: .25em"><h4 style>%y Minuten an folgenden Tagen: </h4><ul v-for>' + store + '</ul></div>'
+
+                },
+
+                xDateFormat: "%y-%0m-%0d %H:%M:%S",
+                shifts: {
+                    x: 10,
+                    y: 20
+                },
+                defaultTheme: false
+
+            }
+
+
+        }
+
+
+
+
+
+        /* options vorbereiten für call! */
+
+
+        console.log(splitArray);
+        console.log(obj);
+        var statement = "Gestaffelte Maximalauslastung";
+
+
+        printFunction(dateContainer, chartOptions, statement);
+
+
+
+    };
+
+
+
+    //SMALL DATA_______________________________________________________
+
+    function smallData(Daten) {
+
+        var color = "#ED1C24";
+
+        var chartOptions = {
+            series: {
+                bars: {
+                    show: true,
+                    barWidth: 0.8,
+                    lineWidth: 1,
+                    order: 1,
+                    fillColor: {
+                        colors: [{
+                            opacity: 1
+                        }, {
+                            opacity: 1
+                        }]
+                    }
+                }
+            },
+            xaxis: {
+                mode: "categories"
+            },
+            grid: {
+                borderWidth: 0,
+                hoverable: true
+            },
+            colors: [color],
+            tooltip: {
+                show: true,
+                content: '<div style="background-color: rgba(255,255,255,0.75); border: 1px solid #000; padding: .25em"><h4 style>%s:</h4><ul><li>%x: Auslastung von %y Minuten</li></ul></div>',
+
+                xDateFormat: "%y-%0m-%0d %H:%M:%S",
+                shifts: {
+                    x: 10,
+                    y: 20
+                },
+                defaultTheme: false
+
+            }
+
+
+        }
+
+        var statement = "Wochenansicht";
+
+        printFunction(data2, chartOptions, statement);
+
+
+
+
+    }
+
+
+    //Tryout:
+
+
+
+
+
+
+
+
+
+
+    //_________________________
+    Execute(param, data2);
+
+    //bigData(data2);
+    //smallData(data2);
+
+    //_________________________
+
+</script>
+    
+    }

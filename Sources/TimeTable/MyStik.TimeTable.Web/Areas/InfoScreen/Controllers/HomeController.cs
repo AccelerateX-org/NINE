@@ -3,33 +3,38 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using HtmlAgilityPack;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Api.Contracts;
-using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Areas.InfoScreen.Models;
 using MyStik.TimeTable.Web.Controllers;
-using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Models;
 using Newtonsoft.Json.Linq;
 
 namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AllowAnonymous]
     public class HomeController : BaseController
     {
-        // GET: InfoScreen/Home
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             // leere Seite nur mir Uhr
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPost]
         [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]
         public PartialViewResult LeftPanel(string token)
@@ -57,108 +62,36 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
             return MVG();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPost]
         [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]
         public PartialViewResult RightPanel(string token)
         {
-            // Im Wechsel
-            // - aktuelle Lehrveranstaltungen
-            // - freie Räume
-            // - "Werbung", z.B. ppt oder Bild 
-
             if (string.IsNullOrEmpty(token))
-            {
-                ViewBag.Token = "CurrentCourses@HOKO_Weeks";
-                return CurrentCourses();
-            }
-
-            string[] elems = token.Split('@');
-
-            if (elems.Length < 2)
-            {
-                // Theoretisch darf das nicht passieren
-                // Default: Zeig die aktuellen Kurse
-                ViewBag.Token = "CurrentCourses@HOKO_Weeks";
-                return CurrentCourses();
-            }
-
-            var lastView = elems[0];
-            var nextView = elems[1];
-
-            if (IsCommercial(lastView))
-            {
-                var nextCommerical = GetNextCommercial(lastView);
-                return ShowContent(nextView, nextCommerical);
-            }
-            else
-            {
-                var nextContent = GetNextContent(lastView);
-                return ShowCommercial(nextView, nextContent);
-            }
-
-        }
-
-        private bool IsCommercial(string token)
-        {
-            return token.Equals("HOKO_Weeks") || token.Equals("HOKO_Screen");
-        }
-
-        private string GetNextCommercial(string token)
-        {
-            if (token.Equals("HOKO_Weeks"))
-                return "HOKO_Screen";
-            return "HOKO_Weeks";
-        }
-
-        private string GetNextContent(string token)
-        {
-            if (token.Equals("CurrentCourses"))
-                return"NextCourses";
-
-            if (token.Equals("NextCourses"))
-                return "FreeRooms";
-
-            return "CurrentCourses";
-        }
-
-        public PartialViewResult ShowContent(string contentView, string commercialView)
-        {
-            string token = string.Format("{0}@{1}", contentView, commercialView);
-            ViewBag.Token = token;
-            
-            if (contentView.Equals("CurrentCourses"))
                 return CurrentCourses();
 
-            if (contentView.Equals("NextCourses"))
+            if (token.Equals("NowPlaying"))
+                return CurrentCourses();
+
+            if (token.Equals("WhatsNext"))
                 return NextCourses();
 
-            if (contentView.Equals("FreeRooms"))
+            if (token.Equals("FreeRooms"))
                 return FreeRooms();
+
+            /*
+            if (contentView.Equals("Events"))
+                return Events();
+                */
 
             // Theoretisch darf das nicht passieren
             // Default: Zeig die aktuellen Kurse
             return CurrentCourses();
         }
-
-        public PartialViewResult ShowCommercial(string commercialView, string contentView)
-        {
-            string token = string.Format("{0}@{1}", commercialView, contentView);
-            ViewBag.Token = token;
-
-
-            // zuletzt HOKO_Weeks
-            if (commercialView.Equals("HOKO_Weeks"))
-            {
-                ViewBag.ImgFileName = "~/Assets/fillter/img/HOKO_Weeks_Stundenplan.jpg";
-            }
-            else // zuletzt HOKO_Screen
-            {
-                ViewBag.ImgFileName = "~/Assets/fillter/img/Hoko Screenwerbung.jpg";
-            }
-
-            return PartialView("_Commercial");
-        }
-
 
 
         #region LeftPanel
@@ -314,6 +247,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
 
         #region RightPanel
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public PartialViewResult CurrentCourses()
         {
             var now = DateTime.Now;
@@ -321,13 +258,19 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
 
             var model = new InfoscreenModel();
 
-            var nowPlaying = Db.ActivityDates.Where(d => d.Begin <= now && now < d.End).OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+            var nowPlaying = Db.ActivityDates.Where(d => 
+            d.Activity.Organiser.ShortName.Equals("FK 09") &&
+            d.Begin <= now && now < d.End).OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
 
             model.NowPlayingDates = nowPlaying.Where(date => date.Activity is Course).Take(maxEntries).ToList();
 
             return PartialView("_CurrentCourses", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public PartialViewResult NextCourses()
         {
             var now = DateTime.Now;
@@ -338,7 +281,9 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
             // die nächste sind die, die am selben Tag noch beginnen
             var endOfDay = DateTime.Today.AddDays(1);
 
-            var upComing = Db.ActivityDates.Where(d => d.Begin > now && d.Begin < endOfDay).OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+            var upComing = Db.ActivityDates.Where(d =>
+                d.Activity.Organiser.ShortName.Equals("FK 09") &&
+                d.Begin > now && d.Begin < endOfDay).OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
 
             model.UpcomingDates = upComing.Where(date => date.Activity is Course).Take(maxEntries).ToList();
 
@@ -346,6 +291,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
             return PartialView("_NextCourses", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public PartialViewResult FreeRooms()
         {
             var model = new InfoscreenModel();
@@ -382,7 +331,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public PartialViewResult Announcements()
         {
             // lese Daten aus Datenbank
@@ -412,6 +364,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
                     Beschreibung = ev.Description,
                     Ort = ev.Dates.FirstOrDefault().Rooms.FirstOrDefault().Name,
                     Datum = ev.Dates.OrderBy(d => d.Begin).FirstOrDefault(d => d.Begin >= DateTime.Now).Begin
+
                 };
 
                 model.Events.Add(ev1);
@@ -453,6 +406,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
             return PartialView("_RechtsCarousel", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public PartialViewResult Announcements2()
         {
             var model = new NachmittagRechtsModel();
@@ -487,7 +444,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
             return PartialView("_RechtsCarouselAnnouncements", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public PartialViewResult Events()
         {
             // TODO: Abfrage des Backends
@@ -504,31 +464,42 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
 
 
             //alle Veranstaltungen der Woche anzeigen
-            var events = Db.Activities.OfType<Event>().Where(ev => ev.Dates.Any(d => d.Begin >= DateTime.Today)).ToList();
+            // Abfragen der Datenbank ob Event am Infoscreen veröffentlicht werden soll
 
+            var events = Db.Activities.OfType<Event>().Where(ev => ev.Dates.Any(d => d.Begin >= DateTime.Today) && ev.Published.Equals(true)).Take(3).ToList();
             
 
             // TODO: Befülle das Objekt
-            foreach(var ev in events)
+            foreach (var ev in events)
             {
+
                 var k = new InfoscreenEventsRightViewModel();
                 
-
+                    k.Infotext = ev.Info;
                 k.Wochentag = ev.Dates.FirstOrDefault().Begin.DayOfWeek.ToString();
                 k.Datum = ev.Dates.FirstOrDefault();
                 k.Titel = ev.Name;
-                //k.Raumnummer = ev.Dates.FirstOrDefault().Rooms.FirstOrDefault().Number;
-                
+                k.Fakultät = "Fakultät 09";
 
-
-
+                    if (ev.Dates.Any() && ev.Dates.First().Rooms.Any())
+                    {
+                        k.Raumnummer = ev.Dates.FirstOrDefault().Rooms.FirstOrDefault().Number;
+                    }
+                    else
+                    {
+                        k.Raumnummer = "unbekannt";
+                    }
+                    k.Kurzbeschreibung = ev.ShortName;
+                    k.Beschreibung = ev.Description;
         
             m.InfoscreenEventsRight.Add(k);
 
 
             // TODO: Verzweigung nach Wochentag => andere Sicht, anderes Modell
+                
             }
             return PartialView("_RechtsEvents",m);
+
 
         }
         string GetResult(string url)

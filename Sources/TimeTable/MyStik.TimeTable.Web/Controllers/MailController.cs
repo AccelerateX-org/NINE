@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using ActionMailer.Net;
 using ActionMailer.Net.Mvc;
 using log4net;
 using MyStik.TimeTable.Web.Models;
@@ -12,8 +7,15 @@ using System.Net.Mail;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MailController : MailerBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mail"></param>
         protected override void OnMailSent(MailMessage mail)
         {
             var logger = LogManager.GetLogger("OnMailSent");
@@ -84,6 +86,17 @@ namespace MyStik.TimeTable.Web.Controllers
             return Email("ForgotPassword", model);
         }
 
+        internal EmailResult ChangeEMail(ConfirmEmailMailModel model)
+        {
+            // Die geänderte E-Mail Adresse steht in den Bemerkungen
+            // und wird erst bei Bestätigung übertragen
+            To.Add(model.User.Remark);
+            Subject = "Änderung der E-Mail Adresse bei NINE";
+
+            return Email("ChangeEMail", model);
+        }
+
+
         internal EmailResult InvitationMail(ForgotPasswordMailModel model, ApplicationUser sender, string language)
         {
             From = new MailAddress(sender.Email,
@@ -151,6 +164,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return Email("CancelOccurrence", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public EmailResult CancelAllOccurrences(SubscriptionMailModel model)
         {
             From = new MailAddress(model.SenderUser.Email,
@@ -218,6 +236,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public EmailResult GenericMail(GenericMailDeliveryModel model)
         {
             if (model.Sender != null && !string.IsNullOrEmpty(model.Sender.Email))

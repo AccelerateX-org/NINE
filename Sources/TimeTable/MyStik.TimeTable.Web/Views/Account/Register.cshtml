@@ -1,82 +1,71 @@
 ﻿@model MyStik.TimeTable.Web.Models.RegisterViewModel
 @{
-    Layout = "~/Views/Shared/_LayoutNewPublic.cshtml";
-    ViewBag.Title = "Registerierung";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    ViewBag.Title = Resources.RegisterTabHeading;
 }
 
 <div class="row">
     <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4 class="panel-title">Neues Benutzerkonto anlegen</h4>
+                <h4 class="panel-title"> @Resources.RegisterHeading </h4>
             </div>
             <div class="panel-body">
                 <div class="alert alert-info ">
                     <strong>Wichtige Information für Erstsemester:</strong>
                     <ul>
-                        <li>Verwenden Sie nach Möglichkeit zur Registrierung Ihre hm.edu E-Mail Adresse.</li>
-                        <li>Ihr HM-Postfach (E-Mail Adresse ....@@hm.edu) steht i.d.R. erst 24 h nach Ihrer Immatrikulation zur Verfügung.</li>
-                        <li>Bitte prüfen Sie zuerst die Funktionsfähigkeit Ihres HM-Postfachs bevor Sie sich hier registrieren.</li>
-                        <li><strong>ACHTUNG</strong>: Bitte keine <strong>hotmail.de/com</strong> oder <strong>outlook.de</strong> Adressen verwenden. Diese Dienste verweigern die Annahme von E-Mails, die von hm.edu gesendet werden.</li>
+                        <li>Prüfen Sie zuerst, ob Ihr HM-Postfach bereits eingerichtet ist und Sie über den <a href="https://xmail.mwn.de" target="_blank"><strong>OWA</strong></a> darauf zugreifen können.</li>
+                        <li>Bitte <strong>keine hotmail.de/com</strong> oder <strong>outlook.de</strong> Adressen verwenden. Diese Dienste verweigern die Annahme von E-Mails, die von hm.edu gesendet werden.</li>
                     </ul>
                 </div>
                 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new {@class = "form", role = "form"}))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.ValidationSummary(true, "Es ist ein Fehler aufgetreten", new {@class = "alert alert-danger"})
+                    @Html.ValidationSummary(true, Resources.RegisterValidationSummaryMessage, new {@class = "alert alert-danger"})
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = "E-Mail Adresse als Benutzername eingeben"})
+                            @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = Resources.RegisterEmailPlaceholder})
                         </div>
                         @Html.ValidationMessageFor(m => m.Email)
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = "Passwort eingeben"})
+                            @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = Resources.RegisterPasswordPlaceholder})
                         </div>
                         @Html.ValidationMessageFor(m => m.Password)
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "form-control", placeholder = "Passwortwiederholung eingeben"})
+                            @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "form-control", placeholder = Resources.RegisterPasswordAgainPlaceholder})
                         </div>
                         @Html.ValidationMessageFor(m => m.ConfirmPassword)
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.FirstName, new {@class = "form-control", placeholder = "Vorname eingeben"})
+                            @Html.TextBoxFor(m => m.FirstName, new {@class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder})
                         </div>
                         @Html.ValidationMessageFor(m => m.FirstName)
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.LastName, new {@class = "form-control", placeholder = "Nachname eingeben"})
+                            @Html.TextBoxFor(m => m.LastName, new {@class = "form-control", placeholder = Resources.RegisterLastNamePlaceholder})
                         </div>
                         @Html.ValidationMessageFor(m => m.LastName)
                     </div>
-                    @*
-    <div class="form-group">
-        <label>
-            <input type="checkbox" name="tnc" /> Ich stimme den <a href="javascript:;">
-                Nutzungsbedingungen
-            </a>
-            und den <a href="javascript:;">
-                Datenschutzrichtlinien
-            </a>
-            zu.
-        </label>
-        <div id="register_tnc_error">
-        </div>
-    </div>
-                    *@
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required><label for="DatenschutzGelesen">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
+                        </div>
+                            @Html.ValidationMessageFor(m => m.DatenschutzGelesen)
+                    </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary pull-right">
-                            Benutzerkonto anlegen <i class="fa fa-arrow-circle-o-right"></i>
+                            @Resources.RegisterSubmitButton <i class="fa fa-arrow-circle-o-right"></i>
                         </button>
                     </div>
                 }
@@ -84,4 +73,5 @@
         </div>
     </div>
 </div>
+
 

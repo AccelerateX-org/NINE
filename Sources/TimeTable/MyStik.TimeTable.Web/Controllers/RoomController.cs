@@ -1,12 +1,10 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Web.Routing;
 using MyStik.TimeTable.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
@@ -18,13 +16,22 @@ using Pitchfork.QRGenerator;
 
 namespace MyStik.TimeTable.Web.Controllers
 { 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Admin()
         {
             var model = Db.Rooms.OrderBy(r => r.Number).ToList();
 
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, "FK 09");
+            var org = GetMyOrganisation();
+
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
 
             return View(model);
         }
@@ -48,6 +55,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(GetMyOrganisation());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Calendar(Guid id)
         {
             var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
@@ -55,7 +67,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Index(Guid? id)
         {
             if (!id.HasValue)
@@ -82,6 +98,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Characteristics", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult IndexMobil()
         {
             var model = new RoomMobileViewModel();
@@ -154,7 +174,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="facultyId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Faculty(Guid facultyId)
         {
@@ -197,13 +221,17 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Free()
         {
             var from = GlobalSettings.Now;
             var to = from;
 
             var model = new FreeRoomSummaryModel();
+            var org = GetMyOrganisation();
 
             // Ermittle alle Räume im Zeitraum [von, bis]
 
@@ -214,7 +242,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
-            var fk09 = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
+            var fk09 = Db.Organisers.SingleOrDefault(o => o.Id == org.Id);
             model.AvailableRooms = roomService.GetAvaliableRoomsNow(fk09.Id);
             model.FutureRooms = roomService.GetNextAvaliableRoomsNow(fk09.Id);
 
@@ -226,6 +254,10 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult LookupDate()
         {
             var semester = GetSemester();
@@ -241,7 +273,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var userRight = GetUserRight(User.Identity.Name, "FK 09");
 
             // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetRooms(orgName, userRight.IsOrgAdmin);
+            var rooms = roomService.GetRooms(orgName, userRight.IsRoomAdmin);
 
 
 
@@ -258,6 +290,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult LookupPeriod()
         {
             var semStart = GetSemester().StartCourses;
@@ -277,6 +313,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult LookupDayOfWeek()
         {
             var semStart = GetSemester().StartCourses;
@@ -296,6 +336,13 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RoomListByDate(DateTime date, TimeSpan from, TimeSpan to)
         {
@@ -326,6 +373,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RoomList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date1"></param>
+        /// <param name="from"></param>
+        /// <param name="date2"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RoomListByPeriod(DateTime date1, TimeSpan from, DateTime date2, TimeSpan to)
         {
@@ -356,6 +411,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RoomList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="day"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RoomListByDayOfWeek(int day, TimeSpan from, TimeSpan to)
         {
@@ -387,6 +449,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RoomList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Edit(Guid id)
         {
             var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
@@ -394,18 +461,34 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Edit(Room model)
         {
             if (ModelState.IsValid)
             {
-                Db.Entry(model).State = EntityState.Modified;
+                var room = Db.Rooms.SingleOrDefault(x => x.Id == model.Id);
+
+                if (room != null)
+                {
+                    room.Name = model.Name;
+                    room.Description = model.Description;
+                    room.Capacity = model.Capacity;
+                }
+
                 Db.SaveChanges();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Rooms", "Organiser");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             var model = new Room();
@@ -413,7 +496,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Create(Room model)
         {
@@ -425,6 +512,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(Guid id)
         {
             var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
@@ -434,6 +526,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Delete(RoomDeleteModel model)
         {
@@ -448,6 +545,32 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult OpenAll()
+        {
+            var rooms = Db.Rooms.OrderBy(r => r.Number).ToList();
+
+            foreach (var room in rooms)
+            {
+                foreach (var roomAssignment in room.Assignments)
+                {
+                    roomAssignment.InternalNeedConfirmation = false;
+                }
+                
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Transfer()
         {
             var model = new RoomTransferModel();
@@ -463,6 +586,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Transfer(RoomTransferModel model)
         {
@@ -484,6 +613,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public FileResult RoomBook()
         {
             var doc = new PdfDocument();
@@ -531,6 +664,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(stream, "text/pdf", "Test.pdf");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult List(Guid id)
         {
             var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
@@ -552,7 +690,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Assignments()
         {
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
@@ -566,6 +707,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Admin");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roomIds"></param>
+        /// <param name="orgName"></param>
+        /// <param name="needExternal"></param>
+        /// <param name="needInternal"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult AddAssignment(ICollection<Guid> roomIds, string orgName, bool needExternal, bool needInternal)
         {
@@ -602,7 +751,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RoomInfoList", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roomIds"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RemoveAssignments(ICollection<Guid> roomIds)
         {
@@ -632,6 +785,15 @@ namespace MyStik.TimeTable.Web.Controllers
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <param name="roomId"></param>
+        /// <param name="date"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult GetState(Guid? dateId, Guid roomId, string date, string begin, string end)
         {
@@ -678,7 +840,15 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <param name="roomId"></param>
+        /// <param name="date"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult GetStateWeekly(Guid? dateId, Guid roomId, string date, string begin, string end)
         {
@@ -693,7 +863,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var dayOfWeek = sDate.DayOfWeek;
 
-            var dayList = new SemesterService().GetDays(semester.Name, dayOfWeek);
+            var dayList = new SemesterService().GetDays(semester.Id, dayOfWeek);
 
             var nCollisions = 0;
 
@@ -725,6 +895,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <param name="roomId"></param>
+        /// <param name="dates"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult GetStates(Guid? dateId, Guid roomId, ICollection<string> dates)
         {
@@ -748,7 +925,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     if (isWdh && semester != null)
                     {
-                        dayList = semesterService.GetDays(semester.Name, day);
+                        dayList = semesterService.GetDays(semester.Id, day);
                     }
                     else
                     {
@@ -789,7 +966,12 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="Dates"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult GetConflicts(Guid roomId, ICollection<string> Dates)
         {
@@ -816,7 +998,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     if (isWdh && semester != null)
                     {
-                        dayList = semesterService.GetDays(semester.Name, day);
+                        dayList = semesterService.GetDays(semester.Id, day);
                     }
                     else
                     {
@@ -853,7 +1035,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_ConflictTable", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="begin"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult GetAvailableRooms(string date, string begin, string end)
         {
@@ -868,8 +1056,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var org = GetMyOrganisation();
 
+            var userRight = GetUserRight(org);
+
             // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetAvaliableRooms(org.Id, from, until);
+            var rooms = roomService.GetAvaliableRooms(org.Id, from, until, userRight.IsRoomAdmin);
 
             return PartialView("_FreeRoomList", rooms);
         }

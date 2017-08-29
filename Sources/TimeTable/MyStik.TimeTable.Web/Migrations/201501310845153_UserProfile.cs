@@ -1,10 +1,15 @@
 namespace MyStik.TimeTable.Web.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
     
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class UserProfile : DbMigration
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Up()
         {
             AddColumn("dbo.AspNetUsers", "IsAnonymous", c => c.Boolean());
@@ -17,6 +22,9 @@ namespace MyStik.TimeTable.Web.Migrations
 
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Down()
         {
             DropColumn("dbo.AspNetUsers", "MemberState");

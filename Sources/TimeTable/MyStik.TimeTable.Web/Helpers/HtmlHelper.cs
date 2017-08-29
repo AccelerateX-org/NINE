@@ -2,19 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Mvc.Ajax;
 using System.Web.Mvc.Html;
-using Microsoft.Ajax.Utilities;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Globalization;
 
 namespace MyStik.TimeTable.Web.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class HtmlHelperExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="linkIcon"></param>
+        /// <param name="linkText"></param>
+        /// <param name="actionName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="routeValues"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         public static MvcHtmlString ActionButton(this HtmlHelper htmlHelper, string linkIcon, string linkText, string actionName, string controllerName, object routeValues, object htmlAttributes)
         {
             var repId = Guid.NewGuid().ToString();
@@ -31,14 +42,29 @@ namespace MyStik.TimeTable.Web.Helpers
             return MvcHtmlString.Create(lnk.ToString().Replace(repId, sb.ToString()));
         }
 
-        public static MvcHtmlString LecturerList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> hosts)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="hosts"></param>
+        /// <param name="showLinks"></param>
+        /// <returns></returns>
+        public static MvcHtmlString LecturerList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> hosts, bool showLinks=true)
         {
             var sb = new StringBuilder();
             foreach (var host in hosts)
             {
-                var lecName = host.Name;
-                sb.Append(htmlHelper.ActionLink(lecName, "Member", "Organiser",
-                    new {orgId = host.Organiser.ShortName, shortName = host.ShortName}, null));
+                var lecName = string.IsNullOrEmpty(host.Name) ? "N.N." : host.Name;
+                if (showLinks)
+                {
+                    sb.Append(htmlHelper.ActionLink(lecName, "Member", "Organiser",
+                        new { id = host.Id}, null));
+                }
+                else
+                {
+                    sb.Append(lecName);
+                }
+
                 if (host != hosts.Last())
                 {
                     sb.Append(htmlHelper.Raw(", "));
@@ -48,14 +74,40 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
-
-        public static MvcHtmlString RoomList(this HtmlHelper htmlHelper, ICollection<Room> rooms)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="rooms"></param>
+        /// <param name="showLinks"></param>
+        /// <param name="showCapacity"></param>
+        /// <returns></returns>
+        public static MvcHtmlString RoomList(this HtmlHelper htmlHelper, ICollection<Room> rooms, bool showLinks=true, bool showCapacity=false)
         {
             var sb = new StringBuilder();
             foreach (var room in rooms)
             {
-                sb.Append(htmlHelper.ActionLink(room.Number, "Calendar", "Room", new { id = room.Id }, null));
-                sb.AppendFormat(" ({0})", room.Capacity);
+                if (showLinks)
+                {
+                    if (string.IsNullOrEmpty(room.Number))
+                    {
+                        sb.Append(htmlHelper.ActionLink("N.N.", "Calendar", "Room", new { id = room.Id }, null));
+                    }
+                    else
+                    {
+                        sb.Append(htmlHelper.ActionLink(room.FullName, "Calendar", "Room", new { id = room.Id }, null));
+                    }
+                }
+                else
+                {
+                    sb.Append(room.Number);
+                }
+
+                if (showCapacity)
+                {
+                    sb.AppendFormat(" ({0})", room.Capacity);
+                }
+
                 if (room != rooms.Last())
                 {
                     sb.Append(htmlHelper.Raw(", "));
@@ -65,12 +117,24 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
-        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, ICollection<SemesterGroup> groups)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="groups"></param>
+        /// <param name="showAvailability"></param>
+        /// <returns></returns>
+        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, ICollection<SemesterGroup> groups, bool showAvailability=false)
         {
             var sb = new StringBuilder();
             foreach (var group in groups)
             {
-                sb.Append(htmlHelper.ActionLink(group.FullName, "Group", "Semester", new { id = group.Id }, null));
+                var linkName = group.FullName;
+                if (showAvailability && !group.IsAvailable)
+                {
+                    linkName += "(!)";
+                }
+                sb.Append(htmlHelper.ActionLink(linkName, "Group", "Semester", new { id = group.Id }, null));
                 if (group != groups.Last())
                 {
                     sb.Append(htmlHelper.Raw(", "));
@@ -80,6 +144,12 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="groups"></param>
+        /// <returns></returns>
         public static MvcHtmlString GroupListExtended(this HtmlHelper htmlHelper, ICollection<SemesterGroup> groups)
         {
             var sb = new StringBuilder();
@@ -97,48 +167,116 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="groups"></param>
+        /// <returns></returns>
+        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, ICollection<CurriculumGroup> groups)
+        {
+            var sb = new StringBuilder();
+            foreach (var group in groups)
+            {
+                sb.Append(group.Name);
+                if (group != groups.Last())
+                {
+                    sb.Append(htmlHelper.Raw(", "));
+                }
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
 
         public static MvcHtmlString TimeSpan(this HtmlHelper htmlHelper, ActivityDate date)
         {
-            return new MvcHtmlString(string.Format("{0} - {1}", date.Begin.ToString("t"), @date.End.ToString("t")));
+            return new MvcHtmlString(string.Format("{0:t} - {1:t}", date.Begin, @date.End));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static MvcHtmlString TimeSpan(this HtmlHelper htmlHelper, ActivitySlot date)
         {
-            return new MvcHtmlString(string.Format("{0} - {1}", date.Begin.ToString("t"), @date.End.ToString("t")));
+            return new MvcHtmlString(string.Format("{0:t} - {1:t}", date.Begin, @date.End));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static MvcHtmlString TimeSpan(this HtmlHelper htmlHelper, SemesterDate date)
         {
             return date.From.Date == date.To.Date ? 
-                new MvcHtmlString(string.Format("{0}", date.From.ToString("d"))) : 
-                new MvcHtmlString(string.Format("{0} - {1}", date.From.ToString("d"), @date.To.ToString("d")));
+                new MvcHtmlString(string.Format("{0:d}", date.From)) : 
+                new MvcHtmlString(string.Format("{0:d} - {1:d}", date.From, @date.To));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public static MvcHtmlString TimeSpan(this HtmlHelper htmlHelper, DateTime from, DateTime until)
         {
-            return new MvcHtmlString(string.Format("{0} - {1}", from.ToString("t"), until.ToString("t")));
+            return new MvcHtmlString(string.Format("{0:t} - {1:t}", @from, until));
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static MvcHtmlString TimeSpanWithDate(this HtmlHelper htmlHelper, ActivityDate date)
         {
-            return new MvcHtmlString(string.Format("{0} {1} - {2}", date.Begin.ToString("d"), date.Begin.ToString("t"), @date.End.ToString("t")));
+            return new MvcHtmlString(string.Format("{0:d} {1:t} - {2:t}", date.Begin, date.Begin, @date.End));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static MvcHtmlString TimeSpanWithDate(this HtmlHelper htmlHelper, ActivitySlot date)
         {
-            return new MvcHtmlString(string.Format("{0} {1} - {2}", date.Begin.ToString("d"), date.Begin.ToString("t"), @date.End.ToString("t")));
+            return new MvcHtmlString(string.Format("{0:d} {1:t} - {2:t}", date.Begin, date.Begin, @date.End));
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public static MvcHtmlString TimeSpanWithDate(this HtmlHelper htmlHelper, DateTime from, DateTime until)
         {
-            return new MvcHtmlString(string.Format("{0} {1} - {2}", from.ToString("d"), from.ToString("t"), until.ToString("t")));
+            return new MvcHtmlString(string.Format("{0:d} {1:t} - {2:t}", @from, @from, until));
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="dates"></param>
+        /// <returns></returns>
         public static MvcHtmlString DateList(this HtmlHelper htmlHelper, ICollection<CourseDateModel> dates)
         {
             var sb = new StringBuilder();
@@ -147,10 +285,8 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<div>");
 
-                sb.AppendFormat("{0} [{1} - {2}]",
-                    courseDate.DefaultDate.ToString("dddd", new CultureInfo("de-DE")),
-                    courseDate.StartTime.ToString(@"hh\:mm"),
-                    courseDate.EndTime.ToString(@"hh\:mm"));
+                sb.AppendFormat("{0} [{1:hh\\:mm} - {2:hh\\:mm}]",
+                    courseDate.DefaultDate.ToString("dddd", new CultureInfo("de-DE")), courseDate.StartTime, courseDate.EndTime);
 
                 sb.Append("</div>");
 
@@ -159,6 +295,12 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="dates"></param>
+        /// <returns></returns>
         public static MvcHtmlString DateList(this HtmlHelper htmlHelper, ICollection<ActivityDate> dates)
         {
             var sb = new StringBuilder();

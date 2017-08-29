@@ -1,0 +1,33 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.UserAdminViewModel>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th><i class="fa fa-check"></i></th>
+            <th>Name</th>
+            <th>Vorname</th>
+            <th>E-Mail (Benutzername)</th>
+            <th><i class="fa fa-institution"></i></th>
+            <th><i class="fa fa-envelope-o text-success"></i></th>
+            <th><i class="fa fa-envelope-o text-danger"></i></th>
+            <th>Veranstalter</th>
+            <th>Gruppe</th>
+            <th>Registriert</th>
+            <th>Letztes Login</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @{ var i = 0;}
+    @foreach (var user in Model)
+    {
+        i++;
+        <tr id="@user.User.Id">
+            <td>@i</td>
+            @Html.Partial("_UserListEntry", user)
+        </tr>
+    }
+    </tbody>
+
+</table>

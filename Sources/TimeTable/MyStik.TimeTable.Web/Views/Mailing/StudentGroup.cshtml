@@ -1,0 +1,110 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterViewModel
+
+@{
+    ViewBag.Title = "Auswahl Semestergruppen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Mailing - Auswahl Semestergruppen</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="selectBody">
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.DropDownListFor(model => model.Semester, (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="semProfile">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            onSemesterChanged();
+        });
+
+
+        function onSemesterChanged() {
+            var semesterId = $('#Semester option:selected').val();
+
+            $('#semProfile').html('');
+            $('#loading').show();
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList")',
+                data: {
+                    semId: semesterId
+                },
+                success: function (data, success, xhr) {
+                    $('#semProfile').html(data);
+                    $('#loading').hide();
+                },
+                error: function (data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            });
+        }
+
+
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+
+        function onSend() {
+            var list = $("#groupTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+            var n = list.length;
+            var groupList = new Array();
+            var i;
+            for (i = 0; i < n; i++) {
+                groupList[i] = list[i].id;
+            }
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("StudentGroupSelect")',
+                data: {
+                    GroupIds: groupList
+                },
+                success: function (data, success, xhr) {
+                    $("#selectBody").html(data);
+                }
+            });
+        }
+
+
+    </script>
+}

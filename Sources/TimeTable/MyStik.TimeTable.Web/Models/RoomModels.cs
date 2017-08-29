@@ -2,25 +2,48 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class FreeRoomModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<ActivityDate> CurrentDates { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate LastDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate NextDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime From { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime To { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int Duration
         {
             get
@@ -33,6 +56,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string DurationText
         {
             get
@@ -46,8 +72,14 @@ namespace MyStik.TimeTable.Web.Models
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomCharacteristicModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public RoomCharacteristicModel()
         {
             Courses = new List<CourseSummaryModel>();
@@ -55,172 +87,393 @@ namespace MyStik.TimeTable.Web.Models
             NextOccurrences = new List<ActivityDate>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ActivityDate> CurrentOccurrences { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ActivityDate> NextOccurrences { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<CourseSummaryModel> Courses { get; set; }
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomStateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public RoomStateModel()
         {
             Conflicts = new List<ActivityDate>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool HasConflicts { get { return Conflicts.Any(); }}
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<ActivityDate> Conflicts { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomListStateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public RoomListStateModel()
         {
             RoomStates = new List<RoomStateModel>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid ActivityDateId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<RoomStateModel> RoomStates { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomLookUpModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime Date1 { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime Date2 { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int BeginHour { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int BeginMinute { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public int EndHour { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int EndMinute { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int DayOfWeek { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Datum")]
         public string NewDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Beginn")]
         public string NewBegin { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Ende")]
         public string NewEnd { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Room> Rooms { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomDeleteModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomTransferModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Aus diesem Raum sollen alle Belegungen entfernt werden")]
         public Guid SourceRoomId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Diesem Raum sollen alle Belegungen zugeorndet werden")]
         public Guid TargetRoomId { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomInfoModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate CurrentDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate NextDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool NeedInternalConfirmation { get; set; }
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class FreeRoomSummaryModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<RoomInfoModel> AvailableRooms { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<RoomInfoModel> FutureRooms { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomOccModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid RoomId { get; set;  }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public string State { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomMobileViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Faculty { get; set;  }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<RoomMobileStateViewModel> SeminarRooms { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<RoomMobileStateViewModel2> EDVRooms { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<RoomMobileStateViewModel3> AllRooms { get; set; }
 
         
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomMobileStateViewModel //Das hier ist die Klasse für die Seminarräume
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int AnzahlTische { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Status { get; set; }
         
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomMobileStateViewModel2 //EDV-Räume
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int AnzahlTische { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Status { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomMobileStateViewModel3 //Alle Räume
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int AnzahlTische { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Beschreibung { get; set; }
 
         
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomConflictViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public RoomConflictViewModel()
         {
             ConflictDates = new List<RoomDateConflictViewModel>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Room Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<RoomDateConflictViewModel> ConflictDates { get; private set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomDateConflictViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public RoomDateConflictViewModel()
         {
             Conflicts = new List<ActivityDate>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime Begin { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime End { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ActivityDate> Conflicts { get; private set; }
     }
 
-    
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RoomActivityModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Room Room { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<ActivityDate> Dates { get; set; }
+    }
 
 }

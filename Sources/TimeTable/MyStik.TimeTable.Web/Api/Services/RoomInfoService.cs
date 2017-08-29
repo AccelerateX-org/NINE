@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomInfoService
     {
         /// <summary>
@@ -98,10 +99,15 @@ namespace MyStik.TimeTable.Web.Api.Services
             return roomContracts.OrderByDescending(r => r.RemainingFreeTime).ThenBy(r => r.RoomNumber);
         }
 
-        
 
 
-        //Gibt alle Räume, die einen bestimmten Zeitraum frei sind zurück
+
+        /// <summary>
+        /// Gibt alle Räume, die einen bestimmten Zeitraum frei sind zurück
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public IEnumerable<FreeRoomContract> GetFreeRooms(DateTime from, DateTime until)
         {
             var roomService = new RoomService();
@@ -130,7 +136,10 @@ namespace MyStik.TimeTable.Web.Api.Services
             return roomContracts.OrderBy(r => r.RoomNumber);
         }
 
-        //Gibt alle freien Räume zurück
+        /// <summary>
+        /// Gibt alle freien Räume zurück
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<AllRoomContract> GetAllRooms()
             {
             var roomService = new RoomService();
@@ -152,7 +161,11 @@ namespace MyStik.TimeTable.Web.Api.Services
             return roomContracts.OrderBy(r => r.RoomNumber);
             }
 
-        //alle räume die mit bestimmten Anfangsbuchstaben beginnen
+        /// <summary>
+        /// alle räume die mit bestimmten Anfangsbuchstaben beginnen
+        /// </summary>
+        /// <param name="startsWith"></param>
+        /// <returns></returns>
         public IEnumerable<AllRoomContract>GetRoomsStartWith(string startsWith)
         {
             var roomService = new RoomService();
@@ -173,7 +186,11 @@ namespace MyStik.TimeTable.Web.Api.Services
             return roomContracts.OrderBy(r => r.RoomNumber);
         }
 
-        //Abfrage der Termine eines Raumes
+        /// <summary>
+        /// Abfrage der Termine eines Raumes
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         public IEnumerable<RoomDateContract> GetRoomDates(string roomId)
         {
             var db = new TimeTableDbContext();
@@ -223,7 +240,12 @@ namespace MyStik.TimeTable.Web.Api.Services
             return roomContract;
         }
 
-        //Abfrage Freizeiten der Räume die an einem gewählten Tag, die mindestens span-minuten frei sind
+        /// <summary>
+        /// Abfrage Freizeiten der Räume die an einem gewählten Tag, die mindestens span-minuten frei sind
+        /// </summary>
+        /// <param name="span"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public IEnumerable<FreeRoomTimespansContract> GetFreeRoomTimespan (TimeSpan span, DateTime date)
         {
             var db = new TimeTableDbContext();
@@ -270,7 +292,12 @@ namespace MyStik.TimeTable.Web.Api.Services
             return roomContract.OrderBy(r=>r.RoomNumber).ThenBy(r=>r.FreeFrom);
         }
 
-        //Fragt alle "Freizeiten" von Räumen in einer Woche ab (min X-min) von 8-20Uhr Mo-Fr
+        /// <summary>
+        /// Fragt alle "Freizeiten" von Räumen in einer Woche ab (min X-min) von 8-20Uhr Mo-Fr
+        /// </summary>
+        /// <param name="span"></param>
+        /// <param name="OneDayOfWeek"></param>
+        /// <returns></returns>
         public IEnumerable<FreeRoomTimespansContract> GetFreeRoomTimesOfWeek (TimeSpan span, DateTime OneDayOfWeek)
         {
             //ersten Tag der Woche ermitteln

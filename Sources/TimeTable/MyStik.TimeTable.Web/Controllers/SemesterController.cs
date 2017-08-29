@@ -3,34 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
-using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.GpUntis;
-using MyStik.TimeTable.DataServices.GpUntis.Data;
 using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
-using WebGrease.Css.Extensions;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SemesterController : BaseController
     {
         //
-        // GET: /Semester/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             ViewBag.SemesterList = Db.Semesters.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
             {
-                Text = f.BookingEnabled ? f.Name : f.Name + "*",
+                Text = f.Name,
                 Value = f.Name,
             });
 
+            var org = GetMyOrganisation();
 
-            ViewBag.UserRight = GetUserRight();
+
+            ViewBag.UserRight = GetUserRight(org);
 
             var model = new SemesterViewModel
             {
@@ -40,11 +40,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Index2", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semGroupId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DateList(string semGroupId)
         {
             var model = Db.Semesters.SingleOrDefault(s => s.Name.Equals(semGroupId));
+
+            if (model == null)
+            {
+                model = Db.Semesters.FirstOrDefault();
+            }
 
             ViewBag.UserRight = GetUserRight();
 
@@ -52,7 +61,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Details(Guid id)
         {
             var model = Db.Semesters.SingleOrDefault(s => s.Id == id);
@@ -60,97 +73,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult GroupList(Guid id)
         {
             var model = Db.Semesters.SingleOrDefault(s => s.Id == id);
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// Ein Semester anlegen
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Create()
-        {
-            var model = new SemesterCreateViewModel();
-
-
-            if (DateTime.Today.Month >= 3 && DateTime.Today.Month < 10)
-            {
-                var date = new DateTime(DateTime.Today.Year, 10, 1);
-                // heute liegt im SS => das nächste ist das WS
-                model.Name = string.Format("WS{0}", DateTime.Today.Year - 2000);
-                model.StartCourses = date.Date.ToShortDateString();
-                model.EndCourses = date.AddDays(100).Date.ToShortDateString();
-            }
-            else
-            {
-                // offenbar im WS => das nächste ist das SS
-                if (DateTime.Today.Month < 3) // "dieses Jahr"
-                {
-                    model.Name = string.Format("SS{0}", DateTime.Today.Year - 2000);
-                }
-                else
-                {
-                    // nächstes Jahr
-                    model.Name = string.Format("SS{0}", DateTime.Today.Year - 1999);
-                }
-                var date = new DateTime(DateTime.Today.Year, 3, 15);
-                model.StartCourses = date.Date.ToShortDateString();
-                model.EndCourses = date.AddDays(100).Date.ToShortDateString();
-            }
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Create(SemesterCreateViewModel model)
-        {
-            // Vorbedingungen geprüft
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var from = DateTime.Parse(model.StartCourses);
-            var to = DateTime.Parse(model.EndCourses);
-
-
-            if (from >= to)
-            {
-                ModelState.AddModelError("StartCourses", "Vorlesungsbeginn liegt später als Vorlesungsende");
-                ModelState.AddModelError("EndCourses", "Vorlesungsende liegt früher als Vorlesungsbeginn");
-            }
-
-            var semExists = Db.Semesters.SingleOrDefault(s => s.Name.ToUpper().Equals(model.Name.ToUpper()));
-            if (semExists != null)
-            {
-                ModelState.AddModelError("Name", "Ein Semester mit diesem Namen existiert bereits");
-            }
-
-            semExists = Db.Semesters.SingleOrDefault(s => s.EndCourses >= from);
-            if (semExists != null)
-            {
-                ModelState.AddModelError("StartCourses",
-                    string.Format("Überschneidung mit Vorlesungsende von Semester {0}: {1}", semExists.Name,
-                        semExists.EndCourses));
-            }
-
-            // Nachbedingunen geprüft
-            if (ModelState.IsValid)
-            {
-                // wenn alles ok, dann einen Redirect auf Index
-                var sem = Db.Semesters.Add(new Semester
-                {
-                    Name = model.Name,
-                    StartCourses = from,
-                    EndCourses = to,
-                    BookingEnabled = false,
-                });
-                Db.SaveChanges();
-
-                return RedirectToAction("Details", new {id=sem.Id});
-            }
 
             return View(model);
         }
@@ -175,6 +105,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Edit(SemesterEditViewModel model)
         {
@@ -190,7 +125,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = semester.Id });
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(Guid id)
         {
             var model = Db.Semesters.SingleOrDefault(s => s.Id == id);
@@ -198,6 +137,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteConfirmed(string id)
         {
             var semester = Db.Semesters.SingleOrDefault(s => s.Name.Equals(id));
@@ -221,8 +165,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new SemesterDateViewModel
             {
                 SemesterId = semester.Id,
-                Start = semester.StartCourses.Date.ToShortDateString(),
-                End = semester.StartCourses.Date.ToShortDateString(),
+                //Start = semester.StartCourses.Date.ToShortDateString(),
+                Start = DateTime.Today.ToShortDateString(),
+                //End = semester.StartCourses.Date.ToShortDateString(),
+                End = DateTime.Today.ToShortDateString(),
                 HasCourses = false
             };
 
@@ -231,18 +177,26 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CreateDate(SemesterDateViewModel model)
         {
             var semester = Db.Semesters.SingleOrDefault(s => s.Id == model.SemesterId);
 
+
+           
             var semDate = new SemesterDate
             {
                 Description = model.Description,
                 From = DateTime.Parse(model.Start),
                 To = DateTime.Parse(model.End),
                 HasCourses = model.HasCourses,
-                Semester = semester
+                Semester = semester,
+                
             };
 
             semester.Dates.Add(semDate);
@@ -256,6 +210,70 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Id des Datums, dessen Attributwerte verändert werden solllen</param>
+        /// <returns></returns>
+        public ActionResult EditDate(Guid id)
+        {
+            var date = Db.SemesterDates.SingleOrDefault(s => s.Id == id);
+            var semester = Db.Semesters.SingleOrDefault(s => s.Dates.Any(d => d.Id == id));
+
+            var model = new SemesterDateViewModel
+            {
+                DateId = date.Id,
+                SemesterId = semester.Id,
+                Start = date.From.ToShortDateString(),
+                End = date.To.ToShortDateString(),
+                Description = date.Description,
+                HasCourses = date.HasCourses
+            };
+
+            ViewBag.Semester = semester;
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditDate(SemesterDateViewModel model)
+        {
+            // wir müssen uns hier wieder das Objekt aus der Datenbank holen
+            // Dazu brauchen wir die Id
+            // Daher mmüssen wir die Id schon vorher an das Formular übergeben
+            var date = Db.SemesterDates.SingleOrDefault(s => s.Id == model.DateId);
+            var semester = Db.Semesters.SingleOrDefault(s => s.Dates.Any(d => d.Id == model.DateId));
+
+            // Jetzt aktualisieren wir die Attributwerte des Objekts aus der Datenbank
+            // mit den Attributwerten aus dem Formular
+            date.Description = model.Description;
+            date.From = DateTime.Parse(model.Start);
+            date.To = DateTime.Parse(model.End);
+            date.HasCourses = model.HasCourses;
+            // Reparatur
+            if (date.Semester == null)
+            {
+                date.Semester = semester;
+            }
+
+            // Objekt wurde geändert
+            // Jetzt speichern wir es in der Datenbank
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new { id = date.Semester.Id });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteDate(Guid id)
         {
             var date = Db.SemesterDates.SingleOrDefault(d => d.Id.Equals(id));
@@ -280,7 +298,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult Group(Guid id)
         {
@@ -339,105 +361,39 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Enable()
-        {
-            new SemesterService().EnableNewestSemester();
-
-            return RedirectToAction("Index", "Activity");
-        }
-
-        public ActionResult Disable()
-        {
-            new SemesterService().DisableNewestSemester();
-
-            return RedirectToAction("Index", "Activity");
-        }
-
-        public ActionResult Switch(Guid id)
-        {
-            var sem = Db.Semesters.SingleOrDefault(s => s.Id == id);
-
-            if (sem != null)
-            {
-                sem.BookingEnabled = !sem.BookingEnabled;
-                Db.SaveChanges();
-            }
-
-            return RedirectToAction("Details", new {id=sem.Id});
-        }
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Init(Guid id)
         {
             return RedirectToAction("List", "Curriculum");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CreateGroup()
         {
             return View();
         }
 
-        [HttpPost]
-        public ActionResult CreateGroup(string semname, string groupname)
-        {
-            var semester = Db.Semesters.SingleOrDefault(s => s.Name.Equals(semname));
-            if (semester == null)
-                return RedirectToAction("Index");
-
-            string prog = null;
-            string sg = null;
-
-            if (!string.IsNullOrEmpty(groupname))
-            {
-                var elems = groupname.Split('-');
-                if (elems.Count() == 2)
-                {
-                    prog = elems[0].Trim();
-                    sg = elems[1].Trim();
-                }
-            }
-
-            var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Semester.Id == semester.Id &&
-                                                                  g.CapacityGroup.CurriculumGroup.Curriculum.ShortName.Equals(prog) &&
-                                                                  g.CapacityGroup.CurriculumGroup.Name.Equals(sg));
-
-            if (semGroup != null)
-                return RedirectToAction("Index");
-
-            var group =
-                Db.CurriculumGroups.SingleOrDefault(g => g.Curriculum.ShortName.Equals(prog) &&
-                                                          g.Name.Equals(sg));
-
-            if (group != null)
-            {
-                var curr = Db.SemesterGroups.SingleOrDefault(g =>
-                    g.Semester.Id == semester.Id &&
-                    g.CapacityGroup.CurriculumGroup.Id == group.Id
-                    );
-
-                if (curr == null)
-                {
-                    var mySem = Db.Semesters.SingleOrDefault(s => s.Id == semester.Id);
-
-                    curr = new SemesterGroup()
-                    {
-                        Semester = mySem,
-                        CurriculumGroup = group
-                    };
-                    Db.SemesterGroups.Add(curr);
-                    Db.SaveChanges();
-                }
-            }
-
-            return RedirectToAction("Index");
-        }
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult DeleteGroup()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="groupname"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult DeleteGroup(string groupname)
         {
@@ -483,7 +439,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteGroup2(Guid id)
         {
@@ -499,7 +459,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Update(string id)
         {
             var model = new Semester();
@@ -521,11 +485,21 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult TransferGroup()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourcegroup"></param>
+        /// <param name="targetgroup"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult TransferGroup(string sourcegroup, string targetgroup)
         {
@@ -582,56 +556,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult InitGroups(Guid id)
-        {
-            var semester = Db.Semesters.SingleOrDefault(s => s.Id == id);
 
-            if (semester == null)
-                return RedirectToAction("Index");
-
-            var isWS = semester.Name.StartsWith("WS");
-
-
-            // Alle Curricula durchgehen
-            foreach (var curriculum in Db.Curricula.ToList())
-            {
-                foreach (var curriculumGroup in curriculum.CurriculumGroups.ToList())
-                {
-                    foreach (var capacityGroup in curriculumGroup.CapacityGroups.ToList())
-                    {
-                        if ((capacityGroup.InWS && isWS) || (capacityGroup.InSS && !isWS))
-                        {
-                            var exist = semester.Groups.Any(g => g.CapacityGroup.Id == capacityGroup.Id);
-
-                            if (!exist)
-                            {
-                                var semGroup = new SemesterGroup
-                                {
-                                    CapacityGroup = capacityGroup,
-                                    CurriculumGroup = capacityGroup.CurriculumGroup,        // nur noch aus Gründen der Sicherheit
-                                    Semester = semester
-                                };
-
-                                semester.Groups.Add(semGroup);
-                                Db.SemesterGroups.Add(semGroup);
-                            }
-                        }
-                    }
-                }
-            }
-
-            Db.SaveChanges();
-            
-            
-            return RedirectToAction("GroupList", new {id = id});
-        }
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult BugFixing()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult RepairGroups()
         {
             return RedirectToAction("Index");
@@ -665,38 +603,105 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
-        public ActionResult ClearFiles(Guid id)
-        {
-            string tempDir = Path.GetTempPath();
-
-            var semester = new SemesterService().GetSemester(id);
-
-            tempDir = Path.Combine(tempDir, semester.Name);
-
-            if (Directory.Exists(tempDir))
-            {
-                var fileNames = Directory.EnumerateFiles(tempDir);
-                foreach (var fileName in fileNames)
-                {
-                    System.IO.File.Delete(fileName);
-                }
-                Directory.Delete(tempDir);
-            }
-
-            return RedirectToAction("GpUntis", new { id = id });
-        }
-
+        /// <summary>
+        /// Erstellt eine Auswertung aller Lehrveranstaltungen nach Dozenten
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Report(Guid id)
         {
-            var semester = new SemesterService().GetSemester(id);
-
-            var allCourses =
-                Db.Activities.OfType<Course>().Where(c => c.SemesterGroups.Any(g => g.Semester.Id == id)).ToList();
-
-
-            return View();
+            var model = CreateSemesterReport(id);
+            var semester = GetSemester(id);
+            ViewBag.Semester = semester;
+            return View(model);
         }
-    
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public FileResult ReportFile(Guid id)
+        {
+            var model = CreateSemesterReport(id);
+            var semester = GetSemester(id);
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+
+            writer.Write("Studiengang;Gruppe;Dozent;Name;Eintragungen");
+            writer.Write(Environment.NewLine);
+
+
+            foreach (var course in model)
+            {
+
+                writer.Write("{0};{1};{2};{3};{4}",
+                    course.Curriculum.ShortName, course.Group.FullName,
+                    course.Lecturer.Name,
+                    course.Course.Name,
+                    course.Course.Occurrence.Subscriptions.Count);
+                writer.Write(Environment.NewLine);
+
+            }
+
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Lehrangebot_");
+            sb.Append(semester.Name);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
+        private List<SemesterCourseViewModel> CreateSemesterReport(Guid id)
+        {
+
+        var model = new List<SemesterCourseViewModel>();
+
+            // Alle Lehrveranstaltungen in diesem Semester
+            var courses = Db.Activities.OfType<Course>().Where(x => x.SemesterGroups.Any(s => s.Semester.Id == id)).ToList();
+
+            // für jede Lehrveranstaltung alle Dozenten
+            foreach (var course in courses)
+            {
+                // Alle Dozenten in dieser LV
+                var lectures =
+                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+
+
+                // Für jede Semestergruppe
+                foreach (var semesterGroup in course.SemesterGroups)
+                {
+
+                    foreach (var lecture in lectures)
+                    {
+                        var courseModel = new SemesterCourseViewModel
+                        {
+                            Course = course,
+                            Curriculum = semesterGroup.CapacityGroup.CurriculumGroup.Curriculum,
+                            Lecturer = lecture,
+                            Group = semesterGroup
+                        };
+
+                        model.Add(courseModel);
+
+                    }
+                }
+            }
+
+            model = model.OrderBy(x => x.Curriculum.ShortName).ThenBy(x => x.Lecturer.Name).ToList();
+
+            return model; 
+        }
+
+
     }
 }

@@ -6,6 +6,9 @@ namespace MyStik.TimeTable.Web.Migrations
     using System.Data.Entity.Migrations.Infrastructure;
     using System.Resources;
     
+    /// <summary>
+    /// 
+    /// </summary>
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
     public sealed partial class UserDevices : IMigrationMetadata
     {

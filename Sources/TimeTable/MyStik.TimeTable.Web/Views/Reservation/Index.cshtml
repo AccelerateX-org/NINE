@@ -20,9 +20,9 @@
         <div class="col-md-7">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    @if (ViewBag.UserRight.IsOrgAdmin)
+                    @if (ViewBag.UserRight.IsRoomAdmin)
                     {
-                        @Html.ActionLink("Reservierung anlegen", "CreateReservation")
+                        <a href="@Url.Action("CreateReservation")" class="btn btn-default"><i class="fa fa-plus"></i> Reservierung anlegen</a>
                     }
                     <table class="table table-condensed">
                         <thead>

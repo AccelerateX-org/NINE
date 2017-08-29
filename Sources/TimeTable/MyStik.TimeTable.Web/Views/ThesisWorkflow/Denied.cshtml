@@ -1,0 +1,37 @@
+﻿
+<br />
+<div class="alert alert-danger" role="alert">Sie haben die Anfrage von @ViewBag.Nachname, @ViewBag.Vorname abgelehnt.</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">Daten des Studenten</div>
+    <div class="panel-body">
+        <address>
+            <strong>@ViewBag.Vorname @ViewBag.Nachname</strong><br>
+            @ViewBag.Matrikelnr<br>
+            @ViewBag.E_Mail<br>
+
+        </address>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Infos zur Arbeit</h3>
+    </div>
+    <div class="panel-body">
+        <strong>@ViewBag.Thema</strong> <br />
+        In Kooperation mit <em>@ViewBag.Firma </em><br />
+        @ViewBag.Expose
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Ihre Antwort</h3>
+    </div>
+    <div class="panel-body">
+
+    </div>
+</div>

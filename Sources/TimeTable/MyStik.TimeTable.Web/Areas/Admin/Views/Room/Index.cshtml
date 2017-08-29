@@ -1,0 +1,64 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Room>
+@{
+    ViewBag.Title = "Räume";
+}
+
+
+<div class="page-header">
+    <h1>
+        Raumverwaltung
+    </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
+                <a href="@Url.Action("UnAssigned")" class="btn btn-primary"><i class="fa fa-question"></i> Ohne Zuordnung</a>
+                <a href="@Url.Action("Transfer")" class="btn btn-primary"><i class="fa fa-magic"></i> Zusammenführen</a>
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Nummer</th>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                        <th>Kapazität</th>
+                        <th>Termine</th>
+                        <th>Raumzuordnungen</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var room in Model.OrderBy(x => x.Number))
+                    {
+                        <tr>
+                            <td>@room.Number</td>
+                            <td>@room.Name</td>
+                            <td>@room.Description</td>
+                            <td>@room.Capacity</td>
+                            <td>@room.Dates.Count</td>
+                            <td>
+                                @foreach (var org in room.Assignments)
+                                {
+                                    <div>@org.Organiser.ShortName</div>
+                                }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
+                                <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-xs btn-default"><i class="fa fa-link"></i></a>
+                                @if (room.Dates.Count == 0 && !room.Assignments.Any())
+                                {
+                                    <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

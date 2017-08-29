@@ -1,0 +1,161 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.OfficeHour
+@{
+    ViewBag.Title = "Sprechstunde";
+    var userService = new UserInfoService();
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Sprechstundentermine im @Model.Semester.Name - Offene Sprechstunde</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("CreateDate", "OfficeHour", new {id = Model.Id})" class="btn btn-default">
+                                <i class="fa fa-plus-circle"></i> neuer Termin
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("EditOpenSystem", "OfficeHour", new {id = Model.Id})" class="btn btn-default">
+                                <i class="fa fa-cog"></i> Einstellungen
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("SubscriptionList", "OfficeHour", new {id = Model.Id})"class="btn btn-default">
+                                <i class="fa fa-download"></i> Teilnehmerliste
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("Lecturer", "OfficeHour", new {id = Model.Owners.First().Member.Id})" class="btn btn-default">
+                                <i class="fa fa-calendar"></i> Terminliste
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("DeleteOfficeHour", "OfficeHour", new {id = Model.Id})" class="btn btn-default">
+                                <i class="fa fa-trash-o"></i> Sprechstunde löschen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    @foreach (var activityDate in Model.Dates.OrderBy(x => x.Begin))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="portlet light bordered">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="fa fa-calendar"></i>
+                                            <span class="caption-subject bold uppercase"> @Html.TimeSpanWithDate(activityDate) 
+                                                @if (activityDate.Occurrence.IsCanceled)
+                                                {
+                                                    @Html.Raw("Abgesagt")
+                                                }
+                                             </span>
+                                        </div>
+                                        <div class="actions">
+                                            @if (!activityDate.Occurrence.Subscriptions.Any())
+                                            {
+                                                <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                    <i class="fa fa-trash-o"></i> löschen
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                if (activityDate.Occurrence.IsCanceled)
+                                                {
+
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("CancelDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                        <i class="fa fa-times"></i> absagen
+                                                    </a>
+                                                    <a href="@Url.Action("MoveDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                        <i class="fa fa-calendar"></i> verschieben
+                                                    </a>
+                                                }
+                                            }
+
+                                            <a href="@Url.Action("OfficeHourDate", "Print", new {id = activityDate.Occurrence.Id})"
+                                               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1'); return false;"
+                                               class="btn btn-circle btn-default"><i class="fa fa-print"></i>drucken</a>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        @if (activityDate.Occurrence.Subscriptions.Any())
+                                        {
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Eingetragen am</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @foreach (var subscription in activityDate.Occurrence.Subscriptions)
+                                                {
+                                                    var name = userService.GetUserName(subscription.UserId);
+                                                    <tr>
+                                                        <td>@name</td>
+                                                        <td>@subscription.TimeStamp</td>
+                                                    </tr>
+                                                }
+                                                </tbody>
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <p>Keine Eintragungen</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+@section scripts{
+
+ <script>
+    $(document).ready(function() {
+    });
+</script>
+}

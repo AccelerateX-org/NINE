@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Data.DefaultData;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize(Roles = "SysAdmin")]
     public class DBAdmimController : BaseController
     {
-        //
-        // GET: /DBAdmim/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var model = new ActivityAnalysisModel();
@@ -41,6 +41,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult DeleteDanglingSubscriptions()
         {
             var subs = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(s => s.Occurrence == null).ToList();
@@ -55,17 +59,47 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult InsertModules()
+        {
+            return RedirectToAction("Index");
+        }
+
+        private CurriculumGroup GetGroup(string curr, string name)
+        {
+            return Db.CurriculumGroups.SingleOrDefault(g => g.Curriculum.ShortName.Equals(curr) && g.Name.Equals(name));
+        }
+
+        private void AddModule(CurriculumModule module)
+        {
+            if (Db.CurriculumModules.Any(m => m.ModuleId.Equals(module.ModuleId)))
+                return;
+            Db.CurriculumModules.Add(module);
+            Db.SaveChanges();
+        }
+
+
+
+        
+        
+        /// <summary>
         /// Initialisiert eine Datenbank mit Testdaten
         /// </summary>
         /// <returns></returns>
         public ActionResult InitDatabase()
         {
             var ds = new InfrastructureDataService();
-            ds.InitData();
+            ds.InitDataFK09();
              
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ClearDatabase()
         {
             var cs = Db.Curricula.ToList();

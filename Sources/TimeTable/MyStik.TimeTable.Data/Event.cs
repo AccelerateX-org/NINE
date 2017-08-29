@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -22,6 +18,16 @@ namespace MyStik.TimeTable.Data
         /// Optionale Einschränkung der Veröffentlichung als Zeitraum vor dem ersten Termin
         /// </summary>
         public TimeSpan? FromTimeSpan { get; set; }
+
+        public bool? IsBookable { get; set; }
+
+        public string RommBooked { get; set; }
+
+        public string Info { get; set; }
+
+
+
+
 
        
     }

@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "Anmeldung Abschlussarbeit";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Abschlussarbeit anmelden</h1>
+                    <p>Folgen Sie den nächsten Schritten, um Ihre Abschlussarbeit anzumelden</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form action="/ThesisWorkflow/AboutFilled"> 
+
+    <div class="panel panel-default">
+        <div class="panel-body bg-fillter-study">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>1. Eingabe Basisdaten</h1>           
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <p>Wurde Ihre Abschlussarbeit im NINE ausgeschrieben?</p>
+    </div>
+
+        <label class="radio-inline">
+            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> ja
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> nein
+        </label> <br /> <br />
+
+        <label for="Titel" class="col-sm-2 control-label">Titel der Arbeit:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="TitleArbeit" name="TitleArbeit">
+        </div> <br /> <br />
+
+        <label for="Description" class="col-sm-2 control-label">Thema der Arbeit:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="DescriptionArbeit" name="DescriptionArbeit">
+        </div>  <br />
+
+        <br />
+        <br />
+
+        <p>Schreiben Sie Ihre Abschlussarbeit bei einem Unternehmen oder an der Hochschule?</p>
+
+        <label class="radio-inline">
+            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" onclick="showForm(this);"> bei einem Unternehmen
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" onclick="hideForm(this);"> an der Hochschule
+        </label>
+
+        <br />
+        <br />
+        <div id="formCorp">
+            <label for="Firmenname" class="col-sm-2 control-label">Firmenname:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Firmenname" name="Firmenname">
+            </div> <br /> <br />
+
+            <label for="Telefonnummer" class="col-sm-2 control-label">Firmenadresse:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Firmenadresse" name="Firmenadresse">
+            </div> <br /> <br />
+
+            <label for="Firmenabteilung" class="col-sm-2 control-label">Firmenabteilung:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Firmenabteilung" name="Firmenabteilung">
+            </div> <br /> <br />
+
+            <label for="Fachbereich" class="col-sm-2 control-label">Fachbereich:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Fachbereich" name="Fachbereich">
+            </div> <br /> <br />
+
+            <label for="Ansprechpartner" class="col-sm-2 control-label">Ansprechpartner:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Ansprechpartner" name="Ansprechpartner">
+            </div> <br /> <br />
+
+            <label for="E-Mail des Ansprechpartners" class="col-sm-2 control-label">E-Mail des Ansprechpartners:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="EMail" name="EMail">
+            </div>
+        </div>
+
+        <div id="formUni">
+            <label for="Dozentname" class="col-sm-2 control-label">Von welchem Professor wird das Thema angeboten:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Dozentname" name="Dozentname">
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+
+            <b>Aus welcher Fakultät stammt er/sie:</b>
+            <select name="Fakultät" size="1">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+                <option>11</option>
+                <option>12</option>
+                <option>13</option>
+                <option>14</option>
+            </select>
+            <br /> <br />
+
+        </div>
+
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <h2>
+            <div class="panel panel-info">
+                <div class="panel-heading">2. Betreuer auswählen</div>
+            </div>
+        </h2>
+
+        <b>Aus welcher Fakultät stammt Ihren Betreuer?:</b>
+        <select name="Fakultät" size="1">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+        </select>
+        <br /> <br />
+
+        <b>Wählen Sie Ihren Betreuer:</b>
+        <select name="Betreuer" size="1">
+            <option>Betreuer A</option>
+            <option>Betreuer B</option>
+            <option>Betreuer C</option>
+        </select>
+
+        <h2>
+            <div class="panel panel-info">
+                <div class="panel-heading">3. Persönliche Daten eingeben</div>
+            </div>
+        </h2>
+
+        <label for="Email" class="col-sm-2 control-label">Private Email Adresse:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="Mail" name="Mail">
+        </div> <br /> <br />
+
+        <label for="Telefonnummer" class="col-sm-2 control-label">Telefonnummer:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="TelNr" name="TelNr">
+        </div> <br /> <br />
+
+        <h2>
+            <div class="panel panel-info">
+                <div class="panel-heading">Expose hochladen </div>
+            </div>
+        </h2>
+
+        <div class="form-group">
+            <input type="file" id="exampleInputFile">
+            <p class="help-block">PDF-Datei</p>
+        </div>
+
+        <button type="submit" class="btn btn-info btn-lg">Abschicken</button>
+
+</form>
+
+@section scripts {
+
+    <script>
+
+        function hideForm(myRadio) {
+            $("#formCorp").hide();
+            $("#formUni").show();
+        }
+
+        function showForm(myRadio) {
+            $("#formCorp").show();
+            $("#formUni").hide();
+        }
+
+
+    </script>
+
+}

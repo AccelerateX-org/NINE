@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
-using ActionMailer.Net;
 using log4net;
-using log4net.Repository.Hierarchy;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -20,6 +16,9 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseController : BaseController
     {
         /// <summary>
@@ -41,12 +40,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // nur Hosts und Admin dürfen die Seite aufrufen
             var userRights = GetUserRight(User.Identity.Name, course);
-            if (!(userRights.IsHost || userRights.IsOrgAdmin))
+            if (!(userRights.IsHost || userRights.IsCourseAdmin || userRights.IsOwner))
             {
                 return RedirectToAction("Details", new {id = id});
             }
 
-
+            ViewBag.UserRight = userRights;
 
             if (string.IsNullOrEmpty(course.Name))
                 course.Name = "N.N.";
@@ -57,6 +56,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Alle Services, die benötigt werden
             var courseService = new CourseService(UserManager, id.Value);
+            var semester = GetSemester();
+            var org = GetMyOrganisation();
 
             var model = new CourseDetailViewModel()
             {
@@ -70,15 +71,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 Groups = courseService.GetSubscriptionGroups(),
                 Description2 = course.Description,
                 CapacitySettings = courseService.GetCapacitySettings(),
+                SemesterId = semester.Id,
+                OrganiserId = org.Id
             };
 
             model.SelectedOption = model.CapacitySettings.SingleOrDefault(o => o.Selected);
 
-            var semester = GetSemester();
-            var org = GetMyOrganisation();
-
-            model.SemesterId = semester.Id;
-            model.OrganiserId = org.Id;
 
             ViewBag.Organiser = Db.Organisers.Select(c => new SelectListItem
             {
@@ -86,13 +84,18 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = c.Id.ToString(),
             });
 
-            ViewBag.Semester = Db.Semesters.OrderByDescending(s => s.StartCourses).Take(3).Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            });
+            // Alle Semester, die in Zukunft enden
+            ViewBag.Semester = Db.Semesters
+                .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
+                .OrderByDescending(x => x.EndCourses)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
 
-            
+                });
+
+
             ViewBag.Curricula = Db.Curricula.Select(c => new SelectListItem
             {
                 Text = c.ShortName,
@@ -135,12 +138,13 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            ViewBag.UserRight = userRights;
-
-
             return View(model);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Details(Guid? id)
         {
             if (!id.HasValue)
@@ -212,7 +216,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ChangeGroups(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -226,21 +234,33 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Course = course,
                 CourseId = course.Id,
-                Semester = sem
+                Semester = sem,
+                SemesterId = sem.Id,
+                OrganiserId = org.Id
             };
 
 
-            ViewBag.Organiser = Db.Organisers.Select(c => new SelectListItem
+            var acticeorgs =
+                Db.Organisers.Where(
+                    x => x.IsFaculty && x.Activities.Any(a =>
+                             a.SemesterGroups.Any(s => s.Semester.EndCourses >= DateTime.Today))).ToList();
+
+            ViewBag.Faculties = acticeorgs.Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
 
-            ViewBag.Semester = Db.Semesters.Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            });
+            // Alle Semester, die in Zukunft enden
+            ViewBag.Semesters = Db.Semesters
+                .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
+                .OrderByDescending(x => x.EndCourses)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+
+                });
 
             // bei der ersten Anzeige wird kein onChange ausgelöst
             var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
@@ -267,7 +287,11 @@ namespace MyStik.TimeTable.Web.Controllers
             
             return View(model);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ChangeGroups(CourseCreateModel3 model)
         {
@@ -337,7 +361,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Index(Guid? id)
         {
             if (id.HasValue)
@@ -346,6 +374,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RemoveSubscription(Guid id, string userId)
         {
@@ -396,6 +430,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RemoveSubscription");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrenceId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ClearSubscriptions(Guid occurrenceId)
         {
@@ -430,6 +469,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RemoveSubscription");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult CancelDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id);
@@ -461,7 +505,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CancelDate(OccurrenceMailingModel model)
         {
@@ -537,6 +585,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CancelAllDates(OccurrenceMailingModel model)
         {
@@ -572,7 +625,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ReactivateDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id);
@@ -603,6 +660,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult ReactivateDate(OccurrenceMailingModel model)
         {
@@ -632,6 +694,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return m.CustomOccurrenceMail(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult MoveDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
@@ -660,6 +727,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult MoveDate(CourseMoveDateModel model)
         {
@@ -733,6 +805,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_SaveSuccess");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="newBegin"></param>
+        /// <param name="newEnd"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult MoveDates(ICollection<Guid> dateIds, string newBegin, string newEnd)
         {
@@ -822,6 +901,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult MoveCourse(CourseCreateModel model)
         {
@@ -867,7 +951,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     var room = Db.Rooms.SingleOrDefault(r => r.Number.ToUpper().Equals(model.Room.ToUpper()));
 
-                    var dayList = new SemesterService().GetDays(semester.Name, (DayOfWeek)model.DayOfWeek, DateTime.Today);
+                    var dayList = new SemesterService().GetDays(semester.Id, (DayOfWeek)model.DayOfWeek, DateTime.Today);
 
                     foreach (var day in dayList)
                     {
@@ -902,6 +986,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", "Course", new { id = model.CourseId });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult MoveCourseTime(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -961,6 +1050,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult MoveCourseTime(CourseCreateModel model)
         {
@@ -994,7 +1088,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", "Course", new { id = model.CourseId });
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="date"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
 
         [HttpPost]
         public PartialViewResult CheckRoomList(Guid id, DateTime date, TimeSpan from, TimeSpan to)
@@ -1006,6 +1107,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RoomState", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="date"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult CheckCurriculum(Guid id, DateTime date, TimeSpan from, TimeSpan to)
         {
@@ -1050,6 +1159,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="date"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="room"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult AddRoom(Guid id, DateTime date, TimeSpan from, TimeSpan to, string room)
         {
@@ -1073,6 +1191,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return CheckRoomList(id, date, from, to);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RemoveRoom(Guid id, Guid roomId)
         {
@@ -1097,7 +1221,13 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activityDateId"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         private RoomListStateModel GetRoomList(Guid activityDateId, DateTime from, DateTime to)
         {
             var model = new RoomListStateModel() {ActivityDateId = activityDateId};
@@ -1121,7 +1251,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return model;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="date"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult CheckLecturerList(Guid id, DateTime date, TimeSpan from, TimeSpan to)
         {
@@ -1132,6 +1269,15 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_LecturerState", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="date"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="lecturer"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult AddLecturer(Guid id, DateTime date, TimeSpan from, TimeSpan to, string lecturer)
         {
@@ -1157,6 +1303,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return CheckLecturerList(id, date, from, to);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="lecturerId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RemoveLecturer(Guid id, Guid lecturerId)
         {
@@ -1205,6 +1357,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return model;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteDate(Guid id)
         {
             var occ = Db.Occurrences.SingleOrDefault(o => o.Id == id);
@@ -1231,7 +1388,11 @@ namespace MyStik.TimeTable.Web.Controllers
             // Kehre zurück zur Seite der Aktivität
             return RedirectToAction(actSummary.Action, actSummary.Controller, new { id = actSummary.Id });
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteAllDates(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -1241,7 +1402,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult DeleteAllDates(CourseDeleteModel model)
         {
@@ -1256,6 +1421,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction(actSummary.Action, actSummary.Controller, new { id = actSummary.Id });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteCourse(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -1265,13 +1435,44 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult DeleteCourse(CourseDeleteModel model)
         {
-            var timeTableService = new TimeTableInfoService();
+            var timeTableService = new TimeTableInfoService(Db);
 
             timeTableService.DeleteCourse(model.Course.Id);
 
+            // Kehre zurück zur Seite der Aktivität
+            return RedirectToAction("Index", "Home");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult CleanCourse(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+            var model = new CourseDeleteModel { Course = course };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult CleanCourse(CourseDeleteModel model)
+        {
             // Kehre zurück zur Seite der Aktivität
             return RedirectToAction("Index", "Home");
         }
@@ -1298,6 +1499,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SetInfo(CourseDateInfoModel model)
         {
@@ -1347,136 +1553,133 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public ActionResult CreateDate2(Guid courseId)
         {
-            var semester = GetSemester();
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var org = GetMyOrganisation();
 
-            var memberService = new MemberService(Db, UserManager);
-            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
 
-            var orgName = User.IsInRole("SysAdmin") ?
-                "FK 09" :
-                memberService.GetOrganisationName(semester, User.Identity.Name);
 
-            var userRight = GetUserRight(User.Identity.Name, "FK 09");
-
-            // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetRooms(orgName, userRight.IsOrgAdmin);
 
 
             var model = new CourseDateCreatenModel
             {
                 Course = course,
                 CourseId = course.Id,
+                OrganiserId2 = org.Id,
+                OrganiserId3 = org.Id,
                 NewDate = GlobalSettings.Today.ToShortDateString(),
                 NewBegin = GlobalSettings.Now.TimeOfDay.ToString(),
                 NewEnd = GlobalSettings.Now.TimeOfDay.ToString(),
-                Rooms = rooms,
-                Lecturers = Db.Members.Where(m => m.Organiser.ShortName.Equals("FK 09")).ToList(),
             };
-            
-            
-            return View("CreateDate",model);
+
+
+            ViewBag.Organiser = Db.Organisers.Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            // Liste aller Fakultäten, auf die Zugriff auf Räume bestehen
+            // aktuell nur meine
+            ViewBag.RoomOrganiser = Db.Organisers.Where(x => x.Id == org.Id).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            return View("CreateDate2",model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public PartialViewResult CreateDate2(CourseDateCreatenModel model)
+        public PartialViewResult CreateCourseDate(CourseDateCreateModelExtended model)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
 
-            var day = DateTime.Parse(model.NewDate);
-            var from = DateTime.Parse(model.NewBegin);
-            var to = DateTime.Parse(model.NewEnd);
-
-
-            var start = day.Add(from.TimeOfDay);
-            var end = day.Add(to.TimeOfDay);
-
-            var date = new ActivityDate
+            // Jetzt die Termine - falls vorhanden
+            var dozList = new List<OrganiserMember>();
+            if (model.DozIds != null)
             {
-                Begin = start,
-                End = end,
-                Occurrence = new Occurrence { Capacity = -1, IsAvailable = true, FromIsRestricted = false, UntilIsRestricted = false },
-            };
+                dozList.AddRange(model.DozIds.Select(dozId => Db.Members.SingleOrDefault(g => g.Id == dozId)).Where(doz => doz != null));
+            }
 
+            var roomList = new List<Room>();
             if (model.RoomIds != null)
             {
-                foreach (var roomId in model.RoomIds)
-                {
-                    date.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
-                }
+                roomList.AddRange(model.RoomIds.Select(roomId => Db.Rooms.SingleOrDefault(g => g.Id == roomId)).Where(doz => doz != null));
             }
 
-            if (model.LecturerIds != null)
+            // Termine anelegen
+            var semesterService = new SemesterService();
+
+            if (model.Dates != null)
             {
-                foreach (var dozId in model.LecturerIds)
+                foreach (var date in model.Dates)
                 {
-                    date.Hosts.Add(Db.Members.SingleOrDefault(m => m.Id == dozId));
-                }
-            }
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+                    var isWdh = bool.Parse(elems[3]);
 
-            course.Dates.Add(date);
 
-
-
-            if (model.IsWeekly)
-            {
-                Semester semester = null;
-                if (course.SemesterGroups.Any())
-                {
-                    semester = course.SemesterGroups.First().Semester;
-                }
-
-                if (semester != null)
-                {
-                    day = day.AddDays(7);
-                    while (day < semester.EndCourses)
+                    ICollection<DateTime> dayList;
+                    // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
+                    // sonst nimm nur den Einzeltag
+                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        bool isVorlesung = true;
-                        foreach (var sd in semester.Dates)
+                        var lastDay = DateTime.Parse(elems[4]);
+                        var frequency = int.Parse(elems[5]);
+                        dayList = semesterService.GetDays(day, lastDay, frequency);
+                    }
+                    else
+                    {
+                        dayList = new List<DateTime> { day };
+                    }
+
+
+                    foreach (var dateDay in dayList)
+                    {
+                        var activityDate = new ActivityDate
                         {
-                            // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
-                            if (sd.From.Date <= day.Date &&
-                                day.Date <= sd.To.Date &&
-                                sd.HasCourses == false)
+                            Activity = course,
+                            Begin = dateDay.Add(begin),
+                            End = dateDay.Add(end),
+                            Occurrence = new Occurrence
                             {
-                                isVorlesung = false;
-                            }
+                                Capacity = -1,
+                                IsAvailable = true,
+                                FromIsRestricted = false,
+                                UntilIsRestricted = false,
+                                IsCanceled = false,
+                                IsMoved = false,
+                                UseGroups = false,
+                            },
+
+                        };
+
+                        foreach (var room in roomList)
+                        {
+                            activityDate.Rooms.Add(room);
                         }
 
-                        if (isVorlesung)
+                        foreach (var doz in dozList)
                         {
-
-                            start = day.Add(from.TimeOfDay);
-                            end = day.Add(to.TimeOfDay);
-
-                            date = new ActivityDate
-                            {
-                                Begin = start,
-                                End = end,
-                                Occurrence = new Occurrence { Capacity = -1, IsAvailable = true, FromIsRestricted = false, UntilIsRestricted = false },
-                            };
-
-                            if (model.RoomIds != null)
-                            {
-                                foreach (var roomId in model.RoomIds)
-                                {
-                                    date.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
-                                }
-                            }
-
-                            if (model.LecturerIds != null)
-                            {
-                                foreach (var dozId in model.LecturerIds)
-                                {
-                                    date.Hosts.Add(Db.Members.SingleOrDefault(m => m.Id == dozId));
-                                }
-                            }
-
-                            course.Dates.Add(date);
+                            activityDate.Hosts.Add(doz);
                         }
-                        day = day.AddDays(7);
+
+                        Db.ActivityDates.Add(activityDate);
+
                     }
                 }
             }
@@ -1516,50 +1719,113 @@ namespace MyStik.TimeTable.Web.Controllers
             model.OrganiserId2 = org.Id;
             model.OrganiserId3 = org.Id;
 
+            // Liste aller Fakultäten
             ViewBag.Organiser = Db.Organisers.Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
 
-            ViewBag.Semester = Db.Semesters.OrderByDescending(s => s.StartCourses).Take(3).Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            });
-
-            // bei der ersten Anzeige wird kein onChange ausgelöst
-            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
-            var curr = currList.FirstOrDefault();
-            model.CurriculumId = curr != null ? curr.Id : Guid.Empty;
-            ViewBag.Curricula = currList.Select(c => new SelectListItem
+            // Liste aller Fakultäten, auf die Zugriff auf Räume bestehen
+            // aktuell nur meine
+            ViewBag.RoomOrganiser = Db.Organisers.Where(x => x.Id == org.Id).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
 
-            var semGroups = Db.SemesterGroups.Where(g => g.Semester.Id == sem.Id &&
-                                                         g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
-                .ToList();
-
-            var group = semGroups.FirstOrDefault();
-            model.GroupId = group != null ? group.Id : Guid.Empty;
-            ViewBag.Groups = semGroups.Select(c => new SelectListItem
+            // Alle Semester, die in Zukunft enden
+            ViewBag.Semester = Db.Semesters.Where(x => x.EndCourses >= DateTime.Today).OrderBy(s => s.StartCourses).Take(5).Select(c => new SelectListItem
             {
-                Text = c.GroupName,
+                Text = c.Name,
                 Value = c.Id.ToString(),
             });
+            model.SemesterId = GetSemester().Id;
 
+            ViewBag.Curricula = null;
+            ViewBag.Groups = null;
+            ViewBag.Chapters = null;
+            ViewBag.Topics = null;
+
+
+
+
+            // bei der ersten Anzeige wird kein onChange ausgelöst
+            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
+            var curr = currList.FirstOrDefault();
+            if (curr != null)
+            {
+                model.CurriculumId = curr.Id;
+                ViewBag.Curricula = currList.Select(c => new SelectListItem
+                {
+                    Text = c.ShortName,
+                    Value = c.Id.ToString(),
+                });
+
+
+                // alle Studiengruppen
+                var currGroups = curr.CurriculumGroups.ToList();
+                var group = currGroups.FirstOrDefault();
+                model.CurrGroupId = @group?.Id ?? Guid.Empty;
+                ViewBag.CurrGroups = currGroups.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                });
+
+                // alle Kapazitätsgruppen
+
+                if (group != null)
+                {
+                    var capGroups = group.CapacityGroups.ToList();
+                    var firstGroup = capGroups.FirstOrDefault();
+                    model.CapGroupId = firstGroup?.Id ?? Guid.Empty;
+
+                    ViewBag.CapGroups = capGroups.Select(c => new SelectListItem
+                    {
+                        Text = c.Name,
+                        Value = c.Id.ToString(),
+                    });
+                }
+
+
+                var chapters = curr.Chapters.ToList();
+                var chapter = chapters.FirstOrDefault();
+                model.ChapterId = chapter?.Id ?? Guid.Empty;
+                ViewBag.Chapters = chapters.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                });
+
+                if (chapter != null)
+                {
+                    var topics = chapter.Topics.ToList();
+                    var topic = topics.FirstOrDefault();
+                    model.TopicId = topic?.Id ?? Guid.Empty;
+
+                    ViewBag.Topics = topics.Select(c => new SelectListItem
+                    {
+                        Text = c.Name,
+                        Value = c.Id.ToString(),
+                    });
+                }
+            }
 
 
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CreateCourse(CourseCreateModelExtended model)
         {
             var org = GetMyOrganisation();
+            var semester = GetSemester(model.SemesterId);
 
             var course = new Course
             {
@@ -1578,29 +1844,68 @@ namespace MyStik.TimeTable.Web.Controllers
                 },
             };
 
+            // da kommen Kapazitätsgruppen
+            // d.h. Semestergruppe suchen und ggf. anlegen
             if (model.GroupIds != null)
             {
                 foreach (var groupId in model.GroupIds)
                 {
-                    var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Id == groupId);
+                    var capGroup = Db.CapacityGroups.SingleOrDefault(g => g.Id == groupId);
 
-                    if (semGroup != null)
+                    var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Semester.Id == semester.Id && g.CapacityGroup.Id == groupId);
+
+                    // die Semestergruppe gibt es nicht => anlegen
+                    if (semGroup == null)
                     {
-                        course.SemesterGroups.Add(semGroup);
-
-                        var occGroup = new OccurrenceGroup
+                        semGroup = new SemesterGroup
                         {
-                            Capacity = 0,
-                            FitToCurriculumOnly = true,
-                            Occurrence = course.Occurrence
+                            CapacityGroup = capGroup,
+                            Semester = semester,
+                            IsAvailable = false,
                         };
-                        occGroup.SemesterGroups.Add(semGroup);
-                        semGroup.OccurrenceGroups.Add(occGroup);
-                        course.Occurrence.Groups.Add(occGroup);
-                        Db.OccurrenceGroups.Add(occGroup);
+                        Db.SemesterGroups.Add(semGroup);
                     }
+                    course.SemesterGroups.Add(semGroup);
+
+                    var occGroup = new OccurrenceGroup
+                    {
+                        Capacity = 0,
+                        FitToCurriculumOnly = true,
+                        Occurrence = course.Occurrence
+                    };
+                    occGroup.SemesterGroups.Add(semGroup);
+                    semGroup.OccurrenceGroups.Add(occGroup);
+                    course.Occurrence.Groups.Add(occGroup);
+                    Db.OccurrenceGroups.Add(occGroup);
                 }
             }
+
+            // jetzt die Themenbereiche
+            if (model.TopicIds != null)
+            {
+                foreach (var topicId in model.TopicIds)
+                {
+                    var topic = Db.CurriculumTopics.SingleOrDefault(x => x.Id == topicId);
+
+                    var semTopic =
+                        Db.SemesterTopics.SingleOrDefault(
+                            x => x.Semester.Id == model.SemesterId && x.Topic.Id == topicId);
+
+                    if (semTopic == null)
+                    {
+                        semTopic = new SemesterTopic
+                        {
+                            Semester = semester,
+                            Topic = topic
+                        };
+                        Db.SemesterTopics.Add(semTopic);
+                    }
+
+                    course.SemesterTopics.Add(semTopic);
+                }
+            }
+
+
 
             var member = GetMyMembership();
 
@@ -1647,12 +1952,15 @@ namespace MyStik.TimeTable.Web.Controllers
                     var end = TimeSpan.Parse(elems[2]);
                     var isWdh = bool.Parse(elems[3]);
 
-                    ICollection<DateTime> dayList;
-                    var semester = semesterService.GetSemester(day);
 
-                    if (isWdh && semester != null)
+                    ICollection<DateTime> dayList;
+                    // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
+                    // sonst nimm nur den Einzeltag
+                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        dayList = semesterService.GetDays(semester.Name, day);
+                        var lastDay = DateTime.Parse(elems[4]);
+                        var frequency = int.Parse(elems[5]);
+                        dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
                     else
                     {
@@ -1700,16 +2008,13 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.Activities.Add(course);
             Db.SaveChanges();
 
-            /*
-            return Json(new
-            {
-                ok = true, 
-                newurl = Url.Action("Admin", new { id = course.Id })
-            });
-            */
             return PartialView("_CreateCourseSuccess",course);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult GetMyCourseList()
         {
@@ -1726,7 +2031,16 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="day"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="room"></param>
+        /// <param name="doz"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult CheckConflicts(string group, int day, TimeSpan from, TimeSpan to, string room, string doz)
         {
@@ -1747,6 +2061,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(course);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult UpdateGeneralSettings(Course model)
         {
@@ -1769,6 +2088,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new { id = course.Id });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="semGroupId"></param>
+        /// <param name="capacity"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult AddGroup(Guid courseId, Guid semGroupId, int capacity)
         {
@@ -1817,6 +2143,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_GroupList", groups);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RemoveGroup(Guid courseId, Guid groupId)
         {
@@ -1844,6 +2176,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RemoveSubscription");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult UpdateOccurrenceSettings(Course model)
         {
@@ -1897,6 +2234,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("EditCourse", new { id = course.Id });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult UploadDocument(Guid id)
         {
             var model = new CourseDocumentUploadModel {CourseId = id};
@@ -1904,6 +2246,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult UploadDocument(CourseDocumentUploadModel model)
         {
@@ -1935,6 +2282,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="CourseId"></param>
+        /// <param name="DocId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteDocument(Guid CourseId, Guid DocId)
         {
@@ -1953,6 +2306,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RemoveSubscription");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ChangeGeneralSettings(CourseDetailViewModel model)
         {
@@ -1982,6 +2340,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_SaveSuccess");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ChangeCapacitySettings(CourseDetailViewModel model)
         {
@@ -2109,7 +2472,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", course);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult ReactivateDate2(Guid dateId)
         {
@@ -2143,6 +2510,11 @@ namespace MyStik.TimeTable.Web.Controllers
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ReactivateDateList(ICollection<Guid> dateIds)
         {
@@ -2184,6 +2556,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", course);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteDateConfirm(Guid dateId)
         {
@@ -2191,6 +2568,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DlgConfirmDeleteDate", date);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteDateConfirmed(Guid dateId)
         {
@@ -2219,6 +2601,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", activity);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteDateList(ICollection<Guid> dateIds)
         {
@@ -2294,11 +2681,16 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", course);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddRoomToDates(ICollection<Guid> dateIds, string roomNumber)
+        public PartialViewResult AddRoomToDates(ICollection<Guid> dateIds, Guid roomId)
         {
-            var room = Db.Rooms.FirstOrDefault(r => r.Number.Equals(roomNumber));
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
 
             Course course = null;
             var changeService = new ChangeService(Db);
@@ -2340,10 +2732,16 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", course);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="hostId"></param>
+        /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddHostToDates(ICollection<Guid> dateIds, string hostName)
+        public PartialViewResult AddHostToDates(ICollection<Guid> dateIds, Guid hostId)
         {
-            var host = Db.Members.FirstOrDefault(r => r.Name.Equals(hostName) || r.ShortName.Equals(hostName));
+            var host = Db.Members.SingleOrDefault(r => r.Id == hostId);
 
             Course course = null;
             foreach (var dateId in dateIds)
@@ -2366,6 +2764,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", course);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RemoveHosts(ICollection<Guid> dateIds)
         {
@@ -2391,7 +2794,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
 
         [HttpPost]
         public PartialViewResult ChangeDateInformation(Guid dateId)
@@ -2411,6 +2818,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DlgEditInformation", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ChangeDateInformationConfirmed(CourseDateInformationModel model)
         {
@@ -2427,7 +2839,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateTable", course);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult SetOnWaitingList(Guid id, string userId)
         {
@@ -2437,14 +2854,36 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (occurrence != null && !string.IsNullOrEmpty(userId))
             {
-                var subscription =
-                    occurrence.Subscriptions.SingleOrDefault(s => s.UserId.Equals(userId));
+                // immer doppelte reparieren
+                var subscriptions =
+                    occurrence.Subscriptions.Where(s => s.UserId.Equals(userId)).OrderBy(s => s.TimeStamp).ToList();
 
-                if (subscription != null)
+                var theOnlySubscription = subscriptions.LastOrDefault();
+
+                if (subscriptions.Count > 1)
                 {
-                    subscription.OnWaitingList = true;
-                    subscription.LapCount = 0;
-                    subscription.IsConfirmed = false;
+                    foreach (var subscription in subscriptions)
+                    {
+                        if (subscription != subscriptions.Last())
+                        {
+                            var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
+                            foreach (var drawing in allDrawings)
+                            {
+                                Db.SubscriptionDrawings.Remove(drawing);
+                            }
+
+                            occurrence.Subscriptions.Remove(subscription);
+                            Db.Subscriptions.Remove(subscription);
+                        }
+                    }
+                    Db.SaveChanges();
+                }
+
+                if (theOnlySubscription != null)
+                {
+                    theOnlySubscription.OnWaitingList = true;
+                    theOnlySubscription.LapCount = 0;
+                    theOnlySubscription.IsConfirmed = false;
                     Db.SaveChanges();
                 }
                 else
@@ -2488,7 +2927,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_ParticipantTable", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult SetOnParticipiantList(Guid id, string userId)
         {
@@ -2498,14 +2942,36 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (occurrence != null && !string.IsNullOrEmpty(userId))
             {
-                var subscription =
-                    occurrence.Subscriptions.SingleOrDefault(s => s.UserId.Equals(userId));
+                // immer doppelte reparieren
+                var subscriptions =
+                    occurrence.Subscriptions.Where(s => s.UserId.Equals(userId)).OrderBy(s => s.TimeStamp).ToList();
 
-                if (subscription != null)
+                var theOnlySubscription = subscriptions.LastOrDefault();
+
+                if (subscriptions.Count > 1)
                 {
-                    subscription.OnWaitingList = false;
-                    subscription.LapCount = 0;
-                    subscription.IsConfirmed = true;
+                    foreach (var subscription in subscriptions)
+                    {
+                        if (subscription != subscriptions.Last())
+                        {
+                            var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
+                            foreach (var drawing in allDrawings)
+                            {
+                                Db.SubscriptionDrawings.Remove(drawing);
+                            }
+
+                            occurrence.Subscriptions.Remove(subscription);
+                            Db.Subscriptions.Remove(subscription);
+                        }
+                    }
+                    Db.SaveChanges();
+                }
+
+                if (theOnlySubscription != null)
+                {
+                    theOnlySubscription.OnWaitingList = false;
+                    theOnlySubscription.LapCount = 0;
+                    theOnlySubscription.IsConfirmed = true;
                     Db.SaveChanges();
                 }
                 else
@@ -2550,6 +3016,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_ParticipantTable", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CreateDummy()
         {
             var semester = Db.Semesters.SingleOrDefault(s => s.Name.Equals("SS15"));

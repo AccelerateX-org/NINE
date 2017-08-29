@@ -1,0 +1,76 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.LevelViewModel>
+@{
+    ViewBag.Title = "Level";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Stockwerksverwaltung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col-md-12" style="margin-left: 15px;">
+                <div class="panel panel-default">
+                    <ul class="nav">
+                        @if (User.IsInRole("SysAdmin"))
+                        {
+                            <li>
+                                <a href="@Url.Action("CreateLevel", "Level")"><i class="fa fa-building"></i>Neues Stockwerk anlegen</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-md-10">
+
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Stockwerke</th>
+                            <th>Plan</th>
+                            <th>Räume</th>                  
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var level in Model)
+                        {
+                            <tr>
+
+                                <td>@level.Stockwerke</td>
+                                <td>@level.Plan</td>
+                                <td>@level.Räume</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <a href="@Url.Action("EditLevel", "Level" , new { id=level.Level.Id })" class="btn btn-default btn-xs"><i class="fa fa-pencil-square-o"></i></a>
+                                    <a href="@Url.Action("DeleteLevel", "Level" ,new { id=level.Level.Id })" class="btn btn-default btn-xs"><i class="fa fa-trash-o"></i></a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

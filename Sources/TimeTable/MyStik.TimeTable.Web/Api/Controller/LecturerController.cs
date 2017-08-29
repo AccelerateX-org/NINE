@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
@@ -11,6 +8,9 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LecturerController : ApiBaseController
     {
         
@@ -19,15 +19,65 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// Abfrage aller Dozenten
         /// </summary>
         /// <returns>Liste aller verfügbaren Dozenten</returns>
-        public LecturersResponse GetAllLecture()
+        public LecturersResponseExtended GetAllLecture()
         {
             var lecturerService = new LecturerInfoService();
 
-            var lecturerList = lecturerService.GetAllLecturers();
+            // Fakultät
+            var orgService = new OrganizerService();
+            var faculty = orgService.GetOrganiser("FK 09");
+                
+    
+            // Lehrveranstaltungen im aktuellen Semester
+            var semesterService = new SemesterService();
+            var semester = semesterService.GetCurrentSemester();
 
-            var response = new LecturersResponse
+            // Dozenten, die Lehrveranstaltungen im aktuellen Semester anbieten
+            var activeLecturers = orgService.GetLecturers(faculty, semester);
+
+            // Benutzerdaten
+            var userService = new UserInfoService();
+            
+
+            // für jeden Dozenten
+            var LecturerList = new List<LecturerContractExtended>();
+
+            foreach (var lecturer in activeLecturers)
             {
-                Lecturers = lecturerList,
+                var lecModel = new LecturerContractExtended();
+
+                lecModel.MemberId = lecturer.Id;
+                lecModel.Title = lecturer.Role;
+                lecModel.Room = "";
+
+                // Details zum Benutzerkonto
+                var user = userService.GetUser(lecturer.UserId);
+
+                if (user != null)
+                {
+                    lecModel.FirstName = user.FirstName;
+                    lecModel.LastName = user.LastName;
+                    lecModel.Email = user.Email;
+                }
+                else
+                {
+                    lecModel.LastName = lecturer.Name;
+                }
+
+                // gibt es noch nicht
+                lecModel.Functions = new List<string>();
+
+                // Averfügbar Slots
+                lecModel.AvailableSlots = lecturerService.GetAvailabeSlots(lecturer, semester);
+                
+                LecturerList.Add(lecModel);
+            }
+
+
+
+            var response = new LecturersResponseExtended()
+            {
+                Lecturers = LecturerList
             };
 
             return response;
@@ -61,7 +111,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
         {
             var lecturerService = new LecturerInfoService();
 
-            var lecturerList = lecturerService.GetLecturersStartwith(StartsWith);
+            var orgName = "FK 09";
+
+            var lecturerList = lecturerService.GetLecturersStartwith(StartsWith, orgName);
 
             var response = new LecturersResponse
             {

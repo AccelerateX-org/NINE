@@ -1,0 +1,144 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.UserAdminViewModel>
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="page-header">
+    <h1>
+        Benutzer <small>Status des Benutzerkontos, keine Fachinformationen</small><span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+    </h1>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        @using (Ajax.BeginForm("Search", "User", null,
+                new AjaxOptions
+                {
+                    HttpMethod = "Post",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = "userTable"
+                },
+                new { @class = "form", role = "form" }))
+                        {
+                            <div class="form-group">
+                                <label for="searchString">Suche nach:</label>
+                                <input type="text" name="searchString" id="searchString" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Suchen" class="btn btn-primary" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>
+                                @Ajax.ActionLink("Zuletzt registriert", "LatestRegistrations", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Heue angemeldet", "TodayLoggedIn", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Duplikate", "Doubles", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Gäste", "GuestAccounts", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Inaktiv", "Inactive", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Nie angemeldet", "NeverLoggedIn", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Unbestätigte E-Mail Adressen", "Pending", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Konten mit Verfallsdatum", "Expired", null, new AjaxOptions
+                           {
+                               HttpMethod = "Post",
+                               InsertionMode = InsertionMode.Replace,
+                               UpdateTargetId = "userTable",
+                               LoadingElementId = "loading"
+                           }, null)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li><a href="@Url.Action("ConfirmAll")">Alle aktivieren</a></li>
+                            <li><a href="@Url.Action("Jobs")">Hintergrundjobs</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="userTable">
+                        @Html.Partial("_UserList", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

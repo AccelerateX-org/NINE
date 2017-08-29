@@ -1,12 +1,14 @@
-﻿@{
-    ViewBag.Title = "Jobs";
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+
+@{
+    ViewBag.Title = Resources.JobsString;
 }
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-events">
         <div class="row">
             <div class="col-md-12">
-                <h1>Jobs</h1>
+                <h1>@Resources.JobsString</h1>
             </div>
         </div>
     </div>
@@ -17,27 +19,27 @@
         <div class="col-md-12">
             <div class="panel panel-default ">
                 <div class="panel-heading">
-                    <h4>Angebote von Unternehmen</h4>
+                    <h4>@Resources.JobsPanelHeading</h4>
                 </div>
                 <table class="table table-condensed">
                     <thead>
                     <tr>
-                        <th>Bezeichnung</th>
-                        <th>Beschreibung</th>
+                        <th>@Resources.Description</th>
+                        <th>@Resources.Description2</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td>
-                            <a href="https://fk09-hm.jobonaut.de/" target="_blank">Job Portal der FK09 bei Jobonaut</a> <i class="fa fa-external-link"></i>
+                            <a href="https://fk09-hm.jobonaut.de/" target="_blank">@Resources.HMJobonautDescription</a>
                         </td>
                         <td>
-                            Die Unternehmen stellen direkt die Stellenanzeigen im Portal ein. Eine SHK der FK 09 kümmert sich um die Qualitätssicherung.
+                           @Resources.HMJobonautDescription2
                         </td>
                     </tr>
                     <tr>
-                        <td><a href="@Url.Action("Index", "Newsletter")">Job Newsletter der FK09</a></td>
-                        <td>Jobangebote, die per E-Mail bei Profs, Sekretariat und/oder Fachschaft landen werden von einer SHK der FK09 gesammelt und von Zeit zu Zeit über den Newsletter versendet.</td>
+                        <td><a href="@Url.Action("Index", "Newsletter")">@Resources.JobsNewsletterFK09Description</a></td>
+                        <td>@Resources.JobsNewsletterFK09Description2</td>
                     </tr>
                     </tbody>
                 </table>

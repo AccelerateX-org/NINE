@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -13,6 +10,8 @@ namespace MyStik.TimeTable.Data
         {
             ModuleCourses = new HashSet<ModuleCourse>();
             ModuleExams = new HashSet<ModuleExam>();
+            Groups = new HashSet<CurriculumGroup>();
+            Accreditations = new HashSet<ModuleAccreditation>();
         }
 
 
@@ -46,8 +45,9 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Zugehörige Studiengruppe
+        /// Überflüssig!
         /// </summary>
-        public virtual CurriculumGroup Group { get; set; }
+        public virtual ICollection<CurriculumGroup> Groups { get; set; }
 
 
         /// <summary>
@@ -55,8 +55,54 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual OrganiserMember MV { get; set; }
         
+
         /// <summary>
-        /// Liste der Lehrveranstaltungen zu diesem Modul
+        /// Dozent
+        /// </summary>
+        public int Lecturer { get; set; }
+
+        /// <summary>
+        /// Sprache der Veranstaltung
+        /// </summary>
+        public int Language { get; set; }
+
+        /// <summary>
+        /// Lehrform
+        /// </summary>
+        public int SWS { get; set; }
+
+        /// <summary>
+        /// Arbeitsaufwand
+        /// </summary>
+        public int Work { get; set; }
+
+        /// <summary>
+        /// Voraussetzungen für Modul
+        /// </summary>
+        public int Requirements { get; set; }
+
+        /// <summary>
+        /// Lernziele/Kompetenzen
+        /// </summary>
+        public int Skills { get; set; }
+
+        /// <summary>
+        /// Verbindliche Lehrinhalte
+        /// </summary>
+        public int Topic { get; set; }
+
+        /// <summary>
+        /// Studien-/ Prüfungsleistungen
+        /// </summary>
+        public int Leistung { get; set; }
+
+        /// <summary>
+        /// Literatur
+        /// </summary>
+        public int Books { get; set; }
+
+        /// <summary>
+        /// Liste der akkreditierten Module
         /// </summary>
         public virtual ICollection<ModuleCourse> ModuleCourses { get; set; }
 
@@ -64,5 +110,10 @@ namespace MyStik.TimeTable.Data
         /// Liste aller Modulprüfungen
         /// </summary>
         public virtual ICollection<ModuleExam> ModuleExams { get; set; }
+
+        /// <summary>
+        /// Alle Akkreditierungen des Moduls
+        /// </summary>
+       public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
     }
 }

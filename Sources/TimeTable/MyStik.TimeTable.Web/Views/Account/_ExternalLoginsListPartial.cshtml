@@ -1,6 +1,6 @@
 ﻿@using Microsoft.Owin.Security
 
-<h3>Andere Dienste zum Anmelden verwenden</h3>
+<h4>@Resources.LoginProviderHeading <small>BETA</small></h4>
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0)

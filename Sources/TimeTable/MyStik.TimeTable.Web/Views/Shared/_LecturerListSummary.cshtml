@@ -11,8 +11,16 @@
         @foreach (var lec in Model)
         {
             <tr>
-                <td>@lec.Lecturer.Name</td>
-                <td>@Html.ActionLink("> zum Profil", "Profile", "Lecturer", new { id = @lec.Lecturer.Id })</td>
+                <td><a href="@Url.Action("Member", "Organiser", new {orgId = lec.Lecturer.Organiser.ShortName, shortName = lec.Lecturer.ShortName})">@lec.Lecturer.Name</a></td>
+                @if (string.IsNullOrEmpty(lec.Lecturer.UrlProfile))
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td><a href="@lec.Lecturer.UrlProfile" target="_blank">@lec.Lecturer.UrlProfile</a> <i class="fa fa-external-link"></i></td>
+                }
+                
             </tr>
         }
     </tbody>

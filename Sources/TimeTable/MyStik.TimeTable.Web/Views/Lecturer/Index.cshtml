@@ -1,7 +1,6 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Dozenten";
+    ViewBag.Title = Resources.SubMenuLecturer;
 }
 
 <div class="panel panel-default">
@@ -9,7 +8,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Dozenten @ViewBag.Organiser <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
+                    <h1>@Resources.SubMenuLecturer @ViewBag.Organiser <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
                 </div>
             </div>
         </div>
@@ -22,7 +21,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            @Html.DropDownListFor(model => model.Organiser, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", disabled = "", onchange = "onFacultyChanged()" })
+                            @Html.DropDownListFor(model => model.Organiser, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
                         </div>
                     </div>
                 </div>

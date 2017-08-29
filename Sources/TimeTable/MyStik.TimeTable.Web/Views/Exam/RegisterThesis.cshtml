@@ -1,0 +1,72 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.ThesisCriteriaListModel>
+@{
+    ViewBag.Title = "RegisterThesis";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Abschlussarbeit erfassen - Auswahl Prüfungsmodul</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-group"></i> Akkredierte Module für Abschlussarbeiten
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Studiengang</th>
+                            <th>Bezeichnung</th>
+                            <th>Modulverantwortlicher</th>
+                            <th>Prüfungsteil(e)</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var thesis in Model)
+                        {
+                            <tr>
+                                <td>@thesis.Curriculum.Name</td>
+                                @if (thesis.Criteria != null)
+                                {
+                                    <td>@thesis.Module.Name</td>
+                                    <td>@thesis.Module.MV.Name</td>
+                                    <td>
+                                        @foreach (var moduleExam in thesis.Module.ModuleExams)
+                                        {
+                                            <div>@moduleExam.ExamType: <a href="@Url.Action("CreateThesis", new {id = moduleExam.Id})">Prüfungsleistung auswählen</a></div>
+                                        }
+                                    </td>
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td>Kein Modul vorhanden</td>
+                                    <td></td>
+                                    <td></td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

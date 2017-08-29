@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomService
     {
         private TimeTableDbContext _db = new TimeTableDbContext();
@@ -41,6 +43,11 @@ namespace MyStik.TimeTable.Web.Services
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="allAvailable"></param>
+        /// <returns></returns>
         public IEnumerable<Room> GetAllRooms(bool allAvailable)
         {
             if (allAvailable)
@@ -64,7 +71,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         internal IEnumerable<Room> GetFreeRooms(DayOfWeek dayOfWeek, TimeSpan fromTime, TimeSpan untilTime, Semester semester, bool allAvailable)
         {
-            var dayList = new SemesterService().GetDays(semester.Name, dayOfWeek);
+            var dayList = new SemesterService().GetDays(semester.Id, dayOfWeek);
 
             // ich fange mit allen an!
             var rooms = _db.Rooms.ToList();
@@ -105,7 +112,7 @@ namespace MyStik.TimeTable.Web.Services
 
         internal IEnumerable<Room> GetFreeRooms(DayOfWeek dayOfWeek, TimeSpan fromTime, TimeSpan untilTime, Semester semester, bool allAvailable, List<Room> allRooms)
         {
-            var dayList = new SemesterService().GetDays(semester.Name, dayOfWeek);
+            var dayList = new SemesterService().GetDays(semester.Id, dayOfWeek);
 
             // ich fange mit allen an!
             var rooms = allRooms;
@@ -188,6 +195,7 @@ namespace MyStik.TimeTable.Web.Services
         /// Liefert alle Räume, die einem Veranstalter zugeordnet sine
         /// </summary>
         /// <param name="orgName">Kurzname des Veranstalters</param>
+        /// <param name="isOrgAdmin"></param>
         /// <returns>Liste der Räume des Veranstalters</returns>
         internal ICollection<Room> GetRooms(string orgName, bool isOrgAdmin)
         {
@@ -218,13 +226,23 @@ namespace MyStik.TimeTable.Web.Services
             return room.Dates.FirstOrDefault(d => d.Begin <= now && d.End >= now);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns></returns>
         internal ActivityDate GetNextDate(Room room)
         {
             var now = GlobalSettings.Now;
             return room.Dates.Where(d => d.Begin >= now).OrderBy(d => d.Begin).FirstOrDefault();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public ICollection<RoomInfoModel> GetAvaliableRoomsNow(Guid orgId, int offset=15)
         {
             var start = GlobalSettings.Now;
@@ -236,6 +254,13 @@ namespace MyStik.TimeTable.Web.Services
             return GetAvaliableRooms(orgId, start, end);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <param name="offset"></param>
+        /// <param name="duration"></param>
+        /// <returns></returns>
         public ICollection<RoomInfoModel> GetAvaliableRoomsNext(Guid orgId, int offset = 15, int duration = 45)
         {
             var start = GlobalSettings.Now.AddMinutes(offset);
@@ -248,18 +273,40 @@ namespace MyStik.TimeTable.Web.Services
         }
 
 
-
-        public ICollection<RoomInfoModel> GetAvaliableRooms(Guid orgId, DateTime from, DateTime until)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <param name="isRoomAdmin"></param>
+        /// <returns></returns>
+        public ICollection<RoomInfoModel> GetAvaliableRooms(Guid orgId, DateTime from, DateTime until, bool isRoomAdmin = false)
         {
             var roomList = new List<RoomInfoModel>();
 
-            var rooms = _db.Rooms.Where(room => 
-                room.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation) &&
-                !room.Dates.Any(d =>
-                    (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
-                    (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
-                    (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+            List<Room> rooms;
+
+            if (isRoomAdmin)
+            {
+                rooms = _db.Rooms.Where(room =>
+                    room.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation) &&
+                    !room.Dates.Any(d =>
+                            (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
                     )).ToList();
+            }
+            else
+            {
+                rooms = _db.Rooms.Where(room =>
+                    room.Assignments.Any(a => a.Organiser.Id == orgId) &&
+                    !room.Dates.Any(d =>
+                            (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                    )).ToList();
+            }
 
             foreach (var room in rooms)
             {
@@ -274,6 +321,11 @@ namespace MyStik.TimeTable.Web.Services
             return roomList;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
         public ICollection<RoomInfoModel> GetNextAvaliableRoomsNow(Guid orgId)
         {
             var start = GlobalSettings.Now;
@@ -285,6 +337,13 @@ namespace MyStik.TimeTable.Web.Services
             return GetNextAvaliableRooms(orgId, start, end);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public ICollection<RoomInfoModel> GetNextAvaliableRooms(Guid orgId, DateTime from, DateTime until)
         {
             var roomList = new List<RoomInfoModel>();

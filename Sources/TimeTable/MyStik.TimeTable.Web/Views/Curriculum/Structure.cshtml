@@ -1,0 +1,222 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+@{
+    ViewBag.Title = "Aufbau";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Aufbau @Model.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.UserRight != null && ViewBag.UserRight.IsCurriculumAdmin)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Edit", "Curriculum", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-cog"></i> Einstellungen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("CreateGroup", "Curricula", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-plus"></i> Gruppe hinzufügen
+                                </a>
+                            </div>
+                            @*
+    <div class="form-group">
+        <a href="@Url.Action("Create", "CurriculumCriteria", new {id = Model.Id})" class="btn btn-default">
+            <i class="fa fa-plus"></i> Kriterium anlegen
+        </a>
+    </div>
+                            *@
+                            @*
+    <div class="form-group">
+        <a href="@Url.Action("ImportModuleCatalog", "Curriculum", new {id = Model.Id})" class="btn btn-default">
+            <i class="fa fa-upload"></i> Modulkatalog importieren
+        </a>
+    </div>
+    <div class="form-group">
+        <a href="@Url.Action("DeleteModuleCatalog", "Curriculum", new {id = Model.Id})" class="btn btn-default">
+            <i class="fa fa-trash"></i> Modulkatalog löschen
+        </a>
+    </div>
+                        *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-group"></i> Studiengruppen
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Teilgruppen</th>
+                                <th>WS</th>
+                                <th>SS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var group in Model.CurriculumGroups.OrderBy(g => g.Name))
+                            {
+                                var n = group.CapacityGroups.Count;
+                                foreach (var capacityGroup in group.CapacityGroups)
+                                {
+                                    if (capacityGroup.Equals(group.CapacityGroups.First()))
+                                    {
+                                        <tr>
+                                            <td rowspan="@n">@group.Name</td>
+                                            <td>@capacityGroup.Name</td>
+                                            <td>
+                                                @if (capacityGroup.InWS)
+                                                {
+                                                    <i class="fa fa-check text-success"></i>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (capacityGroup.InSS)
+                                                {
+                                                    <i class="fa fa-check text-success"></i>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>@capacityGroup.Name</td>
+                                            <td>
+                                                @if (capacityGroup.InWS)
+                                                {
+                                                    <i class="fa fa-check text-success"></i>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (capacityGroup.InSS)
+                                                {
+                                                    <i class="fa fa-check text-success"></i>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-bookmark"></i> Themenruppen
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Thema</th>
+                                <th>Kapitel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var group in Model.Chapters.OrderBy(g => g.Name))
+                            {
+                                var n = group.Topics.Count;
+                                foreach (var capacityGroup in group.Topics)
+                                {
+                                    if (capacityGroup.Equals(group.Topics.First()))
+                                    {
+                                        <tr>
+                                            <td rowspan="@n">@group.Name</td>
+                                            <td>@capacityGroup.Name</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>@capacityGroup.Name</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-trophy"></i> Kriterien
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Akkreditierte Module</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var group in Model.Criterias.OrderBy(x => x.Name))
+                        {
+                            var n = group.Accreditations.Count;
+                            foreach (var capacityGroup in group.Accreditations)
+                            {
+                                if (capacityGroup.Equals(group.Accreditations.First()))
+                                {
+                                    <tr>
+                                        <td rowspan="@n"><a href="@Url.Action("Details", "CurriculumCriteria", new {id = group.Id})">@group.Name</a></td>
+                                        <td>@capacityGroup.Module.Name</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@capacityGroup.Module.Name</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

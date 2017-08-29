@@ -1,9 +1,7 @@
-﻿@using MyStik.TimeTable.Data
-@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.ActivityPlanModel
+﻿@model MyStik.TimeTable.Web.Models.ActivityPlanModel
 
 @{
-    ViewBag.Title = "Meine Termine";
+    ViewBag.Title = Resources.MyCalendar;
 }
 
 @section styles
@@ -17,7 +15,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Mein Kalender</h1>
+                    <h1>@Resources.MyCalendar</h1>
                 </div>
             </div>
         </div>
@@ -30,7 +28,7 @@
                 <div class="portlet-title">
                     <div class="caption">
                         <i class="fa fa-calendar"></i>
-                        <span class="caption-subject bold uppercase"> Mein Kalender</span>
+                        <span class="caption-subject bold uppercase"> @Resources.MyCalendar</span>
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </div>
                     <div class="actions">

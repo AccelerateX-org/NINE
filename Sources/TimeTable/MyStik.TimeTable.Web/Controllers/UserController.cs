@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using PagedList;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize(Roles = "SysAdmin")]
     public class UserController : BaseController
     {
         private ApplicationDbContext _db = new ApplicationDbContext();
 
-        //
-        // GET: /User/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var model = new List<UserAdminViewModel>();
@@ -35,27 +36,62 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult DeleteUser(string id)
         {
 
             // Alle Eintragungen löschen
             // Das darf nur der Admin, der weiss, was er tut. Daher hier auch keine E-Mail oder ähnliches
-            var subscriptions = Db.Subscriptions.Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
-
-            foreach (var subscription in subscriptions)
+            try
             {
-                Db.Subscriptions.Remove(subscription);
+                var subscriptions = Db.Subscriptions.Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
+
+                foreach (var subscription in subscriptions)
+                {
+                    Db.Subscriptions.Remove(subscription);
+                }
+                Db.SaveChanges();
+
+                var user = UserManager.FindById(id);
+                // Devices löschen!
+                var devices = _db.Devices.Where(d => d.User.Id.Equals(user.Id)).ToList();
+                foreach (var userDevice in devices)
+                {
+                    _db.Devices.Remove(userDevice);
+                }
+                _db.SaveChanges();
+                UserManager.Delete(user);
+
+                return PartialView("_EmptyRow");
             }
-            Db.SaveChanges();
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
 
-            var user = UserManager.FindById(id);
-            UserManager.Delete(user);
+                if (ex.InnerException != null)
+                {
+                    msg += " - ";
+                    msg += ex.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        msg += " - ";
+                        msg += ex.InnerException.InnerException.Message;
+                    }
+                }
 
-            return PartialView("_EmptyRow");
+                return PartialView("_ErrorRow", msg);
+            }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Statistics()
         {
             var userDB = new ApplicationDbContext();
@@ -96,6 +132,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Subscriptions(string id)
         {
             var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(s => s.UserId.Equals(id)).OrderBy(s => s.TimeStamp).ToList();
@@ -140,7 +181,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult TodayLoggedIn()
         {
@@ -151,6 +195,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Inactive()
         {
@@ -163,6 +211,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult NeverLoggedIn()
         {
@@ -173,6 +225,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Pending()
         {
@@ -183,6 +239,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Remarked()
         {
@@ -193,6 +253,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Expired()
         {
@@ -203,6 +267,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public async Task<PartialViewResult> ConfirmAll()
         {
@@ -262,6 +330,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return model;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult GuestAccounts()
         {
@@ -272,6 +344,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Doubles()
         {
@@ -299,6 +375,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult MakeStudent(string id)
         {
@@ -314,6 +395,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserListEntry", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult MakeGuest(string id)
         {
@@ -329,6 +415,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserListEntry", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult MakeStaff(string id)
         {
@@ -344,7 +435,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserListEntry", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult RepairUser(string id)
         {
@@ -363,6 +458,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserListEntry", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Search(string searchString)
         {
@@ -377,6 +477,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult TestAccounts()
         {
@@ -452,7 +556,10 @@ namespace MyStik.TimeTable.Web.Controllers
             //return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult AccountManagement()
         {
             var today = DateTime.Today;
@@ -469,7 +576,10 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult InactiveStage1()
         {
@@ -486,7 +596,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult InactiveWarned()
         {
@@ -503,7 +616,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult InactiveStage2()
         {
@@ -520,7 +636,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult InactiveDeactivated()
         {
@@ -537,7 +656,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult InactiveExpired()
         {
@@ -554,6 +676,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_UserList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ResetWarnings()
         {
             var userList = _db.Users.Where(x => x.Approved.HasValue).ToList();
@@ -566,6 +692,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("AccountManagement");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ChangeUserName(string id)
         {
             var model = new UserManageViewModel();
@@ -579,6 +710,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult ChangeUserName(UserManageViewModel model)
         {

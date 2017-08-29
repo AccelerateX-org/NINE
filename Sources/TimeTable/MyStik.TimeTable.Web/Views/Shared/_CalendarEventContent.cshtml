@@ -1,6 +1,4 @@
 ﻿@model CalenderEventViewModel
-@using System.Text
-@using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Models
 
 <div>
@@ -17,7 +15,7 @@
             {
                 foreach (var semesterGroup in Model.Summary.Activity.SemesterGroups)
                 {
-                    if (semesterGroup.CurriculumGroup != null)
+                    if (semesterGroup.CapacityGroup != null)
                     {
                         linkName += semesterGroup.FullNameCompact;
                         if (semesterGroup != Model.Summary.Activity.SemesterGroups.Last())
@@ -40,7 +38,14 @@
 
     @foreach (var l in Model.Summary.Date.Hosts)
     {
-        @Html.ActionLink(l.Name, "Member", "Organiser", new { orgId = l.Organiser.ShortName, shortName = l.ShortName }, null)
+        if (string.IsNullOrEmpty(l.Name))
+        {
+            @Html.ActionLink("N.N.", "Member", "Organiser", new {id = l.Id}, null)
+        }
+        else
+        {
+            @Html.ActionLink(l.Name, "Member", "Organiser", new { id = l.Id }, null)
+        }
         if (l != Model.Summary.Date.Hosts.Last())
         {
             @Html.Raw(", ")

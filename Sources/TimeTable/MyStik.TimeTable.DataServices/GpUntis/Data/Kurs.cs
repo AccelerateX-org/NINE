@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.DataServices.GpUntis.Data
 {
-    public class Kurs
+    public class Kurs : ImportBase
     {
         public Kurs()
         {
             Unterricht = new HashSet<Unterricht>();
             Termine = new HashSet<Termin>();
             Gruppen = new HashSet<Gruppe>();
-
+            IsValid = false;
         }
 
         public String Id { get; set; }
@@ -31,8 +29,11 @@ namespace MyStik.TimeTable.DataServices.GpUntis.Data
         {
             var sb = new StringBuilder();
 
-            sb.Append(Fach.FachID);
-            sb.Append(";");
+            if (Fach != null)
+            {
+                sb.Append(Fach.FachID);
+                sb.Append(";");
+            }
 
             foreach (var gruppe in Gruppen)
             {

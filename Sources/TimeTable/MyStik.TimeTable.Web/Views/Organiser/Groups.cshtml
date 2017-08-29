@@ -1,0 +1,113 @@
+﻿@model ICollection<MyStik.TimeTable.Data.SemesterGroup>
+@{
+    ViewBag.Title = "Semestergruppen";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @ViewBag.Organiser.ShortName im @ViewBag.Semester.Name - Semestergruppen</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-home"></i> Semestergruppen
+                    </div>
+                    <div class="actions">
+                        @if (ViewBag.UserRight.IsCourseAdmin)
+                        {
+                            <div class="btn-group">
+                                <a class="btn btn-default btn-sm" href="javascript:;" data-toggle="dropdown">
+                                    <i class="fa fa-cog"></i> Aktionen
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li>
+                                        <a href="@Url.Action("InitGroups")"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Semestergruppen erzeugen</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("EnableGroups")"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Semestergruppen freigeben</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("DisableGroups")"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Semestergruppen zurückziehen</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table id="tabCourses" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Studiengang</th>
+                            <th>Studiengruppe</th>
+                            <th>Kapazitätsgruppe</th>
+                            <th># LVs</th>
+                            <th># Stud</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model)
+                            {
+                                <tr>
+                                    @if (c.IsAvailable)
+                                    {
+                                        <td><i class="fa fa-check"></i></td>
+                                    }
+                                    else
+                                    {
+                                        <td><i class="fa fa-ban"></i></td>
+                                    }
+                                    <td>@Html.ActionLink(c.FullName, "Group", "Semester", new {id = c.Id}, null)</td>
+                                    <td>@c.CapacityGroup.CurriculumGroup.Curriculum.ShortName</td>
+                                    <td>@c.CapacityGroup.CurriculumGroup.Name</td>
+                                    <td>@c.CapacityGroup.Name</td>
+                                    <td>@c.Activities.Count</td>
+                                    <td>@c.Subscriptions.Count</td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabCourses').DataTable();
+        });
+    </script>
+}
+
+

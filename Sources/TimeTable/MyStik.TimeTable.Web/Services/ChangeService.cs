@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ChangeService
     {
         private TimeTableDbContext _db;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbContext"></param>
         public ChangeService(TimeTableDbContext dbContext)
         {
             _db = dbContext;

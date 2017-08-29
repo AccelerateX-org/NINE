@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
+﻿using System.Collections.Generic;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -86,6 +82,9 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string htmlToolbar { get; set; }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public string htmlToolbarInfo { get; set; }
 
         /// <summary>
@@ -94,17 +93,35 @@ namespace MyStik.TimeTable.Web.Models
         public string htmlContent { get; set; }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CalenderEventViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDateSummary Summary { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel State { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CalenderEventPrintViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Room> Rooms { get; set; }
     }
 

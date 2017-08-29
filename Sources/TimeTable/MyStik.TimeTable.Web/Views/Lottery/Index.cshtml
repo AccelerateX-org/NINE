@@ -1,88 +1,192 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@using MyStik.TimeTable.Web.Models
-@model ICollection<MyStik.TimeTable.Data.Lottery>
+﻿@using MyStik.TimeTable.Web.Models
+@model ICollection<LotterySummaryModel>
 @{
     ViewBag.Title = "Platzverlosungen";
 }
 
 <div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
+    <div class="panel-body bg-fillter-study">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Platzverlosungen</h1>
+                    <h1>Lotterien für @ViewBag.Organiser.ShortName im @ViewBag.Semester.Name</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2">
-            @if ((ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff) || User.IsInRole("SysAdmin"))
-            {
+@if (ViewBag.UserRight.IsOrgMember)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Create")" class="btn btn-default">
+                                    <i class="fa fa-plus-circle"></i> Verlosung anlegen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("DeleteAll", new {id=ViewBag.Semester.Id})" class="btn btn-default">
+                                    <i class="fa fa-trash-o"></i> Alle löschen
+                                </a>
+                            </div>
+                            @if (ViewBag.NextSemester != null)
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("Index", new {id=ViewBag.NextSemester.Id})" class="btn btn-info">
+                                        <i class="fa fa-chevron-right"></i> @ViewBag.NextSemester.Name
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
-                        <div class="panel panel-default">
-                            <ul class="nav">
-                                <li>
-                                    <a href="@Url.Action("Create")"><i class="fa fa-plus"></i> Verlosung anlegen</a>
-                                </li>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold">Rahmenbedingungen</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <ul>
+                        <li>Jede Lotterie besteht aus einem Satz von Lehrveranstaltungen.</li>
+                        <li>Für jede Lehrveranstaltung existiert ein eigener Lostopf aus allen Eintragungen.</li>
+                        <li>Die Platzverlosungen werden für jede Lehrveranstaltung einzeln durchgeführt.</li>
+                        <li>Durch eine Platzverlosung werden Reservierungen zugelost.</li>
+                        <li>Reservierungen müssen bis zur nächsten Platzverlosung bestätigt werden, sonst verfallen sie.</li>
+                        <li>Die Anzahl an Reservierungen ist nicht beschränkt.</li>
+                        <li><strong>Die Anzahl an Bestätigungen pro Lotterie ist beschränkt.</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold">Legende / Symbole</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Gesamt</h4>
+                            <ul class="fa-ul">
+                                <li><i class="fa-li fa fa-book"></i>Anzahl der Lehrveranstaltungen</li>
+                                <li><i class="fa-li fa fa-shopping-cart"></i>Anzahl der bestätigbaren Reservierungen</li>
+                                <li><i class="fa-li fa fa-cubes"></i>Anzahl der Plätze insgesamt (Kapazität)</li>
+                                <li><i class="fa-li fa fa-user"></i>Anzahl der Studierenden mit Eintragungen</li>
+                                <li><i class="fa-li fa fa-pencil"></i>Anzahl der Eintragungen insgesamt</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Details zu Einschreibungen</h4>
+                            <ul class="fa-ul">
+                                <li><i class="fa-li fa fa-group"></i>Anzahl der belegten Plätze</li>
+                                <li><i class="fa-li fa fa-ticket"></i>Anzahl der Reservierungen</li>
+                                <li><i class="fa-li fa fa-hourglass"></i>Anzahl Eintragungen auf Wartelisten</li>
+                                <li><i class="fa-li fa fa-calendar"></i>Zeitraum der Platzverlosungen</li>
+                                <li><i class="fa-li fa fa-clock-o"></i>Uhrzeit</li>
                             </ul>
                         </div>
                     </div>
                 </div>
-
-            }
-
-
+            </div>
         </div>
-
-        <div class="col-md-10">
+    </div>
+    
+    
+    <div class="row">
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <table class="table table-condensed">
                                 <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>JobID</th>
-                                        <th>Beschreibung</th>
-                                        <th>Zeitraum</th>
-                                        <th># Kurse</th>
-                                        <th></th>
-                                    </tr>
+                                <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th style="text-align: right"><i class="fa fa-book"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-shopping-cart"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-cubes"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-user"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-pencil"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-group"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-ticket"></i></th>
+                                    <th style="text-align: right"><i class="fa fa-hourglass"></i></th>
+                                    <th style="text-align: center"><i class="fa fa-calendar"></i></th>
+                                    <th style="text-align: center"><i class="fa fa-clock-o"></i></th>
+                                    <th></th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var lottery in Model)
+                                    @foreach (var lottery in Model.OrderBy(x => x.Lottery.FirstDrawing).ThenBy(x => x.Lottery.DrawingTime))
                                     {
-                                        <tr>
-                                            <td>@lottery.Name</td>
-                                            <td>@lottery.JobId</td>
-                                            <td>@lottery.Description</td>
-                                            <td>@lottery.FirstDrawing.ToShortDateString() bis @lottery.LastDrawing.ToShortDateString() um @lottery.DrawingTime</td>
-                                            <td>@lottery.Occurrences.Count</td>
-                                            @if (User.IsInRole("SysAdmin"))
+                                        var nConfirmed = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => s.IsConfirmed && !s.OnWaitingList));
+                                        var nReserved = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => !s.IsConfirmed && !s.OnWaitingList));
+                                        var nWaiting = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => s.OnWaitingList));
+
+                                        var rowColor = "";
+                                        if (nConfirmed >= lottery.Capacity)
+                                        {
+                                            rowColor = "danger";
+                                        }
+                                        else if (nConfirmed > 0.8 * lottery.Capacity && nConfirmed < lottery.Capacity)
+                                        {
+                                            rowColor = "warning";
+                                        }
+
+                                        <tr class="@rowColor">
+                                            @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
                                             {
-                                                <td>
-                                                    <a href="@Url.Action("Edit", new {id = lottery.Id})" class="btn btn-default btn-xs">Edit</a>
-                                                    <a href="@Url.Action("Details", new {id = lottery.Id})" class="btn btn-default btn-xs">Details</a>
-                                                    <a href="@Url.Action("State", new {id = lottery.Id})" class="btn btn-default btn-xs">Status</a>
-                                                    <a href="@Url.Action("List", new {id = lottery.Id})" class="btn btn-default btn-xs">Liste</a>
-                                                    <a href="@Url.Action("Subscribers", new {id = lottery.Id})" class="btn btn-default btn-xs">Eintragungen</a>
-                                                    <a href="@Url.Action("Drawing", new {id = lottery.Id})" class="btn btn-default btn-xs">Verlosung</a>
-                                                    <a href="@Url.Action("Delete", new {id = lottery.Id})" class="btn btn-default btn-xs">Löschen</a>
-                                                </td>
+                                                <td></td>
+                                                <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
                                             }
                                             else
                                             {
-                                                <td>
-                                                    <a href="@Url.Action("State", new {id = lottery.Id})" class="btn btn-default btn-xs">Status</a>
-                                                    <a href="@Url.Action("Subscribers", new {id = lottery.Id})" class="btn btn-default btn-xs">Eintragungen</a>
-                                                </td>
+                                                var hasSubscription = lottery.Lottery.Occurrences.Any(x => x.Subscriptions.Any(y => y.UserId.Equals(ViewBag.UserRight.User.Id)));
+                                                if (hasSubscription)
+                                                {
+                                                    <td><i class="fa fa-pencil"></i></td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                <td><a href="@Url.Action("MySelection", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
+                                            }
+                                            <td style="text-align: right">@lottery.Lottery.Occurrences.Count</td>
+                                            <td style="text-align: right">@lottery.Lottery.MaxConfirm</td>
+                                            <td style="text-align: right">@lottery.Capacity</td>
+                                            <td style="text-align: right">@lottery.TotalSubscriberCount</td>
+                                            <td style="text-align: right">@lottery.TotalSubscriptionCount</td>
+                                            <td style="text-align: right">@nConfirmed</td>
+                                            <td style="text-align: right">@nReserved</td>
+                                            <td style="text-align: right">@nWaiting</td>
+                                            <td style="text-align: center">[@lottery.Lottery.FirstDrawing.ToShortDateString() - @lottery.Lottery.LastDrawing.ToShortDateString()]</td>
+                                            <td style="text-align: center">@lottery.Lottery.DrawingTime.ToString(@"hh\:mm")</td>
+                                            @if (ViewBag.UserRight.IsCourseAdmin)
+                                            {
+                                                <td><a href="@Url.Action("Delete", new {id = lottery.Lottery.Id})"><i class="fa fa-trash-o"></i> löschen</a></td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
                                             }
                                         </tr>
                                     }

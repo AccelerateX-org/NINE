@@ -119,16 +119,16 @@
     <div class="portlet light bordered">
         <div class="portlet-title">
             <div class="caption">
-                <i class="fa fa-pencil"></i> Da war ich eingetragen
+                <i class="fa fa-pencil"></i> @Resources.StudyBookSemProfileSubscriptionsHeading
             </div>
         </div>
         <div class="portlet-body">
             <table class="table table-condensed">
                 <thead>
                     <tr>
-                        <th>Bezeichnung</th>
-                        <th>Nächster Termin</th>
-                        <th>Status</th>
+                        <th>@Resources.Description</th>
+                        <th>@Resources.NextDate</th>
+                        <th>@Resources.Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -143,7 +143,7 @@
                             </td>
                             @if (act.Activity.Summary.CurrentDate != null)
                             {
-                                <td class="text-danger">jetzt</td>
+                                <td class="text-danger">@Resources.Now</td>
                             }
                             else
                             {
@@ -151,17 +151,17 @@
                             }
                             @if (act.State.Subscription.OnWaitingList)
                             {
-                                <td>Warteliste</td>
+                                <td>@Resources.WaitingList</td>
                             }
                             else
                             {
                                 if (act.State.Subscription.IsConfirmed)
                                 {
-                                    <td>Teilnehmer</td>
+                                    <td>@Resources.Subscriber</td>
                                 }
                                 else
                                 {
-                                    <td>Platz reserviert</td>
+                                    <td>@Resources.IsReserved</td>
                                 }
                             }
                         </tr>

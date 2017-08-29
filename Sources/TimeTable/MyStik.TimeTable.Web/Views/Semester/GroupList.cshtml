@@ -36,7 +36,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var group in Model.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
+                    @foreach (var group in Model.Groups.Where(g => g.CapacityGroup.CurriculumGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
                     {
                         <tr>
                             <td>@group.FullName</td>

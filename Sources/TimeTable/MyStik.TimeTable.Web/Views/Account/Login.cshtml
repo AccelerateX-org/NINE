@@ -1,8 +1,8 @@
 ﻿@model MyStik.TimeTable.Web.Models.LoginViewModel
 
 @{
-    Layout = "~/Views/Shared/_LayoutNewPublic.cshtml";
-    ViewBag.Title = "Anmelden";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    ViewBag.Title = Resources.LoginTab;
 }
 
 @section styles
@@ -23,39 +23,61 @@
     <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
         <div class="panel panel-default">
             <div class="panel-body">
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+            @*
+    <ul class="list-inline pull-right">
+        <li>
+            <a href="@Url.Action("SetCulture", new {culture = "en"})">
+                <img src="~/Assets/global/img/flags/gb.png"/>
+            </a>
+            <a href="@Url.Action("SetCulture", new {culture = "de"})">
+                <img src="~/Assets/global/img/flags/de.png"/>
+            </a>
+            <a href="@Url.Action("SetCulture", new {culture = "fr"})">
+                <img src="~/Assets/global/img/flags/fr.png"/>
+            </a>
+        </li>
+    </ul>
+            *@
+                <h4>@Resources.LoginHeading</h4>
+                @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "form", role = "form"}))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
 
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "E-Mail Adresse oder Benutzername" })
-                            </div>
-                            @Html.ValidationMessageFor(m => m.Email)
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = Resources.EmailPlaceholder})
                         </div>
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </div>
 
-                        <div class="form-group">
+                    <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Passwort" })
+                            @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = Resources.PasswordPlaceholder})
                         </div>
-                                @Html.ValidationMessageFor(m => m.Password)
-                            </div>
+                        @Html.ValidationMessageFor(m => m.Password)
+                    </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary pull-right">
-                                Login <i class="icon icon-login"></i>
-                            </button>
-                        </div>
-                    }
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary pull-right">
+                            @Resources.LoginButton <i class="icon icon-login"></i>
+                        </button>
+                    </div>
+                }
                 <div class="clearfix"></div>
                 <div class="form-group">
-                    @Html.ActionLink("Passwort vergessen?", "ForgotPassword") |
-                    @Html.ActionLink("Benutzerkonto anlegen", "Register")
+                    @Html.ActionLink(Resources.ForgotPasswordLink, "ForgotPassword") |
+                    @Html.ActionLink(Resources.RegisterLink, "Register")
                 </div>
-        </div>
+            @*
+    <hr/>
+    <div class="form-group">
+        @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel {ReturnUrl = ViewBag.ReturnUrl})
+    </div>
+            *@
+            </div>
     </div>
     </div>
 </div>

@@ -1,0 +1,299 @@
+﻿@model MyStik.TimeTable.Web.Models.CoursePlanPlanningViewModel
+@{
+    ViewBag.Title = "Details2";
+}
+
+@section styles
+{
+    <style>
+        .GaugeMeter {
+            position: Relative;
+            text-align: Center;
+            overflow: Hidden;
+            cursor: Default;
+            display: inline-block;
+        }
+
+            .GaugeMeter SPAN, .GaugeMeter B {
+                width: 54%;
+                position: Absolute;
+                text-align: Center;
+                display: Inline-Block;
+                color: RGBa(0,0,0,.8);
+                font-weight: 100;
+                font-family: "Open Sans", Arial;
+                overflow: Hidden;
+                white-space: NoWrap;
+                text-overflow: Ellipsis;
+                margin: 0 23%;
+            }
+
+            .GaugeMeter[data-style="Semi"] B {
+                width: 80%;
+                margin: 0 10%;
+            }
+
+            .GaugeMeter S, .GaugeMeter U {
+                text-decoration: None;
+                font-size: .60em;
+                font-weight: 200;
+                opacity: .6;
+            }
+
+            .GaugeMeter B {
+                color: #000000;
+                font-weight: 200;
+                opacity: .8;
+            }
+
+
+
+        /*
+        .container {
+            width: 200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .gauge {
+            width: 200px;
+            height: 200px;
+        }
+
+            */
+
+        /*----- Tab Links -----*/
+        /* Clearfix */
+        /*
+        .tab-links:after {
+            display: block;
+            clear: both;
+            content: '';
+        }
+
+        .tab-links li {
+            margin: 0 5px;
+            float: left;
+            list-style: none;
+        }
+
+        .tab-links a {
+            padding: 9px 15px;
+            display: inline-block;
+            border-radius: 3px 3px 0 0;
+            background: #7FB5DA;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4c4c4c;
+            transition: all linear 0.15s;
+        }
+
+            .tab-links a:hover {
+                background: #a7cce5;
+                text-decoration: none;
+            }
+
+        li.active a, li.active a:hover {
+            background: #fff;
+            color: #4c4c4c;
+        }
+            */
+
+        /*----- Content of Tabs -----*/
+        /*
+        .tab-content {
+            padding: 15px;
+            border-radius: 3px;
+            box-shadow: -1px 1px 1px rgba(0,0,0,0.15);
+            background: #fff;
+        }
+
+        .tab {
+            display: none;
+        }
+
+            .tab.active {
+                display: block;
+            }
+            */
+    </style>
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mein Studienplan @Model.CoursePlan.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    var i = 0;
+    var cid = "";
+    var kid = "";
+    
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-group" id="accordion">
+
+                @foreach (var sem in Model.SemesterModules)
+                {
+                    i++;
+                    cid = "collapse" + i;
+                    kid = i + ". Semester (" + sem.Semester.Name + ")";
+
+                    var DataUsedSem1 = sem.Modules.Sum(x => x.Module.ECTS);
+                    var DataTotalSem1 = sem.CurriculumModules.Sum(x => x.Module.ECTS);
+                    var DataThemeSem1 = "DarkGreen-LightGreen";
+                    var DataTextSem1 = DataUsedSem1;
+
+
+                    if (DataUsedSem1 > DataTotalSem1 + 5)
+                    {
+                        DataUsedSem1 = DataTotalSem1;
+                        DataThemeSem1 = "DarkRed-LightRed";
+                    }
+                    else if (DataUsedSem1 < DataTotalSem1 - 5)
+                    {
+                        DataThemeSem1 = "DarkRed-LightRed";
+                    }
+                    else if (DataUsedSem1 < DataTotalSem1 && DataUsedSem1 >= DataTotalSem1 - 5)
+                    {
+                        DataThemeSem1 = "DarkGold-LightGold";
+                    }
+                    else if (DataUsedSem1 > DataTotalSem1 && DataUsedSem1 <= DataTotalSem1 + 5)
+                    {
+                        DataUsedSem1 = DataTotalSem1;
+                        DataThemeSem1 = "DarkGold-LightGold";
+                    }
+                    else
+                    {
+                        DataThemeSem1 = "DarkGreen-LightGreen";
+                    }
+                    
+                    
+                    
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@cid">
+
+                                <!--
+                                <h4>@sem.Semester.Name</h4>
+                                <h5>@sem.Modules.Sum(x => x.Module.ECTS) von @sem.CurriculumModules.Sum(x => x.Module.ECTS)</h5>
+                                -->
+
+
+
+                                <table>
+                                    <tbody>
+
+                                        <tr>
+                                            <td>
+                                                <div class="GaugeMeter"
+                                                     data-percent="10"
+                                                     data-text="@DataTextSem1"
+                                                     data-label="null"
+                                                     data-used="@DataUsedSem1"
+                                                     data-total="@DataTotalSem1"
+                                                     data-prepend="null"
+                                                     data-append="/@sem.CurriculumModules.Sum(x => x.Module.ECTS)"
+                                                     data-size="100"
+                                                     data-width="11"
+                                                     data-style="Arch"
+                                                     data-color="null"
+                                                     data-back="null"
+                                                     data-theme="@DataThemeSem1"
+                                                     data-animate_gauge_colors="1"
+                                                     data-animate_text_colors="1"
+                                                     data-label_color="null"
+                                                     data-stripe="null"></div>
+                                            </td>
+                                            <td>
+                                                @kid
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </a>
+                        </div>
+                        <div id="@cid" class="panel-collapse collapse">
+                            <table class="table table-condensed  table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Modul</th>
+                                        <th>ECTS</th>
+                                        <th>Nach SPO</th>
+                                        <th>Geplant</th>
+                                        <th>Versuche</th>
+                                        <th>Vorziehen</th>
+                                        <th>Schieben</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var mapping in sem.Modules)
+                                    {
+                                        var rowColor = "";
+                                        if (mapping.CurriculumSemester.Id != mapping.Semester.Id)
+                                        {
+                                            rowColor = "danger";
+                                        }
+                                        
+                                        <tr class="@rowColor">
+                                            <td>@mapping.Module.Name</td>
+                                            <td>@mapping.Module.ECTS</td>
+                                            <td>@mapping.CurriculumSemester.Name</td>
+                                            <td>@mapping.Semester.Name</td>
+                                            <td>@mapping.Trials.Count</td>
+                                            <td>
+                                                @if (sem.PrevSemester != null)
+                                                {
+                                                    <a href="@Url.Action("MoveMapping", new { planId = Model.CoursePlan.Id, mappingId = mapping.Id, targetSemId = sem.PrevSemester.Id })" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (sem.NextSemester != null)
+                                                {
+                                                    <a href="@Url.Action("MoveMapping", new { planId = Model.CoursePlan.Id, mappingId = mapping.Id, targetSemId = sem.NextSemester.Id })" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+            </div>
+    </div>
+</div>
+
+<div>
+    <a href="@Url.Action("AddSemester", new { planId = Model.CoursePlan.Id })" class="btn btn-primary btn-lg btn-block">Semester hinzufügen</a>
+</div>
+
+
+@section scripts
+{
+    <script src='~/Assets/global/plugins/GaugeMeter-master/jquery.AshAlom.gaugeMeter-2.0.0.min.js'></script>
+
+    <script>
+                $(document).ready(function () {
+
+                    $(".GaugeMeter").gaugeMeter()
+                });
+
+    </script>
+}
+

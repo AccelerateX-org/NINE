@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
     public class LotteryDrawing
     {
+        public LotteryDrawing()
+        {
+            OccurrenceDrawings = new HashSet<OccurrenceDrawing>();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -23,6 +25,8 @@ namespace MyStik.TimeTable.Data
         public string JobId { get; set; }
 
         public virtual BinaryStorage Report { get; set; }
+
+        public virtual ICollection<OccurrenceDrawing> OccurrenceDrawings { get; set; }
 
     }
 }

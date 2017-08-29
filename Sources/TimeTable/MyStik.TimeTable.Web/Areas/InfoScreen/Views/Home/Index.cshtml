@@ -24,7 +24,9 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <div id="leftInfoscreenPanel"></div>
+                            <div id="leftInfoscreenPanel">
+                                <h2><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></h2>
+                            </div>
                         </div>
                     </div>
 
@@ -37,7 +39,9 @@
                 <div class="col-md-8">
                     <div class="row">
                         <div class="col-md-12">
-                            <div id="rightInfoscreenPanel"></div>
+                            <div id="rightInfoscreenPanel">
+                                <h2><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></h2>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,13 +55,24 @@
 
 
 @section scripts
-        {
+{
     <script src="~/Assets/global/plugins/CoolClock-master/coolclock.js"></script>
     <script src="~/Assets/global/plugins/CoolClock-master/moreskins.js"></script>
 
     <script>
 
-        $(function() {
+        var playList = [
+            { "ID": "1", "Title": "NowPlaying" },
+            { "ID": "2", "Title": "WhatsNext" },
+            { "ID": "3", "Title": "FreeRooms" }
+        ];
+
+        var playListSize = playList.length;
+        var playListIndex = 1;
+
+
+
+        $(function () {
             CoolClock.findAndCreateClocks();
 
             $.ajax({
@@ -68,14 +83,6 @@
                 }
             });
 
-                
-            $.ajax({
-                url: '@Url.Action("RightPanel")',
-                type: 'POST',
-                success: function (result) {
-                    $('#rightInfoscreenPanel').html(result);
-                }
-            });
 
             updateLeftPanel();
             updateRightPanel();
@@ -89,13 +96,13 @@
                 if ($("#tokenPanelLeft")) {
                     tokenLeft = $("#tokenPanelLeft").val();
                 }
-                
+
 
                 $.ajax({
                     url: '@Url.Action("LeftPanel")',
                     type: 'POST',
                     data: {
-                      token: tokenLeft  
+                      token: tokenLeft
                     },
                     success: function (result) {
                         $('#leftInfoscreenPanel').html(result);
@@ -108,21 +115,22 @@
 
             setInterval(function () {
 
-                var tokenRight = null;
-                if ($("#tokenPanelRight")) {
-                    tokenRight = $("#tokenPanelRight").val();
-                }
-
                 $.ajax({
                     url: '@Url.Action("RightPanel")',
                     type: 'POST',
                     data: {
-                        token: tokenRight
+                        token: playList[playListIndex-1].Title
                     },
                     success: function (result) {
                         $('#rightInfoscreenPanel').html(result);
+
+                        playListIndex++;
+                        if (playListIndex > playListSize)
+                            playListIndex = 1;
                     }
                 });
+
+
             }, 20000);
         }
 

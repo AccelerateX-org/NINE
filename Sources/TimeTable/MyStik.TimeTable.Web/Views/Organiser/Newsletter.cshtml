@@ -5,63 +5,82 @@
     ViewBag.Title = "Newsletter";
 }
 
-<h4>Newsletter</h4>
-<div class="row">
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Veranstalter</th>
-                <th>Name</th>
-                <th>Beschreibung</th>
-                <th>Abonnenten</th>
-                <th></th>
-                @if (ViewBag.UserRight.IsOrgMember)
-                {
-                    <th></th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ev in @Model)
-            {
-                <tr>
-                    <td>@ev.Newsletter.Organiser.Name (@ev.Newsletter.Organiser.ShortName)</td>
-                    <td>@ev.Newsletter.Name</td>
-                    <td>@ev.Newsletter.Description</td>
-                    <td>@ev.Newsletter.Occurrence.Subscriptions.Count</td>
-                    <td>
-                        @Html.Partial("_SubscriptionState", ev.State)
-                    </td>
-                    @if (ViewBag.UserRight.IsOrgMember)
-                    {
-                        <td>
-                            @if (ev.IsMember)
-                            {
-                                <a href="@Url.Action("SendNews", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> News senden</a>
-                            }
-                            @if (ev.IsAdmin)
-                            {
-                                <a href="@Url.Action("Edit", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-gear"></i> Einstellungen</a>
-                                if (User.IsInRole("SysAdmin"))
-                                {
-                                    <a href="@Url.Action("Members", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-group"></i> Teilnehmer</a>
-                                    <a href="@Url.Action("Test", "Newsletter", new {id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-users"></i>> Empfänger einfügen</a>
-                                }
-                            }
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
 
-    @if (ViewBag.UserRight.IsOrgAdmin)
-    {
-        var orgName = new MemberService().GetOrganisation(User.Identity.Name);
-        <div class="well well-sm">
-            <a href="@Url.Action("Create", "Newsletter", new { id = orgName })" class="btn btn-default"><i class="fa fa-plus fa-2x text-success"></i> Neuen Newsletter anlegen</a>
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Newsletter der @ViewBag.Organiser.ShortName</h1>
+                </div>
+            </div>
         </div>
-    }
-
-
+    </div>
 </div>
+@if (ViewBag.UserRight.IsNewsAdmin)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Create", "Newsletter", new {id = ViewBag.Organiser.Id})" class="btn btn-default">
+                                    <i class="fa fa-plus-circle"></i> Newsletter anlegen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-list"></i> Übersicht
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Beschreibung</th>
+                            <th>Abonnenten</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var ev in @Model)
+                        {
+                            <tr>
+                                <td>@ev.Newsletter.Name</td>
+                                <td>@ev.Newsletter.Description</td>
+                                <td>@ev.Newsletter.Occurrence.Subscriptions.Count</td>
+                                <td>
+                                    <a href="@Url.Action("SendNews", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default"><i class="fa fa-envelope-o"></i> News senden</a>
+                                    @if (ViewBag.UserRight.IsNewsAdmin)
+                                    {
+                                        <a href="@Url.Action("Edit", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default"><i class="fa fa-gear"></i> Einstellungen</a>
+                                        <a href="@Url.Action("Members", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmer</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,16 +1,15 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model MyStik.TimeTable.Web.Models.SemesterViewModel
+﻿@model MyStik.TimeTable.Web.Models.SemesterViewModel
 
 @{
-    ViewBag.Title = "Semester";
+    ViewBag.Title = Resources.SemesterString;
 }
 
 <div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
+    <div class="panel-body bg-fillter-hm">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Semesterablauf</h1>
+                    <h1>@Resources.SubMenuStudiesSemester</h1>
                 </div>
             </div>
         </div>
@@ -22,7 +21,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        @Html.DropDownListFor(model => model.Semester, (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                        @Html.DropDownListFor(model => model.Semester.Name, (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-control", onchange = "onSemesterChanged()" })
                     </div>
                     @if (User.IsInRole("SysAdmin"))
                     {
@@ -59,7 +58,7 @@
 
 
         function onSemesterChanged() {
-            var group = $('#Semester option:selected').val();
+            var group = $('#Semester_Name option:selected').val();
 
             $('#semProfile').html('');
             $('#loading').show();
@@ -68,7 +67,7 @@
                 type: 'POST',
                 url: '@Url.Action("DateList", "Semester")',
                 data: {
-                    semGroupId: group,
+                    semGroupId: group
                 },
                 success: function (data, success, xhr) {
                     $('#semProfile').html(data);

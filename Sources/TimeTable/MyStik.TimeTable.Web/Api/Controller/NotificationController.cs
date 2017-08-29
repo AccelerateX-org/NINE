@@ -1,16 +1,21 @@
 ﻿using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NotificationController : ApiController
     {
-        // GET: Notification+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="token"></param>
+        /// <param name="deviceName"></param>
+        /// <returns></returns>
         [HttpGet]
         public TokenRegistryResponse TokenRegistration(string userId, string token, string deviceName)
         {
@@ -25,6 +30,11 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return response;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <returns></returns>
         [HttpGet]
         public PersonalNotificationResponse GetPersonalNotifications (string UserId)
         {

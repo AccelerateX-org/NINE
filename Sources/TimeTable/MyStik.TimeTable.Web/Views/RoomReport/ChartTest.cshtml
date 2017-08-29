@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewBag.Title = "ChartTest";
+}
+
+<h2>ChartTest</h2>
+
+<div class="row">
+    <h2>Flot-Dummy</h2>
+    <div id="placeholder" style="width: 800px; height: 300px"></div>
+
+</div>
+
+@section Scripts
+{
+    <script src="~/Assets/global/plugins/flot/jquery.flot.min.js"></script>
+
+
+
+<script type="text/javascript">
+
+	$(function() {
+
+		var options = {
+			lines: {
+				show: true
+			},
+			points: {
+				show: true
+			},
+			xaxis: {
+				tickDecimals: 0,
+				tickSize: 1
+			}
+		};
+
+		var data = [];
+
+		var d3 = [[1999, 3], [2000, 8], [2001, 5], [2002, 13]];
+	    data.push(d3);
+
+		$.plot("#placeholder", d3, options);
+
+		// Fetch one series, adding to what we already have
+        /*
+		$.ajax({
+		    url: "http://www.flotcharts.org/flot/examples/ajax/data-eu-gdp-growth.json",
+		    type: "GET",
+		    dataType: "json",
+		    success: onDataReceived
+		});
+        */
+	    $.ajax({
+	        url: "@Url.Action("GetTestData")",
+	        type: "POST",
+	        dataType: "json",
+	        success: onDataReceived
+	    });
+
+
+		function onDataReceived(series) {
+
+		    // Extract the first coordinate pair; jQuery has parsed it, so
+		    // the data is now just an ordinary JavaScript object
+
+		    alert("huhu");
+
+		    // Push the new data onto our existing data array
+		    data.push(series);
+
+		    $.plot("#placeholder", data, options);
+		}
+
+	});
+
+</script>
+
+}

@@ -1,0 +1,419 @@
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
+    ViewBag.Title = "EditAdmins";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Personen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> Personen
+                    </div>
+                    <div class="actions">
+
+                        @using (Ajax.BeginForm("AddMemberAdminRight", null, null,
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "tabMemberAdmin"
+                            },
+                            new {@class = "form form-inline", role = "form"}))
+                        {
+                            <div class="form-group">
+                                <label for="memberAdminName">Suche nach:</label>
+                                <input type="text" name="memberAdminName" id="memberAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        }
+
+
+                    </div>
+                </div>
+                <div id="tabMemberAdmin" class="portlet-body">
+                    @{ ViewBag.AdminRight = "Member"; }
+                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsMemberAdmin).ToList())
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-music"></i> Lehrveranstaltungen
+                    </div>
+                    <div class="actions">
+
+                        @using (Ajax.BeginForm("AddCourseAdminRight", null, null,
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "tabCourseAdmin"
+                            },
+                            new {@class = "form form-inline", role = "form"}))
+                        {
+                            <div class="form-group">
+                                <label for="courseAdminName">Suche nach:</label>
+                                <input type="text" name="courseAdminName" id="courseAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        }
+
+
+                    </div>
+                </div>
+                <div id="tabCourseAdmin" class="portlet-body">
+                    @{ ViewBag.AdminRight = "Course"; }
+                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsCourseAdmin).ToList())
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-book"></i> Studiengänge
+                    </div>
+                    <div class="actions">
+
+                        @using (Ajax.BeginForm("AddCurriculumAdminRight", null, null,
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "tabCurriculumAdmin"
+                            },
+                            new {@class = "form form-inline", role = "form"}))
+                        {
+                            <div class="form-group">
+                                <label for="curriculumAdminName">Suche nach:</label>
+                                <input type="text" name="curriculumAdminName" id="curriculumAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        }
+
+
+                    </div>
+                </div>
+                <div id="tabCurriculumAdmin" class="portlet-body">
+                    @{ ViewBag.AdminRight = "Curriculum"; }
+                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsCurriculumAdmin).ToList())
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> Räume
+                    </div>
+                    <div class="actions">
+
+                        @using (Ajax.BeginForm("AddRoomAdminRight", null, null,
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "tabRoomAdmin"
+                            },
+                            new {@class = "form form-inline", role = "form"}))
+                        {
+                            <div class="form-group">
+                                <label for="roomAdminName">Suche nach:</label>
+                                <input type="text" name="roomAdminName" id="roomAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        }
+
+
+                    </div>
+                </div>
+                <div id="tabRoomAdmin" class="portlet-body">
+                    @{ ViewBag.AdminRight = "Room"; }
+                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsRoomAdmin).ToList())
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-globe"></i> Veranstaltungen
+                    </div>
+                    <div class="actions">
+
+                        @using (Ajax.BeginForm("AddEventAdminRight", null, null,
+                new AjaxOptions
+                {
+                    HttpMethod = "Post",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = "tabEventAdmin"
+                },
+                new { @class = "form form-inline", role = "form" }))
+                        {
+                            <div class="form-group">
+                                <label for="eventAdminName">Suche nach:</label>
+                                <input type="text" name="eventAdminName" id="eventAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        }
+
+
+                    </div>
+                </div>
+                <div id="tabEventAdmin" class="portlet-body">
+                    @{ ViewBag.AdminRight = "Event"; }
+                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsEventAdmin).ToList())
+                </div>
+            </div>
+        </div>
+    <div class="col-lg-3">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-envelope-o"></i> Newsletter
+                </div>
+                <div class="actions">
+
+                    @using (Ajax.BeginForm("AddNewsletterAdminRight", null, null,
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "tabNewsletterAdmin"
+                        },
+                        new {@class = "form form-inline", role = "form"}))
+                    {
+                        <div class="form-group">
+                            <label for="newsletterAdminName">Suche nach:</label>
+                            <input type="text" name="newsletterAdminName" id="newsletterAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                    }
+
+
+                </div>
+            </div>
+            <div id="tabNewsletterAdmin" class="portlet-body">
+                @{ ViewBag.AdminRight = "Newsletter"; }
+                @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsNewsAdmin).ToList())
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+</div>
+
+
+
+
+
+
+
+@section scripts
+{
+    <script>
+    $(function () {
+        $('#memberAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+        $('#courseAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+        $('#curriculumAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+        $('#roomAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+        $('#eventAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+        $('#newsletterAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+
+    });
+    </script>
+}
+

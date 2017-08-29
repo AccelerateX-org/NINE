@@ -29,7 +29,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption">
@@ -47,12 +47,6 @@
                             @Html.LabelFor(m => m.Name, new {@class = "col-sm-4 control-label"})
                             <div class="col-sm-8">
                                 @Html.TextBoxFor(m => m.Name, new {@class = "form-control"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.JobId, new {@class = "col-sm-4 control-label"})
-                            <div class="col-sm-8">
-                                @Html.TextBoxFor(m => m.JobId, new {@class = "form-control"})
                             </div>
                         </div>
                         <div class="form-group">

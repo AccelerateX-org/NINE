@@ -1,0 +1,121 @@
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourCreateModel
+@{
+    ViewBag.Title = "Sprechstunde anlegen";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Sprechstunde für @ViewBag.UserRight.User.UserName im @ViewBag.Semester.Name anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-headphones"></i>
+                        <span class="caption-subject bold uppercase"> Einstellungen</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(model => model.Type)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Wochentag</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.DayOfWeek, (IEnumerable<SelectListItem>) ViewBag.WeekDays, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Beginn</label>
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.StartTime, new {@class = "form-control timepicker timepicker-24"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Ende</label>
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.EndTime, new {@class = "form-control timepicker timepicker-24"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Anzahl Plätze</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.Capacity, (IEnumerable<SelectListItem>) ViewBag.Capacities, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Eintragung für Studierende bis</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>) ViewBag.Limits, new {@class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Zusatztext, wird auf der Terminliste angezeigt", rows = "10" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-4 col-md-6">
+                                    <input type="submit" value="Sprechstunde für Semester @ViewBag.Semester.Name anlegen" class="btn btn-primary"/>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts
+{
+<script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+            <script>
+                $(function () {
+                    $("#Description").cleditor();
+
+                    $('.timepicker-24').timepicker({
+                        autoclose: true,
+                        minuteStep: 15,
+                        showSeconds: false,
+                        showMeridian: false
+                    });
+
+                    $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
+                        e.preventDefault();
+                        $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+                    });
+
+                });
+
+
+            </script>
+        }

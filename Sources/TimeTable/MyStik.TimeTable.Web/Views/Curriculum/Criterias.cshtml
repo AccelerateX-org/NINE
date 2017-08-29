@@ -1,0 +1,95 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+@{
+    ViewBag.Title = "Criterias";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>@Model.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.UserRight.IsCurriculumAdmin)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Create", "CurriculumCriteria", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-plus"></i> Kriterium anlegen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("ImportModuleCatalog", "Curriculum", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-upload"></i> Modulkatalog importieren
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("DeleteModuleCatalog", "Curriculum", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-trash"></i> Modulkatalog löschen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> Kriterien = Module
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table id="tabMembers" class="table table-condensed table-striped">
+                        <thead>
+                        <tr>
+                            <th>Kurzname</th>
+                            <th>Name</th>
+                            <th>Min ECTS</th>
+                            <th>Max ECTS</th>
+                            <th>Option</th>
+                            <th>Akkredierte Module</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model.Criterias)
+                        {
+                            <tr>
+                                <td>@item.ShortName</td>
+                                <td>@item.Name</td>
+                                <td>@item.MinECTS</td>
+                                <td>@item.MaxECTS</td>
+                                <td>@item.Option</td>
+                                <td>
+                                    @foreach (var acc in item.Accreditations)
+                                    {
+                                        <div>@acc.Module.Name (@acc.Module.MV.Name)</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

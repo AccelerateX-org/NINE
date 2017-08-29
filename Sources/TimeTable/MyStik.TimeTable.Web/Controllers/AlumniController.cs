@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
@@ -14,9 +13,15 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AlumniController : BaseController
     {
-        // GET: Alumni
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             ViewBag.UserRight = GetUserRight();
@@ -39,12 +44,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Invitation()
         {
             return View();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Invitation(InvitationFileModel model)
         {
@@ -130,12 +142,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View("InvitationList", invitationList);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult SendInvitations()
         {
             return View();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SendInvitations(OccurrenceMailingModel model)
         {
@@ -186,9 +205,8 @@ namespace MyStik.TimeTable.Web.Controllers
                         Remark = "Einladung von " + host.FullName,
                         ExpiryDate = null, // Einladung bleibt dauerhaft bestehen - Deprovisionierung automatisch
                         Submitted = now,
-                        EmailConfirmed = true,
-                        // damit ist auch ein "ForgotPassword" möglich, auch wenn er die Einladung nicht angenommen hat.
-                        IsApproved = true, // Markiert Konto als "wurde eingeladen"
+                        EmailConfirmed = true, // damit ist auch ein "ForgotPassword" möglich, auch wenn er die Einladung nicht angenommen hat.
+                        IsApproved = true, // Damit bekommt der Nutzer von Anfang an E-Mails
                         Faculty = host.Id // Benutzer der eingeladen hat
                     };
 
@@ -311,6 +329,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("SendInvitationsSuccess", invitationList);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult Delete()
         {
