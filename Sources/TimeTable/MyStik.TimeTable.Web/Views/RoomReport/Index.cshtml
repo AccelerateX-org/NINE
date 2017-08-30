@@ -1,0 +1,108 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomReportRequestModel
+@{
+    ViewBag.Title = "Index";
+}
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Raumauswertung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("TimeLine", null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <div class="panel-body">
+        <div class="form-group">
+            @Html.ValidationSummary()
+            <div>
+                <label>Room Number</label>
+                @Html.TextBoxFor(m => m.RoomNumber, new { @class = "form-control", placeholder = "R 3.089 // T 2.017 // Als Standardraum wird bei Abwesenheit einer Gebäudenummer der R-Bau gesetzt" })
+            </div>
+
+
+            <div>
+                <label>Starttag (es muss trotz Datumseingabe (unten) ein Wert hier eingegeben werden) </label>
+
+                @Html.DropDownListFor(x => x.Days, new[]
+         {
+                   new SelectListItem() {Text = "Heute in einem Jahr", Value ="-365" },
+                   new SelectListItem() {Text = "Heute in einem Semester", Value ="-183" },
+                   new SelectListItem() {Text = "Heute in einem Monat", Value ="-31" },
+                   new SelectListItem() {Text = "Heute in einer Woche", Value ="-7" },
+                   new SelectListItem() {Text = "Heute", Value = "0" },
+                   new SelectListItem() {Text = "Heute vor einer Woche", Value ="7" },
+                   new SelectListItem() {Text = "Heute vor einem Monat", Value ="31" },
+                   new SelectListItem() {Text = "Heute vor einem Semester", Value ="183" },
+                   new SelectListItem() {Text = "Heute vor einem Jahr", Value ="365" },
+
+                @*new SelectListItem() {Text = "Eine Woche", Value ="12345" },*@
+                   new SelectListItem() {Text = "Aktueller Monat", Value ="311" }
+
+                }
+
+, "Bitte auswählen", new { @class = "form-control" })
+            </div>
+                            
+          <div>
+              <label>Starttag (muss vor Endtag liegen)</label>
+                  @Html.TextBoxFor(model => model.fromCalendar, new { @class = "form-control datepicker" })
+          </div>  
+            <div>
+                <label>Endtag</label>
+                @Html.TextBoxFor(model => model.untilCalendar, new { @class = "form-control datepicker" })
+            </div>                  
+    </div>
+
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-8">
+                    <input type="submit" value="Anzeigen" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+}
+
+
+
+    @section Scripts {
+
+        <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+
+        <script>
+
+        $(function () {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+        });
+
+        function onDateChanged() 
+        {
+            onUpdateRoomState();
+        }
+
+        </script>
+    }
+
+

@@ -1,33 +1,184 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
-    public class OrganiserMembersController : Controller
+    /// <summary>
+    /// 
+    /// </summary>
+    public class OrganiserMembersController : BaseController
     {
-        private TimeTableDbContext db = new TimeTableDbContext();
-
-        // GET: OrganiserMembers
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
-            return View(db.Members.ToList());
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var semester = GetSemester();
+            
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+                Semester = semester
+            };
+
+            var memberPage = organiser.Members.OrderBy(m => m.Name);
+
+            var myUser = UserManager.FindByName(User.Identity.Name);
+         
+            var vorSemester = new SemesterService().GetSemester(semester, 1);
+
+            var courseService = new CourseService(UserManager);
+
+            foreach (var member in memberPage)
+            {
+                var itsMe = false;
+                if (member.UserId != null && myUser != null)
+                    itsMe = member.UserId.Equals(myUser.Id);
+
+                model.Members.Add(new MemberViewModel
+                {
+                    Member = member,
+                    //User = member.UserId != null ? UserManager.FindById(member.UserId) : null,
+                    ItsMe = itsMe,
+                    //IsActive = courseService.IsActive(member, semester),
+                    //WasActiveLastSemester = courseService.IsActive(member, vorSemester),
+                });
+            }
+
+            // Benutzerrechte
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+            ViewBag.ThisSemester = semester.Name;
+            ViewBag.LastSemester = vorSemester.Name;
+
+
+            return View(model);
+
         }
 
-        // GET: OrganiserMembers/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Active()
+        {
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var semester = GetSemester();
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+                Semester = semester
+            };
+
+            var memberPage = organiser.Members.OrderBy(m => m.Name);
+
+            var myUser = UserManager.FindByName(User.Identity.Name);
+
+            var vorSemester = new SemesterService().GetSemester(semester, 1);
+
+            var courseService = new CourseService(UserManager);
+
+            foreach (var member in memberPage)
+            {
+                var itsMe = false;
+                if (member.UserId != null && myUser != null)
+                    itsMe = member.UserId.Equals(myUser.Id);
+
+                model.Members.Add(new MemberViewModel
+                {
+                    Member = member,
+                    //User = member.UserId != null ? UserManager.FindById(member.UserId) : null,
+                    ItsMe = itsMe,
+                    IsActive = courseService.IsActive(member, semester),
+                    WasActiveLastSemester = courseService.IsActive(member, vorSemester),
+                });
+            }
+
+            // Benutzerrechte
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+            ViewBag.ThisSemester = semester.Name;
+            ViewBag.LastSemester = vorSemester.Name;
+
+
+            return View(model);
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Today()
+        {
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var semester = GetSemester();
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+                Semester = semester
+            };
+
+            var day = DateTime.Today;
+            var nextDay = day.AddDays(1);
+
+            var memberPage = organiser.Members.Where(x => x.Dates.Any(d => d.Begin >= day && d.End < nextDay)).OrderBy(m => m.Name);
+
+            var vorSemester = new SemesterService().GetSemester(semester, 1);
+
+
+            foreach (var member in memberPage)
+            {
+                model.Members.Add(new MemberViewModel
+                {
+                    Member = member,
+                    ItsMe = false,
+                    IsActive = true,
+                });
+            }
+
+            // Benutzerrechte
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+            ViewBag.ThisSemester = semester.Name;
+            ViewBag.LastSemester = vorSemester.Name;
+
+
+            return View(model);
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrganiserMember organiserMember = db.Members.Find(id);
+            OrganiserMember organiserMember = Db.Members.Find(id);
             if (organiserMember == null)
             {
                 return HttpNotFound();
@@ -35,15 +186,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(organiserMember);
         }
 
-        // GET: OrganiserMembers/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: OrganiserMembers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="organiserMember"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,UserId,ShortName,Name,Role,Description,IsAdmin,UrlProfile")] OrganiserMember organiserMember)
@@ -51,22 +207,26 @@ namespace MyStik.TimeTable.Web.Controllers
             if (ModelState.IsValid)
             {
                 organiserMember.Id = Guid.NewGuid();
-                db.Members.Add(organiserMember);
-                db.SaveChanges();
+                Db.Members.Add(organiserMember);
+                Db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             return View(organiserMember);
         }
 
-        // GET: OrganiserMembers/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrganiserMember organiserMember = db.Members.Find(id);
+            OrganiserMember organiserMember = Db.Members.Find(id);
             if (organiserMember == null)
             {
                 return HttpNotFound();
@@ -74,30 +234,36 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(organiserMember);
         }
 
-        // POST: OrganiserMembers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="organiserMember"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,UserId,ShortName,Name,Role,Description,IsAdmin,UrlProfile")] OrganiserMember organiserMember)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(organiserMember).State = EntityState.Modified;
-                db.SaveChanges();
+                Db.Entry(organiserMember).State = EntityState.Modified;
+                Db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(organiserMember);
         }
 
-        // GET: OrganiserMembers/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrganiserMember organiserMember = db.Members.Find(id);
+            OrganiserMember organiserMember = Db.Members.Find(id);
             if (organiserMember == null)
             {
                 return HttpNotFound();
@@ -105,22 +271,30 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(organiserMember);
         }
 
-        // POST: OrganiserMembers/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            OrganiserMember organiserMember = db.Members.Find(id);
-            db.Members.Remove(organiserMember);
-            db.SaveChanges();
+            OrganiserMember organiserMember = Db.Members.Find(id);
+            Db.Members.Remove(organiserMember);
+            Db.SaveChanges();
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                Db.Dispose();
             }
             base.Dispose(disposing);
         }

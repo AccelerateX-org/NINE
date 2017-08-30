@@ -1,15 +1,11 @@
 using System.Collections.Generic;
-using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<MyStik.TimeTable.Web.Models.ApplicationDbContext>
     {
@@ -44,7 +40,7 @@ namespace MyStik.TimeTable.Web.Migrations
                 FirstName = firstName,
                 LastName = lastName,
             };
-            UserManager.Create(user, "p123456");
+            UserManager.Create(user, "Pas1234?");
             user = UserManager.FindByName(user.UserName);
 
             foreach (var role in roles)

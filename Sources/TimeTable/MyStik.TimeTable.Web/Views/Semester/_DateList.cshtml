@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Data
-@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Data.Semester
 
@@ -11,7 +10,7 @@
                     <i class="fa fa-calendar"></i>Wichtige Termine
                 </div>
                 <div class="actions">
-                    @if ((ViewBag.UserRight.IsOrgAdmin && ViewBag.UserRight.User.MemberState == MemberState.Staff) || User.IsInRole("SysAdmin"))
+                    @if ((ViewBag.UserRight.IsSemesterAdmin && ViewBag.UserRight.User.MemberState == MemberState.Staff) || User.IsInRole("SysAdmin"))
                     {
                         <a href="@Url.Action("Details", "Semester", new {id = Model.Id})" class="edit"> Ändern</a>
                     }
@@ -22,18 +21,16 @@
                     <thead>
                     <tr>
                         <th>Datum / Zeitraum</th>
+                        <th></th>
                         <th>Beschreibung</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>@Model.StartCourses.ToShortDateString()</td>
-                        <td>Vorlesungsbeginn</td>
-                    </tr>
                     @foreach (var date in Model.Dates)
                     {
                         <tr>
                             <td>@Html.TimeSpan(date)</td>
+                            <td>HM</td>
                             @if (date.HasCourses)
                             {
                                 <td>@date.Description</td>
@@ -44,10 +41,6 @@
                             }
                         </tr>
                     }
-                    <tr>
-                        <td>@Model.EndCourses.ToShortDateString()</td>
-                        <td>Vorlesungsende</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -55,106 +48,3 @@
     </div>
 </div>
 
-@if ((ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff) || User.IsInRole("SysAdmin"))
-{
-    var nLV = 0;
-    var nEV = 0;
-    var nStud = 0;
-    
-    <div class="row">
-    <div class="col-md-12">
-        <div class="portlet light bordered">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-calendar"></i>
-                    <span class="caption-subject bold uppercase"> Lehrangebot</span>
-                </div>
-                <div class="actions">
-                    @if (User.IsInRole("SysAdmin"))
-                    {
-                        <a href="@Url.Action("GroupList", "Semester", new {id = Model.Id})" class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-wrench"></i></a>
-                        <a href="@Url.Action("Index", "Untis")" class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-upload"></i></a>
-                    }
-                    <a href="@Url.Action("Report", "Semester", new { id = Model.Id })" class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-list"></i></a>
-                    <a href="@Url.Action("Index", "Lottery")" class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-random"></i></a>
-                    <a href="@Url.Action("CreateCourse", "Course", new {id = Model.Id})" class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-plus"></i></a>
-                </div>
-            </div>
-            <div class="portlet-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <table class="table table-condensed">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>LVs</th>
-                                <th>EVs</th>
-                                <th>Stud</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var group in Model.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CurriculumGroup.Name).ThenBy(g => g.Name))
-                            {
-                                var evCount = group.Activities.OfType<Event>().Count();
-                                var lvCount = group.Activities.OfType<Course>().Count();
-                                var grCount = group.Subscriptions.Count;
-                                nLV += lvCount;
-                                nEV += evCount;
-                                nStud += grCount;
-                                
-                                
-                                <tr id="@group.Id">
-                                    <td>@group.FullName</td>
-                                    <td>
-                                        @Ajax.ActionLink(lvCount.ToString(), "CourseListByProgram", "Curriculum", new {semGroupId = group.Id, compact=true},
-                                            new AjaxOptions
-                                            {
-                                                HttpMethod = "Post",
-                                                InsertionMode = InsertionMode.Replace,
-                                                UpdateTargetId = "courseList"
-                                            })
-                                    </td>
-                                    <td>@evCount</td>
-                                    <td>
-                                        @Ajax.ActionLink(grCount.ToString(), "ListByGroup", "Organiser", new {semGroupId = group.Id},
-                                            new AjaxOptions
-                                            {
-                                                HttpMethod = "Post",
-                                                InsertionMode = InsertionMode.Replace,
-                                                UpdateTargetId = "courseList"
-                                            })
-                                    </td>
-                                    <td>
-                                        @if (ViewBag.UserRight.IsOrgAdmin)
-                                        {
-                                            @Ajax.ActionLink("Löschen", "DeleteGroup2", new {id = group.Id},
-                                                new AjaxOptions
-                                                {
-                                                    HttpMethod = "Post",
-                                                    InsertionMode = InsertionMode.Replace,
-                                                    UpdateTargetId = group.Id.ToString()
-                                                })
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td><strong>@nLV</strong></td>
-                                <td><strong>@nEV</strong></td>
-                                <td><strong>@nStud</strong></td>
-                                <td></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-8">
-                        <div id="courseList"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
- </div>
-}

@@ -1,0 +1,30 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.ActivitySlot
+    
+<div id="@Model.Occurrence.Id">
+@if (Model.Occurrence.IsAvailable)
+    {
+        @Ajax.ActionButton("fa-lock", "Sperren", "LockSlot", "OfficeHour",
+            new {Id = Model.Id},
+            new AjaxOptions()
+            {
+                HttpMethod = "Post",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = Model.Occurrence.Id.ToString()
+            },
+            new {@class = "btn btn-default btn-xs"})
+    }
+    else
+    {
+        @Ajax.ActionButton("fa-unlock", "Freigeben", "UnLockSlot", "OfficeHour",
+            new { Id = Model.Id },
+            new AjaxOptions()
+            {
+                HttpMethod = "Post",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = Model.Occurrence.Id.ToString()
+            },
+            new { @class = "btn btn-default btn-xs" })
+    }
+</div>
+

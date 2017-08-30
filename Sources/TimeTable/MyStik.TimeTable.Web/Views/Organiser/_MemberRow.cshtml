@@ -1,0 +1,32 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.OrganiserMember>
+
+<table class="table table-condensed ">
+    <thead>
+        <tr>
+            <th>Kurzname</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model)
+        {
+            var rowId = string.Format("{0}{1}", ViewBag.AdminRight, member.Id);
+            <tr id="@rowId">
+                <td>@member.ShortName</td>
+                <td>@member.Name</td>
+                <td>@Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteAdminRight", null,
+                        new { id = member.Id, right = ViewBag.AdminRight },
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = rowId
+                        },
+                        new {@class="btn btn-default btn-xs"})
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

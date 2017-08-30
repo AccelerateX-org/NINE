@@ -1,22 +1,24 @@
 ﻿using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Data.Initializers;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using MyStik.TimeTable.Data.DefaultData;
 using MyStik.TimeTable.Web.Migrations;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MvcApplication : System.Web.HttpApplication
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -32,6 +34,9 @@ namespace MyStik.TimeTable.Web
 
             // Datenbank für log4net per EF anlegen
             Database.SetInitializer(new CreateDatabaseIfNotExists<LogDbContext>());
+
+            // ob es das noch wirklich braucht?
+            // JA, sonst geht der attach nicht, das Hangfire macht Probleme
             var db = new LogDbContext();
             if (!db.Log.Any())
             {
@@ -46,17 +51,17 @@ namespace MyStik.TimeTable.Web
                 db.Log.Add(log);
                 db.SaveChanges();
             }
+        }
 
-            GlobalSettings.Init(new DateTime(2015, 6, 16));
+        private void Application_Error(object sender, EventArgs e)
+        {
+            Exception ex = Server.GetLastError();
 
-            // Datenbank anlegen bzw. initialiseren
-            TimeTableDbContext dbTT = new TimeTableDbContext();
-            if (!dbTT.Organisers.Any())
+            if (ex is HttpAntiForgeryException)
             {
-                InfrastructureData.InitOrganisation(dbTT);
-                InfrastructureData.InitCurriculum(dbTT);
-                InfrastructureData.InitGroupTemplates(dbTT);
-                InfrastructureData.InitSemester(dbTT);
+                Response.Clear();
+                Server.ClearError(); //make sure you log the exception first
+                Response.Redirect("~/Error/AntiForgery", true);
             }
         }
     }

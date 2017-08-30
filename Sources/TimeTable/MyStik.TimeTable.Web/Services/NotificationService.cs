@@ -6,15 +6,24 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NotificationService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly TimeTableDbContext Db = new TimeTableDbContext();
         private ApplicationDbContext _db = new ApplicationDbContext();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public int CreateAllNotifications()
         {
             // Liste aller Changes die Veranstaltungen betreffen die innerhalb einer Woche in der Zukunft liegen
@@ -39,6 +48,11 @@ namespace MyStik.TimeTable.Web.Services
             return changeList.Count();
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="changeId"></param>
+        /// <returns></returns>
         public bool CreateSingleNotification(string changeId)
         {
             bool notificationGenerated = false;
@@ -73,6 +87,11 @@ namespace MyStik.TimeTable.Web.Services
             return notificationGenerated;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="changeId"></param>
+        /// <returns></returns>
         public string GenerateNotificationText(string changeId)
         {
             ActivityDateChange change = Db.DateChanges.SingleOrDefault(c => c.Id.ToString().Equals(changeId));
@@ -137,6 +156,10 @@ namespace MyStik.TimeTable.Web.Services
             return notificationText;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="changeId"></param>
         public void GenerateNotificationStates(string changeId)
         {
 
@@ -162,6 +185,11 @@ namespace MyStik.TimeTable.Web.Services
             Db.SaveChanges();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="changeId"></param>
         public void MarkAsRead(string userId, string changeId)
         {
             var state = Db.DateChanges.SingleOrDefault(x => x.Id.ToString().Equals(changeId)).NotificationStates.SingleOrDefault(y => y.UserId.Equals(userId));
@@ -173,7 +201,11 @@ namespace MyStik.TimeTable.Web.Services
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="changeId"></param>
         public void SendPushNotification(string message, string changeId)
         {
             string stringregIds = null;
@@ -265,10 +297,7 @@ namespace MyStik.TimeTable.Web.Services
                     dataStream.Close();
                     tResponse.Close();
                 }
-                catch (Exception ex)
-                {
-                    //throw new WebFaultException<string>("Error", HttpStatusCode.ServiceUnavailable);
-                }
+                finally { }
             }
         }
     }

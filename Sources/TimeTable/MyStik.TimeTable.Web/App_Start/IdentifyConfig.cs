@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -13,18 +10,37 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class IdentifyConfig
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public class EmailService : IIdentityMessageService
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="message"></param>
+            /// <returns></returns>
             public Task SendAsync(IdentityMessage message)
             {
                 return Task.FromResult(0);
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class SmsService : IIdentityMessageService
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="message"></param>
+            /// <returns></returns>
             public Task SendAsync(IdentityMessage message)
             {
                 // Plug in your SMS service here to send a text message.
@@ -32,14 +48,26 @@ namespace MyStik.TimeTable.Web
             }
         }
 
-        // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
+        /// <summary>
+        /// Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
+        /// </summary>
         public class ApplicationUserManager : UserManager<ApplicationUser>
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="store"></param>
             public ApplicationUserManager(IUserStore<ApplicationUser> store)
                 : base(store)
             {
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="options"></param>
+            /// <param name="context"></param>
+            /// <returns></returns>
             public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options,
                 IOwinContext context)
             {
@@ -89,11 +117,19 @@ namespace MyStik.TimeTable.Web
                 return manager;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="userId"></param>
+            /// <returns></returns>
             public async Task<DateTime> StoreLogInAsync(string userId)
             {
                 var user = await FindByIdAsync(userId);
                 var now = GlobalSettings.Now;
                 user.LastLogin = now;
+
+                // in jedem Fall wieder auf aktiv für E-Mail setzen
+                user.IsApproved = true;
                 
                 // Falls ein Ablaufdatum vorhanden
                 // => zurücksetzen
@@ -111,20 +147,38 @@ namespace MyStik.TimeTable.Web
             }
         }
 
-        // Configure the application sign-in manager which is used in this application.
+        /// <summary>
+        /// Configure the application sign-in manager which is used in this application.
+        /// </summary>
         public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="userManager"></param>
+            /// <param name="authenticationManager"></param>
             public ApplicationSignInManager(ApplicationUserManager userManager,
                 IAuthenticationManager authenticationManager)
                 : base(userManager, authenticationManager)
             {
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="user"></param>
+            /// <returns></returns>
             public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
             {
                 return user.GenerateUserIdentityAsync((ApplicationUserManager) UserManager);
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="options"></param>
+            /// <param name="context"></param>
+            /// <returns></returns>
             public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options,
                 IOwinContext context)
             {

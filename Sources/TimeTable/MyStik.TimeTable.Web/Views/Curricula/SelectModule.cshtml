@@ -1,0 +1,59 @@
+﻿@model MyStik.TimeTable.Web.Models.SelectModuleViewModel
+@{
+    ViewBag.Title = "Modul akkreditieren";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Modul akkreditieren @Model.Curriculum.ShortName - @Model.Criteria.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-puzzle-piece"></i>
+                        <span class="caption-subject bold uppercase"> Akkreditierte Module</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Modulverantwortlicher</th>
+                                <th>ECTS</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Modules)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.MV.Name</td>
+                                    <td>@item.ECTS</td>
+                                    <td>
+                                        <a href="@Url.Action("AccreditateModule", new {moduleId = item.Id, critId = Model.Criteria.Id})">akkreditieren</a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

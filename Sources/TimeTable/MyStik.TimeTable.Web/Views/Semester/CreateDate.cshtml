@@ -32,7 +32,7 @@
 
                         <div class="form-group">
                             @Html.LabelFor(model => model.Start, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
+                            <div class="col-sm-2">
                                 @Html.TextBoxFor(model => model.Start, new { @class = "form-control datepicker" })
 
                                 @Html.ValidationMessageFor(m => m.Start)
@@ -41,7 +41,7 @@
 
                         <div class="form-group">
                             @Html.LabelFor(model => model.End, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
+                            <div class="col-sm-2">
                                 @Html.TextBoxFor(model => model.End, new { @class = "form-control datepicker" })
                                 @Html.ValidationMessageFor(m => m.End)
                             </div>
@@ -49,14 +49,32 @@
 
                         <div class="checkbox">
                             @Html.CheckBoxFor(m => m.HasCourses)
-                            @Html.LabelFor(m => m.HasCourses)
+                            
                             <label for="HasCourses">Vorlesungszeit</label>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.Wichtig)
+                            
+                            <label for="Wichtig">Ist wichtig</label>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.Eintaegig)
+                            
+                            <label for="Eintaegig">Eintaegig</label>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.Terminstehtnochnichtfest)
+                         
+                            <label for="Terminstehtnochnichtfest">Termin steht noch nicht fest</label>
                         </div>
 
 
                         <div class="form-group">
                             <div class="col-md-offset-4 col-md-10">
-                                <input type="submit" value="anlegen" class="btn btn-default" />
+                                <input type="submit" value="anlegen" class="btn btn-success" />
                             </div>
                         </div>
                     </fieldset>
@@ -74,7 +92,8 @@
 
     <script>
 
-        $(function() {
+        $(function () {
+       
             $('.datepicker').datepicker({
                 orientation: "left",
                 autoclose: true,

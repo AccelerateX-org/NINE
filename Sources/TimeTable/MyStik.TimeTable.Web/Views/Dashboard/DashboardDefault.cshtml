@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model MyStik.TimeTable.Web.Models.DashboardViewModel
+﻿@model MyStik.TimeTable.Web.Models.DashboardViewModel
 @{
     ViewBag.Title = "Meine Termine";
 }
@@ -9,14 +8,12 @@
 
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-hm">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Das Wichtigste im @Model.Semester.Name auf einen Blick</h1>
-                </div>
-            </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="page-title">
+                Status Gast
+            </h3>
         </div>
     </div>
 </div>
@@ -24,69 +21,55 @@
 
 
 <div class="container-fluid">
-
-
     <div class="row">
         <div class="col-md-12">
-            <div class="row" id="sortable_portlets">
-                <div class="col-md-4 column sortable">
-                    <div id="portletStudtentUpgrade">
-                        @Html.Partial("_PortletStudentUpgrade", Model)
-                    </div>
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
-                    </div>
-                </div>
-                <div class="col-md-4 column sortable">
-                    @if (Model.OfficeHours.Any())
-                    {
-                        <div id="portletGuestOfficeHour">
-                            @Html.Partial("_PortletSubOfficeHour", Model)
+            @Html.Partial("_PortletStudentUpgrade", Model)
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            Alle Sprechstunden im @Model.Semester.Name
                         </div>
-                    }
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
+                        <div class="actions">
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4 column sortable">
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
+                    <div class="portlet-body">
+                        <div class="list-group">
+                            @foreach (var oh in Model.OfficeHours.OrderBy(x => x.Owners.First().Member.Name))
+                            {
+                                var lec = oh.Owners.First().Member;
+
+                                if (oh.ByAgreement)
+                                {
+                                    var txt = "Sprechstunde nach Vereinbarung";
+                                    if (!string.IsNullOrEmpty(oh.Description))
+                                    {
+                                        txt = oh.Description;
+                                    }
+                                    <a href="@Url.Action("Member", "Organiser", new {id = lec.Id})" class="list-group-item">
+                                        <span class="badge">@txt</span>
+                                        @lec.Name (@lec.ShortName)
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Member", "Organiser", new {id=lec.Id})" class="list-group-item">
+                                        <span class="badge">Sprechstunde mit Terminen</span>
+                                        @lec.Name (@lec.ShortName)
+                                    </a>
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        
 </div>
 
-@section scripts
-{
-    <script src="~/Assets/admin/pages/scripts/portlet-draggable.js"></script>
 
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        PortletDraggable.init();
-    });
-
-    function onCurriculumChanged() {
-
-        var prog = $('#Curriculum option:selected').val();
-
-        $.ajax(
-        {
-            type: 'POST',
-            url: '@Url.Action("GroupList", "Dashboard")',
-            data: {
-                currId: prog
-            },
-            success: function (data, success, xhr) {
-                $('#CurrGroup').html(data);
-            }
-        });
-    }
-
-
-</script>
-
-
+@section scripts{
 }

@@ -1,143 +1,295 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.LotteryLotPotModel
 @{
     ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
 }
 
 <div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
+    <div class="panel-body bg-fillter-study">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Platzverlosung für @Model.Lottery.Name</h1>
+                    <h1>Platzverlosung @Model.Lottery.Name</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Index")" class="btn btn-default">
+                                    <i class="fa fa-arrow-left"></i> Zurück
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Subscribers", new {id = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-pencil"></i> Auswertung
+                                </a>
+                            </div>
+                        @if (ViewBag.UserRight.IsCourseAdmin)
+                        {
+                            <div class="form-group">
+                                <a href="@Url.Action("Edit", new {id = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-cog"></i> Einstellungen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Select", new {id = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-cog"></i> Zusammensetzung
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Run", new {id = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-random"></i> Jetzt verlosen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Reset", new {id = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-random"></i> Zurücksetzen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("ClearDrawings", new {id = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-trash-o"></i> Ziehungen löschen
+                                </a>
+                            </div>
+                        }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-random"></i>
+                                <span class="caption-subject bold uppercase"> Allgemeine Daten</span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Zeitraum</label>
+                                    <div class="col-md-10">
+                                        <p class="form-control-static">@Model.Lottery.FirstDrawing.ToShortDateString() - @Model.Lottery.LastDrawing.ToShortDateString() jeweils um @Model.Lottery.DrawingTime</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Max. Bestätigungen</label>
+                                    <div class="col-md-10">
+                                        <p class="form-control-static">@Model.Lottery.MaxConfirm</p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <span class="caption-subject bold">Legende / Symbole</span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4>Spaltenüberschriften</h4>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa-li fa fa-cubes"></i>Anzahl der Plätze (Kapazität, * nach Gruppen, n.b. nicht beschränkt)</li>
+                                        <li><i class="fa-li fa fa-group"></i>Anzahl der belegten Plätze (Teilnehmer)</li>
+                                        <li><i class="fa-li fa fa-ticket"></i>Anzahl der Reservierungen</li>
+                                        <li><i class="fa-li fa fa-hourglass"></i>Anzahl auf Warteliste</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Details zur Warteliste</h4>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa-li fa fa-refresh"></i>Größter Rundenwert, d.h. wird zuerst verlost</li>
+                                        <li><i class="fa-li fa fa-flask"></i>Anzahl Studierende in Lostopf für größten Rundenwert</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-10">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
                     <div class="portlet light bordered">
                         <div class="portlet-title">
                             <div class="caption">
                                 <i class="fa fa-random"></i>
-                                <span class="caption-subject bold uppercase"> Kurse in Lostopf</span>
+                                <span class="caption-subject bold uppercase"> Beteiligte Lehrveranstaltungen</span>
                             </div>
-                            <div class="inputs">
-                                <form id="searchForm" action="/">
-                                    <div class="portlet-input input-inline input-small">
-                                        <div class="input-group">
-                                            <span><input type="text" class="form-control" name="semester" placeholder="Semester..."></span>
-                                        </div>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control input-circle-left" name="searchText" placeholder="Name...">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-circle-right btn-default" type="submit">Suchen</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </form>
+                        </div>
+                        <div class="portlet-body">
+                            <div id="CourseTable">
+                                <table class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th>Bezeichnung</th>
+                                        <th>Lehrende</th>
+                                        <th>Gruppen</th>
+                                        <th>Erste Termin</th>
+                                        <th>Letzte Termin</th>
+                                        <th><i class="fa fa-cubes"></i></th>
+                                        <th><i class="fa fa-group"></i></th>
+                                        <th><i class="fa fa-ticket"></i></th>
+                                        <th><i class="fa fa-hourglass"></i></th>
+                                        <th><i class="fa fa-refresh"></i></th>
+                                        <th><i class="fa fa-flask"></i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="activityTable">
+                                    @foreach (var activity in Model.PotElements)
+                                    {
+                                        var nCap = activity.ActivitySummary.Summary.Activity.Occurrence.Capacity;
+                                        if (activity.ActivitySummary.Summary.Activity.Occurrence.UseGroups)
+                                        {
+                                            nCap = activity.ActivitySummary.Summary.Activity.Occurrence.Groups.Sum(x => x.Capacity);
+                                        }
 
-                            </div>
-                            <div class="portlet-body">
-                                <div id="CourseTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th>Bezeichnung</th>
-                                                <th>Gruppen</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="activityTable">
-                                            @foreach (var activity in Model.LotPotActivities)
+
+                                        var nConfirmed = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => x.IsConfirmed);
+                                        var nReserved = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => !x.IsConfirmed && !x.OnWaitingList);
+                                        var nWaiting = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
+
+                                        var maxLap = 0;
+                                        if (activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Any())
+                                        {
+                                            maxLap = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Max(x => x.LapCount);
+                                        }
+                                        var nMax = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => x.LapCount == maxLap);
+
+
+                                        var rowColor = "";
+                                        if (nCap > -1)
+                                        {
+                                            if (nConfirmed >= nCap)
                                             {
-                                                <tr id="@activity.Activity.Occurrence.Id">
-                                                    <td>@activity.Name</td>
-                                                    <td>@Html.GroupList(activity.Activity.SemesterGroups)</td>
-                                                    <td><button class="btn btn-default btn-sm" onclick="deleteRow('@activity.Activity.Occurrence.Id');"><i class="fa fa-trash-o"></i></button></td>
-                                                </tr>
+                                                rowColor = "danger";
                                             }
-                                        </tbody>
+                                            else if (nConfirmed > 0.8 * nCap && nConfirmed < nCap)
+                                            {
+                                                rowColor = "warning";
+                                            }
+                                        }
 
-                                    </table>
-                                </div>
-                                <button class="btn btn-default" onclick="saveLotPot()"><i class="fa fa-save"></i> speichern</button>
+                                        <tr class="@rowColor">
+                                            <td><a href="@Url.Action("Details", "Course", new {id = activity.CourseSummary.Course.Id})">@activity.ActivitySummary.Name (@activity.CourseSummary.Course.ShortName)</a></td>
+                                            <td>@Html.LecturerList(activity.CourseSummary.Lecturers)</td>
+                                            <td>@Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)</td>
+                                            @if (activity.CourseSummary.Course.Dates.Any())
+                                            {
+                                                <td>@activity.CourseSummary.Course.Dates.OrderBy(x => x.Begin).First().Begin.Date.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
+                                                <td>@activity.CourseSummary.Course.Dates.OrderBy(x => x.Begin).Last().Begin.Date.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
+                                            }
+                                            else
+                                             {
+                                                <td colspan="2">Keine Termine</td>
+                                            }
+                                            @if (activity.ActivitySummary.Summary.Activity.Occurrence.UseGroups)
+                                            {
+                                                <td>*@nCap</td>
+                                            }
+                                            else
+                                            {
+                                                if (nCap > -1)
+                                                {
+                                                    <td>@nCap</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>n.b.</td>
+                                                }
+                                            }
+                                            <td>@nConfirmed</td>
+                                            <td>@nReserved</td>
+                                            <td><a href="@Url.Action("LotPot", new {id = activity.CourseSummary.Course.Id})">@nWaiting</a></td>
+                                            <td>@maxLap</td>
+                                            <td>@nMax</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
+        </div>
+    </div>
+  
+      <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-random"></i>
+                                <span class="caption-subject bold uppercase"> Historie</span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Datum</th>
+                                    <th>Start</th>
+                                    <th>Ende</th>
+                                    <th>Bemerkung</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var drawing in Model.Lottery.Drawings)
+                                {
+                                    <tr>
+                                        <td><a href="@Url.Action("Report", new {id = drawing.Id})">@drawing.Start.Date.ToShortDateString()</a></td>
+                                        <td>@drawing.Start.TimeOfDay</td>
+                                        <td>@drawing.End.TimeOfDay</td>
+                                        <td>@drawing.Message</td>
+                                    </tr>
+  
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 
+
 @section Scripts {
 
     <script>
-    $("#searchForm").submit(function(event) {
-
-        /* stop form from submitting normally */
-        event.preventDefault();
-
-        /* get some values from elements on the page: */
-        var $form = $(this),
-            semester = $form.find('input[name="semester"]').val(),
-            term = $form.find('input[name="searchText"]').val();
-
-        $.ajax(
-        {
-            type: 'POST',
-            url: '@Url.Action("Search")',
-                data: {
-                    semester: semester,
-                    term: term
-                },
-                success: function (data, success, xhr) {
-                    $('#activityTable').append(data);
-                }
-            });
-
-        });
-
-        function deleteRow(id) {
-            $("#" + id).remove();
-        }
-
-        function saveLotPot() {
-            var groupList = new Array();
-
-            var list = $("#CourseTable > table > tbody > tr").get();
-            var n = list.length;
-            if (n > 0) {
-                for (var i = 0; i < n; i++) {
-                    groupList[i] = list[i].id;
-                }
-            }
-
-            $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("ChangeLotPot")',
-                data: {
-                    LotteryId: "@Model.LotteryId",
-                    CourseIds: groupList
-                },
-                success: function(data, success, xhr) {
-                    window.location.replace("@Url.Action("Index")");
-                }
-            });
-
-        }
-
     </script>
 }
 

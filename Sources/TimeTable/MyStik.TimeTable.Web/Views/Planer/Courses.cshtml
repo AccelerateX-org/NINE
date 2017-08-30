@@ -1,0 +1,152 @@
+﻿@model MyStik.TimeTable.Web.Models.DashboardStudentViewModel
+
+@{
+    ViewBag.Title = "Meine Lehveranstaltungen";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine lehrveranstaltungen im @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-pencil"></i>
+                        <span class="caption-subject bold uppercase"> Meine Lehrveranstaltungen</span>
+                    </div>
+                    <div class="actions">
+                        <a href="@Url.Action("Index", "Planer")" class="btn btn-circle btn-icon-only btn-default">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="@Url.Action("Index", "Activity")" class="btn btn-circle btn-icon-only btn-default">
+                            <i class="fa fa-calendar"></i>
+                        </a>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th><i class="fa fa-envelope-o"></i></th>
+                        <th><i class="fa fa-group"></i></th>
+                        <th><i class="fa fa-random"></i></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var act in Model.MyCourseSubscriptions)
+                    {
+                        var activityFlag = act.State != null ? "Activity_" + act.State.Occurrence.Id : string.Empty;
+                        var lvName = string.Format("{0} ({1})", act.Activity.Name, act.Activity.Activity.ShortName);
+                        <tr id="@activityFlag">
+                            <td>
+                                @Html.ActionLink(
+                                    lvName,
+                                    act.Activity.Action, act.Activity.Controller, new { id = act.Activity.Id }, null)
+                            </td>
+                            <td><i class="fa fa-check text-success"></i></td>
+                            @if (act.State.Subscription.OnWaitingList)
+                            {
+                                <td><i class="fa fa-hourglass-o text-danger"></i></td>
+                            }
+                            else
+                            {
+                                if (act.State.Subscription.IsConfirmed)
+                                {
+                                    <td>
+                                        <i class="fa fa-check text-success"></i>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-ticket text-warning"></i></td>
+                                }
+                            }
+                            @if (act.Lottery != null)
+                            {
+                                <td><a href="@Url.Action("MySelection", "Lottery", new {id = act.Lottery.Id})"><i class="fa fa-arrow-circle-right text-primary"></i></a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div class="alert alert-info">
+                    <i class="fa fa-random"></i>: Diese Lehveranstaltung hat eine Platzverlosung
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Meine Termine (nur bestätigte Plätze und Reservierungen)</span>
+                    </div>
+                    <div class="actions">
+                        <a href="@Url.Action("Index", "Planer")" class="btn btn-circle btn-icon-only btn-default">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="@Url.Action("Index", "Activity")" class="btn btn-circle btn-icon-only btn-default">
+                            <i class="fa fa-calendar"></i>
+                        </a>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Von</th>
+                        <th>Bis</th>
+                        <th>Lehrveranstaltung</th>
+                    </tr>
+                    <tbody>
+                    @foreach (var courseDate in Model.CourseDates.OrderBy(x => x.Day))
+                    {
+                        var n = courseDate.Dates.Count;
+                        var ordered = courseDate.Dates.OrderBy(x => x.Begin).ToList();
+
+                        foreach (var activityDate in ordered)
+                        {
+                            if (activityDate.Equals(ordered.First()))
+                            {
+                                <tr>
+                                    <td rowspan="@n">@courseDate.Day.ToShortDateString()</td>
+                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                                </tr>
+                            }
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

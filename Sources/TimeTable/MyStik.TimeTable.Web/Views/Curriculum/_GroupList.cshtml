@@ -1,6 +1,13 @@
 ﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
 
-@foreach (var group in Model.SemesterGroups)
+@if (Model.SemesterGroups.Any())
 {
-    <option value="@group.Id">@group.GroupName</option>
+    foreach (var group in Model.SemesterGroups)
+    {
+        <option value="@group.Id">@group.GroupName</option>
+    }
+}
+else
+{
+    <option value="@Guid.Empty">Keine Stundenplandaten vorhanden</option>
 }

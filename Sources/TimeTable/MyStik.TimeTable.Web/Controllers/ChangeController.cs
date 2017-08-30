@@ -1,27 +1,30 @@
 ﻿using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.ServiceModel.Web;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ChangeController : BaseController
     {
-        // GET: Change
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var model = Db.DateChanges.OrderBy(c => c.TimeStamp).ToList();
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult DeleteAll()
         {
             var changes = Db.DateChanges.ToList();
@@ -37,6 +40,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public string CreateAllNotifications()
         {
@@ -60,6 +67,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return returnText;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="changeId"></param>
+        /// <returns></returns>
         [HttpPost]
         public string CreateNotification(string changeId)
         {

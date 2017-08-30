@@ -1,51 +1,77 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model ICollection<MyStik.TimeTable.Web.Models.LecturerViewModel>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.LecturerViewModel>
 
 
-@foreach (var lec in Model)
-{
-    <div class="panel panel-default">
-        <div class="panel-heading"><strong>@lec.Lecturer.Name</strong></div>
-        <div class="list-group">
-            @if (lec.User != null)
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    @Resources.ProfileListActiveLecturer (@ViewBag.Semester.Name) 
+                </div>
+                <div class="actions">
+                </div>
+            </div>
+            <div class="portlet-body">
+
+                <div class="list-group">
+                    @foreach (var lec in Model)
+                    {
+                        <a href="@Url.Action("Member", "Organiser", new {id = lec.Lecturer.Id})" class="list-group-item">
+                            @lec.Lecturer.Name (@lec.Lecturer.ShortName)
+                        </a>
+@*
+    if (lec.IsActive)
+    {
+        if (lec.OfficeHour != null)
+        {
+            if (lec.OfficeHour.ByAgreement)
             {
-                <a href="mailto:@lec.User.Email" class="list-group-item"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                var txt2 = Resources.OfficeHourByAgreement;
+                if (!string.IsNullOrEmpty(lec.OfficeHour.Description))
+                {
+                    txt2 = lec.OfficeHour.Description;
+                }
+                <a href="@Url.Action("Member", "Organiser", new {id = lec.Lecturer.Id})" class="list-group-item">
+                    <span class="badge">@txt2</span>
+                    @lec.Lecturer.Name (@lec.Lecturer.ShortName)
+                </a>
             }
             else
             {
-                <a href="#" class="list-group-item disabled"><i class="fa fa-envelope-o"></i> Keine E-Mail Adresse vorhanden</a>
+                <a href="@Url.Action("Member", "Organiser", new {id = lec.Lecturer.Id})" class="list-group-item">
+                    <span class="badge">@Resources.OfficeHourWithDates</span>
+                    @lec.Lecturer.Name (@lec.Lecturer.ShortName)
+                </a>
             }
-            @if (lec.OfficeHour != null)
-            {
-                if (lec.OfficeHour.ByAgreement)
-                {
-                    <a href="#" class="list-group-item disabled"><i class="fa fa-ambulance"></i> Terminvereinbarung per E-Mail</a>
-                }
-                else
-                {
-                    <a href="@Url.Action("Lecturer", "OfficeHour", new {id = lec.Lecturer.Id}, null)" 
-                       class="list-group-item"><i class="fa fa-ambulance"></i> Sprechstundentermine</a>
-                }
-            }
-            else
-            {
-                <a href="#" class="list-group-item disabled"><i class="fa fa-ambulance"></i> Keine Sprechstunde</a>
-            }
-            @if (ViewBag.UserRight.User.MemberState == MemberState.Staff && (ViewBag.UserRight.IsOrgMember || ViewBag.UserRight.IsOrgAdmin))
-            {
-                <a href="@Url.Action("Calendar", "Lecturer", new { id = lec.Lecturer.Id })"
-                   class="list-group-item"><i class="fa fa-calendar"></i> Kalender</a>
-                <a href="@Url.Action("Schedule", "Print", new { id = lec.Lecturer.Id })"
-                   onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=500,toolbar=0,resizable=1'); return false;"
-                   class="list-group-item"><i class="fa fa-print"></i> Drucken</a>
-            }
-            @if (User.IsInRole("SysAdmin") && lec.OfficeHour != null)
-            {
-                <a href="@Url.Action("Delete", "OfficeHour", new {id = lec.OfficeHour.Id})"
-                   class="list-group-item"><i class="fa fa-trash-o"></i> Sprechstunde löschen</a>
-                <a href="@Url.Action("Inspect", "OfficeHour", new {id = lec.Lecturer.Id})"
-                   class="list-group-item"><i class="fa fa-fire-extinguisher"></i> Sprechstunde prüfen</a>
-            }
+        }
+        else
+        {
+            <a href="@Url.Action("Member", "Organiser", new {id = lec.Lecturer.Id})" class="list-group-item">
+                @lec.Lecturer.Name (@lec.Lecturer.ShortName)
+            </a>
+        }
+    }
+    else
+    {
+        if (lec.User != null)
+        {
+            <a href="mailto:@lec.User.Email" class="list-group-item">
+                @lec.Lecturer.Name (@lec.Lecturer.ShortName) - @Resources.InactiveUseEmail
+            </a>
+        }
+        else
+        {
+            <a href="#" class="list-group-item disabled">
+                @lec.Lecturer.Name (@lec.Lecturer.ShortName) - @Resources.InactiveNoContactInf
+            </a>
+        }
+    }
+*@
+                    }
+                </div>
+            </div>
         </div>
     </div>
-}
+</div>
+
+

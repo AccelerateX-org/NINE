@@ -1,16 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class StorageController : Controller
     {
-        //
-        // GET: /Storage/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult GetRessource(Guid id)
         {
             var db = new TimeTableDbContext();
@@ -20,6 +24,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(file.BinaryData, file.FileType);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult GetDocument(Guid id)
         {
             var db = new TimeTableDbContext();

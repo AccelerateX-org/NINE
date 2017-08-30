@@ -1,16 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SemesterSubscriptionService
     {
-        private readonly TimeTableDbContext _db = new TimeTableDbContext();
+        private readonly TimeTableDbContext _db;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public SemesterSubscriptionService()
+        {
+            _db = new TimeTableDbContext();
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="db"></param>
+        public SemesterSubscriptionService(TimeTableDbContext db)
+        {
+            _db = db;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semGroupId"></param>
         public void Subscribe(string userId, Guid semGroupId)
         {
             var group = _db.SemesterGroups.SingleOrDefault(g => g.Id == semGroupId);
@@ -44,6 +67,12 @@ namespace MyStik.TimeTable.Web.Services
             _db.SaveChanges();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         public bool IsSubscribed(string userId, Semester semester)
         {
             return _db.Subscriptions.OfType<SemesterSubscription>().Any(s =>
@@ -51,6 +80,43 @@ namespace MyStik.TimeTable.Web.Services
                 s.SemesterGroup.Semester.Id.Equals(semester.Id));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semester"></param>
+        /// <param name="org"></param>
+        /// <returns></returns>
+        public bool IsSubscribed(string userId, Semester semester, ActivityOrganiser org)
+        {
+            return _db.Subscriptions.OfType<SemesterSubscription>().Any(s =>
+                s.UserId.Equals(userId) &&
+                s.SemesterGroup.Semester.Id.Equals(semester.Id) &&
+                s.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semesterId"></param>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
+        public bool IsSubscribed(string userId, Guid semesterId, Guid orgId)
+        {
+            return _db.Subscriptions.OfType<SemesterSubscription>().Any(s =>
+                s.UserId.Equals(userId) &&
+                s.SemesterGroup.Semester.Id.Equals(semesterId) &&
+                s.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupList"></param>
+        /// <param name="exactFit"></param>
+        /// <returns></returns>
         public bool IsSubscribed(string userId, ICollection<SemesterGroup> groupList, bool exactFit = true)
         {
             if (exactFit)
@@ -79,7 +145,13 @@ namespace MyStik.TimeTable.Web.Services
             return false;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupList"></param>
+        /// <param name="exactFit"></param>
+        /// <returns></returns>
         internal bool IsSubscribed(string userId, ICollection<OccurrenceGroup> groupList, bool exactFit = true)
         {
             foreach (var group in groupList)
@@ -90,7 +162,13 @@ namespace MyStik.TimeTable.Web.Services
             return false;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="groupList"></param>
+        /// <param name="exactFit"></param>
+        /// <returns></returns>
         internal OccurrenceGroup GetBestFit(string userId, ICollection<OccurrenceGroup> groupList, bool exactFit = true)
         {
             foreach (var group in groupList)
@@ -101,6 +179,12 @@ namespace MyStik.TimeTable.Web.Services
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         internal Curriculum GetBestCurriculum(string userId, Semester semester)
         {
             var subscription = _db.Subscriptions.OfType<SemesterSubscription>().FirstOrDefault(s =>
@@ -113,11 +197,11 @@ namespace MyStik.TimeTable.Web.Services
             return null;
         }
 
-        internal List<SemesterGroup> GetSemesterGroups(string userId, Semester semester)
+        internal SemesterGroup GetSemesterGroup(string userId, Semester semester)
         {
-            return _db.SemesterGroups.Where(g =>
+            return _db.SemesterGroups.FirstOrDefault(g =>
                 g.Semester.Id == semester.Id &&
-                g.Subscriptions.Any(s => s.UserId.Equals(userId))).ToList();
+                g.Subscriptions.Any(s => s.UserId.Equals(userId)));
         }
 
         internal SemesterSubscription GetSubscription(string userId, Guid semId)

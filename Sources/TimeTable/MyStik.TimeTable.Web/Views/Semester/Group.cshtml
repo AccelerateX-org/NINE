@@ -3,7 +3,30 @@
     ViewBag.Title = ViewBag.GroupName;
 }
 
-<h4>Semestergruppe @ViewBag.GroupName (@ViewBag.Semester.Name)</h4>
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Semestergruppe @ViewBag.GroupName (@ViewBag.Semester.Name)</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-@Html.Partial("_CourseListSummary", Model)
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Lehrveranstaltungen der Semestergruppe</h4>
+                </div>
+                <div class="panel-body">
+                    @Html.Partial("_CourseListSummary", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

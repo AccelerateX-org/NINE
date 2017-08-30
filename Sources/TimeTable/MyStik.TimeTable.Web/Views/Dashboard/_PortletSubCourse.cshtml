@@ -1,14 +1,17 @@
 ﻿@model MyStik.TimeTable.Web.Models.DashboardViewModel
 
 
-<div class="portlet portlet-sortable light bordered">
+<div class="portlet light bordered">
         <div class="portlet-title">
             <div class="caption">
                 <i class="fa fa-pencil"></i>
-                <span class="caption-subject bold uppercase"> Meine Kurse</span>
+                <span class="caption-subject bold uppercase"> Meine Fächer</span>
             </div>
             <div class="actions">
-                <a href="@Url.Action("Index", "Activity")" class="btn btn-default btn-sm">
+                <a href="@Url.Action("Index", "Planer")" class="btn btn-circle btn-icon-only btn-default">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a href="@Url.Action("Index", "Activity")" class="btn btn-circle btn-icon-only btn-default">
                     <i class="fa fa-calendar"></i>
                 </a>
             </div>
@@ -17,8 +20,9 @@
         <thead>
         <tr>
             <th>Bezeichnung</th>
-            <th>Status</th>
-            <th></th>
+            <th><i class="fa fa-envelope-o"></i></th>
+            <th><i class="fa fa-group"></i></th>
+            <th><i class="fa fa-random"></i></th>
         </tr>
         </thead>
         <tbody>
@@ -31,24 +35,27 @@
                         act.Activity.Name,
                         act.Activity.Action, act.Activity.Controller, new {id = act.Activity.Id}, null)
                 </td>
+                <td><i class="fa fa-check text-success"></i></td>
                 @if (act.State.Subscription.OnWaitingList)
                 {
-                    <td>Warteliste</td>
+                    <td><i class="fa fa-hourglass-o text-danger"></i></td>
                 }
                 else
                 {
                     if (act.State.Subscription.IsConfirmed)
                     {
-                        <td>Teilnehmer</td>
+                        <td>
+                            <i class="fa fa-check text-success"></i>
+                        </td>
                     }
                     else
                     {
-                        <td>Platz reserviert</td>
+                        <td><i class="fa fa-ticket text-warning"></i></td>
                     }
                 }
                 @if (act.Lottery != null)
                 {
-                    <td><a href="@Url.Action("MySelection", "Lottery", new {id = act.Lottery.Id})"><i class="fa fa-random"></i></a></td>
+                    <td><a href="@Url.Action("MySelection", "Lottery", new {id = act.Lottery.Id})"><i class="fa fa-arrow-circle-right text-primary"></i></a></td>
                 }
                 else
                 {
@@ -59,7 +66,7 @@
         </tbody>
     </table>
     <div class="alert alert-info">
-        <p>Über <i class="fa fa-random"></i> geht es zur Platzverlosung</p>
+        <i class="fa fa-random"></i>: Für Fach gibt es eine Platzverlosung
     </div>
 </div>
 

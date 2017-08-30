@@ -2,29 +2,48 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NewsletterController : BaseController
     {
-        //
-        // GET: /Activity/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
+            ViewBag.FacultyList = Db.Organisers.Where(x => x.Activities.Any()).OrderBy(s => s.Name).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
 
+            return View(GetMyOrganisation());
+        }
 
-            var newsletters = Db.Activities.OfType<Newsletter>().ToList();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="facultyId">Kurzname der Fakultät</param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult Faculty(Guid facultyId)
+        {
+            var newsletters = Db.Activities.OfType<Newsletter>().Where(x => x.Organiser.Id == facultyId).ToList();
 
             var model = new List<NewsletterViewModel>();
 
-            var userRight = new UserRight(User.IsInRole("SysAdmin"));
+            var userRight = new UserRight();
             userRight.User = UserManager.FindByName(User.Identity.Name);
+            userRight.Member = GetMyMembership();
 
             var semester = GetSemester();
 
@@ -41,20 +60,20 @@ namespace MyStik.TimeTable.Web.Controllers
                     IsAdmin = isAdmin,
                 });
 
-                if (!userRight.IsOrgMember)
-                    userRight.IsOrgMember = isMember;
-
-                if (!userRight.IsOrgAdmin)
-                    userRight.IsOrgAdmin = isAdmin;
             }
 
             ViewBag.UserRight = userRight;
             ViewBag.Curricula = Db.Curricula.ToList();
             ViewBag.Semester = semester;
 
-            return View(model);
+            return PartialView("_NewsletterList", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult SendNews(Guid id)
         {
             var newsletter = Db.Activities.OfType<Newsletter>().SingleOrDefault(n => n.Id == id);
@@ -78,6 +97,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Missing", "Home");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SendNews(OccurrenceMailingModel model)
         {
@@ -99,21 +123,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return m.CustomOccurrenceMail(model);
         }
 
-
-        public ActionResult Create(string id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Create()
         {
-            var org = Db.Organisers.SingleOrDefault(o => o.ShortName.ToUpper().Equals(id.ToUpper()));
+            var org = GetMyOrganisation();
 
             var model = new Newsletter {Organiser = org};
 
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Create(Newsletter model)
         {
 
-            var org = Db.Organisers.SingleOrDefault(o => o.ShortName.ToUpper().Equals(model.Organiser.ShortName.ToUpper()));
+            var org = GetMyOrganisation();
 
             var newsletter = new Newsletter
             {
@@ -131,15 +163,25 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Newsletter", "Organiser", new {id = model.Organiser.ShortName});
+            return RedirectToAction("Newsletter", "Organiser");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Edit(Guid id)
         {
             var model = Db.Activities.OfType<Newsletter>().SingleOrDefault(a => a.Id == id);
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Edit(Newsletter model)
         {
@@ -152,6 +194,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Newsletter", "Organiser", new { id = model.Organiser.ShortName });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Members(Guid id)
         {
             var letter = Db.Activities.OfType<Newsletter>().SingleOrDefault(a => a.Id == id);

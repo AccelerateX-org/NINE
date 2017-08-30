@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
     public enum ExamType
     {
-        SP,
-        PA
+        SP,     // Schriftliche Prüfung
+        PA,     // Projekt / Studienarbeit
+        MP      // Mündliche Prüfung
     }
 
     /// <summary>
@@ -18,6 +16,11 @@ namespace MyStik.TimeTable.Data
     /// </summary>
     public class ModuleExam
     {
+        public ModuleExam()
+        {
+            Examiners = new HashSet<OrganiserMember>();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -41,5 +44,22 @@ namespace MyStik.TimeTable.Data
         /// Das zugehörige Modul
         /// </summary>
         public virtual CurriculumModule Module { get; set; }
+
+
+        /// <summary>
+        /// Prüfungsdauer, z.B. 90 min, 6 Monate
+        /// </summary>
+        public TimeSpan? Duration { get; set; }
+
+        /// <summary>
+        /// zugelassene Prüfer
+        /// </summary>
+        public virtual ICollection<OrganiserMember> Examiners { get; set; }
+
+        /// <summary>
+        /// Die echten Prüfungen
+        /// </summary>
+        public virtual ICollection<StudentExam> StudentExams { get; set; }
+
     }
 }

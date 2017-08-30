@@ -1,5 +1,4 @@
-﻿@using System.Globalization
-@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Web.Models.EventViewModel>
 
 @{
@@ -55,7 +54,16 @@
                             {
                                 <tr>
                                     <td><a href="@Url.Action("Admin", new {id = ev.Event.Id})">@ev.Event.Name</a></td>
-                                    <td>@Html.GroupListExtended(ev.Event.SemesterGroups)</td>
+                                    @if (ev.Event.SemesterGroups.Count <= 3)
+                                    {
+                                        <td>@Html.GroupListExtended(ev.Event.SemesterGroups)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @ev.Event.SemesterGroups.First().Semester.Name - @ev.Event.SemesterGroups.First().FullName + @(ev.Event.SemesterGroups.Count - 1) weitere
+                                        </td>
+                                    }
                                     <td>@Html.DateList(ev.Event.Dates)</td>
                                     <td></td>
                                 </tr>

@@ -1,97 +1,196 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model MyStik.TimeTable.Web.Models.DashboardViewModel
+﻿@model MyStik.TimeTable.Web.Models.DashboardViewModel
 @{
-    ViewBag.Title = "Meine Termine";
+    ViewBag.Title = "Startseite";
 }
 
 @section styles
 {
-
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-hm">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Das Wichtigste im @Model.Semester.Name auf einen Blick</h1>
-                </div>
-            </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="page-title">
+                Das Wichtigste auf einen Blick
+            </h3>
         </div>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <div class="row" id="sortable_portlets">
-                <div class="col-md-4 column sortable">
-                    <div id="portletCourses">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-rooms">
+                <div class="visual">
+                    <i class="fa fa-calendar"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        Raumbelegung
+                    </div>
+                    <div class="desc">@Model.Organiser.ShortName - @DateTime.Today.ToShortDateString()</div>
+                </div>
+                <a class="more" href="@Url.Action("DailyRota", "Activity")">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-study">
+                <div class="visual">
+                    <i class="fa fa-music"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        Lehrangebot
+                    </div>
+                    <div class="desc">@Model.Organiser.ShortName - @Model.Semester.Name</div>
+                </div>
+                <a class="more" href="@Url.Action("Index", "Courses")">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-lecturer">
+                <div class="visual">
+                    <i class="fa fa-graduation-cap"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        Lehrende
+                    </div>
+                    <div class="desc">@Model.Organiser.ShortName</div>
+                </div>
+                <a class="more" href="@Url.Action("Index", "OrganiserMembers")">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-events">
+                <div class="visual">
+                    <i class="fa fa-globe"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        Veranstaltungen
+                    </div>
+                    <div class="desc">@Model.Organiser.ShortName</div>
+                </div>
+                <a class="more" href="@Url.Action("Events", "Organiser")">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item disabled">
+                    <strong>Termine, Termine,.....</strong>
+                </a>                        
+                <a href="@Url.Action("Index", "Reservation")" class="list-group-item">
+                    <i class="fa fa-ticket fa-fw"></i> Raumreservierungen
+                </a>
+                <a href="@Url.Action("Index", "OfficeHour")" class="list-group-item">
+                    <i class="fa fa-question-circle-o fa-fw"></i> Sprechstunden
+                </a>
+                <a href="@Url.Action("Index", "Lottery")" class="list-group-item">
+                    <i class="fa fa-random fa-fw"></i> Platzverlosungen
+                </a>
+                @if (ViewBag.UserRight.IsMemberOf("FK 09"))
+                {
+                    <a href="@Url.Action("Thesis", "Exam")" class="list-group-item">
+                        <i class="fa fa-book fa-fw"></i> Abschlussarbeiten - FK09only
+                    </a>
+                }
+                <a href="#" class="list-group-item disabled">
+                    <strong>Kommunikation</strong>
+                </a>
+                <a href="@Url.Action("Index", "Mailing")" class="list-group-item">
+                    <i class="fa fa-envelope fa-fw"></i> Mailverteiler
+                </a>
+                <a href="@Url.Action("Newsletter", "Organiser")" class="list-group-item">
+                    <i class="fa fa-newspaper-o fa-fw"></i> Newsletter
+                </a>
+                @if (ViewBag.UserRight.IsMemberOf("FK 09"))
+                {
+                    <a href="@Url.Action("Index", "Advertisements")" class="list-group-item">
+                        <i class="fa fa-industry fa-fw"></i> Ausschreibungen - FK09only
+                    </a>
+                    <a href="@Url.Action("Index", "Contacts")" class="list-group-item">
+                        <i class="fa fa-address-card-o fa-fw"></i> Kontakte - FK09only
+                    </a>
+                }
+                <a href="#" class="list-group-item disabled">
+                    <strong>Stammdaten & Einstellungen</strong>
+                </a>
+                <a href="@Url.Action("Curricula", "Organiser")" class="list-group-item">
+                    <i class="fa fa-certificate fa-fw"></i> Studiengänge
+                </a>
+                <a href="@Url.Action("Rooms", "Organiser")" class="list-group-item">
+                    <i class="fa fa-university fa-fw"></i> Räume
+                </a>
+                <a href="@Url.Action("Admins", "Organiser")" class="list-group-item">
+                    <i class="fa fa-legal fa-fw"></i> Rechte & Rollen
+                </a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            @if (Model.MyActivities.Any() || Model.OfficeHour != null)
+            {
+                <div class="row">
+                    <div class="col-md-12">
                         @Html.Partial("_PortletCourses", Model)
                     </div>
-                    <div id="portletOfficHour">
-                        @Html.Partial("_PortletOfficeHour", Model)
-                    </div>
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        @Html.Partial("_PortletPersonalPlan", Model)
                     </div>
                 </div>
-            <div class="col-md-4 column sortable">
-                @if (Model.Member != null)
-                {
-                    <div id="portletFaculty">
-                        @Html.Partial("_PortletFaculty", Model)
-                    </div>
-                }
-                <div id="portletSemester">
-                    @Html.Partial("_PortletSemester", Model)
-                </div>
-                <!-- empty sortable porlet required for each columns! -->
-                <div class="portlet portlet-sortable-empty">
-                </div>
-            </div>
-                <div class="col-md-4 column sortable">
-                    <div id="portletCurrent">
-                        @Html.Partial("_PortletCurrent", Model)
-                    </div>
-                    <!-- empty sortable porlet required for each columns! -->
-                    <div class="portlet portlet-sortable-empty">
-                    </div>
+            }
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Partial("_PortletCurrent", Model)
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
 @section scripts
 {
-    <script src="~/Assets/admin/pages/scripts/portlet-draggable.js"></script>
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/lang/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
     $(document).ready(function () {
-        PortletDraggable.init();
+
+        $('#loading').hide();
+
+        initCalendar(false, false, true);
+
+        $('#calendar').fullCalendar('removeEvents');
+
+        $('#calendar').fullCalendar('addEventSource',
+        {
+            url: '@Url.Action("ActivityPlan", "Calendar")',
+            type: 'POST'
+        });
     });
 
-    function onCurriculumChanged() {
-
-        var prog = $('#Curriculum option:selected').val();
-
-        $.ajax(
-        {
-            type: 'POST',
-            url: '@Url.Action("GroupList", "Dashboard")',
-            data: {
-                currId: prog
-            },
-            success: function (data, success, xhr) {
-                $('#CurrGroup').html(data);
-            }
-        });
-    }
-
-
-</script>
+    </script>
 
 
 }

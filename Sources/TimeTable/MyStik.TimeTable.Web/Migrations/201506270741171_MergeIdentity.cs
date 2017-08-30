@@ -1,10 +1,14 @@
 namespace MyStik.TimeTable.Web.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class MergeIdentity : DbMigration
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Up()
         {
             RenameColumn(table: "dbo.AspNetUserClaims", name: "User_Id", newName: "UserId");
@@ -30,6 +34,9 @@ namespace MyStik.TimeTable.Web.Migrations
             DropColumn("dbo.AspNetUsers", "Discriminator");
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Down()
         {
             AddColumn("dbo.AspNetUsers", "Discriminator", c => c.String(nullable: false, maxLength: 128));

@@ -1,81 +1,187 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel State { get; set; }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseSummaryModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public CourseSummaryModel()
         {
             Dates = new List<CourseDateModel>();
             Lecturers = new List<OrganiserMember>();
             Rooms = new List<Room>();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Activity Course { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsBlock { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<CourseDateModel> Dates { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public List<OrganiserMember> Lecturers { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<Room> Rooms { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel State { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public SemesterGroup SemesterGroup { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int SubscriptionCountFit { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool HasLottery { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivitySummary Summary { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public class TopicSummaryModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public SemesterTopic Topic { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<CourseSummaryModel> Courses { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseHistoryModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Activity Course { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Semester Semester { get; set; }
         
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public CourseDateModel()
         {
             Rooms = new List<Room>();
             Lecturers = new List<OrganiserMember>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DayOfWeek DayOfWeek { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public TimeSpan StartTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public TimeSpan EndTime { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime DefaultDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<Room> Rooms { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public List<OrganiserMember> Lecturers { get; set; }
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseCharacteristicModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public CourseCharacteristicModel()
         {
             Member = new List<CourseMemberModel>();
@@ -83,21 +189,44 @@ namespace MyStik.TimeTable.Web.Models
             ExpiredDates = new List<CourseDateStateModel>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public CourseDateStateModel NextDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<CourseMemberModel> Member { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel State { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<CourseDateStateModel> CurrentDates { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public List<CourseDateStateModel> ExpiredDates { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public BinaryStorage ModuleDescription { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string OccurrenceDescription
         {
             get
@@ -118,173 +247,413 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsWPM { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseMemberModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public int Number { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ApplicationUser User { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceSubscription Subscription { get; set; } 
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum SubscriptionState
     {
+        /// <summary>
+        /// 
+        /// </summary>
         BeforeSubscriptionPhase,
+        /// <summary>
+        /// 
+        /// </summary>
         DuringSubscriptionPhase,
+        /// <summary>
+        /// 
+        /// </summary>
         AfterSubscriptionPhase,
+        /// <summary>
+        /// 
+        /// </summary>
         DuringOccurrence,
+        /// <summary>
+        /// 
+        /// </summary>
         AfterOccurrence
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDateStateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDateSummary Summary { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public SubscriptionState State { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel OccurrenceState { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseMoveDateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate Date { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid ActivityDateId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrganiserId2 { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrganiserId3 { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Datum")]
         public string NewDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Beginn")]
         public string NewBegin { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Ende")]
         public string NewEnd { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> DozIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> RoomIds { get; set; }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseCreateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CourseId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrgId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Bezeichnung")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Kurzname")]
         public string ShortName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Semester")]
         public string Semester { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Wochentag im Semester")]
         public int DayOfWeek { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Beginn")]
         public int StartTimeHour { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int StartTimeMinute { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Ende")]
         public int EndTimeHour { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int EndTimeMinute { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Raumnummer")]
         public string Room { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Dozentenkürzel")]
         public string Lecturer { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name =" Studiengruppe")]
         public string Group { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Anlegen von Terminen")]
         public int DateOption { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Beschreibung")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Datum EInzeltermin")]
         public DateTime Day { get; set; }
     
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDateInfoModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate Date { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid ActivityDateId { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDeleteModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool DeleteCancelled { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool DeleteHosting { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool KeepOwnership { get; set; }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDocumentUploadModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CourseId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Name")]
         public string Name { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Beschreibung")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Datei")]
         public HttpPostedFileBase Document { get; set; }
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDetailViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<CourseDateModel> DateSummary { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public List<OrganiserMember> Lecturers { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<Room> Rooms { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate NextDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<SubscriptionDetailViewModel> ParticipantList { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<SubscriptionDetailViewModel> WaitingList { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<OccurrenceGroupCapacityModel> Groups { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<OccurrenceCapacityOption> CapacitySettings { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceCapacityOption SelectedOption { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel State { get; set; }
             
+        /// <summary>
+        /// 
+        /// </summary>
         [AllowHtml]
         [Display(Name = "Beschreibung")]
         public string Description2 { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CurriculumId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrganiserId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid GroupId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid SemesterId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int Capacity { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string CourseType
         {
             get
@@ -294,6 +663,9 @@ namespace MyStik.TimeTable.Web.Models
             } 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string DefaultDay
         {
             get
@@ -308,6 +680,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string DefaultTimespan
         {
             get
@@ -325,6 +700,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string DefaultRoom
         {
             get
@@ -351,118 +729,332 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Title
         {
             get { return Course.Name; }
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDateInformationModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid DateId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Titel")]
         public string Title { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name="Beschreibung")]
         [AllowHtml]
         public string DateDescription { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Kurzinformation")]
         public string ShortInfo { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate Date { get; set; }
         
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseDateCreatenModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CourseId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public RoomListStateModel RoomList { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public LecturerListStateModel LecturerList { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<OrganiserMember> Lecturers { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Room> Rooms { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Datum")]
         public string NewDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Beginn")]
         public string NewBegin { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Ende")]
         public string NewEnd { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> RoomIds { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> LecturerIds { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsWeekly { get; set; }
 
-    }
-
-    public class CourseCreateModel2
-    {
-        public Guid SemesterId { get; set; }
-        
-        public Guid OrganiserId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrganiserId2 { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid OrganiserId3 { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CourseCreateModel2
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid SemesterId { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid OrganiserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid OrganiserId2 { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrganiserId3 { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CurriculumId { get; set; }
 
-        public Guid GroupId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid CurrGroupId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid CapGroupId { get; set; }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid TopicId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid ChapterId { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string ShortName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> GroupIds { get; set; }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseCreateModelExtended
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string ShortName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> GroupIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> TopicIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> DozIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> RoomIds { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<string> Dates { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid SemesterId { get; set; }
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CourseDateCreateModelExtended
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid CourseId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> DozIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> RoomIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<string> Dates { get; set; }
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class CourseCreateModel3
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Semester Semester { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid SemesterId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrgId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ShortName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Guid> GroupIds { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Course Course { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CourseId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid CurriculumId { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid OrganiserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid GroupId { get; set; }
     }
 

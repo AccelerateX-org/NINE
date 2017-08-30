@@ -1,0 +1,70 @@
+﻿@model MyStik.TimeTable.Web.Models.CapacityGroupEditModel
+@{
+    ViewBag.Title = "Studiengruppe";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Neuen Studiengang anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-database"></i>
+                        <span class="caption-subject bold uppercase"> Studiengruppe</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                    {
+                        <fieldset>
+                            @Html.HiddenFor(model => model.CapacityGroup.Id)
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Name, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.InWS, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.EditorFor(m => m.InWS, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.InSS, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.EditorFor(m => m.InSS, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AliasList, new { @class = "col-sm-3 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(m => m.AliasList, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-save"></i> Speichern</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

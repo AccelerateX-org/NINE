@@ -1,0 +1,95 @@
+﻿@model MyStik.TimeTable.Web.Areas.Admin.Models.DataAdminModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="page-header">
+    <h1>Daten und Benutzerkonten <small>nur für Testsysteme</small></h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-book"></i> Modulkataloge
+            </div>
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Fakultät</th>
+                            <th>Studiengang</th>
+                            <th>Gruppen</th>
+                            <th>Module</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var curr in Model.Curricula)
+                    {
+                        <tr>
+                            <td>@curr.Curriculum.Organiser.ShortName</td>
+                            <td>@curr.Curriculum.ShortName</td>
+                            <td>@curr.Curriculum.CurriculumGroups.Count</td>
+                            <td></td>
+                            @if (curr.ModuleCatalog != null)
+                            {
+                                <td><a href="@Url.Action("ImportModuleCatalog", "Curriculum", new {org = curr.ModuleCatalog.Organiser, curr = curr.ModuleCatalog.ShortName})"><i class="fa fa-upload"></i></a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                    <i class="fa fa-users"></i> Benutzerkonten
+            </div>
+            <div class="panel-body">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Fakultät</th>
+                            <th>Benutzer</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var org in Model.Organisers)
+                        {
+                            <tr>
+                                <td>@org.Organiser.ShortName</td>
+                                @if (org.Users.Any())
+                                {
+                                    <td>
+                                        @foreach (var user in org.Users)
+                                        {
+                                            <div>@user.UserName</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("CreateTestUser", new {id = org.Organiser.Id})">Aktualisieren</a>                                        
+                                        <a href="@Url.Action("DeleteTestUser", new {id = org.Organiser.Id})">Löschen</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td><a href="@Url.Action("CreateTestUser", new {id = org.Organiser.Id})">Anlegen</a></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

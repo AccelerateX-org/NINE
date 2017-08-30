@@ -1,0 +1,761 @@
+﻿@model MyStik.TimeTable.Web.Models.CoursePlanViewModel
+@{
+    ViewBag.Title = "View";
+}
+
+
+@section styles
+{
+    <style>
+        .GaugeMeter {
+            position: Relative;
+            text-align: Center;
+            overflow: Hidden;
+            cursor: Default;
+            display: inline-block;
+        }
+
+            .GaugeMeter SPAN, .GaugeMeter B {
+                width: 54%;
+                position: Absolute;
+                text-align: Center;
+                display: Inline-Block;
+                color: RGBa(0,0,0,.8);
+                font-weight: 100;
+                font-family: "Open Sans", Arial;
+                overflow: Hidden;
+                white-space: NoWrap;
+                text-overflow: Ellipsis;
+                margin: 0 23%;
+            }
+
+            .GaugeMeter[data-style="Semi"] B {
+                width: 80%;
+                margin: 0 10%;
+            }
+
+            .GaugeMeter S, .GaugeMeter U {
+                text-decoration: None;
+                font-size: .60em;
+                font-weight: 200;
+                opacity: .6;
+            }
+
+            .GaugeMeter B {
+                color: #000000;
+                font-weight: 200;
+                opacity: .8;
+            }
+
+
+
+
+        .container {
+            width: 200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .gauge {
+            width: 200px;
+            height: 200px;
+        }
+
+
+
+        /*----- Tab Links -----*/
+        /* Clearfix */
+        .tab-links:after {
+            display: block;
+            clear: both;
+            content: '';
+        }
+
+        .tab-links li {
+            margin: 0 5px;
+            float: left;
+            list-style: none;
+        }
+
+        .tab-links a {
+            padding: 9px 15px;
+            display: inline-block;
+            border-radius: 3px 3px 0 0;
+            background: #7FB5DA;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4c4c4c;
+            transition: all linear 0.15s;
+        }
+
+            .tab-links a:hover {
+                background: #a7cce5;
+                text-decoration: none;
+            }
+
+        li.active a, li.active a:hover {
+            background: #fff;
+            color: #4c4c4c;
+        }
+
+        /*----- Content of Tabs -----*/
+        .tab-content {
+            padding: 15px;
+            border-radius: 3px;
+            box-shadow: -1px 1px 1px rgba(0,0,0,0.15);
+            background: #fff;
+        }
+
+        .tab {
+            display: none;
+        }
+
+            .tab.active {
+                display: block;
+            }
+    </style>
+}
+
+
+<h2>View</h2>
+
+@{
+    var DataUsedSem1 = 34;
+    var DataTotalSem1 = 30;
+    var DataThemeSem1 = "DarkGreen-LightGreen";
+    var DataTextSem1 = DataUsedSem1; 
+    
+    
+    if (DataUsedSem1 > DataTotalSem1 + 5)
+    {
+        DataUsedSem1 = DataTotalSem1;
+        DataThemeSem1 = "DarkRed-LightRed";
+    }
+    else if (DataUsedSem1 < DataTotalSem1 - 6)
+    {
+        DataThemeSem1 = "DarkRed-LightRed";
+    }
+    else if (DataUsedSem1 < DataTotalSem1 && DataUsedSem1 >= DataTotalSem1 -6)
+    {
+        DataThemeSem1 = "DarkGold-LightGold";
+    }
+    else if (DataUsedSem1 > DataTotalSem1 && DataUsedSem1 <= DataTotalSem1 + 5)
+    {
+        DataUsedSem1 = DataTotalSem1;
+        DataThemeSem1 = "DarkGold-LightGold";
+    }
+    else
+    {
+        DataThemeSem1 = "DarkGreen-LightGreen";
+    }
+}
+
+
+<div class="panel-group" id="accordion">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="@DataTextSem1"
+                                             data-label="null"
+                                             data-used="@DataUsedSem1"
+                                             data-total="@DataTotalSem1"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester1.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="@DataThemeSem1"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="null"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>1. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse in">
+                    <table class="table table-condensed table-striped">
+
+                        @foreach (var modul in Model.Semester1)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="32"
+                                             data-label="null"
+                                             data-used="32"
+                                             data-total="32"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester2.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>2. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in">
+                    <table class="table table-condensed table-striped">
+                        
+                        @foreach (var modul in Model.Semester2)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="29"
+                                             data-label="null"
+                                             data-used="29"
+                                             data-total="29"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester3.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>3. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse3" class="panel-collapse collapse in">
+                    <table class="table table-condensed table-striped">
+
+                        @foreach (var modul in Model.Semester3)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="23"
+                                             data-label="null"
+                                             data-used="23"
+                                             data-total="23"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester4.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>4. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse4" class="panel-collapse collapse in">
+                    <table class="table table-condensed table-striped">
+
+                        @foreach (var modul in Model.Semester4)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="21"
+                                             data-label="null"
+                                             data-used="21"
+                                             data-total="21"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester5.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>5. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse5" class="panel-collapse collapse in">
+                    <table class="table table-condensed table-striped">
+
+                        @foreach (var modul in Model.Semester5)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="24"
+                                             data-label="null"
+                                             data-used="24"
+                                             data-total="24"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester6.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>6. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse6" class="panel-collapse collapse">
+                    <table class="table table-condensed table-striped">
+
+                        @foreach (var modul in Model.Semester6)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse7">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="24"
+                                             data-label="null"
+                                             data-used="24"
+                                             data-total="24"
+                                             data-prepend="null"
+                                             data-append="/@Model.Semester7.Sum(m => m.ECTS)"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>7. Semester</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse7" class="panel-collapse collapse">                    
+                    <table class="table table-condensed table-striped">
+
+                        @foreach (var modul in Model.Semester7)
+                        {
+                            <tr>
+                                <td>
+                                    @modul.Name
+                                </td>
+                                <td>
+                                    @modul.ECTS
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse8">
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <div class="GaugeMeter"
+                                             data-percent="10"
+                                             data-text="28"
+                                             data-label="null"
+                                             data-used="28"
+                                             data-total="28"
+                                             data-prepend="null"
+                                             data-append="/28"
+                                             data-size="100"
+                                             data-width="11"
+                                             data-style="Arch"
+                                             data-color="null"
+                                             data-back="null"
+                                             data-theme="DarkGreen-LightGreen"
+                                             data-animate_gauge_colors="1"
+                                             data-animate_text_colors="1"
+                                             data-label_color="#000"
+                                             data-stripe="null"></div>
+                                    </td>
+                                    <td>
+                                        <h4>Wahlfächer</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </a>
+                </div>
+                <div id="collapse8" class="panel-collapse collapse">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Wahlfächer
+                                    </th>
+                                    <th>
+                                        28/28
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Fremdsprache A
+                                    </td>
+                                    <td>
+                                        4
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Fremdsprache B
+                                    </td>
+                                    <td>
+                                        4
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Fremdsprache (A o. B)
+                                    </td>
+                                    <td>
+                                        4
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        WPM Fach I
+                                    </td>
+                                    <td>
+                                        4
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        WPM Fach II
+                                    </td>
+                                    <td>
+                                        4
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Fremdsprache B / WPM III
+                                    </td>
+                                    <td>
+                                        4
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        AW-Fach 1
+                                    </td>
+                                    <td>
+                                        2
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        AW-Fach 2
+                                    </td>
+                                    <td>
+                                        2
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-up"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs"><i class="fa fa-arrow-circle-down"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+        </div>
+
+
+
+
+        @section scripts
+{
+            <script src='~/Assets/global/plugins/GaugeMeter-master/jquery.AshAlom.gaugeMeter-2.0.0.min.js'></script>
+
+            <script>
+                $(document).ready(function () {
+
+                    $(".GaugeMeter").gaugeMeter()
+                });
+
+            </script>
+        }
+        

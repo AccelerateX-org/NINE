@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -20,6 +17,13 @@ namespace MyStik.TimeTable.Data
     /// </summary>
     public class ModuleCourse
     {
+        public ModuleCourse()
+        {
+            Courses = new List<Course>();
+            CapacityCourses = new List<CapacityCourse>();
+        }
+
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -40,6 +44,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Fachbezeichnung in externer Quelle, z.B. gpUntis
+        /// obsolet
         /// </summary>
         public string ExternalId { get; set; }
 
@@ -55,5 +60,11 @@ namespace MyStik.TimeTable.Data
         /// zu den Semestergruppen. Muss daher hier nicht extra gemacht werden
         /// </summary>
         public virtual ICollection<Course> Courses { get; set; }
+
+        /// <summary>
+        /// Unterteilung in Parallelgruppen
+        /// immmer mindestens 1
+        /// </summary>
+        public virtual ICollection<CapacityCourse> CapacityCourses { get; set; }
     }
 }

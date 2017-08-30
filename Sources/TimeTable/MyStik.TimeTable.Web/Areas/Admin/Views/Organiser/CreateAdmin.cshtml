@@ -1,0 +1,102 @@
+﻿@model MyStik.TimeTable.Web.Models.MemberUserViewModel
+@{
+    ViewBag.Title = "Person anlegen";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+}
+
+<div class="page-header">
+    <h1>
+        @ViewBag.Organiser.ShortName <small>@ViewBag.Organiser.Name</small>
+    </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Neuer Admin</h4>
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm("CreateAdmin", "Organiser", FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                        ))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div class="form-group">
+                        @Html.HiddenFor(item => item.OrganiserId)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.Name, new { @class = "col-md-4 control-label" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(item => item.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.ShortName, new { @class = "col-md-4 control-label" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(item => item.ShortName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(item => item.UserName, new { @class = "col-md-4 control-label" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(item => item.UserName, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-8">
+                            <input type="submit" value="Anlegen" class="btn btn-primary" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script>
+        $(function () {
+            $('#UserName').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("UserList")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            token: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    label: item.userName + ' (' + item.firstName + ' ' + item.lastName + ')',
+                                    value: item.userName
+                                };
+                            }));
+
+                        },
+
+                        error: function (data) { alert(data); },
+                    });
+
+                },
+                select: function (event, ui) { }
+            });
+        });
+    </script>
+}
+

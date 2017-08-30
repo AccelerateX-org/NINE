@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINE Admin | @ViewBag.Title</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/uniform/css/uniform.default.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css")" />
+    @RenderSection("styles", required: false)
+    @*
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/css/components.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/css/plugins.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/layout.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/themes/fillter.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/custom.css")" />
+*@
+        <link rel="stylesheet" href="@Url.Content("~/Assets/fillter/css/fillter.css")" />
+
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="@Url.Action("Index", "Home", new {area = ""})"><img class="fillter-logo-sm" src="@Url.Content("~/Assets/fillter/img/logo.svg")" /></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="@Url.Action("Index", "Home", new {area = "Admin"})">Admin Startseite</a></li>
+                    <li><a href="@Url.Action("Index", "Organiser")">Veranstalter</a></li>
+                    <li><a href="@Url.Action("Index", "Semester")">Semester</a></li>
+                    <li><a href="@Url.Action("Index", "Module")">Module</a></li>
+                    <li><a href="@Url.Action("Index", "User")">Benutzer</a></li>
+                    <li><a href="#">System</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="margin-top: 75px;">
+        <div class="row">
+            <div class="col-md-12">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- BEGIN FOOTER -->
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-inline">
+                    <li><a href="http://acceleratex.org">&copy; @DateTime.Now.Year AccelerateX</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Assets/global/plugins/respond.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/excanvas.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-migrate.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-ui/jquery-ui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery.blockui.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/jquery.cokie.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/uniform/jquery.uniform.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js")"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

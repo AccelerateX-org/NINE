@@ -1,0 +1,51 @@
+﻿@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Links";
+}
+
+<h2>Zuordnung @Model.Number</h2>
+
+<a href="@Url.Action("Index")">Zurück zur Liste</a>
+
+@using (Html.BeginForm("AddLink", null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+    ))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form-group">
+        <input name="roomId" type="text" value="@Model.Id" hidden=""/>
+    </div>
+    <div class="form-group">
+        <label for="orgName" class="col-md-4 control-label">Kurzname</label>
+        <div class="col-md-8">
+            <input name="orgName" id="orgName" type="text" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            <input type="submit" value="Zuordnen" class="btn btn-primary" />
+        </div>
+    </div>
+}
+
+
+
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Fakultät</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var link in Model.Assignments)
+    {
+        <tr>
+            <td>@link.Organiser.ShortName</td>
+            <td><a href="@Url.Action("DeleteLink", new {id=link.Id})" class="btn btn-danger"><i class="fa fa-trash-o"></i></a></td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+

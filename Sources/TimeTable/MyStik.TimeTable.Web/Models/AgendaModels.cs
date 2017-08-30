@@ -1,35 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AgendaViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public AgendaViewModel()
         {
             Days = new List<AgendaDayViewModel>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<AgendaDayViewModel> Days { get; private set; }
 
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class AgendaDayViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public AgendaDayViewModel()
         {
             Activities = new List<AgendaActivityViewModel>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime Day { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<AgendaActivityViewModel> Activities { get; private set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string Title
         {
             get
@@ -50,12 +70,24 @@ namespace MyStik.TimeTable.Web.Models
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class AgendaActivityViewModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate Date { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivitySlot Slot { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime Begin
         {
             get
@@ -71,6 +103,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime End
         {
             get
@@ -86,6 +121,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string AgendaStyle
         {
             get

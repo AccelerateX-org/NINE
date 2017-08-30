@@ -1,0 +1,108 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterSubscriptionViewModel
+
+
+<div class="portlet light bordered">
+    @if (Model.Group != null)
+    {
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-graduation-cap"></i>
+                <span class="caption-subject bold uppercase">  Meine Semestergruppe im @ViewBag.Semester.Name</span>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <h2>@Model.Group.FullName</h2>
+            @using (Ajax.BeginForm("RemoveSemesterGroup", null, null,
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "portletSemGroup",
+                                    }, new { @class = "form-horizontal", @role = "form" }))
+            {
+                <button type="submit" class="btn btn-danger">ENTFERNEN</button>
+            }
+        </div>
+    }
+    else
+    {
+        if (Model.HasData)
+        {
+            <div class="portlet-title">
+                <div class="caption font-red-flamingo">
+                    <i class="icon-graduation-cap font-red-flamingo"></i>
+                    <span class="caption-subject bold uppercase"> Meine Semestergruppe im @ViewBag.Semester.Name</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="note note-danger">
+                            <p>
+                                <strong>Hinweis:</strong> Ohne Angabe einer Semestergruppe ist keine Eintragung in Lehrveranstaltungen möglich.
+                            </p>
+                        </div>
+                        @using (Html.BeginForm("UpdateSemesterGroup", null, FormMethod.Post, new {@class = "form-horizontal", @role = "form"}))
+                        {
+                            @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
+
+                            <fieldset>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Faculty, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-8">
+                                        @Html.DropDownListFor(model => model.Faculty, (IEnumerable<SelectListItem>) ViewBag.Faculties, new {@class = "form-control", onchange = "onFacultyChanged()"})
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Semester, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-8">
+                                        @Html.DropDownListFor(model => model.Semester, (IEnumerable<SelectListItem>) ViewBag.Semesters, new {@class = "form-control", disabled = ""})
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Curriculum, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-8">
+                                        @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>) ViewBag.Curricula, new {@class = "form-control", onchange = "onCurriculumChanged()"})
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CurrGroup, new {@class = "col-sm-4 control-label"})
+                                    <div class="col-sm-8">
+                                        @Html.DropDownListFor(model => model.CurrGroup, (IEnumerable<SelectListItem>) ViewBag.Groups, new {@class = "form-control",})
+                                    </div>
+                                </div>
+
+
+                                <button type="submit" class="btn btn-default">SPEICHERN</button>
+                            </fieldset>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <div class="well well-sm">
+                            <h4>Hinweis</h4>
+                            <p>Diese Angaben hier haben keinen Bezug zu Ihrem Fach- oder Studiensemester.</p>
+                            <p>Die Angabe zu Studienprogramm und Semestergruppe beziehen sich auf die Einordnung der Module in den zugehörigen Modulkataloge der Studienpläne.</p>
+                            <p>Mit der Angabe hier legen sich die "Vorauswahl" fest, wenn das Vorlesungsverzeichnis geöffnet wird. Es soll die Suche nach den passenden Lehrveranstaltungen erleichtern.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="portlet-title">
+                <div class="caption font-red-flamingo">
+                    <i class="icon-graduation-cap font-red-flamingo"></i>
+                    <span class="caption-subject bold uppercase"> Keine Daten</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="note note-danger">
+                    <p>
+                        <strong>Hinweis:</strong> Für das aktuelle Semester sind keine Stundenplandaten verfügbar.
+                    </p>
+                </div>
+            </div>
+        }
+    }
+</div>

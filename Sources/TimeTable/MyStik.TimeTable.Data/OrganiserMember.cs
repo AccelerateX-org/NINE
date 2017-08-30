@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -73,5 +70,7 @@ namespace MyStik.TimeTable.Data
         /// Liste aller Modulverantwortlichkeiten
         /// </summary>
         public virtual ICollection<CurriculumModule> Modules { get; set; }
+
+        public virtual ICollection<ActivityOwner> Ownerships { get; set; }
     }
 }

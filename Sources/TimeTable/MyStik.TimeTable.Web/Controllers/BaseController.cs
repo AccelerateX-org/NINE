@@ -1,38 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web;
-using System.Web.Http.Controllers;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class BaseController : Controller
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly TimeTableDbContext Db = new TimeTableDbContext();
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly ActivityService ActivityService;
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager _userManager;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected ApplicationUser _appUser;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class SelectionHelper
         {
+            /// <summary>
+            /// 
+            /// </summary>
             public string Text { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
             public int Value { get; set; }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected BaseController()
         {
             ActivityService = new ActivityService(Db);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IdentifyConfig.ApplicationUserManager UserManager
         {
             get
@@ -43,96 +74,114 @@ namespace MyStik.TimeTable.Web.Controllers
             protected set { _userManager = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ApplicationUser AppUser
         {
             get { return _appUser ?? (_appUser = UserManager.FindByName(User.Identity.Name)); }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
+        protected ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected UserRight GetUserRight()
         {
             var user = UserManager.FindByName(User.Identity.Name);
 
-            if (User.IsInRole("SysAdmin"))
-            {
-                return new UserRight
-                {
-                    IsOrgAdmin = true,
-                    IsHost = true,
-                    IsOrgMember = true,
-                    IsSubscriber = true,
-                    User = user
-                };
-            }
 
             if (user.MemberState == MemberState.Student)
             {
+                var member = Db.Members.FirstOrDefault(m => m.UserId.Equals(user.Id) && m.Organiser.IsStudent);
                 return new UserRight
                 {
-                    IsOrgAdmin =
-                        Db.Members.Any(
-                            m =>
-                                m.UserId.Equals(user.Id) && m.IsAdmin && m.Organiser.IsStudent),
+                    IsSysAdmin = User.IsInRole("SysAdmin"),
                     IsHost = false,
-                    IsOrgMember =
-                        Db.Members.Any(m => m.UserId.Equals(user.Id) && m.Organiser.IsStudent),
                     IsSubscriber = false,
-                    User = user
+                    User = user,
+                    Member = member
                 };
             }
             else if (user.MemberState == MemberState.Staff)
             {
+                var member =
+                    Db.Members.FirstOrDefault(m => m.UserId.Equals(user.Id) && m.Organiser.IsFaculty && !m.Organiser.IsStudent);
                 return new UserRight
                 {
-                    IsOrgAdmin =
-                        Db.Members.Any(
-                            m =>
-                                m.UserId.Equals(user.Id) && m.IsAdmin && m.Organiser.IsFaculty && !m.Organiser.IsStudent),
+                    IsSysAdmin = User.IsInRole("SysAdmin"),
                     IsHost = false,
-                    IsOrgMember =
-                        Db.Members.Any(m => m.UserId.Equals(user.Id) && m.Organiser.IsFaculty && !m.Organiser.IsStudent),
                     IsSubscriber = false,
-                    User = user
+                    User = user,
+                    Member = member
                 };
             }
             else // Gast oder sonst was
             {
                 return new UserRight
                 {
-                    IsOrgAdmin = false,
+                    IsSysAdmin = User.IsInRole("SysAdmin"),
                     IsHost = false,
-                    IsOrgMember = false,
                     IsSubscriber = false,
                     User = user
                 };
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="org"></param>
+        /// <returns></returns>
+        protected UserRight GetUserRight(ActivityOrganiser org)
+        {
+            var user = UserManager.FindByName(User.Identity.Name);
+            var member = org.Members.FirstOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
 
+            return new UserRight
+            {
+                IsSysAdmin = User.IsInRole("SysAdmin"),
+                IsHost = false,
+                IsSubscriber = false,
+                User = user,
+                Member = member
+            };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="activity"></param>
+        /// <returns></returns>
         protected UserRight GetUserRight(string userName, Activity activity)
         {
             var user = UserManager.FindByName(userName);
 
-            if (User.IsInRole("SysAdmin"))
-            {
-                return new UserRight
-                {
-                    IsOrgAdmin = true,
-                    IsHost = true,
-                    IsOrgMember = true,
-                    IsSubscriber = true,
-                    User = user
-                };
-            }
 
             // Hypothese: keine Rechte
             var userRight = new UserRight
             {
-                IsOrgAdmin = false,
+                IsSysAdmin = User.IsInRole("SysAdmin"),
                 IsHost = false,
-                IsOrgMember = false,
                 IsSubscriber = false,
-                User = user
+                IsOwner = false,
+                User = user,
+                Member = null
             };
 
             if (activity == null)
@@ -148,18 +197,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (member != null)
                 {
-                    userRight.IsOrgAdmin = member.IsAdmin;
-                    userRight.IsHost =
-                        Db.Members.Any(
-                            l => l.Dates.Any(occ => occ.Activity.Id == activity.Id) && l.Id == member.Id) ||
-                        // Hält mindestens einen Termin
+                    userRight.Member = member;
+                    var oh = activity as OfficeHour;
+                    if (oh != null && oh.ByAgreement && oh.Owners.Any(x => x.Member.Id == member.Id))
+                    {
+                        userRight.IsHost = true;
+                    }
+                    else
+                    {
+                        userRight.IsHost =
+                            Db.Members.Any(
+                                l => l.Dates.Any(occ => occ.Activity.Id == activity.Id) && l.Id == member.Id); // Hält mindestens einen Termin
+                    }
+                    userRight.IsOwner =
                         activity.Owners.Any(o => o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
-                    userRight.IsOrgMember = true;
                 }
                 else
                 {
                     // Benutzer gehört nicht zur organisation ist aber owner => das sollte selten sein, aber denkbar
-                    userRight.IsHost =
+                    userRight.IsOwner =
                         activity.Owners.Any(o => o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
                 }
 
@@ -169,27 +225,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return userRight;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="org"></param>
+        /// <param name="isHost"></param>
+        /// <returns></returns>
         protected UserRight GetUserRight(string userName, string org, bool isHost = false)
         {
             var user = UserManager.FindByName(userName);
-            if (User.IsInRole("SysAdmin"))
-            {
-                return new UserRight
-                {
-                    IsOrgAdmin = true,
-                    IsHost = true,
-                    IsOrgMember = true,
-                    User = user
-                };
-            }
 
             // Hypothese: keine Rechte
             var userRight = new UserRight
             {
-                IsOrgAdmin = false,
+                IsSysAdmin = User.IsInRole("SysAdmin"),
                 IsHost = false,
-                IsOrgMember = false,
                 User = user
             };
 
@@ -205,61 +256,99 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (member != null)
                 {
-                    userRight.IsOrgAdmin = member.IsAdmin;
+                    userRight.Member = member;
                     userRight.IsHost = isHost;                   // keine Entscheidung möglich
-                    userRight.IsOrgMember = true;
                 }
             }
 
             return userRight;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgName"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         protected bool HasUserRole(string userName, string orgName, string roleName)
         {
             return new MemberService(Db, UserManager).HasRole(userName, orgName, roleName);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
         protected OrganiserMember GetMember(string userName, string orgName)
         {
             return new MemberService(Db, UserManager).GetMember(userName, orgName);
         }
 
-        protected string GetMyOrganisationName()
-        {
-            return new MemberService(Db, UserManager).GetOrganisationName(GetSemester(), User.Identity.Name);
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected ActivityOrganiser GetMyOrganisation()
         {
             return new MemberService(Db, UserManager).GetOrganisation(User.Identity.Name);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected OrganiserMember GetMyMembership()
         {
             return new MemberService(Db, UserManager).GetMember(User.Identity.Name);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
         protected bool IsUserAdminOf(string orgName)
         {
             return new MemberService(Db, UserManager).IsUserAdminOf(User.Identity.Name, orgName);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
         protected bool IsUserMemberOf(string orgName)
         {
             return new MemberService(Db, UserManager).IsUserMemberOf(User.Identity.Name, orgName);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected bool IsOrgAdmin()
         {
             return new MemberService(Db, UserManager).IsUserOrgAdmin(User.Identity.Name) || User.IsInRole("SysAdmin");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
         protected bool IsOrgAdmin(Guid orgId)
         {
             return new MemberService(Db, UserManager).IsUserOrgAdmin(User.Identity.Name, orgId) || User.IsInRole("SysAdmin");
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
+        protected bool IsRoomAdmin(Guid orgId)
+        {
+            return new MemberService(Db, UserManager).IsUserRoomAdmin(User.Identity.Name, orgId) || User.IsInRole("SysAdmin");
+        }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected void SetTimeSelections()
         {
             var wd = new List<SelectionHelper>
@@ -305,42 +394,112 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Minutes = new SelectList(minutes, "Value", "Text", "00");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         protected Semester GetSemester(ApplicationUser user)
         {
-            var semService = new SemesterService();
-            // aktuelles Semester
+            var semService = new SemesterService(Db);
+            // aktuelles Semester definiert durch die Vorlesungszeit!
+            // der Switch könnte später kommen, z.B. Tag der Prüfungseinsicht
             var currentSemester = semService.GetCurrentSemester();
             if (currentSemester != null)
                 return currentSemester;
 
             // Kein Semester mit dieser Vorlesungszeit
-            // hier kommt immer was zurück
             var nextSemester = semService.GetNextSemester();
 
-            // wenn es freigegeben ist, dann zurückgeben
-            if (nextSemester.BookingEnabled)
+            if (nextSemester != null)
                 return nextSemester;
-
-            // (Noch) nicht freigegeben
-            // Für Staff => das nächste
-            if (user.MemberState == MemberState.Staff || User.IsInRole("SysAdmin"))
-            {
-                return nextSemester;
-            }
-
+                
             // für alle anderen das vorgehende
-            return semService.GetPreviousSemester();
-        }
+            var prevSemester = semService.GetPreviousSemester();
+            if (prevSemester != null)
+                return prevSemester;
 
+            // wenn alles nichts hilft, dann ein Dummy Semester anlegen
+            return new Semester { Name = "N.A." };
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected Semester GetSemester()
         {
             return GetSemester(AppUser);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         protected Semester GetSemester(string semester)
         {
-            return new SemesterService().GetSemester(semester);
+            return new SemesterService(Db).GetSemester(semester);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        protected Semester GetSemester(Guid id)
+        {
+            return new SemesterService(Db).GetSemester(id);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected Semester GetPreviousSemester()
+        {
+            return new SemesterService(Db).GetPreviousSemester();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected ApplicationUser GetCurrentUser()
+        {
+            return UserManager.FindByName(User.Identity.Name);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        protected ActivityOrganiser GetOrganiser(Guid id)
+        {
+            return Db.Organisers.SingleOrDefault(x => x.Id == id);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
+        {
+            string cultureName = null;
+
+            // Attempt to read the culture cookie from Request
+            HttpCookie cultureCookie = Request.Cookies["_culture"];
+            if (cultureCookie != null)
+                cultureName = cultureCookie.Value;
+            else
+                cultureName = Request.UserLanguages != null && Request.UserLanguages.Length > 0 ?
+                        Request.UserLanguages[0] :  // obtain it from HTTP header AcceptLanguages
+                        null;
+            // Validate culture name
+            cultureName = CultureHelper.GetImplementedCulture(cultureName); // This is safe
+
+            // Modify current thread's cultures            
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(cultureName);
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+
+            return base.BeginExecuteCore(callback, state);
         }
     }
 }

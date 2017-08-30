@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "_PortletPersonalPlan";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+
+}
+
+<div class="portlet light bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-calendar"></i>
+            <span class="caption-subject bold uppercase"> @Resources.MyTimeTableHeading</span>
+            <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+        </div>
+        <div class="actions">
+            <a href="@Url.Action("Index", "Planer")" class="btn btn-circle btn-icon-only btn-default">
+                <i class="fa fa-edit"></i>
+            </a>
+            <a href="@Url.Action("PersonalSchedule", "Print")"
+               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=500,toolbar=0,resizable=1'); return false;"
+               class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-print"></i></a>
+            <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
+            </a>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div id="calendar" class="has-toolbar">
+        </div>
+    </div>
+</div>
+
+

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -26,6 +23,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Kurse buchbar, d.h. beim Import wird das flag auf false gesetzt
         /// erst nach dem Import auf true
+        /// OH20170504: obsolet
         /// </summary>
         public bool BookingEnabled { get; set; }
 

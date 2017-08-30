@@ -1,7 +1,4 @@
-﻿@using System.Web.UI.WebControls
-@using MyStik.TimeTable.Web.Helpers
-
-@{
+﻿@{
     ViewBag.Title = "Tagesplan";
 }
 
@@ -12,11 +9,14 @@
 }
 
 <div class="panel panel-default">
-    <div class="panel-body bg-fillter-hm">
+    <div class="panel-body bg-fillter-rooms">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Tagesplan</h1>
+                    <h1>
+                        Tagesplan @ViewBag.Organiser.ShortName
+                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h1>
                 </div>
             </div>
         </div>
@@ -31,7 +31,6 @@
                     <div class="caption">
                         <i class="fa fa-calendar"></i>
                         <span class="caption-subject bold uppercase"> Tagesplan</span>
-                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </div>
                     <div class="actions">
                         <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">

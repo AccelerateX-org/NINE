@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AdminDashboardController : BaseController
     {
         DateTime today = GlobalSettings.Today;
         DateTime tomorrow = GlobalSettings.Today.AddDays(1);
 
-        // GET: AdminDashboard
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var model = GetCoursesToday(false);
@@ -21,6 +26,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
 
         public ActionResult ActiveCoursesToday()
         {
@@ -29,7 +38,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CanceledCoursesToday()
         {
             var model = GetCoursesToday(true);
@@ -37,6 +49,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ActiveOfficeHoursToday()
         {
             var model = GetOfficeHoursToday(false);
@@ -44,13 +60,19 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CanceledOfficeHoursToday()
         {
             var model = GetOfficeHoursToday(true);
             GetBadges();
             return View(model);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void GetBadges()
         {
             var datesToday = Db.ActivityDates.Where(d => 

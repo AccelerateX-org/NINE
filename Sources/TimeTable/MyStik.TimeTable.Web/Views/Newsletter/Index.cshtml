@@ -1,144 +1,72 @@
-﻿@using MyStik.TimeTable.Web.Models
-@model ICollection<MyStik.TimeTable.Web.Models.NewsletterViewModel>
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
 
 @{
-    ViewBag.Title = "Newsletter";
+    ViewBag.Title = Resources.SubMenuCurrentNewsletter;
 }
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-events">
         <div class="row">
             <div class="col-md-12">
-                <h1>Newsletter & Mailing</h1>
+                <h1>@Resources.NewsletterHeading</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.DropDownListFor(model => model.Id, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-envelope-o"></i> Newsletter</h4>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Veranstalter</th>
-                                <th>Name</th>
-                                <th>Beschreibung</th>
-                                <th>Abonnenten</th>
-                                <th></th>
-                                @if (ViewBag.UserRight.IsOrgMember)
-                                {
-                                    <th></th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var ev in @Model)
-                            {
-                                <tr>
-                                    <td>@ev.Newsletter.Organiser.Name (@ev.Newsletter.Organiser.ShortName)</td>
-                                    <td>@ev.Newsletter.Name</td>
-                                    <td>@ev.Newsletter.Description</td>
-                                    <td>@ev.Newsletter.Occurrence.Subscriptions.Count</td>
-                                    <td>
-                                        @Html.Partial("_SubscriptionState", ev.State)
-                                    </td>
-                                    @if (ViewBag.UserRight.IsOrgMember)
-                                    {
-                                        <td>
-                                            @if (ev.IsMember)
-                                            {
-                                                <a href="@Url.Action("SendNews", "Newsletter", new {id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> News senden</a>
-                                            }
-                                            @if (ev.IsAdmin)
-                                            {
-                                                <a href="@Url.Action("Edit", "Newsletter", new {id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-gear"></i> Einstellungen</a>
-                                                <a href="@Url.Action("Members", "Newsletter", new {id = ev.Newsletter.Id})" class="btn btn-default btn-xs"><i class="fa fa-group"></i> Teilnehmer</a>
-                                            }
-                                        </td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div id="facultyNewsletterList">
     </div>
-
-    
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default ">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-envelope-o"></i> E-Mail Verteiler</h4>
-                </div>
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Bezeichnung</th>
-                            <th>Wer erhält E-Mails</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><a href="@Url.Action("AllStudents", "Mailing")">Alle Studierenden</a></td>
-                            <td>
-                                <p>Status "Student", validierte hm.edu E-Mail Adresse und Eintragung im Benutzerprofil, dass Empfang von E-Mails erwünscht ist.</p>
-                                <p>Status "Staff" (Mitarbeiter, Dozenten, etc,) mit Eintragung im Benutzerprofil, dass Empfang von E-Mails erwünscht ist.</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><a href="@Url.Action("StudentGroup", "Mailing")">Gruppe von Studierenden</a></td>
-                            <td>
-                                Die Liste der Empfänger ermittelt sich aus den Profildaten der Benutzer. Diese Daten können die Benutzer freiwillig eingegeben. Ausgewertet werden die Felder Studienprogramm und Studiengruppe.
-                                Jeder Benutzer kann über das Benutzerprofil einstellen, ob der Empfang über E-Mail gewünscht ist.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default ">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-download"></i> Adresslisten (@ViewBag.Semester.Name)</h4>
-                </div>
-
-                @if (ViewBag.UserRight.User.MemberState != MemberState.Staff)
-                {
-                    <div class="alert alert-dangerer">
-                        <h4><i class="fa fa-ban"></i> Nicht verfügbar</h4>
-                    </div>
-
-                }
-                else
-                {
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Studiengang</th>
-                                <th>Liste</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in ViewBag.Curricula)
-                            {
-                                <tr>
-                                    <td>@item.Name</td>
-                                    <td>@Html.ActionLink("Alle Studierenden", "AdressList", "Mailing", new { id = item.Id }, null)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-            </div>
-        </div>
-    </div>
-
 </div>
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function() {
+            $('#loading').hide();
+            onFacultyChanged();
+        });
+
+
+        function onFacultyChanged() {
+            var facultyId = $('#Id option:selected').val();
+
+            $('#facultyNewsletterList').html('');
+            $('#loading').show();
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("Faculty", "Newsletter")',
+                data: {
+                    facultyId: facultyId,
+                },
+                success: function(data, success, xhr) {
+                    $('#facultyNewsletterList').html(data);
+                    $('#loading').hide();
+                },
+                error: function(data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            });
+        }
+
+
+    </script>
+}
+

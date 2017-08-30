@@ -1,27 +1,45 @@
-﻿@model MyStik.TimeTable.Web.Models.DashboardViewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
 
+@{
+    var nCourses = Model.Organiser.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(y => y.Semester.Id == Model.Semester.Id));
+    var nEvents = Model.Organiser.Activities.OfType<Event>().Count(x => x.SemesterGroups.Any(y => y.Semester.Id == Model.Semester.Id));
+}
 
-<div class="portlet portlet-sortable light bordered">
+<div class="portlet light bordered">
         <div class="portlet-title">
             <div class="caption">
-                <i class="fa fa-university"></i>
-                <span class="caption-subject bold uppercase"> Fakultät</span>
+                <i class="fa fa-home"></i>
+                <span class="caption-subject bold uppercase"> Meine Fakultät</span>
             </div>
             <div class="actions">
-                <a href="@Url.Action("Index", "Reservation", null)" class="btn btn-circle btn-icon-only btn-default">
-                    <i class="fa fa-cog"></i>
-                </a>
             </div>
         </div>
     <div class="portlet-body">
         <div class="list-group">
-            <a href="@Url.Action("Members", "Organiser", new {id = "FK 09"})" class="list-group-item">
+            <a href="@Url.Action("Members", "Organiser")" class="list-group-item">
                 <span class="badge">@Model.Organiser.Members.Count</span>
-                Kolleginnen und Kollegen
+                Personen 
             </a>
-            <a href="@Url.Action("Members", "Organiser", new {id = "FK 09"})" class="list-group-item">
-                <span class="badge">@Model.Organiser.Members.Count</span>
-                Lehrbeauftragte und Gäste
+            <a href="@Url.Action("Rooms", "Organiser")" class="list-group-item">
+                <span class="badge">@Model.Organiser.RoomAssignments.Count</span>
+                Räume
+            </a>
+            <a href="@Url.Action("Dates", "Organiser")" class="list-group-item">
+                <span class="badge">@Model.Semester.Dates.Count</span>
+                Termine
+            </a>
+            <a href="@Url.Action("Curricula", "Organiser")" class="list-group-item">
+                <span class="badge">@Model.Organiser.Curricula.Count</span>
+                Studiengänge
+            </a>
+            <a href="@Url.Action("Courses", "Organiser")" class="list-group-item">
+                <span class="badge">@nCourses</span>
+                Lehrangebot
+            </a>
+            <a href="@Url.Action("Events", "Organiser")" class="list-group-item">
+                <span class="badge">@nEvents</span>
+                Veranstaltungen
             </a>
         </div>
 

@@ -12,9 +12,9 @@
         @foreach (var room in Model.OrderBy(r => r.Room.Number))
         {
             <tr id="@room.Room.Id">
-                <td>@room.Room.Number</td>
+                <td>@room.Room.FullName</td>
                 <td>@room.Room.Capacity</td>
-                <td><button class="btn btn-default btn-sm" onclick="selectRoom('@room.Room.Id', '@room.Room.Number')">auswählen</button></td>
+                <td><button class="btn btn-default btn-sm" onclick="selectRoom('@room.Room.Id', '@room.Room.FullName')">auswählen</button></td>
             </tr>
         }
     </tbody>

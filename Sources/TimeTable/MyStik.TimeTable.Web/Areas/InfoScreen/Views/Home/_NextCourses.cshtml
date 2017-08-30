@@ -31,16 +31,16 @@
                                 <td>@Html.TimeSpan(date)</td>
                                 <td>abgesagt</td>
                                 <td>@date.Activity.Name</td>
-                                <td>@Html.LecturerList(date.Hosts)</td>
+                                <td>@Html.LecturerList(date.Hosts, false)</td>
                             </tr>
                         }
                         else
                         {
                             <tr>
                                 <td>@Html.TimeSpan(date)</td>
-                                <td>@Html.RoomList(date.Rooms)</td>
+                                <td>@Html.RoomList(date.Rooms, false, false)</td>
                                 <td>@date.Activity.Name</td>
-                                <td>@Html.LecturerList(date.Hosts)</td>
+                                <td>@Html.LecturerList(date.Hosts, false)</td>
                             </tr>
                         }
                     }

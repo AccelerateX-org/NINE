@@ -16,6 +16,9 @@ using MyStik.TimeTable.Web.Areas.HelpPage.Models;
 
 namespace MyStik.TimeTable.Web.Areas.HelpPage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class HelpPageConfigurationExtensions
     {
         private const string ApiModelPrefix = "MS_HelpPageApiModel_";

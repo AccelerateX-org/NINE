@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.DataServices
@@ -33,14 +30,14 @@ namespace MyStik.TimeTable.DataServices
             return org;
         }
 
-        public Curriculum AddCurriculum(string shortName, string name, string orgName)
+        public Data.Curriculum AddCurriculum(string shortName, string name, string orgName)
         {
             var cur = GetCurriculum(shortName);
             var org = GetOrganiser(orgName);
 
             if (cur == null && org != null)
             {
-                cur = new Curriculum
+                cur = new Data.Curriculum
                 {
                     ShortName = shortName,
                     Name = name,
@@ -105,7 +102,7 @@ namespace MyStik.TimeTable.DataServices
         }
 
 
-        public Curriculum GetCurriculum(string shortName)
+        public Data.Curriculum GetCurriculum(string shortName)
         {
             return _db.Curricula.SingleOrDefault(d => d.ShortName.Equals(shortName, StringComparison.OrdinalIgnoreCase));
         }

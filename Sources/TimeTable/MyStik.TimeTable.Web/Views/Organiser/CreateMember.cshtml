@@ -1,78 +1,161 @@
-﻿@using System.Data
-@model MyStik.TimeTable.Web.Models.MemberUserViewModel
+﻿@model MyStik.TimeTable.Web.Models.MemberUserViewModel
 @{
-    ViewBag.Title = "Mitglied anlegen";
+    ViewBag.Title = "Person anlegen";
 }
 
 @section styles
 {
-    @Styles.Render("~/Content/themes/base/css")
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
 }
 
 
-<h4>Neues Mitglied anlegen</h4>
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Neue Person anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> Angaben zur Person und Rollen
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
 
 
-@using (Html.BeginForm("CreateMember", "Organiser", FormMethod.Post, new { @class = "form-horizontal", role = "form" }
-        ))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+                    @using (Html.BeginForm("CreateMember", "Organiser", FormMethod.Post, new {@class = "form-horizontal", role = "form"}
+                        ))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="form-group">
+                            @Html.HiddenFor(item => item.OrganiserId)
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.Name, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.Name, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.ShortName, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.ShortName, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.UserName, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.UserName, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.Role, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.Role, new {@class = "form-control"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.Description, new {@class = "col-md-4 control-label"})
+                            <div class="col-md-8">
+                                @Html.TextAreaFor(item => item.Description, new {@class = "form-control", rows = "10"})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-8">
+                                @Html.CheckBoxFor(item => item.IsAssociated)
+                                @Html.LabelFor(item => item.IsAssociated, new { @class = "control-label" })
+                            </div>
+                        </div>
+
+                    @*
     <div class="form-group">
-        @Html.HiddenFor(item => item.OrganiserId)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(item => item.Name, new { @class="col-md-4 control-label"})
-        <div class="col-md-8">
-            @Html.TextBoxFor(item => item.Name, new { @class="form-control"})
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(item => item.ShortName, new { @class="col-md-4 control-label"})
-        <div class="col-md-8">
-            @Html.TextBoxFor(item => item.ShortName, new { @class="form-control"})
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(item => item.UserName, new { @class="col-md-4 control-label"})
-        <div class="col-md-8">
-            @Html.TextBoxFor(item => item.UserName, new { @class="form-control"})
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(item => item.Role, new { @class="col-md-4 control-label"})
-        <div class="col-md-8">
-            @Html.TextBoxFor(item => item.Role, new { @class="form-control"})
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(item => item.Description, new { @class="col-md-4 control-label"})
-        <div class="col-md-8">
-            @Html.TextAreaFor(item => item.Description, new { @class = "form-control", rows="10" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(item => item.IsAdmin, new { @class = "col-md-4 control-label" })
-        <div class="col-md-8">
-            @Html.CheckBoxFor(item => item.IsAdmin)
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsMemberAdmin)
+            @Html.LabelFor(item => item.IsMemberAdmin, new { @class = "control-label" })
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-offset-4 col-md-8">
-            <input type="submit" value="Übernehmen" class="btn btn-primary" />
+            @Html.CheckBoxFor(item => item.IsRoomAdmin)
+            @Html.LabelFor(item => item.IsRoomAdmin, new { @class = "control-label" })
         </div>
     </div>
-}
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsSemesterAdmin)
+            @Html.LabelFor(item => item.IsSemesterAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsCurriculumAdmin)
+            @Html.LabelFor(item => item.IsCurriculumAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsCourseAdmin)
+            @Html.LabelFor(item => item.IsCourseAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsStudentAdmin)
+            @Html.LabelFor(item => item.IsStudentAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsAlumniAdmin)
+            @Html.LabelFor(item => item.IsAlumniAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsEventAdmin)
+            @Html.LabelFor(item => item.IsEventAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            @Html.CheckBoxFor(item => item.IsNewsAdmin)
+            @Html.LabelFor(item => item.IsNewsAdmin, new { @class = "control-label" })
+        </div>
+    </div>
+                    *@
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-8">
+                                <input type="submit" value="Anlegen" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @section scripts
 {
-    @Scripts.Render("~/bundles/jquery-ui")
-
     <script>
-        $(function() {
+        $(function () {
             $('#UserName').autocomplete({
-                source: function(request, response) {
+                source: function (request, response) {
                     $.ajax({
                         url: '@Url.Action("UserList")',
                         type: 'POST',
@@ -82,8 +165,8 @@
                             token: request.term
                         },
 
-                        success: function(data, success, xhr) {
-                            response($.map(data, function(item) {
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
 
                                 return {
                                     label: item.userName + ' (' + item.firstName + ' ' + item.lastName + ')',
@@ -93,12 +176,13 @@
 
                         },
 
-                        error: function(data) { alert(data); },
+                        error: function (data) { alert(data); },
                     });
 
                 },
-                select: function(event, ui) { }
+                select: function (event, ui) { }
             });
         });
     </script>
 }
+

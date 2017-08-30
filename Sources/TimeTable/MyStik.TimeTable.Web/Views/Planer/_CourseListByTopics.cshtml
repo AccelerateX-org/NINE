@@ -1,0 +1,85 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.TopicSummaryModel>
+
+
+@foreach (var topic in Model)
+{
+    if (topic.Topic != null)
+    {
+        <h4>@topic.Topic.TopicName</h4>
+    }
+    else
+    {
+        <h4>Ohne Fachzugehörigkeit</h4>
+    }
+
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Bezeichnung</th>
+            <th>Wochentag</th>
+            <th>Von</th>
+            <th>Bis</th>
+            <th>Raum</th>
+            <th>Lehrende</th>
+            @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
+            {
+                <th></th>
+            }
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in topic.Courses)
+        {
+            var linkText = c.Course.Name + " (" + c.Course.ShortName + ")";
+            <tr>
+                @if (c.HasLottery)
+                {
+                    <td><i class="fa fa-random"></i></td>
+
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>
+                @Html.ActionLink(linkText, c.Summary.Action, c.Summary.Controller, new { id = c.Summary.Id }, null)
+                </td>
+                @if (!c.Dates.Any())
+                {
+                    <td colspan="3">Keine Termine</td>
+                }
+                else if (c.Dates.Count > 1)
+                {
+                    <td colspan="3">diverse Termine</td>
+                }
+                else
+                {
+                    var date = c.Dates.First();
+                    <td>@date.DefaultDate.ToString("dddd", new CultureInfo("de-DE"))</td>
+                    <td>@date.StartTime.ToString(@"hh\:mm")</td>
+                    <td>@date.EndTime.ToString(@"hh\:mm")</td>
+                }
+                <td>
+                    @Html.RoomList(c.Rooms)
+                </td>
+                <td>
+                    @Html.LecturerList(c.Lecturers)
+                </td>
+                @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
+                {
+                    <td>@c.Course.Occurrence.Subscriptions.Count</td>
+                }
+                <td>
+                    @Html.Partial("_SubscriptionState", c.State)
+                </td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+}

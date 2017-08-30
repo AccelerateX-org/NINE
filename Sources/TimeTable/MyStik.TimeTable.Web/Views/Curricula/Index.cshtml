@@ -1,14 +1,24 @@
 ﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
 @{
-    ViewBag.Title = "Studiengänge";
+    ViewBag.Title = Resources.SubMenuStudiesCurricula;
 }
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-study">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Studiengänge</h1>
+                    <h1>@Resources.AllCurriculas <small>@Resources.StudyProcessComment</small></h1>
                 </div>
             </div>
         </div>
@@ -17,61 +27,45 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2">
-    @if (ViewBag.HasEditRights)
-            {
-                <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <ul class="nav">
-                    <li><a href="@Url.Action("Create")">Studiengang anlegen</a></li>
-                    <li><a href="@Url.Action("Index", "Untis")">Stundenplan einlesen</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-                if (User.IsInRole("SysAdmin"))
-                {
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="panel panel-default">
-                                <ul class="nav">
-                                    <li><a href="@Url.Action("ImportData")">Curriculum einlesen</a></li>
-                                    <li><a href="@Url.Action("CorrectGroups")">Gruppen umhängen</a></li>
-                                    <li><a href="@Url.Action("CheckGroups")">Gruppen prüfen</a></li>
-                                </ul>
-                            </div>
-                        </div>
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> @Resources.SubMenuStudiesCurricula
                     </div>
-                }
-
-            }
-            </div>
-            <div class="col-md-10">
-                <div class="panel panel-default">
-                    <table class="table table-condensed">
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table id="tabCurr" class="table table-condensed">
                         <thead>
-                            <tr>
-                                <th>Kurzname</th>
-                                <th>Name</th>
-                                <th>Fakultät</th>
-                                <th></th>
-                            </tr>
+                        <tr>
+                            <th>@Resources.ShortNameString</th>
+                            <th>@Resources.Name</th>
+                            <th>@Resources.FacultyField</th>
+                            <th>@Resources.CriteriaString</th>
+                            <th>@Resources.GroupsString</th>
+                            <th>@Resources.ModulesString</th>
+                            <th></th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach (var curr in Model)
+                        @foreach (var curr in Model)
                         {
-                                <tr>
-                                    <td><a href="@Url.Action("Details", new {id=curr.Id})">@curr.ShortName</a></td>
-                                    <td>@curr.Name</td>
-                                    <td>@curr.Organiser.Name</td>
-                                    <td>
-                                        @if (ViewBag.HasEditRights)
+                            <tr>
+                                <td><a href="@Url.Action("Details", new {id = curr.Id})">@curr.ShortName</a></td>
+                                <td>@curr.Name</td>
+                                <td>@curr.Organiser.Name</td>
+                                <td>@curr.Criterias.Count</td>
+                                <td>@curr.CurriculumGroups.Count</td>
+                                <td>@curr.Modules.Count</td>
+                                <td>
+                                    @if (ViewBag.HasEditRights)
                                     {
 
                                     }
-                                    </td>
-                                </tr>
+                                </td>
+                            </tr>
                         }
                         </tbody>
                     </table>
@@ -79,6 +73,20 @@
             </div>
         </div>
     </div>
+</div>
 
 
 
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabCurr').DataTable();
+        });
+    </script>
+}

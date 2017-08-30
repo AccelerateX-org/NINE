@@ -1,5 +1,4 @@
-﻿@using MyStik.TimeTable.Web.Services
-@model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
 
 
 <div class="panel panel-default">
@@ -12,13 +11,34 @@
             <th>@ViewBag.LastSemester.Name</th>
             <th>LVs</th>
             <th>Fit</th>
+            <th><i class="fa fa-group"></i></th>
+            <th><i class="fa fa-ticket"></i></th>
+            <th><i class="fa fa-hourglass"></i></th>
             <th></th>
         </tr>
         </thead>
         <tbody>
         @foreach (var user in Model)
         {
-            <tr>
+            var nConfirmed = user.AllCourses.Sum(x => x.Occurrence.Subscriptions.Count(s => s.UserId.Equals(user.User.Id) && s.IsConfirmed && !s.OnWaitingList));
+            var nReserved = user.AllCourses.Sum(x => x.Occurrence.Subscriptions.Count(s => s.UserId.Equals(user.User.Id) && !s.IsConfirmed && !s.OnWaitingList));
+            var nWaiting = user.AllCourses.Sum(x => x.Occurrence.Subscriptions.Count(s => s.UserId.Equals(user.User.Id) && s.OnWaitingList));
+
+
+            var rowColor = "";
+            if (nConfirmed == 0 && nReserved == 0 && nWaiting > 0)
+            {
+                if (nWaiting <= 3)
+                {
+                    rowColor = "warning";
+                }
+                else
+                {
+                    rowColor = "danger";
+                }
+            }
+
+            <tr class="@rowColor">
                 <td>@user.User.LastName</td>
                 <td>@user.User.FirstName</td>
                 @if (user.CurrentSubscription != null)
@@ -39,6 +59,9 @@
                 }
                 <td>@user.AllCourses.Count</td>
                 <td>@user.CoursesFit.Count</td>
+                <td>@nConfirmed</td>
+                <td>@nReserved</td>
+                <td>@nWaiting</td>
                 <td>
                     <a href="@Url.Action("CoursePlan", "Students", new {id = user.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Kursplan</a>
                     <a href="mailto:@user.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>

@@ -2,8 +2,14 @@
 
 namespace MyStik.TimeTable.Web.Areas.InfoScreen
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class InfoScreenAreaRegistration : AreaRegistration 
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public override string AreaName 
         {
             get 
@@ -12,6 +18,10 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
         public override void RegisterArea(AreaRegistrationContext context) 
         {
             context.MapRoute(

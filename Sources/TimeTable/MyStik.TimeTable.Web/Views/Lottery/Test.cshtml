@@ -1,0 +1,60 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Lottery>
+@{
+    ViewBag.Title = "Test";
+}
+
+<h2>Alle Lotterien</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Kurzname</th>
+        <th>Beschreibug</th>
+        <th>Erste</th>
+        <th>Letzte</th>
+        <th>Veranstalter</th>
+        <th>Besitzer</th>
+        <th>Semester</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var l in Model)
+    {
+        <tr>
+            <td>@l.Name</td>
+            <td>@l.JobId</td>
+            <td>@l.Description</td>
+            <td>@l.FirstDrawing</td>
+            <td>@l.LastDrawing</td>
+            @if (l.Organiser != null)
+            {
+                <td>@l.Organiser.ShortName</td>
+            }
+            else
+            {
+                <td></td>
+            }
+            @if (l.Owner != null)
+            {
+                <td>@l.Owner.Name</td>
+            }
+            else
+            {
+                <td></td>
+            }
+            @if (l.Semester != null)
+            {
+                <td>@l.Semester.Name</td>
+            }
+            else
+            {
+                <td></td>
+            }
+
+        </tr>
+    }
+    </tbody>
+
+</table>
+

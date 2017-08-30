@@ -1,7 +1,7 @@
 ﻿@model MyStik.TimeTable.Web.Models.FreeRoomSummaryModel
 
 @{
-    ViewBag.Title = "Freie Räume";
+    ViewBag.Title = Resources.FreeRoomsHeading;
 }
 
 
@@ -11,7 +11,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Freie Räume für @ViewBag.Organiser</h1>
+                    <h1>@Resources.FreeRoomsForString @ViewBag.Organiser</h1>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption">
-                        <span class="caption-subject bold uppercase"> Diese Räume sind jetzt (@DateTime.Now) frei</span>
+                        <span class="caption-subject bold uppercase">@Resources.FreeRoomsNow (@DateTime.Now) @Resources.FreeString</span>
                     </div>
                     <div class="tools">
                         <a href="javascript:;" class="collapse">
@@ -36,10 +36,10 @@
                     <table class="table table-striped table-bordered table-condensed">
                         <thead>
                             <tr>
-                                <th>Nummer</th>
-                                <th>Plätze</th>
-                                <th>Frei bis</th>
-                                <th>Nächste Belegung</th>
+                                <th>@Resources.NumberString</th>
+                                <th>@Resources.NumberSeatsString</th>
+                                <th>@Resources.FreeUntilString</th>
+                                <th>@Resources.NextOccupancyString</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -53,18 +53,18 @@
                                     {
                                         if (c.NextDate.Begin > DateTime.Today.AddDays(1))
                                         {
-                                            <td>frei bis Abends</td>
+                                            <td>@Resources.FreeUntilEveningString</td>
                                             <td></td>
                                         }
                                         else
                                         {
-                                            <td>frei bis @c.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                            <td>@Resources.FreeUntilString @c.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
                                             <td>@c.NextDate.Activity.Name</td>
                                         }
                                     }
                                     else
                                     {
-                                        <td>frei bis Abends</td>
+                                        <td>@Resources.FreeUntilEveningString</td>
                                         <td></td>
                                     }
                                     <td>
@@ -80,7 +80,7 @@
             <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption">
-                        <span class="caption-subject bold uppercase"> Diese Räume werden demnächst (@DateTime.Now) frei</span>
+                        <span class="caption-subject bold uppercase"> @Resources.FreeRoomsSoonString (@DateTime.Now) @Resources.FreeString</span>
                     </div>
                     <div class="tools">
                         <a href="javascript:;" class="collapse">
@@ -92,11 +92,11 @@
                     <table class="table table-striped table-bordered table-condensed">
                         <thead>
                             <tr>
-                                <th>Nummer</th>
-                                <th>Plätze</th>
-                                <th>Frei ab</th>
-                                <th>Frei bis</th>
-                                <th>Nächste Belegung</th>
+                                <th>@Resources.NumberString</th>
+                                <th>@Resources.NumberSeatsString</th>
+                                <th>@Resources.FreeFromString</th>
+                                <th>@Resources.FreeUntilString</th>
+                                <th>@Resources.NextOccupancyString</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -118,18 +118,18 @@
                                     {
                                         if (c.NextDate.Begin > DateTime.Today.AddDays(1))
                                         {
-                                            <td>frei bis Abends</td>
+                                            <td>@Resources.FreeUntilEveningString</td>
                                             <td></td>
                                         }
                                         else
                                         {
-                                            <td>frei bis @c.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                            <td>@Resources.FreeUntilString @c.NextDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
                                             <td>@c.NextDate.Activity.Name</td>
                                         }
                                     }
                                     else
                                     {
-                                        <td>frei bis Abends</td>
+                                        <td>@Resources.FreeUntilEveningString</td>
                                         <td></td>
                                     }
                                     <td>

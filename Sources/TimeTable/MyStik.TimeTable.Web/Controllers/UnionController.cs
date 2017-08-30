@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -10,8 +8,16 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class UnionController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Details(Guid id)
         {
             var organiser = Db.Organisers.SingleOrDefault(org => org.Id == id);
@@ -46,6 +52,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteMember(Guid id)
         {
             var member = Db.Members.SingleOrDefault(m => m.Id == id);
@@ -65,7 +76,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult EditMember(Guid id)
         {
             var member = Db.Members.SingleOrDefault(m => m.Id == id);
@@ -79,7 +94,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     Description = member.Description,
                     UrlProfile = member.UrlProfile,
                     Name = member.Name,
-                    IsAdmin = member.IsAdmin,
                     ShortName = member.ShortName,
                 };
 
@@ -100,7 +114,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult EditMember(MemberUserViewModel model)
         {
@@ -108,7 +126,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (member != null)
             {
-                member.IsAdmin = model.IsAdmin;
+                //member.IsAdmin = model.IsAdmin;
                 member.Role = model.Role;
 
                 Db.SaveChanges();
@@ -119,6 +137,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", "Students");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult GetMember(Guid id)
         {
             var organiser = Db.Organisers.SingleOrDefault(org => org.Id == id);

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -15,6 +11,7 @@ namespace MyStik.TimeTable.Data
             SemesterGroups = new HashSet<SemesterGroup>();
             Modules = new HashSet<CurriculumModule>();
             CapacityGroups = new HashSet<CapacityGroup>();
+            Accreditations = new HashSet<ModuleAccreditation>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -52,10 +49,21 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Liste der Module
-        /// Jedes Modul gehört zu genau einer Gruppe
-        /// Es gibt keine Versionierung
+        /// m-n Beziehung
+        /// Überflüssig! Wurde durch Akkreditierung ersetzt
         /// </summary>
         public virtual ICollection<CurriculumModule> Modules { get; set; }
+
+
+        /// <summary>
+        /// Liste der regeln
+        /// </summary>
+        public virtual ICollection<CriteriaRule> Rules { get; set; }
+
+        /// <summary>
+        /// Alle Akkreditierungen => Zugang zu Modulen
+        /// </summary>
+        public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
 
     }
 }

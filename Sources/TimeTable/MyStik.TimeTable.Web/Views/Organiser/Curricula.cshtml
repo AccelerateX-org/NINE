@@ -1,0 +1,104 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+@{
+    ViewBag.Title = "Curricula";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Studiengänge @ViewBag.Organiser.ShortName</h1>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.UserRight.IsCurriculumAdmin)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Create", "Curricula", new {id = ViewBag.Organiser.Id})" class="btn btn-default">
+                                    <i class="fa fa-plus-circle"></i> Studiengang anlegen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-home"></i> Alle Studiengänge
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table id="tabDates">
+                        <thead>
+                            <tr>
+                                <th>Kurzname</th>
+                                <th>Name</th>
+                                <th>Anzahl Studiengruppen</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var date in Model)
+                            {
+                                <tr>
+                                    <td><a href="@Url.Action("Structure", "Curriculum", new {id=date.Id})">@date.ShortName</a></td>
+                                    <td>@date.Name</td>
+                                    <td>@date.CurriculumGroups.Count</td>
+                                    <td>
+                                    @if (ViewBag.UserRight.IsCurriculumAdmin)
+                                    {
+                                        <a href="@Url.Action("Delete", "Curricula", new { id = date.Id })">löschen</a>
+                                    }                                        
+                                    </td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabDates').DataTable();
+        });
+    </script>
+}
+
+

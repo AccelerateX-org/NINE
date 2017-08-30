@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -16,6 +12,7 @@ namespace MyStik.TimeTable.Data
             this.Dates = new HashSet<ActivityDate>();
             this.Ressources = new HashSet<BinaryStorage>();
             this.SemesterGroups = new HashSet<SemesterGroup>();
+            this.SemesterTopics = new HashSet<SemesterTopic>();
             this.Owners = new HashSet<ActivityOwner>();
         }
 
@@ -40,6 +37,11 @@ namespace MyStik.TimeTable.Data
         [Display(Name = "Beschreibung")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// wird unterschiedlich verwendet
+        /// Course: "gesperrt"
+        /// Event: "veröffentlichen"
+        /// </summary>
         public bool IsInternal { get; set; }
 
         /// <summary>
@@ -65,6 +67,13 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<SemesterGroup> SemesterGroups { get; set; }
 
+        /// <summary>
+        /// Über die Semestertopics wird geregelt, in welchen Stundenplänen
+        /// die Activity auftaucht
+        /// </summary>
+        public virtual ICollection<SemesterTopic> SemesterTopics { get; set; }
+
+
         public virtual Occurrence Occurrence { get; set; }
 
         public virtual ICollection<BinaryStorage> Ressources { get; set; }
@@ -74,5 +83,6 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<ActivityDate> Dates { get; set; }
 
         public virtual ICollection<ActivityOwner> Owners { get; set; }
+
     }
 }

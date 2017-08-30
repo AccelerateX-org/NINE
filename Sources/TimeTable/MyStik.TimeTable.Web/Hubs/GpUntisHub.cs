@@ -1,29 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.GpUntis;
-using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Hubs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class GpUntisHub : Hub
     {
-
         /// <summary>
         /// Löscht alle Kurse aus dem angegebenen Semester, die aus gpUntis importiert wurden
         /// </summary>
         /// <param name="semId"></param>
+        /// <param name="orgId"></param>
         public void DeleteSemester(Guid semId, Guid orgId)
         {
+            var db = new TimeTableDbContext();
+
             var semService = new SemesterService();
-            var timeTableService = new TimeTableInfoService();
+            var timeTableService = new TimeTableInfoService(db);
 
             var msg = "Sammle Daten";
             var perc1 = 0;
@@ -40,12 +41,17 @@ namespace MyStik.TimeTable.Web.Hubs
                 return;
             }
 
-            var allCourses = timeTableService.GetCourses(semId, orgId);
-            var courses = allCourses.Where(c =>
-                !string.IsNullOrEmpty(c.ExternalSource) &&
-                c.ExternalSource.Equals("GPUNTIS")).ToList();
+            var courses = db.Activities.OfType<Course>().Where(c =>
+                c.Organiser.Id == orgId &&                                  // Veranstalter
+                (c.SemesterGroups.Any(g =>                                  // Mit Semestergruppe
+                    g.Semester.Id == semId &&
+                    g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId) ||
+                    !c.SemesterGroups.Any()                                 // oder ohne Zuordnung
+                ) &&
+                (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals("GPUNTIS")))    // aus GPUNTIS
+                .ToList();
 
-            msg = string.Format("Lösche {0} von {1} Kursen", courses.Count, allCourses.Count);
+            msg = string.Format("Lösche {0} von {1} Kursen", courses.Count, courses.Count);
             perc1 = 0;
             Clients.Caller.updateProgress(msg, perc1);
 
@@ -68,6 +74,12 @@ namespace MyStik.TimeTable.Web.Hubs
             Clients.Caller.updateProgress(msg, perc1);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semId"></param>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
         public string CheckConsistency(Guid semId, Guid orgId)
         {
 
@@ -96,34 +108,31 @@ namespace MyStik.TimeTable.Web.Hubs
             {
                 reader.ReadFiles(tempDir);
 
-                if (!reader.Context.ErrorMessages.Any())
-                {
-                    var importer = new SemesterImport(reader.Context, semId, orgId);
+                var importer = new SemesterImport(reader.Context, semId, orgId);
 
-                    msg = "prüfe Gruppen";
-                    perc1 = 25;
-                    Clients.Caller.updateProgress(msg, perc1);
-                    // Gruppen müssen existieren! => Fehler, wenn nicht
-                    importer.CheckGroupConsistency();
+                msg = "prüfe Gruppen";
+                perc1 = 25;
+                Clients.Caller.updateProgress(msg, perc1);
+                // Gruppen müssen existieren! => Fehler, wenn nicht
+                importer.CheckGroups();
 
-                    msg = "prüfe Räume";
-                    perc1 = 50;
-                    Clients.Caller.updateProgress(msg, perc1);
-                    // Räume sollten existieren => Warnung
-                    // Zuordnungen zu Räumen sollten existieren => Warnung
-                    importer.CheckRooms();
+                msg = "prüfe Räume";
+                perc1 = 50;
+                Clients.Caller.updateProgress(msg, perc1);
+                // Räume sollten existieren => Warnung
+                // Zuordnungen zu Räumen sollten existieren => Warnung
+                importer.CheckRooms();
 
-                    msg = "prüfe Dozenten";
-                    perc1 = 75;
-                    Clients.Caller.updateProgress(msg, perc1);
-                    // Dozenten sollten existieren => Warnung
-                    importer.CheckLecturers();
-                }
+                msg = "prüfe Dozenten";
+                perc1 = 75;
+                Clients.Caller.updateProgress(msg, perc1);
+                // Dozenten sollten existieren => Warnung
+                importer.CheckLecturers();
 
             }
             catch (Exception ex)
             {
-                reader.Context.ErrorMessages.Add(ex.Message);
+                reader.Context.AddErrorMessage("Import", ex.Message, true);
             }
 
 
@@ -132,22 +141,31 @@ namespace MyStik.TimeTable.Web.Hubs
             Clients.Caller.updateProgress(msg, perc1);
 
 
-            if (!reader.Context.ErrorMessages.Any())
+            if (reader.Context.ErrorMessages["Import"] == null)
                 return null;
 
             var sb = new StringBuilder();
-            sb.Append("<ul>");
-            foreach (var message in reader.Context.ErrorMessages)
+            sb.Append("<tr>");
+            sb.Append("<td>Import</td>");
+            sb.Append("<td>");
+            foreach (var message in reader.Context.ErrorMessages["Import"])
             {
-                sb.AppendFormat("<li>{0}</li>", message);
+                sb.AppendFormat("<div>{0}</li>", message);
             }
-            sb.Append("</ul>");
+            sb.Append("</td>");
+            sb.Append("</tr>");
 
             return sb.ToString();
         }
 
-
-        public void ImportSemester(Guid semId, Guid orgId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semId"></param>
+        /// <param name="orgId"></param>
+        /// <param name="firstDate"></param>
+        /// <param name="lastDate"></param>
+        public void ImportSemester(Guid semId, Guid orgId, string firstDate, string lastDate)
         {
             var db = new TimeTableDbContext();
 
@@ -207,8 +225,7 @@ namespace MyStik.TimeTable.Web.Hubs
             // fehler hier ignorieren => muss noch an anderer Stelle besser gelöst werden
             // Annahme: Fehler sind dem Anwender bekannt, da vorher ein Check durchgeführt wurde
             // daher können die Checks oben auch entfallen
-            var importer = new SemesterImport(reader.Context, semId, orgId);
-            
+            var importer = new SemesterImport(reader.Context, semId, orgId, firstDate, lastDate);
             
             var n = reader.Context.Kurse.Count;
             var i = 0;
@@ -222,12 +239,6 @@ namespace MyStik.TimeTable.Web.Hubs
 
                 Clients.Caller.updateProgress(msg, perc1);
             }
-
-            msg = "Initialisiere Platzverlosung";
-            perc1 = 100;
-            Clients.Caller.updateProgress(msg, perc1);
-
-            importer.InitWPMs();
 
             msg = "Alle Kurse importiert";
             perc1 = 100;

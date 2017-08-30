@@ -1,5 +1,4 @@
 ﻿@using System.Globalization
-@using System.Web.Mvc.Html
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.EventDetailViewModel
 @{
@@ -29,7 +28,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2">
-            @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+            @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsEventAdmin)
             {
 
                 <div class="row">

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -11,9 +9,16 @@ using Pitchfork.QRGenerator;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PrintController : BaseController
     {
-        // GET: Print
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult OfficeHourDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
@@ -33,13 +38,22 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult PersonalSchedule()
         {
-            var member = GetMyMembership();
             ViewBag.Semester = GetSemester();
-            return View(member);
+            ViewBag.Name = GetCurrentUser().FullName;
+            return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Schedule(Guid id)
         {
             var member = Db.Members.SingleOrDefault(m => m.Id == id);
@@ -47,12 +61,22 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("PersonalSchedule", member);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult RoomSchedule(Guid id)
         {
             var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
             return View(room);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public FileResult GetQrCode(Guid id)
         {
             var room = Db.Rooms.SingleOrDefault(r => r.Id == id);

@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Api.Contracts;
 
 namespace MyStik.TimeTable.Web.Api.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class EventInfoService
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public NextEventContract GetNextEvent()
         {
             var db = new TimeTableDbContext();
@@ -62,6 +67,11 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public NextEventContract GetNextEvent(Guid id)
         {
             var db = new TimeTableDbContext();
@@ -113,6 +123,10 @@ namespace MyStik.TimeTable.Web.Api.Services
             return nextEvent;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<EventContract> GetAllEvents()
         {
             var db = new TimeTableDbContext();
@@ -171,7 +185,11 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
-        //Abfrage eines speziellen Events mit Hilfe der EventId
+        /// <summary>
+        /// Abfrage eines speziellen Events mit Hilfe der EventId
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public EventContract GetEvent (string eventId)
         {
             var db = new TimeTableDbContext();

@@ -1,0 +1,88 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterSubscriptionViewModel
+@{
+    ViewBag.Title = "Semester";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mein Studiensemester</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div id="portletSemGroup">
+
+                        @Html.Partial("_SelectSemGroup", Model)
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            onFacultyChanged();
+        });
+
+
+        function onFacultyChanged() {
+            var prog = $('#Faculty option:selected').val();
+            var sem = $('#Semester option:selected').val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("CurriculaList", "Curriculum")',
+                data: {
+                    orgId: prog,
+                    semId: sem
+                },
+                success: function (data, success, xhr) {
+                    $('#Curriculum').html(data);
+                    onCurriculumChanged();
+                }
+            });
+        }
+
+        function onCurriculumChanged() {
+
+            var prog = $('#Curriculum option:selected').val();
+            var sem = $('#Semester option:selected').val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList", "Curriculum")',
+                data: {
+                    currId: prog,
+                    semId: sem
+                },
+                success: function (data, success, xhr) {
+                    $('#CurrGroup').html(data);
+                }
+            });
+        }
+
+    </script>
+}
+
+

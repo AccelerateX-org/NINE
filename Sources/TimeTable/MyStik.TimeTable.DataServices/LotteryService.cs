@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net;
-using log4net.Repository.Hierarchy;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices.Lottery;
 
@@ -15,32 +12,7 @@ namespace MyStik.TimeTable.DataServices
         private TimeTableDbContext db = new TimeTableDbContext();
         private ILog logger = LogManager.GetLogger("Lottery");
 
-        /*
-        public void RunLottery()
-        {
-            try
-            {
-                var semester = new SemesterService().GetNewestSemester();
-
-                var lotteryService = new LotteryService();
-
-                logger.InfoFormat("Starte Verlosung für Semester {0}", semester.Name);
-
-                var wpmList = lotteryService.GetLottery(semester);
-
-                foreach (var wpm in wpmList)
-                {
-                    lotteryService.RunLotteryForCourse(wpm);
-                }
-
-                logger.InfoFormat("Verlosung für Semester {0} beendet", semester.Name);
-            }
-            catch (Exception ex)
-            {
-                logger.FatalFormat("Abbruch wegen Fehler: {0}", ex.Message);
-            }
-        }
-        */
+        private LotteryDrawing lotteryDrawing;
 
         public void RunLottery(Guid id)
         {
@@ -66,6 +38,20 @@ namespace MyStik.TimeTable.DataServices
                 return;
             }
             
+            ExecuteLottery(id);
+        }
+
+        public void ExecuteLottery(Guid id)
+        {
+            var lottery = GetLottery(id);
+            // report für Ziehung anlegen und sofort in db speichern
+            lotteryDrawing = new LotteryDrawing();
+            lotteryDrawing.Start = DateTime.Now;
+            lotteryDrawing.End = DateTime.Now;
+            lotteryDrawing.Lottery = lottery;
+            db.LotteryDrawings.Add(lotteryDrawing);
+            db.SaveChanges();
+
             try
             {
                 var wpmList = GetLotteryCourseList(id);
@@ -81,22 +67,13 @@ namespace MyStik.TimeTable.DataServices
             }
             catch (Exception ex)
             {
+                lotteryDrawing.Message = ex.Message;
                 logger.FatalFormat("Abbruch der Verlosung {0} wegen Fehler: {1}", lottery.Name, ex.Message);
             }
-        }
 
-
-
-        public ICollection<Course> GetLottery(Semester semester)
-        {
-            var wpmList = db.Activities.OfType<Course>().Where(c =>
-                c.Occurrence.LotteryEnabled &&
-                c.SemesterGroups.Any(g => g.Semester.Id == semester.Id)).ToList();
-
-            
-            logger.DebugFormat("Es wurden {0} Kurse für die Verlosung im {1} gefunden", wpmList.Count, semester.Name);
-            
-            return wpmList;
+            lotteryDrawing.End = DateTime.Now;
+            lotteryDrawing.Message = "Lotterie durchgelaufen";
+            db.SaveChanges();
         }
 
         public Data.Lottery GetLottery(Guid lotteryId)
@@ -124,44 +101,52 @@ namespace MyStik.TimeTable.DataServices
         }
 
 
-
-        public CourseDrawingReportModel RunLotteryForCourse(Course wpm)
+        /// <summary>
+        /// Verlosung für einen einzigen Kurs
+        /// </summary>
+        /// <param name="wpm">der Kurs</param>
+        /// <returns></returns>
+        public void RunLotteryForCourse(Course wpm)
         {
-            var report = new CourseDrawingReportModel
-            {
-                Course = wpm
-            };
-
-
+            // wir legen jetzt was an
+            var courseDrawingReport = new OccurrenceDrawing();
+            courseDrawingReport.Occurrence = wpm.Occurrence;
+            courseDrawingReport.Start = DateTime.Now;
+            courseDrawingReport.End = DateTime.Now;
+            courseDrawingReport.LotteryDrawing = lotteryDrawing;
+            
+            // wir sichern mal den Stand vor der verlosung
             foreach (var subscription in wpm.Occurrence.Subscriptions)
             {
-                string text;
+                var subscriptionDrawingReport = new SubscriptionDrawing();
+                subscriptionDrawingReport.OccurrenceDrawing = courseDrawingReport;
+                subscriptionDrawingReport.Subscription = subscription;
+                subscriptionDrawingReport.DrawingTime = DateTime.Now;
+
                 if (subscription.IsConfirmed)
                 {
-                    text = "TN";
+                    subscriptionDrawingReport.StateBeforeDrawing = DrawingState.Confirmed;
+                    subscriptionDrawingReport.LapCountBeforeDrawing = -1;
                 }
                 else
                 {
                     if (subscription.OnWaitingList)
                     {
-                        text = string.Format("WL ({0})", subscription.LapCount);
+                        subscriptionDrawingReport.StateBeforeDrawing = DrawingState.Waiting;
+                        subscriptionDrawingReport.LapCountBeforeDrawing = subscription.LapCount;
                     }
                     else
                     {
-                        text = "R";
+                        subscriptionDrawingReport.StateBeforeDrawing = DrawingState.Reserved;
+                        subscriptionDrawingReport.LapCountBeforeDrawing = -1;
                     }
                 }
 
-                var subReport = new SuscriptionDrawingReportModel
-                {
-                    Subscription = subscription,
-                    StateBeforeDrawing = text,
-                    LapCountBeforeDrawing = subscription.LapCount
-                };
-
-                report.Subscriptions.Add(subReport);
+                courseDrawingReport.SubscriptionDrawings.Add(subscriptionDrawingReport);
+                db.SubscriptionDrawings.Add(subscriptionDrawingReport);
             }
-
+            db.OccurrenceDrawings.Add(courseDrawingReport);
+            db.SaveChanges();
 
             logger.Debug("####################################");
             logger.DebugFormat("Starte Verlosung für [{0}]", wpm.ShortName);
@@ -210,8 +195,11 @@ namespace MyStik.TimeTable.DataServices
                 participentList.Remove(subscription);
 
                 // Report
-                var subReport = report.Subscriptions.SingleOrDefault(s => s.Subscription.Id == subscription.Id);
-                subReport.Remark = "<p>Reservierung nicht angenommen. Zurückgesetzt.</p>";
+                var subReport = courseDrawingReport.SubscriptionDrawings.FirstOrDefault(s => s.Subscription.Id == subscription.Id);
+                if (subReport != null)
+                {
+                    subReport.Remark = "<p>Reservierung nicht angenommen. Zurückgesetzt.</p>";
+                }
             }
 
             // diesen Stand vor der Durchführung der Verlosung sichern
@@ -246,8 +234,8 @@ namespace MyStik.TimeTable.DataServices
                     {
                         logger.DebugFormat("Zugehörige Semestergruppe [{0}]", semesterGroup.FullName);
                     }
-                    var groupParticipantList = GetSubscriptionsForGroup(participentList, group, report);
-                    var groupWaitingList = GetSubscriptionsForGroup(waitingList, group, report);
+                    var groupParticipantList = GetSubscriptionsForGroup(participentList, group, courseDrawingReport);
+                    var groupWaitingList = GetSubscriptionsForGroup(waitingList, group, courseDrawingReport);
                     logger.Debug("------");
 
                     available += LotteryForGroup(groupWaitingList, groupParticipantList, group.Capacity);
@@ -270,7 +258,7 @@ namespace MyStik.TimeTable.DataServices
                         logger.DebugFormat("Zugehörige Semestergruppe [{0}]", semesterGroup.FullName);
                     }
 
-                    var groupWaitingList = GetSubscriptionsForGroup(waitingList, group, report);
+                    var groupWaitingList = GetSubscriptionsForGroup(waitingList, group, courseDrawingReport);
                     validWaitingList.AddRange(groupWaitingList);
 
                     logger.Debug("------");
@@ -299,30 +287,36 @@ namespace MyStik.TimeTable.DataServices
 
             foreach (var subscription in wpm.Occurrence.Subscriptions)
             {
-                string text;
-                if (subscription.IsConfirmed)
+                var subReport = courseDrawingReport.SubscriptionDrawings.FirstOrDefault(s => s.Subscription.Id == subscription.Id);
+
+                if (subReport != null)
                 {
-                    text = "TN";
-                }
-                else
-                {
-                    if (subscription.OnWaitingList)
+                    if (subscription.IsConfirmed)
                     {
-                        text = string.Format("WL ({0})", subscription.LapCount);
+                        subReport.StateAfterDrawing = DrawingState.Confirmed;
+                        subReport.LapCountAfterDrawing = -1;
                     }
                     else
                     {
-                        text = "R";
+                        if (subscription.OnWaitingList)
+                        {
+                            subReport.StateAfterDrawing = DrawingState.Waiting;
+                            subReport.LapCountAfterDrawing = subscription.LapCount;
+                        }
+                        else
+                        {
+                            subReport.StateAfterDrawing = DrawingState.Reserved;
+                            subReport.LapCountAfterDrawing = -1;
+                        }
                     }
-                }
 
-                var subReport = report.Subscriptions.SingleOrDefault(s => s.Subscription.Id == subscription.Id);
-                subReport.StateAfterDrawing = text;
-                subReport.LapCountAfterDrawing = subscription.LapCount;
+                    subReport.DrawingTime = DateTime.Now;
+                }
             }
 
+            courseDrawingReport.End = DateTime.Now;
 
-            return report;
+            db.SaveChanges();
         }
 
         private int LotteryForGroup(List<OccurrenceSubscription> waitingList, List<OccurrenceSubscription> participantList, int capacity)
@@ -419,7 +413,7 @@ namespace MyStik.TimeTable.DataServices
         }
 
         public List<OccurrenceSubscription> GetSubscriptionsForGroup(ICollection<OccurrenceSubscription> allSubscriptions, 
-            OccurrenceGroup group, CourseDrawingReportModel report)
+            OccurrenceGroup group, OccurrenceDrawing report)
         {
             if (!group.Occurrence.UseExactFit)
             {
@@ -435,7 +429,7 @@ namespace MyStik.TimeTable.DataServices
 
             foreach (var subscription in allSubscriptions)
             {
-                var subReport = report.Subscriptions.SingleOrDefault(s => s.Subscription.Id == subscription.Id);
+                var subReport = report.SubscriptionDrawings.FirstOrDefault(s => s.Subscription.Id == subscription.Id);
 
                 var bFound = false;
 
@@ -468,7 +462,7 @@ namespace MyStik.TimeTable.DataServices
                                 logger.DebugFormat("Suche nach Studienprogramm erfolglos: {0}", semSub.SemesterGroup.FullName);
                             }
                              */
-                                if (!isInGroup)
+                                if (!isInGroup && subReport != null)
                                 {
                                     subReport.Remark += string.Format("<p>Studiengang passt nicht exakt: Eingetragen in {0}</p>", semSub.SemesterGroup.FullName);
                                 }
@@ -477,7 +471,7 @@ namespace MyStik.TimeTable.DataServices
                             {
                                 // Die Semestergruppe muss exakt passen
                                 isInGroup = group.SemesterGroups.Any(g => g.Id == semSub.SemesterGroup.Id);
-                                if (!isInGroup)
+                                if (!isInGroup && subReport != null)
                                 {
                                     subReport.Remark += string.Format("<p>Semestergruppe passt nicht exakt: Eingetragen in {0}</p>", semSub.SemesterGroup.FullName);
                                 }
@@ -494,7 +488,10 @@ namespace MyStik.TimeTable.DataServices
                         else
                         {
                             logger.DebugFormat("Keine Angabe zu Semestergruppe - wird ignoriert");
-                            subReport.Remark += "<p>Keine Angabe zu Semestergruppe - wird ignoriert</p>";
+                            if (subReport != null)
+                            {
+                                subReport.Remark += "<p>Keine Angabe zu Semestergruppe - wird ignoriert</p>";
+                            }
                         }
                     }
                 }

@@ -1,0 +1,36 @@
+﻿@model MyStik.TimeTable.Data.CurriculumModule
+@{
+    ViewBag.Title = "Prüfungsleistung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Prüfungsleistung für Modul @Model.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-puzzle-piece"></i>
+                        <span class="caption-subject bold uppercase"> Prüfungstyp</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <a href="@Url.Action("CreateExamByType", new {id = Model.Id, examtype="SP"})" class="btn btn-default">Schriftliche Prüfung</a>
+                    <a href="@Url.Action("CreateExamByType", new {id = Model.Id, examtype="MP"})" class="btn btn-default">Mündliche Prüfung</a>
+                    <a href="@Url.Action("CreateExamByType", new {id = Model.Id, examtype="PA"})" class="btn btn-default">Projektarbeit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

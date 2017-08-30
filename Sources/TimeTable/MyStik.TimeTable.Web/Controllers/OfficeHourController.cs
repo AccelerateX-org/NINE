@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using log4net;
@@ -16,8 +15,15 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OfficeHourController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult DeleteAll()
         {
@@ -64,7 +70,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult Delete(Guid id)
         {
@@ -113,34 +123,65 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        //
-        // GET: /OfficeHour/
-        public ActionResult Index(Guid? id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
         {
-            if (id.HasValue)
+            // Liste aller Sprechstunden
+            var semester = GetSemester();
+            var org = GetMyOrganisation();
+
+
+
+            var officeHours = Db.Activities.OfType<OfficeHour>().Where(oh =>
+                    oh.Semester.Id == semester.Id &&
+                    oh.Owners.Any(m => m.Member.Organiser.Id == org.Id))
+                .ToList();
+
+            var model = new OfficeHourOverviewModel
             {
-                var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(oh => oh.Id == id.Value);
+                Organiser = org,
+                Semester = semester,
+            };
 
-                var fak = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
 
-                if (officeHour != null && fak != null)
-                {
-                    var member = fak.Members.SingleOrDefault(m => m.ShortName.Equals(officeHour.ShortName));
-
-                    if (member != null)
-                    {
-                        return RedirectToAction("Lecturer", new {id = member.Id});
-                    }
-                }
+            var member = GetMyMembership();
+            if (member != null)
+            {
+                model.MyOfficeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(x =>
+                    x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id));
             }
 
-            return RedirectToAction("Index", "Lecturer");
+
+
+            foreach (var officeHour in officeHours)
+            {
+                var lecturer = officeHour.Dates.Any()
+                    ? officeHour.Dates.First().Hosts.FirstOrDefault()
+                    : officeHour.Owners.First().Member;
+
+                var m = new OfficeHourDateViewModel();
+
+                m.OfficeHour = officeHour;
+                m.Lecturer = lecturer;
+
+                m.Date = officeHour.Dates.FirstOrDefault(x => x.End > DateTime.Now);
+
+                model.OfficeHours.Add(m);
+            }
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
         }
 
         /// <summary>
         /// Terminliste einer bestimmten Spürechstunde
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="semId"></param>
         /// <returns></returns>
         public ActionResult History(Guid id, Guid semId)
         {
@@ -190,48 +231,19 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Lecturer(Guid id)
         {
             var semester = GetSemester();
-
             var hostRequested = Db.Members.FirstOrDefault(l => l.Id == id);
 
             if (hostRequested == null)
             {
-                return RedirectToAction("Index", "Lecturer");
+                return RedirectToAction("Index");
             }
 
-            var officeHour =
-                Db.Activities.OfType<OfficeHour>().SingleOrDefault(a =>
-                    a.Semester.Id == semester.Id &&
-                    a.Dates.Any(oc => oc.Hosts.Any(l => l.Id == id)));
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, officeHour);
-
-
-            if (ViewBag.UserRight.IsHost)
+            var ohService = new OfficeHourService();
+            var officeHour = ohService.GetOfficeHour(hostRequested, semester);
+            if (officeHour == null)
             {
-                officeHour =
-                    Db.Activities.OfType<OfficeHour>().SingleOrDefault(a =>
-                        a.Semester.Id == semester.Id &&
-                        a.Dates.Any(oc => oc.Hosts.Any(l => l.Id == id)));
-
-                var model = new OfficeHourDateSlotViewModel
-                {
-                    OfficeHour = officeHour,
-                    Semester = semester,
-                    //Host = hostRequested,
-                };
-
-                // aktuelles Datum
-                var orderedDates = officeHour.Dates.OrderBy(x => x.End).ToList();
-                var currentDate = orderedDates.FirstOrDefault(x => x.End >= DateTime.Now);
-                if (currentDate == null)
-                {
-                    model.CurrentDate = orderedDates.LastOrDefault();
-                }
-                else
-                {
-                    model.CurrentDate = currentDate;
-                }
-
-                return View("DateListHost2", model);
+                // TODO: keine Sprechstunde
+                return RedirectToAction("Index", "Lecturer");
             }
 
             var model2 = new OfficeHourSubscriptionViewModel
@@ -240,174 +252,346 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester,
                 Host = hostRequested,
             };
-            
 
-            var userRequesting = AppUser;
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, officeHour);
 
-            // wenn eine Sprechstunde begonnen hat, dann ist sie für den Studenten bereits "Geschichte"
-            var historicDates = officeHour.Dates.Where(x => x.Begin <= DateTime.Now).OrderBy(x => x.Begin).ToList();
-            var futureDates = officeHour.Dates.Where(x => x.Begin > DateTime.Now).OrderBy(x => x.Begin).ToList();
-
-            // alle historischen Eintragungen (zur Info)
-            var historicSubscriptionDates = historicDates.Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id))).ToList();
-            foreach (var date in historicSubscriptionDates)
+            if (officeHour.ByAgreement)
             {
-                var ohSlot = new OfficeHourAvailableSlotViewModel
-                {
-                    Date = date.Begin.Date,
-                    Begin = date.Begin,
-                    End = date.End,
-                    Occurrence = date.Occurrence,
-                    IsSubscribed = true
-                };
-                model2.Slots.Add(ohSlot);
+                return ByAgreement(model2);
             }
-
-            var historicSubscriptionSlots = Db.ActivitySlots.Where(x => 
-                x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id)) &&
-                x.ActivityDate.Activity.Id == officeHour.Id &&
-                x.ActivityDate.End <= DateTime.Now).ToList();
-            foreach (var slot in historicSubscriptionSlots)
+            else
             {
-                var ohSlot = new OfficeHourAvailableSlotViewModel
+                // nach Slots suchen
+                if (officeHour.Dates.Any(x => x.Slots.Any()))
                 {
-                    Date = slot.Begin.Date,
-                    Begin = slot.Begin,
-                    End = slot.End,
-                    Occurrence = slot.Occurrence,
-                    IsSubscribed = true
-                };
-                model2.Slots.Add(ohSlot);
+                    return SlotSystem(model2);
+                }
+                else
+                {
+                    return OpenSystem(model2);
+                }
             }
+        }
+
+        private ActionResult ByAgreement(OfficeHourSubscriptionViewModel model)
+        {
+            return View("DateListByAgreement", model);
+        }
 
 
-            // alle zukünftigen Termine mit Status
-            // - vor dem Ende der Eintragungszeit noch das Austragen zulassen
-            // - nach dem Ende der Eintragungszeit kein Austragen mehr zulassen
-            //var currentSubscriptonDates;
-            //var currentSubscriptionSlots;
 
-            
-            // zukünftige freie Termine bei Dozent
-            // - nur falls keine zukünftige Eintragung besteht
+        private ActionResult SlotSystem(OfficeHourSubscriptionViewModel model)
+        {
+            var userRequesting = GetCurrentUser();
+            var officeHour = model.OfficeHour;
 
-            // für diesen Dozenten die Liste der zukünftigen freien Termine zusammenstellen
-            // aber nur falls der Benutzer nicht bereits bei einem zukünftigen Termin eingetragen ist
-            foreach (var date in futureDates)
+            var dates = officeHour.Dates.OrderBy(x => x.Begin).ToList();
+            var now = DateTime.Now;
+
+            var nFutureSub = officeHour.Dates.Count(x => x.End > DateTime.Now &&
+                                                         x.Slots.Any(
+                                                             y => y.Occurrence.Subscriptions.Any(
+                                                                 s => s.UserId.Equals(userRequesting
+                                                                     .Id))));
+
+            foreach (var date in dates)
             {
-                if (date.Slots.Any())
+                var dateModel = new OfficeHourDateViewModel();
+                dateModel.Date = date;
+
+                // zuerst alle, die vorbei sind
+                // war ich drin
+                // ja => Zeiraum Slot zeigen
+                // nein => Zeitraum Date zeigen
+                if (date.End < now)
                 {
-                    // bin ich in in einem Slot eingetragen?
-                    // ja => dazufügen (Status kommt später)
-                    // nein => ist noch ein Platz frei
-                    foreach (var slot in date.Slots)
+                    var slots =
+                        date.Slots.Where(
+                            x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id))).ToList();
+
+
+                    if (slots.Any())
                     {
-                        var isSubscribed =
-                            slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id));
-                        if (isSubscribed)
+                        if (slots.Count == 1)
                         {
-                            var ohSlot = new OfficeHourAvailableSlotViewModel
-                            {
-                                Date = slot.Begin.Date,
-                                Begin = slot.Begin,
-                                End = slot.End,
-                                Occurrence = slot.Occurrence,
-                                IsSubscribed = true
-                            };
-                            model2.Slots.Add(ohSlot);
+                            dateModel.Slot = slots.First();
+                            dateModel.Remark = "gebucht";
                         }
                         else
                         {
-                            if (slot.Occurrence.Capacity < 0)
-                            {
-                                // keine Platzbeschränkung
-                                var ohSlot = new OfficeHourAvailableSlotViewModel
-                                {
-                                    Date = slot.Begin.Date,
-                                    Begin = slot.Begin,
-                                    End = slot.End,
-                                    Occurrence = slot.Occurrence
-                                };
-                                model2.Slots.Add(ohSlot);
-                            }
-                            else if (slot.Occurrence.Subscriptions.Count < slot.Occurrence.Capacity)
-                            {
-                                // Platzbeschränkung mit noch freien Plätzen
-                                var n = slot.Occurrence.Capacity - slot.Occurrence.Subscriptions.Count;
-
-                                var ohSlot = new OfficeHourAvailableSlotViewModel
-                                {
-                                    Date = slot.Begin.Date,
-                                    Begin = slot.Begin,
-                                    End = slot.End,
-                                    Occurrence = slot.Occurrence,
-                                    Remark = string.Format("Noch {0} Plätze verfügbar", n)
-                                };
-                                model2.Slots.Add(ohSlot);
-                            }
+                            dateModel.Remark = $"{slots.Count} Slots gebucht";
                         }
+                    }
+                    else
+                    {
+                        dateModel.Remark = "Keine Buchung";
                     }
                 }
                 else
                 {
-                    var isSubscribed =
-                        date.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id));
-                    if (isSubscribed)
+                    // für zukünftige
+                    // bin ich drin?
+                    var slots =
+                        date.Slots.Where(
+                            x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id))).ToList();
+
+                    // ja
+                    if (slots.Any())
                     {
-                        var ohSlot = new OfficeHourAvailableSlotViewModel
+                        var slot = slots.First();
+                        // Anzahl meiner Eintragungen erhöhen
+
+
+                        // kann ich mich noch austragen
+                        var state = ActivityService.GetSubscriptionState(slot.Occurrence, date.Begin, date.End);
+
+                        // nein
+                        if (state == SubscriptionState.AfterSubscriptionPhase ||
+                            state == SubscriptionState.DuringOccurrence ||
+                            state == SubscriptionState.AfterOccurrence)
                         {
-                            Date = date.Begin.Date,
-                            Begin = date.Begin,
-                            End = date.End,
-                            Occurrence = date.Occurrence,
-                            IsSubscribed = true
-                        };
-                        model2.Slots.Add(ohSlot);
+                            dateModel.Remark = "kein Austragen mehr möglich.";
+                        }
+                        else
+                        {
+                            // ja => Schalter zeigen
+                            dateModel.Slot = slot;
+                            dateModel.Subscription =
+                                slot.Occurrence.Subscriptions.FirstOrDefault(
+                                    x => x.UserId.Equals(userRequesting.Id));
+                        }
                     }
                     else
                     {
-
-                        if (date.Occurrence.Capacity < 0)
+                        // nein
+                        // Ist was frei
+                        var availableSlots = date.Slots.Where(x => !x.Occurrence.Subscriptions.Any() && x.Occurrence.IsAvailable).ToList();
+                        if (availableSlots.Any())
                         {
-                            var ohSlot = new OfficeHourAvailableSlotViewModel
+                            // ja
+                            // darf ich mich eintragen
+                            // Anzahl der zukünftigen gebuchten Slots vs Vorgabe
+                            if (officeHour.FutureSubscriptions.HasValue && officeHour.FutureSubscriptions.Value > 0)
                             {
-                                Date = date.Begin.Date,
-                                Begin = date.Begin,
-                                End = date.End,
-                                Occurrence = date.Occurrence
-                            };
-                            model2.Slots.Add(ohSlot);
+                                var maxSub = officeHour.FutureSubscriptions.Value;
+                                if (nFutureSub < maxSub)
+                                {
+                                    // eintragen erlaubt
+                                    dateModel.AvailableSlots = availableSlots;
+                                }
+                                else
+                                {
+                                    dateModel.Remark = $"Habe bereits {maxSub} Slots gebucht";
+                                }
+
+                            }
+                            else
+                            {
+                                // eintragen erlaubt
+                                dateModel.AvailableSlots = availableSlots;
+                            }
+
                         }
-                        else if (date.Occurrence.Subscriptions.Count < date.Occurrence.Capacity)
+                        else
                         {
-                            var n = date.Occurrence.Capacity - date.Occurrence.Subscriptions.Count;
-
-                            var ohSlot = new OfficeHourAvailableSlotViewModel
-                            {
-                                Date = date.Begin.Date,
-                                Begin = date.Begin,
-                                End = date.End,
-                                Occurrence = date.Occurrence,
-                                Remark = string.Format("Noch {0} Plätze verfügbar", n)
-                            };
-                            model2.Slots.Add(ohSlot);
+                            // nein
+                            dateModel.Remark = "ausgebucht";
                         }
                     }
                 }
+
+
+
+                model.Dates.Add(dateModel);
             }
 
-            // Den Status einfügen
-            foreach (var slot in model2.Slots)
-            {
-                slot.State =
-                    ActivityService.GetActivityState(slot.Occurrence, userRequesting, semester);
-            }
-
-
-            
-            return View("DateListPublic2", model2);
+            return View("DateListSlotSystem", model);
         }
 
+        private ActionResult OpenSystem(OfficeHourSubscriptionViewModel model)
+        {
+            var userRequesting = GetCurrentUser();
+            var officeHour = model.OfficeHour;
+            var semester = GetSemester();
+
+            var dates = officeHour.Dates.OrderBy(x => x.Begin).ToList();
+            var now = DateTime.Now;
+
+            var capacity = officeHour.Occurrence.Capacity;
+            var hasCapacity = capacity > 0;
+
+
+            foreach (var date in dates)
+            {
+                var dateModel = new OfficeHourDateViewModel();
+                dateModel.Date = date;
+
+                // zuerst alle, die vorbei sind
+                // war ich drin
+                // nein => Zeitraum Date zeigen
+                if (date.End < now)
+                {
+                    var booked = date.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id));
+
+                    if (booked)
+                    {
+                        dateModel.Remark = "gebucht";
+                    }
+                    else
+                    {
+                        dateModel.Remark = "Keine Buchung";
+                    }
+                }
+                else
+                {
+                    // für zukünftige
+                    // bin ich drin?
+                    var booked = date.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRequesting.Id));
+
+                    // ja
+                    if (booked)
+                    {
+                        // kann ich mich noch austragen
+                        var state = ActivityService.GetSubscriptionState(date.Occurrence, date.Begin, date.End);
+
+                        // nein
+                        if (state == SubscriptionState.AfterSubscriptionPhase ||
+                            state == SubscriptionState.DuringOccurrence ||
+                            state == SubscriptionState.AfterOccurrence)
+                        {
+                            dateModel.Remark = "kein Austragen mehr möglich.";
+                        }
+                        else
+                        {
+                            // ja => Schalter zeigen
+                            dateModel.Subscription =
+                                date.Occurrence.Subscriptions.FirstOrDefault(
+                                    x => x.UserId.Equals(userRequesting.Id));
+
+                            dateModel.State =
+                                ActivityService.GetActivityState(date.Occurrence, userRequesting, semester);
+                        }
+                    }
+                    else
+                    {
+                        // nein
+                        // Ist was frei
+                        if (hasCapacity)
+                        {
+                            var availableSlots = capacity - date.Occurrence.Subscriptions.Count;
+                            if (availableSlots > 0)
+                            {
+                                // ja
+                                // darf ich mich eintragen
+                                dateModel.AvailableDate = date;
+
+                                dateModel.State =
+                                    ActivityService.GetActivityState(date.Occurrence, userRequesting, semester);
+                            }
+                            else
+                            {
+                                // nein
+                                dateModel.Remark = "ausgebucht";
+                            }
+                        }
+                        else
+                        {
+                            dateModel.AvailableDate = date;
+
+                            dateModel.State =
+                                ActivityService.GetActivityState(date.Occurrence, userRequesting, semester);
+                        }
+                    }
+                }
+
+
+
+                model.Dates.Add(dateModel);
+            }
+
+            return View("DateListOpenSystem", model);
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
+        public ActionResult SubscribeDate(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
+
+
+            return View(date);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slotId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult SubscribeSlot(Guid slotId)
+        {
+            var slot = Db.ActivitySlots.SingleOrDefault(x => x.Id == slotId);
+            var user = GetCurrentUser();
+
+            if (!slot.Occurrence.Subscriptions.Any())
+            {
+                var mySub = slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+                if (mySub == null)
+                {
+                    var subscription = new OccurrenceSubscription
+                    {
+                        UserId = user.Id,
+                        TimeStamp = DateTime.Now,
+                        OnWaitingList = false,
+                        IsConfirmed = true
+                    };
+
+                    slot.Occurrence.Subscriptions.Add(subscription);
+                    Db.SaveChanges();
+                }
+            }
+
+            var officeHour = slot.ActivityDate.Activity as OfficeHour;
+            var owner = officeHour.Owners.First();
+
+
+            return RedirectToAction("Lecturer", new {id = owner.Member.Id});
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slotId"></param>
+        /// <returns></returns>
+        public ActionResult Unsubscribe(Guid slotId)
+        {
+            var slot = Db.ActivitySlots.SingleOrDefault(x => x.Id == slotId);
+            var user = GetCurrentUser();
+
+            var mySub = slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+            if (mySub != null)
+            {
+                slot.Occurrence.Subscriptions.Remove(mySub);
+                Db.Subscriptions.Remove(mySub);
+                Db.SaveChanges();
+            }
+
+            var officeHour = slot.ActivityDate.Activity as OfficeHour;
+            var owner = officeHour.Owners.First();
+
+            return RedirectToAction("Lecturer", new {id = owner.Member.Id});
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
         public PartialViewResult DateDetails(Guid dateId)
         {
             var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
@@ -500,7 +684,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Inspect(Guid id)
         {
             var semester = GetSemester();
@@ -515,7 +703,8 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(officeHour);
         }
 
-        private void FillOfficeHourDateList(OfficeHourCharacteristicModel model, OrganiserMember hostRequested, ApplicationUser userRequesting)
+        private void FillOfficeHourDateList(OfficeHourCharacteristicModel model, OrganiserMember hostRequested,
+            ApplicationUser userRequesting)
         {
             var logger = LogManager.GetLogger("OfficeHour");
 
@@ -560,7 +749,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                                         foreach (
                                             var subscription in
-                                                ohSlot.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
+                                            ohSlot.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
                                         {
                                             var user = UserManager.FindById(subscription.UserId);
 
@@ -570,7 +759,8 @@ namespace MyStik.TimeTable.Web.Controllers
                                             {
 
                                                 // pro Subscription eine Zeile
-                                                var state = ActivityService.GetActivityState(ohSlot.Occurrence, myUser, semester);
+                                                var state = ActivityService.GetActivityState(ohSlot.Occurrence, myUser,
+                                                    semester);
 
                                                 // wenn es nicht der user selbst ist, dann ist der Slot besetzt
                                                 if (!User.Identity.Name.Equals(user.UserName))
@@ -616,7 +806,8 @@ namespace MyStik.TimeTable.Web.Controllers
                                                     SubscriptionCount = 1,
                                                     SubscriptionNo = 1,
                                                     State =
-                                                        ActivityService.GetActivityState(ohSlot.Occurrence, myUser, semester),
+                                                        ActivityService.GetActivityState(ohSlot.Occurrence, myUser,
+                                                            semester),
                                                     Occurrence = ohSlot.Occurrence,
                                                     ActivityDate = ohSlot.ActivityDate,
                                                     IsHistory = isHistory,
@@ -652,7 +843,8 @@ namespace MyStik.TimeTable.Web.Controllers
                                         // nur aufnehmen, wenn generell aktiv und der Owner die Sicht anfordert
 
                                         if (ohSlot.Occurrence.IsAvailable || (userRequesting != null &&
-                                                                              !string.IsNullOrEmpty(hostRequested.UserId) &&
+                                                                              !string.IsNullOrEmpty(
+                                                                                  hostRequested.UserId) &&
                                                                               hostRequested.UserId.Equals(
                                                                                   userRequesting.Id)))
                                         {
@@ -668,7 +860,8 @@ namespace MyStik.TimeTable.Web.Controllers
                                                 SubscriptionCount = 1,
                                                 SubscriptionNo = 1,
                                                 State =
-                                                    ActivityService.GetActivityState(ohSlot.Occurrence, myUser, semester),
+                                                    ActivityService.GetActivityState(ohSlot.Occurrence, myUser,
+                                                        semester),
                                                 Occurrence = ohSlot.Occurrence,
                                                 ActivityDate = ohSlot.ActivityDate,
                                                 IsHistory = isHistory,
@@ -782,7 +975,8 @@ namespace MyStik.TimeTable.Web.Controllers
                             sb.Append(ex.Message);
                         }
 
-                        logger.ErrorFormat("Fehler bei Termin {0} für {1}: {2}", date.Begin, model.OfficeHour.ShortName, sb.ToString());
+                        logger.ErrorFormat("Fehler bei Termin {0} für {1}: {2}", date.Begin, model.OfficeHour.ShortName,
+                            sb.ToString());
                         logger.Error(ex.StackTrace);
                     }
                 }
@@ -799,17 +993,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult CreateDate(Guid id)
         {
-            var semester = GetSemester();
-
             var memberService = new MemberService(Db, UserManager);
-            var member = memberService.GetMember(User.Identity.Name, "FK 09");
-            var isProf = memberService.HasRole(User.Identity.Name, "FK 09", "Prof");
 
             var model = new OfficeHourCreateModel
             {
                 OfficeHourId = id,
-                Semester = semester.Name,
-                DozId = isProf ? member.ShortName : string.Empty,
                 NewDate = DateTime.Today.ToShortDateString(),
                 StartTime = "16:00",
                 EndTime = "17:00",
@@ -825,17 +1013,31 @@ namespace MyStik.TimeTable.Web.Controllers
             SetTimeSelections();
             SetRestrictionSelections();
 
-            
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CreateDate(OfficeHourCreateModel model)
         {
             var oh = Db.Activities.OfType<OfficeHour>().SingleOrDefault(a => a.Id == model.OfficeHourId);
-            var lecturer = Db.Members.FirstOrDefault(l => l.Dates.Any(d => d.Activity.Id == oh.Id));
 
+            if (oh.ByAgreement)
+                return RedirectToAction("OfficeHour", "Lecturer");
+
+            var firstDate = oh.Dates.FirstOrDefault();
+            if (firstDate == null)
+                return RedirectToAction("OfficeHour", "Lecturer");
+
+            var owner = oh.Owners.FirstOrDefault();
+            if (owner == null)
+                return RedirectToAction("OfficeHour", "Lecturer");
+
+            var lecturer = owner.Member;
 
             // Model in request umsetzen
             var day = DateTime.Parse(model.NewDate);
@@ -846,9 +1048,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var end = day.Add(to.TimeOfDay);
 
 
-            var myCapacity = model.Type == 0 ? 1 : model.Capacity;
-            var mySlotDuration = model.Type == 0 ? model.SlotDuration : 0;
-            var byAgreement = (model.Type == 1);
+            //if (firstDate.Slots.Any())
 
 
             var date = new ActivityDate
@@ -857,30 +1057,28 @@ namespace MyStik.TimeTable.Web.Controllers
                 End = end,
                 Activity = oh,
                 Hosts = new HashSet<OrganiserMember>
-                        {
-                            lecturer,
-                        },
+                {
+                    lecturer,
+                },
                 Occurrence = new Occurrence
                 {
                     IsAvailable = true,
-                    Capacity = myCapacity,
+                    Capacity = firstDate.Occurrence.Capacity,
                     FromIsRestricted = false,
-                    UntilIsRestricted = (model.SubscriptionLimit > 0),
-                    UntilTimeSpan =
-                        (model.SubscriptionLimit > 0)
-                            ? new TimeSpan(model.SubscriptionLimit-1, 59, 0)
-                            : new TimeSpan?(),
+                    UntilIsRestricted = firstDate.Occurrence.UntilIsRestricted,
+                    UntilTimeSpan = firstDate.Occurrence.UntilTimeSpan,
                     IsCanceled = false,
                     IsMoved = false,
                 }
 
             };
 
-            if (mySlotDuration > 0)
+            if (firstDate.Slots.Any())
             {
                 var ohDuration = end - start;
-
-                var numSlots = (int)(ohDuration.TotalMinutes / mySlotDuration + 0.01);
+                var totalMinutes = ohDuration.TotalMinutes;
+                var numSlots = firstDate.Slots.Count;
+                var mySlotDuration = totalMinutes / (double) numSlots;
 
 
                 for (int i = 1; i <= numSlots; i++)
@@ -907,7 +1105,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         Occurrence = new Occurrence
                         {
                             IsAvailable = available,
-                            Capacity = myCapacity,
+                            Capacity = 1,
                             FromIsRestricted = false, // Zeitrestriktionen nur auf dem Activity Date
                             UntilIsRestricted = false,
                             IsCanceled = false,
@@ -962,24 +1160,22 @@ namespace MyStik.TimeTable.Web.Controllers
                                 Occurrence = new Occurrence
                                 {
                                     IsAvailable = true,
-                                    Capacity = myCapacity,
+                                    Capacity = firstDate.Occurrence.Capacity,
                                     FromIsRestricted = false,
-                                    UntilIsRestricted = (model.SubscriptionLimit > 0),
-                                    UntilTimeSpan =
-                                        (model.SubscriptionLimit > 0)
-                                            ? new TimeSpan(model.SubscriptionLimit - 1, 59, 0)
-                                            : new TimeSpan?(),
+                                    UntilIsRestricted = firstDate.Occurrence.UntilIsRestricted,
+                                    UntilTimeSpan = firstDate.Occurrence.UntilTimeSpan,
                                     IsCanceled = false,
                                     IsMoved = false,
                                 }
 
                             };
 
-                            if (mySlotDuration > 0)
+                            if (firstDate.Slots.Any())
                             {
                                 var ohDuration = end - start;
-
-                                var numSlots = (int)(ohDuration.TotalMinutes / mySlotDuration + 0.01);
+                                var totalMinutes = ohDuration.TotalMinutes;
+                                var numSlots = firstDate.Slots.Count;
+                                var mySlotDuration = totalMinutes / (double)numSlots;
 
 
                                 for (int i = 1; i <= numSlots; i++)
@@ -1006,7 +1202,7 @@ namespace MyStik.TimeTable.Web.Controllers
                                         Occurrence = new Occurrence
                                         {
                                             IsAvailable = available,
-                                            Capacity = myCapacity,
+                                            Capacity = 1,
                                             FromIsRestricted = false, // Zeitrestriktionen nur auf dem Activity Date
                                             UntilIsRestricted = false,
                                             IsCanceled = false,
@@ -1019,26 +1215,25 @@ namespace MyStik.TimeTable.Web.Controllers
                             }
 
                             oh.Dates.Add(date);
-                        
-                        
+
+
                         }
                         day = day.AddDays(7);
                     }
                 }
             }
 
-
-
-
-
-
             Db.SaveChanges();
 
-            return RedirectToAction("Index", new {id = model.OfficeHourId});
+            return RedirectToAction("OfficeHour", "Lecturer");
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteDate(Guid id)
         {
             var occ = Db.Occurrences.SingleOrDefault(o => o.Id == id);
@@ -1047,7 +1242,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == summary.Date.Id);
 
-            var actSummary = new ActivitySummary { Activity = date.Activity };
+            var actSummary = new ActivitySummary {Activity = date.Activity};
 
             // alle slots löschen
             foreach (var slot in date.Slots.ToList())
@@ -1061,7 +1256,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 date.Slots.Remove(slot);
                 Db.ActivitySlots.Remove(slot);
             }
-            
+
             occ.Subscriptions.ForEach(s => Db.Subscriptions.Remove(s));
             Db.Occurrences.Remove(occ);
             date.Occurrence = null;
@@ -1074,10 +1269,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction(actSummary.Action, actSummary.Controller, new { id = actSummary.Id });
+            return RedirectToAction("OfficeHour", "Lecturer");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult CancelDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id);
@@ -1108,6 +1307,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CancelDate(OccurrenceMailingModel model)
         {
@@ -1123,6 +1327,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return m.CustomOccurrenceMail(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ReactivateDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id);
@@ -1153,6 +1362,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult ReactivateDate(OccurrenceMailingModel model)
         {
@@ -1164,10 +1378,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            var m = new MailingController { ControllerContext = ControllerContext };
+            var m = new MailingController {ControllerContext = ControllerContext};
             return m.CustomOccurrenceMail(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult MoveDate(Guid id)
         {
             var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
@@ -1185,6 +1404,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult MoveDate(OfficeHourMoveDateModel model)
         {
@@ -1227,7 +1451,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     var ohDuration = activityDate.End - activityDate.Begin;
 
-                    var slotDuration = (int)(ohDuration.TotalMinutes / nSlots + 0.01);
+                    var slotDuration = (int) (ohDuration.TotalMinutes / nSlots + 0.01);
 
                     var slots = activityDate.Slots.OrderBy(s => s.Begin).ToList();
                     var i = 1;
@@ -1245,24 +1469,33 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 Db.SaveChanges();
+                return RedirectToAction("OfficeHour", "Lecturer");
             }
 
-            return RedirectToAction("Index", new { id = activityDate.Activity.Id });
+            return RedirectToAction("Index");
         }
 
-        public ActionResult CreateOfficeHour()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CreateOpenSystem()
         {
             var semester = GetSemester();
+            var m = GetMyMembership();
 
-            var memberService = new MemberService(Db, UserManager);
-            var member = memberService.GetMember(User.Identity.Name, "FK 09");
-            //var isProf = memberService.HasRole(User.Identity.Name, "FK 09", "Prof");
+            if (m != null)
+            {
+                var courseService = new CourseService(UserManager);
+                var myOfficeHour = courseService.GetOfficeHour(m, semester);
+                if (myOfficeHour != null)
+                {
+                    return RedirectToAction("Lecturer", new {id = m.Id});
+                }
+            }
 
             var model = new OfficeHourCreateModel
             {
-                Semester = semester.Name,
-                //DozId = isProf ? member.ShortName : string.Empty,
-                DozId = member.ShortName,
                 DayOfWeek = 1,
                 StartTime = "16:00",
                 EndTime = "17:00",
@@ -1272,75 +1505,240 @@ namespace MyStik.TimeTable.Web.Controllers
                 SubscriptionLimit = 0,
                 DateOption = 0,
                 Text = "Terminvereinbarung per E-Mail",
-                Type = -1,
-                DayOfWeek2 = 1,
-                StartTime2 = "16:00",
-                EndTime2 = "17:00",
-                SubscriptionLimit2 = 0,
             };
 
             SetTimeSelections();
             SetRestrictionSelections();
-            
+
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = sem;
+
+
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult CreateOfficeHour(OfficeHourCreateModel model)
+        public ActionResult CreateOpenSystem(OfficeHourCreateModel model)
         {
             var semester = GetSemester();
-            
+            var org = GetMyOrganisation();
+            var member = GetMyMembership();
+
             // Model in request umsetzen
-            var start = TimeSpan.Parse(model.Type == 0 ? model.StartTime2 : model.StartTime);
-            var end = TimeSpan.Parse(model.Type == 0 ? model.EndTime2 : model.EndTime);
+            var start = TimeSpan.Parse(model.StartTime);
+            var end = TimeSpan.Parse(model.EndTime);
 
             var ohService = new OfficeHourService();
 
             var request = new OfficeHourCreateRequest
             {
-                DozId = string.IsNullOrEmpty(model.DozId) ? new MemberService(Db, UserManager).GetMember(User.Identity.Name, "FK 09").ShortName : model.DozId,
+                DozId = member.Id,
                 StartTime = start,
                 EndTime = end,
-                SubscriptionLimit = model.Type == 0 ? model.SubscriptionLimit2 : model.SubscriptionLimit,
-                Capacity = model.Type == 0 ? 1 :  model.Capacity,
-                SlotDuration = model.Type == 0 ? model.SlotDuration : 0,
-                SpareSlots = model.SpareSlots,
-                DayOfWeek = model.Type == 0 ? (DayOfWeek)model.DayOfWeek2 : (DayOfWeek)model.DayOfWeek,
-                ByAgreement = (model.Type == 1),
-                OrgId = "FK 09",
-                SemesterId = semester.Name,
-                CreateDates = (model.Type != 1),
+                SubscriptionLimit = model.SubscriptionLimit,
+                Capacity = model.Capacity,
+                SlotDuration = 0,
+                SpareSlots = 0,
+                DayOfWeek = (DayOfWeek) model.DayOfWeek,
+                ByAgreement = false,
+                OrgId = org.Id,
+                SemesterId = semester.Id,
+                CreateDates = true,
+                Text = model.Description
             };
 
             var officeHour = ohService.CreateOfficeHour(request);
 
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("OfficeHour", "Lecturer");
         }
 
-        public ActionResult DeleteOfficeHour()
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CreateSlotSystem()
         {
             var semester = GetSemester();
 
-            var memberService = new MemberService(Db, UserManager);
-            var member = memberService.GetMember(User.Identity.Name, "FK 09");
-            var isProf = memberService.HasRole(User.Identity.Name, "FK 09", "Prof");
+            var dozId = string.Empty;
+            var m = GetMyMembership();
 
-            var officeHour = new OfficeHourService().GetOfficeHour(member.ShortName, semester.Name);
+            if (m != null)
+            {
+                var courseService = new CourseService(UserManager);
+                var myOfficeHour = courseService.GetOfficeHour(m, semester);
+                if (myOfficeHour != null)
+                {
+                    return RedirectToAction("Lecturer", new {id = m.Id});
+                }
+            }
+
+            // Member-Admin darf Sprechstunde für andere (und sich) anlegen
+            if (m != null && !m.IsMemberAdmin)
+            {
+                dozId = m.ShortName;
+            }
+
 
             var model = new OfficeHourCreateModel
             {
-                OfficeHourId = officeHour.Id,
-                Semester = semester.Name,
-                DozId = isProf ? member.ShortName : string.Empty,
+                DayOfWeek = 1,
+                StartTime = "16:00",
+                EndTime = "17:00",
+                Capacity = 1,
+                SlotDuration = 15,
+                SpareSlots = 0,
+                SubscriptionLimit = 0,
+                DateOption = 0,
+                Text = "Terminvereinbarung per E-Mail",
+                SlotsPerDate = 1,
+                MaxFutureSlots = 1,
             };
+
+            SetTimeSelections();
+            SetRestrictionSelections();
+
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = sem;
+
 
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult DeleteOfficeHour(OfficeHourCreateModel model)
+        public ActionResult CreateSlotSystem(OfficeHourCreateModel model)
         {
-            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(act => act.Id == model.OfficeHourId);
+            var semester = GetSemester();
+            var org = GetMyOrganisation();
+            var member = GetMyMembership();
+
+            // Model in request umsetzen
+            var start = TimeSpan.Parse(model.StartTime);
+            var end = TimeSpan.Parse(model.EndTime);
+
+            var ohService = new OfficeHourService();
+
+            var request = new OfficeHourCreateRequest
+            {
+                DozId = member.Id,
+                StartTime = start,
+                EndTime = end,
+                SubscriptionLimit = model.SubscriptionLimit,
+                Capacity = 1,
+                SlotDuration = model.SlotDuration,
+                SpareSlots = model.SpareSlots,
+                DayOfWeek = (DayOfWeek) model.DayOfWeek,
+                ByAgreement = false,
+                OrgId = org.Id,
+                SemesterId = semester.Id,
+                CreateDates = true,
+                Text = model.Description,
+                SlotsPerDate = 1,
+                FutureSlots = model.MaxFutureSlots
+            };
+
+
+            var officeHour = ohService.CreateOfficeHour(request);
+
+            return RedirectToAction("OfficeHour", "Lecturer");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CreateByAgreement()
+        {
+            var semester = GetSemester();
+
+            var dozId = string.Empty;
+            var m = GetMyMembership();
+
+            if (m != null)
+            {
+                var courseService = new CourseService(UserManager);
+                var myOfficeHour = courseService.GetOfficeHour(m, semester);
+                if (myOfficeHour != null)
+                {
+                    return RedirectToAction("Lecturer", new { id = m.Id });
+                }
+            }
+
+            var model = new OfficeHourCreateModel
+            {
+                Description = "",
+            };
+
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = sem;
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult CreateByAgreement(OfficeHourCreateModel model)
+        {
+            var semester = GetSemester();
+            var org = GetMyOrganisation();
+            var member = GetMyMembership();
+
+            var ohService = new OfficeHourService();
+
+            var request = new OfficeHourCreateRequest
+            {
+                DozId = member.Id,
+                StartTime = TimeSpan.Zero,
+                EndTime = TimeSpan.Zero,
+                SubscriptionLimit = 0,
+                Capacity = 0,
+                SlotDuration = 0,
+                SpareSlots = 0,
+                DayOfWeek = DayOfWeek.Friday,
+                ByAgreement = true,
+                OrgId = org.Id,
+                SemesterId = semester.Id,
+                CreateDates = false,
+                Text = model.Description
+            };
+
+            var officeHour = ohService.CreateOfficeHour(request);
+
+
+            return RedirectToAction("OfficeHour", "Lecturer");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DeleteOfficeHour(Guid id)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(act => act.Id == id);
 
             if (officeHour != null)
             {
@@ -1368,11 +1766,17 @@ namespace MyStik.TimeTable.Web.Controllers
                     officeHour.Dates.Remove(date);
                     Db.ActivityDates.Remove(date);
                 }
-                
+
                 foreach (var sub in officeHour.Occurrence.Subscriptions.ToList())
                 {
                     officeHour.Occurrence.Subscriptions.Remove(sub);
                     Db.Subscriptions.Remove(sub);
+                }
+
+                foreach (var owner in officeHour.Owners.ToList())
+                {
+                    officeHour.Owners.Remove(owner);
+                    Db.ActivityOwners.Remove(owner);
                 }
 
                 Db.Occurrences.Remove(officeHour.Occurrence);
@@ -1385,6 +1789,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public ActionResult RemoveSubscription(Guid id, string userId)
         {
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
@@ -1413,7 +1823,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     var mail = new MailController();
                     mail.RemoveSubscription(mailModel).Deliver();
 
-                    return RedirectToAction(summary.Action, summary.Controller, new { id = summary.Id });
+                    return RedirectToAction(summary.Action, summary.Controller, new {id = summary.Id});
 
                     // alt: return RedirectToAction("Index", new { id = summary.Activity.Id });
                 }
@@ -1422,7 +1832,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Missing", "Home");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public FileResult SubscriptionList(Guid id)
         {
             var ms = new MemoryStream();
@@ -1446,10 +1860,12 @@ namespace MyStik.TimeTable.Web.Controllers
                             var user = UserManager.FindById(sub.UserId);
                             if (user != null)
                             {
-                                writer.Write("{0};{1};{2};{3};{4};{5};{6}", date.Begin.Date.ToShortDateString(), slot.Begin.TimeOfDay.ToString(@"hh\:mm"), slot.End.TimeOfDay.ToString(@"hh\:mm"), user.LastName, user.FirstName, user.Email, sub.TimeStamp);
+                                writer.Write("{0};{1};{2};{3};{4};{5};{6}", date.Begin.Date.ToShortDateString(),
+                                    slot.Begin.TimeOfDay.ToString(@"hh\:mm"), slot.End.TimeOfDay.ToString(@"hh\:mm"),
+                                    user.LastName, user.FirstName, user.Email, sub.TimeStamp);
                                 writer.Write(Environment.NewLine);
                             }
-                        }                    
+                        }
                     }
                     foreach (var sub in date.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
                     {
@@ -1464,10 +1880,10 @@ namespace MyStik.TimeTable.Web.Controllers
                                 user.FirstName,
                                 user.Email,
                                 sub.TimeStamp
-                                ));
+                            ));
                             writer.Write(Environment.NewLine);
                         }
-                    }                    
+                    }
 
                 }
             }
@@ -1518,10 +1934,224 @@ namespace MyStik.TimeTable.Web.Controllers
                 new SelectionHelper {Text = "jeweils 24 h vor Beginn des Termins", Value = 24},
             };
 
+
+            var slotLimits = new List<SelectionHelper>
+            {
+                new SelectionHelper {Text = "1", Value = 1},
+                new SelectionHelper {Text = "2", Value = 2},
+                new SelectionHelper {Text = "3", Value = 3},
+                new SelectionHelper {Text = "Keine Beschränkung", Value = 0},
+            };
+
+            var futureSlotLimits = new List<SelectionHelper>
+            {
+                new SelectionHelper {Text = "1", Value = 1},
+                new SelectionHelper {Text = "2", Value = 2},
+                new SelectionHelper {Text = "3", Value = 3},
+                new SelectionHelper {Text = "Keine Beschränkung", Value = 0},
+            };
+
+
+
             ViewBag.SlotDurations = new SelectList(sd, "Value", "Text", "Slots a 10 min");
             ViewBag.SpareSlots = new SelectList(spare, "Value", "Text", "keine");
             ViewBag.Capacities = new SelectList(cap, "Value", "Text", "keine Beschränkung");
             ViewBag.Limits = new SelectList(limits, "Value", "Text", "keine Beschränkung");
+            ViewBag.SlotLimits = new SelectList(slotLimits, "Value", "Text", "1");
+            ViewBag.FutureSlotLimits = new SelectList(futureSlotLimits, "Value", "Text", "1");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult LockSlot(Guid id)
+        {
+            var occurrence = Db.ActivitySlots.SingleOrDefault(occ => occ.Id == id);
+
+            if (occurrence != null)
+            {
+                occurrence.Occurrence.IsAvailable = false;
+                Db.SaveChanges();
+            }
+
+
+            return PartialView("_LockedSlot", occurrence);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult UnLockSlot(Guid id)
+        {
+            var occurrence = Db.ActivitySlots.SingleOrDefault(occ => occ.Id == id);
+
+            if (occurrence != null)
+            {
+                occurrence.Occurrence.IsAvailable = true;
+                Db.SaveChanges();
+            }
+
+            return PartialView("_LockedSlot", occurrence);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult EditSlotSystem(Guid id)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(o => o.Id == id);
+
+            var limit = 0;
+            if (officeHour.Occurrence.UntilIsRestricted && officeHour.Occurrence.UntilTimeSpan.HasValue)
+            {
+                limit = officeHour.Occurrence.UntilTimeSpan.Value.Hours + 1;
+            }
+
+
+            var model = new OfficeHourCreateModel
+            {
+                OfficeHourId = officeHour.Id,
+                Capacity = officeHour.Occurrence.Capacity,
+                SubscriptionLimit = limit,
+                MaxFutureSlots = officeHour.FutureSubscriptions.HasValue ? officeHour.FutureSubscriptions.Value : 0
+            };
+
+            SetRestrictionSelections();
+
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = sem;
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditSlotSystem(OfficeHourCreateModel model)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(o => o.Id == model.OfficeHourId);
+
+            if (officeHour != null)
+            {
+
+                officeHour.Occurrence.UntilIsRestricted = (model.SubscriptionLimit > 0);
+                officeHour.Occurrence.UntilTimeSpan =
+                    (model.SubscriptionLimit > 0)
+                        ? new TimeSpan(model.SubscriptionLimit - 1, 59, 0)
+                        : new TimeSpan?();
+
+                officeHour.FutureSubscriptions = model.MaxFutureSlots;
+                officeHour.Description = model.Description;
+
+                officeHour.Occurrence.Capacity = model.Capacity;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("OfficeHour", "Lecturer");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult EditOpenSystem(Guid id)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(o => o.Id == id);
+
+            var model = new OfficeHourCreateModel
+            {
+                OfficeHourId = officeHour.Id,
+                Capacity = officeHour.Occurrence.Capacity,
+                SubscriptionLimit = 0,
+            };
+
+            SetRestrictionSelections();
+
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = sem;
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditOpenSystem(OfficeHourCreateModel model)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(o => o.Id == model.OfficeHourId);
+
+            officeHour.Occurrence.Capacity = model.Capacity;
+            officeHour.Description = model.Description;
+            Db.SaveChanges();
+
+            return RedirectToAction("OfficeHour", "Lecturer");
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult EditByAgreement(Guid id)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(o => o.Id == id);
+
+            var model = new OfficeHourCreateModel
+            {
+                OfficeHourId = officeHour.Id,
+                Description = officeHour.Description
+            };
+
+            SetRestrictionSelections();
+
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = sem;
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditByAgreement(OfficeHourCreateModel model)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(o => o.Id == model.OfficeHourId);
+
+            officeHour.Description = model.Description;
+            Db.SaveChanges();
+
+            return RedirectToAction("OfficeHour", "Lecturer");
+
+        }
+
     }
 }

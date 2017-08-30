@@ -1,6 +1,6 @@
 ﻿@model MyStik.TimeTable.Web.Models.MensaViewModel
 @{
-    ViewBag.Title = "Mensa";
+    ViewBag.Title = Resources.SubMenuCantine;
 }
 
 <div class="panel panel-default">
@@ -27,7 +27,7 @@
                             <div class="portlet light bordered">
                                 <div class="portlet-title">
                                     <div class="caption">
-                                        <i class="fa fa-calendar"></i>Heute, @Model.Tage.ElementAt(0).date
+                                        <i class="fa fa-calendar"></i>@Resources.TodayString, @Model.Tage.ElementAt(0).date
                                     </div>
                                     <div class="actions">
                                     </div>
@@ -38,8 +38,8 @@
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Bezeichnung</th>
-                                                    <th>Preis</th>
+                                                    <th>@Resources.Description</th>
+                                                    <th>´@Resources.PriceString</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -78,13 +78,13 @@
                                                             @if (!meal.prices.allPricesAreZero())
                                                             {
                                                                 <b>@meal.prices.price_student.ToString("0.00€")</b>
-                                                                <small>Studenten</small>
+                                                                <small>@Resources.SubMenuStudents</small>
                                                                 <br />
                                                                 @meal.prices.price_employees.ToString("0.00€")
-                                                                <small>Mitarbeiter</small>
+                                                                <small>@Resources.EmployeesString</small>
                                                                 <br />
                                                                 @meal.prices.price_others.ToString("0.00€")
-                                                                <small>Gäste</small>
+                                                                <small>@Resources.GuestsString</small>
                                                                 ;
                                                             }
                                                         </td>
@@ -107,7 +107,7 @@
                                             <div class="caption">
 
                                                 <p>
-                                                    <h3> Vorschau </h3>
+                                                    <h3> @Resources.PreviewString </h3>
                                                 </p>
                                             </div>
                                         </div>
@@ -123,15 +123,15 @@
                                                             <th>
                                                                 <h2> @Vorschautag.Name, @Vorschautag.Datum </h2>
                                                             </th>
-                                                            <th>Preise für</th>
+                                                            <th>@Resources.PricesforString</th>
 
                                                         </tr>
                                                     </thead>
 
                                                     <thead>
                                                         <tr>
-                                                            <th>Gericht</th>
-                                                            <th>Studenten <small>Mitarbeiter,Gäste</small></th>
+                                                            <th>@Resources.MealString</th>
+                                                            <th>Studenten <small>@Resources.EmployeesString, @Resources.GuestsString</small></th>
 
                                                         </tr>
                                                     </thead>
@@ -177,7 +177,7 @@
                                     </div>
                                     <!--Legende-->
                                     <div>
-                                        <small>Legende: vegan = <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>; vegetarisch = <span class="glyphicon glyphicon-apple" aria-hidden="true"></span>; bio = <span class="glyphicon glyphicon-leaf" aria-hidden="true"></span></small>
+                                        <small>@Resources.KeyString: @Resources.VeganString = <span class="glyphicon glyphicon-grain" aria-hidden="true"></span>; @Resources.VegetarianString = <span class="glyphicon glyphicon-apple" aria-hidden="true"></span>; @Resources.OrganicString = <span class="glyphicon glyphicon-leaf" aria-hidden="true"></span></small>
                                     </div>
                                 </div>
                             </div>
@@ -195,14 +195,14 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Öffnungszeiten</th>
+                                                <th>@Resources.BusinessHoursString</th>
                                                 <th></th>
-                                                <th>Adresse</th>
-                                                <th>Links</th>
+                                                <th>@Resources.AddressString</th>
+                                                <th>@Resources.LinkString</th>
                                             </tr>
                                             <tr>
-                                                <th>Montag-Donnerstag</th>
-                                                <th>Freitag</th>
+                                                <th>@Resources.MondayToThursdayString</th>
+                                                <th>@Resources.FridayString</th>
                                                 <td>Lothstraße 13d</td>
                                                 <td><a href="@Url.Action("StuCafe", "Cantine")">StuCafe</a></td>
                                             </tr>
@@ -210,10 +210,10 @@
                                         <tbody>
                                             <tr>
 
-                                                <td>11.00 - 14.00</td>
-                                                <td>11.00 - 13.45</td>
-                                                <td>1.Stock</td>
-                                                <td><a href="http://openmensa.org/c/141" target="_blank">Mensa Speiseplan</a></td>
+                                                <td>@Resources.BusinessHoursTimeMondaytoThursday</td>
+                                                <td>@Resources.BusinessHoursTimeFriday</td>
+                                                <td>@Resources.AddressCantine</td>
+                                                <td><a href="@Resources.CantineHyperlink" target="_blank">@Resources.CantineMenuString</a></td>
                                             </tr>
                                         </tbody>
 
@@ -223,8 +223,6 @@
                         </div>
                     </div>
                 </div>
-                }
-
             </div>
         </div>
     </div>
@@ -237,7 +235,7 @@ else
                 <div class="portlet box red">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-gift"></i>Kein Speiseplan verfügbar
+                            <i class="fa fa-gift"></i>@Resources.CantineNoMenuAvailable
                         </div>
                     </div>
                     <div class="portlet-body">

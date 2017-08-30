@@ -1,15 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class UserInfoService
     {
         private ApplicationDbContext _db = new ApplicationDbContext();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public string GetUserName(string userId)
         {
             var user = _db.Users.SingleOrDefault(u => u.Id.Equals(userId));
@@ -19,6 +24,19 @@ namespace MyStik.TimeTable.Web.Services
             }
 
             return "unbekannt";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public ApplicationUser GetUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return null;
+
+            return _db.Users.SingleOrDefault(u => u.Id.Equals(userId));
         }
     }
 }

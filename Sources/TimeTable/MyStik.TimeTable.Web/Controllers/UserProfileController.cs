@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -15,9 +11,28 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class UserProfileController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PersonalData()
+        {
+            return View();
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EditPersonalData()
+        {
+            return View();
+        }
 
-        // GET: UserProfile
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var model = new UserProfileViewModel();
@@ -76,6 +91,20 @@ namespace MyStik.TimeTable.Web.Controllers
                     Id = d.Id.ToString(),
                     UserId = d.User.Id.ToString()
                 };
+
+                switch (d.Platform)
+                {
+                    case DevicePlatform.Android:
+                        userDevice.DeviceName = "Android";
+                        break;
+                    case DevicePlatform.IOS:
+                        userDevice.DeviceName = "iOS";
+                        break;
+                    case DevicePlatform.WinPhone:
+                        userDevice.DeviceName = "Windows Phone";
+                        break;
+                }
+
                 model.UserDevices.Add(userDevice);
             }
 
@@ -147,7 +176,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
          */
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SaveMsgData(UserProfileViewModel model)
         {
@@ -165,6 +198,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return new EmptyResult();// View("Index", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SaveContactData(UserProfileViewModel model)
         {
@@ -187,6 +225,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return new EmptyResult();// View("Index", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="deviceList"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult SaveUserDeviceData(List<string[]> deviceList)
         {
@@ -320,9 +363,18 @@ namespace MyStik.TimeTable.Web.Controllers
          */
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class UserDataModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string FirstName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string LastName { get; set; }
     }
 }

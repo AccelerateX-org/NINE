@@ -1,6 +1,5 @@
-﻿@using System.Collections
-@model MyStik.TimeTable.Web.Models.ProfileViewModel
-<h4>Benutzerprofil verwalten</h4>
+﻿@model MyStik.TimeTable.Web.Models.ProfileViewModel
+<h4>@Resources.ManageProfileHeading</h4>
 
 <div class="row">
     <div class="col-md-8">
@@ -47,7 +46,7 @@
                      if (string.IsNullOrEmpty(Model.Curriculum) || string.IsNullOrEmpty(Model.Group))
                      {
                          <div class="alert alert-warning">
-                             <p>Bitte wählen Sie Ihr Studienprogramm und Ihre Studiengruppe für dieses Semester aus. Nach der Auswahl bitte die Schaltfläche speichern betätigen.</p>
+                             <p>@Resources.CurriculumNGroupEmptyMessage</p>
                          </div>
                      }
                      <div class="form-group">

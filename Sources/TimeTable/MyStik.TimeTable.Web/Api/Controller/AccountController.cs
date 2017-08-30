@@ -1,39 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using MyStik.TimeTable.Web.Api.Responses;
-using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AccountController : ApiController
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager _userManager;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected AccountController()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IdentifyConfig.ApplicationUserManager UserManager
         {
-            get
-            {
-                return _userManager ?? new IdentifyConfig.ApplicationUserManager(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-            }
-            protected set
-            {
-                _userManager = value;
-            }
+            get => _userManager ?? new IdentifyConfig.ApplicationUserManager(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            protected set => _userManager = value;
         }
 
 
@@ -66,10 +63,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     user = UserManager.Find(tempUser.UserName, Password);
                     //wenn pw vorhanden userID abfragen
                     if (user != null)
-                    {
-                        //UserID Abfragen
                         userId = user.Id;
-                    }
                 }
             }
             //Übergebener string ist evtl Loginname
@@ -80,10 +74,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
                 //wenn user vorhanden stimmt userID abfragen
                 if (user != null)
-                {
-                    //UserID Abfragen
                     userId = user.Id;
-                }
             }
 
             // jetzt steht in jedem Fall etwas sinnvolles in der userId drin!

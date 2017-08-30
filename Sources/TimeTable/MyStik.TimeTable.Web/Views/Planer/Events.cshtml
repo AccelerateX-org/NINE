@@ -1,0 +1,64 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardStudentViewModel
+
+@{
+    ViewBag.Title = "Meine Veranstaltungen";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Veranstaltungen im @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-pencil"></i>
+                        <span class="caption-subject bold uppercase"> Meine Veranstaltungen</span>
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Datum</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var act in Model.MyCourseSubscriptions)
+                    {
+                        var lvName = string.Format("{0} ({1})", act.Activity.Name, act.Activity.Activity.ShortName);
+                        <tr>
+                            <td>
+                                @Html.ActionLink(
+                                    lvName,
+                                    act.Activity.Action, act.Activity.Controller, new { id = act.Activity.Id }, null)
+                            </td>
+                            <td>
+                                @foreach (var date in act.Activity.Activity.Dates)
+                                {
+                                    <div>@Html.TimeSpanWithDate(date)</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

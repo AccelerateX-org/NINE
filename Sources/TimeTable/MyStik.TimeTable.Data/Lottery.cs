@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -33,8 +30,20 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Nur der Owener darf die Einstellungen ändern
+        /// Das sind "private" Lotterien, diese sind wiederverwendbar
         /// </summary>
         public virtual OrganiserMember Owner { get; set; }
+
+        /// <summary>
+        /// Die immer wiederkehrenden Platzverlosungen in einem Semester
+        /// </summary>
+        public virtual Semester Semester { get; set; }
+
+        /// <summary>
+        /// In Kombination zu einem Semester => dürfen nur von den CourseAdmins
+        /// bearbeitet werden
+        /// </summary>
+        public virtual ActivityOrganiser Organiser { get; set; }
 
         /// <summary>
         /// Anzahl der Plätze, die ein Teilnehmer maximal annehmen darf

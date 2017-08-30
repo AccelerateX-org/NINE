@@ -1,0 +1,152 @@
+﻿@model MyStik.TimeTable.Data.CurriculumModule
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Modulbeschreibung "Modul @Model.Name"</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Member != null && ViewBag.Member.Id == Model.MV.Id)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-cog"></i> Verwaltung <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="@Url.Action("Edit", new {id = Model.Id})">
+                                            <i class="fa fa-pencil"></i> Angaben ändern
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("CourseAdmin", new {id=Model.Id})">
+                                            <i class="fa fa-music"></i> LVs verwalten
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("CreateExam", new {id=Model.Id})">
+                                            <i class="fa fa-bomb"></i> Prüfungen hinzufügen
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a href="@Url.Action("LinkCourses", new {id=Model.Id})">
+                                            <i class="fa fa-music"></i> Lehrveranstaltungen zuordnen
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a href="@Url.Action("Delegate", new {id=Model.Id})">
+                                            <i class="fa fa-fast-forward"></i> Modulverantwortung übertragen
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-puzzle-piece"></i>
+                        <span class="caption-subject bold uppercase"> Allgemeine Angaben</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed table-bordered">
+                        <tbody>
+                        <tr>
+                            <td><strong>Name</strong></td>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Modulverantwortlicher</strong></td>
+                            <td>@Model.MV.Name (@Model.ShortName)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beschreibung</strong></td>
+                            <td>@Html.Raw(Model.Description)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ECTS</strong></td>
+                            <td>@Model.ECTS</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-music"></i>
+                                <span class="caption-subject bold uppercase"> Lehrveranstaltungen</span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-bomb"></i>
+                                <span class="caption-subject bold uppercase"> Prüfungsleistungen</span>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Typ</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var exam in Model.ModuleExams)
+                                {
+                                    <tr>
+                                        <td>@exam.ExamType</td>
+                                    </tr>
+  
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

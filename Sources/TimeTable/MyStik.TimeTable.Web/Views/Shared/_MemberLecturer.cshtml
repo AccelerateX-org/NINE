@@ -1,33 +1,52 @@
 ﻿@model MyStik.TimeTable.Web.Models.LecturerCharacteristicModel
 
-<h4>@Model.Lecturer.Name (@Model.Lecturer.ShortName)</h4>
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">Allgemeine Informationen</div>
-            <div class="panel-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Profil</label>
-                        <div class="col-sm-9">
-                            <p class="form-control-static"><a href="@Model.Lecturer.UrlProfile" target="_blank">@Model.Lecturer.UrlProfile</a> <i class="fa fa-external-link"></i></p>
+
+@*
+    @if (!string.IsNullOrEmpty(Model.Lecturer.UrlProfile))
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-graduation-cap"></i>Allgemeine Informationen
+                        </div>
+                        <div class="actions">
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Profil</label>
+                                <div class="col-sm-9">
+                                    <p class="form-control-static">
+                                        <a href="@Model.Lecturer.UrlProfile" target="_blank">@Model.Lecturer.UrlProfile</a> <i class="fa fa-external-link"></i>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">Aktuelle Lehrveranstaltungen (@ViewBag.Semester.Name)</h4>
-            </div>
-            <div class="panel-body">
-                @Html.Partial("_CourseListSummary", Model.Courses)
+    }
+*@
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>Aktuelle Lehrveranstaltungen (@ViewBag.Semester.Name)
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    @Html.Partial("_CourseListSummary", Model.Courses)
+                </div>
             </div>
         </div>
     </div>
-</div>
+
 

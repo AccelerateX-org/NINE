@@ -1,4 +1,4 @@
-﻿@model MyStik.TimeTable.Data.OrganiserMember
+﻿
 @{
     ViewBag.Title = "PersonalSchedule";
 }
@@ -9,7 +9,7 @@
 }
 
 
-<h2>Vorlesungsplan (@Model.Name) - Semester @ViewBag.Semester.Name</h2>
+<h2>Vorlesungsplan (@ViewBag.Name) - Semester @ViewBag.Semester.Name</h2>
 
         <div id="calendar">
         </div>
@@ -35,7 +35,7 @@
 
             $('#calendar').fullCalendar('addEventSource',
             {
-                url: '@Url.Action("ActivityPrintPlan", "Calendar", new { dozId = Model.Id})',
+                url: '@Url.Action("ActivityPrintPlan", "Calendar")',
                 type: 'POST'
             });
         });

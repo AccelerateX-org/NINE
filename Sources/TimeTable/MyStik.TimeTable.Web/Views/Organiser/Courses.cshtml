@@ -1,116 +1,197 @@
-﻿@using System.Globalization
-@using System.Web.UI.WebControls
-@using MyStik.TimeTable.Web.Helpers
-@using PagedList
-@using PagedList.Mvc
+﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
     ViewBag.Title = "Lehrveranstaltungen " + Model.Organiser.ShortName;
 }
-<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
 
 
-<h4>Lehrveranstaltungen</h4>
+
 
 <div class="panel panel-default">
-    <div class="panel panel-default">
-        <div class="panel-heading">Alle Lehrveranstaltungen (@ViewBag.Semester.Name)</div>
-        <div class="panel-body">
-            <div>
-                @Html.ActionLink("A", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "A" }, null)
-                @Html.ActionLink("B", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "B" }, null)
-                @Html.ActionLink("C", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "C" }, null)
-                @Html.ActionLink("D", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "D" }, null)
-                @Html.ActionLink("E", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "E" }, null)
-                @Html.ActionLink("F", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "F" }, null)
-                @Html.ActionLink("G", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "G" }, null)
-                @Html.ActionLink("H", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "H" }, null)
-                @Html.ActionLink("I", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "I" }, null)
-                @Html.ActionLink("J", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "J" }, null)
-                @Html.ActionLink("K", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "K" }, null)
-                @Html.ActionLink("L", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "L" }, null)
-                @Html.ActionLink("M", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "M" }, null)
-                @Html.ActionLink("N", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "N" }, null)
-                @Html.ActionLink("O", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "O" }, null)
-                @Html.ActionLink("P", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "P" }, null)
-                @Html.ActionLink("Q", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "Q" }, null)
-                @Html.ActionLink("R", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "R" }, null)
-                @Html.ActionLink("S", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "S" }, null)
-                @Html.ActionLink("T", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "T" }, null)
-                @Html.ActionLink("U", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "U" }, null)
-                @Html.ActionLink("V", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "V" }, null)
-                @Html.ActionLink("W", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "W" }, null)
-                @Html.ActionLink("X", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "X" }, null)
-                @Html.ActionLink("Y", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "Y" }, null)
-                @Html.ActionLink("Z", "Courses", "Organiser", new { id = Model.Organiser.ShortName, startWith = "Z" }, null)
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName im @ViewBag.Semester.Name</h1>
             </div>
-            
-
-            <table class="table table-striped table-bordered table-condensed">
-                <thead>
-                    <tr>
-                        <th>Bezeichnung</th>
-                        <th>Gruppe(n)</th>
-                        <th>Zeit(en)</th>
-                        <th>Raum</th>
-                        <th>Dozent(en)</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var c in Model.Courses)
-                    {
-                        <tr>
-                            <td>
-                                @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new { id = c.Course.Id }, null)
-                            </td>
-                            <td>
-                                @foreach (var group in c.Course.SemesterGroups)
-                                {
-                                    if (group.CurriculumGroup != null)
-                                    {
-                                        var label = group.CurriculumGroup.Curriculum.ShortName + " - " + group.CurriculumGroup.Name;
-                                        @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
-                                        if (group != c.Course.SemesterGroups.Last())
-                                        {
-                                            @Html.Raw(", ")
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var label = "Ohne Zuordnung";
-                                        <div class="text-danger"><strong>@Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)</strong></div>
-                                    }
-                                }
-                            </td>
-                            <td>
-                                @foreach (var courseDate in c.Dates)
-                                {
-                                    <div>@courseDate.DefaultDate.ToString("dd.MM.yyyy", new CultureInfo("de-DE")) [@courseDate.StartTime.ToString(@"hh\:mm") - @courseDate.EndTime.ToString(@"hh\:mm")]</div>
-                                }
-                            </td>
-                            <td>
-                                @Html.RoomList(c.Rooms)
-                            </td>
-                            <td>
-                                @Html.LecturerList(c.Lecturers)
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>            
-            
-            @Html.PagedListPager((IPagedList)ViewBag.CoursePage, page => Url.Action("Courses", new { id = Model.Organiser.ShortName, page }))
-
-
-            @if (ViewBag.UserRight.IsOrgMember)
-            {
-                <div class="well well-sm">
-                    <a href="@Url.Action("CreateCourse", "Course")" class="btn btn-default"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Lehrveranstaltung anlegen</a>
-                </div>
-            }
         </div>
     </div>
 </div>
 
 
+
+
+<div class="container-fluid">
+    @{
+        var allowAddCourse = true;
+        var allowInitGroups = false;
+        var allowImport = false;
+        var allowPublishGroups = false;
+
+        if (!ViewBag.HasSemesterGroups)
+        {
+            allowAddCourse = false;
+            if (ViewBag.HasCurricula)
+            {
+                if (ViewBag.UserRight.IsCourseAdmin)
+                {
+                    allowInitGroups = true;
+                    
+                    <div class="alert alert-info">
+                        <strong>Hinweis:</strong> Es wurden noch keine Semestergruppen angelegt.<br/>
+                        <a href="@Url.Action("Groups")" class="btn btn-primary">Semestergruppen anlegen</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <strong>Hinweis:</strong> Es wurden noch keine Semestergruppen angelegt.<br/>
+                        Daher können für das @ViewBag.Semester.Name noch keine Lehrveranstaltungen angelegt werden.
+                    </div>
+                }
+            }
+            else
+            {
+                if (ViewBag.UserRight.IsCourseAdmin)
+                {
+                    allowImport = true;
+
+                    <div class="alert alert-info">
+                        <strong>Hinweis:</strong> Es gibt keine Studiengänge. Stundenplandaten können importiert werden.<br/>
+                        <a href="@Url.Action("Index", "Untis")" class="btn btn-primary">Stundenplandaten importieren</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <strong>Hinweis:</strong> Es sind keine Studiengänge angelegt.<br/>
+                        Daher können für das @ViewBag.Semester.Name keine Lehrveranstaltungen angelegt werden.
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            if (ViewBag.HasUnpublishedGroups)
+            {
+                if (ViewBag.UserRight.IsCourseAdmin)
+                {
+                    <div class="alert alert-info">
+                        <strong>Hinweis:</strong> Es sind noch nicht alle Semestergruppen freigegeben.<br />
+                        Daher können sich die Studierenden für das @ViewBag.Semester.Name noch nicht in allle Lehrveranstaltungen eintragen.
+                        <a href="@Url.Action("Groups")" class="btn btn-primary">Semestergruppen freigeben</a>
+                    </div>
+
+                    allowImport = true;
+                    allowInitGroups = true;
+                    allowPublishGroups = true;
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <strong>Hinweis:</strong> Es sind noch nicht alle Semestergruppen freigegeben.<br />
+                        Daher können sich die Studierenden für das @ViewBag.Semester.Name noch nicht in allle Lehrveranstaltungen eintragen.
+                    </div>
+                }
+            }
+        }
+}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-home"></i> Alle Lehrveranstaltungen
+                    </div>
+                    <div class="actions">
+                        @if (allowImport || allowAddCourse || allowInitGroups)
+                        {
+                            <div class="btn-group">
+                                <a class="btn btn-default btn-sm" href="javascript:;" data-toggle="dropdown">
+                                    <i class="fa fa-cog"></i> Aktionen
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    @if (allowAddCourse)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("CreateCourse", "Course")"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Lehrveranstaltung anlegen</a>
+                                        </li>
+                                    }
+                                    @if (allowInitGroups)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("InitGroups", "Semester")"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Semestergruppen initialisieren</a>
+                                        </li>
+                                    }
+                                    @if (allowImport)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("Index", "Untis")"><i class="fa fa-lightbulb-o fa-2x text-primary"></i> Stundenplandaten importieren</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table id="tabCourses" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Bezeichnung</th>
+                            <th>Gruppe(n)</th>
+                            <th>Zeit(en)</th>
+                            <th>Raum</th>
+                            <th>Lehrende</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var c in Model.Courses)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new {id = c.Course.Id}, null)
+                                </td>
+                                <td>
+                                    @Html.GroupList(c.Course.SemesterGroups, true)
+                                </td>
+                                <td>
+                                    @Html.DateList(c.Dates)
+                                </td>
+                                <td>
+                                    @Html.RoomList(c.Rooms)
+                                </td>
+                                <td>
+                                    @Html.LecturerList(c.Lecturers)
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabCourses').DataTable();
+        });
+    </script>
+}

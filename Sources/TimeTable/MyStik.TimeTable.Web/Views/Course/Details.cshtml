@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CourseDetailViewModel
 @{
     ViewBag.Title = "Kursdetails";
@@ -34,15 +35,24 @@
 <div class="container-fluid">
 <div class="row">
 <div class="col-md-2">
-    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)
+    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsCourseAdmin)
     {
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <ul class="nav">
-                        <li>
-                            <a href="@Url.Action("Admin", new {id = Model.Course.Id})"><i class="fa fa-wrench"></i> Verwaltung</a>
-                        </li>
+                        @if (Model.Course.IsInternal)
+                        {
+                            <li class="list-group-item disabled">
+                                <strong>Gesperrt</strong>
+                            </li>                        
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@Url.Action("Admin", new {id = Model.Course.Id})"><i class="fa fa-wrench"></i> Verwaltung</a>
+                            </li>
+                        }
                         <li>
                             <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-envelope-o"></i> E-Mail</a>
                         </li>
@@ -141,7 +151,7 @@
     <div class="panel">
         <div class="panel-header">
             <div class="btn-group" role="group">
-                <button id="toggleHistoryOn" type="button" class="btn btn-default">Alle Termine anzeigen</button>
+                <button id="toggleHistoryOn" type="button" class="btn btn-default" style="margin-right: 5px; margin-left: 14px;">Alle Termine anzeigen</button>
                 <button id="toggleHistoryOff" type="button" class="btn btn-default">Nur zukünftige Termine anzeigen</button>
             </div>
         </div>
@@ -190,7 +200,7 @@
         <div class="panel-body">
             <div class="col-md-6">
                 <div class="panel panel-default">
-                    <div class="panel-heading"><i class="fa fa-users"></i> Teilnehmer <span class="badge">@Model.ParticipantList.Count</span></div>
+                    <div class="panel-heading"><i class="fa fa-users"></i> Teilnehmer + Reservierungen <span class="badge">@Model.ParticipantList.Count</span></div>
                     <table class="table table-condensed">
                         <thead>
                         <tr>
@@ -203,9 +213,12 @@
                         @{ var anonymousCount = 0;}
                         @foreach (var paricipiant in Model.ParticipantList)
                         {
-                            bool showItem = ViewBag.UserRight.IsOrgMember ||
+                            /* 
+                             * bool showItem = ((ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff) ||
                                             (ViewBag.UserRight.IsSubscriber && !ViewBag.UserRight.User.IsAnonymous && !paricipiant.User.IsAnonymous) ||
-                                            paricipiant.User.Id.Equals(ViewBag.UserRight.User.Id);
+                                            paricipiant.User.Id.Equals(ViewBag.UserRight.User.Id));
+                                            */
+                            bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
 
                             if (showItem)
                             {
@@ -247,9 +260,12 @@
                         @{ var anonymousCountW = 0;}
                         @foreach (var waiting in Model.WaitingList)
                         {
+                            /*
                             bool showItem = ViewBag.UserRight.IsOrgMember ||
                                             (ViewBag.UserRight.IsSubscriber && !ViewBag.UserRight.User.IsAnonymous && !waiting.User.IsAnonymous) ||
                                             waiting.User.Id.Equals(ViewBag.UserRight.User.Id);
+                                            */
+                            bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
 
                             if (showItem)
                             {
@@ -358,11 +374,11 @@
 
         $(document).ready(function () {
             $("#toggleHistoryOn").click(function () {
-                $("tr[history]").show();
+                $("div[history]").show();
             });
 
             $("#toggleHistoryOff").click(function () {
-                $("tr[history]").hide();
+                $("div[history]").hide();
             });
 
         });

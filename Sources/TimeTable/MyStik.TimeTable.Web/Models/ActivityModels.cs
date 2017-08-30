@@ -1,102 +1,191 @@
-﻿using System.Configuration;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.Text;
 using MyStik.TimeTable.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityCurrentModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ActivityDate> CurrentDates { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ActivityDate> CanceledDates { get; set; }
 
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityPlanModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityPlanModel()
         {
             MyActivities = new List<ActivitySummary>();
             MySubscriptions = new List<ActivitySubscriptionModel>();
         }
 
-        public List<ActivitySummary> MyActivities { get; private set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ActivitySummary> MyActivities { get; }
 
-        public List<ActivitySubscriptionModel> MySubscriptions { get; private set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ActivitySubscriptionModel> MySubscriptions { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool HasLottery { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsDuringLottery { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivitySubscriptionModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public IActivitySummary Activity { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceStateModel State { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IActivitySummary
     {
+        /// <summary>
+        /// 
+        /// </summary>
         Activity Activity { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         ActivitySummary Summary { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         string Name { get; }
+        /// <summary>
+        /// 
+        /// </summary>
         string TimeFrame { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         string Action { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         string Controller { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         string Id { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         string IconName { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         string BannerColor { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         ICollection<OccurrenceSubscription> Subscriptions { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         ICollection<ActivityDate> GetDates(DateTime start, DateTime end);
 
+        /// <summary>
+        /// 
+        /// </summary>
         string NextDateTime { get; }
 
    }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivitySummary : IActivitySummary
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivitySummary()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="act"></param>
         public ActivitySummary(Activity act)
         {
             Activity = act;
         }
 
-        public ActivitySummary Summary
-        {
-            get
-            {
-                return new ActivitySummary(Activity);
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivitySummary Summary => new ActivitySummary(Activity);
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Activity Activity { get; set; }
-        public string Name
-        {
-            get { return Activity.Name; }
-        }
 
-        public string TimeFrame
-        {
-            get { return ""; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name => Activity.Name;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TimeFrame => "";
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Action
         {
             get
@@ -107,6 +196,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Controller
         {
             get
@@ -125,23 +217,24 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Id
         {
             get
             {
                 if (Activity != null)
                 {
-                    if (Activity is OfficeHour)
+                    var hour = Activity as OfficeHour;
+                    if (hour != null)
                     {
-                        var oh = Activity as OfficeHour;
+                        var oh = hour;
                         var date = oh.Dates.FirstOrDefault();
-                        if (date != null)
+                        var host = date?.Hosts.FirstOrDefault();
+                        if (host != null)
                         {
-                            var host = date.Hosts.FirstOrDefault();
-                            if (host != null)
-                            {
-                                return host.Id.ToString();
-                            }
+                            return host.Id.ToString();
                         }
                     }
                     return Activity.Id.ToString();
@@ -150,6 +243,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string IconName
         {
             get
@@ -168,6 +264,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string BannerColor
         {
             get
@@ -186,29 +285,44 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<OccurrenceSubscription> Subscriptions => Activity.Occurrence.Subscriptions;
 
-        public ICollection<OccurrenceSubscription> Subscriptions
-        {
-            get { return Activity.Occurrence.Subscriptions; }
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public ICollection<ActivityDate> GetDates(DateTime start, DateTime end)
         {
             return Activity.Dates.Where(d => d.Begin >= start && d.End <= end).ToList();
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public CourseDateStateModel CurrentDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public CourseDateStateModel NextDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Details
         {
             get
             {
-                if (Activity is Course)
+                var activity = Activity as Course;
+                if (activity != null)
                 {
-                    var course = Activity as Course;
+                    var course = activity;
 
                     var sb = new StringBuilder();
 
@@ -226,7 +340,9 @@ namespace MyStik.TimeTable.Web.Models
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string NextDateTime
         {
             get
@@ -253,39 +369,53 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityDateSummary : IActivitySummary
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDateSummary()
         {
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="dateType"></param>
         public ActivityDateSummary(ActivityDate date, ActivityDateType dateType)
         {
             Date = date;
             DateType = dateType;
         }
 
-        public Activity Activity
-        {
-            get { return Date.Activity; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Activity Activity => Date.Activity;
 
-        public ActivitySummary Summary
-        {
-            get
-            {
-                return new ActivitySummary(Activity);
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivitySummary Summary => new ActivitySummary(Activity);
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDateType DateType { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivityDate Date { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name
         {
             get
@@ -315,6 +445,9 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ShortName
         {
             get
@@ -328,14 +461,7 @@ namespace MyStik.TimeTable.Web.Models
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(Date.Activity.ShortName))
-                        {
-                            sb.Append("N.N.");
-                        }
-                        else
-                        {
-                            sb.Append(Date.Activity.ShortName);
-                        }
+                        sb.Append(string.IsNullOrEmpty(Date.Activity.ShortName) ? "N.N." : Date.Activity.ShortName);
                     }
                 }
                 else
@@ -352,42 +478,40 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
-        public string TimeFrame
-        {
-            get { return string.Format("{0} - {1}",  Date.Begin, Date.End); }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TimeFrame => $"{Date.Begin} - {Date.End}";
 
-        public string Action
-        {
-            get { return new ActivitySummary(Date.Activity).Action; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Action => new ActivitySummary(Date.Activity).Action;
 
-        public string Controller
-        {
-            get
-            {
-                return new ActivitySummary(Date.Activity).Controller;
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Controller => new ActivitySummary(Date.Activity).Controller;
 
-        public string Id
-        {
-            get { return new ActivitySummary(Date.Activity).Id; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Id => new ActivitySummary(Date.Activity).Id;
 
-        public string IconName
-        {
-            get { return new ActivitySummary(Date.Activity).IconName; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string IconName => new ActivitySummary(Date.Activity).IconName;
 
-
-        public string BannerColor
-        {
-            get { return new ActivitySummary(Date.Activity).BannerColor; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BannerColor => new ActivitySummary(Date.Activity).BannerColor;
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<OccurrenceSubscription> Subscriptions
         {
             get
@@ -411,6 +535,12 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public ICollection<ActivityDate> GetDates(DateTime start, DateTime end)
         {
             var dates = new List<ActivityDate>();
@@ -421,24 +551,14 @@ namespace MyStik.TimeTable.Web.Models
             return dates;
         }
 
-        public string TextColor
-        {
-            get
-            {
-                /*
-                switch (DateType)
-                {
-                   case ActivityDateType.Offer:
-                   case ActivityDateType.SearchResult:
-                        return "#FFF";
-                    default:
-                        return "#000";
-                }
-                 */
-                return "#000";
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TextColor => "#000";
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string BackgroundColor
         {
             get
@@ -478,7 +598,9 @@ namespace MyStik.TimeTable.Web.Models
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string NextDateTime
         {
             get
@@ -493,16 +615,38 @@ namespace MyStik.TimeTable.Web.Models
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum ActivityDateType
     {
+        /// <summary>
+        /// 
+        /// </summary>
         Offer,
+        /// <summary>
+        /// 
+        /// </summary>
         Subscription,
+        /// <summary>
+        /// 
+        /// </summary>
         SearchResult
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivitySlotSummary : IActivitySummary
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ActivitySlot Slot { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name
         {
             get
@@ -516,65 +660,58 @@ namespace MyStik.TimeTable.Web.Models
                 return sb.ToString();
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Activity Activity => Slot.ActivityDate.Activity;
 
-        public Activity Activity
-        {
-            get { return Slot.ActivityDate.Activity; }
-        }
-
-        public ActivitySummary Summary
-        {
-            get
-            {
-                return new ActivitySummary(Activity);
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivitySummary Summary => new ActivitySummary(Activity);
 
 
-        public string TimeFrame
-        {
-            get
-            {
-                return string.Format("{0}: {1} - {2}", Slot.ActivityDate.Begin.Date, Slot.Begin, Slot.End);
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TimeFrame => $"{Slot.ActivityDate.Begin.Date}: {Slot.Begin} - {Slot.End}";
 
-        public string Action
-        {
-            get { return new ActivitySummary(Slot.ActivityDate.Activity).Action; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Action => new ActivitySummary(Slot.ActivityDate.Activity).Action;
 
-        public string Controller
-        {
-            get
-            {
-                return new ActivitySummary(Slot.ActivityDate.Activity).Controller;
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Controller => new ActivitySummary(Slot.ActivityDate.Activity).Controller;
 
-        public string Id
-        {
-            get { return new ActivitySummary(Slot.ActivityDate.Activity).Id; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Id => new ActivitySummary(Slot.ActivityDate.Activity).Id;
 
-        public string IconName
-        {
-            get { return new ActivitySummary(Slot.ActivityDate.Activity).IconName; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string IconName => new ActivitySummary(Slot.ActivityDate.Activity).IconName;
 
-        public string BannerColor
-        {
-            get { return new ActivitySummary(Slot.ActivityDate.Activity).BannerColor; }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BannerColor => new ActivitySummary(Slot.ActivityDate.Activity).BannerColor;
 
-        public ICollection<OccurrenceSubscription> Subscriptions
-        {
-            get
-            {
-                return Slot.Occurrence.Subscriptions;
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<OccurrenceSubscription> Subscriptions => Slot.Occurrence.Subscriptions;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public ICollection<ActivityDate> GetDates(DateTime start, DateTime end)
         {
             var dates = new List<ActivityDate>();
@@ -587,7 +724,9 @@ namespace MyStik.TimeTable.Web.Models
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string NextDateTime
         {
             get

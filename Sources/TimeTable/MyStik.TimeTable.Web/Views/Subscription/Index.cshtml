@@ -1,0 +1,69 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.SemesterSubscriptionOverviewModel>
+@{
+    ViewBag.Title = "Studiensemester";
+}
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Studiensemester</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-graduation-cap"></i>
+                            <span class="caption-subject bold uppercase">  Aktuelle Semester</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Semester</th>
+                                <th>Studiengang</th>
+                                <th>Gruppe</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var sub in Model)
+                            {
+                                <tr>
+                                    <td>@sub.Semester.Name</td>
+                                    @if (sub.Group != null)
+                                    {
+                                        <td>@sub.Group.CapacityGroup.CurriculumGroup.Curriculum.Name</td>
+                                        <td>@sub.Group.GroupName</td>
+                                        <td><a href="@Url.Action("UnSubscribe", new {id = sub.Semester.Id})" class="btn btn-default"><i class="fa fa-times"></i> Austragen</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                        <td><a href="@Url.Action("Subscribe", new {id = sub.Semester.Id})" class="btn btn-default"><i class="fa fa-pencil"></i> Eintragen</a></td>
+                                    }
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

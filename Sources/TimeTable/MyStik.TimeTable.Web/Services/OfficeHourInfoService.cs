@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -13,9 +11,16 @@ namespace MyStik.TimeTable.Web.Services
     /// </summary>
     public class OfficeHourInfoService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager UserManager;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
         public OfficeHourInfoService(IdentifyConfig.ApplicationUserManager userManager)
         {
             UserManager = userManager;
@@ -110,6 +115,24 @@ namespace MyStik.TimeTable.Web.Services
                     else
                     {
                         #region Slot ohne Eintragungen - erst mal nicht
+                        var slot = new OfficeHourSlotViewModel
+                        {
+                            Date = date.Begin.Date,
+                            From = date.Begin.TimeOfDay,
+                            Until = date.End.TimeOfDay,
+                            DateOccurrenceId = date.Occurrence.Id,
+                            Member = null,
+                            RowCount = 1,
+                            RowNo = i,
+                            SubscriptionCount = 1,
+                            SubscriptionNo = i,
+                            // ist der aktuelle User eingetragen?
+                            Occurrence = date.Occurrence,
+                            ActivityDate = date,
+                        };
+                        model.CurrentSlots.Add(slot);
+
+
                         #endregion
                     }
                 }
@@ -178,83 +201,6 @@ namespace MyStik.TimeTable.Web.Services
         }
 
 
-        /*
-        internal OfficeHourDateViewModel GetNextAvailableDate(OfficeHour officeHour)
-        {
-            var activityService = new ActivityService();
-
-
-            OfficeHourDateViewModel ohm = null;
-            DateTime x = GlobalSettings.Now;
-
-            while (ohm == null)
-            {
-                var nextDate = officeHour.Dates.Where(d => d.Begin >= x && d.Occurrence.IsAvailable)
-                    .OrderBy(d => d.Begin)
-                    .FirstOrDefault();
-
-                // kein weiterer Termin mehr
-                if (nextDate == null)
-                {
-                    ohm = new OfficeHourDateViewModel();
-
-                    // Damit man weiss zum wem die Sprechstunde gehört der Versuch, einen termin zu finden
-                    var firstDate = officeHour.Dates.FirstOrDefault();
-                    if (firstDate != null)
-                    {
-                        ohm.Lecturer = firstDate.Hosts.FirstOrDefault();
-                    }
-
-                    break;
-                }
-                else
-                {
-                    // keine Slots
-                    if (!nextDate.Slots.Any())
-                    {
-                        var state = activityService.GetActivityState(nextDate.Occurrence, null);
-
-                        // kein Fehler => Termin verfügbar
-                        if (!state.HasError)
-                        {
-                            ohm = new OfficeHourDateViewModel();
-                            ohm.Date = nextDate;
-                            ohm.Lecturer = nextDate.Hosts.FirstOrDefault();
-                            ohm.State = state;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        // Jeden Slot durchsuchen
-                        var slots = nextDate.Slots.OrderBy(s => s.Begin).ToList();
-                        foreach (var slot in slots)
-                        {
-                            var state = activityService.GetActivityState(slot.Occurrence, null);
-
-                            // kein Fehler => Termin verfügbar
-                            if (!state.HasError && slot.Occurrence.IsAvailable)
-                            {
-                                ohm = new OfficeHourDateViewModel();
-                                ohm.Date = nextDate;
-                                ohm.Lecturer = nextDate.Hosts.FirstOrDefault();
-                                ohm.Slot = slot;
-                                ohm.State = state;
-                                break;
-                            }
-                        }
-                    }
-                    // den nächsten Termin durchsuchen
-                    x = nextDate.End;
-                }
-            }
-
-            ohm.OfficeHour = officeHour;
-
-
-            return ohm;
-        }
-         */
 
 
         internal OfficeHourDateViewModel GetNextSubscription(OfficeHour officeHour, string userId)

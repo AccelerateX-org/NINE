@@ -6,6 +6,7 @@
 @section styles
 {
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")"/>
 }
 
 <div class="panel panel-default">
@@ -13,7 +14,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Sprechstunde für @Model.Semester anlegen</h1>
+                    <h1>Sprechstunde für @ViewBag.UserRight.User.UserName im @ViewBag.Semester.Name anlegen</h1>
                 </div>
             </div>
         </div>
@@ -162,7 +163,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-4 col-md-6">
-                                    <input type="submit" value="Sprechstunde und Termine für Semester @Model.Semester anlegen" class="btn btn-primary"/>
+                                    <input type="submit" value="Sprechstunde für Semester @Model.Semester anlegen" class="btn btn-primary"/>
                                 </div>
                             </div>
                         </fieldset>

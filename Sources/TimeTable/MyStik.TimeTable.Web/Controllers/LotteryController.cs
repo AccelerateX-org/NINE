@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Web;
 using System.Web.Mvc;
 using Hangfire;
 using log4net;
@@ -14,21 +12,142 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LotteryController : BaseController
     {
-        // GET: Lottery
-        public ActionResult Index()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Index(Guid? id)
         {
-            var model = Db.Lotteries.ToList();
-            ViewBag.UserRight = GetUserRight();
+            var org = GetMyOrganisation();
+
+            Semester semester;
+            if (id.HasValue)
+            {
+                semester = GetSemester(id.Value);
+            }
+            else
+            {
+                semester = GetSemester();
+            }
+
+            // alte reparieren
+            foreach (var lottery in Db.Lotteries.ToList())
+            {
+                if (lottery.Organiser == null)
+                {
+                    if (lottery.Owner != null)
+                    {
+                        lottery.Organiser = lottery.Owner.Organiser;
+                    }
+                }
+
+                if (lottery.Semester == null)
+                {
+                    lottery.Semester = semester;
+                }
+            }
+            Db.SaveChanges();
+
+
+            var alLotteries = Db.Lotteries.Where(x => 
+                x.Semester!= null && x.Semester.Id == semester.Id &&
+                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
+
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.Semester = semester;
+            ViewBag.Organiser = org;
+
+            var nextSemester = new SemesterService().GetNextSemester(semester);
+            if (nextSemester != null && nextSemester.Groups.Any())
+            {
+                ViewBag.NextSemester = nextSemester;
+            }
+
+
+            var model = new List<LotterySummaryModel>();
+
+            foreach (var lottery in alLotteries)
+            {
+                var totalCapacity = 0;
+                var totalSubscriptions = 0;
+              
+                var userIds = new List<string>();
+
+                foreach (var lotteryOccurrence in lottery.Occurrences)
+                {
+                    if (lotteryOccurrence.UseGroups)
+                    {
+                        totalCapacity += lotteryOccurrence.Groups.Sum(x => x.Capacity);
+                    }
+                    else
+                    {
+                        totalCapacity += lotteryOccurrence.Capacity > 0 ? lotteryOccurrence.Capacity : 0;
+                    }
+
+                    totalSubscriptions += lotteryOccurrence.Subscriptions.Count;
+
+                    var userId2s = lotteryOccurrence.Subscriptions.Select(x => x.UserId).Distinct().ToList();
+                    userIds.AddRange(userId2s);
+                }
+
+                var realUserIds = userIds.Distinct();
+
+                /*
+                foreach (var userId in realUserIds)
+                {
+                    var subCount = lottery.Occurrences.Count(x => x.Subscriptions.Any(s => s.UserId.Equals(userId)));
+                    totalSubscriptionPerUser += subCount;
+                }
+                var avgSubscriptionCount = totalSubscriptionPerUser / (double)lottery.Occurrences.Count;
+                */
+
+
+                var lm = new LotterySummaryModel
+                {
+                    Lottery = lottery,
+                    Capacity = totalCapacity,
+                    TotalSubscriptionCount = totalSubscriptions,
+                    TotalSubscriberCount = realUserIds.Count(),
+                    AvgSubscriptionCount = 0
+                };
+
+                model.Add(lm);
+            }
+
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Test()
+        {
+            var model = Db.Lotteries.ToList();
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             return View();
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Create(LotteryCreateModel model)
         {
@@ -48,7 +167,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 LastDrawing = lastDate,
                 DrawingTime = time,
                 MaxConfirm = model.MaxConfirm,
-                Owner = me
+                Owner = me,
+                Organiser = me.Organiser,
+                Semester = GetSemester()
             };
 
 
@@ -59,6 +180,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Edit(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
@@ -68,7 +194,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 LotteryId = lottery.Id,
                 Name = lottery.Name,
-                JobId = lottery.JobId,
+                JobId = lottery.Id.ToString(),
                 Description = lottery.Description,
                 FirstDrawing = lottery.FirstDrawing.ToShortDateString(),
                 LastDrawing = lottery.LastDrawing.ToShortDateString(),
@@ -79,6 +205,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Edit(LotteryCreateModel model)
         {
@@ -107,16 +238,76 @@ namespace MyStik.TimeTable.Web.Controllers
             // jetzt den BackgroundJob anlegen
 
             RecurringJob.AddOrUpdate<LotteryService>(
-                lottery.JobId, 
+                lottery.Id.ToString(), 
                 x => x.RunLottery(lottery.Id), Cron.Daily(lottery.DrawingTime.Hours, 
                 lottery.DrawingTime.Minutes), TimeZoneInfo.Local);
 
+            return RedirectToAction("Details", new {id = lottery.Id});
+        }
 
-            return RedirectToAction("Index");
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Details(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+            var org = GetMyOrganisation();
+
+            var model = new LotteryLotPotModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+            };
+
+
+            var actService = new ActivityService(Db);
+            var courseService = new CourseService();
+
+            foreach (var occurrence in lottery.Occurrences)
+            {
+                var actSummary = actService.GetSummary(occurrence);
+                var courseSummary = courseService.GetCourseSummary(actSummary.Activity);
+
+                model.PotElements.Add(new LotteryLotPotCourseModel
+                {
+                    ActivitySummary = actSummary,
+                    CourseSummary = courseSummary
+                });
+            }
+
+            ViewBag.UserRight = GetUserRight(org);
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Run(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            if (lottery != null)
+            {
+                var service = new LotteryService();
+                service.ExecuteLottery(lottery.Id);
+            }
+
+            return RedirectToAction("Details", new {id=id});
         }
 
 
-        public ActionResult Details(Guid id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Select(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
 
@@ -131,13 +322,60 @@ namespace MyStik.TimeTable.Web.Controllers
             
             foreach (var occurrence in lottery.Occurrences)
             {
-               model.LotPotActivities.Add(actService.GetSummary(occurrence));
+                var actSummary = actService.GetSummary(occurrence);
+
+                model.PotElements.Add(new LotteryLotPotCourseModel
+                {
+                    ActivitySummary = actSummary,
+                    CourseSummary = null
+                });
             }
+
+            var org = GetMyOrganisation();
+            var semester = GetSemester();
+
+            var allGroups = Db.SemesterGroups.Where(x =>
+                x.Semester.Id == semester.Id &&
+                x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id).ToList();
+
+
+            ViewBag.GroupList = allGroups.Select(f => new SelectListItem
+            {
+                Text = f.GroupName,
+                Value = f.Id.ToString(),
+            });
+            ;
+
 
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchText"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult Search(string searchText)
+        {
+            var sem = GetSemester();
+            var org = GetMyOrganisation();
 
+            var courses = Db.Activities.OfType<Course>().Where(a =>
+            (a.Organiser != null && a.Organiser.Id == org.Id ) && 
+            (a.Name.Contains(searchText) || a.ShortName.Contains(searchText)) &&
+                    a.SemesterGroups.Any(s => s.Semester.Id == sem.Id))
+                .ToList();
+
+            return PartialView("_CourseTable", courses);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult State(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
@@ -286,6 +524,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Drawing(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
@@ -294,8 +537,40 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(lottery);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult ClearDrawings(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            foreach (var lotteryDrawing in lottery.Drawings.ToList())
+            {
+                foreach (var occurrenceDrawing in lotteryDrawing.OccurrenceDrawings.ToList())
+                {
+                    foreach (var subscriptionDrawing in occurrenceDrawing.SubscriptionDrawings.ToList())
+                    {
+                        Db.SubscriptionDrawings.Remove(subscriptionDrawing);
+                    }
+                    Db.OccurrenceDrawings.Remove(occurrenceDrawing);
+                }
+
+                Db.LotteryDrawings.Remove(lotteryDrawing);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = id });
+        }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
@@ -315,21 +590,48 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-
-
-        [HttpPost]
-        public PartialViewResult Search(string semester, string term)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DeleteAll(Guid id)
         {
-            var sem = GetSemester(semester);
+            var org = GetMyOrganisation();
+            var semester = GetSemester(id);
 
-            var courses = Db.Activities.OfType<Course>().Where(a => 
-                (a.Name.Contains(term) || a.ShortName.Contains(term)) && 
-                a.SemesterGroups.Any(s => s.Semester.Id == sem.Id))
-                .ToList();
+            var model = Db.Lotteries.Where(x =>
+                x.Semester != null && x.Semester.Id == semester.Id &&
+                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
 
-            return PartialView("_CourseTable", courses);
+            foreach (var lottery in model)
+            {
+                var drawings = lottery.Drawings.ToList();
+                foreach (var drawing in drawings)
+                {
+                    Db.LotteryDrawings.Remove(drawing);
+                }
+
+                lottery.Occurrences.Clear();
+
+                Db.Lotteries.Remove(lottery);
+            }
+
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", new {id = id});
         }
 
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="LotteryId"></param>
+        /// <param name="CourseIds"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ChangeLotPot(Guid LotteryId, Guid[] CourseIds)
         {
@@ -380,7 +682,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return null;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult MySelection(Guid id)
         {
             var userDb = new ApplicationDbContext();
@@ -413,12 +719,41 @@ namespace MyStik.TimeTable.Web.Controllers
                     // es könnten ja auch mehrere Eintragungen vorliegen
                     var wpmsubs = wpm.Occurrence.Subscriptions.Where(s => s.UserId.Equals(model.User.Id));
 
-                    foreach (var subscription in wpmsubs)
+                    if (wpmsubs.Any())
+                    {
+                        foreach (var subscription in wpmsubs)
+                        {
+                            var wpmSubscriptionModel = new WPMSubscriptionModel
+                            {
+                                Course = wpm,
+                                Subscription = subscription,
+                                IsAvailable = true,
+                            };
+
+                            var summary = courseService.GetCourseSummary(wpm);
+                            summary.State = ActivityService.GetActivityState(wpm.Occurrence, user, semester);
+
+                            wpmSubscriptionModel.Summary = summary;
+
+                            if (subscription.IsConfirmed)
+                            {
+                                nConfirmed++;
+                            }
+
+                            wpmSubscriptionModel.IsValid = courseService.IsAvailableFor(wpm, curriculum.ShortName);
+
+                            occurrenceService.GetCapacity(wpm.Occurrence, wpmSubscriptionModel, curriculum.ShortName,
+                                subscription.LapCount);
+
+                            model.Subscriptions.Add(wpmSubscriptionModel);
+                        }
+                    }
+                    else
                     {
                         var wpmSubscriptionModel = new WPMSubscriptionModel
                         {
                             Course = wpm,
-                            Subscription = subscription,
+                            Subscription = null,
                             IsAvailable = true,
                         };
 
@@ -427,17 +762,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         wpmSubscriptionModel.Summary = summary;
 
-                        if (subscription.IsConfirmed)
-                        {
-                            nConfirmed++;
-                        }
-
                         wpmSubscriptionModel.IsValid = courseService.IsAvailableFor(wpm, curriculum.ShortName);
 
-                        occurrenceService.GetCapacity(wpm.Occurrence, wpmSubscriptionModel, curriculum.ShortName,
-                            subscription.LapCount);
+                        occurrenceService.GetCapacity(wpm.Occurrence, wpmSubscriptionModel, curriculum.ShortName, 0);
 
-                        model.Subscriptions.Add(wpmSubscriptionModel);
+                        model.Available.Add(wpmSubscriptionModel);
                     }
 
                 }
@@ -450,6 +779,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <param name="lotId"></param>
+        /// <returns></returns>
         public ActionResult Confirm(Guid occId, Guid lotId)
         {
             var userDb = new ApplicationDbContext();
@@ -478,6 +813,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("MySelection", new { id = lotId });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <param name="lotId"></param>
+        /// <returns></returns>
         public ActionResult Release(Guid occId, Guid lotId)
         {
             var userDb = new ApplicationDbContext();
@@ -512,6 +853,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("MySelection", new { id = lotId });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <param name="lotId"></param>
+        /// <returns></returns>
         public ActionResult Discharge(Guid occId, Guid lotId)
         {
             var acController = new ActivityController();
@@ -521,6 +868,27 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("MySelection", new {id =lotId});
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <param name="lotId"></param>
+        /// <returns></returns>
+        public ActionResult Subscribe(Guid occId, Guid lotId)
+        {
+            var acController = new ActivityController();
+            acController.ControllerContext = ControllerContext;
+            acController.Subscribe(occId);
+
+            return RedirectToAction("MySelection", new { id = lotId });
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult List(Guid id)
         {
             // Datenbank reparieren
@@ -669,7 +1037,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Subscribers(Guid id)
         {
             var semester = GetSemester();
@@ -776,6 +1148,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Reset(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
@@ -794,6 +1171,32 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Drawing", new {id = id });
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Report(Guid id)
+        {
+            var drawing = Db.LotteryDrawings.SingleOrDefault(l => l.Id == id);
+
+
+            return View(drawing);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult LotPot(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+
+            return View(course);
+        }
+
 
     }
 }

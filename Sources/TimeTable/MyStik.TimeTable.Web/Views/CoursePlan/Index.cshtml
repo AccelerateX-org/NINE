@@ -1,0 +1,105 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.CoursePlan>
+@{
+    ViewBag.Title = Resources.MyCoursePlanHeading;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-personal">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Resources.MyCoursePlanHeading <small>[DEMO]</small></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                        <div class="alert alert-danger">
+                            <div class="media">
+                                <div class="media-left">
+                                        <i class="fa fa-exclamation fa-5x"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h3 class="media-heading"><strong>Wichtiger Hinweis</strong></h3>
+                                    <p>Auf dieser Seite sollen Lösungen für Planungsfragen rund um das Thema "persönliche Studienplanung" entstehen. Dieses Vorhaben wird vom hochschulweiten Projekt
+                                        <a href="https://www.hm.edu/allgemein/lehren/zug/index.de.html" target="_blank">"ZUG - Für die Zukunft gerüstet (2016-2020)"</a> gefördert.</p>
+                                    <p>Derzeit sammeln wir Ideen für Planungsfragen. Wer Ideen hat oder mitmachen möchte kann entweder das <a href="@Url.Action("Contact", "Home")">Kontaktformular</a> verwenden
+                                    oder eine E-Mail an <a href="mailto:olav.hinz@hm.edu">Prof. Dr. Olav Hinz</a> schreiben.</p>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                    <i class="fa fa-globe fa-5x text-success"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h3 class="media-heading">Semester-Planer</h3>
+                                    <h4>Auslands- oder Urlaubssemester geplant?</h4>
+                                    <p>Welches Modul muss/kann ich wann belegen? Welche Module kann ich (wohin) schieben? Was kann ich anrechnenen lassen?</p>
+                                    <form class="form-inline" action="@Url.Action("Create", "CoursePlan")">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" required=""> Mir ist bewusst, dass das hier eine Demo ist
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-calculator"></i> Einen neuen Plan erstellen</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                    <i class="fa fa-book fa-5x text-info"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h3 class="media-heading">Modul-Radar</h3>
+                                    <h4>Die Qual der Wahl</h4>
+                                    <p>Welche Wahlmöglichkeiten habe ich? Welche Regeln sind zu beachten? Welche Abhängigkeiten gibt es?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-left media-middle">
+                                    <i class="fa fa-trophy fa-5x text-warning"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h3 class="media-heading">Noten-Check</h3>
+                                    <h4>Wo stehe ich?</h4>
+                                    <p>Wie kann ich meine gewünschte Abschlussnote (noch) erreichen? Wie stehe ich im Vergleich zu anderen?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

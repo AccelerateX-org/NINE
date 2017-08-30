@@ -13,7 +13,13 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Raumbelegung für @Model.Number</h1>
+                    <p>
+                        <i class="fa fa-cubes"></i> @Model.Capacity
+                    </p>
+                    <h4>@Model.FullName</h4>
+                    <p>
+                        @Model.Description
+                    </p>
                 </div>
             </div>
         </div>
@@ -26,7 +32,7 @@
             <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption">
-                        <i class="fa fa-calendar"></i> @Model.Number
+                        <i class="fa fa-calendar"></i> Belegung
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </div>
                     <div class="actions">

@@ -1,5 +1,5 @@
 ﻿
-function initCalendar(isInteractive, isMoFr) {
+function initCalendar(isInteractive, isMoFr, isSmall) {
     $('body').popover({
         selector: '[data-toggle="popover"]'
     });
@@ -44,6 +44,13 @@ function initCalendar(isInteractive, isMoFr) {
         smallScreen = true;
     ////
 
+    var slotDuration = "00:15:00";
+    var contentHeight = 1088;
+    if (isSmall) {
+        slotDuration = "00:30:00";
+        contentHeight = 500;
+    }
+
 
     $('#calendar').fullCalendar('destroy'); // destroy the calendar
     $('#calendar').fullCalendar({
@@ -55,13 +62,13 @@ function initCalendar(isInteractive, isMoFr) {
         },
         defaultView: smallScreen ? 'agendaDay' : 'agendaWeek',
         allDaySlot: false,
-        slotDuration: "00:15:00",
+        slotDuration: slotDuration,
         minTime: "08:00:00",
         maxTime: "21:00:00",
         slotEventOverlap: false,
         hiddenDays: isMoFr ? [ 0, 6 ] : null,
         firstDay: 1,
-        contentHeight: 1088,
+        contentHeight: contentHeight,
         eventRender: function (event, element, view) {
 
             if (event.htmlToolbarInfo != null || (event.htmlToolbar != null && isInteractive)) {
@@ -202,7 +209,7 @@ function initMobileCalendar(isInteractive, isMoFr) {
         slotEventOverlap: false,
         hiddenDays: isMoFr ? [0, 6] : null,
         firstDay: 1,
-        contentHeight: 544,
+        contentHeight: 555,
         eventRender: function (event, element, view) {
 
             if (event.htmlToolbarInfo != null || (event.htmlToolbar != null && isInteractive)) {

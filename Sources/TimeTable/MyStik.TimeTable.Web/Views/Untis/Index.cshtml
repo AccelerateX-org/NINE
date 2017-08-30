@@ -1,10 +1,6 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.SemesterImportModel
+﻿@model MyStik.TimeTable.Web.Models.SemesterImportModel
 @{
     ViewBag.Title = "Import Stundenplandaten";
-}
-
-@section styles{
 }
 
 <div class="panel panel-default">
@@ -12,7 +8,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Import von Stundenplandaten aus Untis</h1>
+                    <h1>Import von Stundenplandaten aus Untis für @Model.Organiser.ShortName</h1>
                 </div>
             </div>
         </div>
@@ -23,36 +19,71 @@
     <div class="row">
         <div class="col-md-12">
             <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Schritt 1 von 4: Auswahl Fakultät und Semester</span>
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-database"></i>
+            <span class="caption-subject bold uppercase"> Schritt 1 von 3: Auswahl Semester</span>
+        </div>
+    </div>
+    <div class="portlet-body">
+        @using (Html.BeginForm("SelectFiles", null, FormMethod.Post, new { @class = "form form-horizontal" }))
+        {
+            <fieldset>
+                @*Html.HiddenFor(m => m.SemesterId)*@
+                @Html.HiddenFor(m => m.OrganiserId)
+                
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SemesterId, new {@class = "col-sm-3 control-label"})
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>) ViewBag.Semester, new {@class = "form-control"})
                     </div>
                 </div>
-                <div class="portlet-body">
-                    @using (Html.BeginForm("CheckDatabase", null, FormMethod.Post, new { @class = "form form-horizontal" }))
-                    {
-                        <fieldset>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.OrganiserId, new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-6">
-                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control" })
-                                </div>
+                
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FirstDate, new { @class = "col-sm-3 control-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(model => model.FirstDate, new {@class="form-control input-sm datepicker"})
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LastDate, new { @class = "col-sm-3 control-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(model => model.LastDate, new { @class = "form-control input-sm datepicker" })
+                    </div>
+                </div>
+                
+
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Anzahl vorhandene Kurse in Datenbank</label>
+                    <div class="col-sm-3">
+                        <p class="form-control-static">@Model.Existing</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <a href="#" id="btnDelete" class="btn btn-danger"><i class="fa fa-trash-o"></i> löschen</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Fortschritt</label>
+                    <div class="col-sm-9">
+                        <div id="pogresslabel"></div>
+                        <div class="progress">
+                            <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+                                0%
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.SemesterId, new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-6">
-                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-control" })
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-3 col-sm-9">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-right"></i> Weiter</button>
-                                </div>
-                            </div>
-                            
-                        </fieldset>
-                    }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-right"></i> Weiter</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        }
                 </div>
             </div>
         </div>
@@ -60,9 +91,65 @@
 </div>
 
 
+
+
+
 @section scripts {
-    
+<script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+
+    @Scripts.Render("~/bundles/signalr")
+
+    <!--
+    Obwohl diese Datei so nicht existieren, wird das hier benötigt
+    Wahrscheinlich wird das erst zur Laufzeit erstellt
+    -->
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            var connection = $.connection.gpUntisHub;
+
+            connection.client.updateProgress = function (message, perc1) {
+
+                $("#pogresslabel").html("<p>" + message + "</p>");
+                $("#progressbar1").html(perc1 + "%");
+                $("#progressbar1").css("width", perc1 + "%");
+            };
+
+            $("#btnDelete").click(function () {
+                var semId = $("#SemesterId").val();
+                var orgId = "@Model.Organiser.Id";
+
+                connection.server.deleteSemester(semId, orgId).done(function () {
+                    //                    alert("habe fertig");
+                });
+            });
+
+
+            $.connection.hub.start();
+        })
+
+    </script>
+
 }
+
+
+
+
+
+
+
 
 
 

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -15,6 +12,7 @@ namespace MyStik.TimeTable.Data
             this.Members = new HashSet<OrganiserMember>();
             this.RoomAssignments = new HashSet<RoomAssignment>();
             this.Curricula = new HashSet<Curriculum>();
+            this.SubOrganisers = new HashSet<ActivityOrganiser>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,6 +26,14 @@ namespace MyStik.TimeTable.Data
         /// Handelt es sich um eine studentische Organisation?
         /// </summary>
         public bool IsStudent { get; set; }
+
+        public string HtmlColor { get; set; }   
+
+        public string SupportUrl { get; set; }
+
+        public string SupportEMail { get; set; }
+
+        public bool IsVisible { get; set; }
 
         /// <summary>
         /// Handelt es sich um eine Fakultät oder eine zentrale Organisation
@@ -43,5 +49,11 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<RoomAssignment> RoomAssignments { get; set; }
 
         public virtual ICollection<Infoscreen> Infoscreens { get; set; }
+
+        public virtual ICollection<Institution> Institution { get; set; }
+
+
+        public virtual ActivityOrganiser ParentOrganiser { get; set; }
+        public virtual ICollection<ActivityOrganiser> SubOrganisers { get; set; }
     }
 }

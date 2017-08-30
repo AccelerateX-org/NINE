@@ -1626,10 +1626,10 @@ File dropzone
 /***
 Fontawesome Icons
 ***/
-[class^="fa-"]:not(.fa-stack),
+/*[class^="fa-"]:not(.fa-stack),*/
 [class^="glyphicon-"],
 [class^="icon-"],
-[class*=" fa-"]:not(.fa-stack),
+/*[class*=" fa-"]:not(.fa-stack),*/
 [class*=" glyphicon-"],
 [class*=" icon-"] {
   display: inline-block;
@@ -3691,7 +3691,7 @@ h1 .label, h2 .label, h3 .label, h4 .label, h5 .label, h6 .label {
 }
 
 .label-primary {
-  background-color: #428bca;
+  background-color: #f3565d;
 }
 .label-primary[href]:hover, .label-primary[href]:focus {
   background-color: #3071a9;

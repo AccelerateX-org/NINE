@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Web.Configuration;
 using System.Web.Mvc;
+using Hangfire;
 using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -14,17 +14,33 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MailingController : BaseController
     {
         private ApplicationDbContext _userDb = new ApplicationDbContext();
 
-        //
-        // GET: /Mailing/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
-            return RedirectToAction("Index", "Newsletter");
+            var org = GetMyOrganisation();
+            ViewBag.Organiser = org;
+            ViewBag.Semester = GetSemester();
+            ViewBag.UserRight = GetUserRight();
+            ViewBag.Curricula = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList();
+
+            return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult CustomOccurrenceMail(Guid id)
         {
             var db = new TimeTableDbContext();
@@ -105,6 +121,42 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+        private MailJobModel GetMailModel(OccurrenceMailingModel model)
+        {
+            var m = new MailJobModel
+            {
+                SenderId = "",
+                Subject = model.Subject,
+                Body = model.Body // HttpUtility.HtmlEncode(model.Body)
+            };
+
+            var size = 0;
+            var count = 0;
+            foreach (var attachment in model.Attachments)
+            {
+                if (attachment != null)
+                {
+                    size += attachment.ContentLength;
+                    count++;
+
+                    var bytes = new byte[attachment.ContentLength];
+                    attachment.InputStream.Read(bytes, 0, attachment.ContentLength);
+
+                    m.Files.Add(new CustomMailAttachtmentModel
+                    {
+                        FileName = Path.GetFileName(attachment.FileName),
+                        Bytes = bytes,
+                    });
+                }
+            }
+
+            return m;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult AllStudents()
         {
             ViewBag.UserRight = GetUserRight();
@@ -121,15 +173,59 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var logger = LogManager.GetLogger("AllStudentsMail");
 
-            var semester = GetSemester();
 
             if (ModelState.IsValid)
             {
+                var semester = GetSemester();
+                var org = GetMyOrganisation();
+
+                /*
+                var backgroundMailModel = GetMailModel(model);
+                backgroundMailModel.OrgId = org.Id;
+                backgroundMailModel.SemesterId = semester.Id;
+                backgroundMailModel.SenderId = UserManager.FindByName(User.Identity.Name).Id;
+                backgroundMailModel.IsImportant = model.IsImportant;
+                backgroundMailModel.ListName = "Alle Studierende";
+                backgroundMailModel.IsDistributionList = true;
+
+                BackgroundJob.Enqueue<MailService>(x => x.SendAll(backgroundMailModel));
+                */
+
+
                 // Alle Studierenden und alle Staff, die E-Mails erhalten wollen
                 ICollection<ApplicationUser> userList;
                 userList = _userDb.Users.Where(u => 
                     u.MemberState == MemberState.Student || 
                     (u.MemberState == MemberState.Staff && u.LikeEMails)).ToList();
+
+                // jetzt reduzieren, um nicht FK Mitglieder!
+                var deleteList = new List<ApplicationUser>();
+
+                var subService = new SemesterSubscriptionService(Db);
+
+                foreach (var user in userList)
+                {
+                    if (user.MemberState == MemberState.Student)
+                    {
+                        var isInSem = subService.IsSubscribed(user.Id, semester, org);
+                        if (!isInSem)
+                            deleteList.Add(user);
+                    }
+                    else
+                    {
+                        var isInFK = Db.Members.Any(x =>
+                            x.Organiser.Id == org.Id &&
+                            string.IsNullOrEmpty(x.UserId) && x.UserId.Equals(user.Id));
+                        if (!isInFK)
+                            deleteList.Add(user);
+                    }
+                }
+
+                foreach (var user in deleteList)
+                {
+                    userList.Remove(user);
+                }
+
 
                 model.ListName = "Alle Studierende";
                 model.IsDistributionList = true;
@@ -141,7 +237,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     SendMail(userList, model);
                 }
+
+                //ICollection<ApplicationUser> userList = new List<ApplicationUser>();
                 return View("ReceiverList", userList);
+
             }
             else
             {
@@ -149,12 +248,21 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult AllMembers()
         {
             var model = new OccurrenceMailingModel();
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult AllMembers(OccurrenceMailingModel model)
         {
@@ -202,15 +310,35 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult StudentGroup()
         {
-            var model = GetSemester();
+            ViewBag.SemesterList = Db.Semesters.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Name,
+            });
 
-            return View("StudentGroupSelect", model);
+
+            ViewBag.UserRight = GetUserRight();
+
+            var model = new SemesterViewModel
+            {
+                Semester = GetSemester()
+            };
+
+            return View(model);
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="GroupIds"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult StudentGroupSelect(ICollection<Guid> GroupIds)
         {
@@ -226,13 +354,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 return PartialView("_GroupSelectionConfirm", groupList);
             }
-            else
-            {
-                return PartialView("_GroupSelectionError");
-            }
 
+            
+            return PartialView("_GroupSelectionError");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult StudentGroupMail()
         {
             var model = new OccurrenceMailingModel();
@@ -242,7 +372,37 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult GroupList(string semId)
+        {
+            var semester = GetSemester(semId);
+            var org = GetMyOrganisation();
 
+            var model = Db.SemesterGroups
+                .Where(
+                    x =>
+                        x.Semester.Id == semester.Id &&
+                        x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
+                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
+                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name)
+                .ThenBy(g => g.Name)
+                .ToList();
+
+            ViewBag.Semester = semester;
+
+            return PartialView("_StudentGroupSelect", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult StudentGroup(OccurrenceMailingModel model)
         {
@@ -292,20 +452,30 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult HostByRoom()
         {
             var model = new OccurrenceMailingModel();
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult HostByDate()
         {
             var model = new OccurrenceMailingModel();
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Guests()
         {
             var model = new OccurrenceMailingModel();
@@ -313,7 +483,12 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="receiverList"></param>
+        /// <param name="model"></param>
+        /// <param name="pckSize"></param>
         public void SendMail(ICollection<ApplicationUser> receiverList, OccurrenceMailingModel model, int pckSize = 0)
         {
             var logger = LogManager.GetLogger("SendMail");
@@ -421,11 +596,13 @@ namespace MyStik.TimeTable.Web.Controllers
                                 ErrorMessage = strError
                             });
 
+                            /*
                             user.EmailConfirmed = false;
                             // Ein Expiry ist nicht sinnvoll / möglich, da E-Mail Adresse ja ohnehin nicht erreichbar
                             user.Remark = strError;
                             user.Submitted = DateTime.Now;
                             UserManager.Update(user);
+                             */
                         }
                     }
                 }
@@ -482,7 +659,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult MailSentSuccess(Guid? id)
         {
             if (id.HasValue)
@@ -513,11 +694,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult MailSentError()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public FileResult AdressList(Guid id)
         {
             var curr = Db.Curricula.SingleOrDefault(c => c.Id == id);

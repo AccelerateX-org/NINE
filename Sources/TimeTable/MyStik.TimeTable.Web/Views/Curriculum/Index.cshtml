@@ -1,6 +1,4 @@
 ﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
-@using System.Data.Entity.Migrations.Infrastructure
-@using MyStik.TimeTable.Web.Helpers
 @{
     ViewBag.Title = "Studienfortschritt";
 }
@@ -61,7 +59,7 @@
                     type: 'POST',
                     url: '@Url.Action("Details", "Curriculum")',
                     data: {
-                        currId: group,
+                        FakultyID: Curriculum,
                     },
                     success: function (data, success, xhr) {
                         $('#semProfile').html(data);

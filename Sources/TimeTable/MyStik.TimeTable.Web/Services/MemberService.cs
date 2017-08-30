@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
@@ -9,19 +8,38 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MemberService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager UserManager;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected TimeTableDbContext db;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="userManager"></param>
         public MemberService(TimeTableDbContext db, IdentifyConfig.ApplicationUserManager userManager)
         {
            UserManager = userManager;
             this.db = db;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
         public bool IsUserMemberOf(string userName, string orgName)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(orgName))
@@ -43,6 +61,11 @@ namespace MyStik.TimeTable.Web.Services
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public bool IsUserOrgAdmin(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -58,6 +81,12 @@ namespace MyStik.TimeTable.Web.Services
             return member != null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
         public bool IsUserOrgAdmin(string userName, Guid orgId)
         {
             if (string.IsNullOrEmpty(userName))
@@ -73,6 +102,33 @@ namespace MyStik.TimeTable.Web.Services
             return member != null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
+        public bool IsUserRoomAdmin(string userName, Guid orgId)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return false;
+
+            var db = new TimeTableDbContext();
+
+            var user = UserManager.FindByName(userName);
+            if (user == null)
+                return false;
+
+            var member = db.Organisers.FirstOrDefault(org => org.Id == orgId && org.Members.Any(m => m.UserId == user.Id && m.IsRoomAdmin));
+            return member != null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
         public bool IsUserAdminOf(string userName, string orgName)
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(orgName))
@@ -93,6 +149,13 @@ namespace MyStik.TimeTable.Web.Services
             return member.IsAdmin;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgName"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         public bool HasRole(string userName, string orgName, string role)
         {
             var organiser = db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(orgName.ToUpper()));
@@ -107,9 +170,18 @@ namespace MyStik.TimeTable.Web.Services
             if (member == null)
                 return false;
 
+            if (string.IsNullOrEmpty(member.Role))
+                return false;
+
             return member.Role.ToUpper().Contains(role.ToUpper());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="orgName"></param>
+        /// <returns></returns>
         public OrganiserMember GetMember(string userName, string orgName)
         {
             var organiser = db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(orgName.ToUpper()));
@@ -125,6 +197,11 @@ namespace MyStik.TimeTable.Web.Services
             return member;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public OrganiserMember GetMember(string userName)
         {
             var user = UserManager.FindByName(userName);
@@ -136,7 +213,12 @@ namespace MyStik.TimeTable.Web.Services
             return member;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semester"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public string GetOrganisationName(Semester semester, string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -161,6 +243,11 @@ namespace MyStik.TimeTable.Web.Services
             return subscription.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public ActivityOrganiser GetOrganisation(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -170,23 +257,32 @@ namespace MyStik.TimeTable.Web.Services
             if (user == null)
                 return null;
 
+            // Bei Studenten nach einer Eintragung suchen
+            if (user.MemberState == MemberState.Student)
+            {
+                // existiert eine Eintragung?
+                var subscription = db.Subscriptions.OfType<SemesterSubscription>().FirstOrDefault(s => s.UserId.Equals(user.Id));
+                if (subscription != null && subscription.SemesterGroup.CapacityGroup.CurriculumGroup != null)
+                {
+                    return subscription.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser;
+                }
+                return db.Organisers.FirstOrDefault();
+            }
+
             // Ist der Benutzer in einer Organisation?
             var memberOrg = db.Organisers.FirstOrDefault(org => org.Members.Any(m => m.UserId.Equals(user.Id)));
             if (memberOrg != null)
                 return memberOrg;
 
-            // wenn nicht: existiert eine Semestereintragung? kann auch in der Vargangenheit liegen
-            var subscription = db.Subscriptions.OfType<SemesterSubscription>().FirstOrDefault(s => s.UserId.Equals(user.Id));
-            if (subscription != null && subscription.SemesterGroup.CapacityGroup.CurriculumGroup != null)
-            {
-                return subscription.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser;
-            }
-
-            // default: FK 09
-            return db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
+            // default: nimm die erste
+            return db.Organisers.FirstOrDefault();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public string IsOrgMember(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -203,7 +299,11 @@ namespace MyStik.TimeTable.Web.Services
             return string.Empty;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public bool IsStudent(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -248,6 +348,11 @@ namespace MyStik.TimeTable.Web.Services
                         c.Dates.Any(d => d.Hosts.Any(h => h.UserId != null && h.UserId.Equals(userId))));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         internal ICollection<OrganiserMember> GetMemberships(string userName)
         {
             if (string.IsNullOrEmpty(userName))
@@ -259,5 +364,23 @@ namespace MyStik.TimeTable.Web.Services
 
             return db.Members.Where(m => m.UserId.Equals(user.Id)).ToList();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgName"></param>
+        /// <param name="shortName"></param>
+        /// <returns></returns>
+        public OrganiserMember GetMemberFromShortName(string orgName, string shortName)
+        {
+            var organiser = db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(orgName.ToUpper()));
+            if (organiser == null)
+                return null;
+
+            var member = organiser.Members.SingleOrDefault(m => m.ShortName.Equals(shortName));
+
+            return member;
+        }
+
     }
 }

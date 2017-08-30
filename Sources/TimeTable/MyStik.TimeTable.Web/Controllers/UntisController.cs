@@ -1,64 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.GpUntis;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class UntisController : BaseController
     {
-        // GET: Untis
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
-
-
-
-
+            var org = GetMyOrganisation();
             var semester = GetSemester();
 
             var model = new SemesterImportModel
             {
                 Semester = semester,
+                FirstDate = semester.StartCourses.ToShortDateString(),
+                LastDate = semester.EndCourses.ToShortDateString(),
+                Organiser = org,
                 SemesterId = semester.Id,
-                OrganiserId = GetMyOrganisation().Id,
+                OrganiserId = org.Id,
+                Existing = GetCourseCount(org.Id, semester.Id)
             };
 
-            /*
-                             Existing = Db.Activities.OfType<Course>().Count(c =>
-                    c.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
-                    (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals("GPUNTIS")))
-*/
-
-
-            // wenn für das Semester ein Verzeichnis angelegt ist
-            // dann überprüfen, ob Dateien vorhanden sind
-            // Hochladen ohne Einlesen
-            // Einlesen üebr Ajax-Aktion => Hub, SugnalR
-            /*
-            string tempDir = Path.GetTempPath();
-
-            tempDir = Path.Combine(tempDir, semester.Name);
-
-            if (Directory.Exists(tempDir))
-            {
-                model.FileNames = Directory.EnumerateFiles(tempDir);
-            }
-            else
-            {
-                model.Message = string.Format("Bisher keine Daten, Verzeichnis für {0} existiert nicht", semester.Name);
-            }
-             * */
-
-            ViewBag.Organiser = Db.Organisers.Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
 
             ViewBag.Semester = Db.Semesters.OrderByDescending(c => c.StartCourses).Select(c => new SelectListItem
             {
@@ -70,36 +44,31 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public ActionResult CheckDatabase(SemesterImportModel model)
+        private int GetCourseCount(Guid orgId, Guid semId)
         {
-            model.Existing = Db.Activities.OfType<Course>().Count(c =>
+            var nInSemester = Db.Activities.OfType<Course>().Count(c =>
+                c.Organiser.Id == orgId &&
                 c.SemesterGroups.Any(g => 
-                    g.Semester.Id == model.SemesterId && 
-                    g.CurriculumGroup.Curriculum.Organiser.Id == model.OrganiserId
+                    g.Semester.Id == semId && 
+                    g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId
                 ) &&
                 (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals("GPUNTIS")));
 
-            model.Semester = Db.Semesters.SingleOrDefault(s => s.Id == model.SemesterId);
-            model.Organiser = Db.Organisers.SingleOrDefault(o => o.Id == model.OrganiserId);
+            var nNoGroup = Db.Activities.OfType<Course>().Count(c =>
+                c.Organiser.Id == orgId &&
+                !string.IsNullOrEmpty(c.ExternalSource) && 
+                c.ExternalSource.Equals("GPUNTIS") &&
+                !c.SemesterGroups.Any());
 
-
-            return View(model);
+            return nInSemester + nNoGroup;
         }
 
-        [HttpPost]
-        public ActionResult SelectFiles(SemesterImportModel model)
-        {
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Upload(SemesterImportModel model)
+        private string GetTempPath(Guid orgId, Guid semId)
         {
             string tempDir = Path.GetTempPath();
 
-            var semester = new SemesterService().GetSemester(model.SemesterId);
-            var org = Db.Organisers.SingleOrDefault(o => o.Id == model.OrganiserId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
             if (semester != null && org != null)
             {
@@ -110,23 +79,78 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     Directory.CreateDirectory(tempDir);
                 }
-
-
-                foreach (var attachment in model.Attachments)
-                {
-                    if (attachment != null)
-                    {
-                        var fileName = Path.GetFileName(attachment.FileName);
-
-                        var tempFileName = Path.Combine(tempDir, fileName);
-
-                        attachment.SaveAs(tempFileName);
-                    }
-                }
-
-                model.FileNames = Directory.EnumerateFiles(tempDir);
             }
 
+            return tempDir;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult SelectFiles(SemesterImportModel model)
+        {
+            // Die Dateien löschen
+            string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
+
+            Directory.Delete(tempDir, true);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Upload(SemesterImportModel model)
+        {
+            string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
+
+            // Speichern der Untis Dateien
+            foreach (var attachment in model.Attachments)
+            {
+                if (attachment != null)
+                {
+                    var fileName = Path.GetFileName(attachment.FileName);
+
+                    var tempFileName = Path.Combine(tempDir, fileName);
+
+                    attachment.SaveAs(tempFileName);
+                }
+            }
+
+            // Speichern der Config-Dateien
+            model.AttachmentDays?.SaveAs(Path.Combine(tempDir, "configDays.txt"));
+            model.AttachmentHours?.SaveAs(Path.Combine(tempDir, "configHours.txt"));
+            model.AttachmentGroups?.SaveAs(Path.Combine(tempDir, "configGroups.txt"));
+
+            // Dateien prüfen
+            var reader = new FileReader();
+            reader.ReadFiles(tempDir);
+
+            var importer = new SemesterImport(reader.Context, model.SemesterId, model.OrganiserId);
+
+            // Gruppen müssen existieren! => Fehler, wenn nicht
+            importer.CheckGroups();
+
+            // Räume sollten existieren => Warnung
+            // Zuordnungen zu Räumen sollten existieren => Warnung
+            importer.CheckRooms();
+
+            // Dozenten sollten existieren => Warnung
+            importer.CheckLecturers();
+
+            importer.CheckCourses();
+
+            reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
+                reader.Context.Kurse.Count, reader.Context.Kurse.Count(x => x.IsValid)), false);
+
+
+            model.Context = reader.Context;
 
             return View(model);
         }

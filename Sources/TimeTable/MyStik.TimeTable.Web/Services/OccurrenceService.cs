@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -14,14 +12,31 @@ namespace MyStik.TimeTable.Web.Services
     /// </summary>
     public class OccurrenceService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected readonly TimeTableDbContext Db = new TimeTableDbContext();
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager UserManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
         public OccurrenceService(IdentifyConfig.ApplicationUserManager userManager)
         {
             UserManager = userManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public SubscriptionResponse SubscribeOccurrence(Guid occId, ApplicationUser user)
         {
             var occurrence = Db.Occurrences.SingleOrDefault(ac => ac.Id == occId);
@@ -72,7 +87,9 @@ namespace MyStik.TimeTable.Web.Services
 
             #region Alles auf Warteliste: Inaktiv gesetzt oder Platzverlosung
 
-            if (occurrence.IsAvailable == false || occurrence.LotteryEnabled)
+            var hasLottery = Db.Lotteries.Any(x => x.Occurrences.Any(y => y.Id == occurrence.Id));
+
+            if (occurrence.IsAvailable == false || hasLottery)
             {
                 subscription = AddOnWaitingList(occurrence, user);
                 return new SubscriptionResponse
@@ -172,6 +189,12 @@ namespace MyStik.TimeTable.Web.Services
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="allSubscriptions"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
         public List<OccurrenceSubscription> GetSubscriptionsForGroup(ICollection<OccurrenceSubscription> allSubscriptions, OccurrenceGroup group)
         {
             var semSubService = new SemesterSubscriptionService();
@@ -245,16 +268,31 @@ namespace MyStik.TimeTable.Web.Services
             return GetSubListByCurriculum(participantList, curriculum);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <returns></returns>
         public int GetParticipiantCount(Occurrence occurrence)
         {
             return occurrence.Subscriptions.Count(s => s.OnWaitingList == false && s.IsConfirmed);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <returns></returns>
         public int GetPendingCount(Occurrence occurrence)
         {
             return occurrence.Subscriptions.Count(s => s.OnWaitingList == false && !s.IsConfirmed);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <returns></returns>
         public int GetWaitingCount(Occurrence occurrence)
         {
             return occurrence.Subscriptions.Count(s => s.OnWaitingList == true);
@@ -279,17 +317,39 @@ namespace MyStik.TimeTable.Web.Services
             return subList;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <param name="curriculum"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         public int GetParticipiantCount(Occurrence occurrence, string curriculum, Semester semester)
         {
             var subList = occurrence.Subscriptions.Where(s => s.OnWaitingList == false && s.IsConfirmed).ToList();
             return GetSubListByCurriculum(subList, curriculum, semester).Count;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <param name="curriculum"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         public int GetPendingCount(Occurrence occurrence, string curriculum, Semester semester)
         {
             var subList = occurrence.Subscriptions.Where(s => s.OnWaitingList == false && !s.IsConfirmed).ToList();
             return GetSubListByCurriculum(subList, curriculum, semester).Count;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occurrence"></param>
+        /// <param name="curriculum"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
         public int GetWaitingCount(Occurrence occurrence, string curriculum, Semester semester)
         {
             var subList = occurrence.Subscriptions.Where(s => s.OnWaitingList == true).ToList();
@@ -320,7 +380,9 @@ namespace MyStik.TimeTable.Web.Services
         /// Anzahl der verfügbaren Plätze im Studiengang
         /// </summary>
         /// <param name="occurrence"></param>
+        /// <param name="model"></param>
         /// <param name="curriculum"></param>
+        /// <param name="lapCount"></param>
         /// <returns></returns>
         public void GetCapacity(Occurrence occurrence, WPMSubscriptionModel model, string curriculum, int lapCount)
         {
@@ -451,14 +513,29 @@ namespace MyStik.TimeTable.Web.Services
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class SubscriptionResponse
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public bool HasError { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool ShowUser { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String Message { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public OccurrenceSubscription Subscription { get; set; }
     }
 

@@ -1,25 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class EventService
     {
         private TimeTableDbContext db = new TimeTableDbContext();
         private Event _course;
 
-        //private UserService userService = new UserService();
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public EventService()
         {
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
         public EventService(Guid courseId)
         {
             _course = db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == courseId);

@@ -1,26 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using PagedList;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OrganiserController : BaseController
     {
-        // GET: /Organiser/
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Index(string id)
         {
 
@@ -47,7 +50,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Details", org);
         }
 
-        // GET: /Organiser/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Details(Guid? id)
         {
             if (id == null)
@@ -62,30 +69,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(activityorganiser);
         }
 
-        public ActionResult Members(string id, int? page, string startWith)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Members(string id)
         {
-            var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(id.ToUpper()));
+            var organiser = GetMyOrganisation();
             if (organiser == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (User.IsInRole("SysAdmin"))
+            {
+                organiser = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(id));
+            }
+
 
             var model = new OrganiserViewModel
             {
                 Organiser = organiser,
             };
 
-            var pageNumber = page ?? 1;
-
-            var members = string.IsNullOrEmpty(startWith) ?
-                organiser.Members.OrderBy(m => m.Name) :
-                organiser.Members.Where(m => !string.IsNullOrEmpty(m.Name) && m.Name.ToUpper().StartsWith(startWith.ToUpper())).OrderBy(m => m.Name);
-
-            var listLength = 20;
-            if (!string.IsNullOrEmpty(startWith) && members.Any())
-                listLength = members.Count();
-
-
-            var memberPage = members.ToPagedList(pageNumber, listLength);
-            ViewBag.MemberPage = memberPage;
+            var memberPage = organiser.Members.OrderBy(m => m.Name);
 
             var myUser = UserManager.FindByName(User.Identity.Name);
 
@@ -95,6 +101,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var vorVorSemester = new SemesterService().GetSemester(semester, 2);
 
             var courseService = new CourseService(UserManager);
+            var userService = new UserInfoService();
 
             foreach (var member in memberPage)
             {
@@ -105,11 +112,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Members.Add(new MemberViewModel
                 {
                     Member = member,
-                    User = member.UserId != null ? UserManager.FindById(member.UserId) : null,
+                    //User = member.UserId != null ? UserManager.FindById(member.UserId) : null,
                     ItsMe = itsMe,
                     IsActive = courseService.IsActive(member, semester),
                     WasActiveLastSemester = courseService.IsActive(member, vorSemester),
-                    WasActiveLastYear = courseService.IsActive(member, vorVorSemester)
+                    WasActiveLastYear = courseService.IsActive(member, vorVorSemester),
+                    User = userService.GetUser(member.UserId)
                 });
             }
 
@@ -119,16 +127,65 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.LastSemester = vorSemester.Name;
             ViewBag.LastYear = vorVorSemester.Name;
 
-            return View(model);
+            return View("Members2", model);
         }
 
-        public ActionResult Member(string orgId, string shortName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Admins(string id)
         {
-            var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(orgId.ToUpper()));
+            var organiser = GetMyOrganisation();
             if (organiser == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var member = organiser.Members.SingleOrDefault(m => m.ShortName.ToUpper().Equals(shortName.ToUpper()));
+            if (User.IsInRole("SysAdmin"))
+            {
+                organiser = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(id));
+            }
+
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+            };
+
+            var memberPage = organiser.Members.OrderBy(m => m.Name);
+
+            var myUser = UserManager.FindByName(User.Identity.Name);
+
+
+            var semester = GetSemester();
+
+            foreach (var member in memberPage)
+            {
+                var itsMe = false;
+                if (member.UserId != null && myUser != null)
+                    itsMe = member.UserId.Equals(myUser.Id);
+
+                model.Members.Add(new MemberViewModel
+                {
+                    Member = member,
+                    ItsMe = itsMe,
+                });
+            }
+
+            // Benutzerrechte
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+
+            return View("Admins", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Member(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(m => m.Id == id);
             if (member == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
@@ -162,31 +219,335 @@ namespace MyStik.TimeTable.Web.Controllers
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, user, semester);
             }
 
-            // Sprechstunden - wird derzeit nicht verwendet
-            //model.OfficeHours = courseService.GetOfficeHours(member);
+            // Sprechstunde im aktuellen Semester
+            model.OfficeHour = courseService.GetOfficeHour(member, semester);
 
             ViewBag.Semester = semester;
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, member.Organiser.ShortName);
 
-            if (ViewBag.UserRight.IsOrgMember)
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Newsletter()
+        {
+            var org = GetMyOrganisation();
+
+            var userRight = GetUserRight();
+            if (!userRight.IsOrgMember)
+                return RedirectToAction("NoMember");
+
+            var newsletters = Db.Activities.OfType<Newsletter>().Where(n => n.Organiser.Id == org.Id).ToList();
+
+            var model = new List<NewsletterViewModel>();
+
+            var user = AppUser;
+            var semester = GetSemester();
+
+
+            foreach (var newsletter in newsletters)
             {
-                model.OldCourses = courseService.GetCourseHistory(member);
+                if (newsletter.Occurrence == null)
+                {
+                    newsletter.Occurrence = new Occurrence
+                    {
+                        IsAvailable = true,
+                        Capacity = -1,
+                    };
+                    Db.SaveChanges();
+                }
+                else
+                {
+                    newsletter.Occurrence.IsAvailable = true;
+                    newsletter.Occurrence.Capacity = -1;
+                    Db.SaveChanges();
+                }
+
+
+                bool isMember = userRight.IsOrgMember;
+                bool isAdmin = userRight.IsNewsAdmin;
+
+                model.Add(new NewsletterViewModel
+                {
+                    Newsletter = newsletter,
+                    State = ActivityService.GetActivityState(newsletter.Occurrence, user, semester),
+                    IsMember = isMember,
+                    IsAdmin = isAdmin,
+                });
             }
 
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
 
             return View(model);
         }
 
 
-        // GET: /Organiser/Create
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Rooms()
+        {
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+            var rooms = roomService.GetRooms(org.ShortName, true);
+
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+
+            ViewBag.Organiser = org;
+            ViewBag.Smester = sem;
+
+
+            return View(rooms);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult EnableRoomAssignment(Guid id)
+        {
+            var assignment = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            if (assignment != null)
+            {
+                assignment.InternalNeedConfirmation = false;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Rooms");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DisableRoomAssignment(Guid id)
+        {
+            var assignment = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            if (assignment != null)
+            {
+                assignment.InternalNeedConfirmation = true;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Rooms");
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Dates()
+        {
+            var org = GetMyOrganisation();
+            var sem = GetSemester();
+
+            var dates =Db.SemesterDates.Where(s => s.Semester.Id == sem.Id && s.Organiser != null && s.Organiser.Id == org.Id)
+                .ToList();
+
+            ViewBag.Organiser = org;
+            ViewBag.Semester = sem;
+
+            return View(dates);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Curricula()
+        {
+            var org = GetMyOrganisation();
+
+            var model = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList();
+
+            ViewBag.Organiser = org;
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Groups()
+        {
+            var organiser = GetMyOrganisation();
+            var semester = GetSemester();
+            var userRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = organiser;
+            ViewBag.Semester = semester;
+
+            var model = Db.SemesterGroups.Where(x =>
+                x.Semester.Id == semester.Id &&
+                x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id).ToList();
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult InitGroups()
+        {
+            var organiser = GetMyOrganisation();
+            var semester = GetSemester();
+
+            if (semester == null)
+                return RedirectToAction("Index");
+
+            var isWS = semester.Name.StartsWith("WS");
+
+
+            // Alle Curricula durchgehen
+            var allCurricula = Db.Curricula.Where(x => x.Organiser.Id == organiser.Id).ToList();
+            foreach (var curriculum in allCurricula)
+            {
+                foreach (var curriculumGroup in curriculum.CurriculumGroups.ToList())
+                {
+                    foreach (var capacityGroup in curriculumGroup.CapacityGroups.ToList())
+                    {
+                        if ((capacityGroup.InWS && isWS) || (capacityGroup.InSS && !isWS))
+                        {
+                            var exist = semester.Groups.Any(g => g.CapacityGroup.Id == capacityGroup.Id);
+
+                            if (!exist)
+                            {
+                                var semGroup = new SemesterGroup
+                                {
+                                    CapacityGroup = capacityGroup,
+                                    // CurriculumGroup = capacityGroup.CurriculumGroup,        // nur noch aus Gründen der Sicherheit // nix weg damit!!
+                                    Semester = semester
+                                };
+
+                                semester.Groups.Add(semGroup);
+                                Db.SemesterGroups.Add(semGroup);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Groups");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EnableGroups()
+        {
+            var organiser = GetMyOrganisation();
+            var semester = GetSemester();
+
+            var model = Db.SemesterGroups.Where(x =>
+                x.Semester.Id == semester.Id &&
+                x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id).ToList();
+
+            foreach (var semesterGroup in model)
+            {
+                semesterGroup.IsAvailable = true;
+            }
+            Db.SaveChanges();
+
+            return RedirectToAction("Groups");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DisableGroups()
+        {
+            var organiser = GetMyOrganisation();
+            var semester = GetSemester();
+
+            var model = Db.SemesterGroups.Where(x =>
+                x.Semester.Id == semester.Id &&
+                x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id).ToList();
+
+            foreach (var semesterGroup in model)
+            {
+                semesterGroup.IsAvailable = false;
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Groups");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Events()
+        {
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var userRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+            if (!userRight.IsOrgMember)
+                return RedirectToAction("NoMember");
+
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+            };
+
+            var events = Db.Activities.OfType<Event>().Where(n => n.Organiser.Id == organiser.Id).ToList();
+
+
+            foreach (var @event in events)
+            {
+                model.Events.Add(new EventViewModel { Event = @event });
+            }
+
+            ViewBag.UserRight = userRight;
+
+            return View(model);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: /Organiser/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activityorganiser"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include="Id,Name,ShortName")] ActivityOrganiser activityorganiser)
@@ -202,7 +563,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(activityorganiser);
         }
 
-        // GET: /Organiser/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -217,9 +582,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(activityorganiser);
         }
 
-        // POST: /Organiser/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activityorganiser"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include="Id,Name,ShortName,IsFaculty,IsStudent")] ActivityOrganiser activityorganiser)
@@ -233,7 +600,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(activityorganiser);
         }
 
-        // GET: /Organiser/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -248,7 +619,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(activityorganiser);
         }
 
-        // POST: /Organiser/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
@@ -256,9 +631,14 @@ namespace MyStik.TimeTable.Web.Controllers
             ActivityOrganiser activityorganiser = Db.Organisers.Find(id);
             Db.Organisers.Remove(activityorganiser);
             Db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -287,8 +667,19 @@ namespace MyStik.TimeTable.Web.Controllers
                     Description = member.Description,
                     UrlProfile = member.UrlProfile,
                     Name = member.Name,
-                    IsAdmin = member.IsAdmin,
                     ShortName = member.ShortName,
+                    IsAssociated = member.IsAssociated,
+                    IsMemberAdmin = member.IsMemberAdmin,
+                    IsRoomAdmin = member.IsRoomAdmin,
+                    IsSemesterAdmin = member.IsSemesterAdmin,
+                    IsCurriculumAdmin = member.IsCurriculumAdmin,
+                    IsCourseAdmin = member.IsCourseAdmin,
+                    IsStudentAdmin = member.IsStudentAdmin,
+                    IsAlumniAdmin = member.IsAlumniAdmin,
+                    IsEventAdmin = member.IsEventAdmin,
+                    IsNewsAdmin = member.IsNewsAdmin,
+
+
                 };
 
                 if (!string.IsNullOrEmpty(member.UserId))
@@ -307,9 +698,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult EditMember(MemberUserViewModel model)
         {
@@ -317,7 +714,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (member != null)
             {
-                member.IsAdmin = model.IsAdmin;
+                member.IsAssociated = model.IsAssociated;
+                member.IsMemberAdmin = model.IsMemberAdmin;
+                member.IsRoomAdmin = model.IsRoomAdmin;
+                member.IsSemesterAdmin = model.IsSemesterAdmin;
+                member.IsCurriculumAdmin = model.IsCurriculumAdmin;
+                member.IsCourseAdmin = model.IsCourseAdmin;
+                member.IsStudentAdmin = model.IsStudentAdmin;
+                member.IsAlumniAdmin = model.IsAlumniAdmin;
+                member.IsEventAdmin = model.IsEventAdmin;
+                member.IsNewsAdmin = model.IsNewsAdmin;
+                member.IsAssociated = model.IsAssociated;
 
                 if (string.IsNullOrEmpty(model.UserName))
                 {
@@ -352,11 +759,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
                 // Redirect zu den Members
-                return RedirectToAction("Members", new { id = member.Organiser.ShortName });
+                return RedirectToAction("Index", "OrganiserMembers");
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult EditMemberDescription(Guid id)
         {
 
@@ -386,9 +799,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult EditMemberDescription(MemberUserViewModel model)
         {
@@ -404,9 +823,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("Members", new { id = member.Organiser.ShortName });
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteMember(Guid id)
         {
             var member = Db.Members.SingleOrDefault(m => m.Id == id);
@@ -422,9 +847,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult CreateMember(Guid id)
         {
             var model = new MemberUserViewModel
@@ -435,6 +866,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CreateMember(MemberUserViewModel model)
         {
@@ -444,11 +880,20 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var member = new OrganiserMember
                 {
-                    IsAdmin = model.IsAdmin,
                     Role = model.Role,
                     Description = model.Description,
                     ShortName = model.ShortName,
                     Name = model.Name,
+                    IsAssociated = model.IsAssociated,
+                    IsMemberAdmin = model.IsMemberAdmin,
+                    IsRoomAdmin = model.IsRoomAdmin,
+                    IsSemesterAdmin = model.IsSemesterAdmin,
+                    IsCurriculumAdmin = model.IsCurriculumAdmin,
+                    IsCourseAdmin = model.IsCourseAdmin,
+                    IsStudentAdmin = model.IsStudentAdmin,
+                    IsAlumniAdmin = model.IsAlumniAdmin,
+                    IsEventAdmin = model.IsEventAdmin,
+                    IsNewsAdmin = model.IsNewsAdmin,
                 };
 
                 if (!string.IsNullOrEmpty(model.UserName))
@@ -457,6 +902,13 @@ namespace MyStik.TimeTable.Web.Controllers
                     if (user != null)
                     {
                         member.UserId = user.Id;
+
+                        // wenn es keine stud-orga ist, dann muss der Nutzer "Staff" werden
+                        if (!org.IsStudent)
+                        {
+                            user.MemberState = MemberState.Staff;
+                            UserManager.Update(user);
+                        }
                     }
                 }
 
@@ -464,14 +916,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
                 // Redirect zu den Members
-                return RedirectToAction("Members", new { id = org.ShortName });
+                return RedirectToAction("Index", "OrganiserMembers");
+
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "OrganiserMembers");
+
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult UserList(string token)
         {
@@ -493,198 +951,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(list);
         }
 
-        public ActionResult Courses(string id, int? page, string startWith)
-        {
-            var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(id.ToUpper()));
-            if (organiser == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var userRight = GetUserRight(User.Identity.Name, organiser.ShortName);
-            if (!userRight.IsOrgMember)
-                return RedirectToAction("NoMember");
-
-            var model = new OrganiserViewModel
-            {
-                Organiser = organiser,
-            };
-
-            var semester = GetSemester();
-            var courses = string.IsNullOrEmpty(startWith) ? 
-                Db.Activities.OfType<Course>().Where(c => 
-                c.SemesterGroups.Any(g =>g.Semester.Name.Equals(semester.Name)) ||
-                !c.SemesterGroups.Any()
-                ).OrderBy(c => c.ShortName).ToList() :
-                Db.Activities.OfType<Course>().Where(c => (
-                c.SemesterGroups.Any(g =>g.Semester.Name.Equals(semester.Name)) ||
-                !c.SemesterGroups.Any()) && c.ShortName.StartsWith(startWith)
-                ).OrderBy(c => c.ShortName).ToList()
-                ;
-
-
-            var pageNumber = page ?? 1;
-
-            var listLength = 20;
-            if (!string.IsNullOrEmpty(startWith) && courses.Any())
-                listLength = courses.Count();
-
-
-            var coursePage = courses.ToPagedList(pageNumber, listLength);
-            ViewBag.CoursePage = coursePage;
-
-            foreach (var course in coursePage)
-            {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-
-                var summary = new CourseSummaryModel();
-                summary.Course = course;
-                summary.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-                summary.Rooms.AddRange(rooms);
-
-
-                var days = (from occ in course.Dates
-                            select
-                                new
-                                {
-                                    Day = occ.Begin.DayOfWeek,
-                                    Begin = occ.Begin.TimeOfDay,
-                                    End = occ.End.TimeOfDay,
-                                }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
-                model.Courses.Add(summary);
-            }
-
-            // Benutzerrechte
-            ViewBag.UserRight = userRight;
-            ViewBag.Semester = semester;
-
-            return View(model);
-        }
-
-        public ActionResult Events(string id)
-        {
-            var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(id.ToUpper()));
-            if (organiser == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var userRight = GetUserRight(User.Identity.Name, organiser.ShortName);
-            if (!userRight.IsOrgMember)
-                return RedirectToAction("NoMember");
-
-
-            var model = new OrganiserViewModel
-            {
-                Organiser = organiser,
-            };
-
-            var events =
-                string.IsNullOrEmpty(id)
-                    ? Db.Activities.OfType<Event>().ToList()
-                    : Db.Activities.OfType<Event>().Where(n => n.Organiser.ShortName.ToUpper().Equals(id.ToUpper())).ToList();
-
-
-            foreach (var @event in events)
-            {
-                model.Events.Add( new EventViewModel{ Event = @event});
-            }
-
-            ViewBag.UserRight = userRight;
-
-            return View(model);
-        }
-        public ActionResult Newsletter(string id)
-        {
-            var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(id.ToUpper()));
-            if (organiser == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var userRight = GetUserRight(User.Identity.Name, organiser.ShortName);
-            if (!userRight.IsOrgMember)
-                return RedirectToAction("NoMember");
-
-            var newsletters =
-                string.IsNullOrEmpty(id)
-                    ? Db.Activities.OfType<Newsletter>().ToList()
-                    : Db.Activities.OfType<Newsletter>().Where(n => n.Organiser.ShortName.ToUpper().Equals(id.ToUpper())).ToList();
-
-            var model = new List<NewsletterViewModel>();
-
-            var user = AppUser;
-            var semester = GetSemester();
-
-
-            foreach (var newsletter in newsletters)
-            {
-                if (newsletter.Occurrence == null)
-                {
-                    newsletter.Occurrence = new Occurrence
-                    {
-                        IsAvailable = true,
-                        Capacity = -1,
-                    };
-                    Db.SaveChanges();
-                }
-                else
-                {
-                    newsletter.Occurrence.IsAvailable = true;
-                    newsletter.Occurrence.Capacity = -1;
-                    Db.SaveChanges();
-                }
-
-
-                bool isMember = IsUserMemberOf(newsletter.Organiser.ShortName) || User.IsInRole("SysAdmin");
-                bool isAdmin = IsUserAdminOf(newsletter.Organiser.ShortName) || User.IsInRole("SysAdmin");
-
-                model.Add(new NewsletterViewModel
-                {
-                    Newsletter = newsletter,
-                    State = ActivityService.GetActivityState(newsletter.Occurrence, user, semester),
-                    IsMember = isMember,
-                    IsAdmin = isAdmin,
-                });
-
-                if (!userRight.IsOrgMember)
-                    userRight.IsOrgMember = isMember;
-
-                if (!userRight.IsOrgAdmin)
-                    userRight.IsOrgAdmin = isAdmin;
-            }
-
-            if (!string.IsNullOrEmpty(id))
-            {
-                bool isMember = IsUserMemberOf(id) || User.IsInRole("SysAdmin");
-                bool isAdmin = IsUserAdminOf(id) || User.IsInRole("SysAdmin");
-
-                if (!userRight.IsOrgMember)
-                    userRight.IsOrgMember = isMember;
-
-                if (!userRight.IsOrgAdmin)
-                    userRight.IsOrgAdmin = isAdmin;
-            }
-
-
-            ViewBag.UserRight = userRight;
-
-            return View(model);
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult Persons(string searchString)
         {
@@ -759,7 +1030,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("Persons", model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semGroupId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult ListByGroup(Guid semGroupId)
         {
@@ -823,12 +1098,20 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult NoMember()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public FileResult MemberList(string id)
         {
             var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(id.ToUpper()));
@@ -889,10 +1172,233 @@ namespace MyStik.TimeTable.Web.Controllers
             sb.Append("Mitglieder_");
             sb.Append(organiser.ShortName);
             sb.Append("_");
-            sb.Append(DateTime.Today.ToString("yyMMdd"));
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
             sb.Append(".csv");
 
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EditAdmins()
+        {
+            var org = GetMyOrganisation();
+
+            return View(org);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult MemberList2(string token)
+        {
+            var org = GetMyOrganisation();
+
+
+            var list = from l in org.Members
+                       where l.ShortName.ToUpper().Contains(token.ToUpper())
+                       select
+                           new
+                           {
+                               memberId = l.Id,
+                               shortName = l.ShortName,
+                           };
+
+
+            return Json(list);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="memberAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddMemberAdminRight(string memberAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(memberAdminName));
+
+            if (member != null && !member.IsMemberAdmin)
+            {
+                member.IsMemberAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsMemberAdmin).ToList();
+            ViewBag.AdminRight = "Member";
+
+            return PartialView("_MemberRow", list);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddCourseAdminRight(string courseAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(courseAdminName));
+
+            if (member != null && !member.IsCourseAdmin)
+            {
+                member.IsCourseAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsCourseAdmin).ToList();
+            ViewBag.AdminRight = "Course";
+
+            return PartialView("_MemberRow", list);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="curriculumAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddCurriculumAdminRight(string curriculumAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(curriculumAdminName));
+
+            if (member != null && !member.IsCurriculumAdmin)
+            {
+                member.IsCurriculumAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsCurriculumAdmin).ToList();
+            ViewBag.AdminRight = "Curriculum";
+
+            return PartialView("_MemberRow", list);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roomAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddRoomAdminRight(string roomAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(roomAdminName));
+
+            if (member != null && !member.IsRoomAdmin)
+            {
+                member.IsRoomAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsRoomAdmin).ToList();
+            ViewBag.AdminRight = "Room";
+
+            return PartialView("_MemberRow", list);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddEventAdminRight(string eventAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(eventAdminName));
+
+            if (member != null && !member.IsEventAdmin)
+            {
+                member.IsEventAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsEventAdmin).ToList();
+            ViewBag.AdminRight = "Event";
+
+            return PartialView("_MemberRow", list);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newsletterAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddNewsletterAdminRight(string newsletterAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(newsletterAdminName));
+
+            if (member != null && !member.IsNewsAdmin)
+            {
+                member.IsNewsAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsNewsAdmin).ToList();
+            ViewBag.AdminRight = "Newsletter";
+
+            return PartialView("_MemberRow", list);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult DeleteAdminRight(Guid id, string right)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.Id == id);
+
+            if (member != null)
+            {
+                if (right.Equals("Course") && member.IsCourseAdmin)
+                {
+                    member.IsCourseAdmin = false;
+                }
+                if (right.Equals("Curriculum") && member.IsCurriculumAdmin)
+                {
+                    member.IsCurriculumAdmin = false;
+                }
+                if (right.Equals("Member") && member.IsMemberAdmin)
+                {
+                    member.IsMemberAdmin = false;
+                }
+                if (right.Equals("Semester") && member.IsSemesterAdmin)
+                {
+                    member.IsSemesterAdmin = false;
+                }
+                if (right.Equals("Room") && member.IsRoomAdmin)
+                {
+                    member.IsRoomAdmin = false;
+                }
+                if (right.Equals("Event") && member.IsEventAdmin)
+                {
+                    member.IsEventAdmin = false;
+                }
+                if (right.Equals("Newsletter") && member.IsEventAdmin)
+                {
+                    member.IsNewsAdmin = false;
+                }
+
+                Db.SaveChanges();
+            }
+
+            return PartialView("_EmptyRow");
         }
 
     }

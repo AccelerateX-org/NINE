@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Mvc.Html;
-using System.Web.UI;
 
 namespace MyStik.TimeTable.Web.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class FakeViewExtensions
     {
         /// <summary>Renders a view to string.</summary> 
@@ -24,6 +21,13 @@ namespace MyStik.TimeTable.Web.Helpers
             return RenderViewToString(controller.ControllerContext, viewName, viewData);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="controllerContext"></param>
+        /// <param name="viewName"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static String RenderViewToString(ControllerContext controllerContext, String viewName, Object model)
         {
             controllerContext.Controller.ViewData.Model = model;

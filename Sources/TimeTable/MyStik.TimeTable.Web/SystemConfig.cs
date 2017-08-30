@@ -1,25 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Configuration;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
+﻿using System.Net.Configuration;
 
 namespace MyStik.TimeTable.Web
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SystemConfig
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public SystemConfig()
         {
             this.HasSystemWarning = !string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["nine.system.warning"]);
             this.SystemWarning = System.Configuration.ConfigurationManager.AppSettings["nine.system.warning"];
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public bool HasSystemWarning { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string SystemWarning { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int MailMaxReceiverCount
         {
             get
@@ -31,7 +40,9 @@ namespace MyStik.TimeTable.Web
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public bool MailSubscriptionEnabled
         {
             get
@@ -42,6 +53,9 @@ namespace MyStik.TimeTable.Web
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsLotteryEnabled
         {
             get
@@ -54,11 +68,19 @@ namespace MyStik.TimeTable.Web
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public SmtpSection GetSmtpSettings()
         {
             return (SmtpSection)System.Configuration.ConfigurationManager.GetSection("system.net/mailsettings/smtp");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="section"></param>
         public void SaveSmtpSetting(SmtpSection section)
         {
             

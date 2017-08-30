@@ -8,19 +8,28 @@ using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using MyStik.TimeTable.Web.Helpers;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DashboardController : BaseController
     {
-        // GET: Dashboard
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var userRight = GetUserRight();
             ViewBag.UserRight = userRight;
 
             if (User.IsInRole("SysAdmin"))
-                return View("DashboardOrgAdmin", CreateDashboardModelOrgAdmin(userRight));
+            {
+                return View("DashboardSysAdmin");
+            }
 
 
             switch (userRight.User.MemberState)
@@ -45,20 +54,10 @@ namespace MyStik.TimeTable.Web.Controllers
             model.User = userRight.User;
 
             // Sprechstunden
-            var officeHours =
+            model.OfficeHours =
             Db.Activities.OfType<OfficeHour>().Where(a =>
-                a.Semester.Id == semester.Id &&
-                a.Dates.Any(d =>
-                    d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)) ||
-                    d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)))
-                )).ToList();
+                a.Semester.Id == semester.Id).ToList();
 
-            model.OfficeHours = new List<OfficeHourDateViewModel>();
-
-            foreach (var officeHour in officeHours)
-            {
-                model.OfficeHours.Add(ohs.GetNextSubscription(officeHour, model.User.Id));
-            }
           
             
             return model;
@@ -68,17 +67,19 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var ohs = new OfficeHourInfoService(UserManager);
             var semester = GetSemester();
-            var member = GetMember(User.Identity.Name, "FK 09");
+            var lastSemester = GetPreviousSemester();
+            var org = GetMyOrganisation();
+            var member = GetMember(User.Identity.Name, org.ShortName);
 
             var model = new DashboardViewModel();
-            model.IsProf = HasUserRole(User.Identity.Name, "FK 09", "Prof");
+            model.IsProf = HasUserRole(User.Identity.Name, org.ShortName, "Prof");
             model.Semester = semester;
             model.User = userRight.User;
             model.Member = member;
 
             if (member != null)
             {
-                var officeHour = new OfficeHourService().GetOfficeHour(member.ShortName, semester.Name);
+                var officeHour = new OfficeHourService().GetOfficeHour(member, semester);
                 model.OfficeHour = officeHour;
                 if (officeHour != null)
                 {
@@ -87,14 +88,43 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 // die Fakultät
                 model.Organiser = member.Organiser;
+
+                model.MyModules = Db.CurriculumModules.Where(x => x.MV != null && x.MV.Id == member.Id).ToList();
             }
 
 
             // alle Aktivitäten, im aktuellen Semester
+            model.MyActivities.AddRange(GetLecturerActivities(semester, userRight.User));
+            model.MyPreviousActivities.AddRange(GetLecturerActivities(lastSemester, userRight.User));
+            model.PreviousSemester = lastSemester;
+
+
+            // Was läuft gerade
+            var now = DateTime.Now;
+            var endOfDay = DateTime.Today.AddDays(1);
+
+            var nowPlaying = Db.ActivityDates.Where(d =>
+                d.Activity is Course &&
+                (d.Begin <= now && now < d.End || d.Begin > now && d.Begin < endOfDay) &&
+                d.Activity.SemesterGroups.Any(g =>
+                    g.CapacityGroup != null &&
+                    g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+            .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+
+            model.NowPlayingDates = nowPlaying;
+
+            return model;
+        }
+
+
+        private List<ActivitySummary> GetLecturerActivities(Semester semester, ApplicationUser user)
+        {
+            List<ActivitySummary> model = new List<ActivitySummary>();
+
             var lectureActivities =
                 Db.Activities.OfType<Course>().Where(a =>
                     a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
-                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(userRight.User.Id)))).ToList();
+                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))).ToList();
 
             foreach (var activity in lectureActivities)
             {
@@ -130,49 +160,15 @@ namespace MyStik.TimeTable.Web.Controllers
                         };
                     }
                 }
-                model.MyActivities.Add(summary);
+                model.Add(summary);
             }
 
-
-            // Was läuft gerade
-            model.CurrentDates =
-                Db.ActivityDates.Where(d => d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End && d.Occurrence.IsCanceled == false ).OrderBy(d => d.Begin).ToList();
-
-            /*
-            model.ActiveMembers = Db.Members.Where(m => m.Dates.Any(d => 
-                d.Begin >= GlobalSettings.Today &&
-                d.End <= GlobalSettings.Tomorrow)
-                ).ToList();
-            */
-
-            GetAvailableRooms(model);
-
-            return model;
-        }
-
-        private DashboardViewModel CreateDashboardModelOrgAdmin(UserRight userRight)
-        {
-            var model = new DashboardViewModel();
-
-            model.Semester = GetSemester();
-
-            // Was läuft gerade
-            model.CurrentDates =
-                Db.ActivityDates.Where(d => d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End && d.Occurrence.IsCanceled == false).OrderBy(d => d.Begin).ToList();
-
-            GetAvailableRooms(model);
-
-
-            model.CanceledDates =
-                Db.ActivityDates.Where(d => 
-                    (d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End) && d.Occurrence.IsCanceled
-                    ).ToList();
-            
             return model;
         }
 
 
-        private DashboardViewModel CreateDashboardModelStudent(UserRight userRight)
+
+        private DashboardStudentViewModel CreateDashboardModelStudent(UserRight userRight)
         {
             var semSubService = new SemesterSubscriptionService();
 
@@ -180,48 +176,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = AppUser;
 
 
-            var model = new DashboardViewModel();
+            var model = new DashboardStudentViewModel();
 
             model.Semester = GetSemester();
             model.User = user;
-            model.SemesterGroups = semSubService.GetSemesterGroups(model.User.Id, model.Semester);
+            model.SemesterGroup = semSubService.GetSemesterGroup(model.User.Id, model.Semester);
 
-            var currList = Db.Curricula.Where(x => !x.ShortName.Equals("Export")).ToList();
-
-            ViewBag.Curricula = currList.Select(c => new SelectListItem
-            {
-                Text = c.ShortName + " (" + c.Name + ")",
-                Value = c.ShortName,
-            });
-
-            var curr = currList.First();
-
-
-            if (curr != null)
-            {
-                var selectList = new List<SelectListItem>();
-
-                var groupList = Db.SemesterGroups.Where(g => g.Semester.Id == semester.Id &&
-                                             g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).ToList();
-
-
-                foreach (var group in groupList.OrderBy(g => g.GroupName))
-                {
-                    if (group.CapacityGroup.CurriculumGroup.IsSubscribable)
-                    {
-                        selectList.Add(new SelectListItem
-                        {
-                            Text = group.FullName,
-                            Value = group.Id.ToString()
-                        });
-                    }
-                }
-
-                ViewBag.Groups = selectList;
-            }
-
-
-            // Alle Termine als Teilnehmer in diesem Semester
 
             // Eintragungen auf Aktivitätsebene => Lehrveranstaltungen
             var activities = Db.Activities.OfType<Course>().Where(a => 
@@ -229,19 +189,23 @@ namespace MyStik.TimeTable.Web.Controllers
                 a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
             foreach (var activity in activities)
             {
-                // Die Platzverlosungen, bei denen ich dabei bin
-                var lottery = Db.Lotteries.SingleOrDefault(l => l.Occurrences.Any(o => o.Id == activity.Occurrence.Id));
-
                 model.MyCourseSubscriptions.Add(new ActivitySubscriptionStateModel
                 {
                     Activity = new ActivitySummary { Activity = activity },
-                    State = ActivityService.GetActivityState(activity.Occurrence, user, semester),
-                    Lottery = lottery
                 });
             }
 
+            model.NextCourseDate =
+            Db.Activities.OfType<Course>().Where(a =>
+                a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id)))
+                .Select(officeHour => officeHour.Dates.FirstOrDefault(x => x.End > DateTime.Now)).Where(date => date != null)
+                .OrderBy(x => x.Begin).FirstOrDefault();
+
+
 
             // Die Veranstaltungen => Annahme, dass das nur Termine sind
+            /*
             var dates = Db.ActivityDates.Where(d => d.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
             foreach (var activityDate in dates)
             {
@@ -254,6 +218,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     });
                 }
             }
+             */
 
             /*
             var slots = Db.ActivitySlots.Where(s => s.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
@@ -270,31 +235,72 @@ namespace MyStik.TimeTable.Web.Controllers
             }
              */
 
-            // Sprechstunden
-            var officeHours = 
-            Db.Activities.OfType<OfficeHour>().Where(a => 
-                a.Semester.Id == semester.Id &&
-                a.Dates.Any(d =>
-                    d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)) ||
-                    d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)))
-                )).ToList();
+            // Der nächste Sprechstundentermin
+            var allOfficeHours =
+                Db.Activities.OfType<OfficeHour>().Where(a =>
+                    a.Semester.Id == semester.Id &&
+                    a.Dates.Any(d =>
+                        d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)) ||
+                        d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)))
+                    )).ToList();
 
-            model.OfficeHours = new List<OfficeHourDateViewModel>();
-
-            var ohs = new OfficeHourInfoService(UserManager);
-
-            foreach (var officeHour in officeHours)
+            var allDates = new List<ActivityDate>();
+            foreach (var officeHour in allOfficeHours)
             {
-                model.OfficeHours.Add(ohs.GetNextSubscription(officeHour, model.User.Id));
+                var nextDate = officeHour.Dates
+                    .Where(d =>
+                        d.End > DateTime.Now && (
+                            d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)) ||
+                            d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)))))
+                    .OrderBy(d => d.Begin).FirstOrDefault();
+
+                if (nextDate != null)
+                {
+                    allDates.Add(nextDate);
+                }
+            }
+
+            model.NextOfficeHourDate = allDates.OrderBy(d => d.Begin).FirstOrDefault();
+
+            var nextSemesterDate = semester.Dates.Where(x => x.From >= DateTime.Now).OrderBy(x => x.From).FirstOrDefault();
+            if (nextSemesterDate == null)
+            {
+                if (DateTime.Today > semester.StartCourses)
+                {
+                    model.NextSemesterDate = semester.EndCourses;
+                    model.NextSemesterDateDescription = "Vorlesungsende";
+                }
+                else
+                {
+                    model.NextSemesterDate = semester.StartCourses;
+                    model.NextSemesterDateDescription = "Vorlesungsbeginn";
+                }
+            }
+            else
+            {
+                if (nextSemesterDate.From > semester.StartCourses)
+                {
+                    model.NextSemesterDate = nextSemesterDate.From;
+                    model.NextSemesterDateDescription = nextSemesterDate.Description;
+                }
+                else
+                {
+                    model.NextSemesterDate = semester.StartCourses;
+                    model.NextSemesterDateDescription = "Vorlesungsbeginn";
+                }
             }
 
 
-            GetAvailableRooms(model);
+
 
             return model;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult GroupList(string currId)
         {
@@ -328,7 +334,8 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-
+        /*
+         * Muss umgezogen werden
         [HttpPost]
         public PartialViewResult UpdateSemesterGroup(DashboardViewModel model)
         {
@@ -350,6 +357,18 @@ namespace MyStik.TimeTable.Web.Controllers
             model.User = user;
             model.SemesterGroups = semSubService.GetSemesterGroups(model.User.Id, model.Semester);
 
+            if (!model.SemesterGroups.Any())
+            {
+                ViewBag.Faculties =
+                    Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(f => f.ShortName).Select(f => new SelectListItem
+                    {
+                        Text = f.ShortName,
+                        Value = f.Id.ToString(),
+                    });
+
+                ViewBag.Curricula = new SelectList(new object[] {});
+                ViewBag.Groups = new SelectList(new object[] {});
+            }
 
             return PartialView("_PortletSemGroup", model);
         }
@@ -418,7 +437,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_PortletSemGroup", model);
         }
+        */
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="hmemail"></param>
+            /// <returns></returns>
         [HttpPost]
         public PartialViewResult SendVerificationMail(string hmemail)
         {
@@ -471,6 +496,11 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ActivityDetails(Guid id)
         {
             var act = Db.Activities.SingleOrDefault(a => a.Id == id);
@@ -494,7 +524,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return new EmptyResult();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult GetNotificationList(string userId)
         {
@@ -506,8 +540,37 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserId = userId;
             return PartialView("_NotificationList", data);
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult SetCulture(string culture)
+        {
+            // Validate input
+            culture = CultureHelper.GetImplementedCulture(culture);
+            // Save culture in a cookie
+            HttpCookie cookie = Request.Cookies["_culture"];
+            if (cookie != null)
+                cookie.Value = culture;   // update cookie value
+            else
+            {
+                cookie = new HttpCookie("_culture");
+                cookie.Value = culture;
+                cookie.Expires = DateTime.Now.AddYears(1);
+            }
+            Response.Cookies.Add(cookie);
+            return RedirectToAction("Index");
+        }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="changeId"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult MarkAsRead(string userId, string changeId)
         {
@@ -528,21 +591,5 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_NotificationList", data);
         }
 
-
-        internal void GetAvailableRooms(DashboardViewModel model)
-        {
-            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
-            var fk09 = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
-            if (fk09 != null)
-            {
-                var allRooms = roomService.GetAvaliableRoomsNow(fk09.Id);
-                // nur R-Bau
-                model.AvailableRooms = allRooms.Where(r => r.Room.Number.StartsWith("R")).ToList();
-            }
-            else
-            {
-                model.AvailableRooms = new List<RoomInfoModel>();
-            }
-        }
     }
 }

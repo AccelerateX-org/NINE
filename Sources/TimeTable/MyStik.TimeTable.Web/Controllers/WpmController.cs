@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using Hangfire;
 using log4net;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
@@ -17,23 +11,25 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class WpmController : BaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult Index()
         {
             return View();
         }
 
-        /*
-        public ActionResult Hangfire()
-        {
-            RecurringJob.AddOrUpdate<LotteryService>("WPM-Platzverlosung", x => x.RunLottery(), Cron.Daily(1));
-
-            return RedirectToAction("Index");
-        }
-         */
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult List()
         {
             // Datenbank reparieren
@@ -181,6 +177,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult Reset()
         {
@@ -203,13 +203,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Gamble");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult Gamble()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Subscribers()
         {
             var semester = GetSemester();
@@ -299,7 +306,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(list);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult Statistics()
         {
@@ -339,6 +349,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult InitLottery()
         {
@@ -363,6 +377,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "SysAdmin")]
         public ActionResult InitSubscriptions()
         {
@@ -391,7 +409,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult MySelection()
         {
             var user = AppUser;
@@ -459,6 +480,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <returns></returns>
         public ActionResult Confirm(Guid occId)
         {
             var userDb = new ApplicationDbContext();
@@ -487,6 +513,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("MySelection");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <returns></returns>
         public ActionResult Release(Guid occId)
         {
             var userDb = new ApplicationDbContext();
@@ -521,13 +552,18 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("MySelection");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="occId"></param>
+        /// <returns></returns>
         public ActionResult Discharge(Guid occId)
         {
             var acController = new ActivityController();
             acController.ControllerContext = ControllerContext;
             acController.DeleteSubscription(occId);
 
-            return RedirectToAction("MySelection");
+            return RedirectToAction("MySelection", "Lottery");
         }
     
     }

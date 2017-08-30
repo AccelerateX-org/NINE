@@ -1,0 +1,42 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomTransferModel
+@{
+    ViewBag.Title = "Transfer";
+}
+
+<h4>Alle Veranstaltungen von einem Raum in den anderen übertragen</h4>
+<div class="alert alert-info">
+    <h4>Wichtig</h4>
+    <p>Das ist eine technische Fnuktion, keine organistorische.</p>
+    <p>Die Veranstaltungen werden ohne weitere Prüfung auf Überschneidungen übertragen.</p>
+</div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <fieldset>
+        @Html.ValidationSummary()
+        <div class="form-group">
+            @Html.LabelFor(model => model.SourceRoomId, new { @class = "col-sm-4 control-label" })
+            <div class="col-sm-8">
+                @Html.DropDownListFor(model => model.SourceRoomId, null, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.TargetRoomId, new { @class = "col-sm-4 control-label" })
+            <div class="col-sm-8">
+                @Html.DropDownListFor(model => model.TargetRoomId, null, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-10">
+                <input type="submit" value="Ja" class="btn btn-danger" />
+                <a href="@Url.Action("Index", "Room")" class="btn btn-default">Zurück</a>
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+
+
+

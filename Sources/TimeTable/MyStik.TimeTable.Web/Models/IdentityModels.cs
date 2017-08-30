@@ -1,24 +1,25 @@
 ﻿using System;
-using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Web.ModelBinding;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
-using MyStik.TimeTable.Web.Controllers;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Web.Models
 {
 
-    // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
+    /// <summary>
+    /// 
+    /// </summary>
     public class ApplicationUser : IdentityUser
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <returns></returns>
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -27,10 +28,19 @@ namespace MyStik.TimeTable.Web.Models
             return userIdentity;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string FirstName { get; set; }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public string LastName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool LikeEMails { get; set; }
 
         /// <summary>
@@ -43,6 +53,9 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public DateTime? LastLogin { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public MemberState MemberState { get; set; }
 
         /// <summary>
@@ -52,6 +65,9 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public DateTime? ExpiryDate { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Remark { get; set; }
 
         /// <summary>
@@ -60,9 +76,10 @@ namespace MyStik.TimeTable.Web.Models
         public DateTime? Submitted { get; set; }
 
         /// <summary>
-        /// Verwendung als "Eingeladen"
-        /// Entkoppelt das Einlesen vom Einladen, d.h. Einladungsdateien
-        /// können mehrfach eingelesen werden
+        /// Aktives Konto, erhält E-Mails
+        /// Wird durch automatische Prozess und 
+        /// SysAdmin auf false gesetzt
+        /// Wird bei jedem Login auf true gesetzt
         /// </summary>
         public bool IsApproved { get; set; }
 
@@ -86,16 +103,30 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string Phone { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Street { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ZipCode { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string City { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Country { get; set; }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public bool? EmailValidated { get; set; }
 
 
@@ -109,17 +140,27 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string Group { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public bool? IsSpamer { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsAnonymous { get; set; }
 
 
 #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual ICollection<UserDevice> Devices { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string AccountErrorMessage
         {
             get
@@ -135,25 +176,43 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
-        public string FullName
-        {
-            get { return string.Format("{0} {1}", FirstName, LastName); }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FullName => $"{FirstName} {LastName}";
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IDbSet<UserDevice> Devices { get; set; }
+     
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDbSet<UserContact> Contacts { get; set; }
     }
 
 
@@ -180,15 +239,33 @@ namespace MyStik.TimeTable.Web.Models
         Staff = 2
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DevicePlatform
     {
+        /// <summary>
+        /// 
+        /// </summary>
         IOS = 1,
+        /// <summary>
+        /// 
+        /// </summary>
         Android = 2,
+        /// <summary>
+        /// 
+        /// </summary>
         WinPhone = 3
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class UserDevice
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -217,7 +294,40 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public bool IsActive { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual ApplicationUser User { get; set; }
+    }
+
+    /// <summary>
+    /// Kontaktdaten eines Benutzers
+    /// </summary>
+    public class UserContact
+    {
+        /// <summary>
+        /// Datenbankschlüssel
+        /// </summary>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// E-Mail Adresse
+        /// </summary>
+        public string EMail { get; set; }
+
+        /// <summary>
+        /// Status
+        ///   true: E-Mail Adresse ist validiert. An diese Adresse werden E-Mails versendet
+        ///   false: E-Mail Adresse ist nicht validiert. An diese Adresse werden keine E-Mails versendet
+        /// </summary>
+        public bool IsValidated { get; set; }
+
+        /// <summary>
+        /// Fehlermeldung
+        /// Wird gesetzt sobald beim Versand an diese Adresse ein Fehler auftritt.
+        /// </summary>
+        public string LastErrorMessage { get; set; }
     }
 
 

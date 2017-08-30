@@ -1,15 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CurriculumService
     {
         private TimeTableDbContext Db = new TimeTableDbContext();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currName"></param>
+        /// <param name="groupName"></param>
+        /// <param name="isSubscrible"></param>
         public void SetSubscriptionState(string currName, string groupName, bool isSubscrible)
         {
             var group = Db.CurriculumGroups.SingleOrDefault(g => g.Curriculum.ShortName.Equals(currName) &&
@@ -71,6 +78,11 @@ namespace MyStik.TimeTable.Web.Services
             MoveGroup(semGroup, capGroup);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semGroupId"></param>
+        /// <param name="capGroupId"></param>
         public void MoveGroup(string semGroupId, string capGroupId)
         {
             var semGroup = Db.SemesterGroups.SingleOrDefault(g => string.Equals(g.Id.ToString(), semGroupId));
@@ -98,7 +110,13 @@ namespace MyStik.TimeTable.Web.Services
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currName"></param>
+        /// <param name="groupName"></param>
+        /// <param name="capName"></param>
+        /// <param name="aliasName"></param>
         public void DeleteAlias(string currName, string groupName, string capName, string aliasName)
         {
             var alias = Db.GroupAliases.SingleOrDefault(a =>
@@ -115,6 +133,15 @@ namespace MyStik.TimeTable.Web.Services
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currName"></param>
+        /// <param name="semName"></param>
+        /// <param name="srcCurrGroupName"></param>
+        /// <param name="srcSemGroupName"></param>
+        /// <param name="trgCurrGroupName"></param>
+        /// <param name="trgSemGroupName"></param>
         public void MergeGroup(string currName, string semName, string srcCurrGroupName, string srcSemGroupName,
             string trgCurrGroupName, string trgSemGroupName)
         {
@@ -173,6 +200,11 @@ namespace MyStik.TimeTable.Web.Services
             MergeGroup(srcSemGroup, trgSemGroup);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="srcGroupId"></param>
+        /// <param name="trgGroupId"></param>
         public void MergeGroup(string srcGroupId, string trgGroupId)
         {
             var srcGroup = Db.SemesterGroups.SingleOrDefault(g => string.Equals(g.Id.ToString(), srcGroupId));
@@ -181,6 +213,10 @@ namespace MyStik.TimeTable.Web.Services
             MergeGroup(srcGroup, trgGroup);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="delGroupId"></param>
         public void DeleteGroup(string delGroupId)
         {
             var delGroup = Db.SemesterGroups.SingleOrDefault(g => string.Equals(g.Id.ToString(), delGroupId));
@@ -213,6 +249,13 @@ namespace MyStik.TimeTable.Web.Services
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currName"></param>
+        /// <param name="semName"></param>
+        /// <param name="srcCurrGroupName"></param>
+        /// <param name="srcSemGroupName"></param>
         public void DeleteGroup(string currName, string semName, string srcCurrGroupName, string srcSemGroupName)
         {
             // Die Semestergruppe, um die es geht
@@ -250,7 +293,76 @@ namespace MyStik.TimeTable.Web.Services
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        public void DeleteCurriculum(Guid id)
+        {
+            var c = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            if (c == null)
+                return;
 
+            foreach (var @group in c.CurriculumGroups.ToList())
+            {
+
+                // ALTE STRUKTUR
+                // alle zugehörigen Semestergruppen löschen 
+                // => Die Kurse sind davon nicht betroffen
+                //    sie werden u.U. nicht mehr angezeigt / gefunden
+                foreach (var semesterGroup in group.SemesterGroups.ToList())
+                {
+                    group.SemesterGroups.Remove(semesterGroup);
+
+                    // Alle ggf. vorhandenen Eintragungen (Subscriptions) der
+                    // Semestergruppe löschen
+                    foreach (var semSub in semesterGroup.Subscriptions.ToList())
+                    {
+                        semesterGroup.Subscriptions.Remove(semSub);
+                        Db.Subscriptions.Remove(semSub);
+                    }
+
+                    Db.SemesterGroups.Remove(semesterGroup);
+                }
+
+                // NEUE STRUKTUR
+                // alle zugehörigen CapactityGroups löschen
+                foreach (var capGroup in group.CapacityGroups.ToList())
+                {
+                    foreach (var semesterGroup in capGroup.SemesterGroups.ToList())
+                    {
+                        group.SemesterGroups.Remove(semesterGroup);
+
+                        // Alle ggf. vorhandenen Eintragungen (Subscriptions) der
+                        // Semestergruppe löschen
+                        foreach (var semSub in semesterGroup.Subscriptions.ToList())
+                        {
+                            semesterGroup.Subscriptions.Remove(semSub);
+                            Db.Subscriptions.Remove(semSub);
+                        }
+
+                        Db.SemesterGroups.Remove(semesterGroup);
+                    }
+
+                    foreach (var groupAlias in capGroup.Aliases.ToList())
+                    {
+                        Db.GroupAliases.Remove(groupAlias);
+                    }
+
+                    Db.CapacityGroups.Remove(capGroup);
+                }
+
+                Db.CurriculumGroups.Remove(group);
+            }
+
+            Db.Curricula.Remove(c);
+            Db.SaveChanges();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveWI()
         {
             MoveGroup("WI", "WS13", "1", "A", "1", "A");
@@ -411,6 +523,9 @@ namespace MyStik.TimeTable.Web.Services
             MoveGroup("WI", "WS15", "WPM", "", "WPM", "");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveLM()
         {
             MoveGroup("LM", "WS13", "1", "", "1", "");
@@ -445,6 +560,9 @@ namespace MyStik.TimeTable.Web.Services
             MoveGroup("LM", "WS15", "WPM", "", "WPM", "");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveAU()
         {
             MoveGroup("AU", "SS14", "1", "", "1", "");
@@ -478,6 +596,9 @@ namespace MyStik.TimeTable.Web.Services
             MoveGroup("AU", "WS15", "WPM", "", "WPM", "");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveWIM()
         {
             MoveGroup("WIM", "WS13", "1", "A", "1", "G1");
@@ -506,6 +627,9 @@ namespace MyStik.TimeTable.Web.Services
             MoveGroup("WIM", "WS15", "WPM", "", "WPM", "");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveMBA()
         {
             MoveGroup("MBA", "WS13", "1 ING / NW", "", "1 ING / NW", "G1");
@@ -609,6 +733,9 @@ namespace MyStik.TimeTable.Web.Services
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveMisc()
         {
             MoveGroup("CIE", "WS13", "CIE", "", "CIE", "");

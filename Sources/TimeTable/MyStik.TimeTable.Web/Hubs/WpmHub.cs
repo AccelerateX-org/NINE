@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using log4net;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.Lottery;
 
 namespace MyStik.TimeTable.Web.Hubs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class WpmHub : Hub
     {
         /// <summary>
@@ -68,9 +63,9 @@ namespace MyStik.TimeTable.Web.Hubs
                 perc2 = (i * 100) / n;
                 Clients.Caller.updateProgress(msg, perc1, perc2);
 
-                var courseReport = lotteryService.RunLotteryForCourse(wpm);
+                lotteryService.RunLotteryForCourse(wpm);
 
-                report.Courses.Add(courseReport);
+                //report.Courses.Add(courseReport);
             }
 
             logger.InfoFormat("Manuelle Verlosung {0} beendet", lottery.Name);

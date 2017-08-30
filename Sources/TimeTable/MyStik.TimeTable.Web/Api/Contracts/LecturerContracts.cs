@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Web.Api.Contracts
 {
@@ -145,5 +142,73 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// </summary>
         public string LecturerShortname { get; set; }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class LecturerContractExtended
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid MemberId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FirstName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string LastName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Email { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Room { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<string> Functions { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<AvailableSlotModel> AvailableSlots { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AvailableSlotModel
+    {
+        /// <summary>
+        /// Id des Slots
+        /// </summary>
+        public Guid OccurrenceId { get; set; }
+        /// <summary>
+        /// Startzeitpunkt
+        /// </summary>
+        public DateTime Begin { get; set; }
+        /// <summary>
+        /// Endzeitpunkt
+        /// </summary>
+        public DateTime End { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsSubscribed { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark { get; set; }
+
+    }
+
 
 }

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -11,22 +10,36 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize]
     public class ManageController : Controller
     {
         private IdentifyConfig.ApplicationSignInManager _signInManager;
         private IdentifyConfig.ApplicationUserManager _userManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ManageController()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
         public ManageController(IdentifyConfig.ApplicationUserManager userManager, IdentifyConfig.ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IdentifyConfig.ApplicationSignInManager SignInManager
         {
             get
@@ -39,6 +52,9 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IdentifyConfig.ApplicationUserManager UserManager
         {
             get
@@ -51,8 +67,11 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
-        //
-        // GET: /Manage/Index
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -76,8 +95,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        //
-        // POST: /Manage/RemoveLogin
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loginProvider"></param>
+        /// <param name="providerKey"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
@@ -100,15 +123,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("ManageLogins", new { Message = message });
         }
 
-        //
-        // GET: /Manage/AddPhoneNumber
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult AddPhoneNumber()
         {
             return View();
         }
 
-        //
-        // POST: /Manage/AddPhoneNumber
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
@@ -131,8 +159,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = model.Number });
         }
 
-        //
-        // POST: /Manage/EnableTwoFactorAuthentication
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EnableTwoFactorAuthentication()
@@ -146,8 +176,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", "Manage");
         }
 
-        //
-        // POST: /Manage/DisableTwoFactorAuthentication
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DisableTwoFactorAuthentication()
@@ -161,8 +193,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", "Manage");
         }
 
-        //
-        // GET: /Manage/VerifyPhoneNumber
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns></returns>
         public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
         {
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
@@ -170,8 +205,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
 
-        //
-        // POST: /Manage/VerifyPhoneNumber
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
@@ -195,8 +233,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        //
-        // GET: /Manage/RemovePhoneNumber
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> RemovePhoneNumber()
         {
             var result = await UserManager.SetPhoneNumberAsync(User.Identity.GetUserId(), null);
@@ -212,15 +252,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
         }
 
-        //
-        // GET: /Manage/ChangePassword
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ChangePassword()
         {
             return View();
         }
 
-        //
-        // POST: /Manage/ChangePassword
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -243,15 +288,87 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        //
-        // GET: /Manage/SetPassword
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ChangeEMail()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+
+            ViewBag.User = user;
+
+            return View();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ChangeEMail(ChangeEMailModel model)
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            ViewBag.User = user;
+
+            if (user.Email.ToLower().Equals(model.EMail.ToLower()))
+            {
+                ModelState.AddModelError("EMail", "Das ist Ihre bisherige Adresse");
+                return View(model);
+            }
+
+            var existingUser = UserManager.FindByEmail(model.EMail);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("EMail", "Ungültige E-Mail Adresse");
+                return View(model);
+            }
+
+
+            user.Remark = model.EMail;
+            UserManager.Update(user);
+
+            var mailModel = new ConfirmEmailMailModel
+            {
+                User = user,
+                Token = "",
+            };
+
+            try
+            {
+                new MailController().ChangeEMail(mailModel).Deliver();
+            }
+            catch (SmtpFailedRecipientException exSmtp)
+            {
+                ModelState.AddModelError("EMail", "Fehler bei Zustellung: " + exSmtp.Message);
+
+                user.Remark = string.Empty;
+                UserManager.Update(user);
+
+                return View(model);
+            }
+
+
+            return RedirectToAction("Index");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult SetPassword()
         {
             return View();
         }
 
-        //
-        // POST: /Manage/SetPassword
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
@@ -275,8 +392,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        //
-        // GET: /Manage/ManageLogins
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -298,8 +418,11 @@ namespace MyStik.TimeTable.Web.Controllers
             });
         }
 
-        //
-        // POST: /Manage/LinkLogin
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LinkLogin(string provider)
@@ -308,8 +431,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
         }
 
-        //
-        // GET: /Manage/LinkLoginCallback
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
@@ -321,6 +446,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && _userManager != null)
@@ -372,14 +501,38 @@ namespace MyStik.TimeTable.Web.Controllers
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public enum ManageMessageId
         {
+            /// <summary>
+            /// 
+            /// </summary>
             AddPhoneSuccess,
+            /// <summary>
+            /// 
+            /// </summary>
             ChangePasswordSuccess,
+            /// <summary>
+            /// 
+            /// </summary>
             SetTwoFactorSuccess,
+            /// <summary>
+            /// 
+            /// </summary>
             SetPasswordSuccess,
+            /// <summary>
+            /// 
+            /// </summary>
             RemoveLoginSuccess,
+            /// <summary>
+            /// 
+            /// </summary>
             RemovePhoneSuccess,
+            /// <summary>
+            /// 
+            /// </summary>
             Error
         }
 

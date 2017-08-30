@@ -1,5 +1,4 @@
 ﻿using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -7,18 +6,20 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Net.Mail;
-using ActionMailer.Net;
-using ActionMailer.Net.Mvc;
-using MyStik.TimeTable.DataServices;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class _AlumniController : BaseController
     {
         private ApplicationDbContext _db = new ApplicationDbContext();
 
-        // GET: Alumni
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             IEnumerable<ApplicationUser> model = new List<ApplicationUser>();
@@ -28,6 +29,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             ApplicationUser model = new ApplicationUser()
@@ -37,6 +42,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateSingle(ApplicationUser model)
@@ -69,6 +79,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_AlumniFeedback", ret);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateMulti(AlumniCreateFromFileModel model)
@@ -129,6 +144,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_AlumniFeedbackiFrame", ret);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Invite(AlumniMailModel model)
@@ -138,6 +158,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult InviteSend(AlumniMailModel model)
@@ -167,6 +192,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_AlumniMailSent", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult TakeSuggestion(TakeSuggestionModel model)
@@ -180,6 +210,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("SuggestionSuccess");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         public ActionResult Delete(string ID)
         {
             ApplicationUser user = _db.Users.SingleOrDefault(u => u.Id.Equals(ID));
@@ -193,6 +228,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult SingleMail(string id)
         {
             ApplicationUser user = _db.Users.SingleOrDefault(u => u.Id.Equals(id));
@@ -207,6 +247,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GroupMail()
         {
             return View("Index");

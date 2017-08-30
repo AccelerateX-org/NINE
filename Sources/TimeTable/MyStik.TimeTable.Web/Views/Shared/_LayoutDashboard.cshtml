@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNet.Identity
-@using MyStik.TimeTable.Web.Services
 <!DOCTYPE html>
 <html lang="de-DE">
 <head>
@@ -7,8 +6,8 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fillter | @ViewBag.Title</title>
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <title>NINE | @ViewBag.Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
@@ -22,7 +21,7 @@
     <link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/custom.css")" />
     <link rel="stylesheet" href="@Url.Content("~/Assets/fillter/css/fillter.css")" />
     @Scripts.Render("~/bundles/modernizr")
-    <link rel="icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+    <link rel="shortcut icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
 </head>
 <body class="page-header-fixed page-quick-sidebar-over-content page-sidebar-closed-hide-logo page-container-bg-solid">
     <!-- BEGIN HEADER -->
@@ -34,6 +33,18 @@
                 <a href="@Url.Action("Index", "Home")">
                     <img class="fillter-logo-sm" src="@Url.Content("~/Assets/fillter/img/logo.svg")" />
                 </a>
+                <!--Eingefügt zum einfacheren Testen, kann später wieder gelöscht werden.-->
+            @*
+    <a href="@Url.Action("SetCulture", new {culture = "en"})">
+        <img src="~/Assets/global/img/flags/gb.png" />
+    </a>
+    <a href="@Url.Action("SetCulture", new {culture = "de"})">
+        <img src="~/Assets/global/img/flags/de.png" />
+    </a>
+    <a href="@Url.Action("SetCulture", new {culture = "fr"})">
+        <img src="~/Assets/global/img/flags/fr.png" />
+    </a>
+    *@
                 <div class="menu-toggler sidebar-toggler hide">
                 </div>
             </div>
@@ -49,7 +60,6 @@
 
                     <!-- BEGIN NOTIFICATION DROPDOWN -->
                     <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
-                  
                     <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
                         <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                             <i class="icon-bell"></i>
@@ -76,36 +86,43 @@
                         <ul class="dropdown-menu dropdown-menu-default">
                             <li>
                                 <a href="@Url.Action("Index", "Activity")">
-                                    <i class="icon-calendar"></i> Mein Kalender
+                                    <i class="icon-calendar"></i> @Resources.MyCalendar
                                 </a>
                             </li>
                             <li>
                                 <a href="@Url.Action("Index", "StudyBook")">
-                                    <i class="icon-book-open"></i> Mein Studienbuch
+                                    <i class="icon-book-open"></i> @Resources.MyStudyBook
+                                </a>
+                            </li>
+                        @*
+    <li>
+        <a href="@Url.Action("PersonalData", "UserProfile")">
+            <i class="icon-user "></i> @Resources.MyPersonalData
+        </a>
+    </li>
+                        *@
+                            <li>
+                                <a href="@Url.Action("Index", "CoursePlan")">
+                                    <i class="icon-notebook"></i> @Resources.MyCoursePlan
                                 </a>
                             </li>
                             <li class="divider">
                             </li>
                             <li>
                                 <a href="@Url.Action("Index", "UserProfile")">
-                                    <i class="icon-settings"></i> Meine Einstellungen
+                                    <i class="icon-settings"></i> @Resources.MySettings
                                 </a>
                             </li>
                             <li>
                                 <a href="@Url.Action("Index", "Manage")">
-                                    <i class="icon-user"></i> Mein Benutzerkonto
-                                </a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("DeleteAccount", "Account")">
-                                    <i class="icon-trash"></i> Benutzerkonto löschen
+                                    <i class="icon-ghost"></i> @Resources.MyUserProfile
                                 </a>
                             </li>
                             <li class="divider">
                             </li>
                             <li>
                                 <a href="javascript:document.getElementById('logoutForm').submit()">
-                                    <i class="icon-key"></i> Abmelden
+                                    <i class="icon-key"></i> @Resources.LogOut
                                 </a>
                             </li>
                         </ul>
@@ -171,54 +188,54 @@
                     <li id="menu-dashboard" class="start">
                         <a href="@Url.Action("Index", "Dashboard")">
                             <i class="icon icon-menu icon-dashboard"></i>
-                            <span class="title">STARTSEITE</span>
+                            <span class="title">@Resources.MenuDashboard</span>
                             <span class="selected"></span>
                         </a>
                     </li>
                     <li id="menu-study">
                         <a href="javascript:;">
                             <i class="icon icon-menu icon-studium"></i>
-                            <span class="title">STUDIUM</span>
+                            <span class="title">@Resources.MenuStudies</span>
                             <span class="arrow open"></span>
                         </a>
                         <ul class="sub-menu">
-                            <li id="menu-study-courses">
+                            <li id="menu-study-plan">
                                 <a href="@Url.Action("Index", "Planer")">
-                                    Vorlesungsplaner
+                                    @Resources.SubMenuStudiesPlaner
                                 </a>
                             </li>
-                            <li id="menu-study-semester">
-                                <a href="@Url.Action("Index", "Semester")">
-                                    Semesterablauf
-                                </a>
-                            </li>
-                                <li id="menu-study-curriculum">
+                            <li id="menu-study-curriculum">
                                 <a href="@Url.Action("Index", "Curricula")">
-                                        Studiengänge
-                                    </a>
-                                </li>
+                                    @Resources.SubMenuStudiesCurricula
+                                </a>
+                            </li>
+                            <li id="menu-study-module">
+                                <a href="@Url.Action("Index", "Module")">
+                                    @Resources.SubMenuStudiesModules
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li id="menu-current">
                         <a href="javascript:;">
                             <i class="icon icon-menu icon-mensa"></i>
-                            <span class="title">AKTUELLES</span>
+                            <span class="title">@Resources.MenuCurrent</span>
                             <span class="arrow open"></span>
                         </a>
                         <ul class="sub-menu">
                             <li id="menu-current-events">
                                 <a href="@Url.Action("Index", "Event")">
-                                    Veranstaltungen
+                                    @Resources.SubMenuCurrentEvents
                                 </a>
                             </li>
                             <li id="menu-current-newsletter">
                                 <a href="@Url.Action("Index", "Newsletter")">
-                                    Newsletter & Mailing
+                                    @Resources.SubMenuCurrentNewsletter
                                 </a>
                             </li>
                             <li id="menu-current-jobs">
                                 <a href="@Url.Action("Index", "Jobs")">
-                                    Jobangebote
+                                    @Resources.SubMenuCurrentJobs
                                 </a>
                             </li>
                         </ul>
@@ -226,33 +243,46 @@
                     <li id="menu-cantine">
                         <a href="javascript:;">
                             <i class="icon icon-menu icon-aktuelles"></i>
-                            <span class="title">ESSEN & TRINKEN</span>
+                            <span class="title">@Resources.MenuCantine</span>
                             <span class="arrow open"></span>
                         </a>
                         <ul class="sub-menu">
-                            <li id="menu-current-events">
+                            <li id="menu-current-cantine">
                                 <a href="@Url.Action("Index", "Cantine")">
-                                    Mensa
+                                    @Resources.SubMenuCantine
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <li id="menu-rooms">
-                        <a href="@Url.Action("Index","Room")">
+                        <a href="javascript:;">
                             <i class="icon icon-menu icon-raeume"></i>
-                            <span class="title">RÄUME</span>
+                            <span class="title">@Resources.MenuRooms</span>
+                            <span class="arrow open"></span>
                         </a>
+                        <ul class="sub-menu">
+                            <li id="menu-room-search">
+                                <a href="@Url.Action("Index", "Room")">
+                                    @Resources.SubMenuRoomsOccupancy
+                                </a>
+                            </li>
+                            <li id="menu-room-reports">
+                                <a href="@Url.Action("Free", "Room")">
+                                    @Resources.SubMenuRoomsFreeRooms
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li id="menu-persons">
                         <a href="javascript:;">
                             <i class="icon icon-menu icon-dozenten"></i>
-                            <span class="title">PERSONEN</span>
+                            <span class="title">@Resources.MenuPersons</span>
                             <span class="arrow open"></span>
                         </a>
                         <ul class="sub-menu">
                             <li id="menu-persons-lecturers">
                                 <a href="@Url.Action("Index", "Lecturer")">
-                                    Dozenten
+                                    @Resources.SubMenuLecturer
                                 </a>
                             </li>
                         @*
@@ -264,53 +294,16 @@
                         *@
                             <li id="menu-persons-students">
                                 <a href="@Url.Action("Index", "Students")">
-                                    Studierende
+                                    @Resources.SubMenuStudents
                                 </a>
                             </li>
                             <li id="menu-persons-alumni">
                                 <a href="@Url.Action("Index", "Alumni")">
-                                    Alumni
+                                    @Resources.SubMenuAlumni
                                 </a>
                             </li>
                         </ul>
                     </li>
-                    @if (User.IsInRole("SysAdmin"))
-                    {
-                        <li id="menu-system">
-                            <a href="javascript:;">
-                                <i class="fa fa-database"></i>
-                                <span class="title">System</span>
-                                <span class="arrow open"></span>
-                            </a>
-                            <ul class="sub-menu">
-                                <li id="menu-system-users">
-                                    <a href="@Url.Action("Index", "User")">
-                                        Benutzerverwaltung
-                                    </a>
-                                </li>
-                                <li id="menu-system-log">
-                                    <a href="@Url.Action("Index", "Log")">
-                                        Logs
-                                    </a>
-                                </li>
-                                <li id="menu-system-changes">
-                                    <a href="@Url.Action("Index", "Change")">
-                                        Änderungen
-                                    </a>
-                                </li>
-                                <li id="menu-system-repair">
-                                    <a href="@Url.Action("Index", "SysAdmin")">
-                                        Reparaturen
-                                    </a>
-                                </li>
-                                <li id="menu-system-data">
-                                    <a href="@Url.Action("Index", "Organiser")">
-                                        Veranstalter
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    }
                 </ul>
                 <!-- END SIDEBAR MENU -->
             </div>
@@ -326,7 +319,9 @@
         <!-- BEGIN QUICK SIDEBAR -->
         <a href="javascript:;" class="page-quick-sidebar-toggler"><i class="icon-close"></i></a>
         <div class="page-quick-sidebar-wrapper">
+            <div  class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height:414px;">
             <div id="agenda" class="page-quick-sidebar">
+                </div>
             </div>
         </div>
         <!-- END QUICK SIDEBAR -->
@@ -336,10 +331,9 @@
     <div class="page-footer">
         <div class="page-footer-inner">
             <ul class="list-inline">
-                <li><a href="http://www.wi.hm.edu">&copy; @DateTime.Now.Year FK09</a></li>
-                <li><a href="http://www.hm.edu">Hochschule München</a></li>
-                <li>@Html.ActionLink("Kontakt", "Contact", "Home")</li>
-                <li>@Html.ActionLink("Impressum", "Imprint", "Home")</li>
+                <li><a href="http://acceleratex.org">&copy; @DateTime.Now.Year AccelerateX</a></li>
+                <li>@Html.ActionLink(Resources.ContactLink, "Contact", "Home")</li>
+                <li><a href="@Resources.ImprintHyperlink">@Resources.ImprintLink</a></li>
             </ul>
         </div>
         <div class="scroll-to-top">
@@ -459,7 +453,7 @@
          }
 
     </script>
-
+@*
     @if (!Request.IsLocal)
     {
         <!-- Piwik -->
@@ -469,7 +463,7 @@
             _paq.push(['trackPageView']);
             _paq.push(['enableLinkTracking']);
             (function () {
-                var u = "//analytics.it09.de/piwik/";
+                var u = "//vsl006.wi.private.hm.edu/Analytics/";
                 _paq.push(['setTrackerUrl', u + 'piwik.php']);
                 _paq.push(['setSiteId', 1]);
                 var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
@@ -480,13 +474,9 @@
                 s.parentNode.insertBefore(g, s);
             })();
         </script>
-        <noscript>
-            <p>
-                <img src="//analytics.it09.de/piwik/piwik.php?idsite=1" style="border: 0;" alt="" />
-            </p>
-        </noscript>
         <!-- End Piwik Code -->
     }
+*@
 </body>
 </html>
 
