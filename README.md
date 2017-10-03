@@ -17,7 +17,9 @@ So far, there is no installation or deployment routine. We are working on that!
 ## License / Legal note ##
 This package is licensed under MIT license. See LICENSE for details.
 
-At the moment we are using parts of the well known [Metronic Admin Dashboard Template](http://keenthemes.com/metronic-theme/) within this project. **Please note that you have to purchase a valid licence in order to use NINE in publicly accessible environments!**
+At the moment we are using parts of the well known [Metronic Admin Dashboard Template](http://keenthemes.com/metronic-theme/) within this project. 
+
+**Please note that you have to purchase a valid licence in order to use NINE in publicly accessible environments!**
 
 Purchase a license on themeforest: https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469
 
