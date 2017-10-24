@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>NINE</id>
+    <title>NINE</title>
+    <version>$version$</version>
+    <authors>AccelerateX</authors>
+    <owners>AccelerateX</owners>
+    <licenseUrl>https://github.com/AccelerateX-org/NINE/blob/migration/LICENSE</licenseUrl>
+    <projectUrl>https://acceleratex.org</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Quiz system that adopts fitness and gaming approaches for multipurpose academic scenarios</description>
+    <releaseNotes>This release contains the following changes...</releaseNotes>
+  </metadata>
+</package>

@@ -1,0 +1,100 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format (will be overwritten by GitVersion)
+version: 1.0.{build}-{branch}
+
+# VM-Image
+image: Visual Studio 2017 
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: Any CPU
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# environment variables
+environment:
+  OCTO_URL: https://cd.acceleratex.org/octopus
+  OCTO_API_KEY:
+    secure: Zem6F2u8PGExteS8wAdFwuG5qtxu2qdF0xyHsQKwvbQ= # Encrypted variable: Go to "Encrypt data" page in account menu to encrypt data.
+  COVERALLS_REPO_TOKEN:
+    secure: tfcrsENk0VVns04RPBjJTqqPsTtiJzXG3aVq1QE4ltw3sd/UmHVYDAIuMraVwbxQ
+  SL_USERNAME: ax_team
+  SL_API_KEY:
+    secure: VLNNEt3qzDJ+8bQegF4tXbCJL31rU0QZWBZTO8+sL8u2TyfZxJkN5RW1oeKHAqji  
+
+# Only build non-tagged commits
+skip_tags: false
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# run custom scripts instead of automatic MSBuild
+build_script:
+    - ps: .\build.ps1 -target "DevBuild" -configuration "Release"
+
+#---------------------------------#
+#   general tests configuration   #
+#---------------------------------#
+
+# disable automatic tests
+test: off    
+
+#---------------------------------#
+#     override common settings    #
+#        branches to build        #
+#---------------------------------#
+# See: https://www.appveyor.com/blog/2017/08/01/sharing-configuration-between-branches-in-appveyor-yml/
+
+for:
+-
+  branches:
+    only:
+      - /features?[/-]/
+    
+  build_script:
+    - ps: .\build.ps1 -target "DevBuild" -configuration "Release"
+
+-
+  branches:
+    only:
+      - /hotfix(es)?[/-]/
+      - /releases?[/-]/
+      - /dev(elop)?(ment)?$/
+  
+  build_script:
+    - ps: .\build.ps1 -target "KpiBuild" -configuration "Release"
+
+-
+  branches:
+    only:
+      - master
+  
+  build_script:
+    - ps: .\build.ps1 -target "KpiBuild" -configuration "Release"    
+
+  # Only build tagged commits like releases
+  skip_non_tags: true
+
+# Fallback: Other branches, which are not specified above
+-
+  branches:
+    only:
+      - /.*/
+
+  build_script:
+    - ps: .\build.ps1 -target "DevBuild" -configuration "Debug"   
+
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
+notifications:
+  - provider: HipChat
+    auth_token:
+      secure: H6lOXWlvI0RxIds6xMuFCrkAI8xEn322qHOFDPOmYzO90v0zfZ0+HTx2wp+z30tv
+    room: wiQuiz - RPS
