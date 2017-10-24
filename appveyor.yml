@@ -19,7 +19,7 @@ platform: Any CPU
 environment:
   OCTO_URL: https://cd.acceleratex.org/octopus
   OCTO_API_KEY:
-    secure: Zem6F2u8PGExteS8wAdFwuG5qtxu2qdF0xyHsQKwvbQ= # Encrypted variable: Go to "Encrypt data" page in account menu to encrypt data.
+    secure: n3HRVSbzxROMGgFXlO+aFwWPz/pXDQxh2l23x96en7E= # Encrypted variable: Go to "Encrypt data" page in account menu to encrypt data.
   COVERALLS_REPO_TOKEN:
     secure: tfcrsENk0VVns04RPBjJTqqPsTtiJzXG3aVq1QE4ltw3sd/UmHVYDAIuMraVwbxQ
   SL_USERNAME: ax_team
