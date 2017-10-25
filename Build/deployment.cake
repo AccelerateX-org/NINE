@@ -96,6 +96,7 @@ Task("Deploy-Package")
 
 			Information("Target: " + RPS.UatTargetUrl);
 
+			AppVeyor.AddMessage("Application was deployed successfully", AppVeyorMessageCategoryType.Information, "Target: " + RPS.UatTargetUrl);
 		}	
 	)
 	.OnError(exception =>
