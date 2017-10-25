@@ -78,7 +78,7 @@ for:
     - ps: .\build.ps1 -target "Approval" -configuration "Release"    
 
   # Only build tagged commits like releases
-  skip_non_tags: true
+  skip_non_tags: false
 
 # Fallback: Other branches, which are not specified above
 -

@@ -40,7 +40,7 @@ public static class RPS
     { 
         get
         {
-            return System.Text.RegularExpressions.Regex.IsMatch(BuildVersion, @"d+(\.\d+)+([-ci])+\d+");
+            return BuildParameters.IsMasterBranch ? false : System.Text.RegularExpressions.Regex.IsMatch(BuildVersion, @"d+(\.\d+)+([-ci])+\d+");
         } 
     }
 
