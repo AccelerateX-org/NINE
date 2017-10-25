@@ -27,7 +27,7 @@ environment:
     secure: VLNNEt3qzDJ+8bQegF4tXbCJL31rU0QZWBZTO8+sL8u2TyfZxJkN5RW1oeKHAqji  
 
 # Only build non-tagged commits
-skip_tags: false
+skip_tags: true
 
 # build cache to preserve files/folders between builds
 cache:
@@ -64,15 +64,29 @@ for:
   build_script:
     - ps: .\build.ps1 -target "Develop" -configuration "Release"
 
+  skip_tags: true    
+
+-
+  branches:
+    only:
+      - /releases?[/-]/
+      - /dev(elop)?(ment)?$/
+    
+  build_script:
+    - ps: .\build.ps1 -target "Integrate" -configuration "Release"   
+
+  skip_tags: true  
+
 -
   branches:
     only:
       - /hotfix(es)?[/-]/
-      - /releases?[/-]/
-      - /dev(elop)?(ment)?$/
+      - /support?[/-]/
   
   build_script:
     - ps: .\build.ps1 -target "Integrate" -configuration "Release"
+
+  skip_tags: false    
 
 -
   branches:
@@ -84,6 +98,8 @@ for:
 
   # Only build tagged commits like releases
   skip_non_tags: false
+
+  skip_tags: false
 
 # Fallback: Other branches, which are not specified above
 -

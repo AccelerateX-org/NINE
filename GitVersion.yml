@@ -44,7 +44,7 @@ branches:
     track-merge-target: false
   support[/-]:
     mode: ContinuousDeployment
-    tag: ''
+    tag: 'support'
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
