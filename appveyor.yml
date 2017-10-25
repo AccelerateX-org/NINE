@@ -98,3 +98,7 @@ notifications:
     auth_token:
       secure: Ho4egHslrWIoatRGSw67km4gjib97dJDsnLYbBzpgjOrcEi+nINePrwSHi7X0Mpp
     room: NINE - RPS
+  - provider: GitHubPullRequest
+    auth_token:
+      secure: BH3GjE8/qC3qqVcntcerjQHRbrP5DxniaxtVuowtn+x2ULSypOEsYUVlFKmZrfmZ
+    template: "{{#passed}}:white_check_mark:{{/passed}}{{#failed}}:x:{{/failed}} [Build {{&projectName}} {{buildVersion}} {{status}}]({{buildUrl}}) (commit {{commitUrl}} by @{{&commitAuthorUsername}})"
