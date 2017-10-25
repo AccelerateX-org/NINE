@@ -4,6 +4,7 @@ Task("Test-NUnit-UAT")
 	.WithCriteria(() => !BuildParameters.IsPullRequest)
     .WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.PublishedNUnitTests))
     .WithCriteria(() => RPS.IsDeployed)
+    .WithCriteria(() => RPS.ShouldRunUaTest)
     .IsDependentOn("Octopus-Deployment")
 	.Does(() => RequireTool(NUnitTool, () => 
 		{

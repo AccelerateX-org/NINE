@@ -126,6 +126,8 @@ public static class RPS
         string octopusApiKey = null,
         string uaTestFilePattern = null,
         BranchDeployment branchDeployment = null,
+        bool shouldRunUnitTest = true,
+        bool shouldRunUaTest = true,
         bool shouldDeploy = true)
     {
         if (context == null) 
@@ -138,9 +140,9 @@ public static class RPS
         _version = buildVersion;
         _branchEnvironments  = branchDeployment;
 
-        ShouldRunUnitTest = true;
-        ShouldRunUaTest = true;
-        ShouldDeploy = true;
+        ShouldRunUnitTest = shouldRunUnitTest;
+        ShouldRunUaTest = shouldRunUaTest;
+        ShouldDeploy = shouldDeploy;
         IsDeployed = false;
 
         var gitHubUrlPattern = "https://github.com/{0}/{1}{2}";

@@ -37,6 +37,8 @@ ToolSettings.SetToolSettings(context: Context,
 RPS.Init(context: Context,
         buildSystem: BuildSystem,
         uaTestFilePattern: "/**/*.UaTests.dll",
+        shouldRunUnitTest: true,
+        shouldRunUaTest: true,
         shouldDeploy: true,
         branchDeployment: new BranchDeployment() 
         {
