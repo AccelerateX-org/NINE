@@ -29,6 +29,11 @@ environment:
 # Only build non-tagged commits
 skip_tags: false
 
+# build cache to preserve files/folders between builds
+cache:
+    #-  .\Sources\packages -> .\Sources\WiQuest\WIQuest.Web\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
+    -  .\tools -> .\tools\packages.config, .\setup.cake  # preserve "tools" directory in the root of build folder but will reset it if packages.config or setup.cake is modified
+
 #---------------------------------#
 #       build configuration       #
 #---------------------------------#
