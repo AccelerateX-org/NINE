@@ -148,8 +148,8 @@ public static class RPS
             apiKey: octopusApiKey ?? context.EnvironmentVariable("OCTO_API_KEY")
         );
 
-        if (!string.IsNullOrEmpty(octoApi.Endpoint) || 
-            !string.IsNullOrEmpty(octoApi.ApiKey) ||
+        if (string.IsNullOrEmpty(octoApi.Endpoint) || 
+            string.IsNullOrEmpty(octoApi.ApiKey) ||
             shouldDeploy == false) 
         {
             ShouldDeploy = false;
