@@ -5,7 +5,7 @@ NINE is an open source learning management platform that offers a bundle of web 
 
 |Develop|Master|Latest|
 |:--:|:--:|:--|
-|[![Build status](https://ci.appveyor.com/api/projects/status/lmlo7ee7aniloxyu/branch/master?svg=true)](https://ci.appveyor.com/project/AccelerateX/nine/branch/develop)|[![Build status](https://ci.appveyor.com/api/projects/status/lmlo7ee7aniloxyu/branch/master?svg=true)](https://ci.appveyor.com/project/AccelerateX/nine/branch/master)[![Build status](https://ci.appveyor.com/api/projects/status/lmlo7ee7aniloxyu?svg=true)](https://ci.appveyor.com/project/AccelerateX/nine)
+|[![Build status](https://ci.appveyor.com/api/projects/status/lmlo7ee7aniloxyu/branch/master?svg=true)](https://ci.appveyor.com/project/AccelerateX/nine/branch/develop)|[![Build status](https://ci.appveyor.com/api/projects/status/lmlo7ee7aniloxyu/branch/master?svg=true)](https://ci.appveyor.com/project/AccelerateX/nine/branch/master)|[![Build status](https://ci.appveyor.com/api/projects/status/lmlo7ee7aniloxyu?svg=true)](https://ci.appveyor.com/project/AccelerateX/nine)
 
 ## Quality
 
