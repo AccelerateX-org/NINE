@@ -6,7 +6,7 @@ public static class RPS
     private static ICakeContext _context { get; set; }
     private static string _version { get; set; }
     private static BranchDeployment _branchEnvironments { get; set; }
-    private static BuildSystem _buildSystem { get; set;}
+    private static BuildSystem _buildSystem { get; set; }
 
     public static string BuildVersion 
     { 
@@ -24,11 +24,25 @@ public static class RPS
 
     public static OctopusApiClient Octopus { get; private set; }
 
+    public static bool ShouldRunUnitTest { get; set; }
+
     public static string UatTargetUrl { get; set; }
 
     public static string UaTestFilePattern { get; private set; }
+
+    public static bool ShouldRunUaTest { get; set; }
     
     public static bool ShouldDeploy { get; private set; }
+
+    public static bool IsDeployed { get; set; }
+
+    public static bool IsMergeBuild 
+    { 
+        get
+        {
+            return System.Text.RegularExpressions.Regex.IsMatch(BuildVersion, @"d+(\.\d+)+([-ci])+\d+");
+        } 
+    }
 
     public static string ParseGitLog(NoteFormat format) 
     {
@@ -104,8 +118,8 @@ public static class RPS
         string octopusEndpoint = null,
         string octopusApiKey = null,
         string uaTestFilePattern = null,
-        BranchDeployment branchDeployment = null
-        )
+        BranchDeployment branchDeployment = null,
+        bool shouldDeploy = true)
     {
         if (context == null) 
         {
@@ -116,6 +130,10 @@ public static class RPS
         _buildSystem = buildSystem;
         _version = buildVersion;
         _branchEnvironments  = branchDeployment;
+
+        IsDeployed = false;
+        ShouldRunUnitTest = true;
+        ShouldRunUaTest = true;
 
         var gitHubUrlPattern = "https://github.com/{0}/{1}{2}";
         
@@ -130,6 +148,13 @@ public static class RPS
             apiKey: octopusApiKey ?? context.EnvironmentVariable("OCTO_API_KEY")
         );
 
+        if (!string.IsNullOrEmpty(octoApi.Endpoint) || 
+            !string.IsNullOrEmpty(octoApi.ApiKey) ||
+            shouldDeploy == false) 
+        {
+            ShouldDeploy = false;
+        }
+
         Api = new ApiRepository(octopus: octoApi);
         Vcs = new VcsRepository(github: githubVcs);
         
@@ -137,12 +162,13 @@ public static class RPS
 
         UaTestFilePattern = uaTestFilePattern;
 
-        if (!BuildParameters.IsLocalBuild && !BuildParameters.IsPullRequest)
+        if (!BuildParameters.IsLocalBuild && 
+            !BuildParameters.IsPullRequest &&
+            ShouldDeploy == true)
         {
             Octopus = new OctopusApiClient(octoApi.Endpoint, octoApi.ApiKey);
         }
     }
-
 
 }
 

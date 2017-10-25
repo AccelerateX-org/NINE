@@ -35,7 +35,7 @@ skip_tags: false
 
 # run custom scripts instead of automatic MSBuild
 build_script:
-    - ps: .\build.ps1 -target "DevBuild" -configuration "Release"
+    - ps: .\build.ps1 -target "Develop" -configuration "Release"
 
 #---------------------------------#
 #   general tests configuration   #
@@ -57,7 +57,7 @@ for:
       - /features?[/-]/
     
   build_script:
-    - ps: .\build.ps1 -target "DevBuild" -configuration "Release"
+    - ps: .\build.ps1 -target "Develop" -configuration "Release"
 
 -
   branches:
@@ -67,7 +67,7 @@ for:
       - /dev(elop)?(ment)?$/
   
   build_script:
-    - ps: .\build.ps1 -target "KpiBuild" -configuration "Release"
+    - ps: .\build.ps1 -target "Integrate" -configuration "Release"
 
 -
   branches:
@@ -75,7 +75,7 @@ for:
       - master
   
   build_script:
-    - ps: .\build.ps1 -target "KpiBuild" -configuration "Release"    
+    - ps: .\build.ps1 -target "Approval" -configuration "Release"    
 
   # Only build tagged commits like releases
   skip_non_tags: true
@@ -87,7 +87,7 @@ for:
       - /.*/
 
   build_script:
-    - ps: .\build.ps1 -target "DevBuild" -configuration "Debug"   
+    - ps: .\build.ps1 -target "Develop" -configuration "Debug"   
 
 #---------------------------------#
 #         notifications           #
