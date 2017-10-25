@@ -5,7 +5,7 @@
 
 #load "./Build/rps.cake"
 #load "./Build/targets.cake"
-#load "./Build/adjustments.cake"
+#load "./Build/testing.cake"
 #load "./Build/package.cake"
 #load "./Build/deployment.cake"
 #load "./Build/uat.cake"

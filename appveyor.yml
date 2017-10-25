@@ -31,7 +31,8 @@ skip_tags: true
 
 # build cache to preserve files/folders between builds
 cache:
-    #-  .\Sources\packages -> .\Sources\WiQuest\WIQuest.Web\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
+    # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
+    -  .\Sources\packages -> .\Sources\WiQuest\WIQuest.Web\packages.config, .\Sources\WiQuest\WIQuest.Web.Test\packages.config, .\Sources\WiQuest\WIQuest.Web.UaTest\packages.config
     -  .\tools -> .\tools\packages.config, .\setup.cake  # preserve "tools" directory in the root of build folder but will reset it if packages.config or setup.cake is modified
 
 #---------------------------------#
