@@ -18,9 +18,9 @@ Environment.SetVariableNames();
 
 BuildParameters.SetParameters(context: Context,
                             buildSystem: BuildSystem,
-                            sourceDirectoryPath: "./",
+                            sourceDirectoryPath: "./Sources/",
                             integrationTestScriptPath: ".", // Workaround: NULL Exception
-                            testFilePattern: "/**/*.Tests.dll",
+                            testFilePattern: "/**/*.Test.dll",
                             title: "MyStik.TimeTable",
                             repositoryOwner: "AccelerateX-org",
                             repositoryName: "NINE",
@@ -32,11 +32,11 @@ BuildParameters.SetParameters(context: Context,
 BuildParameters.PrintParameters(Context);
 
 ToolSettings.SetToolSettings(context: Context,
-                            testCoverageFilter: "+[WIQuest*]* -[WIQuest*.Tests]* -[WIQuest*.UaTests]*");
+                            testCoverageFilter: "+[MyStik.TimeTable*]* -[MyStik.TimeTable*.Test]* -[MyStik.TimeTable*.UaTest]*");
 
 RPS.Init(context: Context,
         buildSystem: BuildSystem,
-        uaTestFilePattern: "/**/*.UaTests.dll",
+        uaTestFilePattern: "/**/*.UaTest.dll",
         shouldRunUnitTest: true,
         shouldRunUaTest: true,
         shouldDeploy: true,

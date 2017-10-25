@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using System.Data.Entity;
 using Moq;
-using System.Collections.Generic;
+using NUnit.Framework;
+
 
 
 namespace MyStik.TimeTable.Test
 {
-    [TestClass]
+    [TestFixture]
     public class Test
     {
-        [AssemblyInitialize()]
-        public static void AssemblyInit(TestContext context)
+        [OneTimeSetUp]
+        public static void AssemblyInit()
         {
-            AppDomain.CurrentDomain.SetData("DataDirectory", context.DeploymentDirectory);
+            AppDomain.CurrentDomain.SetData("DataDirectory", TestContext.CurrentContext.WorkDirectory);
 
             // TODO:
             // Datenbank hier manuell detachten
@@ -31,7 +31,8 @@ namespace MyStik.TimeTable.Test
         }
 
  
-        [TestMethod]
+        [Test]
+        [Ignore("Database not implemented yet.")]
         public void RoomOK()
         {
 
@@ -49,7 +50,8 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
+        [Ignore("Database Context not implemented yet.")]
         public void TestFail()
         {
 
@@ -67,7 +69,8 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
+        [Ignore("Database not implemented yet.")]
         public void RoomAdd()
         {
 
@@ -95,7 +98,7 @@ namespace MyStik.TimeTable.Test
             Assert.AreEqual(2, n3);
         }
 
-        [TestMethod]
+        [Test]
         public void RoomMock()
         {
 
@@ -112,7 +115,7 @@ namespace MyStik.TimeTable.Test
           
 
 
-        [TestMethod]
+        [Test]
         public void ShowHowToMockAnInterface()
         {
             Person person = new Person() { LastName = "Graber", FirstName = "Johnny" };
@@ -128,7 +131,8 @@ namespace MyStik.TimeTable.Test
 
 
 
-        [TestMethod]
+        [Test]
+        [Ignore("Database not implemented yet.")]
         public void RoomName()
         {
 
@@ -140,7 +144,8 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
+        [Ignore("Database not implemented yet.")]
         public void CourseOK()
         {
             TimeTableDbContext db = TestDataService.GetDataContext();
@@ -155,10 +160,11 @@ namespace MyStik.TimeTable.Test
 
             Assert.AreEqual(2, o);
         }
-           
 
 
-        [TestMethod]
+
+        [Test]
+        [Ignore("Database not implemented yet.")]
         public void CourseSubscritpions()
         {
             TimeTableDbContext db = TestDataService.GetDataContext();
@@ -182,7 +188,8 @@ namespace MyStik.TimeTable.Test
 
 
 
-        [TestMethod]
+        [Test]
+        [Ignore("Database not implemented yet.")]
         public void Inventory()
         {
             // Initialisiere die Testdaten muss am Anfang jeder Testmethode rein, um 

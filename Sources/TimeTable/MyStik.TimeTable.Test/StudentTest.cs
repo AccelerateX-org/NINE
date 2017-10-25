@@ -1,13 +1,13 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MyStik.TimeTable.DataServices;
+using NUnit.Framework;
 
 namespace MyStik.TimeTable.Test
 {
-    [TestClass]
+    [TestFixture]
     public class StudentTest
     {
-        [TestMethod]
+        [Test]
         public void SubscribeCourse()
         {
             // Situation
@@ -61,7 +61,7 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void UnsubscribeCourse()
         {
 
@@ -77,7 +77,7 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void SubscribeOfficeHour()
         {
 
@@ -101,7 +101,7 @@ namespace MyStik.TimeTable.Test
 
 
 
-        [TestMethod]
+        [Test]
         public void SubscribeEvent()
         {
 
@@ -122,7 +122,7 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void SubscribeMailingList()
         {
             // Situaion
@@ -140,7 +140,7 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void SubscribeNewsletter()
         {
             // Situaion
@@ -156,7 +156,7 @@ namespace MyStik.TimeTable.Test
             Guid newsletterId = Guid.NewGuid();
         }
 
-        [TestMethod]
+        [Test]
         public void LogInLogOut()
         {
 
@@ -173,7 +173,7 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void WPMPlatzverlosung()
         {
             // Situation 
@@ -183,7 +183,7 @@ namespace MyStik.TimeTable.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void FreieRäume()
         {
             // Student s sucht einen freien Raum

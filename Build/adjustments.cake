@@ -19,7 +19,7 @@ BuildParameters.Tasks.TestNUnitTask
         EnsureDirectoryExists(BuildParameters.Paths.Directories.NUnitTestResults);
 
         OpenCover(tool => {
-            tool.NUnit3(GetFiles(BuildParameters.Paths.Directories.PublishedNUnitTests + (BuildParameters.TestFilePattern ?? "/**/*Tests.dll")), new NUnit3Settings {
+            tool.NUnit3(GetFiles(BuildParameters.Paths.Directories.PublishedNUnitTests + (BuildParameters.TestFilePattern ?? "/**/*Test.dll")), new NUnit3Settings {
                 NoResults = false,
                 Work = BuildParameters.Paths.Directories.NUnitTestResults
             });
