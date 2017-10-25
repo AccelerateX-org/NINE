@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{E82D0CF4-A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.Test", "TimeTable\MyStik.TimeTable.Test\MyStik.TimeTable.Test.csproj", "{B859E608-27F2-4536-A6EF-5323A20FC426}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStick.TimeTable.UaTest", "MyStick.TimeTable.UaTest\MyStick.TimeTable.UaTest.csproj", "{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStick.TimeTable.UaTest", "TimeTable\MyStick.TimeTable.UaTest\MyStick.TimeTable.UaTest.csproj", "{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
