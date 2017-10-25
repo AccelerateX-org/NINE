@@ -44,6 +44,17 @@ NINE is an open source learning management platform that offers a bundle of web 
     <td><a href="https://www.codefactor.io/repository/github/acceleratex-org/nine/overview/develop"><img src="https://www.codefactor.io/repository/github/acceleratex-org/nine/badge/develop" /></a></td>
     <td><a href="https://www.codefactor.io/repository/github/acceleratex-org/nine/overview/master"><img src="https://www.codefactor.io/repository/github/acceleratex-org/nine/badge/master" /></a></td>
   </tr>
+ <tr>
+    <td colspan="2"><b>Better Code Hub</b></td>
+  </tr>
+  <tr>
+    <td>Develop</td>
+    <td>Master</td>
+  </tr>
+  <tr>
+    <td><img src="https://bettercodehub.com/edge/badge/AccelerateX-org/NINE?branch=develop"></td>
+    <td><img src="https://bettercodehub.com/edge/badge/AccelerateX-org/NINE?branch=master"></td>
+  </tr>  
 </table>
 
 ## Documentation ##
