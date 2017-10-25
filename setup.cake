@@ -37,6 +37,9 @@ ToolSettings.SetToolSettings(context: Context,
 RPS.Init(context: Context,
         buildSystem: BuildSystem,
         uaTestFilePattern: "/**/*.UaTests.dll",
+        shouldRunUnitTest: true,
+        shouldRunUaTest: true,
+        shouldDeploy: true,
         branchDeployment: new BranchDeployment() 
         {
             Master = "Staging",
@@ -46,5 +49,10 @@ RPS.Init(context: Context,
             Hotfix = "Staging",
             Support = "Staging"
         });
+
+if (BuildParameters.IsDevelopBranch && !BuildParameters.IsPullRequest) 
+{
+    RPS.ShouldRunUnitTest = true;
+}
 
 Build.Run();

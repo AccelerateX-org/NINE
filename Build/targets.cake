@@ -1,12 +1,15 @@
-Task("DevBuild")
+Task("Develop")
     .IsDependentOn("Build")
     .IsDependentOn("Octopus-Packaging")
     .IsDependentOn("Octopus-Deployment");
 
-Task("KpiBuild")
+Task("Integrate")
     .IsDependentOn("Build")
     .IsDependentOn("Test-NUnit")
     .IsDependentOn("Upload-Coveralls")
     .IsDependentOn("Octopus-Packaging")
-    .IsDependentOn("Octopus-Deployment")
-    .IsDependentOn("Test-NUnit-UAT");
+    .IsDependentOn("Octopus-Deployment");
+
+Task("Approval")
+    .IsDependentOn("Integrate")
+    .IsDependentOn("Test-NUnit-UAT");    
