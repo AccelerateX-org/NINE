@@ -107,6 +107,13 @@ public static class RPS
         return env;
     }
 
+    private static void printParameters(ICakeContext context) {
+        context.Information("Printing RPS Parameters...");
+        context.Information("ShouldRunUnitTest: {0}", ShouldRunUnitTest);
+        context.Information("ShouldRunUaTest: {0}", ShouldRunUaTest);
+        context.Information("ShouldDeploy: {0}", ShouldDeploy);
+    }
+
     public static void Init(
         ICakeContext context,
         BuildSystem buildSystem,
@@ -168,6 +175,8 @@ public static class RPS
         {
             Octopus = new OctopusApiClient(octoApi.Endpoint, octoApi.ApiKey);
         }
+
+        printParameters(context);
     }
 
 }
