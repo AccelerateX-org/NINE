@@ -96,5 +96,5 @@ for:
 notifications:
   - provider: HipChat
     auth_token:
-      secure: H6lOXWlvI0RxIds6xMuFCrkAI8xEn322qHOFDPOmYzO90v0zfZ0+HTx2wp+z30tv
-    room: wiQuiz - RPS
+      secure: Ho4egHslrWIoatRGSw67km4gjib97dJDsnLYbBzpgjOrcEi+nINePrwSHi7X0Mpp
+    room: NINE - RPS
