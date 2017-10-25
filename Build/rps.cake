@@ -78,7 +78,11 @@ public static class RPS
         var IsFeatureBranch = _buildSystem.AppVeyor.Environment.Repository.Branch.StartsWith("feature", StringComparison.OrdinalIgnoreCase);
         var IsSupportBranch = _buildSystem.AppVeyor.Environment.Repository.Branch.StartsWith("support", StringComparison.OrdinalIgnoreCase);
         var env = "Dev";
-        
+
+        if (BuildParameters.IsTagged) 
+        {
+            env = _branchEnvironments.Tag;
+        }
         if (BuildParameters.IsMasterBranch) 
         {
             env = _branchEnvironments.Master;
@@ -339,6 +343,7 @@ public class DeploymentModel
 
 public class BranchDeployment
 {
+    public string Tag { get; set; }
     public string Master { get; set; }
     public string Develop { get; set; }
     public string Feature { get; set; }

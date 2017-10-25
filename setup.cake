@@ -42,6 +42,7 @@ RPS.Init(context: Context,
         shouldDeploy: true,
         branchDeployment: new BranchDeployment() 
         {
+            Tag = "Staging",
             Master = "Staging",
             Develop = "Dev",
             Feature = "Dev",
