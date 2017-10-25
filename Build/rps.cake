@@ -138,9 +138,10 @@ public static class RPS
         _version = buildVersion;
         _branchEnvironments  = branchDeployment;
 
-        IsDeployed = false;
         ShouldRunUnitTest = true;
         ShouldRunUaTest = true;
+        ShouldDeploy = true;
+        IsDeployed = false;
 
         var gitHubUrlPattern = "https://github.com/{0}/{1}{2}";
         
