@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -10,6 +11,11 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CurriculumViewModel
     {
+        public CurriculumViewModel()
+        {
+            ActiveSemesters = new List<Semester>();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -29,6 +35,10 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public IEnumerable<SemesterTopic> Topics { get; set; }
+
+        public Semester Semester { get; set; }
+
+        public List<Semester> ActiveSemesters { get; set; }
     }
 
     /// <summary>
@@ -98,5 +108,14 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         [Display(Name = "Zusatz Semestergruppe")]
         public string SemGroupName { get; set; }
+    }
+
+    public class CurriculumTermViewModel
+    {
+        public Curriculum Curriculum { get; set; }
+
+
+        public ICollection<IGrouping<int, CurriculumCriteria>> Terms { get; set; }
+
     }
 }

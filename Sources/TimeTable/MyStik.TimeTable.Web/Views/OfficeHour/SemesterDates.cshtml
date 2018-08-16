@@ -1,0 +1,54 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourOverviewModel
+@{
+    ViewBag.Title = "Sprechstundentermine";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-user-md"></i> Meine Sprechstundentermine im @Model.Semester.Name
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var ohDate in Model.OfficeHours.OrderBy(x => x.Lecturer.Name).ThenBy(x => x.Begin))
+                    {
+                        if (ohDate.Begin > DateTime.Now)
+                        {
+                            <a href="@Url.Action("Lecturer", "OfficeHour", new {id = ohDate.Lecturer.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">@ohDate.Lecturer.FullName</h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(ohDate.Begin, ohDate.End)</li>
+                                        @if (!string.IsNullOrEmpty(ohDate.Subscription.SubscriberRemark))
+                                        {
+                                            <li><i class="fa fa-li fa-info-circle"></i>@ohDate.Subscription.SubscriberRemark</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="list-group-item disabled">
+                                <h5 class="list-group-item-heading">@ohDate.Lecturer.FullName</h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(ohDate.Begin, ohDate.End)</li>
+                                        @if (!string.IsNullOrEmpty(ohDate.Subscription.SubscriberRemark))
+                                        {
+                                            <li><i class="fa fa-li fa-info-circle"></i>@ohDate.Subscription.SubscriberRemark</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -16,7 +17,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.SemesterList = Db.Semesters.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
+            ViewBag.SemesterList = Db.Semesters.Where(x => x.StartCourses < DateTime.Today).OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
             {
                 Text = f.Name,
                 Value = f.Name,
@@ -33,7 +34,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new SemesterViewModel
             {
-                Semester = GetSemester()
+                Semester = SemesterService.GetSemester(DateTime.Today)
             };
 
             return View(model);
@@ -85,7 +86,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     model.MySubscriptions.Add(new ActivitySubscriptionModel
                     {
                         Activity = new ActivitySummary { Activity = activity },
-                        State = ActivityService.GetActivityState(activity.Occurrence, user, semester)
+                        State = ActivityService.GetActivityState(activity.Occurrence, user)
                     });
             }
 
@@ -97,7 +98,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.MySubscriptions.Add(new ActivitySubscriptionModel
                 {
                     Activity = new ActivityDateSummary { Date = activityDate },
-                    State = ActivityService.GetActivityState(activityDate.Occurrence, user, semester)
+                    State = ActivityService.GetActivityState(activityDate.Occurrence, user)
                 });
             }
 
@@ -109,7 +110,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.MySubscriptions.Add(new ActivitySubscriptionModel
                 {
                     Activity = new ActivitySlotSummary { Slot = activitySlot },
-                    State = ActivityService.GetActivityState(activitySlot.Occurrence, user, semester)
+                    State = ActivityService.GetActivityState(activitySlot.Occurrence, user)
                 });
             }
 

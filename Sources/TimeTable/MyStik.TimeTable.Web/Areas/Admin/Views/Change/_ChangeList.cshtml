@@ -1,0 +1,88 @@
+﻿@model ICollection<MyStik.TimeTable.Data.ActivityDateChange>
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Zeit</th>
+        <th>Benutzer</th>
+        <th>Aktivität</th>
+        <th>Zeitraum (aktuell)</th>
+        <th>Zeitraum (alt)</th>
+        <th>Zeitraum (neu)</th>
+        <th>Zeit</th>
+        <th>Status</th>
+        <th>Raum</th>
+        <th>Text</th>
+        <th>#</th>
+        <th>Trigger</th>
+    </tr>
+    </thead>
+    <tbody>
+    @{
+        var i = 0;
+        var userService = new UserInfoService();
+        var notificationService = new NotificationService();
+    }
+    @foreach (var change in Model.OrderBy(x => x.TimeStamp))
+    {
+        i++;
+        var name = userService.GetUserName(change.UserId);
+        var notificationText = notificationService.GenerateNotificationText(change.Id.ToString());
+                                
+        <tr id="@change.Id">
+            <td>@i</td>
+            <td>@change.TimeStamp.ToString()</td>
+            <td>@name</td>
+            @if (change.Date != null && change.Date.Activity != null)
+            {
+                <td>@change.Date.Activity.Name</td>
+                <td>@Html.TimeSpanWithDate(change.Date)</td>
+            }
+            else
+            {
+                <td colspan="2">Termin ohne Datum oder Aktivität</td>
+            }
+            @if (change.HasTimeChange)
+            {
+                <td>@Html.TimeSpanWithDate(change.OldBegin, change.OldEnd)</td>
+                <td>@Html.TimeSpanWithDate(change.NewBegin, change.NewEnd)</td>
+                <td>x</td>
+
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+                <td></td>
+            }
+
+            @if (change.HasStateChange)
+            {
+                <td>x</td>
+            }
+            else
+            {
+                <td></td>
+            }
+
+            @if (change.HasRoomChange)
+            {
+                <td>x</td>
+            }
+            else
+            {
+                <td></td>
+            }
+            <td>@notificationText</td>
+            <td>@change.NotificationStates.Count (@change.NotificationStates.Count(x => x.ReadingDate != null))</td>
+            <td><button onclick="CreateNotification('@change.Id.ToString()')">Notification</button></td>
+        </tr>
+    }
+    </tbody>
+
+</table>
+
+

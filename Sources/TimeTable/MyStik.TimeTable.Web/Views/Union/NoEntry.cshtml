@@ -1,0 +1,10 @@
+﻿
+@{
+    ViewBag.Title = "NoEntry";
+}
+
+<h2>Ich möchte gerne bei der Fachschaft (@ViewBag.Union.ShortName) mitmachen.</h2>
+<p>Um "dabei" zu sein, muss ich meine Anmeldung noch persönlich bestätigen. Dazu muss ich zur Fachschaft gehen und meine Anmeldecode mitbringen. Den habe ich per E-Mail erhalten.</p>
+
+<h4>Code vergessen? Keinen Code erhalten?</h4>
+<a href="@Url.Action("GetMember", "Union", new {id = ViewBag.Union.Id})" class="btn btn-primary btn-lg"><i class="fa fa-paw"></i> Neuen Code zusenden lassen</a>

@@ -79,6 +79,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public SemesterGroup SemesterGroup { get; set; }
+
+        public Student Student { get; set; }
     }
 
     /// <summary>
@@ -208,6 +210,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ApplicationUser User { get; set; }
 
+        public Student Student { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -222,6 +226,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<UserCourseDatePlanModel> CourseDates { get; private set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
     }
 
     /// <summary>

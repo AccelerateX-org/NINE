@@ -1,6 +1,8 @@
-﻿
+﻿@using MyStik.TimeTable.Web.Services
+@model ICollection<MyStik.TimeTable.Data.Thesis>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Abschlussarbeiten";
+    var userInfoServicee = new UserInfoService();
 }
 
 <div class="panel panel-default">
@@ -8,7 +10,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Abschlussarbeiten <small>im Aufbau [DEMO]</small></h1>
+                    <h1>Laufende Abschlussarbeiten</h1>
                 </div>
             </div>
         </div>
@@ -17,37 +19,66 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <div class="jumbotron">
-                <p>Hier entsteht eine Seite für alles rund um das Thema Abschlussarbeiten</p>
-            @*
-    <a href="@Url.Action("Create", "ThesisFeedback")" class="btn btn-primary btn-lg">
-        Feedback anlegen
-    </a>
-    <a href="@Url.Action("Create", "ThesisWorkflow")" class="btn btn-primary btn-lg">
-        Arbeit anmelden
-    </a>
-    <a href="@Url.Action("Accept", "ThesisWorkflow")" class="btn btn-primary btn-lg">
-        Als Prüfer will ich eine Anmeldungbearbeiten
-    </a>
-    <a href="@Url.Action("Search", "ThesisAnnouncements")" class="btn btn-primary btn-lg">
-        Arbeit suchen
-    </a>
-    <a href="@Url.Action("Create", "ThesisAnnouncements")" class="btn btn-primary btn-lg">
-        Ausschreibung anlegen
-    </a>
-    <a href="@Url.Action("Filter", "ThesisAnnouncements")" class="btn btn-primary btn-lg">
-        Ergebnisse auswerten
-    </a>
-            *@
-           </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Laufende Arbeiten</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Studierende(r)</th>
+                            <th>Studiengang</th>
+                            <th>Thema</th>
+                            <th>Betreuende(r)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var thesis in Model)
+                        {
+                            <tr>
+                                <td>@userInfoServicee.GetUserName(thesis.Student.UserId)</td>
+                                <td>@thesis.Student.Curriculum.ShortName</td>
+                                <td><a href="@Url.Action("Details", new {id=thesis.Id})">@thesis.TitleDe</a></td>
+                                <td>@thesis.Supervision.Owners.First().Member.FullName</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+        @if (ViewBag.UserRight.IsCurriculumAdmin)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Verwaltung</h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action()" class="list-group-item">
+                            <h5 class="list-group-item-heading"><i class="fa fa-plus"></i> Arbeit erfassen</h5>
+                            <div class="list-group-item-text">
+                                Erfassung einer Arbeit, z.B. wenn kein Betreuungsangebot gefunden wurde
+                            </div>
+                        </a>
+                        <a href="@Url.Action()" class="list-group-item">
+                            <span class="badge badge-danger">6</span>
+                            <h5 class="list-group-item-heading"><i class="fa fa-exclamation-triangle"></i> Fristen</h5>
+                            <div class="list-group-item-text">
+                                Alle Arbeiten, die kurz vor Abgabefrist stehen oder darüber sind
+                            </div>
+                        </a>
+                        <a href="@Url.Action()" class="list-group-item">
+                            <h5 class="list-group-item-heading"><i class="fa fa-list"></i> Listen</h5>
+                            <div class="list-group-item-text">
+                                Liste aller Absolventen in einem Zeitraum, etc.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
-
-
-
-
-
-
-

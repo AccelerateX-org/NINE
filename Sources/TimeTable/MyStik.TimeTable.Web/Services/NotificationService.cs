@@ -99,58 +99,66 @@ namespace MyStik.TimeTable.Web.Services
             string notificationText = "";
 
             // Notification Text erstellen für den Fall einer Raumänderung
-            if (change.HasRoomChange && !change.Date.Occurrence.IsCanceled && !change.HasTimeChange && change.Date.Rooms.Count() > 0)
+            try
             {
-                if (change.Date.Rooms.Count() > 1)
+                if (change.HasRoomChange && !change.Date.Occurrence.IsCanceled && !change.HasTimeChange && change.Date.Rooms.Count() > 0)
                 {
-                    List<Room> raumListe = change.Date.Rooms.ToList();
-                    string raumNamen = "";
-                    foreach (Room r in raumListe)
+                    if (change.Date.Rooms.Count() > 1)
                     {
-                        raumNamen = raumNamen + r.Number.ToString() + ", ";
+                        List<Room> raumListe = change.Date.Rooms.ToList();
+                        string raumNamen = "";
+                        foreach (Room r in raumListe)
+                        {
+                            raumNamen = raumNamen + r.Number.ToString() + ", ";
+                        }
+                        raumNamen = raumNamen.Remove(raumNamen.Length - 2);
+                        notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " findet in den Räumen " + raumNamen + " statt.";
                     }
-                    raumNamen = raumNamen.Remove(raumNamen.Length - 2);
-                    notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " findet in den Räumen " + raumNamen + " statt.";
+                    else
+                    {
+                        notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " findet im Raum " + change.Date.Rooms.FirstOrDefault().Number.ToString() + " statt.";
+                    }
+                }
+
+                // Notification Text erstellen für den Fall einer Terminverschiebung
+                else if (change.HasTimeChange)
+                {
+                    if (change.Date.Rooms.Count() > 1)
+                    {
+                        List<Room> raumListe = change.Date.Rooms.ToList();
+                        string raumNamen = "";
+                        foreach (Room r in raumListe)
+                        {
+                            raumNamen = raumNamen + r.Number.ToString() + ", ";
+                        }
+                        raumNamen = raumNamen.Remove(raumNamen.Length - 2);
+                        notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " wurde auf den " + change.NewBegin.ToString("dd/MM") + " um " + change.NewBegin.ToString("HH:mm") + " Uhr verschoben und findet in den Räumen " + raumNamen + " statt.";
+                    }
+                    else
+                    {
+                        notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " wurde auf den " + change.NewBegin.ToString("dd/MM") + " um " + change.NewBegin.ToString("HH:mm") + " Uhr verschoben und findet im Raum " + change.Date.Rooms.FirstOrDefault().Number.ToString() + " statt.";
+                    }
+                }
+                // Notification Text erstellen im Fall einer Absage
+                else if (change.HasStateChange && change.Date.Occurrence.IsCanceled)
+                {
+                    notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.Date.Begin.ToString("dd/MM") + " wurde abgesagt.";
+                }
+
+                // Notification Text erstellen im Fall einer Reaktivierung des Termins
+                else if (change.HasStateChange && !change.Date.Occurrence.IsCanceled)
+                {
+                    notificationText = "Die zuvor abgesagte Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.Date.Begin.ToString("dd/MM") + " findet wieder statt.";
                 }
                 else
                 {
-                    notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " findet im Raum " + change.Date.Rooms.FirstOrDefault().Number.ToString() + " statt.";
+                    notificationText = "Es konnte kein Text generiert werden.";
                 }
-            }
 
-            // Notification Text erstellen für den Fall einer Terminverschiebung
-            else if (change.HasTimeChange)
-            {
-                if (change.Date.Rooms.Count() > 1)
-                {
-                    List<Room> raumListe = change.Date.Rooms.ToList();
-                    string raumNamen = "";
-                    foreach (Room r in raumListe)
-                    {
-                        raumNamen = raumNamen + r.Number.ToString() + ", ";
-                    }
-                    raumNamen = raumNamen.Remove(raumNamen.Length - 2);
-                    notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " wurde auf den " + change.NewBegin.ToString("dd/MM") + " um " + change.NewBegin.ToString("HH:mm") + " Uhr verschoben und findet in den Räumen " + raumNamen + " statt.";
-                }
-                else
-                {
-                    notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.OldBegin.ToString("dd/MM") + " wurde auf den " + change.NewBegin.ToString("dd/MM") + " um " + change.NewBegin.ToString("HH:mm") + " Uhr verschoben und findet im Raum " + change.Date.Rooms.FirstOrDefault().Number.ToString() + " statt.";
-                }
             }
-            // Notification Text erstellen im Fall einer Absage
-            else if (change.HasStateChange && change.Date.Occurrence.IsCanceled)
+            catch (Exception e)
             {
-                notificationText = "Die Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.Date.Begin.ToString("dd/MM") + " wurde abgesagt.";
-            }
-
-            // Notification Text erstellen im Fall einer Reaktivierung des Termins
-            else if (change.HasStateChange && !change.Date.Occurrence.IsCanceled)
-            {
-                notificationText = "Die zuvor abgesagte Veranstaltung " + change.Date.Activity.Name.ToString() + " vom " + change.Date.Begin.ToString("dd/MM") + " findet wieder statt.";
-            }
-            else
-            {
-                notificationText = "Es konnte kein Text generiert werden.";
+                notificationText = "FEHLER BEI DER TEXTERSTELLUNG";
             }
 
             return notificationText;

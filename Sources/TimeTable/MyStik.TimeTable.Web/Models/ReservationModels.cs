@@ -6,11 +6,25 @@ using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    public class ReservationListViewModel
+    {
+        public ReservationListViewModel()
+        {
+            Reservations = new List<ReservationViewModel>();
+        }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public ICollection<ReservationViewModel> Reservations { get; set; }
+
+    }
+
     /// <summary>
     /// 
     /// </summary>
     public class ReservationViewModel
     {
+        
         /// <summary>
         /// 
         /// </summary>
@@ -21,6 +35,13 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ApplicationUser Owner { get; set; }
 
+        public ActivityDate FirstDate { get; set; }
+
+        public ActivityDate LastDate { get; set; }
+
+        public List<OrganiserMember> Hosts { get; set; }
+
+        public List<Room> Rooms { get; set; }
 
     }
 
@@ -74,6 +95,11 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
+        public ICollection<Guid> DozIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsWeekly { get; set; }
 
         /// <summary>
@@ -92,5 +118,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         [Display(Name = "Ende wöchentlich")]
         public string WeeklyEnd { get; set; }
+
+        public Guid OrganiserId { get; set; }
     }
 }

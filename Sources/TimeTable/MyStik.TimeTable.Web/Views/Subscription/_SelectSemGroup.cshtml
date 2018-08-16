@@ -7,7 +7,7 @@
         <div class="portlet-title">
             <div class="caption">
                 <i class="fa fa-graduation-cap"></i>
-                <span class="caption-subject bold uppercase">  Meine Semestergruppe im @ViewBag.Semester.Name</span>
+                <span class="caption-subject bold">  Meine Semestergruppe im @ViewBag.Semester.Name</span>
             </div>
         </div>
         <div class="portlet-body">
@@ -37,10 +37,11 @@
             <div class="portlet-body">
                 <div class="row">
                     <div class="col-md-8">
-                        <div class="note note-danger">
+                        <div class="note note-info">
                             <p>
-                                <strong>Hinweis:</strong> Ohne Angabe einer Semestergruppe ist keine Eintragung in Lehrveranstaltungen möglich.
+                                <i class="fa fa-info-circle"></i> <strong>Wichtige Information:</strong>
                             </p>
+                            <p>Zur Auswahl stehen nur die Semestergruppen für die Stundenpläne für das ausgwählte Semester veröffentlicht wurden.</p>
                         </div>
                         @using (Html.BeginForm("UpdateSemesterGroup", null, FormMethod.Post, new {@class = "form-horizontal", @role = "form"}))
                         {
@@ -79,10 +80,12 @@
                     </div>
                     <div class="col-md-4">
                         <div class="well well-sm">
-                            <h4>Hinweis</h4>
-                            <p>Diese Angaben hier haben keinen Bezug zu Ihrem Fach- oder Studiensemester.</p>
-                            <p>Die Angabe zu Studienprogramm und Semestergruppe beziehen sich auf die Einordnung der Module in den zugehörigen Modulkataloge der Studienpläne.</p>
-                            <p>Mit der Angabe hier legen sich die "Vorauswahl" fest, wenn das Vorlesungsverzeichnis geöffnet wird. Es soll die Suche nach den passenden Lehrveranstaltungen erleichtern.</p>
+                            <h4>Hinweise</h4>
+                            <ul>
+                                <li>Diese Angaben hier haben keinen Bezug zu Ihrem Fach- oder Studiensemester.</li>
+                                <li>Alle Lehrveranstaltungen im Vorlesungsverzeichnis sind jeweils Studienprogrammen und Semestergruppen zugeordnet.</li>
+                                <li>Mit der Angabe hier legen Sie lediglich die "Vorauswahl" fest, wenn Sie das Vorlesungsverzeichnis verwenden. Es soll die Suche nach den passenden Lehrveranstaltungen erleichtern.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>

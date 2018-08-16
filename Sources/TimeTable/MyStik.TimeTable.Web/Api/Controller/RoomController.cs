@@ -4,21 +4,26 @@ using MyStik.TimeTable.Web.Api.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+
+
     /// <summary>
     /// 
     /// </summary>
     public class RoomController : ApiBaseController
     {
+
+
         /// <summary>
         /// Gibt alle freien Räume eines Tages ab dem Abfragezeitpunkt wieder,die mindestens 30min frei sind
         /// </summary>
         /// <returns>Liste der freien Räume</returns>
-        public FreeRoomResponse GetFreeRoomsNow()
+        public FreeRoomResponse GetFreeRoomsNow(string buildingId="R")
         {
             //Initialisieren des RoomService, damit dieser genutzt werden kann
             var roomService = new RoomInfoService();
             //Abfrage der freien Räume durch den RoomInfoService und Zwischenspeicherung desen Responeses als Liste roomList
-            var roomList = roomService.GetFreeRoomsNow();
+            var code = string.IsNullOrEmpty(buildingId) ? "R" : buildingId;
+            var roomList = roomService.GetFreeRoomsNow(code);
             //Erstellen eines "Response" mit Hilfe der roomList
             var response = new FreeRoomResponse
             {

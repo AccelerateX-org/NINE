@@ -1,0 +1,115 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.Room>
+@{
+    ViewBag.Title = "Rooms";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Verfügbare Räume für @ViewBag.Organiser.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Räume</h4>
+                </div>
+                <table id="tabRooms" class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Raumnummer</th>
+                        <th>Name</th>
+                        <th>Beschreibung / Ausstattung</th>
+                        <th>Plätze</th>
+                        <th>Lernraum</th>
+                        <th>Kartenleser</th>
+                        <th>Belegbar von</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var room in Model)
+                    {
+
+                        var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);
+
+
+
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Room", new {id = room.Id})">@room.Number</a>
+                            </td>
+                            <td>@room.Name</td>
+                            <td>@room.Description</td>
+                            <td>@room.Capacity</td>
+                            <td>
+                                @if (room.IsForLearning)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-times text-danger"></i>
+                                }
+                            </td>
+                            <td>
+                                @if (room.HasAccessControl)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                            </td>
+                            <td>
+                                @if (room.Assignments.Any())
+                                {
+                                    foreach (var roomAssignment in room.Assignments.OrderBy(x => x.Organiser.ShortName))
+                                    {
+                                        @(roomAssignment.InternalNeedConfirmation ? Html.FacultyLabel(roomAssignment.Organiser, "fa-lock") : Html.FacultyLabel(roomAssignment.Organiser, "fa-unlock"))
+                                    }
+                                }
+                                else
+                                {
+                                    <div>keine Zuordnung</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabRooms').DataTable({
+                paging: false
+            });
+        });
+    </script>
+}

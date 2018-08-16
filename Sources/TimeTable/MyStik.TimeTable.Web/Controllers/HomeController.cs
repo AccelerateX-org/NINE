@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
+using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -13,57 +17,6 @@ namespace MyStik.TimeTable.Web.Controllers
     //[CookieConsent]
     public class HomeController : BaseController
     {
-        private HomeViewModel GetModel()
-        {
-            // wir reparieren
-            var visbleFaculties = Db.Organisers.Where(x => x.IsVisible).OrderBy(x => x.ShortName).ToList();
-            if (!visbleFaculties.Any())
-            {
-                var fk09 = Db.Organisers.FirstOrDefault(x => x.ShortName.Equals("FK 09"));
-                if (fk09 != null)
-                {
-                    fk09.IsVisible = true;
-                    fk09.HtmlColor = "#009B71";
-                    fk09.SupportEMail = "itsupport@wi.hm.edu";
-                    fk09.SupportUrl = "http://www.wi.hm.edu/mein_studium/stundenplaene/stundenplaene_nine.de.html";
-                    Db.SaveChanges();
-                }
-
-                var fk10 = Db.Organisers.FirstOrDefault(x => x.ShortName.Equals("FK 10"));
-                if (fk10 != null)
-                {
-                    fk10.IsVisible = true;
-                    fk10.HtmlColor = "#008E7D";
-                    fk10.SupportEMail = "";
-                    fk10.SupportUrl = "http://www.bwl.hm.edu/";
-                    Db.SaveChanges();
-                }
-
-                var fk11 = Db.Organisers.FirstOrDefault(x => x.ShortName.Equals("FK 11"));
-                if (fk11 != null)
-                {
-                    fk11.IsVisible = true;
-                    fk11.HtmlColor = "#EC7404";
-                    fk11.SupportEMail = "";
-                    fk11.SupportUrl = "http://www.sw.hm.edu/nine/nine_1.de.html";
-                    Db.SaveChanges();
-                }
-
-                visbleFaculties = Db.Organisers.Where(x => x.IsVisible).ToList();
-            }
-
-            var model = new HomeViewModel();
-            foreach (var faculty in visbleFaculties)
-            {
-                model.Faculties.Add(new FacultyViewModel
-                {
-                    Organiser = faculty
-                });
-            }
-
-            return model;
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -74,20 +27,47 @@ namespace MyStik.TimeTable.Web.Controllers
             if (Request.IsAuthenticated)
                 return RedirectToAction("Index", "Dashboard");
 
-            var semester = GetSemester();
+            var model = new HomeViewModel();
 
-            var model = GetModel();
+            var userDb = new ApplicationDbContext();
 
-            model.Semester = semester;
-            foreach (var faculty in model.Faculties)
+            model.Students = userDb.Users.Count(x => x.MemberState == MemberState.Student);
+            model.Lecturers = userDb.Users.Count(x => x.MemberState == MemberState.Staff);
+            model.Curricula = Db.Curricula.Count();
+            model.Rooms = Db.Rooms.Count();
+
+            return View("LandingNew", model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult UniversityCalendar()
+        {
+            var model = new HomeViewModel();
+
+
+            // Alle Semester mit veröffentlichten Semestergruppen
+            var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any(g => g.IsAvailable)).OrderByDescending(s => s.EndCourses).Take(4).ToList();
+            foreach (var semester in allPublishedSemester)
             {
-                faculty.StudentCount = Db.Subscriptions.OfType<SemesterSubscription>().Count(x =>
-                    x.SemesterGroup.Semester.Id == semester.Id &&
-                    x.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == faculty.Organiser.Id);
+                var activeOrgs = SemesterService.GetActiveOrganiser(semester, true);
+
+                var semModel = new SemesterActiveViewModel
+                {
+                    Semester = semester,
+                    Organisers = activeOrgs.ToList()
+                };
+
+                model.ActiveSemester.Add(semModel);
             }
 
             return View(model);
         }
+
 
         /// <summary>
         /// 
@@ -96,9 +76,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [AllowAnonymous]
         public ActionResult PrivacyStatement()
         {
-            var model = GetModel();
-
-            return View(model);
+            return View();
         }
 
         /// <summary>
@@ -106,9 +84,14 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
-        public ActionResult Contact()
+        public ActionResult Contact(string email)
         {
-            return View();
+            var model = new ContactMailModel
+            {
+                Email = email
+            };
+
+            return View(model);
         }
 
         /// <summary>
@@ -155,5 +138,116 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             return View();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult Fillter()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult TermsOfUse()
+        {
+            return View();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult SetCulture(string culture)
+        {
+            // Validate input
+            culture = CultureHelper.GetImplementedCulture(culture);
+            // Save culture in a cookie
+            HttpCookie cookie = Request.Cookies["_culture"];
+            if (cookie != null)
+                cookie.Value = culture;   // update cookie value
+            else
+            {
+                cookie = new HttpCookie("_culture");
+                cookie.Value = culture;
+                cookie.Expires = DateTime.Now.AddYears(1);
+            }
+            Response.Cookies.Add(cookie);
+            return RedirectToAction("Index");
+        }
+
+        [AllowAnonymous]
+        public ActionResult Semester(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+
+            var curricula = SemesterService.GetActiveCurricula(semester, true).ToList();
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Curricula = curricula.OrderBy(x => x.Organiser.ShortName).ThenBy(x => x.Name).ToList()
+            };
+
+            return View(model);
+        }
+
+
+        [AllowAnonymous]
+        public ActionResult Dictionary(Guid semId, Guid currId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var courses = SemesterService.GetCourses(semester, curr);
+
+            var model = new SemesterScheduleViewModel
+            {
+                Semester = semester,
+                Curriculum = curr
+            };
+
+            foreach (var course in courses.OrderBy(x => x.Name))
+            {
+                var lectures =
+                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+
+                var cModel = new CourseSummaryModel
+                {
+                    Course = course,
+                    Lecturers = lectures
+                };
+
+                model.Courses.Add(cModel);
+            }
+
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        public ActionResult Course(Guid semId, Guid currId, Guid courseId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+
+            var model = new CourseScheduleViewModel
+            {
+                Semester = semester,
+                Curriculum = curr,
+                Course = course
+            };
+
+            return View(model);
+        }
+
     }
 }

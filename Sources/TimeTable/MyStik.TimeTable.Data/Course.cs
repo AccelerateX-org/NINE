@@ -7,7 +7,7 @@ namespace MyStik.TimeTable.Data
     {
         public Course()
         {
-            ModuleCourses = new HashSet<ModuleCourse>();
+            Nexus = new HashSet<CourseModuleNexus>();
         }
 
         [Display(Name="Link zu Moodle-Kurs")]
@@ -24,7 +24,11 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Liste aller Modul-LVs zu der dieser Kurs gehört
         /// können theoretische mehrere sein, z.B. Pflicht und WPM
+        /// Das wird jetzt überflüssig
         /// </summary>
-        public virtual ICollection<ModuleCourse> ModuleCourses { get; set; } 
+        // public virtual ICollection<ModuleCourse> ModuleCourses { get; set; }
+
+        public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
+
     }
 }

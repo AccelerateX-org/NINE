@@ -16,6 +16,17 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<VorschauView_Tag> Vorschautage { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Address { get; set; }
     }
 
     /// <summary>

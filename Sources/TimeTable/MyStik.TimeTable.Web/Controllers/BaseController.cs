@@ -31,6 +31,16 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
+        protected readonly SemesterService SemesterService;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected readonly CascadingDeleteService DeleteService;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected IdentifyConfig.ApplicationUserManager _userManager;
 
         /// <summary>
@@ -59,6 +69,8 @@ namespace MyStik.TimeTable.Web.Controllers
         protected BaseController()
         {
             ActivityService = new ActivityService(Db);
+            SemesterService = new SemesterService(Db);
+            DeleteService = new CascadingDeleteService(Db);
         }
 
         /// <summary>
@@ -195,11 +207,12 @@ namespace MyStik.TimeTable.Web.Controllers
                     activity.Organiser.Members.SingleOrDefault(
                         m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
 
+
+
                 if (member != null)
                 {
                     userRight.Member = member;
-                    var oh = activity as OfficeHour;
-                    if (oh != null && oh.ByAgreement && oh.Owners.Any(x => x.Member.Id == member.Id))
+                    if (activity is OfficeHour oh && oh.ByAgreement && oh.Owners.Any(x => x.Member.Id == member.Id))
                     {
                         userRight.IsHost = true;
                     }
@@ -210,13 +223,16 @@ namespace MyStik.TimeTable.Web.Controllers
                                 l => l.Dates.Any(occ => occ.Activity.Id == activity.Id) && l.Id == member.Id); // Hält mindestens einen Termin
                     }
                     userRight.IsOwner =
-                        activity.Owners.Any(o => o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
+                        activity.Owners.Any(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
                 }
                 else
                 {
                     // Benutzer gehört nicht zur organisation ist aber owner => das sollte selten sein, aber denkbar
                     userRight.IsOwner =
-                        activity.Owners.Any(o => o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
+                        activity.Owners.Any(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
+
+                    // jeder der mindestens bei einem Temin dabei ist
+                    userRight.IsHost = activity.Dates.Any(d => d.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)));
                 }
 
                 userRight.IsSubscriber = activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id));
@@ -291,6 +307,13 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         protected ActivityOrganiser GetMyOrganisation()
         {
+            if (User.IsInRole("SysAdmin") && Session["OrgAdminId"] != null)
+            {
+                var orgId = (Guid)Session["OrgAdminId"];
+
+                return Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            }
+
             return new MemberService(Db, UserManager).GetOrganisation(User.Identity.Name);
         }
         /// <summary>
@@ -394,68 +417,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Minutes = new SelectList(minutes, "Value", "Text", "00");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        protected Semester GetSemester(ApplicationUser user)
-        {
-            var semService = new SemesterService(Db);
-            // aktuelles Semester definiert durch die Vorlesungszeit!
-            // der Switch könnte später kommen, z.B. Tag der Prüfungseinsicht
-            var currentSemester = semService.GetCurrentSemester();
-            if (currentSemester != null)
-                return currentSemester;
 
-            // Kein Semester mit dieser Vorlesungszeit
-            var nextSemester = semService.GetNextSemester();
-
-            if (nextSemester != null)
-                return nextSemester;
-                
-            // für alle anderen das vorgehende
-            var prevSemester = semService.GetPreviousSemester();
-            if (prevSemester != null)
-                return prevSemester;
-
-            // wenn alles nichts hilft, dann ein Dummy Semester anlegen
-            return new Semester { Name = "N.A." };
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        protected Semester GetSemester()
-        {
-            return GetSemester(AppUser);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="semester"></param>
-        /// <returns></returns>
-        protected Semester GetSemester(string semester)
-        {
-            return new SemesterService(Db).GetSemester(semester);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        protected Semester GetSemester(Guid id)
-        {
-            return new SemesterService(Db).GetSemester(id);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        protected Semester GetPreviousSemester()
-        {
-            return new SemesterService(Db).GetPreviousSemester();
-        }
 
         /// <summary>
         /// 
@@ -465,6 +427,13 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             return UserManager.FindByName(User.Identity.Name);
         }
+
+
+        protected ApplicationUser GetUser(string userId)
+        {
+            return UserManager.FindById(userId);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -474,6 +443,24 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             return Db.Organisers.SingleOrDefault(x => x.Id == id);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="shortName"></param>
+        /// <returns></returns>
+        protected ActivityOrganiser GetOrganiser(string shortName)
+        {
+            return Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(shortName));
+        }
+
+
+        protected Curriculum GetCurriculum(Guid id)
+        {
+            return Db.Curricula.SingleOrDefault(x => x.Id == id);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

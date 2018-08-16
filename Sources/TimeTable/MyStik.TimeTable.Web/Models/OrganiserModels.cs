@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -19,6 +20,9 @@ namespace MyStik.TimeTable.Web.Models
             Members = new List<MemberViewModel>();
             Courses = new List<CourseSummaryModel>();
             Events = new List<EventViewModel>();
+            SemesterGroups = new List<SemesterGroupViewModel>();
+            ActiveSemesters = new List<Semester>();
+            ActiveLotteries = new List<Lottery>();
         }
 
         /// <summary>
@@ -30,6 +34,16 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public Semester Semester { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Semester PreviousSemester { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Semester NextSemester { get; set; }
+
 
         /// <summary>
         /// 
@@ -71,7 +85,28 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public int NewsletterCount { get { return Organiser.Activities.OfType<Newsletter>().Count(); } }
+
+        public ICollection<IGrouping<string, OrganiserMember>> Roles { get; set; }
+        public ICollection<IGrouping<Tag, MemberResponsibility>> Responsibilities { get; set; }
+
+        public List<SemesterGroupViewModel> SemesterGroups { get; private set; }
+
+        public List<Semester> ActiveSemesters { get; }
+
+        public List<Lottery> ActiveLotteries { get; }
+
+        public List<IGrouping<Curriculum, SemesterGroup>> Groups { get; set; }
+
+
     }
+
+    public class SemesterGroupViewModel
+    {
+        public SemesterGroup Group { get; set; }
+
+        public List<string> UserIds { get; set; }
+    }
+
 
     /// <summary>
     /// 
@@ -107,6 +142,20 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public bool WasActiveLastYear { get; set; }
+
+        public List<MemberExportViewModel> Exports { get; set; }
+
+        public List<Course> ActiveCourses { get; set; }
+    }
+
+
+    public class MemberExportViewModel
+    {
+        public MemberExport Export { get; set; }
+
+        public Activity Activity { get; set; }
+
+        public OrganiserMember ExternalMember { get; set; }
     }
 
     /// <summary>
@@ -145,7 +194,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        [Display(Name = "Kurzname")]
+        [Display(Name = "Kurzname, Identifikation")]
         [Required]
         public string ShortName { get; set; }
 
@@ -369,8 +418,51 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public bool IsExamAdmin
         {
-            get { return IsCurriculumAdmin; }
+            get
+            {
+                if (Member != null)
+                    return Member.IsExamAdmin;
+                return IsSysAdmin;
+                ;
+            }
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsStudentAdmin
+        {
+            get
+            {
+                if (Member != null)
+                    return Member.IsStudentAdmin;
+                return IsSysAdmin;
+                ;
+            }
+        }
+
+
+        public bool IsStaff
+        {
+            get
+            {
+                if (User != null)
+                    return User.MemberState == MemberState.Staff || IsSysAdmin;
+                return IsSysAdmin;
+            }
+        }
+
+        public bool IsStudent
+        {
+            get
+            {
+                if (User != null)
+                    return User.MemberState == MemberState.Student || IsSysAdmin;
+                return IsSysAdmin;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -401,5 +493,29 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public bool IsSysAdmin { get; set; }
+    }
+
+    public class MemberProfileViewModel
+    {
+        public Guid MemberId { get; set; }
+
+        [Display(Name = "Name")]
+        public string Name { get; set; }
+
+        [Display(Name = "Vorname")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Titel")]
+        public string Title { get; set; }
+
+        [AllowHtml]
+        [Display(Name = "Profilbeschreibung")]
+        public string Description { get; set; }
+
+        [Display(Name = "Profilseite HM")]
+        public string UrlProfile { get; set; }
+
+        [Display(Name = "Profilbeschreibung öffentlich sichtbar")]
+        public bool ShowDescription { get; set; }
     }
 }

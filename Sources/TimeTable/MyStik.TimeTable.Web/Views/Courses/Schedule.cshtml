@@ -1,0 +1,157 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+@{
+    ViewBag.Title = "Stundenpläne";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName im @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-group"></i> Semestergruppen
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var group in Model.SemesterGroups)
+                    {
+                        <a href="#" class="list-group-item " data-groupid="@group.Group.Id">
+                            <h5 class="list-group-item-heading">
+                                @if (group.Group.IsAvailable)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-ban text-danger"></i>
+                                }
+                                @group.Group.FullName
+                            </h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-calendar"></i> Wochenplan <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+
+}
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            initCalendar(false, false, true);
+            $('#calendar').hide();
+        });
+
+
+        function onShowGroup(id) {
+
+            $('#loading').show();
+            $('#calendar').show();
+
+            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
+            $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("CourseEventsByProgram", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: id,
+                        topicId: null,
+                        showPersonalDates: true
+                    }
+                });
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListByProgram", "Curriculum")',
+                    data: {
+                        semGroupId: id,
+                        topicId: null,
+                        compact: true
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseList').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+
+        function onShowGroupStudents(id) {
+
+            $('#loading').show();
+            $('#calendar').hide();
+            $('#courseList').html('');
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("ListByGroup", "Organiser")',
+                    data: {
+                        semGroupId: id
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseList').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+
+

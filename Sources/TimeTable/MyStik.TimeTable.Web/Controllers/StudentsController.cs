@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Web.Mvc;
+//using System.Web.Security;
 using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using RazorEngine.Compilation.ImpromptuInterface;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -28,11 +30,122 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight();
 
             // Liste aller Fachschaften
-            var model = Db.Organisers.Where(o => o.IsStudent).ToList();
+            var org = GetMyOrganisation();
 
-            ViewBag.MyOrganisation = GetMyOrganisation();
+            ViewBag.MyOrganisation = org;
+            ViewBag.Unions = Db.Organisers.Where(o => o.IsStudent).ToList();
+
+            var model = new List<StudentStatisticsModel>();
+            var list = Db.Students.GroupBy(x => new {x.Curriculum, x.FirstSemester});
+
+            foreach (var ding in list)
+            {
+                model.Add(new StudentStatisticsModel
+                {
+                    Curriculum = ding.Key.Curriculum,
+                    Semester = ding.Key.FirstSemester,
+                    Count = ding.Count()
+                });
+            }
 
             return View(model);
+        }
+
+
+        public ActionResult StartGroups()
+        {
+            ViewBag.UserRight = GetUserRight();
+
+            // Liste aller Fachschaften
+            var org = GetMyOrganisation();
+
+            ViewBag.MyOrganisation = org;
+
+            var model = new List<StudentStatisticsModel>();
+            var list = Db.Students.GroupBy(x => new { x.Curriculum, x.FirstSemester });
+
+            foreach (var ding in list)
+            {
+                model.Add(new StudentStatisticsModel
+                {
+                    Curriculum = ding.Key.Curriculum,
+                    Semester = ding.Key.FirstSemester,
+                    Count = ding.Count()
+                });
+            }
+
+            return View(model);
+        }
+
+        public ActionResult SemesterGroups()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public PartialViewResult Profile(string searchString)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var vorSemester = new SemesterService().GetSemester(semester, 1);
+
+            var model = new List<StudentViewModel>();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var userDb = new ApplicationDbContext();
+                var users = from s in userDb.Users select s;
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    users = users.Where(u =>
+                        u.MemberState == MemberState.Student &&
+                        (u.FirstName.ToUpper().Contains(searchString.ToUpper()) ||
+                         u.LastName.ToUpper().Contains(searchString.ToUpper()))
+                    );
+                }
+
+
+                var semSubService = new SemesterSubscriptionService();
+
+                foreach (var user in users)
+                {
+                    var studModel = new StudentViewModel
+                    {
+                        User = user,
+                        Student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).FirstOrDefault()
+                    };
+
+
+                    // alle Kurse des Benutzers
+                    var courses =
+                        Db.Activities.OfType<Course>()
+                            .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) &&
+                                        c.SemesterGroups.Any((g => g.Semester.Id == semester.Id)))
+                            .OrderBy(c => c.Name)
+                            .ToList();
+
+                    studModel.CurrentCourses = courses;
+
+                    var lastCourses =
+                        Db.Activities.OfType<Course>()
+                            .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) &&
+                                        c.SemesterGroups.Any((g => g.Semester.Id == vorSemester.Id)))
+                            .OrderBy(c => c.Name)
+                            .ToList();
+
+                    studModel.LastCourses = lastCourses;
+
+
+                    model.Add(studModel);
+                }
+            }
+
+            model = model.OrderBy(u => u.User.LastName).ToList();
+
+            ViewBag.CurrentSemester = semester;
+            ViewBag.LastSemester = vorSemester;
+
+            return PartialView("_Profile", model);
         }
 
 
@@ -54,7 +167,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Invitation(InvitationFileModel model)
         {
             InvitationCheckModel invitationList = new InvitationCheckModel();
-            var sem = GetSemester();
+            //var sem = SemesterService.GetSemester(DateTime.Today);
 
             try
             {
@@ -90,8 +203,10 @@ namespace MyStik.TimeTable.Web.Controllers
                                     LastName = words[0],
                                     FirstName = words[1],
                                     Email = words[2],
-                                    Curriculum = words[3],
-                                    Group = words[4],
+                                    Organiser = words[3],
+                                    Curriculum = words[4],
+                                    Group = words[5],
+                                    Semester = words[6].Trim(),
                                     Invite = true
                                 };
 
@@ -103,33 +218,43 @@ namespace MyStik.TimeTable.Web.Controllers
                                     invitation.Remark = "Hat bereits ein Benutzerkonto";
                                 }
 
-                                var curr = Db.Curricula.SingleOrDefault(c => c.ShortName.Equals(invitation.Curriculum.Trim()));
-                                if (curr == null)
+                                var org = Db.Organisers.SingleOrDefault(x =>
+                                    x.ShortName.Equals(invitation.Organiser.Trim()));
+
+                                if (org == null)
                                 {
-                                    invitation.Remark += "Studiengang unbekannt";
+                                    invitation.Remark += "Veranstalter unbekannt";
                                 }
                                 else
                                 {
-                                    
-                                    var groupList = Db.SemesterGroups.Where(g =>
-                                            g.Semester.Id == sem.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).ToList();
-
-                                    foreach (var group in groupList)
+                                    var curr = org.Curricula.SingleOrDefault(c => c.ShortName.Equals(invitation.Curriculum.Trim()));
+                                    if (curr == null)
                                     {
-                                        if (group.GroupName.Trim().Equals(invitation.Group.Trim()))
+                                        invitation.Remark += "Studiengang unbekannt";
+                                    }
+                                    else
+                                    {
+
+                                        var groupList = Db.SemesterGroups.Where(g =>
+                                            g.Semester.Name.Equals(invitation.Semester) && g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).ToList();
+
+                                        foreach (var group in groupList)
                                         {
-                                            invitation.SemGroup = group;
+                                            if (group.GroupName.Trim().Equals(invitation.Group.Trim()))
+                                            {
+                                                invitation.SemGroup = group;
+                                            }
+                                        }
+
+                                        if (invitation.SemGroup == null)
+                                        {
+                                            invitation.Invite = false;
+                                            invitation.Remark += "Studiengruppe unbekannt";
                                         }
                                     }
 
-                                    if (invitation.SemGroup == null)
-                                    {
-                                        invitation.Invite = false;
-                                        invitation.Remark += "Studiengruppe unbekannt";
-                                    }
+                                    invitationList.Invitations.Add(invitation);
                                 }
-
-                                invitationList.Invitations.Add(invitation);
                             }
                         }
                         i++;
@@ -203,7 +328,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 invitation.Invited = false;
 
-                var now = GlobalSettings.Now;
+                var now = DateTime.Now;
                 var user = new ApplicationUser
                 {
                     UserName = invitation.Email, 
@@ -221,6 +346,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 };
 
                 // Benutzer anlegen, mit Dummy Passwort
+
+                
+                //string pswd = Membership.GeneratePassword(10, 2);
+
                 var result = UserManager.Create(user, "Pas1234?");
                 if (result.Succeeded)
                 {
@@ -330,10 +459,22 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult CoursePlan(string id)
         {
             var model = new UserCoursePlanViewModel();
+            var user = UserManager.FindById(id);
 
-            model.User = UserManager.FindById(id);
+            model.User = user;
+            model.Student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
+                .FirstOrDefault();
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var org = GetMyOrganisation();
+
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var hasGroups = Db.SemesterGroups.Any(x =>
+                x.Semester.Id == nextSemester.Id && x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id);
+            if (hasGroups)
+                semester = nextSemester;
+
+
             model.Semester = semester;
 
             var courses =
@@ -380,7 +521,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     summary.Dates.Add(courseDate);
                 }
 
-                summary.HasLottery = Db.Lotteries.Any(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+                summary.Lottery =
+                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
 
 
                 var subscriptions = course.Occurrence.Subscriptions.Where(s => s.UserId.Equals(id));
@@ -413,9 +555,175 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            ViewBag.UserRight = GetUserRight();
+
+
             return View(model);
         }
 
+        public ActionResult Remove(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(x => x.Id == id);
 
+            Db.Members.Remove(member);
+            Db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult ChangeCurriculum(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = UserManager.FindById(student.UserId);
+            var org = GetMyOrganisation();
+
+            var model = new CurriculumSubscriptionViewModel();
+            model.User = user;
+            model.Student = student;
+            model.CurrId = student.Curriculum.Id;
+            model.SemId = student.FirstSemester.Id;
+            model.IsDual = student.IsDual;
+            model.IsPartTime = student.IsPartTime;
+
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= DateTime.Today).OrderBy(x => x.StartCourses)
+                .Select(f => new SelectListItem
+                    {
+                        Text = f.Name,
+                        Value = f.Id.ToString(),
+                    }
+                );
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangeCurriculum(CurriculumSubscriptionViewModel model)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
+            var user = UserManager.FindById(student.UserId);
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+
+            student.Curriculum = curr;
+            student.FirstSemester = semester;
+            student.IsDual = model.IsDual;
+            student.IsPartTime = model.IsPartTime;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("CoursePlan", new {id = user.Id});
+        }
+
+        public ActionResult ChangeNumber(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = UserManager.FindById(student.UserId);
+
+            var model = new CurriculumSubscriptionViewModel();
+            model.User = user;
+            model.Student = student;
+            model.Number = student.Number;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangeNumber(CurriculumSubscriptionViewModel model)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
+            var user = UserManager.FindById(student.UserId);
+
+            student.Number = model.Number;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("CoursePlan", new { id = user.Id });
+        }
+
+        public ActionResult DeleteStudent(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+            if (student != null)
+            {
+                Db.Entry(student).State = EntityState.Modified;
+
+                student.HasCompleted = true;
+
+                Db.SaveChanges();
+            }
+
+
+            var user = UserManager.FindById(student.UserId);
+
+            return RedirectToAction("CoursePlan", new {id=user.Id});
+        }
+
+
+
+        /// <summary>
+        /// Generates a Random Password
+        /// respecting the given strength requirements.
+        /// </summary>
+        /// <param name="opts">A valid PasswordOptions object
+        /// containing the password strength requirements.</param>
+        /// <returns>A random password</returns>
+        /*
+        public static string GenerateRandomPassword(PasswordOptions opts = null)
+        {
+            if (opts == null) opts = new PasswordOptions()
+            {
+                RequiredLength = 8,
+                RequiredUniqueChars = 4,
+                RequireDigit = true,
+                RequireLowercase = true,
+                RequireNonAlphanumeric = true,
+                RequireUppercase = true
+            };
+
+            string[] randomChars = new[] {
+            "ABCDEFGHJKLMNOPQRSTUVWXYZ",    // uppercase 
+            "abcdefghijkmnopqrstuvwxyz",    // lowercase
+            "0123456789",                   // digits
+            "!@$?_-"                        // non-alphanumeric
+        };
+
+            Random rand = new Random(Environment.TickCount);
+            List<char> chars = new List<char>();
+
+            if (opts.RequireUppercase)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[0][rand.Next(0, randomChars[0].Length)]);
+
+            if (opts.RequireLowercase)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[1][rand.Next(0, randomChars[1].Length)]);
+
+            if (opts.RequireDigit)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[2][rand.Next(0, randomChars[2].Length)]);
+
+            if (opts.RequireNonAlphanumeric)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[3][rand.Next(0, randomChars[3].Length)]);
+
+            for (int i = chars.Count; i < opts.RequiredLength
+                || chars.Distinct().Count() < opts.RequiredUniqueChars; i++)
+            {
+                string rcs = randomChars[rand.Next(0, randomChars.Length)];
+                chars.Insert(rand.Next(0, chars.Count),
+                    rcs[rand.Next(0, rcs.Length)]);
+            }
+
+            return new string(chars.ToArray());
+        }
+        */
     }
 }

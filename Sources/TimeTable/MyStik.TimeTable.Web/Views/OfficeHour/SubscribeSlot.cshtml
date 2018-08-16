@@ -1,0 +1,21 @@
+﻿@model MyStik.TimeTable.Data.ActivityDate
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "SubscribeSlot";
+}
+
+<h2>SubscribeSlot</h2>
+
+<form action="@Url.Action("SubscribeSlot")" method="post" class="form form-inline">
+    <select name="slotId" class="form-control">
+        @foreach (var slot in Model.Slots)
+        {
+            if (!slot.Occurrence.Subscriptions.Any() && slot.Occurrence.IsAvailable)
+            {
+                <option value="@slot.Id">@Html.TimeSpan(slot)</option>
+            }
+        }
+    </select>
+    <button type="submit" class="btn btn-default"><i class="fa fa-pencil"></i> eintragen</button>
+</form>

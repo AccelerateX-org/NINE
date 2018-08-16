@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -107,7 +107,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var userDB = new ApplicationDbContext();
 
-            var sem = GetSemester();
+            var sem = SemesterService.GetSemester(DateTime.Today);
 
             var model = new List<SubTestModel>();
 

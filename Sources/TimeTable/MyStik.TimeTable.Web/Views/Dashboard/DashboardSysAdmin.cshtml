@@ -107,14 +107,20 @@
                 </div>
                 <div class="portlet-body">
                     <div class="list-group">
-                        <a href="@Url.Action("Index", "Semester")" class="list-group-item">
+                        <a href="@Url.Action("Index", "Semester", new {area="Admin"})" class="list-group-item">
                             <i class="fa fa-calendar fa-fw"></i> Semester
                         </a>
                         <a href="@Url.Action("Index", "Hangfire")" class="list-group-item">
                             <i class="fa fa-users fa-fw"></i> Jobverwaltung
                         </a>
-                        <a href="@Url.Action("Index", "Log")" class="list-group-item">
+                        <a href="@Url.Action("Index", "Log", new {area="Admin"})" class="list-group-item">
                             <i class="fa fa-cloud fa-fw"></i> Log
+                        </a>
+                        <a href="@Url.Action("Index", "OfficeHour", new {area="Admin"})" class="list-group-item">
+                            <i class="fa fa-question-circle-o fa-fw"></i> Sprechstunden
+                        </a>
+                        <a href="@Url.Action("Index", "Test", new {area="Admin"})" class="list-group-item">
+                            <i class="fa fa-question-circle-o fa-fw"></i> Systemtest
                         </a>
                     </div>
 
@@ -141,6 +147,15 @@
                         <button type="submit">Als Formular</button>
                     </form>
 
+                </div>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h4>Reparaturen</h4>
+                    </div>
+                    <div class="panel-body">
+                        <a href="@Url.Action("ChangeDoz", "Repair", new {area = "Admin"})" class="btn btn-default">Dozenten FK 11</a>
+                        <a href="@Url.Action("ChangeGroups", "Repair", new {area = "Admin"})" class="btn btn-default">Gruppen FK 11</a>
+                    </div>
                 </div>
             </div>
         </div>

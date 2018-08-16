@@ -1,0 +1,89 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisAcceptModel
+@{
+    ViewBag.Title = "Thema ausgeben";
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Thema ausgeben</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Ausgabe Thema Abschlussarbeit</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        <fieldset>
+                            @Html.HiddenFor(m => m.Supervision.Id)
+                            @Html.HiddenFor(m => m.Subscription.Id)
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Verfasser</label>
+                                <div class="col-md-8">
+                                    <p class="form-control-static">@Model.User.FullName</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Studiengang</label>
+                                <div class="col-md-8">
+                                    <p class="form-control-static">@Model.Curriculum.Name (@Model.Curriculum.ShortName)</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Bearbeitungsdauer</label>
+                                <div class="col-md-8">
+                                    <p class="form-control-static">@Model.Period Monate</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Tag der Ausgabe</label>
+                                <div class="col-md-8">
+                                    <p class="form-control-static">@Model.IssueDate.ToShortDateString()</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Abgabedatum</label>
+                                <div class="col-md-8">
+                                    <p class="form-control-static">@Model.DeliveryDate.ToShortDateString()</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Betreuende(r)</label>
+                                <div class="col-md-8">
+                                    <p class="form-control-static">@Model.Lecturer.Name</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">Titel (optional, kann später geändert werden)</label>
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Titel der Arbeit" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-4 col-md-8">
+                                    <button type="submit" class="btn btn-primary">Thema ausgeben</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

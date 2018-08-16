@@ -1,0 +1,156 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.DataServices.Drawing.DrawingService
+@{
+    ViewBag.Title = "Status " + Model.Lottery.Name;
+    var userService = new UserInfoService();
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Wahlverfahren @Model.Lottery.Name  - Studierende</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Liste der Studierenden</h4>
+                </div>
+
+
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Name</th>
+                            <th rowspan="2"><i class="fa fa-book"></i></th>
+                            <th rowspan="2"><i class="fa fa-calendar-plus-o"></i></th>
+                            <th rowspan="2"><i class="fa fa-user"></i></th>
+                            <th rowspan="2"><i class="fa fa-frown-o"></i></th>
+                            <th rowspan="2">Bereits erhaltene Plätze</th>
+                            <th colspan="@Model.Lottery.MaxSubscription">Wartelisteneinträge (nach Priorität)</th>
+                        </tr>
+                    <tr>
+                        @for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                        {
+                            <th>@i</th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model.Games)
+                        {
+                            var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
+                            var user = userService.GetUser(student.Student.UserId);
+
+                            <tr>
+                                @if (user == null)
+                                {
+                                    <td colspan="3">@student.Game.UserId</td>
+                                }
+                                else
+                                {
+                                    <td>@user.FullName</td>
+                                    <td>@student.Student.Curriculum.ShortName</td>
+                                    <td>@student.Student.FirstSemester.Name</td>
+                                }
+                                @if (seats < student.Game.CoursesWanted)
+                                {
+                                    <td class="warning">@seats (@student.Game.CoursesWanted)</td>
+                                }
+                                else if (seats > student.Game.CoursesWanted)
+                                {
+                                    <td class="danger">@seats (@student.Game.CoursesWanted)</td>
+                                }
+                                else
+                                {
+                                    <td class="success">@seats (@student.Game.CoursesWanted)</td>
+                                }
+                                @if (student.Game.AcceptDefault)
+                                {
+                                    <td><i class="fa fa-random"></i></td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-times text-danger"></i></td>
+                                }
+                                <td>
+                                    @foreach (var seat in student.Seats)
+                                    {
+                                        if (seat.Subscription.Priority.Value == 0)
+                                        {
+                                            <div>@seat.Course.ShortName (*)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@seat.Course.ShortName (@seat.Subscription.Priority)</div>
+                                        }
+                                    }
+                                </td>
+                                @for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                                {
+                                    var lot = student.Lots.FirstOrDefault(x => x.Priority == i);
+
+                                    if (lot != null)
+                                    {
+                                        if (lot.IsTouched)
+                                        {
+                                            if (lot.IsValid)
+                                            {
+                                                <td class="success">@lot.Course.ShortName</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="warning">@lot.Course.ShortName</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td class="danger">@lot.Course.ShortName</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+﻿@using System.Globalization
+@model MyStik.TimeTable.Web.Models.ActivityPlanModel
+@{
+    ViewBag.Title = "Meine Lehrveranstaltungen";
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            @if (Model.MyActivities.Any())
+            {
+                foreach (var course in Model.MyActivities)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>@course.Activity.Name (@course.Activity.ShortName)</h4>
+                        </div>
+                        <div class="list-group">
+                            <a href="@Url.Action("Admin", "Course", new {id = course.Activity.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-calendar"></i> Termine
+                                </h5>
+                                <div class="list-group-item-text">
+                                    @if (course.NextDate != null)
+                                    {
+                                        <div>Nächster Termin: @course.NextDate.Summary.Date.Begin.ToString("dd. MMMM yyyy HH:mm", new CultureInfo("de-DE"))</div>
+                                    }
+                                    else
+                                    {
+                                        <div>Veranstaltung beendet</div>
+                                    }
+                                </div>
+                            </a>
+                            <a href="@Url.Action("Admin", "Course", new {id = course.Activity.Id})" class="list-group-item">
+                                <span class="badge badge-success">@course.Activity.Occurrence.Subscriptions.Count</span>
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-pencil"></i> Eintragungen
+                                </h5>
+                            </a>
+
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <h1>Keine Lehrveranstaltungen vorhanden</h1>
+            }
+        </div>
+    </div>
+</div>
+

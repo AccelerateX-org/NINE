@@ -1,0 +1,108 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterDateViewModel
+@{
+    ViewBag.Title = "Datum anlegen";
+}
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+}
+
+
+<div class="row">
+    <div class="col-md-offset-3 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Neuen Termin im Semester @ViewBag.Semester.Name anlegen</h4>
+            </div>
+            <div class="panel-body">
+
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary(true)
+                        @Html.HiddenFor(m => m.SemesterId)
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Description)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Start, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.Start, new { @class = "form-control datepicker" })
+
+                                @Html.ValidationMessageFor(m => m.Start)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.End, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.End, new { @class = "form-control datepicker" })
+                                @Html.ValidationMessageFor(m => m.End)
+                            </div>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.HasCourses)
+                            
+                            <label for="HasCourses">Vorlesungszeit</label>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.Wichtig)
+                            
+                            <label for="Wichtig">Ist wichtig</label>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.Eintaegig)
+                            
+                            <label for="Eintaegig">Eintaegig</label>
+                        </div>
+
+                        <div class="checkbox">
+                            @Html.CheckBoxFor(m => m.Terminstehtnochnichtfest)
+                         
+                            <label for="Terminstehtnochnichtfest">Termin steht noch nicht fest</label>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-10">
+                                <input type="submit" value="anlegen" class="btn btn-success" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+
+    <script>
+
+        $(function () {
+       
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+        });
+
+    </script>
+}

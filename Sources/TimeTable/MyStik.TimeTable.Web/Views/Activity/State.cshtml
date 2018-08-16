@@ -1,0 +1,43 @@
+﻿@model MyStik.TimeTable.Web.Models.ActivitySemesterViewModel
+@{
+    ViewBag.Title = "Semester";
+}
+
+
+@{
+    var dates = Model.Courses.Sum(x => x.Dates.Count);
+
+    var time = new TimeSpan();
+
+    foreach (var course in Model.Courses)
+    {
+        foreach (var date in course.Dates)
+        {
+            time += (date.End - date.Begin);
+        }
+    }
+}
+
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        Auswertung des Stundenplans
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <p>Ein paar simple Auswertungen des Stundenplans</p>
+                    <ul class="fa-ul">
+                        <li><i class="fa fa-li fa-pencil"></i>Ich bin in @Model.Courses.Count Lehrveranstaltungen eingeschrieben</li>
+                        <li><i class="fa fa-li fa-calendar"></i>Das sind insgesamt @dates Termine</li>
+                        <li><i class="fa fa-li fa-clock-o"></i>Zeitaufwand @time.TotalHours h über das gesamte Semester</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

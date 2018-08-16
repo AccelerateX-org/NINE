@@ -19,7 +19,7 @@ namespace MyStik.TimeTable.Web {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -61,7 +61,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Akkreditierungen.
         /// </summary>
         public static string AccreditationsString {
             get {
@@ -70,7 +70,43 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Aktionen.
+        /// </summary>
+        public static string ActionsString {
+            get {
+                return ResourceManager.GetString("ActionsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aktivitäten.
+        /// </summary>
+        public static string ActivitiesString {
+            get {
+                return ResourceManager.GetString("ActivitiesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Datum hinzufügen.
+        /// </summary>
+        public static string AddDateString {
+            get {
+                return ResourceManager.GetString("AddDateString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dozent anlegen.
+        /// </summary>
+        public static string AddLecturerString {
+            get {
+                return ResourceManager.GetString("AddLecturerString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1. Stock.
         /// </summary>
         public static string AddressCantine {
             get {
@@ -79,7 +115,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Adresse.
         /// </summary>
         public static string AddressString {
             get {
@@ -88,7 +124,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Verwaltung.
+        /// </summary>
+        public static string AdministrationString {
+            get {
+                return ResourceManager.GetString("AdministrationString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin.
+        /// </summary>
+        public static string AdminString {
+            get {
+                return ResourceManager.GetString("AdminString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alle Studiengänge.
         /// </summary>
         public static string AllCurriculas {
             get {
@@ -97,7 +151,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Alle Veranstaltungen.
         /// </summary>
         public static string AllEventsString {
             get {
@@ -106,7 +160,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Alle Module.
         /// </summary>
         public static string AllModules {
             get {
@@ -115,7 +169,43 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Alle Personen.
+        /// </summary>
+        public static string AllPersons {
+            get {
+                return ResourceManager.GetString("AllPersons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alumni.
+        /// </summary>
+        public static string AlumniString {
+            get {
+                return ResourceManager.GetString("AlumniString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to und.
+        /// </summary>
+        public static string AndString {
+            get {
+                return ResourceManager.GetString("AndString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to als Liste.
+        /// </summary>
+        public static string AsListString {
+            get {
+                return ResourceManager.GetString("AsListString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verfügbare externe Login-Dienste.
         /// </summary>
         public static string AvailableLoginServices {
             get {
@@ -124,7 +214,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Freie Plätze (Gesamt).
+        /// </summary>
+        public static string AvailableSubscriptions {
+            get {
+                return ResourceManager.GetString("AvailableSubscriptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zurück.
+        /// </summary>
+        public static string BackLink {
+            get {
+                return ResourceManager.GetString("BackLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stammdaten &amp; Einstellungen.
+        /// </summary>
+        public static string BasicDataNSettingsHeading {
+            get {
+                return ResourceManager.GetString("BasicDataNSettingsHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Öffnungszeiten.
         /// </summary>
         public static string BusinessHoursString {
             get {
@@ -133,7 +250,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 11:00 - 13:45 Uhr.
         /// </summary>
         public static string BusinessHoursTimeFriday {
             get {
@@ -142,7 +259,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 11:00 - 14:00 Uhr.
         /// </summary>
         public static string BusinessHoursTimeMondaytoThursday {
             get {
@@ -151,7 +268,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.studentenwerk-muenchen.de/mensa/speiseplan/speiseplan_431_-en.html#heute.
+        ///   Looks up a localized string similar to abgesagt.
+        /// </summary>
+        public static string CalledOfString {
+            get {
+                return ResourceManager.GetString("CalledOfString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://openmensa.org/c/141.
         /// </summary>
         public static string CantineHyperlink {
             get {
@@ -160,7 +286,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mensa Speiseplan.
         /// </summary>
         public static string CantineMenuString {
             get {
@@ -169,7 +295,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Kein Speiseplan verfügbar.
         /// </summary>
         public static string CantineNoMenuAvailable {
             get {
@@ -178,7 +304,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Zeitpunkt.
+        /// </summary>
+        public static string CertainTimeString {
+            get {
+                return ResourceManager.GetString("CertainTimeString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ändern.
         /// </summary>
         public static string ChangeButton {
             get {
@@ -187,7 +322,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to E-Mail Adresse ändern.
         /// </summary>
         public static string ChangeEMailButton {
             get {
@@ -196,7 +331,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwort ändern.
         /// </summary>
         public static string ChangePasswordButton {
             get {
@@ -205,7 +340,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Bemerkung.
+        /// </summary>
+        public static string CommentString {
+            get {
+                return ResourceManager.GetString("CommentString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kommunikationseinstellungen.
         /// </summary>
         public static string CommunicationSettingsHeading {
             get {
@@ -214,7 +358,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Kommunikation.
+        /// </summary>
+        public static string CommunicationString {
+            get {
+                return ResourceManager.GetString("CommunicationString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reservierung bestätigen.
+        /// </summary>
+        public static string ConfirmReservedCourse {
+            get {
+                return ResourceManager.GetString("ConfirmReservedCourse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kontakt.
         /// </summary>
         public static string ContactHeading {
             get {
@@ -223,7 +385,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Kontakt.
         /// </summary>
         public static string ContactLink {
             get {
@@ -232,7 +394,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Nachricht.
         /// </summary>
         public static string ContactMailBody {
             get {
@@ -241,7 +403,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Betreff.
         /// </summary>
         public static string ContactMailSubject {
             get {
@@ -250,7 +412,70 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Kursdetails.
+        /// </summary>
+        public static string CourseDetailsString {
+            get {
+                return ResourceManager.GetString("CourseDetailsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Veranstaltung ist beendet!.
+        /// </summary>
+        public static string CourseFinished {
+            get {
+                return ResourceManager.GetString("CourseFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to : Für Fach gibt es eine Platzverlosung.
+        /// </summary>
+        public static string CourseGotLotteryMessage {
+            get {
+                return ResourceManager.GetString("CourseGotLotteryMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Der Kurs hat keine Platzbeschränkungen..
+        /// </summary>
+        public static string CourseHasNoRestrictions {
+            get {
+                return ResourceManager.GetString("CourseHasNoRestrictions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Für den Kurs werden die Plätze je Studiengang vergeben (siehe Tabelle links)..
+        /// </summary>
+        public static string CourseLotteryGoesByMajor {
+            get {
+                return ResourceManager.GetString("CourseLotteryGoesByMajor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Für den Kurs werden die Plätze je Studiengang und Studiengruppe vergeben (siehe Tabelle links)..
+        /// </summary>
+        public static string CourseLotteryGoesByMajorAndSemGroup {
+            get {
+                return ResourceManager.GetString("CourseLotteryGoesByMajorAndSemGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Das Fach gehört nicht zum meinem Studiengang. Diese Eintragung nimmt daher nicht an der Platzverlosung teil..
+        /// </summary>
+        public static string CourseMatchesNotMajorMessage {
+            get {
+                return ResourceManager.GetString("CourseMatchesNotMajorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Liste meiner aller meiner Pläne.
         /// </summary>
         public static string CoursePlanPanelHeading {
             get {
@@ -259,7 +484,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Lehrangebot.
+        /// </summary>
+        public static string CoursesOffered {
+            get {
+                return ResourceManager.GetString("CoursesOffered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fach.
+        /// </summary>
+        public static string CourseString {
+            get {
+                return ResourceManager.GetString("CourseString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anlegen.
+        /// </summary>
+        public static string CreateButton {
+            get {
+                return ResourceManager.GetString("CreateButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plan anlegen.
         /// </summary>
         public static string CreateCoursePlanButton {
             get {
@@ -268,7 +520,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Neue Veranstaltung in.
+        /// </summary>
+        public static string CreateEventInString {
+            get {
+                return ResourceManager.GetString("CreateEventInString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Veranstaltung anlegen.
+        /// </summary>
+        public static string CreateEventString {
+            get {
+                return ResourceManager.GetString("CreateEventString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprechstunde anlegen.
+        /// </summary>
+        public static string CreateOfficeHourLink {
+            get {
+                return ResourceManager.GetString("CreateOfficeHourLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kriterien.
         /// </summary>
         public static string CriteriaString {
             get {
@@ -277,7 +556,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Aktuelle Lehrveranstaltungen.
+        /// </summary>
+        public static string CurrentCourses {
+            get {
+                return ResourceManager.GetString("CurrentCourses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aktuell Studentenzahl.
+        /// </summary>
+        public static string CurrentNumberStudents {
+            get {
+                return ResourceManager.GetString("CurrentNumberStudents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Studienprogramm.
         /// </summary>
         public static string CurriculumField {
             get {
@@ -286,7 +583,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Bitte wählen Sie Ihr Studienprogramm und Ihre Studiengruppe für dieses Semester aus. Nach der Auswahl bitte die Schaltfläche speichern betätigen..
         /// </summary>
         public static string CurriculumNGroupEmptyMessage {
             get {
@@ -295,7 +592,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Das Wichtigste auf einen Blick.
         /// </summary>
         public static string DashboardStudentHeading {
             get {
@@ -304,7 +601,43 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Termine, Termine,......
+        /// </summary>
+        public static string DatesDatesHeading {
+            get {
+                return ResourceManager.GetString("DatesDatesHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terminliste.
+        /// </summary>
+        public static string DatesListString {
+            get {
+                return ResourceManager.GetString("DatesListString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Termine.
+        /// </summary>
+        public static string DatesString {
+            get {
+                return ResourceManager.GetString("DatesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Datum.
+        /// </summary>
+        public static string DateString {
+            get {
+                return ResourceManager.GetString("DateString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Benutzerkonto löschen.
         /// </summary>
         public static string DeleteAccountButton {
             get {
@@ -313,7 +646,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to löschen.
         /// </summary>
         public static string DeleteButton {
             get {
@@ -322,7 +655,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ENTFERNEN.
+        /// </summary>
+        public static string DeleteCapButton2 {
+            get {
+                return ResourceManager.GetString("DeleteCapButton2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bezeichnung.
         /// </summary>
         public static string Description {
             get {
@@ -331,7 +673,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Beschreibung.
         /// </summary>
         public static string Description2 {
             get {
@@ -340,7 +682,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Beschreibung der Veranstaltung.
+        /// </summary>
+        public static string DescriptionOfEvent {
+            get {
+                return ResourceManager.GetString("DescriptionOfEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GeräteId.
         /// </summary>
         public static string DeviceId {
             get {
@@ -349,7 +700,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Gerätename.
         /// </summary>
         public static string DeviceName {
             get {
@@ -358,7 +709,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ECTS.
         /// </summary>
         public static string ECTSString {
             get {
@@ -367,7 +718,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to E-Mail.
         /// </summary>
         public static string Email {
             get {
@@ -376,7 +727,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Benutzername oder E-Mail Adresse.
         /// </summary>
         public static string EmailPlaceholder {
             get {
@@ -385,7 +736,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mitarbeiter.
         /// </summary>
         public static string EmployeesString {
             get {
@@ -394,7 +745,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Muss Veranstaltung gebucht werden?.
+        /// </summary>
+        public static string EventBookingNecessary {
+            get {
+                return ResourceManager.GetString("EventBookingNecessary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Veranstaltungsdetails.
+        /// </summary>
+        public static string EventDetailsString {
+            get {
+                return ResourceManager.GetString("EventDetailsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fakultät.
         /// </summary>
         public static string FacultyField {
             get {
@@ -403,7 +772,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.wi.hm.edu/en/index.en.html.
+        ///   Looks up a localized string similar to http://www.wi.hm.edu.
         /// </summary>
         public static string FacultyWebsiteHyperlink {
             get {
@@ -412,7 +781,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to FK09.
         /// </summary>
         public static string FacultyWebsiteShortDescriptionLink {
             get {
@@ -421,7 +790,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Feed.
         /// </summary>
         public static string FeedString {
             get {
@@ -430,7 +799,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Datei.
         /// </summary>
         public static string FileString {
             get {
@@ -439,7 +808,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Neues Passwort anfordern.
         /// </summary>
         public static string ForgotPasswordHeading {
             get {
@@ -448,7 +817,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwort vergessen?.
         /// </summary>
         public static string ForgotPasswordLink {
             get {
@@ -457,7 +826,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Link zum zurücksetzen des Passworts anfordern..
         /// </summary>
         public static string ForgotPasswordMessage {
             get {
@@ -466,7 +835,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Link anfordern.
         /// </summary>
         public static string ForgotPasswordSubmitButton {
             get {
@@ -475,7 +844,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Frei ab.
         /// </summary>
         public static string FreeFromString {
             get {
@@ -484,7 +853,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Freie Räume für.
         /// </summary>
         public static string FreeRoomsForString {
             get {
@@ -493,7 +862,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Freie Räume.
         /// </summary>
         public static string FreeRoomsHeading {
             get {
@@ -502,7 +871,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Diese Räume sind jetzt .
         /// </summary>
         public static string FreeRoomsNow {
             get {
@@ -511,7 +880,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Diese Räume werden demnächst.
         /// </summary>
         public static string FreeRoomsSoonString {
             get {
@@ -520,7 +889,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to frei.
         /// </summary>
         public static string FreeString {
             get {
@@ -529,7 +898,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to frei bis Abends.
         /// </summary>
         public static string FreeUntilEveningString {
             get {
@@ -538,7 +907,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Frei bis.
         /// </summary>
         public static string FreeUntilString {
             get {
@@ -547,7 +916,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Freitag.
         /// </summary>
         public static string FridayString {
             get {
@@ -556,7 +925,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Allgemeine Angaben.
+        /// </summary>
+        public static string GeneralDataString {
+            get {
+                return ResourceManager.GetString("GeneralDataString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allgemeine Informationen.
+        /// </summary>
+        public static string GeneralInformationsString {
+            get {
+                return ResourceManager.GetString("GeneralInformationsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get it from primuss.
+        /// </summary>
+        public static string GetSemGroupFromPrimuss {
+            get {
+                return ResourceManager.GetString("GetSemGroupFromPrimuss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Globaler Modulkatalog.
         /// </summary>
         public static string GlobalCatalogString {
             get {
@@ -565,7 +961,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Gruppen.
         /// </summary>
         public static string GroupsString {
             get {
@@ -574,7 +970,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Gruppe(n).
+        /// </summary>
+        public static string GroupString {
+            get {
+                return ResourceManager.GetString("GroupString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gäste.
         /// </summary>
         public static string GuestsString {
             get {
@@ -583,7 +988,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Hinweis:.
+        /// </summary>
+        public static string HintString {
+            get {
+                return ResourceManager.GetString("HintString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Job Portal der FK09 bei Jobonaut.
         /// </summary>
         public static string HMJobonautDescription {
             get {
@@ -592,7 +1006,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Die Unternehmen stellen direkt die Stellenanzeigen im Portal ein. Eine SHK der FK 09 kümmert sich um die Qualitätssicherung..
         /// </summary>
         public static string HMJobonautDescription2 {
             get {
@@ -601,7 +1015,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Die iCal-Feed läßt sich als Kalender, z.B. in MS-Outlook oder google Calendar einbinden. Das jeweilige Programm ruft dann je nach Einstellungen die aktuellen Termine ab..
         /// </summary>
         public static string iCalFeedExplanation {
             get {
@@ -610,7 +1024,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to URL für iCal Client Feed.
         /// </summary>
         public static string iCalFeedURL {
             get {
@@ -619,7 +1033,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Download iCal-Datei für.
         /// </summary>
         public static string iCalFileDownload {
             get {
@@ -628,7 +1042,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;strong&gt;iCal_Datei:&lt;/strong&gt; Die iCal-Datei läßt sich in verschiedene Mailprogramme einlesen, z.B. MS-Outlook..
+        /// </summary>
+        public static string iCalFileExplanation {
+            get {
+                return ResourceManager.GetString("iCalFileExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;strong&gt;Hinweis:&lt;/strong&gt; Die iCal Datei enthält nur die Termine zum Zeitpunkt des Downloads. Wer ständig auf dem laufenden gehalten werden möchte, kann den iCal-Feed verwenden..
+        /// </summary>
+        public static string iCalFileHint {
+            get {
+                return ResourceManager.GetString("iCalFileHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to iCal.
         /// </summary>
         public static string iCalString {
             get {
@@ -637,7 +1069,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Importiert aus:.
+        /// </summary>
+        public static string ImportedFromString {
+            get {
+                return ResourceManager.GetString("ImportedFromString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Impressum.
         /// </summary>
         public static string ImprintHeading {
             get {
@@ -646,7 +1087,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.hm.edu/en/secondarynavigation/impressum_1/legal_notice_1.en.html.
+        ///   Looks up a localized string similar to https://www.hm.edu/sekundaer_navigation/impressum/index.de.html.
         /// </summary>
         public static string ImprintHyperlink {
             get {
@@ -655,7 +1096,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Impressum.
         /// </summary>
         public static string ImprintLink {
             get {
@@ -664,7 +1105,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to inaktiv, keine Kontaktdaten.
         /// </summary>
         public static string InactiveNoContactInf {
             get {
@@ -673,7 +1114,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to inaktiv, per E-Mail erreichbar.
         /// </summary>
         public static string InactiveUseEmail {
             get {
@@ -682,7 +1123,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Einladen.
+        /// </summary>
+        public static string InviteString {
+            get {
+                return ResourceManager.GetString("InviteString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Platz reserviert.
         /// </summary>
         public static string IsReserved {
             get {
@@ -691,7 +1141,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Job Newsletter der FK09.
         /// </summary>
         public static string JobsNewsletterFK09Description {
             get {
@@ -700,7 +1150,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Jobangebote, die per E-Mail bei Profs, Sekretariat und/oder Fachschaft landen werden von einer SHK der FK09 gesammelt und von Zeit zu Zeit über den Newsletter versendet..
         /// </summary>
         public static string JobsNewsletterFK09Description2 {
             get {
@@ -709,7 +1159,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Angebote von Unternehmen.
         /// </summary>
         public static string JobsPanelHeading {
             get {
@@ -718,7 +1168,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Jobs.
         /// </summary>
         public static string JobsString {
             get {
@@ -727,7 +1177,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Legende.
         /// </summary>
         public static string KeyString {
             get {
@@ -736,7 +1186,43 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Dozenten in.
+        /// </summary>
+        public static string LecturersInString {
+            get {
+                return ResourceManager.GetString("LecturersInString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dozent(en).
+        /// </summary>
+        public static string LecturerString {
+            get {
+                return ResourceManager.GetString("LecturerString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dozent.
+        /// </summary>
+        public static string LecturerString2 {
+            get {
+                return ResourceManager.GetString("LecturerString2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dozenten mit Sprechstunden.
+        /// </summary>
+        public static string LecturersWithOfficeHour {
+            get {
+                return ResourceManager.GetString("LecturersWithOfficeHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vorlesungsplaner.
         /// </summary>
         public static string LectureSchedulerHeading {
             get {
@@ -745,7 +1231,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Vorlesungen.
         /// </summary>
         public static string LecturesHeading {
             get {
@@ -754,7 +1240,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Links.
         /// </summary>
         public static string LinkString {
             get {
@@ -763,7 +1249,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;strong&gt;Hinweis:&lt;/strong&gt; Bei Nutzung der fillter Apps werden an die hier aufgezählten und mit Häckchen markierten Geräte Push-Notifications versendet..
+        /// </summary>
+        public static string ListedDevicesWithPushNotificationMessage {
+            get {
+                return ResourceManager.GetString("ListedDevicesWithPushNotificationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Liste aller Kurse in dieser Platzverlosung.
+        /// </summary>
+        public static string ListOfAllCoursesWithLottery {
+            get {
+                return ResourceManager.GetString("ListOfAllCoursesWithLottery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Liste aller WPMs meines Studiengangs.
+        /// </summary>
+        public static string ListOfAllWPMsOfMajor {
+            get {
+                return ResourceManager.GetString("ListOfAllWPMsOfMajor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NINE Benutzerkonto.
         /// </summary>
         public static string LocalUserAccountHeading {
             get {
@@ -772,7 +1285,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Die fillter Apps für aktuelle Infos auf dem Smartphone.
         /// </summary>
         public static string LoginAppLinksHeading {
             get {
@@ -781,7 +1294,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Anmelden.
         /// </summary>
         public static string LoginButton {
             get {
@@ -790,7 +1303,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Anmelden mit NINE Benutzerkonto.
         /// </summary>
         public static string LoginHeading {
             get {
@@ -799,7 +1312,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Andere Dienste zum Anmelden verwenden.
         /// </summary>
         public static string LoginProviderHeading {
             get {
@@ -808,7 +1321,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Anmelden.
         /// </summary>
         public static string LoginTab {
             get {
@@ -817,7 +1330,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Abmelden.
         /// </summary>
         public static string LogOut {
             get {
@@ -826,7 +1339,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Platzverlosungen.
+        /// </summary>
+        public static string LotteriesString {
+            get {
+                return ResourceManager.GetString("LotteriesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Platzvergabe.
+        /// </summary>
+        public static string LotteryString {
+            get {
+                return ResourceManager.GetString("LotteryString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LVs.
         /// </summary>
         public static string LVsString {
             get {
@@ -835,7 +1366,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mailverteiler.
+        /// </summary>
+        public static string MailingDistributor {
+            get {
+                return ResourceManager.GetString("MailingDistributor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Studiengang.
+        /// </summary>
+        public static string MajorsString {
+            get {
+                return ResourceManager.GetString("MajorsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login-Dienste verwalten.
         /// </summary>
         public static string ManageLoginsLink {
             get {
@@ -844,7 +1393,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Benutzerprofil verwalten.
         /// </summary>
         public static string ManageProfileHeading {
             get {
@@ -853,7 +1402,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Verwaltung Benutzerkonto.
         /// </summary>
         public static string ManageProfileHeading2 {
             get {
@@ -862,7 +1411,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to In dieser Platzverlosung kann ich maximal in @Model.Lottery.MaxConfirm Lehrveranstaltungen einen Platz belegen..
+        /// </summary>
+        public static string MaxNumberOfPossibleSubscriptionsMessage {
+            get {
+                return ResourceManager.GetString("MaxNumberOfPossibleSubscriptionsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gericht.
         /// </summary>
         public static string MealString {
             get {
@@ -871,7 +1429,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Leberkassemmel.
         /// </summary>
         public static string MeatLoafBreadString {
             get {
@@ -880,7 +1438,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to (Benutzer existiert nicht!!!).
+        /// </summary>
+        public static string MemberExistsNot {
+            get {
+                return ResourceManager.GetString("MemberExistsNot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mitglieder.
+        /// </summary>
+        public static string MembersString {
+            get {
+                return ResourceManager.GetString("MembersString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ESSEN &amp; TRINKEN.
         /// </summary>
         public static string MenuCantine {
             get {
@@ -889,7 +1465,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to AKTUELLES.
         /// </summary>
         public static string MenuCurrent {
             get {
@@ -898,7 +1474,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to STARTSEITE.
         /// </summary>
         public static string MenuDashboard {
             get {
@@ -907,7 +1483,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to PERSONEN.
         /// </summary>
         public static string MenuPersons {
             get {
@@ -916,7 +1492,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to RÄUME.
         /// </summary>
         public static string MenuRooms {
             get {
@@ -925,7 +1501,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to STUDIUM.
         /// </summary>
         public static string MenuStudies {
             get {
@@ -934,7 +1510,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Sorry, nur für Mitglieder!.
+        /// </summary>
+        public static string MessageOnlyMembers {
+            get {
+                return ResourceManager.GetString("MessageOnlyMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modulkatalog.
         /// </summary>
         public static string ModuleCatalogString {
             get {
@@ -943,7 +1528,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Module.
         /// </summary>
         public static string ModulesString {
             get {
@@ -952,7 +1537,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Montag - Donnerstag.
         /// </summary>
         public static string MondayToThursdayString {
             get {
@@ -961,7 +1546,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to weitere.
+        /// </summary>
+        public static string MoreString {
+            get {
+                return ResourceManager.GetString("MoreString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MV.
         /// </summary>
         public static string MVString {
             get {
@@ -970,7 +1564,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Meine Aktivitäten.
+        /// </summary>
+        public static string MyActivitiesString {
+            get {
+                return ResourceManager.GetString("MyActivitiesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mein Kalender.
         /// </summary>
         public static string MyCalendar {
             get {
@@ -979,7 +1582,27 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Ich habe bereits in.
+        /// </summary>
+        public static string MyConfirmedCoursesPrt1 {
+            get {
+                return ResourceManager.GetString("MyConfirmedCoursesPrt1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kursen einen Platz belegt.
+        ///                            Wenn ich einen der untenstehenden Plätze annehmen möchte,
+        ///                            muss ich zuerst einen meiner bestätigten Plätze zurückgeben..
+        /// </summary>
+        public static string MyConfirmedCoursesPrt2 {
+            get {
+                return ResourceManager.GetString("MyConfirmedCoursesPrt2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Studienpläne (Demo).
         /// </summary>
         public static string MyCoursePlan {
             get {
@@ -988,7 +1611,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Meine Studienpläne.
         /// </summary>
         public static string MyCoursePlanHeading {
             get {
@@ -997,7 +1620,52 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Meine Fächer.
+        /// </summary>
+        public static string MyCoursesStrin {
+            get {
+                return ResourceManager.GetString("MyCoursesStrin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bei diesen Kursen bin ich auf der Warteliste.
+        /// </summary>
+        public static string MyCourseSubscriptionsOnWaitlist {
+            get {
+                return ResourceManager.GetString("MyCourseSubscriptionsOnWaitlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Eintragungen im.
+        /// </summary>
+        public static string MyEnrollmentInString {
+            get {
+                return ResourceManager.GetString("MyEnrollmentInString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Eintragungen.
+        /// </summary>
+        public static string MyEnrollmentString {
+            get {
+                return ResourceManager.GetString("MyEnrollmentString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mein Studiengang:.
+        /// </summary>
+        public static string MyMajorString {
+            get {
+                return ResourceManager.GetString("MyMajorString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine persönlichen Daten.
         /// </summary>
         public static string MyPersonalData {
             get {
@@ -1006,7 +1674,52 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to In diesen Kursen ist für mich ein Platz reserviert..
+        /// </summary>
+        public static string MyReservedCourses {
+            get {
+                return ResourceManager.GetString("MyReservedCourses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wenn ich einen Platz nicht bestätige, dann verfällt die Reservierung bei der nächsten Platzverlosung..
+        /// </summary>
+        public static string MyReservedCoursesMessage {
+            get {
+                return ResourceManager.GetString("MyReservedCoursesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Platzverlosung findet täglich, jeweils in der Nacht, statt..
+        /// </summary>
+        public static string MyReservedCoursesMessage2 {
+            get {
+                return ResourceManager.GetString("MyReservedCoursesMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mein Studiensemester.
+        /// </summary>
+        public static string MySemester {
+            get {
+                return ResourceManager.GetString("MySemester", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Semestergruppe im.
+        /// </summary>
+        public static string MySemesterGroupIn {
+            get {
+                return ResourceManager.GetString("MySemesterGroupIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Einstellungen.
         /// </summary>
         public static string MySettings {
             get {
@@ -1015,7 +1728,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mein Studienbuch.
         /// </summary>
         public static string MyStudyBook {
             get {
@@ -1024,7 +1737,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Meine Eintragungen in der Platzverlosung.
+        /// </summary>
+        public static string MySubscriptionsInLottery {
+            get {
+                return ResourceManager.GetString("MySubscriptionsInLottery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Eintragungen in Kursen mit Platzbeschränkungen.
+        /// </summary>
+        public static string MySubscriptionsWithRestrictedNo {
+            get {
+                return ResourceManager.GetString("MySubscriptionsWithRestrictedNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In diesen Lehrveranstaltungen habe ich einen bestätigten Platz!.
+        /// </summary>
+        public static string MySuccessfulSubscriptionsHeading {
+            get {
+                return ResourceManager.GetString("MySuccessfulSubscriptionsHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mein Stundenplan.
         /// </summary>
         public static string MyTimeTableHeading {
             get {
@@ -1033,7 +1773,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mein Benutzerkonto.
         /// </summary>
         public static string MyUserProfile {
             get {
@@ -1042,7 +1782,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Meine WPMs.
+        /// </summary>
+        public static string MyWPM {
+            get {
+                return ResourceManager.GetString("MyWPM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string Name {
             get {
@@ -1051,7 +1800,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Name des Kurses.
+        /// </summary>
+        public static string NameOfCoursesPlaceholder {
+            get {
+                return ResourceManager.GetString("NameOfCoursesPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beginn.
+        /// </summary>
+        public static string NewBegin {
+            get {
+                return ResourceManager.GetString("NewBegin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ende.
+        /// </summary>
+        public static string NewEnd {
+            get {
+                return ResourceManager.GetString("NewEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Newsletter &amp; Mailing.
         /// </summary>
         public static string NewsletterHeading {
             get {
@@ -1060,7 +1836,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Nächster Termin.
         /// </summary>
         public static string NextDate {
             get {
@@ -1069,7 +1845,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Weiter.
         /// </summary>
         public static string NextLink {
             get {
@@ -1078,7 +1854,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Nächste Belegung.
         /// </summary>
         public static string NextOccupancyString {
             get {
@@ -1087,7 +1863,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Für das aktuelle Semester sind keine Stundenplandaten verfügbar..
+        /// </summary>
+        public static string NoAvailableDataForCurrentSemester {
+            get {
+                return ResourceManager.GetString("NoAvailableDataForCurrentSemester", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Daten.
+        /// </summary>
+        public static string NoDataString {
+            get {
+                return ResourceManager.GetString("NoDataString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Termine.
         /// </summary>
         public static string NoDates {
             get {
@@ -1096,7 +1890,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Keine Termine mehr im laufenden Semester.
+        /// </summary>
+        public static string NoDatesCurrently {
+            get {
+                return ResourceManager.GetString("NoDatesCurrently", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Beschreibung vorhanden..
+        /// </summary>
+        public static string NoDescriptionExists {
+            get {
+                return ResourceManager.GetString("NoDescriptionExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kein Gerät registriert. Um ein Gerät für Push-Notifications zu registrieren, ist eine Anmeldung in der Fillter-App auf dem gewünschten Gerät erforderlich..
         /// </summary>
         public static string NoDeviceRegisteredMessage {
             get {
@@ -1105,7 +1917,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Keine Eintragungen!.
+        /// </summary>
+        public static string NoEnrolmentsString {
+            get {
+                return ResourceManager.GetString("NoEnrolmentsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KEINE GRUPPE.
         /// </summary>
         public static string NoGroup {
             get {
@@ -1114,7 +1935,133 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to keine Angabe.
+        /// </summary>
+        public static string NoInput {
+            get {
+                return ResourceManager.GetString("NoInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Es sind keine Termine markiert.
+        /// </summary>
+        public static string NoMarkedDates {
+            get {
+                return ResourceManager.GetString("NoMarkedDates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Es sind keine Termine zum Absagen markiert.
+        /// </summary>
+        public static string NoMarkedDatesForCancellation {
+            get {
+                return ResourceManager.GetString("NoMarkedDatesForCancellation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Es sind keine Termine zum Löschen markiert.
+        /// </summary>
+        public static string NoMarkedDatesForDeletion {
+            get {
+                return ResourceManager.GetString("NoMarkedDatesForDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Es sind keine Termine zum Reaktivieren markiert.
+        /// </summary>
+        public static string NoMarkedDatesForReactivation {
+            get {
+                return ResourceManager.GetString("NoMarkedDatesForReactivation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N.N..
+        /// </summary>
+        public static string NomenNominandumShort {
+            get {
+                return ResourceManager.GetString("NomenNominandumShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kein Moodle-Kurs vorhanden.
+        /// </summary>
+        public static string NoMoodleCourseExists {
+            get {
+                return ResourceManager.GetString("NoMoodleCourseExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to kein Termin mehr.
+        /// </summary>
+        public static string NoMoreDatesString {
+            get {
+                return ResourceManager.GetString("NoMoreDatesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Notifications für die nächsten 7 Tage vorhanden..
+        /// </summary>
+        public static string NoNotificationsMessage {
+            get {
+                return ResourceManager.GetString("NoNotificationsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bietet keine Sprechstundentermine an.
+        /// </summary>
+        public static string NoOfficeHours {
+            get {
+                return ResourceManager.GetString("NoOfficeHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Platzbeschränkung.
+        /// </summary>
+        public static string NoRestrictedSubscription {
+            get {
+                return ResourceManager.GetString("NoRestrictedSubscription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ich bin in keinem Studiengang eingetragen, daher kann ich mich auch in keiner Lehrveranstaltung eintragen..
+        /// </summary>
+        public static string NoSignupForMajorMessage {
+            get {
+                return ResourceManager.GetString("NoSignupForMajorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kein weiterer Termin.
+        /// </summary>
+        public static string NotAnotherDateString {
+            get {
+                return ResourceManager.GetString("NotAnotherDateString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notifications der nächsten 7 Tage.
+        /// </summary>
+        public static string NotificationsListHeading {
+            get {
+                return ResourceManager.GetString("NotificationsListHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to jetzt.
         /// </summary>
         public static string Now {
             get {
@@ -1123,7 +2070,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to JETZT.
         /// </summary>
         public static string NowLink {
             get {
@@ -1132,7 +2079,52 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Anzahl Alumni.
+        /// </summary>
+        public static string NumberAlumniString {
+            get {
+                return ResourceManager.GetString("NumberAlumniString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anzahl Plätze.
+        /// </summary>
+        public static string NumberOfSeatsString {
+            get {
+                return ResourceManager.GetString("NumberOfSeatsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to : Anzahl Reservierungen.
+        /// </summary>
+        public static string NumberReservations {
+            get {
+                return ResourceManager.GetString("NumberReservations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Für den Kurs stehen insgesamt.
+        /// </summary>
+        public static string NumberSeatsCapacityPrt1 {
+            get {
+                return ResourceManager.GetString("NumberSeatsCapacityPrt1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plätze zur Verfügung..
+        /// </summary>
+        public static string NumberSeatsCapacityPrt2 {
+            get {
+                return ResourceManager.GetString("NumberSeatsCapacityPrt2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plätze.
         /// </summary>
         public static string NumberSeatsString {
             get {
@@ -1141,7 +2133,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Nummer.
         /// </summary>
         public static string NumberString {
             get {
@@ -1150,7 +2142,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to #TN.
+        /// </summary>
+        public static string NumberSubscribersShort {
+            get {
+                return ResourceManager.GetString("NumberSubscribersShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to : Anzahl Eintragungen auf Warteliste für meinen Studiengang..
+        /// </summary>
+        public static string NumberWaitlist {
+            get {
+                return ResourceManager.GetString("NumberWaitlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Belegt.
         /// </summary>
         public static string OccupiedByString {
             get {
@@ -1159,7 +2169,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Soll für folgende Semestergruppen angeboten werden.
+        /// </summary>
+        public static string OfferedForFollowingSemGroups {
+            get {
+                return ResourceManager.GetString("OfferedForFollowingSemGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprechstunde.
         /// </summary>
         public static string OfficeHour {
             get {
@@ -1168,7 +2187,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Sprechstunde nach Vereinbarung.
         /// </summary>
         public static string OfficeHourByAgreement {
             get {
@@ -1177,7 +2196,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Terminvereinbarung per E-Mail.
+        /// </summary>
+        public static string OfficeHourByEmail {
+            get {
+                return ResourceManager.GetString("OfficeHourByEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to mit Sprechstunde im.
+        /// </summary>
+        public static string OfficeHourWith {
+            get {
+                return ResourceManager.GetString("OfficeHourWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprechstunde mit Terminen.
         /// </summary>
         public static string OfficeHourWithDates {
             get {
@@ -1186,7 +2223,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Es muss mindestens eine Gruppe ausgewaehlt sein..
+        /// </summary>
+        public static string OneGroupMustBeSelected {
+            get {
+                return ResourceManager.GetString("OneGroupMustBeSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bio.
         /// </summary>
         public static string OrganicString {
             get {
@@ -1195,7 +2241,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Veranstalter.
         /// </summary>
         public static string OrganizerString {
             get {
@@ -1204,7 +2250,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mitmachen.
+        /// </summary>
+        public static string ParticipateString {
+            get {
+                return ResourceManager.GetString("ParticipateString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwort.
         /// </summary>
         public static string Password {
             get {
@@ -1213,7 +2268,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwort.
         /// </summary>
         public static string PasswordPlaceholder {
             get {
@@ -1222,7 +2277,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Zeitraum.
+        /// </summary>
+        public static string PeriodOfTimeString {
+            get {
+                return ResourceManager.GetString("PeriodOfTimeString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Persönliche Daten.
         /// </summary>
         public static string PersonalDataHeading {
             get {
@@ -1231,7 +2295,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to planen.
         /// </summary>
         public static string PlanButton {
             get {
@@ -1240,7 +2304,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to heute da.
+        /// </summary>
+        public static string PresentToday {
+            get {
+                return ResourceManager.GetString("PresentToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vorschau.
         /// </summary>
         public static string PreviewString {
             get {
@@ -1249,7 +2322,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Preise für.
         /// </summary>
         public static string PricesforString {
             get {
@@ -1258,7 +2331,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Preis.
         /// </summary>
         public static string PriceString {
             get {
@@ -1267,7 +2340,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Datenschutz.
         /// </summary>
         public static string PrivacyLink {
             get {
@@ -1276,7 +2349,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Alle Personen.
         /// </summary>
         public static string ProfileListActiveLecturer {
             get {
@@ -1285,7 +2358,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Freie Räume.
         /// </summary>
         public static string QuickAccessFreeRooms {
             get {
@@ -1294,7 +2367,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Schnellzugriffe.
         /// </summary>
         public static string QuickAccessHeading {
             get {
@@ -1303,7 +2376,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Sprechstunden.
         /// </summary>
         public static string QuickAccessOfficeHour {
             get {
@@ -1312,7 +2385,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Stundenplanung.
         /// </summary>
         public static string QuickAccessTimeTablePlaner {
             get {
@@ -1321,7 +2394,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to E-Mail (=Benutzername).
         /// </summary>
         public static string RegisterEmailField {
             get {
@@ -1330,7 +2403,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to E-Mail Adresse als Benutzername eingeben.
         /// </summary>
         public static string RegisterEmailPlaceholder {
             get {
@@ -1339,7 +2412,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Vorname.
         /// </summary>
         public static string RegisterFirstNameField {
             get {
@@ -1348,7 +2421,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Vornamen eingeben.
         /// </summary>
         public static string RegisterFirstNamePlaceholder {
             get {
@@ -1357,7 +2430,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Neues Benutzerkonto anlegen.
         /// </summary>
         public static string RegisterHeading {
             get {
@@ -1366,7 +2439,20 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;strong&gt;Wichtige Information für Erstsemester:&lt;/strong&gt;
+        ///        &lt;ul&gt;
+        ///            &lt;li&gt;Prüfen Sie zuerst, ob Ihr HM-Postfach bereits eingerichtet ist und Sie über den &lt;a href=&quot;https://xmail.mwn.de&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;OWA&lt;/strong&gt;&lt;/a&gt; darauf zugreifen können.&lt;/li&gt;
+        ///            &lt;li&gt;Bitte &lt;strong&gt;keine hotmail.de/com&lt;/strong&gt; oder &lt;strong&gt;outlook.de&lt;/strong&gt; Adressen verwenden. Diese Dienste verweigern die Annahme von E-Mails, die von hm.edu gesendet werden.&lt;/li&gt;
+        ///        &lt;/ul&gt;.
+        /// </summary>
+        public static string RegisterImportantMessage {
+            get {
+                return ResourceManager.GetString("RegisterImportantMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nachname.
         /// </summary>
         public static string RegisterLastNameField {
             get {
@@ -1375,7 +2461,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Nachnamen eingeben.
         /// </summary>
         public static string RegisterLastNamePlaceholder {
             get {
@@ -1384,7 +2470,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Benutzerkonto anlegen.
         /// </summary>
         public static string RegisterLink {
             get {
@@ -1393,7 +2479,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwortwiederholung eingeben.
         /// </summary>
         public static string RegisterPasswordAgainPlaceholder {
             get {
@@ -1402,7 +2488,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwort und Passwortwiederholung sind nicht identisch..
         /// </summary>
         public static string RegisterPasswordConfirmErrorMessage {
             get {
@@ -1411,7 +2497,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Wiederholung Passwort.
         /// </summary>
         public static string RegisterPasswordConfirmField {
             get {
@@ -1420,7 +2506,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Das {0} muss mindestens {2} Zeichen lang sein..
         /// </summary>
         public static string RegisterPasswordLengthErrorMessage {
             get {
@@ -1429,7 +2515,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwort eingeben.
         /// </summary>
         public static string RegisterPasswordPlaceholder {
             get {
@@ -1438,7 +2524,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Datenschutz.
         /// </summary>
         public static string RegisterPrivacyField {
             get {
@@ -1447,7 +2533,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Benutzerkonto anlegen.
         /// </summary>
         public static string RegisterSubmitButton {
             get {
@@ -1456,7 +2542,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Registrierung.
         /// </summary>
         public static string RegisterTabHeading {
             get {
@@ -1465,7 +2551,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Es ist ein Fehler aufgetreten..
         /// </summary>
         public static string RegisterValidationSummaryMessage {
             get {
@@ -1474,7 +2560,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Zuordnung zu Semestergruppen.
+        /// </summary>
+        public static string RelationsSemesterGroup {
+            get {
+                return ResourceManager.GetString("RelationsSemesterGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Angemeldet bleiben?.
         /// </summary>
         public static string RememberMe {
             get {
@@ -1483,7 +2578,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Rechte &amp; Rollen.
+        /// </summary>
+        public static string RightsNRoles {
+            get {
+                return ResourceManager.GetString("RightsNRoles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rolle.
+        /// </summary>
+        public static string RoleString {
+            get {
+                return ResourceManager.GetString("RoleString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raumnummer.
         /// </summary>
         public static string RoomNumberString {
             get {
@@ -1492,7 +2605,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Belegungsplan.
+        /// </summary>
+        public static string RoomOccupancyPlan {
+            get {
+                return ResourceManager.GetString("RoomOccupancyPlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raumbelegung.
+        /// </summary>
+        public static string RoomOccupancyString {
+            get {
+                return ResourceManager.GetString("RoomOccupancyString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zuordnung(en).
         /// </summary>
         public static string RoomOwnerString {
             get {
@@ -1501,7 +2632,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Raumbelegung für.
+        /// </summary>
+        public static string RoomPlanFor {
+            get {
+                return ResourceManager.GetString("RoomPlanFor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raumplan.
+        /// </summary>
+        public static string RoomPlanString {
+            get {
+                return ResourceManager.GetString("RoomPlanString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Räume.
         /// </summary>
         public static string RoomsHeading {
             get {
@@ -1510,7 +2659,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Raumreservierungen.
+        /// </summary>
+        public static string RoomsReserved {
+            get {
+                return ResourceManager.GetString("RoomsReserved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raumstatus.
         /// </summary>
         public static string RoomStatusString {
             get {
@@ -1519,7 +2677,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Raum.
+        /// </summary>
+        public static string RoomString {
+            get {
+                return ResourceManager.GetString("RoomString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Regeln der Platzvergabe.
+        /// </summary>
+        public static string RulesOfLottery {
+            get {
+                return ResourceManager.GetString("RulesOfLottery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Regeln.
+        /// </summary>
+        public static string RulesString {
+            get {
+                return ResourceManager.GetString("RulesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SPEICHERN.
         /// </summary>
         public static string SaveButton {
             get {
@@ -1528,7 +2713,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Schnitzelsemmel.
         /// </summary>
         public static string SchnitzelBreadString {
             get {
@@ -1537,7 +2722,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Suche nach:.
+        /// </summary>
+        public static string SearchForString {
+            get {
+                return ResourceManager.GetString("SearchForString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suchen.
+        /// </summary>
+        public static string SearchString {
+            get {
+                return ResourceManager.GetString("SearchString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Studiengruppe.
+        /// </summary>
+        public static string SemesterGroup {
+            get {
+                return ResourceManager.GetString("SemesterGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Semester.
         /// </summary>
         public static string SemesterString {
             get {
@@ -1546,7 +2758,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Semestergruppe.
         /// </summary>
         public static string SemGroupField {
             get {
@@ -1555,7 +2767,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Senden.
         /// </summary>
         public static string SendButton {
             get {
@@ -1564,7 +2776,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to E-Mail senden.
+        /// </summary>
+        public static string SendEmailMailTo {
+            get {
+                return ResourceManager.GetString("SendEmailMailTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-Mail an Gruppe.
+        /// </summary>
+        public static string SendMailToGroup {
+            get {
+                return ResourceManager.GetString("SendMailToGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ich möchte E-Mails erhalten, die über die Funktion &quot;Aktuelles / Mailing&quot; versendet werden..
         /// </summary>
         public static string SetMailingSettingCheckbox {
             get {
@@ -1573,7 +2803,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passwort setzen.
         /// </summary>
         public static string SetPasswordButton {
             get {
@@ -1582,7 +2812,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Einstellungen.
         /// </summary>
         public static string SettingsString {
             get {
@@ -1591,7 +2821,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Kurzinformation.
+        /// </summary>
+        public static string ShortInfo {
+            get {
+                return ResourceManager.GetString("ShortInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kurzname.
         /// </summary>
         public static string ShortNameString {
             get {
@@ -1600,7 +2839,34 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Res..
+        /// </summary>
+        public static string ShortReservation {
+            get {
+                return ResourceManager.GetString("ShortReservation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WL.
+        /// </summary>
+        public static string ShortWaitlist {
+            get {
+                return ResourceManager.GetString("ShortWaitlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alle Termine anzeigen.
+        /// </summary>
+        public static string ShowAllDates {
+            get {
+                return ResourceManager.GetString("ShowAllDates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anzeigen als.
         /// </summary>
         public static string ShowAsLabel {
             get {
@@ -1609,7 +2875,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Am Infoscreen anzeigen.
+        /// </summary>
+        public static string ShowOnInfoscreen {
+            get {
+                return ResourceManager.GetString("ShowOnInfoscreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nur zukünftige Termine anzeigen.
+        /// </summary>
+        public static string ShowOnlyFutureDates {
+            get {
+                return ResourceManager.GetString("ShowOnlyFutureDates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Persönlichen Termine anzeigen.
         /// </summary>
         public static string ShowSubscribedDates {
             get {
@@ -1618,7 +2902,35 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Austragen.
+        /// </summary>
+        public static string SignOutButton {
+            get {
+                return ResourceManager.GetString("SignOutButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Über die Funktion &quot;Aktuelles / Mailing&quot; werden unregelmäßig alle Art von Informationen rund um das Studium versendet, z.B. vom Sekretariat oder der Fachschaft.
+        ///                                    Diese &quot;unwichtigen&quot; E-Mails erhalte ich nur, wenn ích das Häckchen unten setze. Wichtige E-Mails z.B. zur Prüfungsanmeldung erhalte ich unabhängig davon in jedem Fall..
+        /// </summary>
+        public static string SignUpNewsletterFacultyMessage {
+            get {
+                return ResourceManager.GetString("SignUpNewsletterFacultyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ohne Angabe einer Semestergruppe ist keine Eintragung in Lehrveranstaltungen möglich..
+        /// </summary>
+        public static string SignUpSemesterGroupNecessaryMessage {
+            get {
+                return ResourceManager.GetString("SignUpSemesterGroupNecessaryMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Snacks.
         /// </summary>
         public static string SnacksString {
             get {
@@ -1627,7 +2939,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Balisto ver. Sorten.
         /// </summary>
         public static string SnacksTableContent {
             get {
@@ -1636,7 +2948,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Getränke.
         /// </summary>
         public static string SoftDrinksString {
             get {
@@ -1645,7 +2957,25 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Angelegt von.
+        /// </summary>
+        public static string StartedOfString {
+            get {
+                return ResourceManager.GetString("StartedOfString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Statistik.
+        /// </summary>
+        public static string StatisticsString {
+            get {
+                return ResourceManager.GetString("StatisticsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status.
         /// </summary>
         public static string Status {
             get {
@@ -1654,7 +2984,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Demnächst mehr.
         /// </summary>
         public static string StuCafeEmptyMessage {
             get {
@@ -1663,7 +2993,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to StuCafé im Roten Würfel.
         /// </summary>
         public static string StuCafeHeading {
             get {
@@ -1672,7 +3002,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Studierende.
+        /// </summary>
+        public static string StudentsString {
+            get {
+                return ResourceManager.GetString("StudentsString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Studienbuch.
         /// </summary>
         public static string StudyBook {
             get {
@@ -1681,7 +3020,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Da war ich eingetragen.
         /// </summary>
         public static string StudyBookSemProfileSubscriptionsHeading {
             get {
@@ -1690,7 +3029,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Im Aufbau [DEMO].
         /// </summary>
         public static string StudyProcessComment {
             get {
@@ -1699,7 +3038,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Studienverlauf.
         /// </summary>
         public static string StudyProcessHeading {
             get {
@@ -1708,7 +3047,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Alumni.
         /// </summary>
         public static string SubMenuAlumni {
             get {
@@ -1717,7 +3056,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mensa.
         /// </summary>
         public static string SubMenuCantine {
             get {
@@ -1726,7 +3065,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Veranstaltungen.
         /// </summary>
         public static string SubMenuCurrentEvents {
             get {
@@ -1735,7 +3074,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Jobangebote.
         /// </summary>
         public static string SubMenuCurrentJobs {
             get {
@@ -1744,7 +3083,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Newsletter.
         /// </summary>
         public static string SubMenuCurrentNewsletter {
             get {
@@ -1753,7 +3092,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Lehrende.
         /// </summary>
         public static string SubMenuLecturer {
             get {
@@ -1762,7 +3101,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Freie Räume.
         /// </summary>
         public static string SubMenuRoomsFreeRooms {
             get {
@@ -1771,7 +3110,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Raumbelegungen.
         /// </summary>
         public static string SubMenuRoomsOccupancy {
             get {
@@ -1780,7 +3119,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Studenten.
         /// </summary>
         public static string SubMenuStudents {
             get {
@@ -1789,7 +3128,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Studiengänge.
         /// </summary>
         public static string SubMenuStudiesCurricula {
             get {
@@ -1798,7 +3137,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Modulkatalog.
         /// </summary>
         public static string SubMenuStudiesModules {
             get {
@@ -1807,7 +3146,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Vorlesungsverzeichnis.
         /// </summary>
         public static string SubMenuStudiesPlaner {
             get {
@@ -1816,7 +3155,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Semesterablauf.
         /// </summary>
         public static string SubMenuStudiesSemester {
             get {
@@ -1825,7 +3164,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Abschlussarbeiten.
         /// </summary>
         public static string SubMenuStudiesThesis {
             get {
@@ -1834,7 +3173,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Teilnehmer.
         /// </summary>
         public static string Subscriber {
             get {
@@ -1843,7 +3182,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Abonnenten.
         /// </summary>
         public static string SubscribersString {
             get {
@@ -1852,7 +3191,61 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Teilnehmerliste.
+        /// </summary>
+        public static string SubscriptionListString {
+            get {
+                return ResourceManager.GetString("SubscriptionListString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zeit(en).
+        /// </summary>
+        public static string TimesString {
+            get {
+                return ResourceManager.GetString("TimesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uhrzeit.
+        /// </summary>
+        public static string TimeString {
+            get {
+                return ResourceManager.GetString("TimeString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stundenplan.
+        /// </summary>
+        public static string TimeTableString {
+            get {
+                return ResourceManager.GetString("TimeTableString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Titel.
+        /// </summary>
+        public static string TitleString {
+            get {
+                return ResourceManager.GetString("TitleString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ...heute nix mehr.
+        /// </summary>
+        public static string TodayNoMoreString {
+            get {
+                return ResourceManager.GetString("TodayNoMoreString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Heute.
         /// </summary>
         public static string TodayString {
             get {
@@ -1861,7 +3254,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.hm.edu/en/index.en.html.
+        ///   Looks up a localized string similar to Zur Terminliste.
+        /// </summary>
+        public static string ToOfficeHourDatesString {
+            get {
+                return ResourceManager.GetString("ToOfficeHourDatesString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://www.hm.edu/.
         /// </summary>
         public static string UniversityWebsiteHyperlink {
             get {
@@ -1870,7 +3272,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Hochschule München.
         /// </summary>
         public static string UniversityWebsiteShortDescriptionLink {
             get {
@@ -1879,7 +3281,16 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Platz zurückgeben.
+        /// </summary>
+        public static string UnsubscribeCourse {
+            get {
+                return ResourceManager.GetString("UnsubscribeCourse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Geräteverwaltung.
         /// </summary>
         public static string UserDevicesControlHeading {
             get {
@@ -1888,7 +3299,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to UserId.
         /// </summary>
         public static string UserId {
             get {
@@ -1897,7 +3308,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to vegan.
         /// </summary>
         public static string VeganString {
             get {
@@ -1906,7 +3317,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to vegetarisch.
         /// </summary>
         public static string VegetarianString {
             get {
@@ -1915,7 +3326,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Sichtbar für.
         /// </summary>
         public static string VisibleForString {
             get {
@@ -1924,11 +3335,47 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Warteliste.
         /// </summary>
         public static string WaitingList {
             get {
                 return ResourceManager.GetString("WaitingList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warteliste (Teilnehmer / Reservierung).
+        /// </summary>
+        public static string Waitlist {
+            get {
+                return ResourceManager.GetString("Waitlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Was läuft heute wann und wo?.
+        /// </summary>
+        public static string WhatGoesOnTodayNWhere {
+            get {
+                return ResourceManager.GetString("WhatGoesOnTodayNWhere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Das habe ich angeboten.
+        /// </summary>
+        public static string WhatIOfferedString {
+            get {
+                return ResourceManager.GetString("WhatIOfferedString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WPM-Wahl.
+        /// </summary>
+        public static string WPMLottery {
+            get {
+                return ResourceManager.GetString("WPMLottery", resourceCulture);
             }
         }
     }

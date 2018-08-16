@@ -1,0 +1,616 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.EventDetailViewModel
+
+
+@{
+    ViewBag.Title = "Verwaltung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>@Model.Event.Name</h4>
+                <p>@Html.LecturerList(Model.Lecturers, showLinks: false)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Admin", new {id=Model.Event.Id})" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+
+                        <div class="form-group dropdown">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-check"></i> ausgewählte Termine <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li id="cancelAll"><a href="#"><i class="fa fa-times"></i> absagen</a></li>
+                                <li id="refreshAll"><a href="#"><i class="fa fa-refresh"></i> reaktivieren</a></li>
+                                <li id="moveAll"><a href="#"><i class="fa fa-calendar"></i> verschieben</a></li>
+                                <li id="deleteAll"><a href="#"><i class="fa fa-trash-o"></i> löschen</a></li>
+                                <li class="divider"></li>
+                                <li id="addRoom"><a href="#"><i class="fa fa-building"></i> Raum hinzufügen</a></li>
+                                <li id="removeRooms"><a href="#"><i class="fa fa-building-o"></i> Räume löschen</a></li>
+                                <li class="divider"></li>
+                                <li id="addHost"><a href="#"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a></li>
+                                <li id="removeHosts"><a href="#"><i class="fa fa-user-times"></i> Dozenten löschen</a></li>
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("CreateDate2", new {courseId=Model.Event.Id})" class="btn btn-default">
+                                <i class="fa fa-plus-circle"></i> Termin anlegen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-calendar"></i> Termine</h4>
+                </div>
+                <div id="dateTable">
+                    @Html.Partial("_DateTable", Model.Event)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modalDelete"></div>
+
+<div class="modal fade" id="confirmDeleteAllDates" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Löschen bestätigen</h4>
+            </div>
+            <div class="modal-body">
+                <p>Sollen alle markierten Termine gelöscht werden?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteAllConfirmed" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Löschen</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlgAddRoom" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel2">Raum hinzufügen</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="roomNumber">Vollständige Raumnummer, z.B. R 1.087</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="roomNumber" name="roomNumber" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <input id="hiddenRoomId" type="text" hidden />
+            </div>
+            <div class="modal-footer">
+                <button id="btnAddRoom" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlgMoveDates" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel3">Termine verschieben</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="NewBegin">Beginn</label>
+                        <div class="col-sm-4">
+                            <input class="form-control timepicker timepicker-24" id="NewBegin" name="NewBegin" type="text" value="18:30:00" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="NewEnd">Ende</label>
+                        <div class="col-sm-4">
+                            <input class="form-control timepicker timepicker-24" id="NewEnd" name="NewEnd" type="text" value="18:30:00" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnMoveDates" type="button" class="btn btn-danger" data-dismiss="modal">Verschieben</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dlgAddHost" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel4">Dozent hinzufügen</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="dozId">Nachname oder Kurzname (Untis)</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="dozId" name="dozId" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <input id="hiddenDozId" type="text" hidden />
+            </div>
+            <div class="modal-footer">
+                <button id="btnAddHost" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+
+}
+
+
+@section scripts
+{
+
+    <script>
+        $(document).ready(function() {
+
+                //$("tr[history]").hide();
+
+                $("#toggleHistoryOn").click(function () {
+                    $("tr[history]").show();
+                    $("#toggleHistoryOff").removeClass("active");
+                });
+
+                $("#toggleHistoryOff").click(function () {
+                    $("tr[history]").hide();
+                    $("#toggleHistoryOn").removeClass("active");
+                });
+
+
+
+            $("#cancelAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("CancelDateList")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+                } else {
+                    alert("Es sind keine Termine zum Absagen markiert");
+                }
+            });
+
+
+            $("#refreshAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("ReactivateDateList")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+
+            $("#deleteAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#confirmDeleteAllDates').modal("show");
+                } else {
+                    alert("Es sind keine Termine zum Löschen markiert");
+                }
+            });
+
+
+            $("#deleteAllConfirmed").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("DeleteDateList")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+
+
+                    $('#confirmDeleteAllDates').modal("hide");
+                }
+            });
+
+            $("#removeRooms").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("RemoveRooms")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+            $('#roomNumber').autocomplete({
+                appendTo: "#myModalLabel2",
+                source: function (request, response) {
+                    var org = '@Model.OrganiserId';
+
+                    $.ajax({
+                        url: '@Url.Action("RoomListByOrg", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            number: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name,
+                                    value: item.name
+                                };
+                            }));
+                        },
+
+                        error: function (data) { alert(data); },
+                    });
+                },
+                select: function (event, ui) {
+                    $('#hiddenRoomId').val(ui.item.text);
+                }
+            });
+
+
+
+
+            $("#addRoom").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgAddRoom').modal("show");
+                } else {
+                    alert("Es sind keine Termine markiert");
+                }
+            });
+
+            $("#btnAddRoom").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var roomNo = $("#hiddenRoomId").val();
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("AddRoomToDates")',
+                            data: {
+                                dateIds: dateList,
+                                roomId: roomNo
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+
+
+                    $('#dlgAddRoom').modal("hide");
+                }
+            });
+
+            $("#removeHosts").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("RemoveHosts")',
+                            data: {
+                                dateIds: dateList
+                            },
+                            success: function(data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+                } else {
+                    alert("Es sind keine Termine zum Reaktivieren markiert");
+                }
+            });
+
+
+
+            $('#dozId').autocomplete({
+                appendTo: "#myModalLabel4",
+                source: function (request, response) {
+                    var org = '@Model.OrganiserId';
+
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            name: request.term
+                        },
+
+                        success: function (data, success, xhr) {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name + " (" + item.shortname + ")",
+                                    value: item.name + " (" + item.shortname + ")"
+                                };
+                            }));
+
+                        },
+
+                        error: function (data) { alert(data); }
+                    });
+                },
+                select: function(event, ui) {
+                    $('#hiddenDozId').val(ui.item.text);
+                }
+            });
+
+
+
+
+            $("#addHost").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgAddHost').modal("show");
+                } else {
+                    alert("Es sind keine Termine markiert");
+                }
+            });
+
+            $("#btnAddHost").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var hostName = $("#hiddenDozId").val();
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("AddHostToDates")',
+                            data: {
+                                dateIds: dateList,
+                                hostId: hostName
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+
+
+                    //$('#dlgAddHost').modal("hide");
+                }
+            });
+
+
+            $("#moveAll").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    $('#dlgMoveDates').modal("show");
+                } else {
+                    alert("Es sind keine Termine markiert");
+                }
+            });
+
+            $("#btnMoveDates").click(function () {
+                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                var n = list.length;
+
+                if (n > 0) {
+                    var dateList = new Array();
+
+                    for (var i = 0; i < n; i++) {
+                        dateList[i] = list[i].id;
+                    }
+
+                    var newBegin = $("#NewBegin").val();
+                    var newEnd = $("#NewEnd").val();
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("MoveDates")',
+                            data: {
+                                dateIds: dateList,
+                                newBegin: newBegin,
+                                newEnd: newEnd
+                            },
+                            success: function (data, success, xhr) {
+                                $("#dateTable").html(data);
+                            }
+                        });
+
+
+                    //$('#dlgAddRoom').modal("hide");
+                }
+            });
+
+
+
+            }
+        );
+
+        function toggleDateCheck(elem) {
+            // das elem ist das HTML-Element
+            // aus dem mache ich ein jQuery Element
+            // dann erst kann ich die DOM Eigenschaft über attr ändern
+            // damit sie später auch wieder über jQuery ausgewertet werden kann
+            $("#" + elem.id).attr("checked", elem.checked);
+        }
+
+        function toggleDateCheckAll(elem) {
+            $('.chk').trigger("click");
+            if ($("#" + elem.id).is(':checked'))
+                $('.chk').attr('checked', true);
+            else
+                $('.chk').attr('checked', false);
+        }
+
+        function showConfirmDeleteDate() {
+            $('#confirmDeleteDate').modal("show");
+        }
+
+        function hideConfirmDeleteDate() {
+            $('#confirmDeleteDate').modal("hide");
+        }
+
+        function showEditDateInformation() {
+            $('#confirmDeleteDate').modal("show");
+        }
+
+        function hideEditDateInformation() {
+            $('#confirmDeleteDate').modal("hide");
+        }
+
+
+
+    </script>
+}
+

@@ -17,30 +17,41 @@ namespace MyStik.TimeTable.Web.Services
         /// <summary>
         /// Alle Räume, die im angegebenen Zeitraum frei sind
         /// </summary>
+        /// <param name="isRoomAdmin"></param>
         /// <param name="from">Beginn des Zeitraums</param>
         /// <param name="until">Ende des Zeitraums</param>
-        /// <param name="allAvailable"></param>
+        /// <param name="orgId"></param>
         /// <returns>Liste der freien Räume</returns>
-        public IEnumerable<Room> GetFreeRooms(DateTime from, DateTime until, bool allAvailable)
+        public IEnumerable<Room> GetFreeRooms(Guid? orgId, bool isRoomAdmin, DateTime from, DateTime until)
         {
-            if (allAvailable)
+            if (orgId.HasValue)
             {
-                return _db.Rooms.Where(room => !room.Dates.Any(d =>
-                    (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
-                    (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
-                    (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
-                    )).ToList();
-            }
-            else
-            {
-                return _db.Rooms.Where(room => room.Capacity > 0 &&
-                    !room.Dates.Any(d =>
-                    (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
-                    (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
-                    (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                if (isRoomAdmin)
+                {
+                    return _db.Rooms.Where(r =>
+                        r.Assignments.Any(a => a.Organiser.Id == orgId.Value) &&
+                        !r.Dates.Any(d =>
+                                (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                                (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                                (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                        )).ToList();
+                }
+
+                return _db.Rooms.Where(r =>
+                    r.Assignments.Any(a => a.Organiser.Id == orgId.Value && !a.InternalNeedConfirmation) &&
+                    !r.Dates.Any(d =>
+                            (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
                     )).ToList();
             }
 
+            return _db.Rooms.Where(r =>
+                !r.Dates.Any(d =>
+                        (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
+                        (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
+                        (d.Begin <= @from && d.End >= until) // Veranstaltung zieht sich über gesamten Zeitraum
+                )).ToList();
         }
 
         /// <summary>
@@ -61,20 +72,35 @@ namespace MyStik.TimeTable.Web.Services
         }
 
         /// <summary>
-        /// Alle Räume, die im Zeitraum frei sind
+        /// 
         /// </summary>
-        /// <param name="dayOfWeek"></param>
+        /// <param name="orgId"></param>
+        /// <param name="isRoomAdmin"></param>
+        /// <param name="dayList"></param>
         /// <param name="fromTime"></param>
         /// <param name="untilTime"></param>
-        /// <param name="semester"></param>
-        /// <param name="allAvailable"></param>
         /// <returns></returns>
-        internal IEnumerable<Room> GetFreeRooms(DayOfWeek dayOfWeek, TimeSpan fromTime, TimeSpan untilTime, Semester semester, bool allAvailable)
+        internal IEnumerable<Room> GetFreeRooms(Guid? orgId, bool isRoomAdmin, List<DateTime> dayList, TimeSpan fromTime, TimeSpan untilTime)
         {
-            var dayList = new SemesterService().GetDays(semester.Id, dayOfWeek);
-
             // ich fange mit allen an!
-            var rooms = _db.Rooms.ToList();
+            List<Room> rooms = null;
+            if (orgId.HasValue)
+            {
+                if (isRoomAdmin)
+                {
+                    rooms = _db.Rooms.Where(r =>
+                        r.Assignments.Any(a => a.Organiser.Id == orgId.Value)).ToList();
+                }
+                else
+                {
+                    rooms = _db.Rooms.Where(r =>
+                        r.Assignments.Any(a => a.Organiser.Id == orgId.Value && !a.InternalNeedConfirmation)).ToList();
+                }
+            }
+            else
+            {
+                rooms = _db.Rooms.ToList();
+            }
 
             foreach (var day in dayList)
             {
@@ -101,12 +127,7 @@ namespace MyStik.TimeTable.Web.Services
             }
 
             // die die übrig bleiben sind wohl nicht besetzt!
-            if (allAvailable)
-            {
-                return rooms;
-            }
-
-            return rooms.Where(r => r.Capacity > 0).ToList();
+            return rooms.ToList();
         }
 
 
@@ -194,21 +215,9 @@ namespace MyStik.TimeTable.Web.Services
         /// <summary>
         /// Liefert alle Räume, die einem Veranstalter zugeordnet sine
         /// </summary>
-        /// <param name="orgName">Kurzname des Veranstalters</param>
+        /// <param name="orgId">Id des Veranstalters</param>
         /// <param name="isOrgAdmin"></param>
         /// <returns>Liste der Räume des Veranstalters</returns>
-        internal ICollection<Room> GetRooms(string orgName, bool isOrgAdmin)
-        {
-            if (isOrgAdmin)
-                return _db.Rooms.Where(r => 
-                    r.Assignments.Any(a => a.Organiser.ShortName.Equals(orgName))).ToList();
-            
-
-            return _db.Rooms.Where(r => 
-                r.Assignments.Any(a => a.Organiser.ShortName.Equals(orgName) && !a.InternalNeedConfirmation)).ToList();
-        }
-
-
         internal ICollection<Room> GetRooms(Guid orgId, bool isOrgAdmin)
         {
             if (isOrgAdmin)
@@ -222,7 +231,7 @@ namespace MyStik.TimeTable.Web.Services
     
         internal ActivityDate GetCurrentDate(Room room)
         {
-            var now = GlobalSettings.Now;
+            var now = DateTime.Now;
             return room.Dates.FirstOrDefault(d => d.Begin <= now && d.End >= now);
         }
 
@@ -233,7 +242,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         internal ActivityDate GetNextDate(Room room)
         {
-            var now = GlobalSettings.Now;
+            var now = DateTime.Now;
             return room.Dates.Where(d => d.Begin >= now).OrderBy(d => d.Begin).FirstOrDefault();
         }
 
@@ -245,7 +254,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public ICollection<RoomInfoModel> GetAvaliableRoomsNow(Guid orgId, int offset=15)
         {
-            var start = GlobalSettings.Now;
+            var start = DateTime.Now;
 
             // der raum muss ab jetzt mindestens für eine Mindestanzahl an min frei sein, sonst macht es keinen Sinn
 
@@ -263,7 +272,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public ICollection<RoomInfoModel> GetAvaliableRoomsNext(Guid orgId, int offset = 15, int duration = 45)
         {
-            var start = GlobalSettings.Now.AddMinutes(offset);
+            var start = DateTime.Now.AddMinutes(offset);
 
             // der raum muss ab jetzt mindestens für eine Mindestanzahl an min frei sein, sonst macht es keinen Sinn
 
@@ -290,7 +299,7 @@ namespace MyStik.TimeTable.Web.Services
             if (isRoomAdmin)
             {
                 rooms = _db.Rooms.Where(room =>
-                    room.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation) &&
+                    room.Assignments.Any(a => a.Organiser.Id == orgId) &&
                     !room.Dates.Any(d =>
                             (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
                             (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
@@ -300,7 +309,7 @@ namespace MyStik.TimeTable.Web.Services
             else
             {
                 rooms = _db.Rooms.Where(room =>
-                    room.Assignments.Any(a => a.Organiser.Id == orgId) &&
+                    room.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation) &&
                     !room.Dates.Any(d =>
                             (d.End > @from && d.End <= until) || // Veranstaltung endet im Zeitraum
                             (d.Begin >= @from && d.Begin < until) || // Veranstaltung beginnt im Zeitraum
@@ -328,7 +337,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public ICollection<RoomInfoModel> GetNextAvaliableRoomsNow(Guid orgId)
         {
-            var start = GlobalSettings.Now;
+            var start = DateTime.Now;
 
             // der raum muss ab jetzt mindestens für 15 min Frei sein, sonst macht es keinen Sinn
 
@@ -375,6 +384,76 @@ namespace MyStik.TimeTable.Web.Services
             if (assign != null)
                 return assign.InternalNeedConfirmation;
             return true;
+        }
+
+        internal RoomScheduleModel GetRoomSchedule(Guid id, Semester semester)
+        {
+            var room = _db.Rooms.SingleOrDefault(r => r.Id == id);
+
+            var model = new RoomScheduleModel();
+            model.Room = room;
+            model.Semester = semester;
+
+            var allDates = room.Dates.Where(x => x.Begin >= semester.StartCourses && x.End <= semester.EndCourses.AddDays(1))
+                .OrderBy(x => x.Begin)
+                .ToList();
+            var ratio = 0.5;
+
+            while (allDates.Any())
+            {
+                var date = allDates.First();
+                var roomDateModel = new RoomDateSummaryModel
+                {
+                    Activity = date.Activity,
+                    DayOfWeek = date.Begin.DayOfWeek,
+                    Start = date.Begin,
+                    End = date.End,
+                    SlotCount = 1
+                };
+
+                roomDateModel.Dates.Add(date);
+
+                var dayBegin = date.Begin.AddDays(7);
+                var dayEnd = date.End.AddDays(7);
+
+                while (dayBegin <= semester.EndCourses.AddDays(1))
+                {
+                    var matchingDates = allDates.Where(x =>
+                        x.Activity.Id == date.Activity.Id &&
+                        x.Begin == dayBegin && x.End == dayEnd).ToList();
+
+                    foreach (var matchingDate in matchingDates)
+                    {
+                        roomDateModel.Dates.Add(matchingDate);
+                        allDates.Remove(matchingDate);
+                    }
+
+
+                    dayBegin = dayBegin.AddDays(7);
+                    dayEnd = dayEnd.AddDays(7);
+                    roomDateModel.SlotCount++;
+                }
+
+                // regelmäßig oder nicht
+                var frequency = roomDateModel.Dates.Count / (double)roomDateModel.SlotCount;
+                if (frequency > ratio)
+                {
+                    // regelmäßig
+                    model.RegularDates.Add(roomDateModel);
+                }
+                else
+                {
+                    // einzeltermine
+                    foreach (var activityDate in roomDateModel.Dates)
+                    {
+                        model.SingleDates.Add(activityDate);
+                    }
+                }
+
+                allDates.Remove(date);
+            }
+
+            return model;
         }
     }
 }

@@ -16,9 +16,7 @@ namespace MyStik.TimeTable.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            // Scheint egal zu sein, wenn was dahinter liegt
-            // nur wenn nix da ist, dann unterscheidet sich die Fehlermeldung
-            // routes.IgnoreRoute("Analytics");
+            routes.MapMvcAttributeRoutes();
 
             routes.MapRoute(
                 name: "Default",

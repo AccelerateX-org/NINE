@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Hangfire.Dashboard;
+﻿using Hangfire.Dashboard;
 using Microsoft.Owin;
 
 namespace MyStik.TimeTable.Web

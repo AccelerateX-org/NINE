@@ -1,0 +1,58 @@
+﻿@model MyStik.TimeTable.Web.Models.SupervisionOverviewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Betreuungsangebote für Abschlussarbeiten - @Model.Organiser.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @if (Model.Supervisions.Any())
+            {
+                foreach (var member in Model.Supervisions)
+                 {
+                     <div class="panel panel-default">
+                         <div class="panel-heading">
+                             <h4>@member.Key.Name</h4>
+                         </div>
+                         <div class="list-group">
+                             @foreach (var supervision in member.Value)
+                             {
+                                 <a href="@Url.Action("Request", new {id = supervision.Id})" class="list-group-item">
+                                     <div class="list-group-item-heading">
+                                         <h5>@supervision.Name</h5>
+                                     </div>
+                                     <div class="list-group-item-text">
+                                         @Html.Raw(supervision.Description)
+                                     </div>
+                                 </a>
+
+                             }
+                         </div>
+                     </div>
+                 }
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <h4>(Noch) Keine Betreuungsangebote vorhanden</h4>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+

@@ -21,6 +21,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ApplicationUser User { get; set; }
 
+        public Student Student { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -40,6 +42,15 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<Course> CoursesFit { get; set; }
+
+        public ICollection<Course> CurrentCourses { get; set; }
+
+        public ICollection<Course> LastCourses { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public Semester Semester { get; set; }
+
     }
 
 
@@ -74,6 +85,11 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Organiser { get; set; }
 
         /// <summary>
         /// 
@@ -138,5 +154,14 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<StudentInvitationModel> Invitations { get; private set; }
+    }
+
+    public class StudentStatisticsModel
+    {
+        public Curriculum Curriculum { get; set; }
+
+        public Semester Semester { get; set; }
+
+        public int Count { get; set; }
     }
 }

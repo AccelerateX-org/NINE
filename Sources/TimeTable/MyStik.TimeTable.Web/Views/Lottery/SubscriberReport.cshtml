@@ -1,0 +1,96 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model ICollection<MyStik.TimeTable.Data.SubscriptionDrawing>
+@{
+    ViewBag.Title = "SubscriberReport";
+    var occService = new ActivityService();
+    var userService = new UserInfoService();
+
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Auswertung Historie Platzverlosung für einzelnen Benutzer</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-random"></i>
+                        <span class="caption-subject bold uppercase"> Historie</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+            
+                    <table id="tabHist" class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>LV</th>
+                            <th>Datum</th>
+                            <th>Status vor</th>
+                            <th>Runde vor</th>
+                            <th>Status nach</th>
+                            <th>Runde nach</th>
+                            <th>Bemerkung</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var drawing in Model)
+                        {
+                            var activity = occService.GetSummary(drawing.OccurrenceDrawing.Occurrence.Id);
+                            <tr>
+                                <td>@activity.Activity.Name (@activity.Activity.ShortName)</td>
+                                <td>@drawing.OccurrenceDrawing.Start.ToString("yyyyMMdd")</td>
+                                <td>@drawing.StateBeforeDrawing</td>
+                                <td>@drawing.LapCountBeforeDrawing</td>
+                                <td>@drawing.StateAfterDrawing</td>
+                                <td>@drawing.LapCountAfterDrawing</td>
+                                <td>@Html.Raw(drawing.Remark)</td>
+
+                            </tr>
+
+                        }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabHist').DataTable();
+        });
+    </script>
+}

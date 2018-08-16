@@ -1,0 +1,30 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.LotteryCheckModel>
+@{
+    ViewBag.Title = "Check";
+}
+
+<h2>Check</h2>
+
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Student</th>
+        <td>Lotterie</td>
+        <td>Nachricht</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.User.FullName</td>
+            <td>@item.Lottery.Name</td>
+            <td>@item.Message</td>
+        </tr>
+    }
+    
+    </tbody>
+</table>
+
+

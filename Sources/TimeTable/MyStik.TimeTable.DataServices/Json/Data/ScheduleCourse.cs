@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace fk11.Model
+namespace MyStik.TimeTable.DataServices.Json.Data
 {
     public class ScheduleCourse
     {
@@ -14,7 +10,7 @@ namespace fk11.Model
             Dates = new List<ScheduleDate>();
         }
 
-        public int CourseId { get; set; }
+        public string CourseId { get; set; }
 
         public string Name { get; set; }
 
@@ -22,7 +18,7 @@ namespace fk11.Model
 
         public string Description { get; set; }
 
-        public int SeatRestriction { get; set; }
+        public int? SeatRestriction { get; set; }
 
 
         public List<ScheduleGroup> Groups { get; private set; }

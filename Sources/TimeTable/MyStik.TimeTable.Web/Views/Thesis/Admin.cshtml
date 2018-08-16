@@ -1,0 +1,161 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisAdminModel
+@{
+    ViewBag.Title = "Betreuung Abschlussarbeiten";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>@Model.Thesis.Name</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Edit", new {id = Model.Thesis.Id})" class="btn btn-default active">
+                                <i class="fa fa-cog"></i> Einstellungen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-book"></i>
+                        <span class="caption-subject bold uppercase"> Beschreibung</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    @Html.Raw(Model.Thesis.Description)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-book"></i>
+                        <span class="caption-subject bold uppercase"> Aktuelle Anfragen</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>Angefragt am</th>
+                            <th>Voraussetzungen erfüllt</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model.Requests)
+                            {
+                                <tr>
+                                    <td>@request.User.LastName</td>
+                                    <td>@request.User.FirstName</td>
+                                    <td>@request.Subscription.TimeStamp</td>
+                                    <td>@request.Subscription.IsConfirmed</td>
+                                    <td>
+                                        @if (request.Subscription.OnWaitingList)
+                                        {
+                                            <a href="@Url.Action("Accept", new {id = request.Subscription.Id})" class="btn btn-success">Annehmen</a>
+                                            <a href="@Url.Action("Reject", new {id = request.Subscription.Id})" class="btn btn-danger">Ablehnen</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("Issue", new {id = request.Subscription.Id})" class="btn btn-success">Thema ausgeben</a>
+                                            <a href="@Url.Action("Reject", new {id = request.Subscription.Id})" class="btn btn-danger">Beenden</a>
+
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-book"></i>
+                        <span class="caption-subject bold uppercase"> Laufende Arbeiten</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>Ausgabe</th>
+                                <th>Abgabe</th>
+                                <th>Voraussetzungen erfüllt</th>
+                                <th>Thema</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var exam in Model.Exams)
+                        {
+                            <tr>
+                                <td>@exam.User.LastName</td>
+                                <td>@exam.User.FirstName</td>
+                                <td>
+                                    @if (exam.Exam.Start != null)
+                                    {
+                                        @exam.Exam.Start.Value.ToShortDateString()
+                                    }</td>
+                                <td>
+                                    @if (exam.Exam.End != null)
+                                    {
+                                        @exam.Exam.End.Value.ToShortDateString()
+                                    }</td>
+                                <td>@exam.Subscription.IsConfirmed</td>
+                                    @if (exam.Exam.ExamPapers.Any())
+                                    {
+                                        <td>@exam.Exam.ExamPapers.First().Title</td>
+                                        
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                        <td>
+                                            <a href="@Url.Action("EditPaper", new {id=exam.Exam.Id})" class="btn btn-primary"><i class="fa fa-cog"></i> Bearbeiten</a>
+                                            <a href="@Url.Action("Delete", new {id=exam.Exam.Id})" class="btn btn-danger"><i class="fa fa-trash-o"></i> Löschen</a>
+                                        </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,97 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.LotterySummaryModel
+@{
+    ViewBag.Title = "Repair";
+    var userService = new UserInfoService();
+    var actService = new ActivityService();
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Repair</h2>
+
+            @foreach (var user in Model.Subscriptions)
+            {
+                var total = 0;
+                var isNegative = false;
+                var panelType = "panel-default";
+                foreach (var subscription in user.OrderBy(x => x.TimeStamp))
+                {
+                    var bet = subscription.Bets.FirstOrDefault();
+                    if (bet != null)
+                    {
+                        total += bet.Amount;
+                        if (bet.Amount < 0)
+                        {
+                            isNegative = true;
+                        }
+                    }
+                }
+                if (isNegative)
+                {
+                    panelType = "panel-danger";
+                }
+                else
+                {
+                    if (total > 100)
+                    {
+                        panelType = "panel-warning";
+                    }
+                }
+
+                var userName = userService.GetUserName(user.Key);
+
+                <div class="panel @panelType">
+                    <div class="panel-heading">
+                        <h4>@userName (@user.Key)</h4>
+                    </div>
+
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Subscription</th>
+                            <th>Occurrence</th>
+                            <th>zeit</th>
+                            <th></th>
+                            <th>Gesetzt</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var subscription in user.OrderBy(x => x.TimeStamp))
+                        {
+                            var bet = subscription.Bets.FirstOrDefault();
+                            var course = actService.GetSummary(subscription.Occurrence);
+                            <tr>
+                                <td>@subscription.Id</td>
+                                <td>@course.Activity.Name (@course.Activity.ShortName)</td>
+                                <td>@subscription.TimeStamp</td>
+                                <td>@Html.SubscriptionLabel(subscription)</td>
+                                @if (bet != null)
+    {
+                            <td>@bet.Amount</td>
+                            <td><a href="@Url.Action("AssignPoints", new {betId = bet.Id, amount = 80})">80</a></td>
+                            <td><a href="@Url.Action("AssignPoints", new {betId = bet.Id, amount = 16})">16</a></td>
+                            <td><a href="@Url.Action("AssignPoints", new {betId = bet.Id, amount = 4})">4</a></td>
+                            <td><a href="@Url.Action("AssignPoints", new {betId = bet.Id, amount = 0})">0</a></td>
+    }
+else
+{
+                            <td colspan="4"></td>
+}
+                                <td><a href="@Url.Action("RepairSubscription", new { lotId=Model.Lottery.Id, subId=subscription.Id})">Eintragung löschen</a></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

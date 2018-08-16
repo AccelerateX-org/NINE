@@ -12,6 +12,7 @@ namespace MyStik.TimeTable.Data
             this.Activities = new HashSet<Activity>();
             this.Subscriptions = new HashSet<SemesterSubscription>();
             this.OccurrenceGroups = new HashSet<OccurrenceGroup>();
+            this.Students = new HashSet<Student>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -47,6 +48,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<OccurrenceGroup> OccurrenceGroups { get; set; }
 
+
+        public virtual ICollection<Student> Students { get; set; }
 
         public string CompleteName
         {

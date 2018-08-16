@@ -1,0 +1,134 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Course
+@{
+    ViewBag.Title = "Owners";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Besitzer von @Model.Name (@Model.ShortName)</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Besitzer</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-default" href="@Url.Action("Admin", new {id=Model.Id})"><i class="fa fa-arrow-left"></i> zurück</a>
+                    </div>
+
+                    <table id="tabOwners" class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Fakultät</th>
+                                <th>Name</th>
+                                <th>Kurzname</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="dozList">
+                            @foreach (var owner in Model.Owners)
+            {
+                <tr>
+                    <td>@Html.FacultyLabel(owner.Member.Organiser)</td>
+                    <td>@owner.Member.Name</td>
+                    <td>@owner.Member.ShortName</td>
+                    <td><a href="@Url.Action("DeleteOwner", new {id = owner.Id})"><i class="fa fa-trash-o"></i> Löschen</a></td>
+                </tr>
+}
+                            <tr>
+                                <td>@Html.DropDownListFor(m => m.Organiser.Id, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })</td>
+                                <td><input type="text" class="form-control  input-sm" id="DozId"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+
+<script>
+
+        var isInit = true;
+
+        $(function() {
+            $('#DozId').autocomplete({
+                source: function(request, response) {
+                    var org = $("#Organiser_Id option:selected").val();
+
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            name: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data,
+                                function(item) {
+
+                                    return {
+                                        text: item.id,
+                                        label: item.name,
+                                        value: item.name
+                                    };
+                                }));
+
+                        },
+
+                        error: function(data) { alert(data); }
+                    });
+
+                },
+                select: function(event, ui) {
+
+                    var courseId = '@Model.Id.ToString()';
+                    var dozId = ui.item.text;
+
+                    $.ajax({
+                        url: '@Url.Action("AddOwner", "Course")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            courseId: courseId,
+                            dozId: dozId
+                        },
+
+                        success: function (data, success, xhr) {
+                            $("#dozList").prepend(data);
+                        },
+
+                        error: function(data) { alert(data); }
+                    });
+
+                }
+            });
+
+        });
+</script>
+}
+

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Models;
@@ -18,7 +19,8 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index(string searchText)
         {
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
 
             if (string.IsNullOrEmpty(searchText))
             {
@@ -26,7 +28,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     SearchText = searchText,
                     Semester = semester,
+                    NextSemester = nextSemester,
                     Courses = new List<CourseSummaryModel>(),
+                    NextCourses = new List<CourseSummaryModel>(),
                     Lecturers = new List<LecturerViewModel>()
                 };
 
@@ -36,7 +40,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(defaultModel);
             }
 
-            var courseList = new CourseService(UserManager).SearchCourses(semester.Name, searchText);
+            var courseList = new CourseService(Db).SearchCourses(semester.Name, searchText);
             foreach (var course in courseList)
             {
                 var lectures =
@@ -48,13 +52,28 @@ namespace MyStik.TimeTable.Web.Controllers
                     Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
                 course.Rooms.AddRange(rooms);
 
-                course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser, semester);
+                course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
+            }
+
+            var nextCoursesList = new CourseService(Db).SearchCourses(nextSemester.Name, searchText);
+            foreach (var course in nextCoursesList)
+            {
+                var lectures =
+                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
+
+                course.Lecturers.AddRange(lectures);
+
+                var rooms =
+                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
+                course.Rooms.AddRange(rooms);
+
+                course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
             }
 
             // alle Mitglieder
             var activeLecturers =
             Db.Members.Where(m => 
-                (m.Name.Contains(searchText) || m.ShortName.Contains(searchText)))
+                (m.Name.Contains(searchText) || m.ShortName.Contains(searchText)) && !m.Organiser.IsStudent)
                 .OrderBy(m => m.Name)
                 .ToList();
 
@@ -70,7 +89,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 SearchText = searchText,
                 Semester = semester,
+                NextSemester = nextSemester,
                 Courses = courseList,
+                NextCourses = nextCoursesList,
                 Lecturers = lecturerList
             };
 

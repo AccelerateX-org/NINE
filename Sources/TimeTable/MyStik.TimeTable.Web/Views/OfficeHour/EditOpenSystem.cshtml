@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Einstellungen Sprechstunde im @ViewBag.Semester.Name</h1>
+                    <h1>Einstellungen Sprechstunde im @Model.Semester.Name</h1>
                 </div>
             </div>
         </div>
@@ -31,39 +31,34 @@
                 <div class="portlet-title">
                     <div class="caption">
                         <i class="fa fa-headphones"></i>
-                        <span class="caption-subject bold uppercase"> Offene Sprechstunde</span>
+                        <span class="caption-subject bold uppercase"> Allgemeine Einstellungen</span>
                     </div>
                 </div>
                 <div class="portlet-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
                     {
-                        <fieldset>
-                            @Html.ValidationSummary()
-                            @Html.HiddenFor(model => model.OfficeHourId)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Anzahl Plätze</label>
-                                <div class="col-sm-6">
-                                    @Html.DropDownListFor(model => model.Capacity, (IEnumerable<SelectListItem>) ViewBag.Capacities, new {@class = "form-control"})
-                                </div>
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(model => model.OfficeHourId)
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Anzahl zukünftig buchbarer Termine</label>
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(model => model.MaxFutureSlots, (IEnumerable<SelectListItem>)ViewBag.FutureSlotLimits, new { @class = "form-control" })
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Eintragung für Studierende bis</label>
-                                <div class="col-sm-6">
-                                    @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>) ViewBag.Limits, new {@class = "form-control"})
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
-                                <div class="col-sm-6">
-                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-md-6">
+                                <input type="submit" value="speichern" class="btn btn-primary" />
+                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.Semester.Id})" class="btn btn-default">Abbrechen</a>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-4 col-md-6">
-                                    <input type="submit" value="speichern" class="btn btn-primary"/>
-                                </div>
-                            </div>
-                        </fieldset>
+                        </div>
+                    </fieldset>
                     }
                 </div>
             </div>

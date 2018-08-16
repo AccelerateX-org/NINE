@@ -85,6 +85,7 @@
                                     <td>@detail.FirstAction</td>
                                     <td>@detail.LastAction</td>
                                     <td>
+                                        <a href="@Url.Action("SubscriberReport", "Lottery", new { lotteryId = Model.Lottery.Id, userId = detail.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-history"></i> Historie</a>
                                         <a href="@Url.Action("CoursePlan", "Students", new {id = detail.User.Id})" class="btn btn-default btn-xs"><i class="fa fa-calendar-o"></i> Kursplan</a>
                                         <a href="mailto:@detail.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
                                     </td>

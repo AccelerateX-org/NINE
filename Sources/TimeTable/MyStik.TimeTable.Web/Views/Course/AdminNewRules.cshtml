@@ -1,0 +1,142 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+
+
+@{
+    ViewBag.Title = "Verwaltung";
+}
+
+@Html.Partial("_CourseSummaryHeader", Model.Summary)
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-legal"></i> Teilnahmebeschränkungen</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        <fieldset>
+                            @Html.HiddenFor(m => m.Course.Id)
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Einordnung nach "Ampelsystem"</label>
+                                <div class="col-md-10">
+                                    <div class="radio-list">
+                                        <label>
+                                            @Html.RadioButtonFor(m => m.optionsAccess, 1)
+                                            Jeder Studierende kann sich eintragen
+                                        </label>
+                                        <label>
+                                            @Html.RadioButtonFor(m => m.optionsAccess, 2)
+                                            Studierende der angegebenen Studiengänge werden bevorzugt (bei Wahlverfahren)
+                                        </label>
+                                        <label>
+                                            @Html.RadioButtonFor(m => m.optionsAccess, 3)
+                                            Nur Studierende der angegebenen Studiengänge können sich eintragen
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Platzkontingent</label>
+                                <div class="col-md-10">
+                                    <div class="radio-list">
+                                        <label>
+                                            @Html.RadioButtonFor(m => m.optionsLimit, 1)
+                                            Keine Beschränkung
+                                        </label>
+                                        <label>
+                                            @Html.RadioButtonFor(m => m.optionsLimit, 2)
+                                            Beschränkung auf Ebene der Lehrveranstaltung als Ganzes
+                                            @Html.TextBoxFor(m => m.Capacity, new { @class = "form-control" })
+                                        </label>
+                                        <label>
+                                            @Html.RadioButtonFor(m => m.optionsLimit, 3)
+                                            Beschränkung auf Ebene der einzelnen Studiengänge
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            @foreach (var occGroup in Model.Course.Occurrence.Groups)
+                            {
+                                <div class="form-group">
+                                    <label class="col-md-offset-2 col-md-2 control-label">Anzahl Plätze für @Html.GroupList(occGroup.SemesterGroups, showLink: false)</label>
+                                    <div class="col-md-2">
+                                        <input name="@occGroup.Id" id="@occGroup.Id" value="@occGroup.Capacity" class="form-control dtcap" />
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-8">
+                                    <a class="btn btn-primary" href="javascript:onSave()"><i class="fa fa-save"></i> Speichern</a>
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        function onSave() {
+            var list = $(".dtcap").get();
+            var capacity = $("#Capacity").val();
+            var optAccess = $('input[name=optionsAccess]:checked').val();
+            var optLimit = $('input[name=optionsLimit]:checked').val();
+
+
+            var n = list.length;
+
+
+            if (n > 0) {
+                var groupIds = new Array();
+                var groupCaps = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    groupIds[i] = list[i].name;
+                    groupCaps[i] = list[i].value;
+                }
+
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("SaveAdminNewRules")',
+                        data: {
+                            courseId: "@Model.Course.Id",
+                            optAccess: optAccess,
+                            optLimit: optLimit,
+                            capacity: capacity,
+                            groupIds: groupIds,
+                            groupCaps: groupCaps
+
+                        },
+                        success: function (data, success, xhr) {
+                            window.location = data.url;
+                        }
+                    });
+
+
+
+            }
+        }
+
+
+    </script>
+
+
+}

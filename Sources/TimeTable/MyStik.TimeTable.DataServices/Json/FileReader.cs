@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using fk11.Model;
 using log4net;
+using MyStik.TimeTable.DataServices.Json.Data;
 using Newtonsoft.Json;
-using Spire.Doc.Fields;
 
 namespace MyStik.TimeTable.DataServices.Json
 {

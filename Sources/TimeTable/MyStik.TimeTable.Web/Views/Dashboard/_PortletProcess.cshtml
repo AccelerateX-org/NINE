@@ -1,0 +1,24 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardViewModel
+
+
+@{
+    var now = DateTime.Now;
+}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>
+            <i class="fa fa-refresh"></i> Laufende Prozesse
+        </h4>
+    </div>
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="list-group-item-heading"><h5><i class="fa fa-certificate"></i> Abschlussarbeiten</h5></div>
+                <div class="list-group-item-text">Alle laufenden Abschlussarbeiten <span class="badge badge-info">demnächst</span></div>
+            </div>
+        </div>
+</div>
+
+
+
+

@@ -15,6 +15,14 @@
         <div class="col-md-12">
             <h3 class="page-title">
                 @Resources.DashboardStudentHeading
+                @if (Model.SemesterGroup != null)
+                {
+                    <small>Meine aktuelle Semestergruppe @Model.SemesterGroup.CompleteName <a href="@Url.Action("Index", "Subscription")">ändern</a> </small>
+                }
+                else
+                {
+                    <strong><a href="@Url.Action("Index", "Subscription")">Semestergruppe wählen</a> </strong>
+                }
             </h3>
         </div>
     </div>
@@ -22,14 +30,67 @@
 
 
 <div class="container-fluid">
+@if (Model.SemesterGroup == null)
+{
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            @if (Model.NextCourseDate != null)
-            {
-                if (Model.NextCourseDate.Begin.Date == DateTime.Today)
+        <div class="col-md-12>">
+            <div class="note note-danger">
+                <h1>ACHTUNG - Semestergruppe angeben</h1>
+                <p>Um sich in Lehrveranstaltungen eintragen zu können, muss einmal im Semester die aktuelle Semestergruppe angegeben werden.</p>
+                <a href="@Url.Action("Index", "Subscription")" class="btn btn-large btn-default">Semestergruppe auswählen</a>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                @if (Model.NextCourseDate != null)
                 {
-                    if (Model.NextCourseDate.Begin <= DateTime.Now &&
-                        DateTime.Now <= Model.NextCourseDate.End)
+                    if (Model.NextCourseDate.Begin.Date == DateTime.Today)
+                    {
+                        if (Model.NextCourseDate.Begin <= DateTime.Now &&
+                            DateTime.Now <= Model.NextCourseDate.End)
+                        {
+                            <div class="dashboard-stat fillter-study">
+                                <div class="visual">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="number">
+                                        @Resources.NowLink (@Html.RoomList(Model.NextCourseDate.Rooms, showLinks: false))
+                                    </div>
+                                    <div class="desc">@Model.NextCourseDate.Activity.Name</div>
+                                </div>
+                                <a class="more" href="@Url.Action("Courses", "Planer")">
+                                    @Resources.NextLink
+                                    <i class="m-icon-swapright m-icon-white"></i>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dashboard-stat fillter-study">
+                                <div class="visual">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="number">
+                                        @Model.NextCourseDate.Begin.ToString("t") (@Html.RoomList(Model.NextCourseDate.Rooms, showLinks: false))
+                                    </div>
+                                    <div class="desc">@Model.NextCourseDate.Activity.Name</div>
+                                </div>
+                                <a class="more" href="@Url.Action("Courses", "Planer")">
+                                    @Resources.NextLink
+                                    <i class="m-icon-swapright m-icon-white"></i>
+                                </a>
+                            </div>
+
+                        }
+                    }
+                    else
                     {
                         <div class="dashboard-stat fillter-study">
                             <div class="visual">
@@ -37,9 +98,30 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    @Resources.NowLink (@Html.RoomList(Model.NextCourseDate.Rooms, showLinks: false))
+                                    @Model.NextCourseDate.Begin.ToString("dd.MM") @Model.NextCourseDate.Begin.ToString("t")
                                 </div>
                                 <div class="desc">@Model.NextCourseDate.Activity.Name</div>
+                            </div>
+                            <a class="more" href="@Url.Action("Courses", "Planer")">
+                                @Resources.NextLink
+                                <i class="m-icon-swapright m-icon-white"></i>
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    if (Model.MyCourseSubscriptions.Any())
+                    {
+                        <div class="dashboard-stat fillter-study">
+                            <div class="visual">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                    @Resources.LecturesHeading
+                                </div>
+                                <div class="desc">Keine Termine mehr im @Model.Semester.Name</div>
                             </div>
                             <a class="more" href="@Url.Action("Courses", "Planer")">
                                 @Resources.NextLink
@@ -55,52 +137,41 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    @Model.NextCourseDate.Begin.ToString("t") (@Html.RoomList(Model.NextCourseDate.Rooms, showLinks: false))
+                                    @Resources.LecturesHeading
                                 </div>
-                                <div class="desc">@Model.NextCourseDate.Activity.Name</div>
+                                <div class="desc">@Resources.NoDates</div>
                             </div>
-                            <a class="more" href="@Url.Action("Courses", "Planer")">
+                            <a class="more" href="@Url.Action("Index", "Planer")">
                                 @Resources.NextLink
                                 <i class="m-icon-swapright m-icon-white"></i>
                             </a>
                         </div>
-
                     }
                 }
-                else
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                @if (Model.NextOfficeHourDate != null && Model.NextOfficeHourDate.Hosts.Any())
                 {
-                    <div class="dashboard-stat fillter-study">
+                    <div class="dashboard-stat fillter-lecturer">
                         <div class="visual">
-                            <i class="fa fa-calendar"></i>
+                            <i class="fa fa-question-circle-o"></i>
                         </div>
                         <div class="details">
                             <div class="number">
-                                @Model.NextCourseDate.Begin.ToString("dd.MM") @Model.NextCourseDate.Begin.ToString("t")
+                                @if (Model.NextOfficeHourSlot != null)
+                                {
+                                    @Model.NextOfficeHourSlot.Begin.ToString("dd.MM")
+                                    @Model.NextOfficeHourSlot.Begin.ToString("t")
+                                }
+                                else
+                                {
+                                    @Model.NextOfficeHourDate.Begin.ToString("dd.MM")
+                                    @Model.NextOfficeHourDate.Begin.ToString("t")
+                                }
                             </div>
-                            <div class="desc">@Model.NextCourseDate.Activity.Name</div>
+                            <div class="desc">@Resources.OfficeHour @Model.NextOfficeHourDate.Hosts.First().Name</div>
                         </div>
-                        <a class="more" href="@Url.Action("Courses", "Planer")">
-                           @Resources.NextLink
-                            <i class="m-icon-swapright m-icon-white"></i>
-                        </a>
-                    </div>
-                }
-            }
-            else
-            {
-                if (Model.MyCourseSubscriptions.Any())
-                {
-                    <div class="dashboard-stat fillter-study">
-                        <div class="visual">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <div class="details">
-                            <div class="number">
-                                @Resources.LecturesHeading
-                            </div>
-                            <div class="desc">Keine Termine mehr im @Model.Semester.Name</div>
-                        </div>
-                        <a class="more" href="@Url.Action("Courses", "Planer")">
+                        <a class="more" href="@Url.Action("OfficeHour", "Planer")">
                             @Resources.NextLink
                             <i class="m-icon-swapright m-icon-white"></i>
                         </a>
@@ -108,131 +179,98 @@
                 }
                 else
                 {
-                    <div class="dashboard-stat fillter-study">
+                    <div class="dashboard-stat fillter-lecturer">
                         <div class="visual">
-                            <i class="fa fa-calendar"></i>
+                            <i class="fa fa-question-circle-o"></i>
                         </div>
                         <div class="details">
                             <div class="number">
-                                @Resources.LecturesHeading
+                                @Resources.OfficeHour
                             </div>
                             <div class="desc">@Resources.NoDates</div>
                         </div>
-                        <a class="more" href="@Url.Action("Index", "Planer")">
+                        <a class="more" href="@Url.Action("Index", "OfficeHour")">
                             @Resources.NextLink
                             <i class="m-icon-swapright m-icon-white"></i>
                         </a>
                     </div>
+
                 }
-            }
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            @if (Model.NextOfficeHourDate != null && Model.NextOfficeHourDate.Hosts.Any())
-            {
-                <div class="dashboard-stat fillter-lecturer">
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="dashboard-stat fillter-events">
                     <div class="visual">
-                        <i class="fa fa-question-circle-o"></i>
+                        <i class="fa fa-globe"></i>
                     </div>
                     <div class="details">
                         <div class="number">
-                            @Model.NextOfficeHourDate.Begin.ToString("dd.MM") @Model.NextOfficeHourDate.Begin.ToString("t")
-                        </div>
-                        <div class="desc">@Resources.OfficeHour @Model.NextOfficeHourDate.Hosts.First().Name</div>
-                    </div>
-                    <a class="more" href="@Url.Action("OfficeHour", "Planer")">
-                        @Resources.NextLink
-                        <i class="m-icon-swapright m-icon-white"></i>
-                    </a>
-                </div>
-            }
-            else
-            {
-                <div class="dashboard-stat fillter-lecturer">
-                    <div class="visual">
-                        <i class="fa fa-question-circle-o"></i>
-                    </div>
-                    <div class="details">
-                        <div class="number">
-                            @Resources.OfficeHour
+                            Veranstaltungen
                         </div>
                         <div class="desc">@Resources.NoDates</div>
                     </div>
-                    <a class="more" href="@Url.Action("Index", "OfficeHour")">
+                    <a class="more" href="@Url.Action("Events", "Planer")">
                         @Resources.NextLink
                         <i class="m-icon-swapright m-icon-white"></i>
                     </a>
                 </div>
-
-            }
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="dashboard-stat fillter-events">
-                <div class="visual">
-                    <i class="fa fa-globe"></i>
-                </div>
-                <div class="details">
-                    <div class="number">
-                        Veranstaltungen
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="dashboard-stat fillter-hm">
+                    <div class="visual">
+                        <i class="fa fa-graduation-cap"></i>
                     </div>
-                    <div class="desc">@Resources.NoDates</div>
+                    <div class="details">
+                        <div class="number">
+                            Termine im @Model.Semester.Name
+                        </div>
+                        <div class="desc">@Model.NextSemesterDate.ToString("dd.MM") @Model.NextSemesterDateDescription</div>
+                    </div>
+                    <a class="more" href="@Url.Action("Index", "Semester")">
+                        @Resources.NextLink
+                        <i class="m-icon-swapright m-icon-white"></i>
+                    </a>
                 </div>
-                <a class="more" href="@Url.Action("Events", "Planer")">
-                    @Resources.NextLink
-                    <i class="m-icon-swapright m-icon-white"></i>
-                </a>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="dashboard-stat fillter-hm">
-                <div class="visual">
-                    <i class="fa fa-graduation-cap"></i>
+        <div class="clearfix"></div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#" class="list-group-item disabled">
+                        <strong>Übersichten</strong>
+                    </a>
+                    <a href="@Url.Action("Index", "Lottery")" class="list-group-item">
+                        <i class="fa fa-random fa-fw"></i> Platzverlosungen
+                    </a>
+                    <a href="@Url.Action("Index", "OfficeHour")" class="list-group-item">
+                        <i class="fa fa-question-circle-o fa-fw"></i> @Resources.QuickAccessOfficeHour
+                    </a>
+                    <a href="@Url.Action("Free", "Room")" class="list-group-item">
+                        <i class="fa fa-map-marker fa-fw"></i> @Resources.QuickAccessFreeRooms
+                    </a>
+                    <a href="#" class="list-group-item disabled">
+                        <strong>Persönliches</strong>
+                    </a>
+                    <a href="@Url.Action("Index", "CoursePlan")" class="list-group-item">
+                        <i class="fa fa-map-signs fa-fw"></i> @Resources.StudyProcessHeading
+                    </a>
+                    <a href="@Url.Action("Index", "Thesis")" class="list-group-item">
+                        <i class="fa fa-book fa-fw"></i> Abschlussarbeiten
+                    </a>
+                    <a href="#" class="list-group-item disabled">
+                        <strong>Engagement</strong>
+                    </a>
+                    <a href="@Url.Action("Index", "Union")" class="list-group-item">
+                        <i class="fa fa-paw fa-fw"></i> Fachschaft
+                    </a>
                 </div>
-                <div class="details">
-                    <div class="number">
-                        Termine im @Model.Semester.Name
-                    </div>
-                    <div class="desc">@Model.NextSemesterDate.ToString("dd.MM") @Model.NextSemesterDateDescription</div>
-                </div>
-                <a class="more" href="@Url.Action("Index", "Semester")">
-                    @Resources.NextLink
-                    <i class="m-icon-swapright m-icon-white"></i>
-                </a>
+            </div>
+            <div class="col-md-9">
+                @Html.Partial("_PortletPersonalPlan", Model)
             </div>
         </div>
     </div>
-    <div class="clearfix"></div>
-
-    <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="#" class="list-group-item disabled">
-                    <strong>Übersichten</strong>
-                </a>                        
-                <a href="@Url.Action("Index", "Lottery")" class="list-group-item">
-                    <i class="fa fa-random fa-fw"></i> Platzverlosungen
-                </a>
-                <a href="@Url.Action("Index", "OfficeHour")" class="list-group-item">
-                    <i class="fa fa-question-circle-o fa-fw"></i> @Resources.QuickAccessOfficeHour
-                </a>
-                <a href="@Url.Action("Free", "Room")" class="list-group-item">
-                    <i class="fa fa-map-marker fa-fw"></i> @Resources.QuickAccessFreeRooms
-                </a>
-                <a href="#" class="list-group-item disabled">
-                    <strong>Persönliches</strong>
-                </a>
-                <a href="@Url.Action("Index", "CoursePlan")" class="list-group-item">
-                    <i class="fa fa-map-signs fa-fw"></i> @Resources.StudyProcessHeading
-                </a>
-                <a href="@Url.Action("Index", "Exam")" class="list-group-item">
-                    <i class="fa fa-book fa-fw"></i> Abschlussarbeit
-                </a>
-            </div>
-        </div>
-        <div class="col-md-9">
-            @Html.Partial("_PortletPersonalPlan", Model)
-        </div>
-    </div>
-</div>
 
 
 @section scripts

@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Web;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.GpUntis.Data;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -246,6 +245,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public BaseImportContext Context { get; set; }
+
+        public string FormatId { get; set; }
 
     }
 

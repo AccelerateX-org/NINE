@@ -1,0 +1,29 @@
+﻿@model MyStik.TimeTable.Data.Newsletter
+@{
+    ViewBag.Title = "Newsletter löschen";
+}
+
+<h4>Newsletter löschen</h4>
+
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">Der Newsletter @Model.Name soll gelöscht werden</div>
+        <div class="panel-body">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                @Html.ValidationSummary(true)
+                <fieldset>
+                    @Html.ValidationSummary()
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.Organiser.ShortName)
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Löschen" class="btn btn-default" />
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+</div>
+

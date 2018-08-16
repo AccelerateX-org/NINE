@@ -2,11 +2,11 @@
 @model MyStik.TimeTable.Web.Models.OccurrenceStateModel
 
 
-@if (Request.IsAuthenticated && Model.Occurrence.IsAvailable)
+@if (Request.IsAuthenticated)
 {
-    string activityFlag = "Activity_" + Model.Occurrence.Id;
-    <div id="@activityFlag">
-            @if (Model.HasError)
+        string activityFlag = "Activity_" + Model.Occurrence.Id;
+        <div id="@activityFlag">
+            @if (Model.HasError || !Model.Occurrence.IsAvailable)
             {
                 <div class="text-danger">@Model.ErrorMessage</div>
             }
@@ -16,17 +16,34 @@
                 if (Model.Subscription == null)
                 {
                     @Ajax.ActionButton("fa-pencil text-primary", Model.Label, "SubscribeActivity", "Activity",
-                            new { Id = Model.Occurrence.Id },
-                            new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag },
-                            new { @class = "btn btn-default btn-sm" })
+                        new {Id = Model.Occurrence.Id},
+                        new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag},
+                        new {@class = "btn btn-default btn-sm btn-block"})
                 }
                 else
                 {
-                    @Ajax.ActionButton("fa-times text-danger", Model.Label, "DischargeActivity", "Activity",
+                    if (Model.Subscription.OnWaitingList)
+                     {
+                         <p><i class="fa fa-hourglass-half"></i> Warteliste</p>
+                    }
+                    else
+                    {
+                        if (Model.Subscription.IsConfirmed)
+                        {
+                            <p><i class="fa fa-group"></i> Teilnehmer</p>
+                        }
+                        else
+                        {
+                            <p><i class="fa fa-ticket"></i> Reservierung</p>
+                        }
+                    }
+
+                    @Ajax.ActionButton("fa-times", Model.Label, "DischargeActivity", "Activity",
                         new {Id = Model.Occurrence.Id},
                         new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = activityFlag},
-                             new { @class = "btn btn-default btn-sm" })
+                        new {@class = "btn btn-danger btn-sm btn-block" })
                 }
             }
-    </div>
+        </div>
 }
+

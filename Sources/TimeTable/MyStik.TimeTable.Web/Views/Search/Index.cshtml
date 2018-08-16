@@ -1,6 +1,8 @@
 ﻿@model MyStik.TimeTable.Web.Models.SearchViewModel
 @{
     ViewBag.Title = "Suche";
+    ViewBag.ShowState = false;
+    ViewBag.ShowFaculty = true;
 }
 
 <div class="panel panel-default">
@@ -18,40 +20,37 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption font-green-sharp">
-                        <i class="icon-speech font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase"> Personen</span>
-                    </div>
-                    <div class="tools">
-                        <a href="" class="collapse">
-                        </a>
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lehrende</h4>
                 </div>
-                <div class="portlet-body">
-                    @Html.Partial("_LecturerListSummary", Model.Lecturers)
-                </div>
+
+                @Html.Partial("_LecturerListSummary", Model.Lecturers)
             </div>
         </div>
     </div>
+    
+    @if (Model.NextCourses.Any())
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Lehrveranstaltungen (@Model.NextSemester.Name)</h4>
+                    </div>
+                    @Html.Partial("_CourseListFit", Model.NextCourses)
+                </div>
+            </div>
+        </div>
+    }
 
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption font-green-sharp">
-                        <i class="icon-speech font-green-sharp"></i>
-                        <span class="caption-subject bold uppercase"> Lehrveranstaltungen</span>
-                    </div>
-                    <div class="tools">
-                        <a href="" class="collapse">
-                        </a>
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lehrveranstaltungen (@Model.Semester.Name)</h4>
                 </div>
-                <div class="portlet-body">
-                    @Html.Partial("_CourseListSummary", Model.Courses)
-                </div>
+                @Html.Partial("_CourseListFit", Model.Courses)
             </div>
         </div>
     </div>

@@ -13,210 +13,63 @@
     </div>
 </div>
 
-@if (ViewBag.UserRight != null && ViewBag.UserRight.IsCurriculumAdmin)
-{
-    <div class="panel panel-default panel-menu">
-        <div class="panel-body">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <a href="@Url.Action("Edit", "Curriculum", new {id = Model.Id})" class="btn btn-default">
-                                    <i class="fa fa-cog"></i> Einstellungen
-                                </a>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("CreateGroup", "Curricula", new {id = Model.Id})" class="btn btn-default">
-                                    <i class="fa fa-plus"></i> Gruppe hinzufügen
-                                </a>
-                            </div>
-                            @*
-    <div class="form-group">
-        <a href="@Url.Action("Create", "CurriculumCriteria", new {id = Model.Id})" class="btn btn-default">
-            <i class="fa fa-plus"></i> Kriterium anlegen
-        </a>
-    </div>
-                            *@
-                            @*
-    <div class="form-group">
-        <a href="@Url.Action("ImportModuleCatalog", "Curriculum", new {id = Model.Id})" class="btn btn-default">
-            <i class="fa fa-upload"></i> Modulkatalog importieren
-        </a>
-    </div>
-    <div class="form-group">
-        <a href="@Url.Action("DeleteModuleCatalog", "Curriculum", new {id = Model.Id})" class="btn btn-default">
-            <i class="fa fa-trash"></i> Modulkatalog löschen
-        </a>
-    </div>
-                        *@
+<div class="container-fluid">
+    @foreach (var package in Model.Packages)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>@package.Name</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            @foreach (var option in package.Options)
+                            {
+                                <div class="col-md-4">
+                                    <div class="list-group">
+                                        @if (!string.IsNullOrEmpty(option.Name))
+                                        {
+                                            <div class="list-group-item list-group-item-info">
+                                                <div class="list-group-item-heading">
+                                                    <h5>@option.Name</h5>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @foreach (var req in option.Requirements)
+                                        {
+                                            <a href="@Url.Action("Requirement", new {id=req.Id})" class="list-group-item">
+                                                @if (req.Criterias.Count == 1)
+                                                {
+                                                    <span class="badge badge-info">@req.Criterias.First().Term. Semester</span>
+                                                }
+                                                <span class="badge badge-danger">@req.ECTS ECTS</span>
+                                                <div class="list-group-item-heading">
+                                                    <p>@req.Name</p>
+                                                </div>
+                                                @if (req.Criterias.Count > 1)
+                                                {
+                                                    <div class="list-group-item-text">
+                                                        <ul>
+                                                            @foreach (var crit in req.Criterias)
+                                                            {
+                                                                <li>@crit.Name<span class="badge badge-info">@crit.Term. Semester</span></li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                            </a>
+                                        }
+                                    </div>
+
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-}
-
-<div class="container-fluid">
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-group"></i> Studiengruppen
-                    </div>
-                    <div class="actions">
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Teilgruppen</th>
-                                <th>WS</th>
-                                <th>SS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var group in Model.CurriculumGroups.OrderBy(g => g.Name))
-                            {
-                                var n = group.CapacityGroups.Count;
-                                foreach (var capacityGroup in group.CapacityGroups)
-                                {
-                                    if (capacityGroup.Equals(group.CapacityGroups.First()))
-                                    {
-                                        <tr>
-                                            <td rowspan="@n">@group.Name</td>
-                                            <td>@capacityGroup.Name</td>
-                                            <td>
-                                                @if (capacityGroup.InWS)
-                                                {
-                                                    <i class="fa fa-check text-success"></i>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (capacityGroup.InSS)
-                                                {
-                                                    <i class="fa fa-check text-success"></i>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td>@capacityGroup.Name</td>
-                                            <td>
-                                                @if (capacityGroup.InWS)
-                                                {
-                                                    <i class="fa fa-check text-success"></i>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (capacityGroup.InSS)
-                                                {
-                                                    <i class="fa fa-check text-success"></i>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-bookmark"></i> Themenruppen
-                    </div>
-                    <div class="actions">
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Thema</th>
-                                <th>Kapitel</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var group in Model.Chapters.OrderBy(g => g.Name))
-                            {
-                                var n = group.Topics.Count;
-                                foreach (var capacityGroup in group.Topics)
-                                {
-                                    if (capacityGroup.Equals(group.Topics.First()))
-                                    {
-                                        <tr>
-                                            <td rowspan="@n">@group.Name</td>
-                                            <td>@capacityGroup.Name</td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td>@capacityGroup.Name</td>
-                                        </tr>
-                                    }
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-trophy"></i> Kriterien
-                    </div>
-                    <div class="actions">
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <table class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Akkreditierte Module</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var group in Model.Criterias.OrderBy(x => x.Name))
-                        {
-                            var n = group.Accreditations.Count;
-                            foreach (var capacityGroup in group.Accreditations)
-                            {
-                                if (capacityGroup.Equals(group.Accreditations.First()))
-                                {
-                                    <tr>
-                                        <td rowspan="@n"><a href="@Url.Action("Details", "CurriculumCriteria", new {id = group.Id})">@group.Name</a></td>
-                                        <td>@capacityGroup.Module.Name</td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td>@capacityGroup.Module.Name</td>
-                                    </tr>
-                                }
-                            }
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
+    }
 </div>
+

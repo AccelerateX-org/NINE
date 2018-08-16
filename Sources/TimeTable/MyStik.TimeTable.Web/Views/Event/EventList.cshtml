@@ -1,0 +1,264 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+@using MyStik.TimeTable.Web.Helpers
+@{
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Veranstaltungsverzeichnis";
+}
+
+
+<div class="@containerType">
+
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-book"></i>
+                        <a href="@Url.Action("Index")">Start</a> /
+                        <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
+                        @Model.Organiser.ShortName
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var ev in Model.Events.OrderByDescending(x => x.Dates.Max(y => y.End)))
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><a href="@Url.Action("Details", new {id = ev.Id})">@ev.Name</a></h4>
+                    </div>
+                    @if (!string.IsNullOrEmpty(ev.Description))
+                    {
+                        <div class="panel-body">
+                            <div>@Html.Raw(ev.Description)</div>
+                        </div>
+                    }
+                    <div class="list-group">
+                        @foreach (var evDate in ev.Dates)
+                        {
+                            var subscription = evDate.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(Model.User.Id));
+
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">@Html.TimeSpanWithDate(evDate)</h5>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <ul class="fa-ul">
+                                            <li>
+                                                <i class="fa-li fa fa-user-md"></i>
+                                                @if (evDate.Hosts.Any())
+                                                {
+                                                    @Html.LecturerList(evDate.Hosts)
+                                                }
+                                                else
+                                                {
+                                                    <i>Keine Angabe zu Lehrenden verfügbar</i>
+                                                }
+                                            </li>
+                                            <li>
+                                                <i class="fa-li fa fa-university"></i>
+                                                @if (evDate.Rooms.Any())
+                                                {
+                                                    @Html.RoomList(evDate.Rooms)
+                                                }
+                                                else
+                                                {
+                                                    <i>Keine Raumangaben verfügbar</i>
+                                                }
+
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-5">
+                                    </div>
+                                    <div class="col-md-2">
+                                        @if (Model.User != null && evDate.End >= DateTime.Today)
+                                        {
+                                            <div class="panel panel-default" style="margin-bottom: 0pt">
+                                                <div class="list-group">
+                                                    @if (subscription == null)
+                                                    {
+                                                        if (evDate.Occurrence.IsAvailable)
+                                                        {
+                                                            <div class="list-group-item">
+                                                                <div class="selectable" data-occid="@evDate.Occurrence.Id">
+                                                                    <span class="fa-stack fa-lg">
+                                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                                        <i class="fa fa-pencil fa-stack-1x"></i>
+                                                                    </span>
+                                                                    @if (evDate.Occurrence.IsCoterie)
+                                                                    {
+                                                                        <i class="fa fa-circle text-danger"></i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (evDate.Occurrence.HasHomeBias)
+                                                                        {
+                                                                            <i class="fa fa-circle text-warning"></i>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <i class="fa fa-circle text-success"></i>
+                                                                        }
+                                                                    }
+                                                                </div>
+
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="list-group-item">
+                                                                <div data-occid="@evDate.Occurrence.Id">
+                                                                    <span class="fa-stack fa-lg">
+                                                                        <i class="fa fa-ban fa-stack-2x fa-rotate-90 text-danger"></i>
+                                                                        <i class="fa fa-pencil fa-stack-1x"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="list-group-item">
+                                                            <div class="selectable discardable" data-occid="@evDate.Occurrence.Id">
+                                                                <span class="fa-stack fa-lg">
+                                                                    <i class="fa fa-circle fa-stack-2x text-success"></i>
+                                                                    <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section styles
+{
+    <style>
+
+        .selectable {
+            cursor: pointer;
+        }
+
+        .discardable {
+            cursor: pointer;
+        }
+
+        .lottery {
+            cursor: pointer;
+        }
+    </style>
+}
+
+@section scripts
+{
+
+    <script>
+        $(document).ready(function() {
+
+            // Wählen bzw. Abwählen eines Projekte, diese bekommt dann ein Häkchen
+            $('.selectable').click(function() {
+                if ($(this).hasClass('disabled')) {
+                } else {
+                    if ($(this).hasClass('discardable')) {
+
+                        $(this).addClass('disabled');
+
+                        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+                        var ocId = $(this).data("occid");
+
+                        var saveElement = $(this);
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("DischargeActivity", "Activity")',
+                                data: {
+                                    Id: ocId
+                                },
+                                success: function(data, success, xhr) {
+
+                                    saveElement.html(
+                                        '<span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-pencil fa-stack-1x"></i></span>');
+
+                                    saveElement.removeClass('discardable');
+                                    saveElement.removeClass('disabled');
+
+                                }
+                            });
+
+
+                    } else {
+
+
+                        $(this).addClass('disabled');
+
+                        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+                        var ocId = $(this).data("occid");
+
+                        var saveElement = $(this);
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("SubscribeActivity", "Activity")',
+                                data: {
+                                    Id: ocId
+                                },
+                                success: function(data, success, xhr) {
+
+                                    saveElement.html(
+                                        '<span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-success"></i><i class="fa fa-check fa-stack-1x fa-inverse"></i></span>');
+
+                                    saveElement.addClass('discardable');
+                                    saveElement.removeClass('disabled');
+
+                                }
+                            });
+                    }
+                }
+            });
+
+            $('.lottery').click(function() {
+
+                var ocId = $(this).data("lotid");
+                var url = '@Url.Action("Overview", "Lottery")';
+                url += "/" + ocId;
+
+                window.location = url;
+            });
+
+
+        });
+
+    </script>
+
+}

@@ -20,61 +20,14 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2">
-                <div class="row">
-                    <div class="panel panel-default">
-                            <ul class="nav">
-                                @if (Model.OfficeHour == null)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("CreateOfficeHour", "OfficeHour", new {id = "FK 09"})"><i class="fa fa-stethoscope fa-2x text-primary list-group-item"></i> Sprechstunden für @Model.Semester.Name anlegen</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                <li>
-                                    <a href="@Url.Action("CreateDate", "OfficeHour", new { id = Model.OfficeHour.Id })">
-                                        <i class="fa fa-plus-circle"></i> Neuer Termin
-                                    </a>
-                                </li>
-                                    <li>
-                                        <a href="@Url.Action("SubscriptionList", "OfficeHour", new {id = Model.OfficeHour.Id})">
-                                            <i class="fa fa-download"></i> Teilnehmerliste
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="@Url.Action("DeleteOfficeHour", "OfficeHour")">
-                                            <i class="fa fa-trash-o"></i> Sprechstunde löschen
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                    </div>
-                </div>
-        </div>
-
-
-        <div class="col-md-10">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
                         <i class="fa fa-calendar"></i>Terminliste
-                    </div>
-                    <div class="actions">
-                        <div class="btn-group" data-toggle="buttons">
-                            <button id="toggleHistoryOff" class="btn btn-default active">
-                                nur zukünftige Termine
-                            </button>
-                            <button id="toggleHistoryOn" class="btn btn-default">
-                                alle Termine
-                            </button>
-                        </div>                        
-                    </div>
+                    </h4>
                 </div>
-                <div class="portlet-body">
-
-
+                <div class="panel-body">
                     <table class="table table-condensed">
                         <thead>
                         <tr>
@@ -91,13 +44,7 @@
                         <tbody>
                         @foreach (var slot in Model.CurrentSlots)
                         {
-                            var histAttr = "";
-                            if (slot.ActivityDate.End < GlobalSettings.Now)
-                            {
-                                histAttr = "history";
-                            }
-
-                            <tr @histAttr>
+                            <tr>
                                 @if (slot.RowNo == 1)
                                 {
                                     if (slot.ActivityDate.Occurrence.IsCanceled)
@@ -124,21 +71,12 @@
                                         {
                                             <td>@slot.Occurrence.Capacity</td>
                                             <td>
-                                                @if (!slot.Occurrence.Subscriptions.Any())
-                                                {
-                                                    <a href="@Url.Action("LockOccurrence", "Occurrence", new {id = slot.Occurrence.Id})" class="btn btn-default btn-xs">
-                                                        <i class="fa fa-lock text-danger"></i> Sperren
-                                                    </a>
-                                                }
                                             </td>
                                         }
                                         else
                                         {
                                             <td></td>
                                             <td>
-                                                <a href="@Url.Action("UnLockOccurrence", "Occurrence", new {id = slot.Occurrence.Id})" class="btn btn-default btn-xs">
-                                                    <i class="fa fa-unlock text-success"></i> Freigeben
-                                                </a>
                                             </td>
                                         }
                                     }
@@ -152,11 +90,7 @@
                                 {
                                     <td><a href="mailto:@slot.Member.User.Email">@slot.Member.User.FirstName @slot.Member.User.LastName</a></td>
                                     <td>@slot.Member.Subscription.TimeStamp</td>
-                                    <td>
-                                        @Html.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
-                                            new { Id = slot.Occurrence.Id, userId = slot.Member.User.Id },
-                                            new { @class = "btn btn-default btn-xs" })
-                                    </td>
+                                    <td></td>
                                 }
                                 else
                                 {
@@ -167,28 +101,6 @@
                                 @if (slot.RowNo == 1)
                                 {
                                     <td rowspan="@slot.RowCount">
-                                        @if (slot.ActivityDate.Occurrence.IsCanceled)
-                                        {
-                                            @Html.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
-                                        }
-                                        else
-                                        {
-                                            if (slot.State.State == SubscriptionState.BeforeSubscriptionPhase ||
-                                                !slot.HasSubscriptions)
-                                            {
-                                                @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionButton("fa-times text-danger", "absagen", "CancelDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
-                                            }
-                                            @Html.ActionButton("fa-calendar", "ändern", "MoveDate", "OfficeHour", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
-                                            @Html.ActionButton("fa-legal", "Regeln", "SubscriptionRules", "Occurrence", new { id = slot.DateOccurrenceId }, new { @class = "btn btn-default btn-xs" })
-
-                                            <a href="@Url.Action("OfficeHourDate", "Print", new {id = slot.DateOccurrenceId})"
-                                               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1'); return false;"
-                                               class="btn btn-default btn-xs"><i class="fa fa-print"></i> Drucken</a>
-                                        }
                                     </td>
                                 }
                             </tr>
@@ -203,25 +115,3 @@
 
 
 
-
-@section scripts{
-
-    <script>
-        $(document).ready(function() {
-
-            $("tr[history]").hide();
-
-
-            $("#toggleHistoryOn").click(function () {
-                $("tr[history]").show();
-                $("#toggleHistoryOff").removeClass("active");
-            });
-
-            $("#toggleHistoryOff").click(function() {
-                $("tr[history]").hide();
-                $("#toggleHistoryOn").removeClass("active");
-            });
-        });
-
-    </script>
-}

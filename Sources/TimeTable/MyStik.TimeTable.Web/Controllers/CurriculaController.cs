@@ -4,7 +4,6 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices.Curriculum;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -15,6 +14,11 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class CurriculaController : BaseController
     {
+        public ActionResult Disclaimer()
+        {
+            return View();
+        }
+
         
         /// <summary>
         /// 
@@ -22,10 +26,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var model = Db.Curricula.ToList();
-
-            SetEditRights();
-
+            var model = Db.Curricula.GroupBy(x => x.Organiser).OrderBy(g => g.Key.ShortName).ToList();
             return View(model);
         }
 
@@ -37,7 +38,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = new CurriculaCreateModel();
             model.OrganiserId = GetMyOrganisation().Id;
-            return View();
+            return View(model);
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Curricula.Add(curr);
                 Db.SaveChanges();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Courses");
         }
 
         /// <summary>
@@ -343,6 +344,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // alle zugehörigen Semestergruppen löschen 
             // => Die Kurse sind davon nicht betroffen
             //    sie werden u.U. nicht mehr angezeigt / gefunden
+            /*
             foreach (var semesterGroup in group.SemesterGroups.ToList())
             {
                 group.SemesterGroups.Remove(semesterGroup);
@@ -357,6 +359,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SemesterGroups.Remove(semesterGroup);
             }
+            */
 
             // NEUE STRUKTUR
             // alle zugehörigen CapactityGroups löschen
@@ -364,7 +367,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 foreach (var semesterGroup in capGroup.SemesterGroups.ToList())
                 {
-                    group.SemesterGroups.Remove(semesterGroup);
+                    //group.SemesterGroups.Remove(semesterGroup);
 
                     // Alle ggf. vorhandenen Eintragungen (Subscriptions) der
                     // Semestergruppe löschen
@@ -862,13 +865,13 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult SelectModule(Guid currId, Guid critId)
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
-            var crit = curr.Criterias.SingleOrDefault(x => x.Id == critId);
+            //var crit = curr.Criterias.SingleOrDefault(x => x.Id == critId);
             var allModules = Db.CurriculumModules.ToList();
 
             var model = new SelectModuleViewModel
             {
                 Curriculum = curr,
-                Criteria = crit,
+                //Criteria = crit,
                 Modules = allModules
             };
 
@@ -896,7 +899,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Details", new {id = crit.Curriculum.Id});
+            return RedirectToAction("Details", new {id = crit.Id});
         }
 
         /// <summary>
@@ -935,38 +938,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var accr = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
             var group = Db.CurriculumGroups.SingleOrDefault(x => x.Id == groupId);
 
-            if (!accr.Groups.Contains(group))
-            {
-                accr.Groups.Add(group);
-                Db.SaveChanges();
-            }
-
 
             return RedirectToAction("Details", new {id = group.Curriculum.Id});
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult ImportModuleCatalog(Guid id)
-        {
-            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
-            if (curriculum == null)
-                return RedirectToAction("Index");
 
-            // Hole Modulkatalog
-            var mcs = new ModuleCatalogService();
-            var mc = mcs.GetCatalog(curriculum.Organiser.ShortName, curriculum.ShortName);
-            if (mc == null)
-                return RedirectToAction("Details", new { id = curriculum.Id });
-
-            // Importiere den Katalog
-            var acs = new AccreditationService();
-            acs.ImportModuleCatalogSingle(curriculum.Organiser.ShortName, curriculum.ShortName);
-
-            return RedirectToAction("Details", new { id = curriculum.Id });
-        }
 
         /// <summary>
         /// 

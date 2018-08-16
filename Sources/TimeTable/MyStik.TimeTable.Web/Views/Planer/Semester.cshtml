@@ -1,0 +1,26 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Semester>
+@{
+    ViewBag.Title = "Semester";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-pencil"></i> Meine Studiensemester
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var semester in Model.OrderByDescending(x => x.EndCourses))
+                    {
+                        <a href="@Url.Action("Courses", "Planer", new {id = semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">@semester.Name</h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -15,7 +15,9 @@
                     <p>
                         @Model.CourseType <i class="fa fa-calendar"></i> @Model.DefaultDay <i class="fa fa-clock-o"></i> @Model.DefaultTimespan <i class="fa fa-building"></i> @Model.DefaultRoom
                     </p>
-                    <h4>@Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper())</h4>
+                    <h4>
+                        @Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper()) [@Html.GroupList(Model.Course.SemesterGroups, showLink:false)]
+                    </h4>
                     <p>
                         @foreach (var lec in Model.Lecturers)
                         {
@@ -35,13 +37,13 @@
 <div class="container-fluid">
 <div class="row">
 <div class="col-md-2">
-    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsCourseAdmin)
+    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
     {
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <ul class="nav">
-                        @if (Model.Course.IsInternal)
+                        @if (Model.Course.IsInternal && ViewBag.UserRight.IsHost)
                         {
                             <li class="list-group-item disabled">
                                 <strong>Gesperrt</strong>
@@ -90,10 +92,14 @@
 
             <div class="panel panel-default">
                 <div class="panel-body">
-
-                    <div class="btn-group" role="group">
+                    @if (Model.Lottery != null)
+                    {
+                        <a href="@Url.Action("Overview", "Lottery", new {id=Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
+                    }
+                    else
+                    {
                         @Html.Partial("_SubscriptionState", Model.State, new ViewDataDictionary {{"Style", "Large"}})
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -123,6 +129,10 @@
         <div class="panel-body">
             <div class="col-md-3">
                 <h4>@Model.Title</h4>
+                @foreach (var topic in Model.Course.SemesterTopics)
+                {
+                    <h5>@topic.TopicName</h5>
+                }
                 @if (string.IsNullOrEmpty(Model.Course.UrlMoodleCourse))
                 {
                     <div>Kein Moodle-Kurs vorhanden</div>
@@ -131,6 +141,12 @@
                 {
                     <div>
                         <a href="@Model.Course.UrlMoodleCourse" target="_blank"><i class="fa fa-mortar-board"></i> Moodle</a> <i class="fa fa-external-link"></i> (<i class="fa fa-key"></i> <strong>@Model.Course.KeyMoodleCourse</strong>)
+                    </div>
+                }
+                @if (Model.Lottery != null)
+                {
+                    <div class="alert alert-info">
+                        <p>Diese Lehrveranstaltung gehört Zum Wahlverfahren "<strong>@Model.Lottery.Name</strong>"</p>
                     </div>
                 }
             </div>
@@ -160,7 +176,7 @@
             @if (Model.NextDate == null)
             {
                 <div class="note note-info">
-                    <h4>Die Veranstaltung ist beendet!</h4>
+                    <h4>Die Veranstaltung hat keinen Termin in der Zukunft!</h4>
                 </div>
             }
             else
@@ -168,7 +184,7 @@
                 foreach (var date in Model.Course.Dates.OrderBy(d => d.Begin))
                 {
                     var histAttr = "";
-                    if (date.End < GlobalSettings.Now)
+                    if (date.End < DateTime.Now)
                     {
                         histAttr = "history";
                     }
@@ -200,7 +216,7 @@
         <div class="panel-body">
             <div class="col-md-6">
                 <div class="panel panel-default">
-                    <div class="panel-heading"><i class="fa fa-users"></i> Teilnehmer + Reservierungen <span class="badge">@Model.ParticipantList.Count</span></div>
+                    <div class="panel-heading"><i class="fa fa-users"></i> Teilnehmer <span class="badge">@Model.ParticipantList.Count</span></div>
                     <table class="table table-condensed">
                         <thead>
                         <tr>
@@ -213,11 +229,6 @@
                         @{ var anonymousCount = 0;}
                         @foreach (var paricipiant in Model.ParticipantList)
                         {
-                            /* 
-                             * bool showItem = ((ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff) ||
-                                            (ViewBag.UserRight.IsSubscriber && !ViewBag.UserRight.User.IsAnonymous && !paricipiant.User.IsAnonymous) ||
-                                            paricipiant.User.Id.Equals(ViewBag.UserRight.User.Id));
-                                            */
                             bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
 
                             if (showItem)
@@ -246,50 +257,90 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading"><i class="fa fa-user"></i> Warteliste <span class="badge">@Model.WaitingList.Count</span></div>
-                    <table class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Semestergruppe</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @{ var anonymousCountW = 0;}
-                        @foreach (var waiting in Model.WaitingList)
-                        {
-                            /*
-                            bool showItem = ViewBag.UserRight.IsOrgMember ||
-                                            (ViewBag.UserRight.IsSubscriber && !ViewBag.UserRight.User.IsAnonymous && !waiting.User.IsAnonymous) ||
-                                            waiting.User.Id.Equals(ViewBag.UserRight.User.Id);
-                                            */
-                            bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><i class="fa fa-users"></i> Reservierungen <span class="badge">@Model.ReservationList.Count</span>
+                        </div>
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>Semestergruppe</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @{ var anonymousCountR = 0;}
+                            @foreach (var paricipiant in Model.ReservationList)
+                            {
+                                bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
 
-                            if (showItem)
-                            {
-                                <tr>
-                                    <td>@waiting.User.LastName</td>
-                                    <td>@waiting.User.FirstName</td>
-                                    @if (waiting.SemesterGroup != null)
-                                    {
-                                        <td>@waiting.SemesterGroup.FullName</td>
-                                    }
-                                    else
-                                    {
-                                        <td>keine Angabe</td>
-                                    }
-                                </tr>
+                                if (showItem)
+                                {
+                                    <tr>
+                                        <td>@paricipiant.User.LastName</td>
+                                        <td>@paricipiant.User.FirstName</td>
+                                        @if (paricipiant.SemesterGroup != null)
+                                        {
+                                            <td>@paricipiant.SemesterGroup.FullName</td>
+                                        }
+                                        else
+                                        {
+                                            <td>keine Angabe</td>
+                                        }
+                                    </tr>
+                                }
+                                else
+                                {
+                                    anonymousCountR++;
+                                }
                             }
-                            else
+                            </tbody>
+                        </table>
+                        <div class="panel-body">und @anonymousCountR weitere</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><i class="fa fa-user"></i> Warteliste <span class="badge">@Model.WaitingList.Count</span></div>
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>Semestergruppe</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @{ var anonymousCountW = 0;}
+                            @foreach (var waiting in Model.WaitingList)
                             {
-                                anonymousCountW++;
+                                bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
+
+                                if (showItem)
+                                {
+                                    <tr>
+                                        <td>@waiting.User.LastName</td>
+                                        <td>@waiting.User.FirstName</td>
+                                        @if (waiting.SemesterGroup != null)
+                                        {
+                                            <td>@waiting.SemesterGroup.FullName</td>
+                                        }
+                                        else
+                                        {
+                                            <td>keine Angabe</td>
+                                        }
+                                    </tr>
+                                }
+                                else
+                                {
+                                    anonymousCountW++;
+                                }
                             }
-                        }
-                        </tbody>
-                    </table>
-                    <div class="panel-body">und @anonymousCountW weitere</div>
+                            </tbody>
+                        </table>
+                        <div class="panel-body">und @anonymousCountW weitere</div>
+                    </div>
                 </div>
             </div>
         </div>

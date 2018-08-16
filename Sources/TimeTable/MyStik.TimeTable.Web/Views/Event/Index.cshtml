@@ -1,74 +1,41 @@
-﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.HomeViewModel
 
 @{
-    ViewBag.Title = Resources.SubMenuCurrentEvents;
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Veranstaltungsverzeichnis";
 }
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-events">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>@Resources.SubMenuCurrentEvents</h1>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="@containerType">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-book"></i> Veranstaltungsverzeichnis nach Semestern</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var sem in Model.ActiveSemester)
+                    {
+                        <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
+                            <p class="list-group-item-text">
+                                @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
+                                {
+                                    @Html.FacultyLabel(organiser)
+                                }
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        @Html.DropDownListFor(model => model.Id, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
-                    </div>
+                            </p>
+                        </a>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="container-fluid">
-    <div id="FacultyEventList">
-    </div>
-</div>
-
-@section scripts
-{
-    <script>
-
-        $(document).ready(function() {
-            $('#loading').hide();
-            onFacultyChanged();
-        });
-
-
-        function onFacultyChanged() {
-            var facultyId = $('#Id option:selected').val();
-
-            $('#FacultyEventList').html('');
-            $('#loading').show();
-            $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("Faculty", "Event")',
-                data: {
-                    facultyId: facultyId,
-                },
-                success: function(data, success, xhr) {
-                    $('#FacultyEventList').html(data);
-                    $('#loading').hide();
-                },
-                error: function(data, type, ex) {
-                    alert("Fehler beim laden der Daten." + ex);
-                    $('#loading').hide();
-                }
-            });
-        }
-
-
-    </script>
-}
-
-

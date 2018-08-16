@@ -1,0 +1,95 @@
+﻿@model MyStik.TimeTable.Web.Models.DashboardStudentViewModel
+
+@{
+    ViewBag.Title = "Stundenplan";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-bookmark"></i> Meine Auswahl (<strong>@Model.Semester.Name</strong>)</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Kalenderansicht
+                        </h5>
+                        <p class="list-group-item-text">Kalenderansicht mit Tagesdatum. Zum Durchklicken.</p>
+                    </a>
+                    <a href="@Url.Action("PersonalPlanWeekly", "Activity", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Wochenplan
+                        </h5>
+                        <p class="list-group-item-text">Kalenderansicht mit Wochentagen (Mo-So).</p>
+                    </a>
+                    <a href="@Url.Action("Courses", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Lehrveranstaltungen
+                        </h5>
+                        <p class="list-group-item-text">Liste aller meiner Eintragungen mit Anzeige Status (Teilnehmer, Warteliste)</p>
+                    </a>
+                    <a href="@Url.Action("List", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Terminliste
+                        </h5>
+                        <p class="list-group-item-text">
+                            Nach Tagen sortierte Liste mit alle Terminen.
+                        </p>
+                    </a>
+                    <a href="@Url.Action("Index", "UserProfile")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Terminliste als iCal Feed
+                        </h5>
+                        <p class="list-group-item-text">
+                            Die Termine automatsisch über Google-Calender u.ä. abrufen lassen.
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                    <i class="fa fa-pencil"></i> Planung (<strong>@Model.Semester.Name</strong>)
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("Index", "Planer", new {semId = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Nach Studienplan
+                        </h5>
+                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen nach Studiengang und Semestergruppen und Themengebieten.</p>
+                    </a>
+                    <a href="@Url.Action("Search", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Nach Zeiträumen
+                        </h5>
+                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen zu bestimmten Zeiten.</p>
+                    </a>
+                    <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Platzverlosungen
+                        </h5>
+                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen über die Platzverlosungen.</p>
+                    </a>
+                    <a href="@Url.Action("Dictionary", "Planer")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Vorlesungsverzeichnis
+                        </h5>
+                        <p class="list-group-item-text">Suche im gesamten Vorlesungsverzeichnis aller Studiengänge.</p>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

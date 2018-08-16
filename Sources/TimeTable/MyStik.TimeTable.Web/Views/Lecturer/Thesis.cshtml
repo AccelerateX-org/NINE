@@ -1,0 +1,127 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.ThesisSemesterSummaryModel
+@{
+    ViewBag.Title = "Abschlussarbeiten";
+    var userInfoService = new UserInfoService();
+    var subInfoService = new SemesterSubscriptionService();
+
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Betreuung Abschlussarbeiten</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Offene Anfragen</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var supervision in Model.Supervisions)
+                    {
+                        foreach (var subscription in supervision.Occurrence.Subscriptions)
+                        {
+                            var user = userInfoService.GetUser(subscription.UserId);
+                            var curr = subInfoService.GetBestCurriculum(subscription.UserId, Model.Semester);
+
+                            <a href="@Url.Action("AcceptRequest", "Supervision", new {id = subscription.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    @user.FullName                                    
+                                    
+                                    @if (curr == null)
+                                    {
+                                        <span>k.A.</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@curr.ShortName</span>
+                                    }
+
+                                </h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-pencil"></i>Betreuungsangebot: @supervision.Name</li>
+                                        <li><i class="fa fa-li fa-file-pdf-o"></i>@Html.Raw(subscription.SubscriberRemark)</li>
+                                        <li><i class="fa fa-li fa-clock-o"></i>Angefragt am @subscription.TimeStamp</li>
+                                    </ul>
+                                </div>
+                            </a>
+                        }
+                    }
+                    
+                </div>
+            </div>
+            
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5>Laufende Arbeiten</h5>
+                </div>
+                <div class="list-group">
+                    @foreach (var thesis in Model.Theses)
+                    {
+                        var user = userInfoService.GetUser(thesis.Student.UserId);
+
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">@user.FullName (@thesis.Student.Curriculum.ShortName)</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li>Titel: @thesis.TitleDe</li>
+                                    <li>Abgabedatum: @thesis.ExpirationDate.ToShortDateString()</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Betreuungsangebote</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var super in Model.Supervisions)
+                    {
+                        <a href="@Url.Action("Details", "Supervision", new {id = super.Id})" class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>@super.Name</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                @Html.Raw(super.Description)
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Verwaltung</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("Create", "Supervision")" class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5><i class="fa fa-plus"></i> Betreuungsangebot anlegen</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            <p>Das ist das was Studierende zu sehen bekommen.</p>
+                            <p>Die Anzahl der eigenen Betreuungsangebote ist nicht beschränkt. Z.B. für jedes eigene Thema / Themengebiet ein eigenes Angebot. Oder ein "allgemeines" Angebot.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

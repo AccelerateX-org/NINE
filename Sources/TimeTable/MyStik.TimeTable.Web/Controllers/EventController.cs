@@ -25,14 +25,62 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.FacultyList = Db.Organisers.Where(x => x.Activities.Any()) .OrderBy(s => s.Name).Select(f => new SelectListItem
-            {
-                Text = f.Name,
-                Value = f.Id.ToString(),
-            });
+            var model = new HomeViewModel();
 
-            return View(GetMyOrganisation());
+
+            // Alle Semester mit Events
+            var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any(g => g.Activities.OfType<Event>().Any())).OrderByDescending(s => s.EndCourses).Take(4).ToList();
+            foreach (var semester in allPublishedSemester)
+            {
+                var activeOrgs = SemesterService.GetActiveEventOrganiser(semester);
+
+                var semModel = new SemesterActiveViewModel
+                {
+                    Semester = semester,
+                    Organisers = activeOrgs.ToList()
+                };
+
+                model.ActiveSemester.Add(semModel);
+            }
+
+            return View(model);
         }
+
+
+        public ActionResult Semester(Guid semId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+
+            var orgs = SemesterService.GetActiveEventOrganiser(semester);
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Organisers = orgs
+            };
+
+            return View(model);
+        }
+
+        public ActionResult Organiser(Guid semId, Guid orgId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+
+            var organiser = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Events = organiser.Activities.OfType<Event>().Where(x => x.Dates.Any(d => semester.StartCourses <= d.Begin && d.Begin <= semester.EndCourses)).ToList(),
+                Organiser = organiser,
+                User = GetCurrentUser()
+            };
+
+            return View("EventList", model);
+        }
+
+
+
 
         /// <summary>
         /// 
@@ -47,22 +95,28 @@ namespace MyStik.TimeTable.Web.Controllers
                 .Where(x => x.Organiser.Id == facultyId).ToList();
 
             // Jetzt wollen wir nur die Events, die Termine in der Zukunft haben
-            events = events.Where(ev => ev.Dates.Any() && ev.Dates.First().Begin >= GlobalSettings.Today).OrderBy(ev => ev.Dates.First().Begin).ToList();
+            events = events.Where(ev => ev.Dates.Any() && ev.Dates.First().Begin >= DateTime.Today).OrderBy(ev => ev.Dates.First().Begin).ToList();
 
             var modelList = new List<EventViewModel>();
 
-            var semester = GetSemester();
-
             foreach (var @event in events)
             {
-                var nextDate = @event.Dates.FirstOrDefault();
-
-                modelList.Add(new EventViewModel
+                var eventModel = new EventViewModel
                 {
                     Event = @event,
-                    NextDate = nextDate,
-                    State = ActivityService.GetActivityState(nextDate.Occurrence, AppUser, semester),
-                });
+                };
+
+                foreach (var date in @event.Dates.Where(x => x.Begin >= DateTime.Now))
+                {
+                    var dateModel = new EventDateStateViewModel
+                    {
+                        Date = date,
+                        State = ActivityService.GetActivityState(date.Occurrence, AppUser),
+                    };
+                    eventModel.Dates.Add(dateModel);
+                }
+
+                modelList.Add(eventModel);
             }
 
             ViewBag.UserRight = GetUserRight();
@@ -124,7 +178,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult CreateEvent()
         {
-            var sem = GetSemester();
+            var sem = SemesterService.GetSemester(DateTime.Today);
             var org = GetMyOrganisation();
 
             CourseCreateModel2 model = new CourseCreateModel2();
@@ -135,7 +189,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.OrganiserId3 = org.Id;
 
             // Liste aller Fakultäten
-            ViewBag.Organiser = Db.Organisers.Select(c => new SelectListItem
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
@@ -155,7 +209,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = c.Name,
                 Value = c.Id.ToString(),
             });
-            model.SemesterId = GetSemester().Id;
+            model.SemesterId = sem.Id;
 
             // bei der ersten Anzeige wird kein onChange ausgelöst
             var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
@@ -470,106 +524,40 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Admin(Guid? id)
+        public ActionResult Admin(Guid id)
         {
-            if (id.HasValue)
+            var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == id);
+            if (course == null)
+                return RedirectToAction("MissingCourse", "Error");
+
+            // nur Hosts und Admin dürfen die Seite aufrufen
+            var userRights = GetUserRight(User.Identity.Name, course);
+            if (!(userRights.IsHost || userRights.IsOwner || userRights.IsEventAdmin))
             {
-                var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == id);
-                if (course == null)
-                    return RedirectToAction("MissingCourse", "Error");
-
-                // nur Hosts und Admin dürfen die Seite aufrufen
-                var userRights = GetUserRight(User.Identity.Name, course);
-                if (!(userRights.IsHost || userRights.IsOwner || userRights.IsEventAdmin))
-                {
-                    return RedirectToAction("Details", new {id = id});
-                }
-
-
-
-                if (string.IsNullOrEmpty(course.Name))
-                    course.Name = "N.N.";
-
-                if (string.IsNullOrEmpty(course.ShortName))
-                    course.ShortName = "N.N.";
-
-
-                // Alle Services, die benötigt werden
-
-                var model = new EventDetailViewModel()
-                {
-                    Event = course,
-                    Lecturers = Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList(),
-                    Description2 = course.Description,
-                };
-
-
-                ViewBag.Curricula = Db.Curricula.Select(c => new SelectListItem
-                {
-                    Text = c.ShortName,
-                    Value = c.Id.ToString(),
-                });
-
-                var semester = GetSemester();
-
-                var curr = Db.Curricula.First();
-
-                if (curr != null)
-                {
-
-                    var semesterGroups = Db.SemesterGroups.Where(g =>
-                        g.Semester.Id == semester.Id &&
-                        g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).OrderBy(g => g.CapacityGroup.CurriculumGroup.Name).ToList();
-
-
-                    var semGroups = semesterGroups.Select(semGroup => new SelectListItem
-                    {
-                        Text = semGroup.FullName,
-                        Value = semGroup.Id.ToString()
-                    }).ToList();
-
-                    ViewBag.Groups = semGroups;
-                }
-
-                ViewBag.UserRight = userRights;
-
-
-                return View(model);
+                return RedirectToAction("Details", new {id = id});
             }
 
-            // Verwaltung aller Events
-            var org = User.IsInRole("SysAdmin") ? 
-                Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09")) : 
-                GetMyOrganisation();
+            ViewBag.UserRight = userRights;
 
-            if (org != null)
+            if (string.IsNullOrEmpty(course.Name))
+                course.Name = "N.N.";
+
+            if (string.IsNullOrEmpty(course.ShortName))
+                course.ShortName = "N.N.";
+
+
+            // Alle Services, die benötigt werden
+
+            var model = new EventDetailViewModel()
             {
-                var alleEvents = User.IsInRole("SysAdmin") ?
-                    Db.Activities.OfType<Event>() :
-                    Db.Activities.OfType<Event>().Where(ev => ev.Organiser.Id == org.Id);
+                Event = course,
+                Lecturers = Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList(),
+                Description2 = course.Description,
+            };
 
-                var historyDate = DateTime.Today.AddYears(-1);
 
-                var events = alleEvents.Where(e => e.Dates.Max(d => d.Begin) > historyDate).OrderByDescending(d => d.Dates.Max(m => m.Begin));
-
-                var modelList = new List<EventViewModel>();
-
-                foreach (var @event in events)
-                {
-                    modelList.Add(new EventViewModel
-                    {
-                        Event = @event,
-                        NextDate = null,
-                        State = null
-                    });
-                }
-
-                ViewBag.UserRight = GetUserRight();
-
-                return View("EventAdminList", modelList);
-            }
-
-            return new EmptyResult();
+            return View("AdminNew", model);
+      
         }
 
         /// <summary>
@@ -613,7 +601,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("MissingCourse", "Error");
 
             var org = GetMyOrganisation();
-            var sem = GetSemester();
+            var sem = SemesterService.GetSemester(DateTime.Today);
 
             var model = new EventCreateModel2
             {
@@ -804,7 +792,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = c.Id.ToString(),
             });
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var curr = Db.Curricula.First();
 
@@ -954,33 +942,27 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult MoveDate(Guid id)
         {
-            var semester = GetSemester();
             var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
-
-            var memberService = new MemberService(Db, UserManager);
-            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
-
-            var orgName = User.IsInRole("SysAdmin") ?
-                "FK 09" :
-                memberService.GetOrganisationName(semester, User.Identity.Name);
-
-            var userRight = GetUserRight(User.Identity.Name, "FK 09");
-
-            // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetRooms(orgName, userRight.IsRoomAdmin);
+            var course = summary.Activity as Event;
+            var date = summary.Date;
 
             var model = new EventMoveDateModel
             {
-                Event = summary.Activity as Event,
-                ActivityDateId = summary.Date.Id,
-                Date = summary.Date,
-                NewDate = summary.Date.Begin.ToShortDateString(),
-                NewBegin = summary.Date.Begin.TimeOfDay.ToString(),
-                NewEnd = summary.Date.End.TimeOfDay.ToString(),
-                //LecturerList = GetLecturerList(summary.Date.Id, summary.Date.Begin, summary.Date.End),
-                Rooms = rooms,
-                Lecturers = Db.Members.Where(m => m.Organiser.ShortName.Equals("FK 09")).ToList(),
+                Event = course,
+                ActivityDateId = date.Id,
+                Date = date,
+                NewDate = date.Begin.ToShortDateString(),
+                NewBegin = date.Begin.TimeOfDay.ToString(),
+                NewEnd = date.End.TimeOfDay.ToString(),
+                OrganiserId2 = course.Organiser.Id,
+                OrganiserId3 = course.Organiser.Id,
             };
+
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
 
             return View(model);
         }
@@ -997,27 +979,47 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var activityDate = Db.ActivityDates.SingleOrDefault(d => d.Id == model.ActivityDateId);
 
-            if (activityDate != null)
+            if (activityDate == null)
+                return PartialView("_SaveError"); // muss noch gemacht werden
+
+            // Berechnung der neuen Zeiten
+            var day = DateTime.Parse(model.NewDate);
+            var from = DateTime.Parse(model.NewBegin);
+            var to = DateTime.Parse(model.NewEnd);
+
+            var start = day.Add(from.TimeOfDay);
+            var end = day.Add(to.TimeOfDay);
+
+            // Das Änderungsobjekt anlegen
+            var changeService = new ChangeService(Db);
+            var changeObject = changeService.CreateActivityDateChange(activityDate, start, end, model.RoomIds);
+
+            // Es hat keine Änderungen gegeben, die eine Notification ergeben!
+            // es können sicht aber immer noch die Dozenten verändert haben
+            // Das Umsetzen was geändert wurde
+
+            activityDate.Hosts.Clear();
+            if (model.DozIds != null)
             {
-                var day = DateTime.Parse(model.NewDate);
-                var from = DateTime.Parse(model.NewBegin);
-                var to = DateTime.Parse(model.NewEnd);
+                foreach (var dozId in model.DozIds)
+                {
+                    activityDate.Hosts.Add(Db.Members.SingleOrDefault(m => m.Id == dozId));
+                }
+            }
 
+            if (changeObject != null)
+            {
+                // Es liegt eine Änderung vor => Änderung in DB speichern
+                // Änderung umsetzen
+                changeObject.UserId = AppUser.Id;
+                Db.DateChanges.Add(changeObject);
 
-                var start = day.Add(from.TimeOfDay);
-                var end = day.Add(to.TimeOfDay);
-
-                logger.InfoFormat("Course date for {0} moved by {1} from [{2} - {3}] to [{4} - {5}]",
-                    activityDate.Activity.Name, User.Identity.Name, activityDate.Begin, activityDate.End, start, end);
-
+                // Änderungen am DateObjekt vornehmen
                 activityDate.Begin = start;
                 activityDate.End = end;
 
-
                 // es kommen die neuen Räume und Dozenten
                 // => zuerst alle löschen!
-
-                activityDate.Hosts.Clear();
                 activityDate.Rooms.Clear();
 
                 if (model.RoomIds != null)
@@ -1027,17 +1029,20 @@ namespace MyStik.TimeTable.Web.Controllers
                         activityDate.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
                     }
                 }
-
-                if (model.LecturerIds != null)
-                {
-                    foreach (var dozId in model.LecturerIds)
-                    {
-                        activityDate.Hosts.Add(Db.Members.SingleOrDefault(m => m.Id == dozId));
-                    }
-                }
-
-                Db.SaveChanges();
             }
+
+            // Um die Anzahl der Transaktionen klein zu halten werden erst
+            // an dieser Stelle alle Änderungen am Datum und 
+            // dem ChangeObjekt gespeichert
+            Db.SaveChanges();
+
+            // Jetzt erst die Notification auslösen
+            if (changeObject != null)
+            {
+                NotificationService nservice = new NotificationService();
+                nservice.CreateSingleNotification(changeObject.Id.ToString());
+            }
+
 
             return PartialView("_SaveSuccess");
         }
@@ -1396,8 +1401,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var activity = Db.Activities.SingleOrDefault(a => a.Id == id);
             if (activity != null)
             {
-                var today = GlobalSettings.Today;
-                var from = GlobalSettings.Now;
+                var today = DateTime.Today;
+                var from = DateTime.Now;
                 var to = from.AddMinutes(90);
 
                 var date = new ActivityDate
@@ -1413,6 +1418,46 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Admin", "Event", new { id = id });
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
+        public ActionResult CreateDate2(Guid courseId)
+        {
+            var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == courseId);
+            var org = GetMyOrganisation();
+
+            var model = new EventDateCreatenModel
+            {
+                Course = course,
+                CourseId = course.Id,
+                OrganiserId2 = org.Id,
+                OrganiserId3 = org.Id,
+                NewDate = DateTime.Today.ToShortDateString(),
+                NewBegin = DateTime.Now.TimeOfDay.ToString(),
+                NewEnd = DateTime.Now.TimeOfDay.ToString(),
+            };
+
+
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            // Liste aller Fakultäten, auf die Zugriff auf Räume bestehen
+            // aktuell nur meine
+            ViewBag.RoomOrganiser = Db.Organisers.Where(x => x.Id == org.Id).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            return View("CreateDate2", model);
+        }
+
 
         /// <summary>
         /// 
@@ -1461,6 +1506,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Subscribers(Guid id)
         {
             var summary = ActivityService.GetSummary(id) as ActivityDateSummary;
+            var studentService = new StudentService(Db);
 
             var model = new EventDateInfoModel();
 
@@ -1480,6 +1526,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             Number = iNumber,
                             Subscription = subscription,
                             User = subscriber,
+                            Student = studentService.GetCurrentStudent(subscriber)
                         }
                         );
                 }
@@ -1617,6 +1664,689 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_SaveSuccess");
         }
+
+
+        public ActionResult AdminNewInfos(Guid id)
+        {
+            var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == id);
+
+            var model = new EventDetailViewModel()
+            {
+                Event = course,
+                Lecturers = Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList(),
+                Description2 = course.Description
+            };
+
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AdminNewInfos(EventDetailViewModel model)
+        {
+            var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == model.Event.Id);
+
+            if (course != null)
+            {
+                if (!string.IsNullOrEmpty(model.Event.Name) &&
+                    !model.Event.Name.Equals(course.Name))
+                {
+                    course.Name = model.Event.Name;
+                }
+
+                course.ShortName = string.Empty;
+
+                course.Description = model.Description2;
+
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Admin", new { id = course.Id });
+        }
+
+        public ActionResult AdminNewDates(Guid id)
+        {
+            var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == id);
+            var org = GetMyOrganisation();
+
+            var model = new EventDetailViewModel()
+            {
+                Event = course,
+                Lecturers = Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList(),
+                OrganiserId = org.Id
+            };
+
+
+            var userRights = GetUserRight(User.Identity.Name, model.Event);
+            ViewBag.UserRight = userRights;
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="hostId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddHostToDates(ICollection<Guid> dateIds, Guid hostId)
+        {
+            var host = Db.Members.SingleOrDefault(r => r.Id == hostId);
+
+            Event course = null;
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                if (date != null)
+                {
+                    if (host != null)
+                    {
+                        date.Hosts.Add(host);
+                    }
+
+                    if (course == null)
+                        course = date.Activity as Event;
+                }
+                Db.SaveChanges();
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult RemoveHosts(ICollection<Guid> dateIds)
+        {
+            Event course = null;
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                // Alle Räume freigeben
+                if (date != null)
+                {
+                    date.Hosts.Clear();
+
+                    if (course == null)
+                        course = date.Activity as Event;
+                }
+                Db.SaveChanges();
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="newBegin"></param>
+        /// <param name="newEnd"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult MoveDates(ICollection<Guid> dateIds, string newBegin, string newEnd)
+        {
+            // Das sind die Zeiten!
+            var from = DateTime.Parse(newBegin);
+            var to = DateTime.Parse(newEnd);
+
+            Event course = null;
+            var changeService = new ChangeService(Db);
+
+            var changes = new List<ActivityDateChange>();
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                if (date != null)
+                {
+                    // Berechnung der neuen Zeiten
+                    var start = date.Begin.Date.Add(from.TimeOfDay);
+                    var end = date.End.Date.Add(to.TimeOfDay);
+
+                    // Das Änderungsobjekt anlegen
+                    var changeObject = changeService.CreateActivityDateChange(date, start, end, null);
+                    if (changeObject != null)
+                    {
+                        changeObject.UserId = AppUser.Id;
+                        Db.DateChanges.Add(changeObject);
+
+                        changes.Add(changeObject);
+                    }
+
+                    // Änderungen am DateObjekt vornehmen
+                    date.Begin = start;
+                    date.End = end;
+
+                    if (course == null)
+                        course = date.Activity as Event;
+                }
+            }
+
+            Db.SaveChanges();
+
+            // Jetzt erst die Notification auslösen
+            foreach (var changeObject in changes)
+            {
+                NotificationService nservice = new NotificationService();
+                nservice.CreateSingleNotification(changeObject.Id.ToString());
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// Absage über Menüpunkt
+        /// </summary>
+        /// <param name="dateIds">Liste der ausgewählten Termine</param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult CancelDateList(ICollection<Guid> dateIds)
+        {
+            Event course = null;
+            var changeService = new ChangeService(Db);
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                // Alle Räume freigeben
+                // Die Zuordnung zum Dozent bleibt aber bestehen!
+                if (date != null)
+                {
+                    // Absage => auch Raumänderung (Raum wird freigegeben)
+                    var changeObject = changeService.CreateActivityDateStateChange(date, true);
+                    if (changeObject != null)
+                    {
+                        changeObject.UserId = AppUser.Id;
+                        Db.DateChanges.Add(changeObject);
+
+                        Db.SaveChanges();
+
+                        NotificationService nservice = new NotificationService();
+                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                    }
+
+                    date.Occurrence.IsCanceled = true;
+                    date.Rooms.Clear();
+
+                    course = date.Activity as Event;
+
+                }
+                Db.SaveChanges();
+
+
+
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult ReactivateDateList(ICollection<Guid> dateIds)
+        {
+            Event course = null;
+            var changeService = new ChangeService(Db);
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                // Alle Räume freigeben
+                // Die Zuordnung zum Dozent bleibt aber bestehen!
+                if (date != null)
+                {
+                    // Reaktivierung => KEINE Raumänderung
+                    var changeObject = changeService.CreateActivityDateStateChange(date, false);
+                    if (changeObject != null)
+                    {
+                        changeObject.UserId = AppUser.Id;
+                        Db.DateChanges.Add(changeObject);
+
+                        Db.SaveChanges();
+
+                        NotificationService nservice = new NotificationService();
+                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                    }
+
+
+                    date.Occurrence.IsCanceled = false;
+
+                    course = date.Activity as Event;
+                }
+                Db.SaveChanges();
+
+
+
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult DeleteDateConfirm(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+            return PartialView("_DlgConfirmDeleteDate", date);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult DeleteDateConfirmed(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+            var activity = date.Activity as Event;
+
+            DeleteService.DeleteActivityDate(dateId);
+
+            var userRights = GetUserRight(User.Identity.Name, activity);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", activity);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult DeleteDateList(ICollection<Guid> dateIds)
+        {
+            Event course = null;
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+                if (course == null && date != null)
+                    course = date.Activity as Event;
+
+                DeleteService.DeleteActivityDate(dateId);
+            }
+
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// Löscht bei allen angegebenen Terminen die Rauminformation
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult RemoveRooms(ICollection<Guid> dateIds)
+        {
+            Event course = null;
+
+            var changeService = new ChangeService(Db);
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                // Alle Räume freigeben
+                if (date != null)
+                {
+                    // Raumänderung
+                    var changeObject = changeService.CreateActivityDateRoomChange(date);
+                    if (changeObject != null)
+                    {
+                        changeObject.UserId = AppUser.Id;
+                        Db.DateChanges.Add(changeObject);
+
+                        Db.SaveChanges();
+
+                        NotificationService nservice = new NotificationService();
+                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                    }
+
+                    date.Rooms.Clear();
+
+                    if (course == null)
+                        course = date.Activity as Event;
+                }
+                Db.SaveChanges();
+
+
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddRoomToDates(ICollection<Guid> dateIds, Guid roomId)
+        {
+            var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
+
+            Event course = null;
+            var changeService = new ChangeService(Db);
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                if (date != null)
+                {
+                    if (room != null)
+                    {
+                        // Raumänderung
+                        var changeObject = changeService.CreateActivityDateRoomChange(date);
+                        if (changeObject != null)
+                        {
+                            changeObject.UserId = AppUser.Id;
+                            Db.DateChanges.Add(changeObject);
+
+                            Db.SaveChanges();
+
+                            NotificationService nservice = new NotificationService();
+                            nservice.CreateSingleNotification(changeObject.Id.ToString());
+
+                        }
+
+
+                        date.Rooms.Add(room);
+                    }
+
+                    if (course == null)
+                        course = date.Activity as Event;
+                }
+                Db.SaveChanges();
+
+
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", course);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        public PartialViewResult ChangeDateInformation(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+            var model = new CourseDateInformationModel
+            {
+                DateId = date.Id,
+                Title = date.Title,
+                DateDescription = date.Description,
+                ShortInfo = date.Occurrence.Information,
+                Date = date
+            };
+
+            return PartialView("_DlgEditInformation", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult ChangeDateInformationConfirmed(CourseDateInformationModel model)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == model.DateId);
+            var course = date.Activity as Event;
+
+            date.Title = model.Title;
+            date.Description = model.DateDescription;
+            date.Occurrence.Information = model.ShortInfo;
+
+            Db.SaveChanges();
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult CreateEventDate(EventDateCreateModelExtended model)
+        {
+            var course = Db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == model.CourseId);
+
+            // Jetzt die Termine - falls vorhanden
+            var dozList = new List<OrganiserMember>();
+            if (model.DozIds != null)
+            {
+                dozList.AddRange(model.DozIds.Select(dozId => Db.Members.SingleOrDefault(g => g.Id == dozId))
+                    .Where(doz => doz != null));
+            }
+
+            var roomList = new List<Room>();
+            if (model.RoomIds != null)
+            {
+                roomList.AddRange(model.RoomIds.Select(roomId => Db.Rooms.SingleOrDefault(g => g.Id == roomId))
+                    .Where(doz => doz != null));
+            }
+
+            // Termine anelegen
+            var semesterService = new SemesterService();
+
+            if (model.Dates != null)
+            {
+                foreach (var date in model.Dates)
+                {
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+                    var isWdh = bool.Parse(elems[3]);
+
+
+                    ICollection<DateTime> dayList;
+                    // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
+                    // sonst nimm nur den Einzeltag
+                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
+                    {
+                        var lastDay = DateTime.Parse(elems[4]);
+                        var frequency = int.Parse(elems[5]);
+                        dayList = semesterService.GetDays(day, lastDay, frequency);
+                    }
+                    else
+                    {
+                        dayList = new List<DateTime> { day };
+                    }
+
+
+                    foreach (var dateDay in dayList)
+                    {
+                        var activityDate = new ActivityDate
+                        {
+                            Activity = course,
+                            Begin = dateDay.Add(begin),
+                            End = dateDay.Add(end),
+                            Occurrence = new Occurrence
+                            {
+                                Capacity = -1,
+                                IsAvailable = true,
+                                FromIsRestricted = false,
+                                UntilIsRestricted = false,
+                                IsCanceled = false,
+                                IsMoved = false,
+                                UseGroups = false,
+                            },
+
+                        };
+
+                        foreach (var room in roomList)
+                        {
+                            activityDate.Rooms.Add(room);
+                        }
+
+                        foreach (var doz in dozList)
+                        {
+                            activityDate.Hosts.Add(doz);
+                        }
+
+                        Db.ActivityDates.Add(activityDate);
+
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return Json(new { result = "Redirect", url = Url.Action("AdminNewDates", new { id = course.Id }) });
+        }
+
+        /// <summary>
+        /// Absage über Schaltfläche
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult CancelDate2(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+            // Alle Räume freigeben
+            // Die Zuordnung zum Dozent bleibt aber bestehen!
+            if (date != null)
+            {
+                var changeService = new ChangeService(Db);
+                // Absage => auch Raumänderung (Raum wird freigegeben)
+                var changeObject = changeService.CreateActivityDateStateChange(date, true);
+                if (changeObject != null)
+                {
+                    changeObject.UserId = AppUser.Id;
+                    Db.DateChanges.Add(changeObject);
+                }
+
+
+                date.Occurrence.IsCanceled = true;
+                date.Rooms.Clear();
+
+                Db.SaveChanges();
+
+                NotificationService nservice = new NotificationService();
+                nservice.CreateSingleNotification(changeObject.Id.ToString());
+
+            }
+
+            var course = date.Activity as Event;
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", course);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ReactivateDate2(Guid dateId)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+            if (date != null)
+            {
+                var changeService = new ChangeService(Db);
+
+                // Reaktivierung => KEINE Raumänderung
+                var changeObject = changeService.CreateActivityDateStateChange(date, false);
+                if (changeObject != null)
+                {
+                    changeObject.UserId = AppUser.Id;
+                    Db.DateChanges.Add(changeObject);
+
+                    Db.SaveChanges();
+
+                    NotificationService nservice = new NotificationService();
+                    nservice.CreateSingleNotification(changeObject.Id.ToString());
+                }
+
+
+                date.Occurrence.IsCanceled = false;
+
+                Db.SaveChanges();
+
+            }
+
+            var course = date.Activity as Event;
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", course);
+
+        }
+
+
 
     }
 }

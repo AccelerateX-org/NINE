@@ -31,32 +31,31 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CourseSummaryModel
     {
-        /// <summary>
-        /// 
+        /// <summary> 
         /// </summary>
         public CourseSummaryModel()
         {
             Dates = new List<CourseDateModel>();
             Lecturers = new List<OrganiserMember>();
             Rooms = new List<Room>();
+            Curricula = new List<Curriculum>();
+            ConflictingDates = new Dictionary<ActivityDate, List<ActivityDate>>();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public Activity Course { get; set; }
-
+        public Course Course { get; set; }
 
         /// <summary>
-        /// 
+        /// Der sich gerade informiert
         /// </summary>
-        public bool IsBlock { get; set; }
+        public ApplicationUser User { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public List<CourseDateModel> Dates { get; set; }
-
 
         /// <summary>
         /// 
@@ -69,9 +68,29 @@ namespace MyStik.TimeTable.Web.Models
         public List<Room> Rooms { get; set; }
 
         /// <summary>
+        /// Die beteiligten Studiengänge
+        /// </summary>
+        public List<Curriculum> Curricula { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Lottery Lottery { get; set; }
+
+        public bool ShowFaculty { get; set; }
+
+        public bool IsSelectable
+        {
+            get { return Course.Occurrence.IsAvailable; }
+        }
+
+
+        /// <summary>
         /// 
         /// </summary>
         public OccurrenceStateModel State { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
 
         /// <summary>
         /// 
@@ -86,12 +105,92 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public bool HasLottery { get; set; }
+        public ActivitySummary Summary { get; set; }
+
+
+        public List<ActivityDate> FittingDates { get; set; }
+        public List<ActivityDate> NonFittingDates { get; set; }
+        public Dictionary<ActivityDate, List<ActivityDate>> ConflictingDates { get; set; }
+
 
         /// <summary>
         /// 
         /// </summary>
-        public ActivitySummary Summary { get; set; }
+        public string CourseType
+        {
+            get
+            {
+                return "Vorlesung";
+
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DefaultDay
+        {
+            get
+            {
+                if (!Dates.Any())
+                    return "Keine Termine";
+
+                if (Dates.Count > 1)
+                    return "Verschiedene";
+
+                return Dates.First().DefaultDate.ToString("dddd", new CultureInfo("de-DE"));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DefaultTimespan
+        {
+            get
+            {
+                if (!Dates.Any())
+                    return "Keine Termine";
+
+                if (Dates.Count > 1)
+                    return "Verschiedene";
+
+
+                return string.Format("{0}-{1}",
+                    Dates.First().StartTime.ToString(@"hh\:mm"),
+                    Dates.First().EndTime.ToString(@"hh\:mm"));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DefaultRoom
+        {
+            get
+            {
+                if (!Dates.Any())
+                    return "Keine Termine";
+
+                if (Dates.Count > 1)
+                    return "Verschiedene";
+
+                if (!Rooms.Any())
+                    return "keine Raumangaben";
+
+                var sb = new StringBuilder();
+                foreach (var room in Rooms)
+                {
+                    sb.Append(room.Number);
+                    if (room != Rooms.Last())
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                return sb.ToString();
+            }
+        }
+
     }
 
     /// <summary>
@@ -273,6 +372,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public OccurrenceSubscription Subscription { get; set; } 
 
+        public Student Student { get; set; }
+
     }
 
     /// <summary>
@@ -331,7 +432,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public Course Course { get; set; }
+        public Activity Course { get; set; }
 
         /// <summary>
         /// 
@@ -564,178 +665,62 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CourseDetailViewModel
     {
+        public CourseDetailViewModel()
+        {
+            DatesThisWeek = new List<ActivityDate>();
+            DatesNextWeek = new List<ActivityDate>();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         public Course Course { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<CourseDateModel> DateSummary { get; set; }
+        public CourseSummaryModel Summary { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
 
         /// <summary>
-        /// 
+        /// Die zugehörige Platzverlosung (falls vorhanden)
         /// </summary>
-        public List<OrganiserMember> Lecturers { get; set; }
+        public Lottery Lottery { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<Room> Rooms { get; set; }
+
+        public CurriculumRequirement Module { get; set; }
+
 
         /// <summary>
         /// 
         /// </summary>
         public ActivityDate NextDate { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<SubscriptionDetailViewModel> ParticipantList { get; set; }
+        public List<ActivityDate> DatesThisWeek { get; set;  }
+        public List<ActivityDate> DatesNextWeek { get; set;  }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<SubscriptionDetailViewModel> WaitingList { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<OccurrenceGroupCapacityModel> Groups { get; set; }
+        [AllowHtml]
+        public string Description2 { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<OccurrenceCapacityOption> CapacitySettings { get; set; }
+        public int Capacity { get; set; }
+
 
         /// <summary>
         /// 
         /// </summary>
         public OccurrenceCapacityOption SelectedOption { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public OccurrenceStateModel State { get; set; }
-            
-        /// <summary>
-        /// 
-        /// </summary>
-        [AllowHtml]
-        [Display(Name = "Beschreibung")]
-        public string Description2 { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid CurriculumId { get; set; }
+        [Display(Name="Nur für Studierende der angegebenen Studiengänge")]
+        public bool IsCoterie { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid OrganiserId { get; set; }
+        [Display(Name = "Studierende der angegeben Studiengänge werden bevorzugt")]
+        public bool HasHomeBias { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid GroupId { get; set; }
+        public  int optionsAccess { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid SemesterId { get; set; }
+        public int optionsLimit { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public int Capacity { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string CourseType
-        {
-            get
-            {
-                return "Vorlesung";
-                
-            } 
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string DefaultDay
-        {
-            get
-            {
-                if (!DateSummary.Any())
-                    return "Keine Termine";
-
-                if (DateSummary.Count > 1)
-                    return "Verschiedene";
-
-                return DateSummary.First().DefaultDate.ToString("dddd", new CultureInfo("de-DE") );
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string DefaultTimespan
-        {
-            get
-            {
-                if (!DateSummary.Any())
-                    return "Keine Termine";
-
-                if (DateSummary.Count > 1)
-                    return "Verschiedene";
-
-
-                return string.Format("{0}-{1}", 
-                    DateSummary.First().StartTime.ToString(@"hh\:mm"),
-                    DateSummary.First().EndTime.ToString(@"hh\:mm"));
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string DefaultRoom
-        {
-            get
-            {
-                if (!DateSummary.Any())
-                    return "Keine Termine";
-
-                if (DateSummary.Count > 1)
-                    return "Verschiedene";
-
-                if (!Rooms.Any())
-                    return "keine Raumangaben";
-
-                var sb = new StringBuilder();
-                foreach (var room in Rooms)
-                {
-                    sb.Append(room.Number);
-                    if (room != Rooms.Last())
-                    {
-                        sb.Append(", ");
-                    }
-                }
-                return sb.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Title
-        {
-            get { return Course.Name; }
-        }
     }
 
     /// <summary>
@@ -782,7 +767,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public Course Course { get; set; }
+        public Activity Course { get; set; }
 
         /// <summary>
         /// 
@@ -970,6 +955,7 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+
     /// <summary>
     /// 
     /// </summary>
@@ -1002,10 +988,14 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CourseCreateModel3
     {
+        public CourseSummaryModel Summary { get; set; }
+
+
         /// <summary>
         /// 
         /// </summary>
         public Semester Semester { get; set; }
+
 
         /// <summary>
         /// 

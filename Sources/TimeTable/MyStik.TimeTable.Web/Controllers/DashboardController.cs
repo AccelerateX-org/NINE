@@ -28,14 +28,28 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (User.IsInRole("SysAdmin"))
             {
-                return View("DashboardSysAdmin");
+                if (Session["OrgAdminId"] == null)
+                {
+                    return View("DashboardSysAdmin");
+                }
+
+                return View("DashboardOrgMember", CreateDashboardModelOrgMember(userRight));
             }
 
 
             switch (userRight.User.MemberState)
             {
                 case MemberState.Student:
-                    return View("DashboardStudent", CreateDashboardModelStudent(userRight));
+                {
+                    var student = Db.Students.Where(x => x.UserId.Equals(userRight.User.Id))
+                        .OrderByDescending(x => x.Created).FirstOrDefault();
+                    if (student?.FirstSemester == null || student.Curriculum == null || student.HasCompleted)
+                    {
+                        return RedirectToAction("Change", "Subscription");
+                    }
+                    return View("DashboardStudentNew", CreateDashboardModelStudent(userRight));
+                }
+
                 case MemberState.Staff:
                     return View("DashboardOrgMember", CreateDashboardModelOrgMember(userRight));
                 default:
@@ -43,65 +57,133 @@ namespace MyStik.TimeTable.Web.Controllers
             }
         }
 
+        public ActionResult Schedule(Guid id)
+        {
+            var userRight = GetUserRight();
+            ViewBag.UserRight = userRight;
+
+            var semSubService = new SemesterSubscriptionService();
+
+            var user = AppUser;
+
+            // das übergebene Semester
+            var currentSemester = SemesterService.GetSemester(id);
+
+            var model = new DashboardStudentViewModel();
+            model.User = user;
+            model.Organiser = GetMyOrganisation();
+
+            model.Semester = currentSemester;
+            model.SemesterGroup = semSubService.GetSemesterGroup(user.Id, currentSemester);
+
+            return View(model);
+        }
+
+
 
         private DashboardViewModel CreateDashboardModelDefault(UserRight userRight)
         {
-            var ohs = new OfficeHourInfoService(UserManager);
-            var semester = GetSemester();
-
-            var model = new DashboardViewModel();
-            model.Semester = semester;
-            model.User = userRight.User;
-
-            // Sprechstunden
-            model.OfficeHours =
-            Db.Activities.OfType<OfficeHour>().Where(a =>
-                a.Semester.Id == semester.Id).ToList();
-
-          
-            
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var model = new DashboardViewModel
+            {
+                Semester = semester,
+                User = userRight.User
+            };
             return model;
         }
 
         private DashboardViewModel CreateDashboardModelOrgMember(UserRight userRight)
         {
-            var ohs = new OfficeHourInfoService(UserManager);
-            var semester = GetSemester();
-            var lastSemester = GetPreviousSemester();
+            var user = userRight.User;
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var previousSemester = SemesterService.GetPreviousSemester(semester);
             var org = GetMyOrganisation();
-            var member = GetMember(User.Identity.Name, org.ShortName);
+            var member = GetMyMembership();
 
-            var model = new DashboardViewModel();
-            model.IsProf = HasUserRole(User.Identity.Name, org.ShortName, "Prof");
-            model.Semester = semester;
-            model.User = userRight.User;
-            model.Member = member;
 
-            if (member != null)
+            var model = new DashboardViewModel
             {
-                var officeHour = new OfficeHourService().GetOfficeHour(member, semester);
-                model.OfficeHour = officeHour;
-                if (officeHour != null)
+                Semester = semester,
+                User = user,
+                Member = member,
+                Organiser = org,
+                ThisSemesterActivities = {Semester = semester}
+            };
+
+            if (member == null)
+                return model;
+
+            var ohs = new OfficeHourInfoService(UserManager);
+
+            // alle Aktivitäten, im aktuellen Semester
+            var officeHour = new OfficeHourService(Db).GetOfficeHour(member, semester);
+            model.ThisSemesterActivities.MyOfficeHour = officeHour;
+            if (officeHour != null)
+            {
+                model.ThisSemesterActivities.NextOfficeHourDate = ohs.GetPreviewNextDate(officeHour);
+            }
+
+            model.ThisSemesterActivities.MyCourses.AddRange(GetLecturerCourses(semester, userRight.User));
+            model.ThisSemesterActivities.MyEvents.AddRange(GetLecturerEvents(semester, userRight.User));
+            model.ThisSemesterActivities.MyReservations.AddRange(GetLecturerReservations(semester, userRight.User));
+            model.ThisSemesterActivities.MyExams.AddRange(GetLecturerExams(semester, userRight.User));
+
+            // und für das nächste Semester
+            // nur wenn es Stundenpläne gibt, diese müssen noch nicht freigegeben sein, Existenz reicht
+            if (nextSemester != null)
+            {
+                var activeCurriclula = SemesterService.GetActiveCurricula(org, nextSemester, false);
+                if (activeCurriclula.Any())
                 {
-                    model.NextOfficeHourDate = ohs.GetPreviewNextDate(officeHour);
+                    model.NextSemester = nextSemester;
+
+                    officeHour = new OfficeHourService(Db).GetOfficeHour(member, nextSemester);
+
+                    model.NextSemesterActivities.MyOfficeHour = officeHour;
+                    model.NextSemesterActivities.Semester = nextSemester;
+                    if (officeHour != null)
+                    {
+                        model.NextSemesterActivities.NextOfficeHourDate = ohs.GetPreviewNextDate(officeHour);
+                    }
+
+                    model.NextSemesterActivities.MyCourses.AddRange(GetLecturerCourses(nextSemester, userRight.User));
+                    model.NextSemesterActivities.MyEvents.AddRange(GetLecturerEvents(nextSemester, userRight.User));
+                    model.NextSemesterActivities.MyReservations.AddRange(GetLecturerReservations(nextSemester, userRight.User));
+                    model.NextSemesterActivities.MyExams.AddRange(GetLecturerExams(nextSemester, userRight.User));
                 }
+            }
 
-                // die Fakultät
-                model.Organiser = member.Organiser;
+            // es gibt (noch) kein nächstes Semester, dann das vorherige prüfen
+            if (model.NextSemester == null && previousSemester != null)
+            {
+                var activeCurriclula = SemesterService.GetActiveCurricula(org, previousSemester, false);
+                if (activeCurriclula.Any())
+                {
+                    model.PreviousSemester = previousSemester;
 
-                model.MyModules = Db.CurriculumModules.Where(x => x.MV != null && x.MV.Id == member.Id).ToList();
+                    officeHour = new OfficeHourService(Db).GetOfficeHour(member, previousSemester);
+
+                    model.PreviousSemesterActivities.MyOfficeHour = officeHour;
+                    model.PreviousSemesterActivities.Semester = previousSemester;
+                    if (officeHour != null)
+                    {
+                        model.PreviousSemesterActivities.NextOfficeHourDate = ohs.GetPreviewNextDate(officeHour);
+                    }
+
+                    model.PreviousSemesterActivities.MyCourses.AddRange(GetLecturerCourses(previousSemester, userRight.User));
+                    model.PreviousSemesterActivities.MyEvents.AddRange(GetLecturerEvents(previousSemester, userRight.User));
+                    model.PreviousSemesterActivities.MyReservations.AddRange(GetLecturerReservations(previousSemester, userRight.User));
+                    model.PreviousSemesterActivities.MyExams.AddRange(GetLecturerExams(previousSemester, userRight.User));
+                }
             }
 
 
-            // alle Aktivitäten, im aktuellen Semester
-            model.MyActivities.AddRange(GetLecturerActivities(semester, userRight.User));
-            model.MyPreviousActivities.AddRange(GetLecturerActivities(lastSemester, userRight.User));
-            model.PreviousSemester = lastSemester;
-
-
-            // Was läuft gerade
+            // Was läuft gerade?
+            // alles was jetzt läuft
+            // alles was in den nächsten 60 min beginnt
             var now = DateTime.Now;
-            var endOfDay = DateTime.Today.AddDays(1);
+            var endOfDay = now.AddHours(1);
 
             var nowPlaying = Db.ActivityDates.Where(d =>
                 d.Activity is Course &&
@@ -117,7 +199,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        private List<ActivitySummary> GetLecturerActivities(Semester semester, ApplicationUser user)
+        private List<ActivitySummary> GetLecturerCourses(Semester semester, ApplicationUser user)
         {
             List<ActivitySummary> model = new List<ActivitySummary>();
 
@@ -131,14 +213,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 var summary = new ActivitySummary { Activity = activity };
 
                 // nur die, bei denen es noch Termine in der Zukunft gibt
-                if ((activity.Dates.Any() && activity.Dates.OrderBy(d => d.End).Last().End >= GlobalSettings.Today))
+                if (activity.Dates.Any(x => x.End >= DateTime.Now))
                 {
                     var currentDate =
-                        activity.Dates.Where(d => d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End)
+                        activity.Dates.Where(d => d.Begin <= DateTime.Now && DateTime.Now <= d.End)
                             .OrderBy(d => d.Begin)
                             .FirstOrDefault();
                     var nextDate =
-                        activity.Dates.Where(d => d.Begin >= GlobalSettings.Now)
+                        activity.Dates.Where(d => d.Begin >= DateTime.Now)
                             .OrderBy(d => d.Begin)
                             .FirstOrDefault();
 
@@ -167,277 +249,252 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        private List<ActivitySummary> GetLecturerEvents(Semester semester, ApplicationUser user)
+        {
+            List<ActivitySummary> model = new List<ActivitySummary>();
+
+            var lectureActivities =
+                Db.Activities.OfType<Event>().Where(a =>
+                    a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))).ToList();
+
+            foreach (var activity in lectureActivities)
+            {
+                var summary = new ActivitySummary { Activity = activity };
+
+                // nur die, bei denen es noch Termine in der Zukunft gibt
+                if ((activity.Dates.Any() && activity.Dates.OrderBy(d => d.End).Last().End >= DateTime.Today))
+                {
+                    var currentDate =
+                        activity.Dates.Where(d => d.Begin <= DateTime.Now && DateTime.Now <= d.End)
+                            .OrderBy(d => d.Begin)
+                            .FirstOrDefault();
+                    var nextDate =
+                        activity.Dates.Where(d => d.Begin >= DateTime.Now)
+                            .OrderBy(d => d.Begin)
+                            .FirstOrDefault();
+
+                    if (currentDate != null)
+                    {
+                        summary.CurrentDate = new CourseDateStateModel
+                        {
+                            Summary = new ActivityDateSummary { Date = currentDate },
+                            State = ActivityService.GetSubscriptionState(currentDate.Occurrence, currentDate.Begin, currentDate.End),
+                        };
+                    }
+
+                    if (nextDate != null)
+                    {
+                        summary.NextDate = new CourseDateStateModel
+                        {
+                            Summary = new ActivityDateSummary { Date = nextDate },
+                            State = ActivityService.GetSubscriptionState(nextDate.Occurrence, nextDate.Begin, nextDate.End),
+                        };
+                    }
+                }
+                model.Add(summary);
+            }
+
+            return model;
+        }
+
+        private List<ActivitySummary> GetLecturerReservations(Semester semester, ApplicationUser user)
+        {
+            List<ActivitySummary> model = new List<ActivitySummary>();
+
+            var lectureActivities =
+                Db.Activities.OfType<Reservation>().Where(a =>
+                    a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))).ToList();
+
+            foreach (var activity in lectureActivities)
+            {
+                var summary = new ActivitySummary { Activity = activity };
+
+                // nur die, bei denen es noch Termine in der Zukunft gibt
+                if ((activity.Dates.Any() && activity.Dates.OrderBy(d => d.End).Last().End >= DateTime.Today))
+                {
+                    var currentDate =
+                        activity.Dates.Where(d => d.Begin <= DateTime.Now && DateTime.Now <= d.End)
+                            .OrderBy(d => d.Begin)
+                            .FirstOrDefault();
+                    var nextDate =
+                        activity.Dates.Where(d => d.Begin >= DateTime.Now)
+                            .OrderBy(d => d.Begin)
+                            .FirstOrDefault();
+
+                    if (currentDate != null)
+                    {
+                        summary.CurrentDate = new CourseDateStateModel
+                        {
+                            Summary = new ActivityDateSummary { Date = currentDate },
+                            State = ActivityService.GetSubscriptionState(currentDate.Occurrence, currentDate.Begin, currentDate.End),
+                        };
+                    }
+
+                    if (nextDate != null)
+                    {
+                        summary.NextDate = new CourseDateStateModel
+                        {
+                            Summary = new ActivityDateSummary { Date = nextDate },
+                            State = ActivityService.GetSubscriptionState(nextDate.Occurrence, nextDate.Begin, nextDate.End),
+                        };
+                    }
+                }
+                model.Add(summary);
+            }
+
+            return model;
+        }
+
+
+        private List<ActivitySummary> GetLecturerExams(Semester semester, ApplicationUser user)
+        {
+            List<ActivitySummary> model = new List<ActivitySummary>();
+
+            var lectureActivities =
+                //Db.Activities.OfType<Exam>().ToList();
+                
+                Db.Activities.OfType<Exam>().Where(a =>
+                    a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                    a.Owners.Any(d => d.Member.UserId.Equals(user.Id))).ToList();
+                
+
+            foreach (var activity in lectureActivities)
+            {
+                var summary = new ActivitySummary { Activity = activity };
+
+                model.Add(summary);
+            }
+
+            return model;
+        }
+
+
 
         private DashboardStudentViewModel CreateDashboardModelStudent(UserRight userRight)
         {
             var semSubService = new SemesterSubscriptionService();
 
-            var semester = GetSemester();
-            var user = AppUser;
+            var currentSemester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(DateTime.Today);
 
-
-            var model = new DashboardStudentViewModel();
-
-            model.Semester = GetSemester();
-            model.User = user;
-            model.SemesterGroup = semSubService.GetSemesterGroup(model.User.Id, model.Semester);
-
-
-            // Eintragungen auf Aktivitätsebene => Lehrveranstaltungen
-            var activities = Db.Activities.OfType<Course>().Where(a => 
-                a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
-                a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
-            foreach (var activity in activities)
+            var model = new DashboardStudentViewModel
             {
-                model.MyCourseSubscriptions.Add(new ActivitySubscriptionStateModel
-                {
-                    Activity = new ActivitySummary { Activity = activity },
-                });
+                User = userRight.User,
+                Semester = currentSemester,
+                SemesterGroup = semSubService.GetSemesterGroup(userRight.User.Id, currentSemester),
+                Student = Db.Students.Where(x => x.UserId.Equals(userRight.User.Id)).OrderByDescending(x => x.Created).FirstOrDefault()
+            };
+
+            // keine Semestergruppe gewählt => aktive Pläne suchen
+            if (model.SemesterGroup == null)
+            {
+                model.ActiveOrgsSemester = SemesterService.GetActiveOrganiser(currentSemester, true);
             }
 
-            model.NextCourseDate =
-            Db.Activities.OfType<Course>().Where(a =>
-                a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
-                a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id)))
-                .Select(officeHour => officeHour.Dates.FirstOrDefault(x => x.End > DateTime.Now)).Where(date => date != null)
-                .OrderBy(x => x.Begin).FirstOrDefault();
 
-
-
-            // Die Veranstaltungen => Annahme, dass das nur Termine sind
-            /*
-            var dates = Db.ActivityDates.Where(d => d.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
-            foreach (var activityDate in dates)
+            // das nächste Semester nur anzeigen, wenn es einen veröffentlichsten Stundenplan für die letzte Fakultät gibt!
+            var nextSemesterOrgs = SemesterService.GetActiveOrganiser(nextSemester, true);
+            if (nextSemesterOrgs.Any())
             {
-                if (activityDate.End >= GlobalSettings.Today && !(activityDate.Activity is OfficeHour))
+                model.NextSemester = nextSemester;
+                model.NextSemesterGroup = semSubService.GetSemesterGroup(userRight.User.Id, nextSemester);
+                if (model.NextSemesterGroup == null)
                 {
-                    model.MySubscriptions.Add(new ActivitySubscriptionStateModel
+                    model.ActiveOrgsNextSemester = nextSemesterOrgs;
+                }
+            }
+
+
+
+            // Alle Anfragen zu Abschlussarbeiten
+            var supervisions = Db.Activities.OfType<Supervision>()
+                .Where(x => x.Occurrence.Subscriptions.Any(y => y.UserId.Equals(userRight.User.Id))).ToList();
+
+            foreach (var supervision in supervisions)
+            {
+                var request = new SupervisionRequestModel();
+
+                request.Supervision = supervision;
+                request.Lecturer = supervision.Owners.First().Member;
+                request.Subscription =
+                    supervision.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(userRight.User.Id));
+
+                model.Requests.Add(request);
+            }
+
+            // Alle Abschlussarbeiten
+            var theses = Db.Theses.Where(x => x.Student.UserId.Equals(userRight.User.Id)).ToList();
+
+            foreach (var thesis in theses)
+            {
+                var tModel = new ThesisDetailModel();
+
+                tModel.Thesis = thesis;
+                tModel.Lecturer = thesis.Supervision.Owners.First().Member;
+
+                model.Theses.Add(tModel);
+            }
+
+            // Alle heutigen Termine
+            // Alle Eintragungen
+            var begin = DateTime.Now;
+            var end = DateTime.Today.AddDays(1);
+
+            var allDates =
+                Db.ActivityDates.Where(d =>
+                    (d.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRight.User.Id)) ||
+                     d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRight.User.Id)) ||
+                     d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRight.User.Id)))) &&
+                    d.End >= begin && d.End <= end).OrderBy(d => d.Begin).ToList();
+
+            foreach (var date in allDates)
+            {
+                var act = new AgendaActivityViewModel
+                {
+                    Date = date,
+                    Slot = date.Slots.FirstOrDefault(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userRight.User.Id)))
+                };
+
+                model.TodaysActivities.Add(act);
+            }
+
+            if (model.Student != null)
+            {
+                var org = model.Student.Curriculum.Organiser;
+                
+
+                // Alle Platzverlosungen
+                // letzte 90 Tage
+                var lastEnd = DateTime.Today.AddDays(-90);
+                var alLotteries = Db.Lotteries.Where(x =>
+                    x.LastDrawing >= lastEnd && x.IsAvailable &&
+                    x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.FirstDrawing).ToList();
+
+                foreach (var lottery in alLotteries)
+                {
+                    var courseList = new List<Course>();
+                    courseList.AddRange(
+                        lottery.Occurrences.Select(
+                            occurrence => Db.Activities.OfType<Course>().SingleOrDefault(
+                                c => c.Occurrence.Id == occurrence.Id)).Where(course => course != null));
+
+                    var hasFit = 
+                    courseList.Any(c => c.SemesterGroups.Any(g =>
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Id == model.Student.Curriculum.Id));
+
+                    if (hasFit)
                     {
-                        Activity = new ActivityDateSummary { Date = activityDate },
-                        State = ActivityService.GetActivityState(activityDate.Occurrence, user, semester)
-                    });
+                        model.Lotteries.Add(lottery);
+                    }
                 }
             }
-             */
-
-            /*
-            var slots = Db.ActivitySlots.Where(s => s.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
-            foreach (var activitySlot in slots)
-            {
-                if (activitySlot.ActivityDate.End >= GlobalSettings.Today)
-                {
-                    model.MySubscriptions.Add(new ActivitySubscriptionModel
-                    {
-                        Activity = new ActivitySlotSummary { Slot = activitySlot },
-                        State = ac.GetActivityState(activitySlot.Occurrence, UserManager.FindByName(User.Identity.Name))
-                    });
-                }
-            }
-             */
-
-            // Der nächste Sprechstundentermin
-            var allOfficeHours =
-                Db.Activities.OfType<OfficeHour>().Where(a =>
-                    a.Semester.Id == semester.Id &&
-                    a.Dates.Any(d =>
-                        d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)) ||
-                        d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)))
-                    )).ToList();
-
-            var allDates = new List<ActivityDate>();
-            foreach (var officeHour in allOfficeHours)
-            {
-                var nextDate = officeHour.Dates
-                    .Where(d =>
-                        d.End > DateTime.Now && (
-                            d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)) ||
-                            d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(model.User.Id)))))
-                    .OrderBy(d => d.Begin).FirstOrDefault();
-
-                if (nextDate != null)
-                {
-                    allDates.Add(nextDate);
-                }
-            }
-
-            model.NextOfficeHourDate = allDates.OrderBy(d => d.Begin).FirstOrDefault();
-
-            var nextSemesterDate = semester.Dates.Where(x => x.From >= DateTime.Now).OrderBy(x => x.From).FirstOrDefault();
-            if (nextSemesterDate == null)
-            {
-                if (DateTime.Today > semester.StartCourses)
-                {
-                    model.NextSemesterDate = semester.EndCourses;
-                    model.NextSemesterDateDescription = "Vorlesungsende";
-                }
-                else
-                {
-                    model.NextSemesterDate = semester.StartCourses;
-                    model.NextSemesterDateDescription = "Vorlesungsbeginn";
-                }
-            }
-            else
-            {
-                if (nextSemesterDate.From > semester.StartCourses)
-                {
-                    model.NextSemesterDate = nextSemesterDate.From;
-                    model.NextSemesterDateDescription = nextSemesterDate.Description;
-                }
-                else
-                {
-                    model.NextSemesterDate = semester.StartCourses;
-                    model.NextSemesterDateDescription = "Vorlesungsbeginn";
-                }
-            }
-
-
 
 
             return model;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="currId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult GroupList(string currId)
-        {
-            var curr = Db.Curricula.SingleOrDefault(c => c.ShortName.Equals(currId));
-
-            var semester = GetSemester();
-
-            var selectList = new List<SelectListItem>();
-
-            if (curr != null)
-            {
-
-                var groupList = Db.SemesterGroups.Where(g => g.Semester.Id == semester.Id &&
-                                             g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).ToList();
-
-
-                foreach (var group in groupList.OrderBy(g => g.GroupName))
-                {
-                    if (group.CapacityGroup.CurriculumGroup.IsSubscribable)
-                    {
-                        selectList.Add(new SelectListItem
-                        {
-                            Text = group.FullName,
-                            Value = group.Id.ToString()
-                        });
-                    }
-                }
-            }
-
-            return PartialView("_GroupList", selectList);
-        }
-
-
-        /*
-         * Muss umgezogen werden
-        [HttpPost]
-        public PartialViewResult UpdateSemesterGroup(DashboardViewModel model)
-        {
-            var user = AppUser;
-
-            var semSubService = new SemesterSubscriptionService();
-
-            if (user != null)
-            {
-                var group = Db.SemesterGroups.SingleOrDefault(g => g.Id.ToString().Equals(model.CurrGroup));
-
-                if (group != null)
-                {
-                    semSubService.Subscribe(user.Id, group.Id);
-                }
-            }
-
-            model.Semester = GetSemester();
-            model.User = user;
-            model.SemesterGroups = semSubService.GetSemesterGroups(model.User.Id, model.Semester);
-
-            if (!model.SemesterGroups.Any())
-            {
-                ViewBag.Faculties =
-                    Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(f => f.ShortName).Select(f => new SelectListItem
-                    {
-                        Text = f.ShortName,
-                        Value = f.Id.ToString(),
-                    });
-
-                ViewBag.Curricula = new SelectList(new object[] {});
-                ViewBag.Groups = new SelectList(new object[] {});
-            }
-
-            return PartialView("_PortletSemGroup", model);
-        }
-
-
-        [HttpPost]
-        public PartialViewResult RemoveSemesterGroup(DashboardViewModel model)
-        {
-            var user = AppUser;
-            var semester = GetSemester();
-
-            if (user != null)
-            {
-                var group = Db.Subscriptions.OfType<SemesterSubscription>().Where(g => 
-                    g.UserId.Equals(user.Id) &&
-                    g.SemesterGroup.Semester.Id == semester.Id).ToList();
-
-                foreach (var sub in group)
-                {
-                        sub.SemesterGroup.Subscriptions.Remove(sub);
-                        Db.Subscriptions.Remove(sub);
-                }
-
-                Db.SaveChanges();
-            }
-
-            var semSubService = new SemesterSubscriptionService();
-
-            model.Semester = GetSemester();
-            model.User = AppUser;
-            model.SemesterGroups = semSubService.GetSemesterGroups(model.User.Id, model.Semester);
-
-            var currList = Db.Curricula.Where(x => !x.ShortName.Equals("Export")).ToList();
-
-            ViewBag.Curricula = currList.Select(c => new SelectListItem
-            {
-                Text = c.ShortName + " (" + c.Name + ")",
-                Value = c.ShortName,
-            });
-
-            var curr = currList.First();
-
-
-            if (curr != null)
-            {
-                var selectList = new List<SelectListItem>();
-
-                var groupList = Db.SemesterGroups.Where(g => g.Semester.Id == semester.Id &&
-                                             g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).ToList();
-
-
-                foreach (var group in groupList.OrderBy(g => g.GroupName))
-                {
-                    if (group.CapacityGroup.CurriculumGroup.IsSubscribable)
-                    {
-                        selectList.Add(new SelectListItem
-                        {
-                            Text = group.FullName,
-                            Value = group.Id.ToString()
-                        });
-                    }
-                }
-
-                ViewBag.Groups = selectList;
-            }
-
-            return PartialView("_PortletSemGroup", model);
-        }
-        */
 
             /// <summary>
             /// 
@@ -541,29 +598,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_NotificationList", data);
         }
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        public ActionResult SetCulture(string culture)
-        {
-            // Validate input
-            culture = CultureHelper.GetImplementedCulture(culture);
-            // Save culture in a cookie
-            HttpCookie cookie = Request.Cookies["_culture"];
-            if (cookie != null)
-                cookie.Value = culture;   // update cookie value
-            else
-            {
-                cookie = new HttpCookie("_culture");
-                cookie.Value = culture;
-                cookie.Expires = DateTime.Now.AddYears(1);
-            }
-            Response.Cookies.Add(cookie);
-            return RedirectToAction("Index");
-        }
 
         /// <summary>
         /// 

@@ -17,7 +17,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(int id)
         {
             ViewBag.MenuId = "menu-cantine";
             ViewBag.Datum = DateTime.Now.ToString("dddd, d.M.yyyy");
@@ -27,10 +27,33 @@ namespace MyStik.TimeTable.Web.Controllers
 
             string daten = "";
 
+            var url = $"http://openmensa.org/api/v2/canteens/{id}";
+
             // download mensa daten
             try
             {
-                daten = GetResult("http://openmensa.org/api/v2/canteens/141/meals");
+                daten = GetResult(url);
+            }
+            catch (Exception ex)
+            {
+                daten = ""; // Fehlerfall
+                ViewBag.Datum = ex.Message.ToString();
+                return View(model);
+            }
+
+            JToken mensa = JToken.Parse(daten); // Text als JSON parsen
+
+            model.Name = (string)mensa["name"];
+            model.Address = (string)mensa["address"];
+
+
+
+            url = $"http://openmensa.org/api/v2/canteens/{id}/meals";
+
+            // download mensa daten
+            try
+            {
+                daten = GetResult(url);
             }
             catch (Exception ex)
             {
@@ -41,7 +64,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Wenn Inhalt in daten vorhanden
             if (daten != "")
             {
-                JToken alleElemente = JRaw.Parse(daten); // Text als JSON parsen
+                JToken alleElemente = JToken.Parse(daten); // Text als JSON parsen
 
                 // Neue Liste erstellen
                 model.Tage = new List<MensaView_Tag>();

@@ -1,0 +1,35 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.UserAdminViewModel>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Startseite Systemtests</h2>
+
+<a href="@Url.Action("CreateTestUser")" class="btn btn-primary">Testbenutzer anlegen</a>
+
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Studiengang</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.User.UserName</td>
+            @if (user.Student != null)
+            {
+                <td>@user.Student.Curriculum.ShortName</td>
+            }
+            else
+            {
+                <td></td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+

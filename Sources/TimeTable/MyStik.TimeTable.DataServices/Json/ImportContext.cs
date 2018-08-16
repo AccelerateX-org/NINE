@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using fk11.Model;
+﻿using System.Collections.Generic;
+using MyStik.TimeTable.DataServices.Json.Data;
 
 namespace MyStik.TimeTable.DataServices.Json
 {

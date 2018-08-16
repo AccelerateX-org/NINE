@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
     <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+<link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
 
 }
 
@@ -17,6 +19,10 @@
 {
     <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
@@ -24,6 +30,15 @@
             $("tr[history]").hide();
 
             $("#Description2").cleditor();
+
+            refreshDataTable();
+
+            /*
+            $('#tabParticipient tbody').on( 'click', 'tr', function () {
+                $(this).toggleClass('active');
+            } );
+            */
+
 
             $("#btnAdd").click(function () {
                 var group = $("#GroupId option:selected").val();
@@ -67,19 +82,6 @@
                     e.preventDefault();
                     $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
                 });
-
-
-
-            /* die geht einmal
-            $('#checkAll').on("click",
-                function() {
-                    $('.chk').trigger("click");
-                    if ($(this).is(':checked'))
-                        $('.chk').attr('checked', true);
-                    else
-                        $('.chk').attr('checked', false);
-                });
-                */
 
 
             $("#cancelAll").click(function () {
@@ -545,6 +547,28 @@
             $('#confirmDeleteDate').modal("hide");
         }
 
+        function refreshDataTable() {
+            var t = $('#tabParticipient').DataTable({
+                "paging": false,
+                "columnDefs": [{
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "type": "de_datetime",
+                        "targets": 5
+                    }],
+                "order": [[1, 'asc']]
+            });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+        }
+
 
     </script>
 }
@@ -587,14 +611,27 @@
                             <li>
                                 <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-envelope-o"></i> E-Mail</a>
                             </li>
+                            @if (Model.Course.Occurrence.IsAvailable)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Lock", "Course", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-lock"></i> Eintragungen sperren</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href="@Url.Action("UnLock", "Course", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-unlock"></i> Eintragungen freigeben</a>
+                                </li>
+                            }
                             <li>
-                                <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-download"></i> Teilnehmerliste</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("CleanCourse", new {id = Model.Course.Id})"><i class="fa fa-eraser"></i> Bereinigen</a>
+                                <a href="@Url.Action("Download", "Course", new {id = Model.Course.Id})"><i class="fa fa-download"></i> Teilnehmerlisten</a>
                             </li>
                             @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
                             {
+                                <li>
+                                    <a href="@Url.Action("Owners", new {id = Model.Course.Id})"><i class="fa fa-legal"></i> Besitzer</a>
+                                </li>
+
                                 <li>
                                     <a href="@Url.Action("DeleteCourse", new {id = Model.Course.Id})"><i class="fa fa-trash-o"></i> Löschen</a>
                                 </li>
@@ -641,6 +678,25 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h4>Modulbereiche</h4>
+                            <ul class="nav">
+                                @foreach (var topic in Model.Course.SemesterTopics)
+                                {
+                                    <li>@topic.TopicName</li>
+                                }
+                            </ul>
+                            <a href="@Url.Action("ChangeTopics", new {id = Model.Course.Id})">ändern</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
 
@@ -748,9 +804,7 @@
                             <div role="tabpanel" class="tab-pane" id="subscriber">
                                 <div class="panel">
                                     <div class="panel-body">
-                                        <div class="btn-group pull-right" role="group">
-                                            @Html.ActionButton("fa-envelope-o", "E-mail an alle", "CustomOccurrenceMail", "Mailing", new { id = Model.Course.Occurrence.Id }, new { @class = "btn btn-default" })
-                                            @Html.ActionButton("fa-download text-success", "Teilnehmerliste", "SubscriptionList", "Occurrence", new { id = Model.Course.Occurrence.Id }, new { @class = "btn btn-default" })
+                                        <div class="btn-group" role="group">
                                             @Ajax.ActionButton("fa-eraser text-danger", "Alle austragen", "ClearSubscriptions", "Course",
                     new { occurrenceId = Model.Course.Occurrence.Id },
                     new AjaxOptions() { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "course-subscriptions" },
@@ -843,6 +897,20 @@
                                                                             </div>
                                                                         }
                                                                     }
+                                                                    
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-offset-4 col-md-8">
+                                                                            @Html.CheckBoxFor(item => item.IsCoterie)
+                                                                            @Html.LabelFor(item => item.IsCoterie, new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-offset-4 col-md-8">
+                                                                                @Html.CheckBoxFor(item => item.HasHomeBias)
+                                                                                @Html.LabelFor(item => item.HasHomeBias, new { @class = "control-label" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
                                                                 </div>
                                                                 <button type="submit" class="btn btn-default"><i class="fa fa-save text-primary"></i> SPEICHERN</button>
                                                             </fieldset>

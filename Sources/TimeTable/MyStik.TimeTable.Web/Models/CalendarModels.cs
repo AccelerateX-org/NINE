@@ -107,6 +107,11 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public OccurrenceStateModel State { get; set; }
+
+        /// <summary>
+        /// Zugehörige Platzverlosung (falls vorhanden)
+        /// </summary>
+        public Lottery Lottery { get; set; }
     }
 
     /// <summary>

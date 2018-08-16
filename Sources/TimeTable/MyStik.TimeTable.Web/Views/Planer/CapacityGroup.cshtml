@@ -1,0 +1,71 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.PlanerGroupViewModel
+
+@{
+    ViewBag.Title = "Studiengruppe";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        Lehrveranstaltungen in der Studiengruppe @Model.CapacityGroup.FullName (
+                        @Html.DropDownList("Semester_Id", (IEnumerable<SelectListItem>)ViewBag.Semesters, new { onchange = "onSemesterChanged()" })
+                        )<span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h4>
+                </div>
+                <div id="courseList">
+                    @Html.Partial("_CourseListFit", Model.Courses)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function onSemesterChanged() {
+            $("#loading").show();
+
+            var sem = $("#Semester_Id option:selected").val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CapacityGroupList", "Planer")',
+                    data: {
+                        semId: sem,
+                        groupId: "@Model.CapacityGroup.Id",
+                        activeOnly: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseList').html(data);
+                        $("#loading").hide();
+                    }
+                });
+        }
+
+
+
+
+        $(document).ready(function() {
+            $("#loading").hide();
+        });
+
+    </script>
+}

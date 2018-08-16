@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.Curriculum;
+using MyStik.TimeTable.DataServices.Horst;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -21,23 +23,26 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid id)
         {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
             var model = new CurriculumViewModel();
-            var org = GetMyOrganisation();
 
-            ViewBag.Curricula = Db.Curricula.Where(c => c.Organiser.ShortName.Equals("FK 09")).Select(c => new SelectListItem
-            {
-                Text = c.ShortName + " (" + c.Name + ")",
-                Value = c.Id.ToString(),
-            });
+            model.Curriculum = curr;
+            model.Semester = SemesterService.GetSemester(DateTime.Today);
 
-            model.Curriculum = Db.Curricula.First();
-            
-            ViewBag.UserRight = GetUserRight(org);
+            model.ActiveSemesters.AddRange(Db.Semesters.Where(s => s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)));
+
+
+            // hier muss überprüft werden, ob der aktuelle Benutzer
+            // der Fakultät des Studiengangs angehört oder nicht
+            ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
 
             return View(model);
         }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,6 +60,70 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Terms(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var criteria = Db.Criterias.Where(x => x.Requirement.Option.Package.Curriculum.Id == cur.Id).GroupBy(x => x.Term).ToList();
+
+            var model = new CurriculumTermViewModel
+            {
+                Curriculum = cur,
+                Terms = criteria
+            };
+
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Modules(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Milestones(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
+        public ActionResult Requirement(Guid id)
+        {
+            var model = Db.Requirements.SingleOrDefault(x => x.Id == id);
+
+            return View(model);
+        }
+
 
         /// <summary>
         /// 
@@ -68,7 +137,7 @@ namespace MyStik.TimeTable.Web.Controllers
             
             var progs = _service.GetCurriculums();
             ViewBag.Curriculums = progs;
-            ViewBag.Semester = GetSemester();
+            ViewBag.Semester = SemesterService.GetSemester(DateTime.Today);
 
 
             ViewBag.Faculties = Db.Organisers.Select(f => new SelectListItem
@@ -84,13 +153,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = s.Name
             });
              */
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             ViewBag.Semesters = new List<SelectListItem>()
             {
                 new SelectListItem
                 {
-                    Text = GetSemester().Name,
-                    Value = GetSemester().Name
+                    Text = semester.Name,
+                    Value = semester.Name
                 }
             };
 
@@ -113,8 +183,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (curr != null)
             {
-                var semester = GetSemester();
-
                 var semesterGroups = Db.SemesterGroups.Where(g =>
                     g.Semester.Id == semester.Id &&
                     g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).OrderBy(g => g.CapacityGroup.CurriculumGroup.Name).ToList();
@@ -137,7 +205,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Faculty = "FK 01",
                 Curriculum = curr.ShortName,
                 Group = "",
-                Semester = GetSemester().Name
+                Semester = semester.Name
             };
 
             
@@ -162,6 +230,32 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public JsonResult OrgList(Guid? orgId, string number)
+        {
+            List<ActivityOrganiser> orgList;
+            if (orgId.HasValue)
+            {
+                orgList = Db.Organisers.Where(x => x.Id != orgId).ToList();
+            }
+            else
+            {
+                orgList = Db.Organisers.ToList();
+            }
+
+
+            var list = orgList.Where(l => l.ShortName.ToUpper().Contains(number.ToUpper()))
+                .OrderBy(l => l.ShortName)
+                .Select(l => new
+                {
+                    name = l.ShortName,
+                    id = l.Id
+                })
+                .Take(10);
+            return Json(list);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -173,7 +267,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult GroupList(Guid? semId, Guid currId, bool activeOnly=true)
         {
             var curr = Db.Curricula.SingleOrDefault(c => c.Id == currId);
-            var semester = semId == null ? GetSemester() : Db.Semesters.SingleOrDefault(s => s.Id == semId.Value);
+            var semester = SemesterService.GetSemester(semId);
 
             var model = new CurriculumViewModel
             {
@@ -211,6 +305,34 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_GroupList", model);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semId"></param>
+        /// <param name="currId"></param>
+        /// <param name="activeOnly"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult SemesterTopicList(Guid? semId, Guid currId, bool activeOnly = true)
+        {
+            var curr = Db.Curricula.SingleOrDefault(c => c.Id == currId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var model = new CurriculumViewModel
+            {
+                Curriculum = curr,
+            };
+
+            model.Topics = Db.SemesterTopics.Where(x =>
+                x.Semester.Id == semester.Id &&
+                x.Topic.Chapter.Curriculum.Id == curr.Id).ToList();
+
+            return PartialView("_TopicList", model);
+        }
+
+
+
 
         /// <summary>
         /// 
@@ -257,20 +379,11 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult CurriculaList(Guid? semId, Guid orgId, bool activeOnly=true)
         {
-            var semester = semId == null ? GetSemester() : Db.Semesters.SingleOrDefault(s => s.Id == semId.Value);
+            var semester = SemesterService.GetSemester(semId);
             var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
-            ICollection<Curriculum> currs;
-            if (activeOnly)
-            {
-                var semService = new SemesterService(Db);
-                currs = semService.GetActiveCurricula(org, semester);
-
-            }
-            else
-            {
-                currs = Db.Curricula.Where(x => x.Organiser.Id == orgId).ToList();
-            }
+            var semService = new SemesterService(Db);
+            var currs = semService.GetActiveCurricula(org, semester, activeOnly);
 
             var model = currs
                 .OrderBy(g => g.ShortName)
@@ -278,6 +391,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_CurriculumSelectList", model);
         }
+
+        [HttpPost]
+        public PartialViewResult CurriculaList2(Guid orgId)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            var currs = org.Curricula.ToList();
+
+            var model = currs
+                .OrderBy(g => g.ShortName)
+                .ToList();
+
+            return PartialView("_CurriculumSelectList", model);
+        }
+
 
         /// <summary>
         /// 
@@ -443,6 +571,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             // Den User ermitteln
             var isOrgAdmin = IsOrgAdmin();
+            var org = GetMyOrganisation();
 
 
             IEnumerable<Room> roomList;
@@ -452,7 +581,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 DateTime begin = date.Value.AddHours(@from.Value.Hours).AddMinutes(@from.Value.Minutes);
                 DateTime end = date.Value.AddHours(until.Value.Hours).AddMinutes(until.Value.Minutes);
 
-                roomList = useFree.Value ? new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(begin, end, isOrgAdmin) : new MyStik.TimeTable.Web.Services.RoomService().GetAllRooms(isOrgAdmin);
+                roomList = useFree.Value ? new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(org.Id, isOrgAdmin, begin, end) : new MyStik.TimeTable.Web.Services.RoomService().GetAllRooms(isOrgAdmin);
                 
             }
             else
@@ -605,7 +734,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var logger = LogManager.GetLogger("Course");
 
             // das sind nur die Gruppen, die es in diesem Semester auch gibt!
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var dummy = semester.Groups.ToList().OrderBy(g => g.FullName).ToList();
 
@@ -628,23 +757,23 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult CourseListByProgram(Guid semGroupId, bool compact=false)
         {
-            var semester = GetSemester();
             var user = AppUser;
 
             var courses = Db.Activities.OfType<Course>().Where(c => c.SemesterGroups.Any(g =>
                 g.Id == semGroupId)).OrderBy(c => c.Name).ToList();
 
             var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Id == semGroupId);
+            var semester = semGroup.Semester;
 
             var model = new List<CourseSummaryModel>();
 
-            var courseService = new CourseService(UserManager);
+            var courseService = new CourseService(Db);
 
             foreach (var course in courses)
             {
                 var summary = courseService.GetCourseSummary(course);
 
-                summary.State = ActivityService.GetActivityState(course.Occurrence, user, semester);
+                summary.State = ActivityService.GetActivityState(course.Occurrence, user);
                 summary.SemesterGroup = semGroup;
 
                 var subscriptions = course.Occurrence.Subscriptions.ToList();
@@ -670,57 +799,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dozId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult CourseListByLecturer(string dozId)
-        {
-            var orgId = "FK 09";
-            var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.ToUpper().Equals(orgId.ToUpper()));
-            var member = organiser.Members.SingleOrDefault(m => m.ShortName.Equals(dozId));
-            if (member == null)
-                return PartialView("");
-
-            // Alle Vorlesungen
-            // Alle Sprechstunden
-            // Alle Newsletter
-            // Alle Veranstaltungen
-
-            // => 
-
-            var model = new LecturerCharacteristicModel { Lecturer = member };
-
-            var semester = GetSemester();
-            var user = AppUser;
-
-            var courseService = new CourseService(UserManager);
-
-            model.Courses = courseService.GetCourses(semester.Name, member);
-
-            var ac = new ActivityService();
-            foreach (var course in model.Courses)
-            {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-                course.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-                course.Rooms.AddRange(rooms);
-
-                course.State = ActivityService.GetActivityState(course.Course.Occurrence, user, semester);
-            }
-
-            // Sprechstunden
-            model.OfficeHours = courseService.GetOfficeHours(member);
-
-
-            return PartialView("_MemberLecturer", model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
         [HttpPost]
@@ -729,14 +807,13 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new List<CourseSummaryModel>();
 
             var user = AppUser;
-            var semester = GetSemester();
 
             var room = Db.Rooms.SingleOrDefault(l => l.Number.Equals(roomId));
 
             if (room != null)
             {
                 var courses =
-                    Db.Activities //.OfType<Course>()
+                    Db.Activities.OfType<Course>()
                         .Where(c => c.Dates.Any(oc => oc.Rooms.Any(l => l.Id == room.Id)))
                         .ToList();
 
@@ -772,7 +849,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         summary.Dates.Add(courseDate);
                     }
 
-                    summary.State = ActivityService.GetActivityState(course.Occurrence, user, semester);
+                    summary.State = ActivityService.GetActivityState(course.Occurrence, user);
 
                     model.Add(summary);
                 }
@@ -881,24 +958,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult ImportModuleCatalog(Guid id)
         {
-            var curriculum =
-                Db.Curricula.SingleOrDefault(x => x.Id == id);
-            if (curriculum == null)
-                return RedirectToAction("Criterias", new { id = id });
-
-            // Hole Modulkatalog
-            var mcs = new ModuleCatalogService();
-            var mc = mcs.GetCatalog(curriculum.Organiser.ShortName, curriculum.ShortName);
-            if (mc == null)
-                return RedirectToAction("Criterias", new { id = id });
-
-            // Importiere den Katalog
-            var acs = new AccreditationService();
-            // aus jedem Modul ein Kriterium machen
-            // alle WPMs werden zu einem Kriterium zusammengefasst
-            acs.ImportModuleCatalogSingle(curriculum.Organiser.ShortName, curriculum.ShortName);
-
-
             // Zurück zur Startseite
             return RedirectToAction("Criterias", new {id = id});
         }
@@ -910,40 +969,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult DeleteModuleCatalog(Guid id)
         {
-            var curriculum =
-                Db.Curricula.SingleOrDefault(x => x.Id == id);
-
-
-            var allCriteria = curriculum.Criterias.ToList();
-            foreach (var criteria in allCriteria)
-            {
-                foreach (var accreditation in criteria.Accreditations.ToList())
-                {
-                    var curriculumModule = accreditation.Module;
-
-                    var allCourses = curriculumModule.ModuleCourses.ToList();
-
-                    foreach (var moduleCourse in allCourses)
-                    {
-                        foreach (var capCourse in moduleCourse.CapacityCourses.ToList())
-                        {
-                            moduleCourse.CapacityCourses.Remove(capCourse);
-                            capCourse.Course = null;
-
-                            Db.CapacityCourses.Remove(capCourse);
-                        }
-
-                        Db.ModuleCourses.Remove(moduleCourse);
-                    }
-
-                    Db.CurriculumModules.Remove(curriculumModule);
-                    Db.Accreditations.Remove(accreditation);
-                }
-                Db.Criterias.Remove(criteria);
-            }
-            Db.SaveChanges();
-
-
             // Zurück zur Startseite
             return RedirectToAction("Criterias", new { id = id });
         }
@@ -956,6 +981,15 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Edit(Guid id)
         {
             var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            /*
+            ViewBag.Degrees = Db.Degrees.Select(c => new SelectListItem
+            {
+                Text = c.ShortName + " (" + c.Name + ")",
+                Value = c.Id.ToString(),
+            });
+            */
+
             return View(model);
         }
 
@@ -971,9 +1005,242 @@ namespace MyStik.TimeTable.Web.Controllers
 
             cur.Name = model.Name;
             cur.ShortName = model.ShortName;
+            cur.Version = model.Version;
             Db.SaveChanges();
 
             return RedirectToAction("Structure", new {id = cur.Id});
+        }
+
+        public ActionResult Import(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Curriculum = cur
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Import(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
+
+            foreach (var line in lines)
+            {
+                var words = line.Split(';');
+                var orgName = words[0].Trim();
+                var curName = words[1].Trim();
+                var pckName = words[2].Trim();
+                var optName = words[3].Trim();
+                var reqName = words[4].Trim();
+                var reqEcts = int.TryParse(words[5], out var result) ? result : 0;
+                var critName = words[6].Trim();
+                var critTerm = int.TryParse(words[7], out var result2) ? result2 : 0;
+                var subName = words[8].Trim();
+                var subLVs = words[9].Trim();
+                var subExams = words[10].Trim();
+
+                var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(orgName));
+
+                var cur = org?.Curricula.SingleOrDefault(x => x.ShortName.Equals(curName));
+                if (cur == null)
+                    continue;
+
+                var pck = cur.Packages.SingleOrDefault(x => x.Name.Equals(pckName));
+                if (pck == null)
+                {
+                    pck = new CurriculumPackage
+                    {
+                        Name = pckName,
+                        Curriculum = cur,
+                    };
+                    cur.Packages.Add(pck);
+                }
+
+                var option = pck.Options.SingleOrDefault(x => x.Name.Equals(optName));
+                if (option == null)
+                {
+                    option = new PackageOption
+                    {
+                        Name = optName,
+                        Package = pck,
+                    };
+
+                    pck.Options.Add(option);
+                }
+
+                var req = option.Requirements.SingleOrDefault(x => x.Name.Equals(reqName));
+                if (req == null)
+                {
+                    req = new CurriculumRequirement
+                    {
+                        Option = option,
+                        Name = reqName
+                    };
+                    option.Requirements.Add(req);
+                }
+
+                // ECTS nur setzen, wenn größer als 0
+                if (reqEcts > 0)
+                    req.ECTS = reqEcts;
+
+                var crit = req.Criterias.SingleOrDefault(x => x.Name.Equals(critName));
+                if (crit == null)
+                {
+                    crit = new CurriculumCriteria
+                    {
+                        Name = critName,
+                        Requirement = req
+                    };
+
+                    req.Criterias.Add(crit);
+                }
+
+                // Semester nur wenn größer als 0
+                if (critTerm > 0)
+                    crit.Term = critTerm;
+
+                // Module => suchen und akkreditieren
+                // innerhalb der Module noch die Infos setzen
+
+                // Modul in den Akkreditierungen suchen
+                // wenn keine Akkreditierung vorhanden, dann
+                // Modul anlegen und automatisch akkreditieren
+                // Aufräumen ist spezielle Adminaufgabe
+
+                // gibt es das Modul schon als Akkreditierung in diesem Studiengang?
+                var allAccs = Db.Accreditations.Where(x => x.Criteria.Requirement.Option.Package.Curriculum.Id == cur.Id && x.Module.Name.Equals(subName)).ToList();
+                if (!allAccs.Any())
+                {
+                    // Modul anlegen
+                    var module = new CurriculumModule();
+                    module.Name = subName;
+                    // LVs und Prüfungen
+
+                    if (!string.IsNullOrEmpty(subLVs))
+                    {
+                        var lvs = subLVs.Split(',');
+
+                        foreach (var lv in lvs)
+                        {
+                            var c = new ModuleCourse();
+                            c.Name = lv;
+
+                            module.ModuleCourses.Add(c);
+                            Db.ModuleCourses.Add(c);
+                        }
+                    }
+
+
+                    if (!string.IsNullOrEmpty(subExams))
+                    {
+                        var exs = subExams.Split(',');
+
+                        foreach (var ex in exs)
+                        {
+                            var c = new ModuleExam();
+                            c.ExternalId = ex;
+
+                            module.ModuleExams.Add(c);
+                            Db.ModuleExams.Add(c);
+                        }
+                    }
+
+                    Db.CurriculumModules.Add(module);
+
+                    // Akkreditierung anlegen
+                    var acc = new ModuleAccreditation();
+                    acc.Module = module;
+                    acc.Criteria = crit;
+
+                    Db.Accreditations.Add(acc);
+                }
+            }
+
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Index", new { id = model.Curriculum.Id });
+        }
+
+       
+        public JsonResult Export(Guid id)
+        {
+            var service = new ExportService(Db);
+
+            var prog = service.GetProgram(id, 33);
+
+            return Json(prog, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult Delete(Guid id)
+        {
+            var cur2 = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var modules = new List<CurriculumModule>();
+
+            foreach (var pck2 in cur2.Packages.ToList())
+            {
+                foreach (var option2 in pck2.Options.ToList())
+                {
+                    foreach (var req2 in option2.Requirements.ToList())
+                    {
+                        foreach (var crit2 in req2.Criterias.ToList())
+                        {
+                            foreach (var acc2 in crit2.Accreditations.ToList())
+                            {
+                                if (!modules.Contains(acc2.Module))
+                                {
+                                    modules.Add(acc2.Module);
+                                }
+
+                                Db.Accreditations.Remove(acc2);
+                            }
+                            Db.Criterias.Remove(crit2);
+                        }
+                        Db.Requirements.Remove(req2);
+                    }
+                    Db.PackageOptions.Remove(option2);
+                }
+                Db.CurriculumPackages.Remove(pck2);
+            }
+
+            // jetzt noch die Module
+            foreach (var module in modules)
+            {
+                if (!module.Accreditations.Any())
+                {
+                    foreach (var course in module.ModuleCourses.ToList())
+                    {
+                        Db.ModuleCourses.Remove(course);
+                    }
+
+                    foreach (var exam in module.ModuleExams.ToList())
+                    {
+                        Db.ModuleExams.Remove(exam);
+                    }
+
+                    Db.CurriculumModules.Remove(module);
+                }
+
+            }
+
+            Db.SaveChanges();
+
+
+
+
+            return RedirectToAction("Index", new {id = id});
         }
 
     }

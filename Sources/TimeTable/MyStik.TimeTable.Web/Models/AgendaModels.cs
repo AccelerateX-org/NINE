@@ -54,11 +54,11 @@ namespace MyStik.TimeTable.Web.Models
         {
             get
             {
-                if (Day.Date == GlobalSettings.Today)
+                if (Day.Date == DateTime.Today)
                 {
                     return "Heute";
                 }
-                else if (Day.Date == GlobalSettings.Today.AddDays(1))
+                else if (Day.Date == DateTime.Today.AddDays(1))
                 {
                     return "Morgen";
                 }

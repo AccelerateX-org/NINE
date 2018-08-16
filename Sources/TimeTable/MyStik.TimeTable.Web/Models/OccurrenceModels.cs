@@ -55,7 +55,7 @@ namespace MyStik.TimeTable.Web.Models
                     }
                 }
 
-                return GlobalSettings.Now;
+                return DateTime.Now;
             }
         }
 

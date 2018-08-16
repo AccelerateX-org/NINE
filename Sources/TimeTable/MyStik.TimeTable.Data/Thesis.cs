@@ -13,40 +13,58 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public string Title { get; set;  }
+        public string TitleDe { get; set;  }
+
+        public string TitleEn { get; set; }
+
+        /// <summary>
+        /// Sperrvermerk - kann nur Studierende setzen
+        /// </summary>
+        public bool HasLockFlag { get; set; }
 
 
         /// <summary>
-        /// Betreuer
+        /// Aktivität des Betreuers
         /// </summary>
-        public OrganiserMember Lecturer { get; set; }
+        public virtual Supervision Supervision { get; set; }
 
         /// <summary>
         /// Student
         /// </summary>
-        public string UserId { get; set; }
+        public virtual Student Student { get; set; }
 
         /// <summary>
-        /// 
+        /// Datum der Ausgabe
         /// </summary>
-        public virtual Curriculum Curriculum { get; set; }
+        public DateTime IssueDate { get; set; }
 
-        public DateTime Registration { get; set; }
+        /// <summary>
+        /// Abgabedatum
+        /// </summary>
+        public DateTime ExpirationDate { get; set; }
 
-        public bool? IsAccepted { get; set; }
+        /// <summary>
+        /// Verlängerungsdatum
+        /// </summary>
+        public DateTime? RenewalDate { get; set; }
 
-        public DateTime? Acception { get; set; }
+        /// <summary>
+        /// Datum der tatsächlichen Abgabe
+        /// </summary>
+        public DateTime? DeliveryDate { get; set; }
 
-        public bool? IsDelivered { get; set; }
-
-        public DateTime? Delivery { get; set; }
-
-        public bool? IsGraded { get; set; }
-
-        public DateTime? Grade { get; set; }
-
-        public int? Mark { get; set; }
+        /// <summary>
+        /// Datum der Benotung, d.h. Eintragung der Note durch Sekretariat
+        /// bzw. Weiterleitung der Notenmeldung
+        /// benötigt Admin-Rechte
+        /// </summary>
+        public DateTime? GradeDate { get; set; }
 
 
+        /// <summary>
+        /// Wurde abgerechnet
+        /// benötigt Admin-Rechte
+        /// </summary>
+        public bool? IsCleared { get; set; }
     }
 }

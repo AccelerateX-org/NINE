@@ -1,0 +1,76 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Advertisement>
+@{
+    ViewBag.Title = "Ausschreibungen für Praxissemester";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <h4><i class="fa fa-exclamation-triangle"></i> Wichtige Hinweise:</h4>
+                <ul>
+                    <li>Die Angebote auf dieser Seite entsprechen einem „Aushang am schwarzen Brett“. Es ersetzt nicht die ggf. notwendige Genehmigung des praktischen Studiensemesters durch den Praktikantenbeauftragten.</li>
+                    <li>Zitat (A)SPO: <i>"„Ein praktisches Studiensemester ist ein in das Studium integriertes, von der Hochschule geregeltes, inhaltlich bestimmtes, betreutes und mit Lehrveranstaltungen vorbereitetes und begleitetes Studiensemester, das in der Regel in einem Betrieb oder in einer anderen Einrichtung der Berufspraxis außerhalb der Hochschule abgeleistet wird."</i></li>
+                    <li>Die Studierenden schließen mit der von der Hochschule genehmigten Ausbildungsstelle schriftliche Ausbildungsverträge ab. Sie bedürfen der Zustimmung der Hochschule. Das praktische Studiensemester muss also genehmigt werden, Bericht und Kolloquium müssen angemeldet werden.</li>
+                </ul>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-wrench"></i> Ausschreibungen für praktisches Studiensemester
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var adv in Model)
+                    {
+                        var linkDescription = string.Format("desc{0}", adv.Id);
+
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                @adv.Title (@adv.Created.ToShortDateString())
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-user-md"></i>Kontakt: @adv.Owner.FullName</li>
+                                        @if (adv.Attachment != null)
+                                        {
+                                            <li><i class="fa fa-li fa-file-pdf-o"></i><a href="@Url.Action("ShowFile", new {id = adv.Attachment.Id})" target="_blank">Weitere Informationen</a></li>
+                                        }
+                                        @if (!string.IsNullOrEmpty(adv.Description))
+                                        {
+                                            <li>
+                                                <i class="fa-li fa fa-info-circle"></i>Beschreibung: <a href="#@linkDescription" data-toggle="collapse">einblenden</a>
+                                                <div class="collapse" id="@linkDescription">
+                                                    <div class="panel panel-default">
+                                                        @Html.Raw(adv.Description)
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="fa-ul">
+                                        @if (adv.ForThesis)
+                                        {
+                                            <li><i class="fa fa-li fa-graduation-cap"></i>Abschlussarbeit</li>
+                                        }
+                                        @if (adv.ForStayAbroad)
+                                        {
+                                            <li><i class="fa fa-li fa-globe"></i>Auslandsaufenthalt</li>
+                                        }
+                                        @if (adv.ForAdvancement)
+                                        {
+                                            <li><i class="fa fa-li fa-money"></i>Förderung</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

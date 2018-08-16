@@ -1,6 +1,6 @@
 ﻿@model MyStik.TimeTable.Web.Models.RoomLookUpModel
 @{
-    ViewBag.Title = "Freie Räume";
+    ViewBag.Title = "Raumsuche";
 }
 
 @section styles
@@ -21,74 +21,152 @@
     </div>
 </div>
 
+
 <div class="container-fluid">
 
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Datum und Zeitraum</div>
+                <div class="panel-heading">
+                    <h4>Suchkriterien</h4>
+                </div>
                 <div class="panel-body">
-                    <div class="form form-horizontal">
+                    @using (Ajax.BeginForm("Search", "Room", null,
+        new AjaxOptions
+        {
+            HttpMethod = "Post",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "roomTable",
+            LoadingElementId = "loading"
+        },
+        new { @class = "form form-horizontal", role = "form" }))
+    {
+                <div class="row">
+                    <h5>Zeitraum</h5>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 control-label" })
+                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-6 control-label" })
                             <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
-
-                                @Html.ValidationMessageFor(m => m.NewDate)
+                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange="changeDate()" })
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 control-label" })
+                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-6 control-label" })
                             <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
-
-                                @Html.ValidationMessageFor(m => m.NewBegin)
+                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewDate2, new { @class = "col-sm-6 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(model => model.NewDate2, new { @class = "form-control datepicker" })
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 control-label" })
+                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-6 control-label" })
                             <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
-
-                                @Html.ValidationMessageFor(m => m.NewEnd)
+                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24" })
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">Liste der verfügbaren Räume</div>
-                <div class="panel-body">
-                    <div id="roomTable">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Nummer</th>
-                                    <th>Plätze</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
-                                {
-                                    <tr id="@room.Id">
-                                        <td>@room.Number</td>
-                                        <td>@room.Capacity</td>
-                                        <td id="state_@room.Id">unbekannt</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                <div class="row">
+                    <h5>Einschränkung auf Wochentage (keine Auswahl => es werden alle Tage einbezogen)</h5>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsMonday) Montag
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsFriday) Freitag
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsTuesday) Dienstag
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsSaturday) Samstag
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsWednesday) Mittwoch
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsSunday) Sonntag
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <div class="col-md-offset-1 col-sm-11">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.IsThursday) Donnerstag
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Suchen</button>
                 </div>
             </div>
         </div>
+}
 
+                </div>
+            </div>
 
-
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Liste der verfügbaren Räume <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                </div>
+                <div id="roomTable">
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -126,57 +204,9 @@
                 });
             });
 
-    function onDateChanged() {
-        onUpdateRoomState();
-    }
-
-    function onBeginChanged() {
-        onUpdateRoomState();
-    }
-
-    function onEndChanged() {
-        onUpdateRoomState();
-    }
-
-
-    function onUpdateRoomState() {
-
-        var newDate = $("#NewDate").val();
-        var newBegin = $("#NewBegin").val();
-        var newEnd = $("#NewEnd").val();
-            
-
-        var list = $("#roomTable > table > tbody > tr").get();
-        var n = list.length;
-        var i;
-        for (i = 0; i < n; i++) {
-
-            $("#state_" + list[i].id).html("<i class=\"fa fa-spinner fa-spin\"></i>");
-
-            $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("GetState", "Room")',
-                data: {
-                    dateId: null,
-                    roomId: list[i].id,
-                    date: newDate,
-                    begin: newBegin,
-                    end: newEnd
-                },
-                success: function (data, success, xhr) {
-                    $("#state_" + data.RoomId).html(data.State);
-                }
-            });
-
-
-
-        }
-
-            
-    }
-
-
+            function changeDate() {
+                $("#NewDate2").val($("#NewDate").val());
+            }
 
         </script>
     }

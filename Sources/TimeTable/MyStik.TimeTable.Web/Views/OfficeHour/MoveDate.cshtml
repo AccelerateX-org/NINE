@@ -24,7 +24,9 @@
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-default">
-                <div class="panel-heading">Datum und Zeitraum ändern</div>
+                <div class="panel-heading">
+                    <h4>Datum und Zeitraum ändern</h4>
+                </div>
                 <div class="panel-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
                     {
@@ -61,7 +63,7 @@
                                 <div class="form-group">
                                     <div class="col-md-offset-2 col-md-10">
                                         <input type="submit" value="Termin verschieben" class="btn btn-default" />
-                                        <a class="btn btn-default" href="@Url.Action("Index", new {id=Model.ActivityId})"><i class="fa fa-left"></i> zurück</a>
+                                        <a class="btn btn-default" href="@Url.Action("DateDetails", "Lecturer", new {id=Model.Date.Id})"><i class="fa fa-arrow-left"></i> zurück</a>
                                     </div>
                                 </div>
                             </div>

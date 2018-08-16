@@ -1,0 +1,188 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseSummaryModel
+
+<div class="list-group-item">
+    <h5 class="list-group-item-heading">
+        @if (Model.ShowFaculty)
+        {
+            @Html.FacultyLabel(Model.Course.Organiser)
+        }
+
+        <a href="@Url.Action("Details", "Course", new {id = Model.Course.Id})">@Model.Course.Name (@Model.Course.ShortName)</a>
+    </h5>
+    <div class="row">
+        <div class="col-md-5">
+            <ul class="fa-ul">
+                <li>
+                    <i class="fa-li fa fa-user-md"></i>
+                    @if (Model.Lecturers.Any())
+                    {
+                        @Html.LecturerList(Model.Lecturers)
+                    }
+                    else
+                    {
+                        <i>Keine Angabe zu Lehrenden verfügbar</i>
+                    }
+                </li>
+                <li><i class="fa-li fa fa-group"></i>@Html.GroupList(Model.Course.SemesterGroups)</li>
+                <li><i class="fa-li fa fa-calendar"></i>@Html.DateList(Model.Dates)</li>
+                <li>
+                    <i class="fa-li fa fa-university"></i>
+                    @if (Model.Rooms.Any())
+                    {
+                        @Html.RoomList(Model.Rooms)
+                    }
+                    else
+                    {
+                        <i>Keine Raumangaben verfügbar</i>
+                    }
+
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-5">
+            @if (Model.Course.Occurrence.Capacity > 0)
+            {
+                var seatsAvailable = Model.Course.Occurrence.Capacity - Model.Course.Occurrence.Subscriptions.Count(x => !x.OnWaitingList);
+                var seatsPrio = Model.Course.Occurrence.Subscriptions.Count(x => x.OnWaitingList && x.Priority.HasValue && x.Priority == 1);
+
+            <ul class="fa-ul">
+                <li>
+                    <i class="fa-li fa fa-cubes"></i>
+                    Platzkontingent: @Model.Course.Occurrence.Capacity Plätze
+                </li>
+                @*
+        <li><i class="fa-li fa fa-cubes text-success"></i>
+            Noch frei: @seatsAvailable Plätze <i class="fa fa-refresh"></i>
+        </li>
+        @if (Model.Lottery != null)
+        {
+        <li>
+            <i class="fa-li fa fa-heart text-danger"></i>
+            Mit "Priorität 1" auf Warteliste: @seatsPrio Eintragungen <i class="fa fa-refresh"></i>
+        </li>
+                    }
+                *@
+                
+            </ul>
+            }
+        </div>
+        <div class="col-md-2">
+
+            @if (Model.User != null)
+            {
+                <div class="panel panel-default" style="margin-bottom: 0pt">
+                    <div class="list-group">
+                            @if (Model.ConflictingDates.Any())
+                            {
+                                <div class="list-group-item">
+                                <span class="badge badge-warning">@Model.ConflictingDates.Count</span>
+                                Kollisionen
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="list-group-item">
+                                    keine Kollisionen
+                                </div>
+                                
+                            }
+                        @if (Model.Subscription == null)
+                        {
+                            if (Model.Lottery != null)
+                            {
+                                <div class="list-group-item">
+                                    <div class="lottery" data-lotid="@Model.Lottery.Id">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-random fa-stack-1x"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                if (Model.IsSelectable)
+                                {
+                                    <div class="list-group-item">
+                                        <div class="selectable" data-occid="@Model.Course.Occurrence.Id">
+                                            <span class="fa-stack fa-lg">
+                                                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                <i class="fa fa-pencil fa-stack-1x"></i>
+                                            </span>
+                                            @if (Model.Course.Occurrence.IsCoterie)
+                                            {
+                                                <i class="fa fa-circle text-danger"></i>
+                                            }
+                                            else
+                                            {
+                                                if (Model.Course.Occurrence.HasHomeBias)
+                                                {
+                                                    <i class="fa fa-circle text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-circle text-success"></i>
+                                                }
+                                            }
+                                        </div>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="list-group-item">
+                                        <div data-occid="@Model.Course.Occurrence.Id">
+                                            <span class="fa-stack fa-lg">
+                                                <i class="fa fa-ban fa-stack-2x fa-rotate-90 text-danger"></i>
+                                                <i class="fa fa-pencil fa-stack-1x"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Model.Lottery != null)
+                            {
+                                <div class="list-group-item">
+                                    <div class="lottery" data-lotid="@Model.Lottery.Id">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                            <i class="fa fa-random fa-stack-1x"></i>
+                                        </span>
+                                        @if (Model.Subscription.OnWaitingList)
+                                        {
+                                            <i class="fa fa-hourglass-half"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-user"></i>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="list-group-item">
+                                    <div class="selectable discardable" data-occid="@Model.Course.Occurrence.Id">
+                                        <span class="fa-stack fa-lg">
+                                            <i class="fa fa-circle fa-stack-2x text-success"></i>
+                                            <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.RoomSearchResultModel
+
+<div class="alert alert-info">
+    <h4>Es wurde für folgende Zeiten gesucht</h4>
+    <ul>
+        @foreach (var date in Model.DayList)
+        {
+            <li>@date.ToString("dd. MMMM yyyy", new CultureInfo("de-DE")) [@Model.Begin - @Model.End]</li>
+        }
+    </ul>
+</div>
+
+@if (Model.Rooms.Any())
+{
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Nummer</th>
+            <th>Plätze</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
+        {
+            <tr>
+                <td><a href="@Url.Action("Calendar", "Room", new {id = room.Id})">@room.FullName</a></td>
+                <td>@room.Capacity</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-danger">
+        <h4>Für die gesuchten Zeiten sind keine Räume verfügbar</h4>
+    </div>
+}

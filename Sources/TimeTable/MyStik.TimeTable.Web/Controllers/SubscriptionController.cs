@@ -52,7 +52,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Subscribe(Guid id)
         {
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
 
             var semSubService = new SemesterSubscriptionService(Db);
 
@@ -93,7 +93,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semSubService = new SemesterSubscriptionService(Db);
 
             // Alle Fakultäten, die aktive Semestergruppen haben
-            var acticeorgs = semService.GetActiveOrganiser(semester);
+            var acticeorgs = semService.GetActiveOrganiser(semester, true);
 
             ViewBag.Semesters = new List<SelectListItem>()
             {
@@ -114,7 +114,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Liste der Studiengänge
             var actOrg = acticeorgs.FirstOrDefault();
-            var activecurr = semService.GetActiveCurricula(actOrg, semester);
+            var activecurr = semService.GetActiveCurricula(actOrg, semester, true);
 
             // Liste der Gruppen hängt jetzt von der Einschreibung ab
 
@@ -193,7 +193,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult UnSubscribe(Guid id)
         {
             var user = AppUser;
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
 
             if (user != null)
             {
@@ -215,5 +215,98 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Change()
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var user = GetCurrentUser();
+
+            var semSubService = new SemesterSubscriptionService();
+            var semesterSubscription = semSubService.GetSemesterGroup(user.Id, semester);
+
+            var model = new CurriculumSubscriptionViewModel
+            {
+                OrgId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id ?? Guid.Empty,
+                CurrId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Id ?? Guid.Empty,
+                SemId = semester.Id
+            };
+
+            var orgs = Db.Organisers.Where(x => x.IsFaculty && x.Curricula.Any()).OrderBy(f => f.ShortName).ToList();
+            var org = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Organiser ?? orgs.FirstOrDefault();
+
+            ViewBag.Faculties = orgs.Select(f => new SelectListItem
+            {
+                Text = f.ShortName,
+                Value = f.Id.ToString(),
+            });
+
+
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+            var nextDate = DateTime.Today.AddDays(70);
+
+            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= nextDate).OrderByDescending(x => x.EndCourses)
+                .Select(f => new SelectListItem
+                    {
+                        Text = f.Name,
+                        Value = f.Id.ToString(),
+                    }
+                );
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangeConfirm(CurriculumSubscriptionViewModel model)
+        {
+            model.Semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            model.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            model.Organiser = Db.Organisers.SingleOrDefault(x => x.Id == model.OrgId);
+
+            return View("ChangeConfirm", model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Change(CurriculumSubscriptionViewModel model)
+        {
+            var user = GetCurrentUser();
+            var student = Db.Students.SingleOrDefault(x => x.UserId.Equals(user.Id));
+            if (student == null)
+            {
+                student = new Student
+                {
+                    UserId = user.Id
+                };
+
+                Db.Students.Add(student);
+            }
+
+            student.Created = DateTime.Now;
+            student.FirstSemester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            student.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            student.IsDual = model.IsDual;
+            student.IsPartTime = model.IsPartTime;
+            student.HasCompleted = false;
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+
+        public ActionResult Curricula()
+        {
+            var user = GetCurrentUser();
+
+            var model = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderBy(x => x.Created).ToList();
+
+            return View(model);
+        }
     }
 }

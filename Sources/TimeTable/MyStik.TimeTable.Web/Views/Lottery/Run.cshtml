@@ -1,0 +1,26 @@
+﻿@model MyStik.TimeTable.Web.Models.LotterySummaryModel
+@{
+    ViewBag.Title = "Run";
+}
+
+<h2>Run</h2>
+
+@foreach (var user in Model.Subscriptions)
+{
+    <h4>@user.Key</h4>
+    <ul>
+        @foreach (var subscription in user)
+        {
+            <li>@subscription.Id</li>
+
+        }
+    </ul>
+}
+
+
+
+<a href="@Url.Action("ExecuteLottery", new {id =Model.Lottery.Id, msg=1})" class="btn btn-danger">Lotterie starten (Erste Verlosung)</a>
+
+<a href="@Url.Action("ExecuteLottery", new {id =Model.Lottery.Id, msg=2})" class="btn btn-danger">Lotterie starten (Zwischen Verlosung)</a>
+
+<a href="@Url.Action("ExecuteLottery", new {id =Model.Lottery.Id, msg=3})" class="btn btn-danger">Lotterie starten (Letzte Verlosung)</a>

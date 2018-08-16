@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -18,6 +15,10 @@ namespace MyStik.TimeTable.Data
 
     public class StudentExam
     {
+        public StudentExam()
+        {
+            ExamPapers = new HashSet<ExamPaper>();
+        }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
@@ -35,7 +36,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Die zugehörige Modulprüfung
         /// </summary>
-        public virtual ModuleExam Exam { get; set; }
+        public virtual Exam Exam { get; set; }
 
         /// <summary>
         /// Die eigentliche Arbeit

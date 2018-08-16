@@ -29,6 +29,9 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<SemesterGroup> Groups { get; set; }
 
+
+        public virtual ICollection<SemesterTopic> Topics { get; set; }
+
         /// <summary>
         /// Termine im Semester, z.B. vorlesungsfreie Zeit
         /// </summary>

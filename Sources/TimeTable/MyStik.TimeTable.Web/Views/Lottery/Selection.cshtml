@@ -1,0 +1,233 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    ViewBag.Title = "Auswahl";
+}
+
+@section styles
+{
+    <style>
+        .selectable {
+            position: absolute;
+            left: -24px;
+            top: 24px;
+            cursor: pointer;
+        }
+
+        .unselectable {
+            position: absolute;
+            left: -24px;
+            top: 24px;
+        }
+
+
+        .projektliste {
+            list-style-type: none;
+            margin: 1.5rem 0;
+        }
+
+            .projektliste li {
+                margin: 0.8rem 0;
+                padding: 0.4rem 0.4rem 0.1rem 0.4rem;
+                border-radius: 4px;
+                position: relative;
+            }
+
+        .ui-draggable, .ui-droppable {
+            background-position: top
+        }
+
+        #sortable {
+            position: relative;
+            left: 1rem;
+            width: 80%;
+            max-width: 500px
+        }
+
+            #sortable .deselect {
+                position: absolute;
+                right: -12px;
+                top: -12px;
+                width: 28px;
+                cursor: pointer
+            }
+
+            #sortable li {
+                -webkit-box-shadow: 0 0 3px 2px rgba(0,0,0,0.05);
+                box-shadow: 0 0 3px 2px rgba(0,0,0,0.05);
+                cursor: move
+            }
+
+                #sortable li::before {
+                    position: absolute;
+                    left: -1.6rem;
+                    top: 0rem;
+                    color: #a1a1a1;
+                    font-weight: 600;
+                    font-size: 180%
+                }
+
+                #sortable li:nth-of-type(1)::before {
+                    content: '1'
+                }
+
+                #sortable li:nth-of-type(2)::before {
+                    content: '2'
+                }
+
+                #sortable li:nth-of-type(3)::before {
+                    content: '3'
+                }
+
+                #sortable li:nth-of-type(4)::before {
+                    content: '4'
+                }
+
+                #sortable li:nth-of-type(5)::before {
+                    content: '5'
+                }
+
+                #sortable li:nth-of-type(6)::before {
+                    content: '6'
+                }
+
+                #sortable li:nth-of-type(7)::before {
+                    content: '7'
+                }
+
+                #sortable li:nth-of-type(8)::before {
+                    content: '8'
+                }
+
+                #sortable li:nth-of-type(9)::before {
+                    content: '9'
+                }
+
+                #sortable li:nth-of-type(10)::before {
+                    content: '10'
+                }
+
+        .ui-state-highlight {
+            height: 3px;
+            position: relative;
+            left: -15px;
+            background: #a1a1a1;
+            border: none;
+            width: 120%
+        }
+
+        #sortable li.ui-sortable-helper {
+            background: #e6e5e5;
+            -webkit-box-shadow: 0 0 4px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 0 4px 3px rgba(0,0,0,0.2)
+        }
+
+            #sortable li.ui-state-highlight::before, #sortable li.ui-sortable-helper::before {
+                content: '' !important
+            }
+    </style>
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Wahlverfahren "@Model.Lottery.Name" - Status</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div id="dialogPanel">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-shopping-cart"></i> Auswahl der Lehrveranstaltungen</h4>
+                    </div>
+                    <div class="list-group">
+                        @foreach (var course in Model.Courses)
+                        {
+                            var color = "";
+                            if (!course.IsSelectable)
+                            {
+                                color = "list-group-item-danger";
+                            }
+                            <div class="list-group-item @color">
+                                <div class="list-group-item-heading">
+                                    <h5>
+                                        <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">@course.Course.Name (@course.Course.ShortName)</a>
+                                    </h5>
+                                </div>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li>
+                                            <i class="fa-li fa fa-user-md"></i>
+                                            @if (course.CourseSummary.Lecturers.Any())
+                                            {
+                                                @Html.LecturerList(course.CourseSummary.Lecturers, showLinks: false)
+                                            }
+                                            else
+                                            {
+                                                <i>Keine Angabe zu Lehrenden verfügbar</i>
+                                            }
+                                        </li>
+                                        <li><i class="fa-li fa fa-group"></i>@Html.GroupList(course.Course.SemesterGroups, showLink: false)</li>
+                                        <li><i class="fa-li fa fa-calendar"></i>@Html.DateList(course.CourseSummary.Dates)</li>
+                                        <li>
+                                            <i class="fa-li fa fa-university"></i>
+                                            @if (course.CourseSummary.Rooms.Any())
+                                            {
+                                                @Html.RoomList(course.CourseSummary.Rooms, showLinks: false)
+                                            }
+                                            else
+                                            {
+                                                <i>Keine Raumangaben verfügbar</i>
+                                            }
+
+                                        </li>
+                                    </ul>
+                                    @if (!course.IsSelectable)
+                                    {
+                                        <ul class="fa-ul">@Html.Raw(course.Message)</ul>
+                                    }
+                                </div>
+                                @if (course.IsSelectable)
+                                {
+                                    <img id="@course.Course.Id" class="selectable" src="@Url.Content("~/Assets/fillter/img/selectable.svg")" alt="auswählen">
+                                }
+                                else
+                                {
+                                    <img class="unselectable" src="@Url.Content("~/Assets/fillter/img/deselect.svg")" alt="nicht verfügbar">
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

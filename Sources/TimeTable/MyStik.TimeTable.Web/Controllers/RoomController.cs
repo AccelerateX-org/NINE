@@ -4,15 +4,16 @@ using System.Text;
 using MyStik.TimeTable.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using System.Data.Entity;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using Pitchfork.QRGenerator;
+using RoomService = MyStik.TimeTable.Web.Services.RoomService;
 
 namespace MyStik.TimeTable.Web.Controllers
 { 
@@ -72,6 +73,43 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        public ActionResult Details(Guid id)
+        {
+            var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
+
+            var org = GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+            ViewBag.Organiser = org;
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Rules(Guid id)
+        {
+            var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
+
+            var org = GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+            ViewBag.Organiser = org;
+
+            ViewBag.Admins = org.Members.Where(x => x.IsRoomAdmin);
+
+            return View(model);
+        }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Index(Guid? id)
         {
             if (!id.HasValue)
@@ -88,7 +126,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 model.Room = room;
 
-                var now = GlobalSettings.Now;
+                var now = DateTime.Now;
 
                 model.CurrentOccurrences = room.Dates.Where(oc => oc.Begin <= now && oc.End >= now).ToList();
                 model.NextOccurrences =
@@ -189,7 +227,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 // Alle Räume, auf die der Veranstalter Zugriff hat
                 var roomService = new MyStik.TimeTable.Web.Services.RoomService();
-                var rooms = roomService.GetRooms(org.ShortName, true);
+                var rooms = roomService.GetRooms(org.Id, true);
 
 
                 // Für jeden Raum den Status besorgen
@@ -227,7 +265,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Free()
         {
-            var from = GlobalSettings.Now;
+            var from = DateTime.Now;
             var to = from;
 
             var model = new FreeRoomSummaryModel();
@@ -260,80 +298,103 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult LookupDate()
         {
-            var semester = GetSemester();
-            var semStart = semester.StartCourses;
-
-            var memberService = new MemberService(Db, UserManager);
-            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
-
-            var orgName = User.IsInRole("SysAdmin") ?
-                "FK 09" :
-                memberService.GetOrganisationName(semester, User.Identity.Name);
-
-            var userRight = GetUserRight(User.Identity.Name, "FK 09");
-
-            // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetRooms(orgName, userRight.IsRoomAdmin);
-
-
-
             var model = new RoomLookUpModel
             {
                 NewDate = DateTime.Today.ToShortDateString(),
                 NewBegin = DateTime.Now.TimeOfDay.ToString(),
                 NewEnd = DateTime.Now.AddMinutes(90).TimeOfDay.ToString(),
-                Rooms = rooms,
+                NewDate2 = DateTime.Today.ToShortDateString(),
             };
-
-            SetTimeSelections();
 
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult LookupPeriod()
+        public PartialViewResult Search(RoomLookUpModel model)
         {
-            var semStart = GetSemester().StartCourses;
+            var sDateStart = DateTime.Parse(model.NewDate);
+            var sDateEnd = DateTime.Parse(model.NewDate2);
+            var sBegin = TimeSpan.Parse(model.NewBegin);
+            var sEnd = TimeSpan.Parse(model.NewEnd);
 
-            var model = new RoomLookUpModel
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(User.Identity.Name, org.ShortName);
+
+
+            if (sDateEnd < sDateStart)
             {
-                Date1 = semStart > GlobalSettings.Today ? semStart : GlobalSettings.Today,
-                Date2 = semStart > GlobalSettings.Today ? semStart : GlobalSettings.Today,
-                BeginHour = GlobalSettings.Now.TimeOfDay.Hours,
-                BeginMinute = (GlobalSettings.Now.TimeOfDay.Minutes / 15) * 15,
-                EndHour = GlobalSettings.Now.TimeOfDay.Hours + 1,
-                EndMinute = (GlobalSettings.Now.TimeOfDay.Minutes / 15) * 15,
-            };
+                return PartialView("_ErrorMsg", "Enddatum ist kleiner als Startdatum");
+            }
 
-            SetTimeSelections();
+            if (sEnd < sBegin)
+            {
+                return PartialView("_ErrorMsg", "Ende ist kleiner als Beginn");
+            }
 
-            return View(model);
+            var result = new RoomSearchResultModel();
+            result.Begin = sBegin;
+            result.End = sEnd;
+
+
+            // Fallunterscheidungen
+            // gleicher Tag
+            if (sDateStart == sDateEnd)
+            {
+                var from = sDateStart.Add(sBegin);
+                var until = sDateStart.Add(sEnd);
+                var rooms = roomService.GetFreeRooms(org.Id, userRight.IsRoomAdmin, from, until);
+                result.Rooms = rooms.ToList();
+                result.DayList = new List<DateTime>();
+                result.DayList.Add(sDateStart);
+                return PartialView("_SearchResultList", result);
+            }
+
+            // Zeitraum, ggf. Wochentage berücksichtigen
+            // ermittle alle Tage zwischen Beginn und Ende
+            var dateList = new List<DateTime>();
+            var date = sDateStart;
+            if (!model.IsMonday && !model.IsTuesday && !model.IsWednesday &&
+                !model.IsThursday && !model.IsFriday && !model.IsSaturday &&
+                !model.IsSunday)
+            {
+                while (date <= sDateEnd)
+                {
+                    dateList.Add(date);
+                    date = date.AddDays(1);
+                }
+            }
+            else
+            {
+                while (date <= sDateEnd)
+                {
+                    if (model.IsMonday && date.DayOfWeek == DayOfWeek.Monday)
+                        dateList.Add(date);
+                    if (model.IsTuesday && date.DayOfWeek == DayOfWeek.Tuesday)
+                        dateList.Add(date);
+                    if (model.IsWednesday && date.DayOfWeek == DayOfWeek.Wednesday)
+                        dateList.Add(date);
+                    if (model.IsThursday && date.DayOfWeek == DayOfWeek.Thursday)
+                        dateList.Add(date);
+                    if (model.IsFriday && date.DayOfWeek == DayOfWeek.Friday)
+                        dateList.Add(date);
+                    if (model.IsSaturday && date.DayOfWeek == DayOfWeek.Saturday)
+                        dateList.Add(date);
+                    if (model.IsSunday && date.DayOfWeek == DayOfWeek.Sunday)
+                        dateList.Add(date);
+
+                    date = date.AddDays(1);
+                }
+            }
+
+            var rooms2 = roomService.GetFreeRooms(org.Id, userRight.IsRoomAdmin, dateList, sBegin, sEnd);
+
+            result.DayList = dateList;
+            result.Rooms = rooms2.ToList();
+
+            return PartialView("_SearchResultList", result);
+
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult LookupDayOfWeek()
-        {
-            var semStart = GetSemester().StartCourses;
-
-            var model = new RoomLookUpModel
-            {
-                DayOfWeek = (int)GlobalSettings.Today.DayOfWeek,
-                BeginHour = GlobalSettings.Now.TimeOfDay.Hours,
-                BeginMinute = (GlobalSettings.Now.TimeOfDay.Minutes / 15) * 15,
-                EndHour = GlobalSettings.Now.TimeOfDay.Hours + 1,
-                EndMinute = (GlobalSettings.Now.TimeOfDay.Minutes / 15) * 15,
-            };
-
-            SetTimeSelections();
-
-            return View(model);
-        }
 
 
         /// <summary>
@@ -349,7 +410,10 @@ namespace MyStik.TimeTable.Web.Controllers
             DateTime start = date.AddHours(from.Hours).AddMinutes(from.Minutes);
             DateTime end = date.AddHours(to.Hours).AddMinutes(to.Minutes);
 
-            var rooms = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(start, end, IsOrgAdmin());
+            var org = GetMyOrganisation();
+
+
+            var rooms = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(org.Id, IsOrgAdmin(), start, end);
 
             var model = new List<FreeRoomModel>();
 
@@ -373,81 +437,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_RoomList", model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="date1"></param>
-        /// <param name="from"></param>
-        /// <param name="date2"></param>
-        /// <param name="to"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult RoomListByPeriod(DateTime date1, TimeSpan from, DateTime date2, TimeSpan to)
-        {
-            DateTime start = date1.AddHours(from.Hours).AddMinutes(from.Minutes);
-            DateTime end = date2.AddHours(to.Hours).AddMinutes(to.Minutes);
-
-            var rooms = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(start, end, IsOrgAdmin());
-
-            var model = new List<FreeRoomModel>();
-
-            foreach (var room in rooms)
-            {
-                var freeRoom = new FreeRoomModel
-                {
-                    Room = room,
-                    CurrentDates = null,
-                    LastDate = room.Dates.Where(d => d.End <= end).OrderBy(d => d.End).LastOrDefault(),
-                    NextDate = room.Dates.Where(d => d.Begin >= end).OrderBy(d => d.Begin).FirstOrDefault(),
-                    From = start,
-                    To = end,
-                };
-
-                model.Add(freeRoom);
-            }
-
-            model = model.OrderByDescending(r => r.Duration).ThenBy(r => r.Room.Number).ToList();
-
-            return PartialView("_RoomList", model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="day"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult RoomListByDayOfWeek(int day, TimeSpan from, TimeSpan to)
-        {
-            var semester = GetSemester();
-
-            //var fk09 = Db.Organisers.SingleOrDefault(o => o.ShortName.Equals("FK 09"));
-
-            var rooms = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms((DayOfWeek)day, from, to, semester, IsOrgAdmin());
-
-            var model = new List<FreeRoomModel>();
-
-            foreach (var room in rooms)
-            {
-                var freeRoom = new FreeRoomModel
-                {
-                    Room = room,
-                    CurrentDates = null,
-                    LastDate = null,
-                    NextDate = null,
-                    From = semester.StartCourses,
-                    To = semester.EndCourses,
-                };
-
-                model.Add(freeRoom);
-            }
-
-            model = model.OrderByDescending(r => r.Duration).ThenBy(r => r.Room.Number).ToList();
-
-            return PartialView("_RoomList", model);
-        }
 
         /// <summary>
         /// 
@@ -469,48 +458,31 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Edit(Room model)
         {
+            var room = Db.Rooms.SingleOrDefault(x => x.Id == model.Id);
+
             if (ModelState.IsValid)
             {
-                var room = Db.Rooms.SingleOrDefault(x => x.Id == model.Id);
-
                 if (room != null)
                 {
                     room.Name = model.Name;
                     room.Description = model.Description;
                     room.Capacity = model.Capacity;
+                    room.HasAccessControl = model.HasAccessControl;
+                    room.IsForLearning = model.IsForLearning;
                 }
 
                 Db.SaveChanges();
+
+                var org = GetMyOrganisation();
+                ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+                ViewBag.Organiser = org;
+
+                return RedirectToAction("Details", new { id = room.Id });
             }
-            return RedirectToAction("Rooms", "Organiser");
+
+            return View(room);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Create()
-        {
-            var model = new Room();
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult Create(Room model)
-        {
-            if (ModelState.IsValid)
-            {
-                Db.Entry(model).State = EntityState.Added;
-                Db.SaveChanges();
-            }
-            return RedirectToAction("Index");
-        }
 
         /// <summary>
         /// 
@@ -679,7 +651,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (room != null)
             {
                 var futureOccurrenceList =
-                    room.Dates.Where(o => o.Begin >= GlobalSettings.Today).OrderBy(o => o.Begin).ToList();
+                    room.Dates.Where(o => o.Begin >= DateTime.Today).OrderBy(o => o.Begin).ToList();
 
                 foreach (var date in futureOccurrenceList)
                 {
@@ -859,7 +831,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var dayOfWeek = sDate.DayOfWeek;
 
@@ -1064,5 +1036,167 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_FreeRoomList", rooms);
         }
 
+        public ActionResult DateList(Guid id)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var roomService = new RoomService();
+
+            var model = roomService.GetRoomSchedule(id, semester);
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult UnLockRoom(Guid id)
+        {
+            var assignment = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            var room = assignment.Room;
+
+            if (assignment != null)
+            {
+                assignment.InternalNeedConfirmation = false;
+                Db.SaveChanges();
+            }
+
+
+            return PartialView("_EmptyRow");
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult LockRoom(Guid id)
+        {
+            var assignment = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            if (assignment != null)
+            {
+                assignment.InternalNeedConfirmation = true;
+                Db.SaveChanges();
+            }
+
+            return PartialView("_EmptyRow");
+        }
+
+        [HttpPost]
+        public PartialViewResult LinkOrganiser(Guid roomId, Guid orgId)
+        {
+            var room = Db.Rooms.SingleOrDefault(x => x.Id == roomId);
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            if (room != null && org != null)
+            {
+                var assign = room.Assignments.FirstOrDefault(x => x.Organiser.Id == org.Id);
+                if (assign == null)
+                {
+                    assign = new RoomAssignment
+                    {
+                        ExternalNeedConfirmation = true,
+                        InternalNeedConfirmation = true,
+                        Room = room,
+                        Organiser = org
+                    };
+                    Db.RoomAssignments.Add(assign);
+                    Db.SaveChanges();
+                }
+
+
+                return PartialView("_LinkRow", assign);
+
+            }
+
+
+
+            return PartialView("_EmptyRow");
+        }
+
+
+
+        [HttpPost]
+        public PartialViewResult DeleteLink(Guid id)
+        {
+            var assign = Db.RoomAssignments.SingleOrDefault(x => x.Id == id);
+
+            if (assign != null)
+            {
+                var room = assign.Room;
+                Db.RoomAssignments.Remove(assign);
+                Db.SaveChanges();
+                return PartialView("_EmptyRow");
+            }
+
+
+            return PartialView("_EmptyRow");
+        }
+
+
+        public ActionResult Labels(Guid? id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+            var rooms = roomService.GetRooms(org.Id, true);
+
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+            ViewBag.Organiser = org;
+            ViewBag.Semester = semester;
+
+
+            return View(rooms);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Create()
+        {
+            var model = new Room();
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Create(Room model)
+        {
+            if (ModelState.IsValid)
+            {
+                Db.Entry(model).State = EntityState.Added;
+
+                // Verknüpfung anlegen
+                var assign = new RoomAssignment
+                {
+                    ExternalNeedConfirmation = true,
+                    InternalNeedConfirmation = true,
+                    Room = model,
+                    Organiser = GetMyOrganisation()
+                };
+                Db.RoomAssignments.Add(assign);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Rooms", "Organiser");
+        }
+
     }
+
 }

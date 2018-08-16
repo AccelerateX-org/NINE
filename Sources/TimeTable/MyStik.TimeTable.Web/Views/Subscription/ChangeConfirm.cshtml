@@ -1,0 +1,60 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumSubscriptionViewModel
+@{
+    ViewBag.Title = "Studiengang bestätigen";
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Bestätigung Studiengang</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("Change", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+                    {
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+                        @Html.HiddenFor(model => model.CurrId)
+                        @Html.HiddenFor(model => model.SemId)
+                        @Html.HiddenFor(model => model.IsDual)
+                        @Html.HiddenFor(model => model.IsPartTime)
+
+
+
+                        <fieldset>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">@Model.Organiser.ShortName</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Curriculum, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">@Model.Curriculum.Name</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Semester, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">@Model.Semester.Name</p>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-danger">
+                                <h5>Wichtig:</h5>
+                                <p>Ich kann diese Angabe nicht mehr selber ändern. Wenn meine Angabe hier falsch ist, muss ich bei der Studiengangsbetreuung einen Antrag stellen.</p>
+                            </div>
+
+                            <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Bestätigen</button>
+                        </fieldset>
+                    }
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

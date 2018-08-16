@@ -33,5 +33,11 @@ namespace MyStik.TimeTable.Data
         // bzw. dort wird 4000 als maximale Länge automatisch angenommen!
         [MaxLength]
         public byte[] BinaryData { get; set; }
+
+
+        /// <summary>
+        /// Wie oft abgerufen
+        /// </summary>
+        public int AccessCount { get; set; }
     }
 }

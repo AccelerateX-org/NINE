@@ -47,6 +47,10 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public List<ActivitySubscriptionModel> MySubscriptions { get; }
 
+        public ActivityOrganiser Organiser { get; set; }
+
+        public Semester Semester { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -176,7 +180,21 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public string Name => Activity.Name;
+        public string Name
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Activity.Name))
+                {
+                    if (string.IsNullOrEmpty(Activity.ShortName))
+                    {
+                        return "N.N.";
+                    }
+                    return Activity.ShortName;
+                }
+                return Activity.Name;
+            }
+        }
 
         /// <summary>
         /// 
@@ -191,7 +209,7 @@ namespace MyStik.TimeTable.Web.Models
             get
             {
                 if (Activity is OfficeHour)
-                    return "Lecturer";
+                    return "OfficeHour";
                 return "Index";
             }
         }
@@ -208,7 +226,7 @@ namespace MyStik.TimeTable.Web.Models
                 if (Activity is Newsletter)
                     return "Newsletter";
                 if (Activity is OfficeHour)
-                    return "OfficeHour";
+                    return "Lecturer";
                 if (Activity is Event)
                     return "Event";
                 if (Activity is Reservation)
@@ -234,7 +252,7 @@ namespace MyStik.TimeTable.Web.Models
                         var host = date?.Hosts.FirstOrDefault();
                         if (host != null)
                         {
-                            return host.Id.ToString();
+                            return hour.Semester.Id.ToString();
                         }
                     }
                     return Activity.Id.ToString();
@@ -349,7 +367,7 @@ namespace MyStik.TimeTable.Web.Models
             {
                 var sb = new StringBuilder();
                 var nextDate =
-                    Activity.Dates.Where(d => d.Begin >= GlobalSettings.Now)
+                    Activity.Dates.Where(d => d.Begin >= DateTime.Now)
                         .OrderBy(d => d.Begin)
                         .FirstOrDefault();
                 if (nextDate != null)
@@ -387,6 +405,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         /// <param name="date"></param>
         /// <param name="dateType"></param>
+        /// <param name="isSlot"></param>
         public ActivityDateSummary(ActivityDate date, ActivityDateType dateType)
         {
             Date = date;
@@ -412,6 +431,11 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ActivityDate Date { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivitySlot Slot { get; set; }
 
         /// <summary>
         /// 
@@ -739,5 +763,13 @@ namespace MyStik.TimeTable.Web.Models
                 return sb.ToString();
             }
         }
+    }
+
+    public class ActivitySemesterViewModel
+    {
+        public Semester Semester { get; set; }
+
+        public ICollection<Course> Courses { get; set; }
+
     }
 }

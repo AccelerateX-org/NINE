@@ -59,21 +59,15 @@ namespace MyStik.TimeTable.Web.Api.Services
                 a.Dates.Any(d =>
                     (d.Begin >= FromTime && d.End <= UntilTime))).ToList();
 
-                //ALternative langsamere Abfrage
-                ////Gebuchten Termine des Tages abrufen
-                //var activityofday = Db.Activities.Where(a =>
-                //a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(userId)) &&
-                //a.Dates.Any(d =>
-                //    (d.Begin >= FromTime && d.End <= UntilTime) ||
-                //    (d.Begin <= FromTime && d.End <= UntilTime) ||
-                //    (d.Begin >= FromTime && d.End >= UntilTime) ||
-                //    (d.Begin <= FromTime && d.End >= UntilTime))).ToList();
-
                 // jede Activiy durchgehen und den nächsten Termine bestimmen
                 foreach (var activity in activityofday)
                 {
-                    dates.AddRange(GetDateContract(activity, day));
+                    dates.AddRange(GetDateContract(activity, day, UserId));
                 }
+
+                // Alternative: die Dates abfragen
+
+
 
                 // Die Veranstaltungen des Dozenten
                 var lectureActivities =
@@ -85,7 +79,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
                 foreach (var activity in lectureActivities)
                 {
-                    dates.AddRange(GetDateContract(activity, day));
+                    dates.AddRange(GetDateContract(activity, day, UserId));
                 }
 
 
@@ -116,7 +110,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         }
 
 
-        private List<DateContract> GetDateContract(Activity activity, DateTime day)
+        private List<DateContract> GetDateContract(Activity activity, DateTime day, string userId)
         {
             var dates = new List<DateContract>();
 
@@ -139,7 +133,7 @@ namespace MyStik.TimeTable.Web.Api.Services
                             LecturerName = host.Name != null ? host.Name : "N.N.",
                         });
                     }
-                    LecturerList.OrderBy(l => l.LecturerName);
+                    LecturerList = LecturerList.OrderBy(l => l.LecturerName).ToList();
 
                     //Räume
                     var RoomList = new List<DateRoomContract>();
@@ -152,14 +146,31 @@ namespace MyStik.TimeTable.Web.Api.Services
                             RoomNumber = room.Number != null ? room.Number : "N.N.",
                         });
                     }
-                    RoomList.OrderBy(r => r.RoomNumber);
+                    RoomList = RoomList.OrderBy(r => r.RoomNumber).ToList();
+
+
+                    // Bei Sprechstunden ggf. den Slot rausholen
+                    var start = nextDate.Begin;
+                    var end = nextDate.End;
+                    if (nextDate.Activity is OfficeHour)
+                    {
+                        var slot = nextDate.Slots.FirstOrDefault(
+                            x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId)));
+
+                        if (slot != null)
+                        {
+                            start = slot.Begin;
+                            end = slot.End;
+                        }
+                    }
+
 
                     //Termin zu Liste hinzufügen
                     dates.Add(new DateContract
                     {
-                        StartTime = nextDate.Begin.TimeOfDay.ToString("hh\\:mm"),
-                        EndTime = nextDate.End.TimeOfDay.ToString("hh\\:mm"),
-                        IsCanceled = nextDate.Occurrence.IsCanceled,
+                        StartTime = start.TimeOfDay.ToString("hh\\:mm"),
+                        EndTime = end.TimeOfDay.ToString("hh\\:mm"),
+                        IsCanceled =  nextDate.Occurrence?.IsCanceled ?? false,
                         Titel = activity.Name,
                         Rooms = RoomList.Any() ? RoomList : null,
                         Lecturers = LecturerList.Any() ? LecturerList : null,
@@ -177,7 +188,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         /// <returns></returns>
         public DatesContract GetDateInfo(string DateId)
         {
-            var dates = Db.ActivityDates.Where(d => d.Id.ToString().Equals(DateId)).FirstOrDefault();
+            var dates = Db.ActivityDates.FirstOrDefault(d => d.Id.ToString().Equals(DateId));
 
             var date = new DatesContract();
 
@@ -188,7 +199,7 @@ namespace MyStik.TimeTable.Web.Api.Services
                 date.Start = dates.Begin.TimeOfDay.ToString("hh\\:mm");
                 date.End = dates.End.TimeOfDay.ToString("hh\\:mm");
                 date.Date = dates.Begin.Date.ToString("dd.MM.yyyy");
-                date.IsCanceled = dates.Occurrence.IsCanceled;
+                date.IsCanceled = dates.Occurrence?.IsCanceled ?? false;
 
                 var lecturerList = new List<DateLecturerContract>();
 

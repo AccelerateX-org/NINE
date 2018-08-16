@@ -1,0 +1,146 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseSearchModel
+@{
+    ViewBag.Title = "Search";
+}
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Vorlesungssuche im Semester @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Alle Lehrveranstaltungen</h4></div>
+                <div class="panel-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DayOfWeek, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(model => model.DayOfWeek, (IEnumerable<SelectListItem>)ViewBag.WeekDays, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.DayOfWeek)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24" })
+                                @Html.ValidationMessageFor(m => m.NewBegin)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24" })
+                                @Html.ValidationMessageFor(m => m.NewEnd)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Option, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(model => model.Option, (IEnumerable<SelectListItem>)ViewBag.Options, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Option)
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button class="btn btn-default" onclick="onSearch()"><i class="fa fa-search"></i> suchen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Liste der Lehrveranstaltungen <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                </div>
+                <div class="panel-body">
+                    <div id="CourseList"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+        $(function () {
+            $("#loading").hide();
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+        });
+
+
+        function onSearch() {
+            $("#loading").show();
+
+            var day = $('#DayOfWeek option:selected').val();
+            var from = $("#NewBegin").val();
+            var to = $("#NewEnd").val();
+            var op = $('#Option option:selected').val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("Search")',
+                data: {
+                    semid: "@Model.Semester.Id.ToString()",
+                    day: day,
+                    from: from,
+                    to: to,
+                    radius: op
+                },
+                success: function(data, success, xhr) {
+                    $('#CourseList').html(data);
+                    $("#loading").hide();
+                }
+            });
+
+        };
+
+    </script>
+}

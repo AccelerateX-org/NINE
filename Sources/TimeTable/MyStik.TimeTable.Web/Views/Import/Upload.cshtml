@@ -17,6 +17,7 @@
 
 @Html.HiddenFor(m => m.OrganiserId)
 @Html.HiddenFor(m => m.SemesterId)
+@Html.HiddenFor(m => m.FormatId);
 
 
 <div class="container-fluid">
@@ -39,6 +40,7 @@
                             0%
                         </div>
                     </div>
+                    <a id="reportLink" href="@Url.Action("Reports", new {orgId=Model.OrganiserId, semId=Model.SemesterId})" class="btn btn-success"><i class="fa fa-file"></i> Importberichte</a>
                     <hr/>                    
                     <table class="table table-condensed">
                         <thead>
@@ -96,6 +98,9 @@
     <script type="text/javascript">
 
         $(function () {
+            $('#reportLink').hide();
+
+
             var connection = $.connection.jsonImportHub;
 
             connection.client.updateProgress = function (message, perc1) {
@@ -109,14 +114,15 @@
             $("#btnImport").click(function () {
                 var semId = $("#SemesterId").val();
                 var orgId = $("#OrganiserId").val();
+                var formatId = $("#FormatId").val();
 
-                connection.server.importSemester(semId, orgId).done(function (result) {
-                    //                    alert("habe fertig");
+                connection.server.importSemester(semId, orgId, formatId).done(function (result) {
+                    $('#reportLink').show();
                 });
             });
 
             $.connection.hub.start();
-        })
+    })
 
     </script>
 }

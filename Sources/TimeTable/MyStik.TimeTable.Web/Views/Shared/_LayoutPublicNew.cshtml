@@ -1,5 +1,4 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.HomeViewModel
 <!DOCTYPE html>
 <html lang="de-DE">
 <head>
@@ -7,57 +6,89 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NINE | @ViewBag.Title</title>
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")"/>
+    <title>nine | @ViewBag.Title</title>
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
-    <link rel="shortcut icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo.svg")" />
+    @RenderSection("styles", required: false)
+    <link rel="shortcut icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo_nine.svg")" />
 </head>
 <body>
-<nav class="navbar navbar-default" style="margin-bottom: 0px;border: 0px; background-color: #e1e1e1" ">
+    <div id="cookie-consent" class="bg-warning" hidden="">
+        <div class="container">
+            <div style="margin-top: 10px; margin-bottom: 10px">
+                <span>Wir verwenden Cookies, um Inhalte und Anzeigen zu personalisieren.</span>
+                <button class="btn btn-xs btn-default" id="consent">Hinweis nicht mehr anzeigen</button> <button class="btn btn-xs btn-default" id="learn-more">Weitere Informationen</button>
+            </div>
+        </div>
+    </div>
+<nav class="navbar navbar-default" style="margin-bottom: 0px; border: 0px; background-color: #595f64">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="@Url.Action("Index", "Home")">NINE</a>
+            <a class="navbar-brand" style="color: white" href="@Url.Action("Index", "Home")">
+                nine@shortcut
+            </a>
         </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="@Url.Action("Index", "Dashboard")" class="btn btn-primary" style="color: white"><i class="fa fa-sign-in"></i> Anmelden</a></li>
-        </ul>
+        @RenderSection("login", required: false)
     </div><!-- /.container-fluid -->
 </nav>
     @RenderBody()
-<footer style="background-color: #595f64;margin-top: 80px;padding-bottom: 200px;padding-top:40px; color:white">
     <div class="container">
-        <div class="col-md-3">
-            <h4>Open Source</h4>
-            <ul class="list-unstyled">
-                <li><a href="https://acceleratex.org" style="color:white">AccelerateX</a></li>
-            </ul>
-        </div>
-        <div class="col-md-3">
-            <h4>Dokumentation</h4>
-            <ul class="list-unstyled">
-                @foreach (var fac in Model.Faculties)
-                {
-                    <li><a href="@fac.Organiser.SupportUrl" style="color:white">@fac.Organiser.Name</a></li>
-                }
-            </ul>
-        </div>
-        <div class="col-md-3">
-            <h4>Support</h4>
-            <ul class="list-unstyled">
-                <li><a href="@Url.Action("Contact", "Home")" style="color:white">Kontakt</a></li>
-            </ul>
-        </div>
-        <div class="col-md-3">
-            <h4>Allgemeines</h4>
-            <ul class="list-unstyled">
-                <li><a href="@Url.Action("PrivacyStatement", "Home")" style="color:white">Datenschutz</a></li>
-                <li><a href="@Resources.ImprintHyperlink" style="color:white">@Resources.ImprintLink</a></li>
-            </ul>
+        <div class="page-footer">
+            <div class="page-footer-inner">
+                <div class="pull-left">
+                    <ul class="list-inline">
+                        <li><a href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a></li>
+                        <li><a href="@Url.Action("TermsOfUse", "Home")">Nutzungsbedingungen</a></li>
+                        <li><a href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a></li>
+                    </ul>
+                </div>
+                <div class="pull-right">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
+                                <img src="~/Assets/global/img/flags/de.png" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
+                                <img src="~/Assets/global/img/flags/gb.png" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetCulture", "Home", new {culture = "fr"})">
+                                <img src="~/Assets/global/img/flags/fr.png" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SetCulture", "Home", new {culture = "es"})">
+                                <img src="~/Assets/global/img/flags/es.png" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-</footer>
-@Scripts.Render("~/bundles/jquery")
-<script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    @Scripts.Render("~/bundles/jquery")
+    <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    @RenderSection("scripts", required: false)
+
+        <script type="text/javascript">
+            $(function() {
+                if (document.cookie.indexOf("cookieNotification") < 0) {
+                    $('#cookie-consent').slideDown('slow');
+                }
+                $('#consent').on('click',
+                    function() {
+                        document.cookie = "cookieNotification=yes; max-age=" + (5 * 365 * 24 * 60 * 60);
+                        $('#cookie-consent').slideUp('slow');
+                    });
+                $('#learn-more').on('click',
+                    function() {
+                        location.href = '@Url.Action("TermsOfUse", "Home")';
+                    });
+            });
+        </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 @model MyStik.TimeTable.Web.Models.DashboardViewModel
 
 @{
-    var hasPreviousActivities = Model.PreviousSemester != null && Model.MyPreviousActivities.Any();
+    var hasPreviousActivities = Model.PreviousSemester != null && Model.MyNextActivities.Any();
 
 }
 <div class="portlet light bordered">
@@ -10,19 +10,18 @@
         <div class="caption">
             <span class="caption-subject bold"> Meine Aktivitäten</span>
         </div>
-
         <ul class="nav nav-tabs">
             <li>
                 <a href="#portlet_tab3" data-toggle="tab"> Module </a>
             </li>
             @if (hasPreviousActivities)
-            {
-                <li>
-                    <a href="#portlet_tab2" data-toggle="tab">LV @Model.PreviousSemester.Name</a>
-                </li>
-            }
+        {
+            <li>
+                <a href="#portlet_tab2" data-toggle="tab">@Model.PreviousSemester.Name</a>
+            </li>
+    }
             <li class="active">
-                <a href="#portlet_tab1" data-toggle="tab">LV @Model.Semester.Name</a>
+                <a href="#portlet_tab1" data-toggle="tab">@Model.Semester.Name</a>
             </li>
         </ul>
     </div>
@@ -56,13 +55,13 @@
                                 {
                                     @Html.ActionLink(
                                         "N.N.",
-                                        "Admin", act.Controller, new {id = act.Id}, null)
+                                        "Admin", act.Controller, new { id = act.Id }, null)
                                 }
                                 else
                                 {
                                     @Html.ActionLink(
                                         act.Activity.Name,
-                                        "Admin", act.Controller, new {id = act.Id}, null)
+                                        "Admin", act.Controller, new { id = act.Id }, null)
                                 }
 
                             </td>
@@ -151,8 +150,23 @@
                         }
                     }
 
-
-
+                    @foreach (var act in Model.MyCurrentExams)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                @Html.ActionLink(
+                                    act.Activity.Name,
+                                    "Admin", "Thesis", new { id = act.Id }, null)
+                            </td>
+                            <td>@Html.GroupList(act.Activity.SemesterGroups)</td>
+                            <td></td>
+                            <td></td>
+                            <td>@act.Subscriptions.Count</td>
+                            <td></td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -172,7 +186,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var act in Model.MyPreviousActivities)
+                        @foreach (var act in Model.MyNextActivities)
                         {
                             <tr>
                                 <td>

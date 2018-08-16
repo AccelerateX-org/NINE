@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Web.Models.UserAdminViewModel
+@{
+    ViewBag.Title = "Student";
+}
+
+
+<h2>@Model.User.FullName</h2>
+<h4>@Model.Student.Curriculum.ShortName - @Model.Student.FirstSemester.Name</h4>
+<a href="@Url.Action("DeleteStudent", new {id=Model.Student.Id})">Löschen</a>
+

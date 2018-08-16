@@ -1,0 +1,53 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+    ViewBag.Title = "fillter";
+}
+
+<div class="container" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-12">
+            <h3><img src="@Url.Content("~/Assets/fillter/img/logo_fillter.svg")" style="background-color: #080808; width: 40px; padding-bottom: 5px"> fillter</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>Die Idee</h4>
+                    <p>Einführung in die Entwicklung von Apps für mobile Endgeräte an einem überschaubaren, nutzenstfitenden Vorhaben. Abruf des persönlichen Stundenplans, Anzeige von Abfahrtszeiten der MVG sowie des aktuellen Mensaspeicheplans bilden den Kern der Apps. Highlight sind die Push-Notifications bei Terminänderungen.</p>
+                    <p><strong>Hinweis</strong>: Die Apps werden von den Teams eigenständig (weiter)entwickelt. Leider findet sich nicht jedes Semester Teams zur Betreuung der Apps.</p>
+                </div>
+                <div class="col-md-4">
+                    <h4>Die Technik</h4>
+                    <p>Aktuell sind es "Native" Apps, d.h. Java/Android Studio für Android und Swift/XCode für iOS.</p>
+                    <p><strong>Hinweis</strong>: Leider kann die Hochschule nicht als Vertragspartner der App Shops auftreten. Die fillter Apps werden daher von Prof. Dr.-Ing. Olav Hinz unter seinem Namen veröffentlicht.</p>
+                </div>
+                <div class="col-md-4">
+                    <h4>Der Ausblick</h4>
+                    <p>Derzeit sind Prototypen auf Basis von Webtechnologien in Vorbereitung, z.B. mit dem Ionic Framework.</p>
+                    <p><strong>Hinweis</strong>: Wir sind ständig auf der Suche nach interessierten Studierenden als SHKs und auch für Abschlussarbeiten.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="list-inline">
+                <li>
+                    <a href='https://play.google.com/store/apps/details?id=de.fillter2&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                        <img alt='Get it on Google Play'
+                             src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'
+                             style="height: 65px" />
+                    </a>
+                </li>
+                <li>
+                    <a href="https://itunes.apple.com/us/app/fillter/id1203686910">
+                        <img alt="Get it on AppStore"
+                             src="@Url.Content("~/Assets/fillter/img/Download_on_the_App_Store_Badge_US-UK_135x40.svg")"
+                             style="height: 45px" />
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+

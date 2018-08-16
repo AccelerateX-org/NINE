@@ -1,0 +1,28 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.RoomAssignment
+
+<tr id="@Model.Id">
+    @if (Model.InternalNeedConfirmation)
+    {
+        <td>
+            <i class="fa fa-lock"></i>
+        </td>
+    }
+    else
+    {
+        <td></td>
+    }
+    <td>@Model.Organiser.ShortName</td>
+    <td>
+        @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteLink", "Room",
+            new {id = Model.Id},
+            new AjaxOptions
+            {
+                HttpMethod = "Post",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = Model.Id.ToString()
+            },
+            null)
+        
+    </td>
+</tr>

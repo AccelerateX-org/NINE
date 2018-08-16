@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.Cie;
 using MyStik.TimeTable.DataServices.Json;
 using MyStik.TimeTable.Web.Models;
 
@@ -29,7 +30,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new OrganiserViewModel
             {
                 Organiser = organiser,
-                Semester = GetSemester()
+                Semester = SemesterService.GetSemester(DateTime.Today)
             };
 
             ViewBag.UserRight = GetUserRight();
@@ -41,10 +42,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Select()
+        public ActionResult Select(string format)
         {
             var org = GetMyOrganisation();
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var model = new SemesterImportModel
             {
@@ -52,7 +53,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
                 SemesterId = semester.Id,
                 OrganiserId = org.Id,
-                Existing = GetCourseCount(org.Id, semester.Id)
+                Existing = GetCourseCount(org.Id, semester.Id, format),
+                FormatId = format
             };
 
 
@@ -65,20 +67,35 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        private int GetCourseCount(Guid orgId, Guid semId)
+        private int GetCourseCount(Guid orgId, Guid semId, string formatId)
         {
-            var nInSemester = Db.Activities.OfType<Course>().Count(c =>
-                c.Organiser.Id == orgId &&
-                c.SemesterGroups.Any(g =>
-                    g.Semester.Id == semId &&
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId
-                ) &&
-                (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals("JSON")));
+            var nInSemester = 0;
 
-            var nNoGroup = Db.Activities.OfType<Course>().Count(c =>
+            if (formatId.Equals("CIE"))
+            {
+                nInSemester = Db.Activities.OfType<Course>().Count(c =>
+                    c.SemesterGroups.Any(g => g.Semester.Id == semId) &&
+                    (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals(formatId)));
+            }
+            else
+            {
+                nInSemester = Db.Activities.OfType<Course>().Count(c =>
+                    c.Organiser.Id == orgId &&
+                    c.SemesterGroups.Any(g =>
+                        g.Semester.Id == semId &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == orgId
+                    ) &&
+                    (!string.IsNullOrEmpty(c.ExternalSource) && c.ExternalSource.Equals(formatId)));
+
+            }
+
+
+
+
+            var nNoGroup = Db.Activities.Count(c =>
                 c.Organiser.Id == orgId &&
                 !string.IsNullOrEmpty(c.ExternalSource) &&
-                c.ExternalSource.Equals("JSON") &&
+                c.ExternalSource.Equals(formatId) &&
                 !c.SemesterGroups.Any());
 
             return nInSemester + nNoGroup;
@@ -137,35 +154,86 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.AttachmentDays.SaveAs(Path.Combine(tempDir, "import.json"));
             }
 
-            // Dateien prüfen
-            var reader = new FileReader();
-            
-            reader.ReadFiles(tempDir);
+            BaseImportContext ctx = null;
+            if (model.FormatId.Equals("CIE"))
+            {
+                // Dateien prüfen
+                var reader = new DataServices.Cie.FileReader();
+                reader.ReadFiles(tempDir);
+                var importer = new DataServices.Cie.SemesterImport(reader.Context, model.SemesterId);
 
-            var importer = new SemesterImport(reader.Context, model.SemesterId, model.OrganiserId);
+                // Die Fakultät muss existieren
+                importer.CheckFaculty();
 
-            // Die Fakultät muss existieren
-            importer.CheckFaculty();
+                // Räume sollten existieren => Warnung
+                // Zuordnungen zu Räumen sollten existieren => Warnung
+                importer.CheckRooms();
 
-            // Räume sollten existieren => Warnung
-            // Zuordnungen zu Räumen sollten existieren => Warnung
-            importer.CheckRooms();
+                // Dozenten sollten existieren => Warnung
+                importer.CheckLecturers();
 
-            // Dozenten sollten existieren => Warnung
-            importer.CheckLecturers();
+                reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
+                    reader.Context.Model.Courses.Count, reader.Context.ValidCourses.Count), false);
 
-            reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
-                reader.Context.Model.Courses.Count, reader.Context.ValidCourses.Count), false);
+                ctx = reader.Context;
+            }
+            else
+            {
+                // Dateien prüfen
+                var reader = new DataServices.Json.FileReader();
+                reader.ReadFiles(tempDir);
+                var importer = new DataServices.Json.SemesterImport(reader.Context, model.SemesterId, model.OrganiserId);
 
-            model.Context = reader.Context;
+                // Die Fakultät muss existieren
+                importer.CheckFaculty();
 
+                // Räume sollten existieren => Warnung
+                // Zuordnungen zu Räumen sollten existieren => Warnung
+                importer.CheckRooms();
+
+                // Dozenten sollten existieren => Warnung
+                importer.CheckLecturers();
+
+                reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
+                    reader.Context.Model.Courses.Count, reader.Context.ValidCourses.Count), false);
+
+                ctx = reader.Context;
+            }
+
+            model.Context = ctx;
             model.Organiser = GetMyOrganisation();
-            model.Semester = GetSemester(model.SemesterId);
+            model.Semester = SemesterService.GetSemester(model.SemesterId);
 
 
             return View(model);
         }
 
 
+        public ActionResult Reports(Guid orgId, Guid semId)
+        {
+            var path = Path.GetTempPath();
+
+            var info = Directory.GetFiles(path, "Import*");
+
+            var model = new List<ImportReportViewModel>();
+
+            foreach (var s in info)
+            {
+                var fileName = Path.GetFileName(s);
+                model.Add(new ImportReportViewModel{Name=fileName});
+            }
+
+
+            return View(model);
+        }
+
+        public ActionResult GetReport(string id)
+        {
+            var path = Path.GetTempPath();
+
+            var file = Path.Combine(path, id);
+
+            return File(file, "text/html");
+        }
     }
 }

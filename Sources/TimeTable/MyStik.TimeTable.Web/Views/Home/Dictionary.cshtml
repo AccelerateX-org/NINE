@@ -1,0 +1,36 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterScheduleViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+
+    ViewBag.Title = "Vorlesunsgverzeichnis";
+}
+
+<div class="container" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-book"></i> Vorlesungsverzeichnis @Model.Curriculum.Name (@Model.Semester.Name)</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var course in Model.Courses)
+                    {
+                        <a href="@Url.Action("Course", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id, courseId=course.Course.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">@course.Course.Name</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa-li fa fa-user-md"></i>@Html.LecturerList(course.Lecturers, false)</li>
+                                    <li><i class="fa-li fa fa-calendar"></i>@course.Course.Dates.Count Termine</li>
+                                    <li><i class="fa-li fa fa-group"></i>@Html.GroupList(course.Course.SemesterGroups, false, false)</li>
+                                </ul>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

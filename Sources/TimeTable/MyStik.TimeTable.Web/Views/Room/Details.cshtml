@@ -1,0 +1,164 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Room
+@{
+    ViewBag.Title = "Raumdetails";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+}
+
+@{
+    var assignment = Model.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);    
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        <i class="fa fa-cubes"></i> @Model.Capacity
+                        @foreach (var roomAssignment in Model.Assignments.OrderBy(x => x.Organiser.ShortName))
+                        {
+                            @(roomAssignment.InternalNeedConfirmation ? Html.FacultyLabel(roomAssignment.Organiser, "fa-lock") : Html.FacultyLabel(roomAssignment.Organiser, "fa-unlock"))
+                        }
+                        
+                    </p>
+                    <h2>@Model.FullName</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("RoomList", "Organiser")" class="btn btn-default active">
+                                <i class="fa fa-arrow-left"></i> zurück zur Liste
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("DateList", new {id=Model.Id})" class="btn btn-default">
+                                <i class="fa fa-list"></i> Terminliste
+                            </a>
+                        </div>
+                        <div class="form-group dropdown">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-print"></i> Türschild <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=true, showDateList=false, isMoSa=false })">
+                                        <i class="fa fa-calendar"></i> Wochenkalender (Mo-Fr)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=true, showDateList=false, isMoSa=true  })">
+                                        <i class="fa fa-calendar"></i> Wochenkalender (Mo-Sa)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("RoomScheduleCurrentWeek", "Print", new { id = Model.Id  })">
+                                        <i class="fa fa-calendar"></i> Aktuelle Woche
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("RoomScheduleNextWeek", "Print", new { id = Model.Id  })">
+                                        <i class="fa fa-calendar"></i> Nächste Woche
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=false, showDateList=true, isMoSa=false })">
+                                        <i class="fa fa-list"></i> Nur Datumsliste
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=true, showDateList=true, isMoSa=false })">
+                                        <i class="fa fa-birthday-cake"></i> Wochenkalender und Datumsliste
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    
+                        @if (ViewBag.UserRight.IsRoomAdmin)
+                        {
+                            <div class="form-group">
+                                <a href="@Url.Action("Edit", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-gear"></i> Einstellungen
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Rules", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-legal"></i> Belegungsregeln
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i> Belegung
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                    <div class="actions">
+                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="calendar" class="has-toolbar">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#loading').hide();
+
+            initCalendar(false);
+
+            $('#calendar').fullCalendar('removeEvents');
+
+            $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("CourseEventsByRoom", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        roomId: "@Model.Id",
+                        showPersonalDates: false
+                    }
+                });
+        });
+
+    </script>
+}

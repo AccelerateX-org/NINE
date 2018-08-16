@@ -1,0 +1,76 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisOverviewModel
+@{
+    ViewBag.Title = "Abschlussarbeiten";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Lehrende @Model.Organiser.ShortName mit Betreuungsangebot von Abschlussarbeiten im @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.UserRight.IsOrgMember)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("CreateThesis", "Thesis")" class="btn btn-default">
+                                    <i class="fa fa-cog"></i> Eigenes Angebot anlegen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        Lehrende mit Betreuungsangebot von Abschlussarbeiten
+                    </div>
+                </div>
+                <div class="portlet-body"></div>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Studiengang</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Thesis.OrderBy(x => x.Lecturer.Name))
+                        {
+                            <tr>
+                                <td>@item.Lecturer.Name</td>
+                                <td>@item.Curriculum.Name</td>
+                                <td>
+                                    <a href="@Url.Action("Details", new {id=item.Thesis.Id})">zum Angebot</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

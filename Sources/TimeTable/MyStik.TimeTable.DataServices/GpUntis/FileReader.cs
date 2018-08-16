@@ -116,8 +116,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                 var words = line.Split(',');
                 var GPU005RaumID = words[0].Replace("\"", "");
                 var GPU005RaumName = words[1].Replace("\"", "");
-                int result;
-                var capacity = int.TryParse(words[7], out result) ? result : 0;
+                var capacity = int.TryParse(words[7], out var result) ? result : 0;
                 var desc = words[12].Replace("\"", "");
                 var owner = words[11].Replace("\"", "");
 
@@ -378,13 +377,38 @@ namespace MyStik.TimeTable.DataServices.GpUntis
         private Kurs GetCourse(Unterricht u)
         {
             // Vorbedingungen prüfen
-            var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(u.RaumID));
+            // es können auch mehrere Räume sein
+            var rooms = new List<Raum>();
+            if (u.RaumID.StartsWith("~"))
+            {
+                // das sind nun mehrere Räume
+                var roomIds = u.RaumID.Split('~');
+                foreach (var roomId in roomIds)
+                {
+                    var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(roomId));
+                    if (room != null)
+                    {
+                        rooms.Add(room);
+                    }
+                }
+            }
+            else
+            {
+                var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(u.RaumID));
+                if (room != null)
+                {
+                    rooms.Add(room);
+                }
+            }
+
+
+
             var lecturer = ctx.Dozenten.SingleOrDefault(l => l.DozentID.Equals(u.DozentID));
 
             Kurs c;
             if (!unterrichtsMap.ContainsKey(u.UnterrichtID))
             {
-                c = CreateCourse(u, room, lecturer);
+                c = CreateCourse(u, rooms, lecturer);
                 if (c != null)
                 {
                     unterrichtsMap[u.UnterrichtID] = new List<Kurs> {c};
@@ -403,7 +427,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
                 if (c == null)
                 {
-                    c = CreateCourse(u, room, lecturer);
+                    c = CreateCourse(u, rooms, lecturer);
                     if (c != null)
                     {
                         unterrichtsMap[u.UnterrichtID].Add(c);
@@ -413,7 +437,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
             return c;
         }
 
-        private Kurs CreateCourse(Unterricht u, Raum room, Dozent lecturer)
+        private Kurs CreateCourse(Unterricht u, List<Raum> rooms, Dozent lecturer)
         {
             var fach = ctx.Faecher.SingleOrDefault(f => f.FachID.Equals(u.FachID));
 
@@ -442,7 +466,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                 Tag = u.Tag,
             };
 
-            if (room != null)
+            foreach (var room in rooms)
             {
                 ce.Raeume.Add(room);
                 room.IsTouched = true;

@@ -1,0 +1,34 @@
+﻿@model MyStik.TimeTable.Data.Course
+@{
+    ViewBag.Title = "Teilnehmerliste";
+}
+
+<h2>SubscriptionList</h2>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
+{
+    <fieldset>
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, new { @class = "col-sm-3 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ShortName, new { @class = "col-sm-3 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <button type="submit" class="btn btn-default"><i class="fa fa-save"></i> Anlegen</button>
+            </div>
+        </div>
+
+    </fieldset>
+}
+
+

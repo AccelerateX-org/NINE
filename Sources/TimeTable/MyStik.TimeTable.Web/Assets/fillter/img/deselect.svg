@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="44px" height="44px" viewBox="0 0 44 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>deselect</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-16.7%" y="-16.7%" width="133.3%" height="133.3%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="deselect" filter="url(#filter-1)" transform="translate(4.000000, 4.000000)">
+            <circle id="Oval" fill="#FF6464" cx="18" cy="18" r="18"></circle>
+            <path d="M9.99291131,9.99291131 L26.5,26.5" id="Line" stroke="#FFFFFF" stroke-width="5" stroke-linecap="square"></path>
+            <path d="M9.99219279,26.0078072 L26.0069431,9.99305689" id="Line-Copy" stroke="#FFFFFF" stroke-width="5" stroke-linecap="square"></path>
+        </g>
+    </g>
+</svg>

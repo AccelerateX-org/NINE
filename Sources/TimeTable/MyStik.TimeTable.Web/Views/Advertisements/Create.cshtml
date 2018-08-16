@@ -1,0 +1,139 @@
+﻿@model MyStik.TimeTable.Web.Models.AdvertisementCreateModel
+@{
+    ViewBag.Title = "Ausschreibung anlegen";
+}
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Ausschreibung anlegen</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Angaben</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                    {
+                        @Html.ValidationSummary(true)
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Title, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-10">
+                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "10" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Anhang</label>
+                                <div class="col-md-10">
+                                    <div><input type="file" name="Attachment1" id="Attachment1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Einordnung / Bezug</label>
+                                <div class="col-md-4">
+                                    @Html.CheckBoxFor(item => item.ForInternship)
+                                    @Html.LabelFor(item => item.ForInternship, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.CheckBoxFor(item => item.ForThesis)
+                                    @Html.LabelFor(item => item.ForThesis, new { @class = "control-label" })
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-4">
+                                        @Html.CheckBoxFor(item => item.ForStayAbroad)
+                                        @Html.LabelFor(item => item.ForStayAbroad, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.CheckBoxFor(item => item.ForAdvancement)
+                                        @Html.LabelFor(item => item.ForAdvancement, new { @class = "control-label" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-4">
+                                        @Html.CheckBoxFor(item => item.ForCompetition)
+                                        @Html.LabelFor(item => item.ForCompetition, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.CheckBoxFor(item => item.ForTutor)
+                                        @Html.LabelFor(item => item.ForTutor, new { @class = "control-label" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-4">
+                                        @Html.CheckBoxFor(item => item.ForWorkingStudent)
+                                        @Html.LabelFor(item => item.ForWorkingStudent, new { @class = "control-label" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Anzeigen bis</label>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(m => m.ExpiryDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Speichern" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#Description").cleditor();
+
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+        });
+
+    </script>
+}

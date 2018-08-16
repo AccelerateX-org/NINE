@@ -20,7 +20,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             var org = GetMyOrganisation();
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var model = new SemesterImportModel
             {
@@ -33,15 +33,25 @@ namespace MyStik.TimeTable.Web.Controllers
                 Existing = GetCourseCount(org.Id, semester.Id)
             };
 
-
-            ViewBag.Semester = Db.Semesters.OrderByDescending(c => c.StartCourses).Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            });
+            ViewBag.Semester = Db.Semesters
+                .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
+                .OrderBy(s => s.StartCourses)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                });
 
 
             return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult GetCourseStat(Guid orgId, Guid semId)
+        {
+            var n = GetCourseCount(orgId, semId);
+
+            return Json(new { nCourses = n });
         }
 
         private int GetCourseCount(Guid orgId, Guid semId)

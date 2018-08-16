@@ -57,12 +57,13 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 var courses = module.ModuleCourses.ToList();
                 foreach (var moduleCourse in courses)
                 {
+                    /*
                     var c2 = moduleCourse.Courses.ToList();
                     foreach (var course in c2)
                     {
                         Db.Activities.Remove(course);
                     }
-
+                    */
                     Db.ModuleCourses.Remove(moduleCourse);
                 }
 

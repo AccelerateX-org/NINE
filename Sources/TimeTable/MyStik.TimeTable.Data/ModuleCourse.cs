@@ -19,8 +19,9 @@ namespace MyStik.TimeTable.Data
     {
         public ModuleCourse()
         {
-            Courses = new List<Course>();
+            //Courses = new List<Course>();
             CapacityCourses = new List<CapacityCourse>();
+            Nexus = new HashSet<CourseModuleNexus>();
         }
 
 
@@ -29,6 +30,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// optionale Bezeichnung
+        /// da packen wir den Typ rein
         /// </summary>
         public string Name { get; set; }
 
@@ -59,12 +61,15 @@ namespace MyStik.TimeTable.Data
         /// Die Semesterzuordnung steckt im Kurs an sich über die Zuordnung
         /// zu den Semestergruppen. Muss daher hier nicht extra gemacht werden
         /// </summary>
-        public virtual ICollection<Course> Courses { get; set; }
+        // public virtual ICollection<Course> Courses { get; set; }
 
         /// <summary>
         /// Unterteilung in Parallelgruppen
         /// immmer mindestens 1
         /// </summary>
         public virtual ICollection<CapacityCourse> CapacityCourses { get; set; }
+
+        public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
+
     }
 }

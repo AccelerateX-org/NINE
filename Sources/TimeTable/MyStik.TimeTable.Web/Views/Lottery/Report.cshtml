@@ -1,6 +1,10 @@
-﻿@model MyStik.TimeTable.Data.LotteryDrawing
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.LotteryDrawing
 @{
     ViewBag.Title = "Report";
+    var occService = new ActivityService();
+    var userService = new UserInfoService();
 }
 
 
@@ -21,16 +25,43 @@
         <div class="col-md-12">
             @foreach (var course in Model.OccurrenceDrawings)
             {
+                var activity = occService.GetSummary(course.Occurrence.Id);
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="portlet light bordered">
                             <div class="portlet-title">
                                 <div class="caption">
                                     <i class="fa fa-random"></i>
-                                    <span class="caption-subject bold uppercase"> @course.Occurrence.Id</span>
+                                    <span class="caption-subject bold uppercase"> @activity.Name (@activity.Activity.ShortName)</span>
                                 </div>
                             </div>
                             <div class="portlet-body">
+                                <div class="alert alert-info">
+                                    <h5>Gruppen</h5>
+                                    <ul>
+                                        @foreach (var g in course.Occurrence.Groups)
+                                        {
+                                            <li>@Html.GroupList(g.SemesterGroups)</li>
+                                        }
+                                    </ul>
+                                    <h5>Infos</h5>
+                                    <ul>
+                                        @if (course.Occurrence.UseGroups)
+                                        {
+                                            <li>Gruppeninfo wird verwendet</li>
+                                        }
+                                        else
+                                        {
+                                            <li>Der Studiengang muss passen</li>
+
+                                        }
+                                        @if (course.Occurrence.UseExactFit)
+                                        {
+                                            <li>Exakte Übereinstimmung gefordert</li>
+                                        }
+                                    </ul>
+                                </div>
                                 <table class="table table-condensed">
                                     <thead>
                                     <tr>
@@ -45,15 +76,16 @@
                                     <tbody>
                                     @foreach (var subscriptionDrawing in course.SubscriptionDrawings)
                                     {
+                                        var user = userService.GetUserName(subscriptionDrawing.Subscription.UserId);
                                         <tr>
-                                            <td>@subscriptionDrawing.Subscription.Id</td>
+                                            <td>@user</td>
                                             <td>@subscriptionDrawing.StateBeforeDrawing</td>
                                             <td>@subscriptionDrawing.LapCountBeforeDrawing</td>
                                             <td>@subscriptionDrawing.StateAfterDrawing</td>
                                             <td>@subscriptionDrawing.LapCountAfterDrawing</td>
-                                            <td>@subscriptionDrawing.Remark</td>
+                                            <td>@Html.Raw(subscriptionDrawing.Remark)</td>
                                         </tr>
-  
+
                                     }
                                     </tbody>
                                 </table>

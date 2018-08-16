@@ -19,7 +19,8 @@
             if (nDates == 0)
             {
                 <tr>
-                    <td>@room.Room.FullName</td>
+                                    
+                    <td><a href="@Url.Action("Details", "Room", new {id = room.Room.Id})">@room.Room.FullName</a></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -36,12 +37,12 @@
                     <tr>
                         @if (date == room.Dates.First())
                         {
-                            <td rowspan="@nDates">@room.Room.FullName</td>
+                            <td rowspan="@nDates"><a href="@Url.Action("Details", "Room", new {id = room.Room.Id})">@room.Room.FullName</a></td>
                         }
                         <td>@Html.TimeSpan(date)</td>
                         <td>
                             @Html.ActionLink(
-                                date.Activity.Name,
+                                summary.Name,
                                 "Details", summary.Controller, new { id = summary.Id }, null)
                         </td>
                         <td>@Html.LecturerList(date.Hosts)</td>

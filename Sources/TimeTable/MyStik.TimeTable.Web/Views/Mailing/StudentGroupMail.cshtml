@@ -37,6 +37,10 @@
                 </div>
                 <div class="portlet-body">
                     <div class="row">
+                    @if (ViewBag.GroupList != null)
+                    {
+                        var nStud = 0;
+                        var groupList = ViewBag.GroupList as ICollection<SemesterGroup>;
                         <table class="table table-condensed">
                             <thead>
                             <tr>
@@ -45,23 +49,17 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @{
-                                var nStud = 0;
-                                var groupList = ViewBag.GroupList as ICollection<SemesterGroup>;
-                            }
-                            @if (groupList != null)
-                            {
-                                foreach (var group in groupList.Where(g => g.CapacityGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
-                                {
-                                    nStud += group.Subscriptions.Count;
 
-                                    <tr>
-                                        <td>@group.FullName</td>
-                                        <td>
-                                            @group.Subscriptions.Count
-                                        </td>
-                                    </tr>
-                                }
+                            @foreach (var group in groupList.Where(g => g.CapacityGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
+                            {
+                            nStud += group.Subscriptions.Count;
+
+                            <tr>
+                                <td>@group.FullName</td>
+                                <td>
+                                    @group.Subscriptions.Count
+                                </td>
+                            </tr>
                             }
                             <tr>
                                 <td><strong>Total</strong></td>
@@ -69,6 +67,13 @@
                             </tr>
                             </tbody>
                         </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <h4>Es sind keine Gruppen ausgewählt. Die Mail hat keine Empfänger!</h4>
+                        </div>
+                    }
                     </div>
                 </div>
             </div>

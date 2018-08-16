@@ -1,0 +1,62 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumTermViewModel
+@{
+    ViewBag.Title = "Ablauf";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Ablauf @Model.Curriculum.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    @foreach (var term in Model.Terms)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>@term.Key. Semester</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            @foreach (var criteria in term)
+                            {
+                                <div class="list-group-item">
+                                    <div class="list-group-item-heading">
+                                        <h5>@criteria.Name</h5>
+                                    </div>
+                                    <div class="list-group-item-text">
+                                        <ul>
+                                            <li>Gehört zu: @criteria.Requirement.Option.Package.Name</li>
+                                            @if (@criteria.Requirement.Option.Package.Options.Count > 1)
+                                            {
+                                                <li>Auswahl: @criteria.Requirement.Option.Name</li>
+                                            }
+                                            @if (criteria.Requirement.Criterias.Count > 1)
+                                            {
+                                                <li>"Teilmodul" - gehört zu @criteria.Requirement.Name</li>
+                                            }
+                                            else
+                                            {
+                                                <li>"Modul" - bringt @criteria.Requirement.ECTS ECTS</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+

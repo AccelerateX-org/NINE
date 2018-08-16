@@ -1,0 +1,78 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Lehrende " + Model.Organiser.ShortName;
+    var i = 0;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Lehrende @Model.Organiser.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Index")" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                @foreach (var role in Model.Responsibilities)
+                {
+                    i++;
+                    var collapseName = "collapse" + i;
+                    var isIn = i == 1 ? "in" : "";
+                    var rolePanelId = "rolePanel" + i;
+                    var roleName = string.IsNullOrEmpty(role.Key.Name) ? "Ohne Rolle" : role.Key.Name;
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="@rolePanelId">
+                            <h5>
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#@collapseName">
+                                    @roleName
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="@collapseName" class="panel-collapse collapse @isIn" role="tabpanel">
+                            <div class="list-group">
+                                @foreach (var member in role)
+                                {
+                                    <a href="@Url.Action("Member", "Organiser", new {id = member.Member.Id})" class="list-group-item">
+                                        <h5 class="list-group-item-heading">@member.Member.FullName (@member.Member.ShortName)</h5>
+                                    </a>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

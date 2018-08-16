@@ -1,0 +1,99 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.UserCoursePlanViewModel
+
+<div>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Eintragung</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">@Model.Semester.Name</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @if (Model.Subscription.OnWaitingList)
+                    {
+                        <h5>Status Warteliste</h5>
+                    }
+                    else
+                    {
+                        <h5>Status Teilnehmer</h5>
+                    }
+                    @if (string.IsNullOrEmpty(Model.Subscription.SubscriberRemark))
+                    {
+                        <h5>Keine Bemerkung vorhanden</h5>
+                    }
+                    else
+                    {
+                        <div class="well">
+                            <i>@Model.Subscription.SubscriberRemark</i>
+                        </div>
+                    }
+                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                        <a href="mailto:@Model.User.Email" class="btn btn-default"><i class="fa fa-envelope-o"></i> E-Mail schreiben</a>
+                        @if (Model.Subscription.OnWaitingList)
+                        {
+                            <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-default"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("SetOnWaitingList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Auf Warteliste setzen</a>
+                        }
+                        <a href="@Url.Action("RemoveSubscription2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="profile">
+            <div class="panel panel-default">
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Gruppe(n)</th>
+                        <th>Dozent(en)</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.CourseSubscriptions)
+                    {
+                        var linkText = item.CourseSummary.Course.Name + " (" + item.CourseSummary.Course.ShortName + ")";
+                        <tr>
+                            <td>
+                                @Html.ActionLink(linkText, "Index", "Course", new { id = item.CourseSummary.Course.Id }, null)
+                            </td>
+                            <td>
+                                @Html.GroupList(item.CourseSummary.Course.SemesterGroups)
+                            </td>
+                            <td>
+                                @Html.LecturerList(item.CourseSummary.Lecturers)
+                            </td>
+                            <td>
+                                @if (item.Subscription.OnWaitingList)
+                                {
+                                    <i class="fa fa-hourglass-half"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-group"></i>
+                                }
+                                @if (item.CourseSummary.Lottery != null)
+                                {
+                                    <i class="fa fa-random"></i>
+                                }
+                            </td>
+                        </tr>
+
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>

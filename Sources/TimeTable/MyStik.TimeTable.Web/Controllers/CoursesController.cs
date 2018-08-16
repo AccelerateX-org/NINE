@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -16,23 +20,100 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var org = GetMyOrganisation();
+
+            var model = new OrganiserViewModel
+            {
+                Semester = semester,
+                Organiser = org,
+            };
+
+            /*
+            model.ThisSemesterActivities.Semester = semester;
+            model.ThisSemesterActivities.Organiser = org;
+
+            // und für das nächste Semester
+            // nur wenn es Stundenpläne gibt, diese müssen noch nicht freigegeben sein, Existenz reicht
+            if (nextSemester != null)
+            {
+                var activeCurriclula = SemesterService.GetActiveCurricula(org, nextSemester, false);
+                if (activeCurriclula.Any())
+                {
+                    model.NextSemester = nextSemester;
+                    model.NextSemesterActivities.Semester = nextSemester;
+                    model.NextSemesterActivities.Organiser = org;
+                }
+            }
+
+            // es gibt (noch) kein nächstes Semester, dann das vorherige prüfen
+            if (model.NextSemester == null && previousSemester != null)
+            {
+                var activeCurriclula = SemesterService.GetActiveCurricula(org, previousSemester, false);
+                if (activeCurriclula.Any())
+                {
+                    model.PreviousSemester = previousSemester;
+
+                    model.PreviousSemesterActivities.Semester = previousSemester;
+                    model.PreviousSemesterActivities.Organiser = org;
+                }
+            }
+            */
+
+            // alle Semester
+            model.ActiveSemesters.AddRange(
+            Db.Semesters
+                .Where(x => x.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .ToList());
+
+
+
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+        public ActionResult Semester(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var model = new OrganiserViewModel
+            {
+                Semester = semester,
+                Organiser = org,
+            };
+
+            var lastEnd = DateTime.Today.AddDays(-90);
+            var alLotteries = Db.Lotteries.Where(x =>
+                x.LastDrawing >= lastEnd && x.IsAvailable &&
+                x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.FirstDrawing).ToList();
+
+            model.ActiveLotteries.AddRange(alLotteries);
+
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Index(Guid? id)
+        public ActionResult Groups(Guid? id)
         {
             var organiser = GetMyOrganisation();
             if (organiser == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Semester semester;
-            if (id.HasValue)
-            {
-                semester = GetSemester(id.Value);
-            }
-            else
-            {
-                semester = GetSemester();
-            }
+            var semester = SemesterService.GetSemester(id);
 
             var model = new OrganiserViewModel
             {
@@ -40,22 +121,36 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
-            var nextSemester = new SemesterService().GetNextSemester(semester);
-            if (nextSemester != null && nextSemester.Groups.Any())
+            // hier jetzt das ganze zu Fuss
+            var studentService = new StudentService(Db);
+
+            var groups = semester.Groups
+                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id)
+                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
+                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name).ToList();
+            foreach (var group in groups)
             {
-                ViewBag.NextSemester = nextSemester;
+                var groupModel = new SemesterGroupViewModel
+                {
+                    Group = group,
+                    UserIds = studentService.GetStudents(group)
+                };
+
+                model.SemesterGroups.Add(groupModel);
             }
+
+            model.Groups = groups.GroupBy(x => x.CapacityGroup.CurriculumGroup.Curriculum).ToList();
 
             ViewBag.UserRight = GetUserRight();
 
-            return View(model);
+            return View("GroupsNew", model);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult List()
+        public ActionResult List(Guid? id)
         {
             var organiser = GetMyOrganisation();
             if (organiser == null)
@@ -65,7 +160,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!userRight.IsOrgMember)
                 return RedirectToAction("NoMember");
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(id);
 
             var model = new OrganiserViewModel
             {
@@ -144,7 +239,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!userRight.IsOrgMember)
                 return RedirectToAction("NoMember");
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var model = new OrganiserViewModel
             {
@@ -214,7 +309,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Enable(Guid id)
         {
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
 
             var allGroups =
@@ -231,7 +326,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Admin", new {id=semester.Id});
         }
 
         /// <summary>
@@ -241,7 +336,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Disable(Guid id)
         {
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
 
             var allGroups =
@@ -258,7 +353,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
         /// <summary>
@@ -268,13 +363,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult InitGroups(Guid id)
         {
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
 
             if (semester == null)
                 return RedirectToAction("Index");
-
-            var isWS = semester.Name.StartsWith("WS");
 
             // Alle Curricula durchgehen
             foreach (var curriculum in Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList())
@@ -283,22 +376,19 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     foreach (var capacityGroup in curriculumGroup.CapacityGroups.ToList())
                     {
-                        if ((capacityGroup.InWS && isWS) || (capacityGroup.InSS && !isWS))
+                        var exist = semester.Groups.Any(g => g.CapacityGroup.Id == capacityGroup.Id);
+
+                        if (!exist)
                         {
-                            var exist = semester.Groups.Any(g => g.CapacityGroup.Id == capacityGroup.Id);
-
-                            if (!exist)
+                            var semGroup = new SemesterGroup
                             {
-                                var semGroup = new SemesterGroup
-                                {
-                                    CapacityGroup = capacityGroup,
-                                    CurriculumGroup = capacityGroup.CurriculumGroup,        // nur noch aus Gründen der Sicherheit
-                                    Semester = semester
-                                };
+                                CapacityGroup = capacityGroup,
+                                CurriculumGroup = capacityGroup.CurriculumGroup,        // nur noch aus Gründen der Sicherheit
+                                Semester = semester
+                            };
 
-                                semester.Groups.Add(semGroup);
-                                Db.SemesterGroups.Add(semGroup);
-                            }
+                            semester.Groups.Add(semGroup);
+                            Db.SemesterGroups.Add(semGroup);
                         }
                     }
                 }
@@ -307,7 +397,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Index", new { id = id });
+            return RedirectToAction("Groups", new { id = id });
         }
 
         /// <summary>
@@ -332,16 +422,19 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult LockCourses(Guid id)
         {
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
 
-            var allGroups = Db.Activities.OfType<Course>().Where(x => x.SemesterGroups.Any(s => s.Semester.Id == id))
+            var allGroups = Db.Activities.OfType<Course>().Where(x => 
+                x.SemesterGroups.Any(s => 
+                    s.Semester.Id == id && 
+                    s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                 .ToList();
             allGroups.ForEach(x => x.IsInternal = true);
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
         /// <summary>
@@ -351,17 +444,258 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult UnLockCourses(Guid id)
         {
-            var semester = GetSemester(id);
+            var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
 
-            var allGroups = Db.Activities.OfType<Course>().Where(x => x.SemesterGroups.Any(s => s.Semester.Id == id))
+            var allGroups = Db.Activities.OfType<Course>().Where(x => 
+                x.SemesterGroups.Any(s => 
+                    s.Semester.Id == id && 
+                    s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                 .ToList();
             allGroups.ForEach(x => x.IsInternal = false);
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Admin", new { id = semester.Id });
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DisableCourses(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var allGroups = Db.Activities.OfType<Course>().Where(x =>
+                    x.SemesterGroups.Any(s =>
+                        s.Semester.Id == id &&
+                        s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .ToList();
+            allGroups.ForEach(x => x.Occurrence.IsAvailable = false);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Admin", new { id = semester.Id });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult EnableCourses(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var allGroups = Db.Activities.OfType<Course>().Where(x =>
+                    x.SemesterGroups.Any(s =>
+                        s.Semester.Id == id &&
+                        s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .ToList();
+            allGroups.ForEach(x => x.Occurrence.IsAvailable = true);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Admin", new { id = semester.Id });
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public FileResult SemesterReport(Guid? id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var model = CreateSemesterReport(semester, org);
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+
+            writer.Write("Studiengang;Gruppe;Dozent;Kurzname;Name;Eintragungen");
+            writer.Write(Environment.NewLine);
+
+
+            foreach (var course in model)
+            {
+
+                writer.Write("{0};{1};{2};{3};{4};{5}",
+                    course.Curriculum.ShortName, course.Group.FullName,
+                    course.Lecturer.Name,
+                    course.Course.ShortName,
+                    course.Course.Name,
+                    course.Course.Occurrence.Subscriptions.Count);
+                writer.Write(Environment.NewLine);
+            }
+
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Lehrangebot_");
+            sb.Append(semester.Name);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
+        private List<SemesterCourseViewModel> CreateSemesterReport(Semester semester, ActivityOrganiser org)
+        {
+
+            var model = new List<SemesterCourseViewModel>();
+
+            // Alle Lehrveranstaltungen in diesem Semester
+            var courses = Db.Activities.OfType<Course>().Where(x => x.SemesterGroups.Any(s => 
+            s.Semester.Id == semester.Id && s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
+
+            // für jede Lehrveranstaltung alle Dozenten
+            foreach (var course in courses)
+            {
+                // Alle Dozenten in dieser LV
+                var lectures =
+                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+
+
+                // Für jede Semestergruppe
+                foreach (var semesterGroup in course.SemesterGroups)
+                {
+
+                    foreach (var lecture in lectures)
+                    {
+                        var courseModel = new SemesterCourseViewModel
+                        {
+                            Course = course,
+                            Curriculum = semesterGroup.CapacityGroup.CurriculumGroup.Curriculum,
+                            Lecturer = lecture,
+                            Group = semesterGroup
+                        };
+
+                        model.Add(courseModel);
+
+                    }
+                }
+            }
+
+            model = model.OrderBy(x => x.Curriculum.ShortName).ThenBy(x => x.Lecturer.Name).ToList();
+
+            return model;
+        }
+
+        public ActionResult Admin(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var model = new OrganiserViewModel
+            {
+                Semester = semester,
+                Organiser = org
+            };
+
+            return View(model);
+        }
+
+        public ActionResult CreateSemester()
+        {
+            var org = GetMyOrganisation();
+            var nextSemester = SemesterService.GetNextSemester(DateTime.Today);
+
+
+            return RedirectToAction("InitGroups", new {id = nextSemester.Id});
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Schedule(Guid id)
+        {
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var semester = SemesterService.GetSemester(id);
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+                Semester = semester
+            };
+
+
+            var groups = semester.Groups
+                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id)
+                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
+                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name).ToList();
+            foreach (var group in groups)
+            {
+                var groupModel = new SemesterGroupViewModel
+                {
+                    Group = group,
+                };
+
+                model.SemesterGroups.Add(groupModel);
+            }
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Calendar(Guid id)
+        {
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var semester = SemesterService.GetSemester(id);
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+                Semester = semester
+            };
+
+
+            var groups = semester.Groups
+                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id)
+                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
+                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name).ToList();
+            foreach (var group in groups)
+            {
+                var groupModel = new SemesterGroupViewModel
+                {
+                    Group = group,
+                };
+
+                model.SemesterGroups.Add(groupModel);
+            }
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
     }
+
 }

@@ -1,0 +1,52 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+@{
+    ViewBag.Title = "Kalender";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName im @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-group"></i>
+                        Semestergruppen
+                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var group in Model.SemesterGroups)
+                    {
+                        <a href="#" class="list-group-item " data-groupid="@group.Group.Id">
+                            <h5 class="list-group-item-heading">
+                                @if (group.Group.IsAvailable)
+                                {
+                                    <i class="fa fa-check text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-ban text-danger"></i>
+                                }
+                                @group.Group.FullName
+                            </h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

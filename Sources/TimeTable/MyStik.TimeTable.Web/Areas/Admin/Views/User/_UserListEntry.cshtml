@@ -13,7 +13,7 @@
         <i class="fa fa-exclamation text-danger"></i>
     }
 </td>
-<td>@Model.User.LastName</td>
+<td><a href="@Url.Action("Student", new {id=Model.User.Id})">@Model.User.LastName</a></td>
 <td>@Model.User.FirstName</td>
 <td>
     @if (!string.IsNullOrEmpty(Model.User.Email))
@@ -67,12 +67,22 @@
             }
         }
     </td>
-    <td>
-        @if (Model.SemesterGroup != null)
-        {
-            @Model.SemesterGroup.FullName
-        }
-    </td>
+<td>
+    @if (Model.Student != null)
+    {
+        <div>@Model.Student.Curriculum.ShortName - @Model.Student.FirstSemester.Name</div>
+    }
+    else
+    {
+        if (Model.SemesterGroup != null)
+         {
+             @Model.SemesterGroup.CompleteName
+         }
+    }
+</td>
+<td>
+    @Html.ActionLink(Model.SubscriptionCount.ToString(), "Subscriptions", "User", new { id = Model.User.Id, area="" }, null)
+</td>
     <td>@Model.User.Registered</td>
     <td>@Model.User.LastLogin</td>
 <td>

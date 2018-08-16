@@ -1,0 +1,22 @@
+﻿@model MyStik.TimeTable.Data.Lottery
+@{
+    ViewBag.Title = "Auswahl löschen";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                    <h2>Auswahl in Wahlverfahren "@Model.Name" komplett löschen</h2>
+                    <h4>Warnung</h4>
+                    <h5>Ich verliere alle Plätze, ob zugeteilt oder Warteliste. Das Löschen ist unwiederbringlich und kann nicht rückgängig gemacht werden.</h5>
+
+                    <a href="@Url.Action("Overview", new {id = Model.Id})" class="btn btn-danger btn-lg">Abbrechen, abbrechen!!! Ich will alles behalten</a>
+                    <a href="@Url.Action("RemoveSelectionConfirmed", new {id = Model.Id})" class="btn btn-primary">Ja ich will wirklich alles löschen</a>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

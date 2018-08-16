@@ -30,7 +30,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     
             // Lehrveranstaltungen im aktuellen Semester
             var semesterService = new SemesterService();
-            var semester = semesterService.GetCurrentSemester();
+            var semester = semesterService.GetSemester(DateTime.Today);
 
             // Dozenten, die Lehrveranstaltungen im aktuellen Semester anbieten
             var activeLecturers = orgService.GetLecturers(faculty, semester);

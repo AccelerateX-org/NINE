@@ -1,0 +1,103 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
+    ViewBag.Title = "Member";
+    var userService = new UserInfoService();
+    var semSubService = new SemesterSubscriptionService();
+}
+
+<h2>Mitglieder der Fachschaft @Model.ShortName</h2>
+
+@Html.ActionLink("zurück zur Startseite", "Index")
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Rolle</th>
+        <th>Fakultät</th>
+        <th>Semestergruppe</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model.Members)
+        {
+            var user = userService.GetUser(member.UserId);
+            var semGroup = semSubService.GetSemesterGroup(member.UserId, ViewBag.Semester);
+
+            if (user == null)
+            {
+                <tr>
+                    <td><i class="fa fa-ban"></i></td>
+                    <td colspan="4"></td>
+                    <td>
+                        @if (ViewBag.UserRight.IsOrgAdmin)
+                        {
+                            <a href="@Url.Action("DeleteMember", new {id=member.Id})">Löschen</a>
+                        }
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        @if (member.IsAdmin)
+                        {
+                            <i class="fa fa-legal"></i>
+                            if (member.IsAssociated)
+                            {
+                                <i class="fa fa-question"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check"></i>
+                            }
+                        }
+                        else
+                        {
+                            if (member.IsAssociated)
+                            {
+                                <i class="fa fa-question"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check"></i>
+                            }
+                        }
+                    </td>
+                    <td>@user.FullName</td>
+                    <td>@user.MemberState</td>
+                    @if (semGroup == null)
+                    {
+                        <td colspan="2">keine Angabe für @ViewBag.Semester.Name</td>
+                    }
+                    else
+                    {
+                        <td>@semGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName</td>
+                        <td>@semGroup.GroupName</td>
+                    }
+                    <td>@member.IsAdmin</td>
+                    <td>
+                        @if (ViewBag.UserRight.IsOrgAdmin)
+                        {
+                            <a href="@Url.Action("ConfirmMember", new {id = member.Id})">Bestätigen</a>
+                            if (member.IsAdmin)
+                            {
+                                <a href="@Url.Action("RemoveAdmin", new {id = member.Id})">Adminrechte entfernen</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("AddAdmin", new {id = member.Id})">Zum Admin machen</a>
+                            }
+                            <a href="@Url.Action("DeleteMember", new {id = member.Id})">Löschen</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

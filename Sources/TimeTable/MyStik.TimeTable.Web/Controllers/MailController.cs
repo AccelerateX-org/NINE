@@ -141,6 +141,7 @@ namespace MyStik.TimeTable.Web.Controllers
             To.Add(model.User.Email);
             From = new MailAddress(model.SenderUser.Email,
                                model.SenderUser.FirstName + " " + model.SenderUser.LastName + " (via NINE)").ToString();
+            CC.Add(model.SenderUser.Email);
 
             Subject = "Ihre Eintragung in " + model.Summary.Name;
 
@@ -267,6 +268,58 @@ namespace MyStik.TimeTable.Web.Controllers
             // Es ist ein Template gegeben => das auch verwenden
             return Email(model.TemplateName, model.TemplateContent);
         }
+
+        internal EmailResult RegisterUnionEMail(OrgMemberMailModel model)
+        {
+            To.Add(model.User.Email);
+            Subject = $"Mitmachen bei {model.Organiser.ShortName}";
+
+            return Email("RegisterUnionEMail", model);
+        }
+
+        internal EmailResult ThesisRequestEMail(ThesisRequestMailModel model)
+        {
+            To.Add(model.User.Email);
+            Subject = $"Anfrage Betreuung Abschlussarbeit";
+
+            return Email("ThesisRequestEMail", model);
+        }
+
+
+        internal EmailResult ThesisRejectEMail(ThesisRejectMailModel model)
+        {
+            To.Add(model.User.Email);
+            Subject = $"Ablehnung Betreuung Abschlussarbeit";
+
+            return Email("ThesisRejectEMail", model);
+        }
+
+
+        internal EmailResult MemberMoveDateEMail(MemberMoveDateMailModel model)
+        {
+            if (model.SourceUser != null)
+            {
+                To.Add(model.SourceUser.Email);
+            }
+            if (model.TargetUser != null)
+            {
+                To.Add(model.TargetUser.Email);
+            }
+            CC.Add(model.User.Email);
+            Subject = $"Übertragung von Terminen";
+
+            return Email("MemberMoveDateEMail", model);
+        }
+
+        internal EmailResult LotterySelectionEMail(LotterySelectionMailModel model)
+        {
+            To.Add(model.User.Email);
+            Subject = $"Wahlverfahren {model.Lottery.Name}: Ihre Auswahl";
+
+            return Email("LotterySelectionEMail", model);
+        }
+
+
 
         private string GetTemplate(string templateName, string language)
         {

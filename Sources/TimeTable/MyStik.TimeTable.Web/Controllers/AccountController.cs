@@ -8,6 +8,7 @@ using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 
@@ -81,6 +82,9 @@ namespace MyStik.TimeTable.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            if (string.IsNullOrEmpty(model.Email) && string.IsNullOrEmpty(model.Password))
+                return RedirectToAction("Login");
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -605,20 +609,54 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 // Alle Eintragungen löschen
                 // Das darf nur der Admin, der weiss, was er tut. Daher hier auch keine E-Mail oder ähnliches
-                var subscriptions =
-                    Db.Subscriptions.Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)).ToList();
+                var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)).ToList();
 
                 foreach (var subscription in subscriptions)
+                {
+                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
+                    foreach (var drawing in allDrawings)
+                    {
+                        Db.SubscriptionDrawings.Remove(drawing);
+                    }
+
+                    var bets = subscription.Bets.ToList();
+                    foreach (var bet in bets)
+                    {
+                        Db.LotteriyBets.Remove(bet);
+                    }
+
+                    Db.Subscriptions.Remove(subscription);
+                }
+
+                var games = Db.LotteryGames.Where(x => x.UserId.Equals(user.Id)).ToList();
+                foreach (var lotteryGame in games)
+                {
+                    Db.LotteryGames.Remove(lotteryGame);
+                }
+
+
+                var semSubscriptions = Db.Subscriptions.OfType<SemesterSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)).ToList();
+
+                foreach (var subscription in semSubscriptions)
                 {
                     Db.Subscriptions.Remove(subscription);
                 }
                 Db.SaveChanges();
 
+
+                // Devices löschen!
+                var _db = new ApplicationDbContext();
+                var devices = _db.Devices.Where(d => d.User.Id.Equals(user.Id)).ToList();
+                foreach (var userDevice in devices)
+                {
+                    _db.Devices.Remove(userDevice);
+                }
+                _db.SaveChanges();
+
                 UserManager.Delete(user);
 
                 // Mail senden
                 var mailModel = new DeleteUserMailModel { User = user };
-
                 new MailController().DeleteUserMail(mailModel).Deliver();
 
                 // Abmelden und byebye anzeigen
@@ -793,30 +831,6 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult ExternalLoginFailure()
         {
             return View();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        public ActionResult SetCulture(string culture)
-        {
-            // Validate input
-            culture = CultureHelper.GetImplementedCulture(culture);
-            // Save culture in a cookie
-            HttpCookie cookie = Request.Cookies["_culture"];
-            if (cookie != null)
-                cookie.Value = culture;   // update cookie value
-            else
-            {
-                cookie = new HttpCookie("_culture");
-                cookie.Value = culture;
-                cookie.Expires = DateTime.Now.AddYears(1);
-            }
-            Response.Cookies.Add(cookie);
-            return RedirectToAction("Login");
         }
 
         /// <summary>

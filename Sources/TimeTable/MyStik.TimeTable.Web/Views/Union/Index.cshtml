@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Startseite Fachschaft";
+}
+
+<h2>Die Startseite meiner Fachschaft (@ViewBag.Union.ShortName)</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            @if (ViewBag.UserRight.IsOrgAdmin)
+            {
+            <div class="list-group">
+                <a href="#" class="list-group-item disabled">
+                    <strong>Admin Bereich</strong>
+                </a>
+                <a href="#" class="list-group-item disabled">
+                    <i class="fa fa-glass fa-fw"></i> Veranstaltungen
+                </a>
+                <a href="#" class="list-group-item disabled">
+                    <i class="fa fa-envelope fa-fw"></i> Mailverteiler
+                </a>
+                <a href="@Url.Action("Newsletter", new {id = ViewBag.Union.Id})" class="list-group-item">
+                    <i class="fa fa-newspaper-o fa-fw"></i> Newsletter
+                </a>
+                <a href="@Url.Action("Member", new {id = ViewBag.Union.Id})" class="list-group-item">
+                    <i class="fa fa-group fa-fw"></i> Wer ist dabei
+                </a>
+            </div>
+            }
+        </div>
+        <div class="col-md-9">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        Infos für bestätigte Mitglieder
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <p>Auf dieser Seite können Infos für Mitglieder angezeigt werden. Was das sein soll? Keine Ahnung. Ideen werden jederzeit gerne entgegen genommen. Einfach einen "Fehler melden" (unten rechts).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

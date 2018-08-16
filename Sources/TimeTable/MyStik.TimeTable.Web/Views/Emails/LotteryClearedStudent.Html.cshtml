@@ -1,0 +1,48 @@
+﻿@using MyStik.TimeTable.Data
+@using RazorEngine.Text
+@model MyStik.TimeTable.Web.Models.LotteryDrawingStudentEmail
+
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="de" http-equiv="Content-Language">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title></title>
+    <style type="text/css">
+        .mail-warning-style {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0000FF;
+        }
+
+        .mail-text-style {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .mail-stationary-style {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: xx-small;
+        }
+    </style>
+</head>
+<body>
+    <div class="mail-text-style">
+
+        <p>Sehr geehrte(r) @Model.User.FullName,</p>
+
+        <p>das Wahlverfahren "@Model.Game.Game.Lottery.Name" wurde @Model.Drawing.Start.ToShortDateString() von @Model.Member.FullName bereinigt.</p>
+
+        <p>Das bedeutet: alle Ihre Eintragungen auf Warteliste wurden gelöscht, wenn Sie die gewünschte Anzahl an Plätzen erhalten haben.</p>
+
+        <p>Mit freundlichen Grüßen</p>
+        <p>nine Team</p>
+
+        <hr />
+    </div>
+    <div class="mail-stationary-style">Dies ist eine automatisch generierte E-Mail.</div>
+    <div class="mail-stationary-style">
+        Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:itsupport@wi.hm.edu">technischen Support</a> von nine.
+    </div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.ActivityDate>
+
+<div class="list-group">
+    @foreach (var date in Model)
+    {
+        <div class="list-group-item">
+            <h5 class="list-group-item-heading">@Html.Date(date)</h5>
+            <p class="list-group-item-text">@date.Activity.Name (@date.Activity.ShortName)</p>
+        </div>
+    }
+</div>
+
+

@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryGambleViewModel
+@{
+    ViewBag.Title = "Platzverlosung";
+    var x = DateTime.Now.ToString("s");
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Platzverlosung @Model.Lottery.Name - läuft</h1>
+                    <p id="lotteryTimer"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" id="drawingView">
+    <div class="row">
+        <div class="col-md-12">
+
+            <h1>
+                <i class="fa fa-random"></i> Verlosung läuft
+            </h1>
+            <a href="@Url.Action("MySelection", new {id = Model.Lottery.Id})" class="btn btn-default btn-lg"><i class="fa fa-refresh"></i> Aktualisieren</a>
+        </div>
+    </div>
+</div>

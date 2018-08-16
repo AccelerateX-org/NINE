@@ -1,0 +1,96 @@
+﻿@model MyStik.TimeTable.Web.Models.MemberProfileViewModel
+@{
+    ViewBag.Title = "Profile";
+}
+
+
+@section styles
+{
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Profil @ViewBag.Member.FullName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-user-circle-o"></i> Persönliche Angaben zum eigenen Profil
+                </h4>
+                <div class="panel-body">
+                    @using (Html.BeginForm("PersonalProfile", "OrganiserMembers", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="form-group">
+                            @Html.HiddenFor(item => item.MemberId)
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.Title, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.Title, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.FirstName, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.FirstName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.Name, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.Name, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.Description, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextAreaFor(item => item.Description, new { @class = "form-control", rows = 10 })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(item => item.UrlProfile, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(item => item.UrlProfile, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-8">
+                                @Html.CheckBoxFor(item => item.ShowDescription)
+                                @Html.LabelFor(item => item.ShowDescription, new { @class = "control-label" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-8">
+                                <input type="submit" value="Speichern" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+    <script>
+        $(function () {
+            $("#Description").cleditor();
+        });
+    </script>
+}

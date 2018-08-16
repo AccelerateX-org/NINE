@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div id="rightInfoscreenPanel">
-                                <h2><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></h2>
+                                <h2>Lade Infoscreen für @ViewBag.Location <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i></h2>
                             </div>
                         </div>
                     </div>
@@ -71,10 +71,20 @@
         var playListIndex = 1;
 
 
+        var playListLeft = [
+            { "ID": "1", "Title": "Mensa" },
+            { "ID": "2", "Title": "MVG" }
+        ];
+
+        var playListSizeLeft = playListLeft.length;
+        var playListIndexLeft = 1;
+
+
 
         $(function () {
             CoolClock.findAndCreateClocks();
 
+            /*
             $.ajax({
                 url: '@Url.Action("LeftPanel")',
                 type: 'POST',
@@ -82,8 +92,8 @@
                     $('#leftInfoscreenPanel').html(result);
                 }
             });
-
-
+            */
+            
             updateLeftPanel();
             updateRightPanel();
 
@@ -92,20 +102,20 @@
         function updateLeftPanel() {
             setInterval(function () {
 
-                var tokenLeft = null;
-                if ($("#tokenPanelLeft")) {
-                    tokenLeft = $("#tokenPanelLeft").val();
-                }
-
 
                 $.ajax({
                     url: '@Url.Action("LeftPanel")',
                     type: 'POST',
                     data: {
-                      token: tokenLeft
+                        token: playListLeft[playListIndexLeft - 1].Title,
+                        location: "@ViewBag.Location"
                     },
                     success: function (result) {
                         $('#leftInfoscreenPanel').html(result);
+
+                        playListIndexLeft++;
+                        if (playListIndexLeft > playListSizeLeft)
+                            playListIndexLeft = 1;
                     }
                 });
             }, 20000);
@@ -119,7 +129,8 @@
                     url: '@Url.Action("RightPanel")',
                     type: 'POST',
                     data: {
-                        token: playList[playListIndex-1].Title
+                        token: playList[playListIndex-1].Title,
+                        location: "@ViewBag.Location"
                     },
                     success: function (result) {
                         $('#rightInfoscreenPanel').html(result);

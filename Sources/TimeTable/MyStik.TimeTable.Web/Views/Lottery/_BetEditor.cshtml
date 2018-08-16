@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryGambleCourseViewModel
+
+<h4> Mein Einsatz </h4>
+    @using (Html.BeginForm("EnterBet", null, null, FormMethod.Post, new { @class = "form", role = "form" }))
+    {
+        @Html.HiddenFor(m => m.Lottery.Id)
+        @Html.HiddenFor(m => m.Course.Id)
+        <div class="form form-horizontal">
+            @foreach (var budget in Model.Budgets)
+            {
+                Html.RenderPartial("_EnterLotteryBet", budget);
+            }
+            <div class="form-group">
+                <label class="col-md-8 control-label">Aus Wartezeit</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">@Model.Subscription.LapCount</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-8 control-label">Summe</label>
+                <div class="col-md-4">
+                    <p class="form-control-static">@Model.PoinstForSubscription</p>
+                </div>
+            </div>
+
+            <button class="btn btn-default" type="submit"><i class="fa fa-save"></i> Setzen</button>
+        </div>
+    }
+
+

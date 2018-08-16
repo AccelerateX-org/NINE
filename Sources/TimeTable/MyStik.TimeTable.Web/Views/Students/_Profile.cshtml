@@ -1,0 +1,65 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.StudentViewModel>
+
+
+<div class="panel panel-default">
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Nachname</th>
+            <th>Vorname</th>
+            <th>Studiengang</th>
+            <th>Studienbeginn</th>
+            <th>@ViewBag.CurrentSemester.Name</th>
+            <th>@ViewBag.LastSemester.Name</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                @if (user.Student != null && user.Student.Curriculum != null)
+                {
+                    <td>@Html.FacultyLabel(user.Student.Curriculum.Organiser)</td>
+                }
+                else
+                {
+                    <td></td>
+                    
+                }
+                <td>
+                    <a href="@Url.Action("CoursePlan", "Students", new {id = user.User.Id})">@user.User.LastName</a>
+                </td>
+                <td>@user.User.FirstName</td>
+                @if (user.Student != null)
+                {
+                    if (user.Student.Curriculum != null && user.Student.FirstSemester != null)
+                    {
+                        <td>@user.Student.Curriculum.ShortName</td>
+                        <td>@user.Student.FirstSemester.Name</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                    }
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                }
+                <td>@user.CurrentCourses.Count</td>
+                <td>@user.LastCourses.Count</td>
+                <td>
+                    <a href="mailto:@user.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
+                </td>
+
+            </tr>
+        }
+        </tbody>
+
+    </table>
+</div>

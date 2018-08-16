@@ -21,24 +21,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult DeleteAll()
-        {
-            var changes = Db.DateChanges.ToList();
-
-            foreach (var change in changes)
-            {
-                change.Date.Changes.Remove(change);
-                Db.DateChanges.Remove(change);
-            }
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
 
         /// <summary>
         /// 

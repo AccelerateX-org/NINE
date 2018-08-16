@@ -37,6 +37,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Bezeichnung aus externer Quelle, z.B. Prüfungsamt
+        /// da packen wir zunächst den Typü rein
         /// </summary>
         public string ExternalId { get; set; }
 
@@ -59,7 +60,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Die echten Prüfungen
         /// </summary>
-        public virtual ICollection<StudentExam> StudentExams { get; set; }
+        public virtual ICollection<Exam> Exams { get; set; }
 
     }
 }

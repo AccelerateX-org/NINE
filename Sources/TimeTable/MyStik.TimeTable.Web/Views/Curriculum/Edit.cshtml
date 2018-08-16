@@ -1,6 +1,6 @@
 ﻿@model MyStik.TimeTable.Data.Curriculum
 @{
-    ViewBag.Title = "Studiengang anlegen";
+    ViewBag.Title = "Studiengang ändern";
 }
 
 <div class="panel panel-default">
@@ -18,37 +18,68 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Bezeichnungen</span>
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Einstellungen</h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
                     {
-                        <fieldset>
-                            @Html.HiddenFor(model => model.Id)
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.Name, new {@class = "col-sm-3 control-label"})
-                                <div class="col-sm-6">
-                                    @Html.TextBoxFor(m => m.Name, new {@class = "form-control"})
-                                </div>
+                    <fieldset>
+                        @Html.HiddenFor(model => model.Id)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.ShortName, new {@class = "col-sm-3 control-label"})
-                                <div class="col-sm-6">
-                                    @Html.TextBoxFor(m => m.ShortName, new {@class = "form-control"})
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ShortName" class="col-sm-3 control-label">Kurzbezeichnung</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control" })
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-3 col-sm-9">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-save"></i> Speichern</button>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Version" class="col-sm-3 control-label">Bearbeitungsdauer Abschlussarbeit</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.Version, new {@class = "form-control"})
                             </div>
+                        </div>
+                        @*
+        <div class="form-group">
+            @Html.LabelFor(model => model.Degree, new { @class = "col-sm-3 control-label" })
+            <div class="col-sm-6">
+                @Html.DropDownListFor(m => m.Degree.Id, (IEnumerable<SelectListItem>)ViewBag.Degrees, new { @class = "form-control" })
+            </div>
+        </div>
+                        *@
+                        @*
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                @Html.CheckBoxFor(item => item.IsQualification)
+                @Html.LabelFor(item => item.IsQualification, new { @class = "control-label" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                @Html.CheckBoxFor(item => item.AsDual)
+                @Html.LabelFor(item => item.AsDual, new { @class = "control-label" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                @Html.CheckBoxFor(item => item.AsPartTime)
+                @Html.LabelFor(item => item.AsPartTime, new { @class = "control-label" })
+            </div>
+        </div>
+                        *@
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
+                            </div>
+                        </div>
 
-                        </fieldset>
+                    </fieldset>
                     }
                 </div>
             </div>

@@ -49,12 +49,40 @@ namespace MyStik.TimeTable.Web.Controllers
             // Das darf nur der Admin, der weiss, was er tut. Daher hier auch keine E-Mail oder ähnliches
             try
             {
-                var subscriptions = Db.Subscriptions.Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
+                var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
 
                 foreach (var subscription in subscriptions)
                 {
+                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
+                    foreach (var drawing in allDrawings)
+                    {
+                        Db.SubscriptionDrawings.Remove(drawing);
+                    }
+
+                    var bets = subscription.Bets.ToList();
+                    foreach (var bet in bets)
+                    {
+                        Db.LotteriyBets.Remove(bet);
+                    }
+
                     Db.Subscriptions.Remove(subscription);
                 }
+
+                var games = Db.LotteryGames.Where(x => x.UserId.Equals(id)).ToList();
+                foreach (var lotteryGame in games)
+                {
+                    Db.LotteryGames.Remove(lotteryGame);
+                }
+
+
+                var semSubscriptions = Db.Subscriptions.OfType<SemesterSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
+
+                foreach (var subscription in semSubscriptions)
+                {
+                    Db.Subscriptions.Remove(subscription);
+                }
+
+
                 Db.SaveChanges();
 
                 var user = UserManager.FindById(id);
@@ -154,7 +182,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // Test: Abfrage der WPMs
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var wpmList = Db.Activities.OfType<Course>().Where(a => 
                 a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(id)) &&
@@ -347,37 +375,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult Doubles()
-        {
-            // alle Gäste
-            var guests = _db.Users.Where(u => u.MemberState == MemberState.Guest).OrderBy(u => u.LastLogin.Value).ToList();
-
-            var userList = new List<ApplicationUser>();
-
-            foreach (var guest in guests)
-            {
-                var candidates = _db.Users.Where(u => u.LastName.ToUpper().Equals(guest.LastName.ToUpper()) &&
-                    u.FirstName.ToUpper().Equals(guest.FirstName.ToUpper()) &&
-                    u.Id != guest.Id);
-                
-                if (candidates.Any())
-                {
-                    userList.Add(guest);
-                    userList.AddRange(candidates.ToList());
-                }
-            }
-
-
-            var model = CreateUserList(userList);
-
-            return PartialView("_UserList", model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
@@ -427,29 +424,6 @@ namespace MyStik.TimeTable.Web.Controllers
             if (user != null)
             {
                 user.MemberState = MemberState.Staff;
-                UserManager.Update(user);
-            }
-
-            var model = GetUserModel(user);
-
-            return PartialView("_UserListEntry", model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult RepairUser(string id)
-        {
-            var user = UserManager.FindById(id);
-            if (user != null)
-            {
-                user.EmailConfirmed = true;
-                user.Remark = string.Empty;
-                user.Submitted = null;
-                user.ExpiryDate = null;
                 UserManager.Update(user);
             }
 
@@ -690,45 +664,6 @@ namespace MyStik.TimeTable.Web.Controllers
             _db.SaveChanges();
             
             return RedirectToAction("AccountManagement");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult ChangeUserName(string id)
-        {
-            var model = new UserManageViewModel();
-
-            var user = UserManager.FindById(id);
-            if (user != null)
-            {
-                model.User = user;
-            }
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult ChangeUserName(UserManageViewModel model)
-        {
-            var user = UserManager.FindById(model.User.Id);
-            if (user != null)
-            {
-                user.Email = model.EMail;
-                user.UserName = model.EMail;
-
-                UserManager.Update(user);
-            }
-
-
-            return RedirectToAction("Index");
         }
 
     }

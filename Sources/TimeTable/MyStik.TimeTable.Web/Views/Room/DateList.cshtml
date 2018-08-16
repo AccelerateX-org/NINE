@@ -1,0 +1,47 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomScheduleModel
+@{
+    ViewBag.Title = "DateList";
+}
+
+<h2>Regelmäßig</h2>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var room in Model.RegularDates)
+    {
+        <tr>
+            <td>@room.Activity.Name</td>
+            <td>@room.DayOfWeek</td>
+            <td>@room.Start</td>
+            <td>@room.End</td>
+            <td>@room.SlotCount</td>
+            <td>@room.Dates.Count</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h2>Einzeltermine</h2>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model.SingleDates.OrderBy(x => x.Begin))
+        {
+            <tr>
+                <td>@room.Activity.Name</td>
+                <td>@room.Begin</td>
+                <td>@room.End</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -117,16 +117,1094 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccreditationsString" xml:space="preserve">
+    <value>Accréditations</value>
+  </data>
+  <data name="ActionsString" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ActivitiesString" xml:space="preserve">
+    <value>Activités</value>
+  </data>
+  <data name="AddDateString" xml:space="preserve">
+    <value>Ajouter une date</value>
+  </data>
+  <data name="AddLecturerString" xml:space="preserve">
+    <value>Créer professeur</value>
+  </data>
+  <data name="AddressCantine" xml:space="preserve">
+    <value>1er étage</value>
+  </data>
+  <data name="AddressString" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="AdministrationString" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="AdminString" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="AllCurriculas" xml:space="preserve">
+    <value>Tous les programmes d’études</value>
+  </data>
+  <data name="AllEventsString" xml:space="preserve">
+    <value>Toutes les manifestations</value>
+  </data>
+  <data name="AllModules" xml:space="preserve">
+    <value>Tous les modules</value>
+  </data>
+  <data name="AllPersons" xml:space="preserve">
+    <value>Toutes les personnes</value>
+  </data>
+  <data name="AlumniString" xml:space="preserve">
+    <value>Anciens élèves</value>
+  </data>
+  <data name="AndString" xml:space="preserve">
+    <value>et</value>
+  </data>
+  <data name="AsListString" xml:space="preserve">
+    <value>sous forme de liste</value>
+  </data>
+  <data name="AvailableLoginServices" xml:space="preserve">
+    <value>Services de connexion externes disponibles</value>
+  </data>
+  <data name="AvailableSubscriptions" xml:space="preserve">
+    <value>Places disponibles (total)</value>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="BasicDataNSettingsHeading" xml:space="preserve">
+    <value>Données sources et paramètres</value>
+  </data>
+  <data name="BusinessHoursString" xml:space="preserve">
+    <value>Horaires d'ouverture</value>
+  </data>
+  <data name="BusinessHoursTimeFriday" xml:space="preserve">
+    <value>11h00 - 13h45</value>
+  </data>
+  <data name="BusinessHoursTimeMondaytoThursday" xml:space="preserve">
+    <value>11h00 - 14h00</value>
+  </data>
+  <data name="CalledOfString" xml:space="preserve">
+    <value>annulé</value>
+  </data>
   <data name="CantineHyperlink" xml:space="preserve">
     <value>http://www.studentenwerk-muenchen.de/mensa/speiseplan/speiseplan_431_-fr.html#heute</value>
+  </data>
+  <data name="CantineMenuString" xml:space="preserve">
+    <value>Menu réfectoire</value>
+  </data>
+  <data name="CantineNoMenuAvailable" xml:space="preserve">
+    <value>Aucun menu disponible</value>
+  </data>
+  <data name="CertainTimeString" xml:space="preserve">
+    <value>Moment</value>
+  </data>
+  <data name="ChangeButton" xml:space="preserve">
+    <value>Utiliser d’autres services pour se connecter</value>
+  </data>
+  <data name="ChangeEMailButton" xml:space="preserve">
+    <value>Modifier l’adresse e-mail</value>
+  </data>
+  <data name="ChangePasswordButton" xml:space="preserve">
+    <value>Modifier le mot de passe</value>
+  </data>
+  <data name="CommentString" xml:space="preserve">
+    <value>Remarque</value>
+  </data>
+  <data name="CommunicationSettingsHeading" xml:space="preserve">
+    <value>Paramètres de communication</value>
+  </data>
+  <data name="CommunicationString" xml:space="preserve">
+    <value>Communication</value>
+  </data>
+  <data name="ConfirmReservedCourse" xml:space="preserve">
+    <value>Confirmer la réservation</value>
+  </data>
+  <data name="ContactHeading" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="ContactLink" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="ContactMailBody" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ContactMailSubject" xml:space="preserve">
+    <value>Objet</value>
+  </data>
+  <data name="CourseDetailsString" xml:space="preserve">
+    <value>Détails sur le cours</value>
+  </data>
+  <data name="CourseFinished" xml:space="preserve">
+    <value>Cette manifestation est terminée !</value>
+  </data>
+  <data name="CourseGotLotteryMessage" xml:space="preserve">
+    <value>: Il y a un tirage au sort de places pour la matière</value>
+  </data>
+  <data name="CourseHasNoRestrictions" xml:space="preserve">
+    <value>Le nombre de places du cours n’est pas limité.</value>
+  </data>
+  <data name="CourseLotteryGoesByMajor" xml:space="preserve">
+    <value>Les places sont attribuées par programme d’étude pour le cours (voir tableau à gauche).</value>
+  </data>
+  <data name="CourseLotteryGoesByMajorAndSemGroup" xml:space="preserve">
+    <value>Les places sont attribuées par programme d’étude et groupe d’étude pour le cours (voir tableau à gauche).</value>
+  </data>
+  <data name="CourseMatchesNotMajorMessage" xml:space="preserve">
+    <value>La matière n’appartient pas à mon programme d’études. Cette entrée ne participe donc pas au tirage au sort des places.</value>
+  </data>
+  <data name="CoursePlanPanelHeading" xml:space="preserve">
+    <value>Liste de tous mes plans</value>
+  </data>
+  <data name="CoursesOffered" xml:space="preserve">
+    <value>Offre pédagogique</value>
+  </data>
+  <data name="CourseString" xml:space="preserve">
+    <value>Matière</value>
+  </data>
+  <data name="CreateButton" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="CreateCoursePlanButton" xml:space="preserve">
+    <value>Créer un plan</value>
+  </data>
+  <data name="CreateEventInString" xml:space="preserve">
+    <value>Créer nouvelle manifestation dans</value>
+  </data>
+  <data name="CreateEventString" xml:space="preserve">
+    <value>Créer une manifestation</value>
+  </data>
+  <data name="CreateOfficeHourLink" xml:space="preserve">
+    <value>Créer une consultation</value>
+  </data>
+  <data name="CriteriaString" xml:space="preserve">
+    <value>Critères</value>
+  </data>
+  <data name="CurrentCourses" xml:space="preserve">
+    <value>Séminaires actuels</value>
+  </data>
+  <data name="CurrentNumberStudents" xml:space="preserve">
+    <value>Nombre d’étudiants actuel</value>
+  </data>
+  <data name="CurriculumField" xml:space="preserve">
+    <value>Programme des études</value>
+  </data>
+  <data name="CurriculumNGroupEmptyMessage" xml:space="preserve">
+    <value>Veuillez sélectionner votre programme d’études et votre groupe d’étude pour ce semestre. Veuillez appuyer sur Enregistrer après votre choix.</value>
+  </data>
+  <data name="DashboardStudentHeading" xml:space="preserve">
+    <value>L’essentiel en bref</value>
+  </data>
+  <data name="DatesDatesHeading" xml:space="preserve">
+    <value>Dates, dates, ...</value>
+  </data>
+  <data name="DatesListString" xml:space="preserve">
+    <value>Liste des rendez-vous</value>
+  </data>
+  <data name="DatesString" xml:space="preserve">
+    <value>Dates</value>
+  </data>
+  <data name="DateString" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DeleteAccountButton" xml:space="preserve">
+    <value>Supprimer compte utilisateur</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>supprimer</value>
+  </data>
+  <data name="DeleteCapButton2" xml:space="preserve">
+    <value>SUPPRIMER</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Désignation</value>
+  </data>
+  <data name="Description2" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DescriptionOfEvent" xml:space="preserve">
+    <value>Description de la manifestation</value>
+  </data>
+  <data name="DeviceId" xml:space="preserve">
+    <value>Id équipement</value>
+  </data>
+  <data name="DeviceName" xml:space="preserve">
+    <value>Nom de l'équipement</value>
+  </data>
+  <data name="ECTSString" xml:space="preserve">
+    <value>ECTS</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>Identifiant ou adresse e-mail</value>
+  </data>
+  <data name="EmployeesString" xml:space="preserve">
+    <value>Collaborateur</value>
+  </data>
+  <data name="EventBookingNecessary" xml:space="preserve">
+    <value>La manifestation doit-elle être réservée ?</value>
+  </data>
+  <data name="EventDetailsString" xml:space="preserve">
+    <value>Détails sur la manifestation</value>
+  </data>
+  <data name="FacultyField" xml:space="preserve">
+    <value>Faculté</value>
   </data>
   <data name="FacultyWebsiteHyperlink" xml:space="preserve">
     <value>http://www.wi.hm.edu/en/index.en.html</value>
   </data>
+  <data name="FacultyWebsiteShortDescriptionLink" xml:space="preserve">
+    <value>Département 09</value>
+  </data>
+  <data name="FeedString" xml:space="preserve">
+    <value>Flux</value>
+  </data>
+  <data name="FileString" xml:space="preserve">
+    <value>Fichier</value>
+  </data>
+  <data name="ForgotPasswordHeading" xml:space="preserve">
+    <value>Demander un nouveau mot de passe</value>
+  </data>
+  <data name="ForgotPasswordLink" xml:space="preserve">
+    <value>Mot de passe oublié ?</value>
+  </data>
+  <data name="ForgotPasswordMessage" xml:space="preserve">
+    <value>Demander le lien de réinitialisation du mot de passe.</value>
+  </data>
+  <data name="ForgotPasswordSubmitButton" xml:space="preserve">
+    <value>Demander le lien</value>
+  </data>
+  <data name="FreeFromString" xml:space="preserve">
+    <value>Libre à partir de</value>
+  </data>
+  <data name="FreeRoomsForString" xml:space="preserve">
+    <value>Salles libres pour</value>
+  </data>
+  <data name="FreeRoomsHeading" xml:space="preserve">
+    <value>Salles libres</value>
+  </data>
+  <data name="FreeRoomsNow" xml:space="preserve">
+    <value>Ces locaux sont maintenant </value>
+  </data>
+  <data name="FreeRoomsSoonString" xml:space="preserve">
+    <value>Ces locaux seront prochainement</value>
+  </data>
+  <data name="FreeString" xml:space="preserve">
+    <value>libre(s)</value>
+  </data>
+  <data name="FreeUntilEveningString" xml:space="preserve">
+    <value>libre(s) jusqu’au soir</value>
+  </data>
+  <data name="FreeUntilString" xml:space="preserve">
+    <value>Libre jusqu’à</value>
+  </data>
+  <data name="FridayString" xml:space="preserve">
+    <value>Vendredi</value>
+  </data>
+  <data name="GeneralDataString" xml:space="preserve">
+    <value>Indications générales</value>
+  </data>
+  <data name="GeneralInformationsString" xml:space="preserve">
+    <value>Informations générales</value>
+  </data>
+  <data name="GetSemGroupFromPrimuss" xml:space="preserve">
+    <value>Get it from primuss</value>
+  </data>
+  <data name="GlobalCatalogString" xml:space="preserve">
+    <value>Catalogue global de modules</value>
+  </data>
+  <data name="GroupsString" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="GroupString" xml:space="preserve">
+    <value>Groupe(s)</value>
+  </data>
+  <data name="GuestsString" xml:space="preserve">
+    <value>Invités</value>
+  </data>
+  <data name="HintString" xml:space="preserve">
+    <value>Nota :</value>
+  </data>
+  <data name="HMJobonautDescription" xml:space="preserve">
+    <value>Portail des offres d’emploi du département 09 sur Jobonaut</value>
+  </data>
+  <data name="HMJobonautDescription2" xml:space="preserve">
+    <value>Les entreprises publient les offres d’emploi directement sur le portail. Un collaborateur du département FK09 se charge de l’assurance qualité.</value>
+  </data>
+  <data name="iCalFeedExplanation" xml:space="preserve">
+    <value>Le flux iCal peut être intégré sous forme de calendrier, par ex. dans MS Outlook ou Google Calendar. Le programme associé consulte alors les rendez-vous en cours en fonction des paramètres.</value>
+  </data>
+  <data name="iCalFeedURL" xml:space="preserve">
+    <value>URL pour flux iCal Client</value>
+  </data>
+  <data name="iCalFileDownload" xml:space="preserve">
+    <value>Téléchargement fichier iCal pour</value>
+  </data>
+  <data name="iCalFileExplanation" xml:space="preserve">
+    <value>&lt;strong&gt;Fichier iCal :&lt;/strong&gt; le fichier iCal peut s'ouvrir dans différents logiciels de messagerie, comme MS Outlook par exemple.</value>
+  </data>
+  <data name="iCalFileHint" xml:space="preserve">
+    <value>&lt;strong&gt;Nota :&lt;/strong&gt; le fichier iCal contient uniquement les rendez-vous existants au moment du téléchargement. Si vous souhaitez toujours rester au courant, utilisez le flux iCal.</value>
+  </data>
+  <data name="iCalString" xml:space="preserve">
+    <value>iCal</value>
+  </data>
+  <data name="ImportedFromString" xml:space="preserve">
+    <value>Importé depuis :</value>
+  </data>
+  <data name="ImprintHeading" xml:space="preserve">
+    <value>Mentions légales</value>
+  </data>
   <data name="ImprintHyperlink" xml:space="preserve">
     <value>https://www.hm.edu/en/secondarynavigation/impressum_1/legal_notice_1.en.html</value>
   </data>
+  <data name="InactiveNoContactInf" xml:space="preserve">
+    <value>désactivé, pas de coordonnées de contact</value>
+  </data>
+  <data name="InactiveUseEmail" xml:space="preserve">
+    <value>désactivé, joignable par e-mail</value>
+  </data>
+  <data name="InviteString" xml:space="preserve">
+    <value>Inviter</value>
+  </data>
+  <data name="IsReserved" xml:space="preserve">
+    <value>Place réservée</value>
+  </data>
+  <data name="JobsNewsletterFK09Description" xml:space="preserve">
+    <value>Newsletter carrière du département 09</value>
+  </data>
+  <data name="JobsNewsletterFK09Description2" xml:space="preserve">
+    <value>Les offres d’emploi qui arrivent par e-mail chez les professeurs, le secrétariat et/ou les conseillers sont collectées par un collaborateur du département 09 et envoyées de temps en temps via la newsletter.</value>
+  </data>
+  <data name="JobsPanelHeading" xml:space="preserve">
+    <value>Offres d’entreprises</value>
+  </data>
+  <data name="JobsString" xml:space="preserve">
+    <value>Emplois</value>
+  </data>
+  <data name="KeyString" xml:space="preserve">
+    <value>Légende</value>
+  </data>
+  <data name="LecturersInString" xml:space="preserve">
+    <value>Professeurs dans</value>
+  </data>
+  <data name="LecturerString" xml:space="preserve">
+    <value>Professeur(s)</value>
+  </data>
+  <data name="LecturerString2" xml:space="preserve">
+    <value>Professeur</value>
+  </data>
+  <data name="LecturersWithOfficeHour" xml:space="preserve">
+    <value>Professeurs avec consultations</value>
+  </data>
+  <data name="LectureSchedulerHeading" xml:space="preserve">
+    <value>Planificateur de cours magistraux</value>
+  </data>
+  <data name="LecturesHeading" xml:space="preserve">
+    <value>Cours magistraux</value>
+  </data>
+  <data name="LinkString" xml:space="preserve">
+    <value>Liens</value>
+  </data>
+  <data name="ListedDevicesWithPushNotificationMessage" xml:space="preserve">
+    <value>&lt;strong&gt;Nota :&lt;/strong&gt;en cas d'utilisation des applications fillter, des notifications push sont envoyées aux équipements répertoriés ici et cochés.</value>
+  </data>
+  <data name="ListOfAllCoursesWithLottery" xml:space="preserve">
+    <value>Liste de tous les cours dans ce tirage au sort de places</value>
+  </data>
+  <data name="ListOfAllWPMsOfMajor" xml:space="preserve">
+    <value>Liste de tous les WPM de mon programme d’études</value>
+  </data>
+  <data name="LocalUserAccountHeading" xml:space="preserve">
+    <value>Compte utilisateur NINE</value>
+  </data>
+  <data name="LoginAppLinksHeading" xml:space="preserve">
+    <value>Les applications fillter pour des informations actuelles sur smartphone</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="LoginHeading" xml:space="preserve">
+    <value>Se connecter avec le compte utilisateur NINE</value>
+  </data>
+  <data name="LoginProviderHeading" xml:space="preserve">
+    <value>Utiliser d’autres services pour se connecter</value>
+  </data>
+  <data name="LoginTab" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="LotteriesString" xml:space="preserve">
+    <value>Tirages au sort de places</value>
+  </data>
+  <data name="LotteryString" xml:space="preserve">
+    <value>Attribution des places</value>
+  </data>
+  <data name="LVsString" xml:space="preserve">
+    <value>LV</value>
+  </data>
+  <data name="MailingDistributor" xml:space="preserve">
+    <value>Liste de diffusion</value>
+  </data>
+  <data name="MajorsString" xml:space="preserve">
+    <value>Programme d’étude</value>
+  </data>
+  <data name="ManageLoginsLink" xml:space="preserve">
+    <value>Gérer les services de connexion</value>
+  </data>
+  <data name="ManageProfileHeading" xml:space="preserve">
+    <value>Gérer le profil utilisateur</value>
+  </data>
+  <data name="ManageProfileHeading2" xml:space="preserve">
+    <value>Administration compte utilisateurs</value>
+  </data>
+  <data name="MaxNumberOfPossibleSubscriptionsMessage" xml:space="preserve">
+    <value>Dans ce tirage au sort de places, je peux occuper une place dans @Model.Lottery.MaxConfirm cours au maximum.</value>
+  </data>
+  <data name="MealString" xml:space="preserve">
+    <value>Plat</value>
+  </data>
+  <data name="MeatLoafBreadString" xml:space="preserve">
+    <value>Pain au Leberkäse</value>
+  </data>
+  <data name="MemberExistsNot" xml:space="preserve">
+    <value>(L’utilisateur n’existe pas !!!)</value>
+  </data>
+  <data name="MembersString" xml:space="preserve">
+    <value>Membre</value>
+  </data>
+  <data name="MenuCantine" xml:space="preserve">
+    <value>BOIRE &amp; MANGER</value>
+  </data>
+  <data name="MenuCurrent" xml:space="preserve">
+    <value>NOUVEAUTÉS</value>
+  </data>
+  <data name="MenuDashboard" xml:space="preserve">
+    <value>PAGE D'ACCUEIL</value>
+  </data>
+  <data name="MenuPersons" xml:space="preserve">
+    <value>PERSONNES</value>
+  </data>
+  <data name="MenuRooms" xml:space="preserve">
+    <value>SALLES</value>
+  </data>
+  <data name="MenuStudies" xml:space="preserve">
+    <value>ÉTUDES</value>
+  </data>
+  <data name="MessageOnlyMembers" xml:space="preserve">
+    <value>Désolé, réservé aux membres !</value>
+  </data>
+  <data name="ModuleCatalogString" xml:space="preserve">
+    <value>Catalogue de modules</value>
+  </data>
+  <data name="ModulesString" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="MondayToThursdayString" xml:space="preserve">
+    <value>Lundi – Jeudi</value>
+  </data>
+  <data name="MoreString" xml:space="preserve">
+    <value>autres</value>
+  </data>
+  <data name="MVString" xml:space="preserve">
+    <value>MV</value>
+  </data>
+  <data name="MyActivitiesString" xml:space="preserve">
+    <value>Mes activités</value>
+  </data>
+  <data name="MyCalendar" xml:space="preserve">
+    <value>Mon calendrier</value>
+  </data>
+  <data name="MyConfirmedCoursesPrt1" xml:space="preserve">
+    <value>J’ai déjà occupé des places dans</value>
+  </data>
+  <data name="MyConfirmedCoursesPrt2" xml:space="preserve">
+    <value>cours
+                            Si je souhaite accepter l’une des places ci-dessous,
+                            je dois d’abord retourner mes places confirmées.</value>
+  </data>
+  <data name="MyCoursePlan" xml:space="preserve">
+    <value>Mes plans d’étude (démo)</value>
+  </data>
+  <data name="MyCoursePlanHeading" xml:space="preserve">
+    <value>Mes plans d’étude</value>
+  </data>
+  <data name="MyCoursesStrin" xml:space="preserve">
+    <value>Mes matières</value>
+  </data>
+  <data name="MyCourseSubscriptionsOnWaitlist" xml:space="preserve">
+    <value>Pour ces cours, je suis sur liste d’attente</value>
+  </data>
+  <data name="MyEnrollmentInString" xml:space="preserve">
+    <value>Mes entrées dans</value>
+  </data>
+  <data name="MyEnrollmentString" xml:space="preserve">
+    <value>Mes entrées</value>
+  </data>
+  <data name="MyMajorString" xml:space="preserve">
+    <value>Mon programme d’étude:</value>
+  </data>
+  <data name="MyPersonalData" xml:space="preserve">
+    <value>Mes données personnelles</value>
+  </data>
+  <data name="MyReservedCourses" xml:space="preserve">
+    <value>Une place m’est réservée dans ces cours.</value>
+  </data>
+  <data name="MyReservedCoursesMessage" xml:space="preserve">
+    <value>Si je ne confirme pas une place, la réservation devient caduque au prochain tirage au sort de places.</value>
+  </data>
+  <data name="MyReservedCoursesMessage2" xml:space="preserve">
+    <value>Le tirage au sort des places se déroule tous les jours, respectivement la nuit.</value>
+  </data>
+  <data name="MySemester" xml:space="preserve">
+    <value>Mon semestre d’études</value>
+  </data>
+  <data name="MySemesterGroupIn" xml:space="preserve">
+    <value>Mon groupe semestriel dans</value>
+  </data>
+  <data name="MySettings" xml:space="preserve">
+    <value>Mes paramètres</value>
+  </data>
+  <data name="MyStudyBook" xml:space="preserve">
+    <value>Mon livret d’étudiant</value>
+  </data>
+  <data name="MySubscriptionsInLottery" xml:space="preserve">
+    <value>Mes entrées dans le tirage au sort des places</value>
+  </data>
+  <data name="MySubscriptionsWithRestrictedNo" xml:space="preserve">
+    <value>Mes entrées dans des cours avec limitation du nombre de places</value>
+  </data>
+  <data name="MySuccessfulSubscriptionsHeading" xml:space="preserve">
+    <value>J’ai une place confirmée pour ces cours !</value>
+  </data>
+  <data name="MyTimeTableHeading" xml:space="preserve">
+    <value>Mon emploi du temps</value>
+  </data>
+  <data name="MyUserProfile" xml:space="preserve">
+    <value>Mon compte utilisateur</value>
+  </data>
+  <data name="MyWPM" xml:space="preserve">
+    <value>Mes WPM</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="NameOfCoursesPlaceholder" xml:space="preserve">
+    <value>Nom du cours</value>
+  </data>
+  <data name="NewBegin" xml:space="preserve">
+    <value>Début</value>
+  </data>
+  <data name="NewEnd" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="NewsletterHeading" xml:space="preserve">
+    <value>Lettre d'informations et publipostage</value>
+  </data>
+  <data name="NextDate" xml:space="preserve">
+    <value>Prochain rendez-vous</value>
+  </data>
+  <data name="NextLink" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="NextOccupancyString" xml:space="preserve">
+    <value>Prochaine occupation</value>
+  </data>
+  <data name="NoAvailableDataForCurrentSemester" xml:space="preserve">
+    <value>Aucune donnée d’emploi du temps n’est disponible pour le semestre en cours.</value>
+  </data>
+  <data name="NoDataString" xml:space="preserve">
+    <value>Pas de données</value>
+  </data>
+  <data name="NoDates" xml:space="preserve">
+    <value>Aucun rendez-vous</value>
+  </data>
+  <data name="NoDatesCurrently" xml:space="preserve">
+    <value>Plus aucun rendez-vous dans le semestre en cours</value>
+  </data>
+  <data name="NoDescriptionExists" xml:space="preserve">
+    <value>Aucune description disponible.</value>
+  </data>
+  <data name="NoDeviceRegisteredMessage" xml:space="preserve">
+    <value>Aucun équipement enregistré. Pour enregistrer un équipement aux notifications push, il faut enregistrer l’équipement souhaité dans l’application fillter.</value>
+  </data>
+  <data name="NoEnrolmentsString" xml:space="preserve">
+    <value>Aucune entrée !</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>AUCUN GROUPE</value>
+  </data>
+  <data name="NoInput" xml:space="preserve">
+    <value>non renseigné</value>
+  </data>
+  <data name="NoMarkedDates" xml:space="preserve">
+    <value>Aucun rendez-vous n’est sélectionné</value>
+  </data>
+  <data name="NoMarkedDatesForCancellation" xml:space="preserve">
+    <value>Aucun rendez-vous n’est sélectionné pour Refus</value>
+  </data>
+  <data name="NoMarkedDatesForDeletion" xml:space="preserve">
+    <value>Aucun rendez-vous n’est sélectionné pour Suppression</value>
+  </data>
+  <data name="NoMarkedDatesForReactivation" xml:space="preserve">
+    <value>Aucun rendez-vous n’est sélectionné pour Réactivation</value>
+  </data>
+  <data name="NomenNominandumShort" xml:space="preserve">
+    <value>N.N.</value>
+  </data>
+  <data name="NoMoodleCourseExists" xml:space="preserve">
+    <value>Aucun cours Moodle disponible</value>
+  </data>
+  <data name="NoMoreDatesString" xml:space="preserve">
+    <value>plus de rendez-vous</value>
+  </data>
+  <data name="NoNotificationsMessage" xml:space="preserve">
+    <value>Aucun notification disponible pour les 7 prochains jours.</value>
+  </data>
+  <data name="NoOfficeHours" xml:space="preserve">
+    <value>Ne propose pas de consultations</value>
+  </data>
+  <data name="NoRestrictedSubscription" xml:space="preserve">
+    <value>Aucune restriction de places</value>
+  </data>
+  <data name="NoSignupForMajorMessage" xml:space="preserve">
+    <value>Je ne suis inscrit à aucun programme d’étude. Je ne peux donc pas m’inscrire à un séminaire.</value>
+  </data>
+  <data name="NotAnotherDateString" xml:space="preserve">
+    <value>Aucun autre rendez-vous</value>
+  </data>
+  <data name="NotificationsListHeading" xml:space="preserve">
+    <value>Notifications des 7 jours suivants</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>maintenant</value>
+  </data>
+  <data name="NowLink" xml:space="preserve">
+    <value>maintenant</value>
+  </data>
+  <data name="NumberAlumniString" xml:space="preserve">
+    <value>Nombre d’anciens élèves</value>
+  </data>
+  <data name="NumberOfSeatsString" xml:space="preserve">
+    <value>Nombre de places</value>
+  </data>
+  <data name="NumberReservations" xml:space="preserve">
+    <value>: Nombre de réservations</value>
+  </data>
+  <data name="NumberSeatsCapacityPrt1" xml:space="preserve">
+    <value>Pour le cours, il y a au total</value>
+  </data>
+  <data name="NumberSeatsCapacityPrt2" xml:space="preserve">
+    <value>Places disponibles.</value>
+  </data>
+  <data name="NumberSeatsString" xml:space="preserve">
+    <value>Places</value>
+  </data>
+  <data name="NumberString" xml:space="preserve">
+    <value>Numéro</value>
+  </data>
+  <data name="NumberSubscribersShort" xml:space="preserve">
+    <value>#TN</value>
+  </data>
+  <data name="NumberWaitlist" xml:space="preserve">
+    <value>: Nombre d’entrées sur liste d’attente pour mon programme d’études.</value>
+  </data>
+  <data name="OccupiedByString" xml:space="preserve">
+    <value>Occupé</value>
+  </data>
+  <data name="OfferedForFollowingSemGroups" xml:space="preserve">
+    <value>Doit être proposé aux groupes semestriels suivants</value>
+  </data>
+  <data name="OfficeHour" xml:space="preserve">
+    <value>Consultation</value>
+  </data>
+  <data name="OfficeHourByAgreement" xml:space="preserve">
+    <value>Consultation sur accord</value>
+  </data>
+  <data name="OfficeHourByEmail" xml:space="preserve">
+    <value>Prendre rendez-vous par e-mail</value>
+  </data>
+  <data name="OfficeHourWith" xml:space="preserve">
+    <value>avec consultation dans</value>
+  </data>
+  <data name="OfficeHourWithDates" xml:space="preserve">
+    <value>Consultation avec rendez-vous</value>
+  </data>
+  <data name="OneGroupMustBeSelected" xml:space="preserve">
+    <value>Il faut sélectionner au moins un groupe.</value>
+  </data>
+  <data name="OrganicString" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="OrganizerString" xml:space="preserve">
+    <value>Organisateur</value>
+  </data>
+  <data name="ParticipateString" xml:space="preserve">
+    <value>Participer</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="PeriodOfTimeString" xml:space="preserve">
+    <value>Période</value>
+  </data>
+  <data name="PersonalDataHeading" xml:space="preserve">
+    <value>Données personnelles</value>
+  </data>
+  <data name="PlanButton" xml:space="preserve">
+    <value>planifier</value>
+  </data>
+  <data name="PresentToday" xml:space="preserve">
+    <value>présent aujourd'hui</value>
+  </data>
+  <data name="PreviewString" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="PricesforString" xml:space="preserve">
+    <value>Prix pour</value>
+  </data>
+  <data name="PriceString" xml:space="preserve">
+    <value>Prix</value>
+  </data>
+  <data name="PrivacyLink" xml:space="preserve">
+    <value>Protection des données</value>
+  </data>
+  <data name="QuickAccessHeading" xml:space="preserve">
+    <value>Accès rapides</value>
+  </data>
+  <data name="QuickAccessOfficeHour" xml:space="preserve">
+    <value>Consultations</value>
+  </data>
+  <data name="QuickAccessTimeTablePlaner" xml:space="preserve">
+    <value>Planification horaire</value>
+  </data>
+  <data name="RegisterEmailField" xml:space="preserve">
+    <value>E-mail (=identifiant)</value>
+  </data>
+  <data name="RegisterEmailPlaceholder" xml:space="preserve">
+    <value>Saisir l’adresse e-mail comme identifiant</value>
+  </data>
+  <data name="RegisterFirstNameField" xml:space="preserve">
+    <value>Prénom</value>
+  </data>
+  <data name="RegisterFirstNamePlaceholder" xml:space="preserve">
+    <value>Saisir le prénom</value>
+  </data>
+  <data name="RegisterHeading" xml:space="preserve">
+    <value>Créer un nouveau compte utilisateur</value>
+  </data>
+  <data name="RegisterImportantMessage" xml:space="preserve">
+    <value>&lt;strong&gt;Information importante pour le premier semestre :&lt;/strong&gt;
+        &lt;ul&gt;
+            &lt;li&gt;vérifiez d’abord si votre boîte de réception HM est configurée et si vous y avez accès via &lt;a href="https://xmail.mwn.de" target="_blank"&gt;&lt;strong&gt;OWA&lt;/strong&gt;&lt;/a&gt;.&lt;/li&gt;
+            &lt;li&gt;Merci de ne pas utiliser d’adresses &lt;strong&gt;hotmail.de/com&lt;/strong&gt; ou &lt;strong&gt;outlook.de&lt;/strong&gt; . Ces services refusent en effet la réception d’e-mails provenant de hm.edu.&lt;/li&gt;
+        &lt;/ul&gt;</value>
+  </data>
+  <data name="RegisterLastNameField" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="RegisterLastNamePlaceholder" xml:space="preserve">
+    <value>Saisir le nom</value>
+  </data>
+  <data name="RegisterPasswordAgainPlaceholder" xml:space="preserve">
+    <value>Répéter la saisie du mot de passe</value>
+  </data>
+  <data name="RegisterPasswordConfirmErrorMessage" xml:space="preserve">
+    <value>Le mot de passe et sa confirmation ne correspondent pas.</value>
+  </data>
+  <data name="RegisterPasswordConfirmField" xml:space="preserve">
+    <value>Répétition mot de passe</value>
+  </data>
+  <data name="RegisterPasswordLengthErrorMessage" xml:space="preserve">
+    <value>{0} doit avoir {2} caractères minimum.</value>
+  </data>
+  <data name="RegisterPasswordPlaceholder" xml:space="preserve">
+    <value>Saisir le mot de passe</value>
+  </data>
+  <data name="RegisterSubmitButton" xml:space="preserve">
+    <value>Créer compte utilisateur</value>
+  </data>
+  <data name="RegisterTabHeading" xml:space="preserve">
+    <value>Enregistrement</value>
+  </data>
+  <data name="RegisterValidationSummaryMessage" xml:space="preserve">
+    <value>Une erreur est survenue.</value>
+  </data>
+  <data name="RelationsSemesterGroup" xml:space="preserve">
+    <value>Affectation aux groupes semestriels</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Rester connecté(e) ?</value>
+  </data>
+  <data name="RightsNRoles" xml:space="preserve">
+    <value>Autorisations et rôles</value>
+  </data>
+  <data name="RoleString" xml:space="preserve">
+    <value>Rôle</value>
+  </data>
+  <data name="RoomNumberString" xml:space="preserve">
+    <value>Numéro de salle</value>
+  </data>
+  <data name="RoomOccupancyPlan" xml:space="preserve">
+    <value>Plan d’occupation</value>
+  </data>
+  <data name="RoomOccupancyString" xml:space="preserve">
+    <value>Occupation des salles</value>
+  </data>
+  <data name="RoomOwnerString" xml:space="preserve">
+    <value>Affectation(s)</value>
+  </data>
+  <data name="RoomPlanFor" xml:space="preserve">
+    <value>Occupation de salle pour</value>
+  </data>
+  <data name="RoomPlanString" xml:space="preserve">
+    <value>Plan des salles</value>
+  </data>
+  <data name="RoomsHeading" xml:space="preserve">
+    <value>Salles</value>
+  </data>
+  <data name="RoomsReserved" xml:space="preserve">
+    <value>Réservations de salles</value>
+  </data>
+  <data name="RoomStatusString" xml:space="preserve">
+    <value>Statut de salle</value>
+  </data>
+  <data name="RoomString" xml:space="preserve">
+    <value>Salle</value>
+  </data>
+  <data name="RulesOfLottery" xml:space="preserve">
+    <value>Règles d’attribution des places</value>
+  </data>
+  <data name="RulesString" xml:space="preserve">
+    <value>Règles</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>ENREGISTRER</value>
+  </data>
+  <data name="SchnitzelBreadString" xml:space="preserve">
+    <value>Pain à l’escalope</value>
+  </data>
+  <data name="SearchForString" xml:space="preserve">
+    <value>Rechercher :</value>
+  </data>
+  <data name="SearchString" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="SemesterGroup" xml:space="preserve">
+    <value>Groupe d’étude</value>
+  </data>
+  <data name="SemesterString" xml:space="preserve">
+    <value>Semestre</value>
+  </data>
+  <data name="SemGroupField" xml:space="preserve">
+    <value>Groupe semestriel</value>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="SendEmailMailTo" xml:space="preserve">
+    <value>Envoyer le message</value>
+  </data>
+  <data name="SendMailToGroup" xml:space="preserve">
+    <value>E-mail au groupe</value>
+  </data>
+  <data name="SetMailingSettingCheckbox" xml:space="preserve">
+    <value>Je souhaite recevoir des e-mails envoyés par la fonction « Nouveautés / Publipostage ».</value>
+  </data>
+  <data name="SetPasswordButton" xml:space="preserve">
+    <value>Définir un mot de passe</value>
+  </data>
+  <data name="SettingsString" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="ShortInfo" xml:space="preserve">
+    <value>Information brève</value>
+  </data>
+  <data name="ShortNameString" xml:space="preserve">
+    <value>Nom abrégé</value>
+  </data>
+  <data name="ShortReservation" xml:space="preserve">
+    <value>Rés.</value>
+  </data>
+  <data name="ShortWaitlist" xml:space="preserve">
+    <value>WL</value>
+  </data>
+  <data name="ShowAllDates" xml:space="preserve">
+    <value>Afficher tous les rendez-vous</value>
+  </data>
+  <data name="ShowAsLabel" xml:space="preserve">
+    <value>Afficher en tant que</value>
+  </data>
+  <data name="ShowOnInfoscreen" xml:space="preserve">
+    <value>Afficher sur l’écran d'information</value>
+  </data>
+  <data name="ShowOnlyFutureDates" xml:space="preserve">
+    <value>Afficher seulement les rendez-vous à venir</value>
+  </data>
+  <data name="ShowSubscribedDates" xml:space="preserve">
+    <value>Afficher les rendez-vous personnels</value>
+  </data>
+  <data name="SignOutButton" xml:space="preserve">
+    <value>Se désabonner</value>
+  </data>
+  <data name="SignUpNewsletterFacultyMessage" xml:space="preserve">
+    <value>Ma fonction « Nouveautés / Publipostage » envoie des informations sur les études, provenant par exemple du secrétariat ou des conseillers à intervalles irréguliers.
+                                    Je ne reçois ces messages « peu importants » qu’en cochant la case ci-dessous. Les messages importants pour l’inscription aux examens par exemple me parviendront dans tous les cas.</value>
+  </data>
+  <data name="SignUpSemesterGroupNecessaryMessage" xml:space="preserve">
+    <value>Il n’est pas possible de saisir une entrée dans les séminaires sans indiquer le groupe semestriel.</value>
+  </data>
+  <data name="SnacksString" xml:space="preserve">
+    <value>En-cas</value>
+  </data>
+  <data name="SnacksTableContent" xml:space="preserve">
+    <value>Balisto div. sortes</value>
+  </data>
+  <data name="SoftDrinksString" xml:space="preserve">
+    <value>Boissons</value>
+  </data>
+  <data name="StartedOfString" xml:space="preserve">
+    <value>Créé par</value>
+  </data>
+  <data name="StatisticsString" xml:space="preserve">
+    <value>Statistiques</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="StuCafeEmptyMessage" xml:space="preserve">
+    <value>Plus bientôt</value>
+  </data>
+  <data name="StuCafeHeading" xml:space="preserve">
+    <value>StuCafé au Roter Würfel</value>
+  </data>
+  <data name="StudentsString" xml:space="preserve">
+    <value>Étudiants</value>
+  </data>
+  <data name="StudyBook" xml:space="preserve">
+    <value>Livret d’études</value>
+  </data>
+  <data name="StudyBookSemProfileSubscriptionsHeading" xml:space="preserve">
+    <value>J’étais inscrit à</value>
+  </data>
+  <data name="StudyProcessComment" xml:space="preserve">
+    <value>En cours de construction [DÉMO]</value>
+  </data>
+  <data name="StudyProcessHeading" xml:space="preserve">
+    <value>Cursus</value>
+  </data>
+  <data name="SubMenuAlumni" xml:space="preserve">
+    <value>Alumni</value>
+  </data>
+  <data name="SubMenuCantine" xml:space="preserve">
+    <value>Réfectoire</value>
+  </data>
+  <data name="SubMenuCurrentEvents" xml:space="preserve">
+    <value>Manifestations</value>
+  </data>
+  <data name="SubMenuCurrentJobs" xml:space="preserve">
+    <value>Offres d'emploi</value>
+  </data>
+  <data name="SubMenuCurrentNewsletter" xml:space="preserve">
+    <value>Lettre d'informations</value>
+  </data>
+  <data name="SubMenuLecturer" xml:space="preserve">
+    <value>Professeurs</value>
+  </data>
+  <data name="SubMenuRoomsOccupancy" xml:space="preserve">
+    <value>Occupations de salle</value>
+  </data>
+  <data name="SubMenuStudents" xml:space="preserve">
+    <value>Étudiants</value>
+  </data>
+  <data name="SubMenuStudiesCurricula" xml:space="preserve">
+    <value>Programmes d’étude</value>
+  </data>
+  <data name="SubMenuStudiesPlaner" xml:space="preserve">
+    <value>Répertoire des cours magistraux</value>
+  </data>
+  <data name="SubMenuStudiesSemester" xml:space="preserve">
+    <value>Fin du semestre</value>
+  </data>
+  <data name="SubMenuStudiesThesis" xml:space="preserve">
+    <value>Mémoires</value>
+  </data>
+  <data name="Subscriber" xml:space="preserve">
+    <value>Participants</value>
+  </data>
+  <data name="SubscribersString" xml:space="preserve">
+    <value>Abonnés</value>
+  </data>
+  <data name="SubscriptionListString" xml:space="preserve">
+    <value>Liste des participants</value>
+  </data>
+  <data name="TimesString" xml:space="preserve">
+    <value>Heure(s)</value>
+  </data>
+  <data name="TimeString" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="TimeTableString" xml:space="preserve">
+    <value>Emploi du temps</value>
+  </data>
+  <data name="TitleString" xml:space="preserve">
+    <value>Titre</value>
+  </data>
+  <data name="TodayNoMoreString" xml:space="preserve">
+    <value>...plus rien aujourd’hui</value>
+  </data>
+  <data name="TodayString" xml:space="preserve">
+    <value>Aujourd'hui</value>
+  </data>
+  <data name="ToOfficeHourDatesString" xml:space="preserve">
+    <value>Aller à la liste des rendez-vous</value>
+  </data>
   <data name="UniversityWebsiteHyperlink" xml:space="preserve">
     <value>https://www.hm.edu/en/index.en.html</value>
+  </data>
+  <data name="UniversityWebsiteShortDescriptionLink" xml:space="preserve">
+    <value>Haute école Munich</value>
+  </data>
+  <data name="UnsubscribeCourse" xml:space="preserve">
+    <value>Restituer la place</value>
+  </data>
+  <data name="UserDevicesControlHeading" xml:space="preserve">
+    <value>Gestion des équipements</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>Id utilisateur</value>
+  </data>
+  <data name="VeganString" xml:space="preserve">
+    <value>végan</value>
+  </data>
+  <data name="VegetarianString" xml:space="preserve">
+    <value>végétarien</value>
+  </data>
+  <data name="VisibleForString" xml:space="preserve">
+    <value>Visible pour</value>
+  </data>
+  <data name="WaitingList" xml:space="preserve">
+    <value>Liste d’attente</value>
+  </data>
+  <data name="Waitlist" xml:space="preserve">
+    <value>Liste d’attente (participants / réservation)</value>
+  </data>
+  <data name="WhatGoesOnTodayNWhere" xml:space="preserve">
+    <value>Que se passe-t-il aujourd'hui et où ?</value>
+  </data>
+  <data name="WhatIOfferedString" xml:space="preserve">
+    <value>Mes propositions</value>
+  </data>
+  <data name="WPMLottery" xml:space="preserve">
+    <value>Sélection WPM</value>
   </data>
 </root>

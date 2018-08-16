@@ -1,7 +1,7 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Mitglieder " + Model.Organiser.ShortName;
+    ViewBag.Title = "Lehrende " + Model.Organiser.ShortName;
 }
 
 @section styles
@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Lehrende in @Model.Organiser.ShortName</h1>
+                    <h1>Lehrende @Model.Organiser.ShortName</h1>
                 </div>
             </div>
         </div>
@@ -30,17 +30,7 @@
                     <div class="form-inline">
                         <div class="form-group">
                             <a href="@Url.Action("Index")" class="btn btn-default">
-                                <i class="fa fa-list"></i> als Liste
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Today")" class="btn btn-default active">
-                                <i class="fa fa-coffee"></i> heute da
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("CreateMember", "Organiser", new {id = Model.Organiser.Id})" class="btn btn-default">
-                                <i class="fa fa-plus-circle"></i> Dozent anlegen
+                                <i class="fa fa-arrow-left"></i> zurück
                             </a>
                         </div>
                     </div>
@@ -52,18 +42,15 @@
 
 
 <div class="container-fluid">
-
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> Alle Personen
-                    </div>
-                    <div class="actions">
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-user-o"></i> Wer ist heute in einer Lehrveranstaltung aktiv?  
+                    </h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     <table id="tabMembers" class="table table-condensed table-striped">
                         <thead>
                             <tr>

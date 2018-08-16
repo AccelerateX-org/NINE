@@ -17,9 +17,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid id)
         {
-            return View(Db.Criterias.ToList());
+            var req = Db.Requirements.SingleOrDefault(x => x.Id == id);
+            var model = req.Criterias.ToList();
+
+            return View(model);
         }
 
         /// <summary>
@@ -52,7 +55,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id.Value);
 
             var model = new CurriculumCriteria();
-            model.Curriculum = curr;
+            //model.Curriculum = curr;
 
             return View(model);
         }
@@ -71,7 +74,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var curr = Db.Curricula.SingleOrDefault(x => x.Id == curriculumCriteria.Id);
 
                 curriculumCriteria.Id = Guid.NewGuid();
-                curriculumCriteria.Curriculum = curr;
+                //curriculumCriteria.Curriculum = curr;
                 Db.Criterias.Add(curriculumCriteria);
                 Db.SaveChanges();
                 

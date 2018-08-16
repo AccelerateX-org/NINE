@@ -19,7 +19,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var slot in Model.Date.Slots)
+    @foreach (var subscription in Model.Date.Occurrence.Subscriptions)
+    {
+        var user = userService.GetUserName(subscription.UserId);
+        <tr>
+            <td>@Html.TimeSpan(Model.Date)</td>
+            <td>@user</td>
+            <td>@subscription.TimeStamp</td>
+            <td>@subscription.SubscriberRemark</td>
+        </tr>
+    }
+
+    @foreach (var slot in Model.Date.Slots)
         {
             foreach (var subscription in slot.Occurrence.Subscriptions)
             {
@@ -28,7 +39,7 @@
                     <td>@Html.TimeSpan(slot)</td>
                     <td>@user</td>
                     <td>@subscription.TimeStamp</td>
-                    <td></td>
+                    <td>@subscription.SubscriberRemark</td>
                 </tr>
             }
         }

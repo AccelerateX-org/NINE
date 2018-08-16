@@ -1,0 +1,17 @@
+﻿@model MyStik.TimeTable.Data.Semester
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Semester @Model.Name löschen</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Soll das Semester @Model.Name gelöscht werden?</h4>
+    </div>
+    <div class="panel-body">
+        @Html.ActionLink("Ja", "DeleteConfirmed", "Semester", new { id = Model.Name }, new { @class="btn btn-danger"} )
+        @Html.ActionLink("Nein", "Index", "Semester", null, new { @class = "btn btn-default" })
+    </div>
+</div>
+

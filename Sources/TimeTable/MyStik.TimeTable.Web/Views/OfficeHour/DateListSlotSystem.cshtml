@@ -79,6 +79,10 @@
                                 <i class="fa fa-calendar"></i>Alle Termine
                             </div>
                             <div class="actions">
+                                @if (ViewBag.UserRight.IsMemberAdmin)
+                                {
+                                    <i class="fa fa-cog"></i>
+                                }
                             </div>
                         </div>
                         <div class="portlet-body">
@@ -88,6 +92,10 @@
                                     <th>Datum</th>
                                     <th>Zeitraum</th>
                                     <th></th>
+                                    @if (ViewBag.UserRight.IsMemberAdmin)
+                                    {
+                                        <th><i class="fa fa-cog"></i></th>
+                                    }
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -95,29 +103,49 @@
                                 {
                                     <tr>
                                         <td>@date.Date.Begin.Date.ToShortDateString()</td>
-                                        @if (date.AvailableSlots != null && date.AvailableSlots.Any())
+                                        @if (date.Date.Occurrence.IsCanceled)
                                         {
                                             <td>@Html.TimeSpan(date.Date)</td>
-                                            <td><a href="@Url.Action("SubscribeDate", new {dateId = date.Date.Id})" class="btn btn-default"> @date.AvailableSlots.Count Slots verfügbar</a></td>
+                                            <td>abgesagt</td>
                                         }
                                         else
                                         {
-                                            if (date.Slot != null)
+                                            if (date.AvailableSlots != null && date.AvailableSlots.Any())
                                             {
-                                                <td>@Html.TimeSpan(date.Slot)</td>
-                                            }
-                                            else
-                                            {
-                                                <td>@Html.TimeSpan(date.Date)</td>
-                                            }
-                                            if (date.Subscription != null && date.Slot != null)
-                                            {
-                                                <td><a href="@Url.Action("Unsubscribe", new {slotId = date.Slot.Id})" class="btn btn-default"><i class="fa fa-times"></i> austragen</a></td>
-                                            }
-                                            else
-                                            {
-                                                <td>@date.Remark</td>
-                                            }
+                                                 <td>@Html.TimeSpan(date.Date)</td>
+                                                 <td><a href="@Url.Action("SubscribeDate", new {dateId = date.Date.Id})" class="btn btn-default"> @date.AvailableSlots.Count Slots verfügbar</a></td>
+                                             }
+                                             else
+                                             {
+                                                 if (date.Slot != null)
+                                                 {
+                                                     <td>@Html.TimeSpan(date.Slot)</td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>@Html.TimeSpan(date.Date)</td>
+                                                 }
+                                                 if (date.Subscription != null && date.Slot != null)
+                                                 {
+                                                     <td><a href="@Url.Action("Unsubscribe", new {slotId = date.Slot.Id})" class="btn btn-default"><i class="fa fa-times"></i> austragen</a></td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>@date.Remark</td>
+                                                 }
+                                             }
+                                        }
+                                        @if (ViewBag.UserRight.IsMemberAdmin)
+                                        {
+                                            <td>
+                                                @Html.TimeSpanWithDate(date.Date) [@date.Date.Occurrence.IsAvailable]
+                                                @foreach (var slot in date.Date.Slots)
+                                                {
+                                                    <div>@Html.TimeSpanWithDate(slot) [@slot.Occurrence.IsAvailable]</div>
+                                                }
+                                            </td>
+
+
                                         }
                                     </tr>
                                 }

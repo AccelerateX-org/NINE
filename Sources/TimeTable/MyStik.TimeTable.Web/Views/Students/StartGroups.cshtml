@@ -1,0 +1,95 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.StudentStatisticsModel>
+
+@{
+    ViewBag.Title = "Gruppen";
+    var i = 0;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studierende</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Index")" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Statistik</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Fakultät</th>
+                                <th>Studiengang</th>
+                                <th>Studienbeginn</th>
+                                <th>Anzahl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var statisticsModel in Model.Where(x => x.Curriculum != null).OrderBy(x => x.Curriculum.Organiser.ShortName).ThenBy(x => x.Curriculum.ShortName).ThenBy(x => x.Semester.StartCourses))
+                            {
+                                i += statisticsModel.Count;
+                                <tr>
+                                    <td>@statisticsModel.Curriculum.Organiser.ShortName</td>
+                                    @if (string.IsNullOrEmpty(statisticsModel.Curriculum.ShortName))
+                                    {
+                                        <td>@statisticsModel.Curriculum.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@statisticsModel.Curriculum.ShortName</td>
+                                    }
+                                    <td>@statisticsModel.Semester.Name</td>
+                                    <td>@statisticsModel.Count</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="3">Summe</td>
+                                <td>@i</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+

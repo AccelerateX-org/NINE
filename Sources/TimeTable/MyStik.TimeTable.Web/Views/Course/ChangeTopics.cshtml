@@ -1,0 +1,234 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseCreateModel3
+@{
+    ViewBag.Title = "Modulbereiche";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Modulbereiche für @Model.Course.Name ändern</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Modulbereiche der Lehrveranstaltung</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-horizontal">
+                        @Html.HiddenFor(m => m.CourseId)
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="GroupTable">Semestergruppe(n)</label>
+                            <div class="col-sm-9">
+                                <div id="GroupTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Fakultät</th>
+                                                <th>Semester</th>
+                                                <th>Studiengang</th>
+                                                <th>Gruppenname</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control  input-sm", onchange = "onFacultyChanged()" })
+                                                </th>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
+                                                </th>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control  input-sm", onchange = "onCurriculumChanged()" })
+                                                </th>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control  input-sm" })
+                                                </th>
+                                                <th>
+                                                    <button class="btn btn-default btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="groupList">
+                                            @foreach (var group in Model.Course.SemesterTopics)
+                                            {
+                                                <tr id="@group.Id">
+                                                    <td>@group.Topic.Chapter.Curriculum.Organiser.ShortName</td>
+                                                    <td>@group.Semester.Name</td>
+                                                    <td>@group.Topic.Chapter.Curriculum.ShortName</td>
+                                                    <td>@group.TopicName</td>
+                                                    <td><button class="btn btn-default btn-sm" onclick="deleteRow('@group.Id');"><i class="fa fa-trash-o"></i></button></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button class="btn btn-default" onclick="saveCourse()"><i class="fa fa-save"></i> speichern</button>
+                                <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold">Erläuterungen</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <p>Die Zuordnung der Modulbereiche bietet die folgenden Möglichkeiten:</p>
+                    <ul>
+                        <li>Die Listendarstellung des Vorlesungsverzeichnisses ist nach Modulbereichen strukturiert.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        function onFacultyChanged() {
+            var org = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SemesterList", "Curriculum")',
+                    data: {
+                        orgId: org,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#SemesterId').html(data);
+                        onSemesterChanged();
+                    }
+                });
+        }
+
+
+        function onSemesterChanged() {
+            var sem = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CurriculaList", "Curriculum")',
+                    data: {
+                        semId: sem,
+                        orgId: orgId,
+                        activeOnly: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#CurriculumId').html(data);
+                        onCurriculumChanged();
+                    }
+                });
+        }
+
+
+        function onCurriculumChanged() {
+
+            var prog = $('#CurriculumId option:selected').val();
+            var sem = $('#SemesterId option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SemesterTopicList", "Curriculum")',
+                    data: {
+                        currId: prog,
+                        semId: sem,
+                        activeOnly: false
+                    },
+                    success: function (data, success, xhr) {
+                        $('#GroupId').html(data);
+                    }
+                });
+        }
+
+
+
+        function addGroup() {
+            var groupId = $("#GroupId option:selected").val();
+
+            var semText = $("#SemesterId option:selected").text();
+            var orgText = $("#OrganiserId option:selected").text();
+            var currText = $("#CurriculumId option:selected").text();
+            var groupText = $("#GroupId option:selected").text();
+
+            $("#groupList").append("<tr id=\""
+                + groupId + "\"><td>"
+                + orgText + "</td><td>"
+                + semText + "</td><td>"
+                + currText + "</td><td>"
+                + groupText + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+                + groupId + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+        }
+
+
+
+        $(document).ready(function() {
+            $("#loading").hide();
+        });
+
+
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+
+        function saveCourse() {
+
+            $("#loading").show();
+
+
+            var courseId = $("#CourseId").val();
+            var groupList = new Array();
+
+            var list = $("#GroupTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    groupList[i] = list[i].id;
+                }
+            }
+
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("ChangeTopics")',
+                    data: {
+                        CourseId: courseId,
+                        GroupIds: groupList
+                    },
+                    success: function(data, success, xhr) {
+                        window.location.replace("@Url.Action("Admin", new {id = Model.Course.Id})");
+                    }
+                });
+        }
+
+
+    </script>
+}

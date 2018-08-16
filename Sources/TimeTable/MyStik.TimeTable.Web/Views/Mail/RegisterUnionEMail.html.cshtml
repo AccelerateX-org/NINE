@@ -1,0 +1,9 @@
+﻿@model MyStik.TimeTable.Web.Models.OrgMemberMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Anbei der Anmeldecode für @Model.Organiser.ShortName: <strong>@Model.Token</strong></p>
+<p>Bitte damit zur Fachschaft gehen das Konto für den Zugang zur Fachschaftsseite aktivieren lassen.</p>

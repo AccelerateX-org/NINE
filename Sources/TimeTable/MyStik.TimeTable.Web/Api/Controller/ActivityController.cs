@@ -23,7 +23,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         {
             //Da hier Abfrage der persönlichen Termine nur für kommende Woche, Festlegung der Variablen des Zeitraums
             //Alle eigenen Termine von jetzt bis zur nächsten Woche
-            var from = GlobalSettings.Now;
+            var from = DateTime.Now;
             var until = from.AddDays(7);
 
             var userService = new UserInfoService();

@@ -1,0 +1,29 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+
+    ViewBag.Title = "Vorlesungsverzeichnisse";
+}
+<div class="container" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-book"></i> <a href="@Url.Action("Index", "Dictionary")">Start</a> / @Model.Semester.Name</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var curr in Model.Curricula)
+                    {
+                        <a href="@Url.Action("Dictionary", new {semId=Model.Semester.Id, currId=curr.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">@Html.FacultyLabel(curr.Organiser) @curr.Name (@curr.ShortName)</h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

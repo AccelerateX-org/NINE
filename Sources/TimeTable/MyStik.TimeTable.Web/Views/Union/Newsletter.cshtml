@@ -1,0 +1,36 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Newsletter>
+
+@{
+    ViewBag.Title = "Newsletter";
+}
+
+<h2>Die Newsletter der Fachschaft @ViewBag.Union.ShortName</h2>
+
+<a href="@Url.Action("Create", "Newsletter")" class="btn btn-default "><i class="fa fa-plus"></i> Newsletter anlegen</a>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Beschreibung</th>
+        <th>Anzahl Eintragungen</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var newsletter in Model)
+    {
+        <tr>
+            <td>@newsletter.Name</td>
+            <td>@newsletter.Description</td>
+            <td>@newsletter.Occurrence.Subscriptions.Count</td>
+            <td>
+                <a href="@Url.Action("SendNews", "Newsletter", new { id = newsletter.Id})" class="btn btn-default"><i class="fa fa-envelope-o"></i> News senden</a>
+                <a href="@Url.Action("Edit", "Newsletter", new { id = newsletter.Id})" class="btn btn-default"><i class="fa fa-edit"></i> Einstellungen</a>
+                <a href="@Url.Action("Delete", "Newsletter", new { id = newsletter.Id})" class="btn btn-danger"><i class="fa fa-trash-o"></i> Löschen</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

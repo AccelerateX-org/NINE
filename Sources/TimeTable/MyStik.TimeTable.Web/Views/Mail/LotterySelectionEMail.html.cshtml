@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Web.Models.LotterySelectionMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Im Wahlverfahren @Model.Lottery.Name haben Sie am @Model.SelectDate folgende Auswahl getroffen</p>
+<ol>
+    @foreach (var course in Model.Courses)
+    {
+        <li>@course.Course.Name</li>
+    }
+</ol>
+<p>Sie können maximal @Model.ConfirmCount Plätze erhalten.</p>
+<p>Sie haben angegeben, dass Sie an @Model.ConfirmCount Lehrveranstaltungen teilnehmen möchten.</p>
+@if (Model.AcceptAny)
+{
+<p>
+    Im Falle, dass Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptieren Sie jeweils einen Platz in nicht von Ihnen gewählten Lehrveranstaltungen.
+</p>
+}
+else
+{
+    <p>
+        Im Falle, dass Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptieren Sie eine geringe Anzahl an Plätzen, als Sie angegeben haben.
+    </p>
+}
+
+<p>Die Verteilung der Plätze findet zwischen dem @Model.Lottery.FirstDrawing.ToShortDateString() und @Model.Lottery.LastDrawing.ToShortDateString() statt.</p>

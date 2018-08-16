@@ -54,132 +54,150 @@
                     </div>
                 </div>
                 <div class="portlet-body">
-                    <div class="form-horizontal">
-                        @Html.HiddenFor(m => m.CourseId)
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DozTable">Dozent(en)</label>
-                            <div class="col-sm-9">
-                                <div id="DozTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                        <tr>
-                                            <th>Fakultät</th>
-                                            <th>Name</th>
-                                            <th>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>) ViewBag.Organiser, new {@class = "form-control  input-sm"})
-                                            </th>
-                                            <th>
-                                                <input type="text" class="form-control  input-sm" id="DozId">
-                                            </th>
-                                            <th>
-                                            </th>
-                                        </tr>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-horizontal">
+                                @Html.HiddenFor(m => m.CourseId)
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="DozTable">Dozent(en)</label>
+                                    <div class="col-sm-9">
+                                        <div id="DozTable">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Fakultät</th>
+                                                    <th>Name</th>
+                                                    <th>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>) ViewBag.Organiser, new {@class = "form-control  input-sm"})
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control  input-sm" id="DozId">
+                                                    </th>
+                                                    <th>
+                                                    </th>
+                                                </tr>
 
-                                        </thead>
-                                        <tbody id="dozList"></tbody>
-                                    </table>
+                                                </thead>
+                                                <tbody id="dozList"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="DateTable">Termin(e)</label>
+                                    <div class="col-sm-9">
+                                        <div id="DateTable">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Datum / Erster Termin</th>
+                                                    <th>Von</th>
+                                                    <th>Bis</th>
+                                                    <th>Wdh</th>
+                                                    <th>Letzer Termin</th>
+                                                    <th>Turnus</th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <input type="text" class="form-control input-sm datepicker" id="DateDay">
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateBegin">
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateEnd">
+                                                    </th>
+                                                    <th>
+                                                        <input type="checkbox" class="form-control input-sm" id="DateWdh" value="">
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control input-sm datepicker" id="DateLastDay">
+                                                    </th>
+                                                    <th>
+                                                        <select class="form-control" id="frequency">
+                                                            <option value="1">täglich</option>
+                                                            <option value="7">wöchentlich</option>
+                                                            <option value="14">14-tägig</option>
+                                                        </select>
+                                                    </th>
+                                                    <th>
+                                                        <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="dateList"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="DozTable">Raum/Räume</label>
+                                    <div class="col-sm-9">
+                                        <div id="RoomTable">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Fakultät</th>
+                                                    <th>Raumnummer</th>
+                                                    <th>Status</th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>) ViewBag.RoomOrganiser, new {@class = "form-control  input-sm"})
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control  input-sm" id="RoomId">
+                                                    </th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="roomList"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="ConflictTable">Konflikte</label>
+                                    <div class="col-sm-9">
+                                        <div id="ConflictTable"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-3 col-sm-9">
+                                        <a href="@Url.Action("Admin", "Course", new {id = Model.CourseId})" class="btn btn-default">Zurück</a>
+                                        <button class="btn btn-primary" onclick="createDate()"><i class="fa fa-save"></i> Termin anlegen</button>
+                                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DateTable">Termin(e)</label>
-                            <div class="col-sm-9">
-                                <div id="DateTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                        <tr>
-                                            <th>Datum / Erster Termin</th>
-                                            <th>Von</th>
-                                            <th>Bis</th>
-                                            <th>Wdh</th>
-                                            <th>Letzer Termin</th>
-                                            <th>Turnus</th>
-                                            <th></th>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                <input type="text" class="form-control input-sm datepicker" id="DateDay">
-                                            </th>
-                                            <th>
-                                                <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateBegin">
-                                            </th>
-                                            <th>
-                                                <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateEnd">
-                                            </th>
-                                            <th>
-                                                <input type="checkbox" class="form-control input-sm" id="DateWdh" value="">
-                                            </th>
-                                            <th>
-                                                <input type="text" class="form-control input-sm datepicker" id="DateLastDay">
-                                            </th>
-                                            <th>
-                                                <select class="form-control" id="frequency">
-                                                    <option value="1">täglich</option>
-                                                    <option value="7">wöchentlich</option>
-                                                    <option value="14">14-tägig</option>
-                                                </select>
-                                            </th>
-                                            <th>
-                                                <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="dateList"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DozTable">Raum/Räume</label>
-                            <div class="col-sm-9">
-                                <div id="RoomTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                        <tr>
-                                            <th>Fakultät</th>
-                                            <th>Raumnummer</th>
-                                            <th>Status</th>
-                                            <th></th>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>) ViewBag.RoomOrganiser, new {@class = "form-control  input-sm"})
-                                            </th>
-                                            <th>
-                                                <input type="text" class="form-control  input-sm" id="RoomId">
-                                            </th>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="roomList"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="ConflictTable">Konflikte</label>
-                            <div class="col-sm-9">
-                                <div id="ConflictTable"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <a href="@Url.Action("Admin", "Course", new {id = Model.CourseId})" class="btn btn-default">Zurück</a>
-                                <button class="btn btn-primary" onclick="createDate()"><i class="fa fa-save"></i> Termin anlegen</button>
-                                <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                        <div class="col-md-4">
+                            <div class="alert alert-info">
+                                <p><strong>Hinweise zur Eingabe der Termine</strong></p>
+                                <ul>
+                                    <li>Es können mehrere Terminangaben gemacht werden.</li>
+                                    <li>Terminangaben werden nur übernommen, wenn sie mit dem "+" hinzugefügt wurden.</li>
+                                    <li>Für Einzeltermine genügen die Angaben zu Datum, Von und Bis.</li>
+                                    <li>Bei Wiederholungen <strong>muss</strong> der letzte Termin und der Turnus angegeben werden.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        
     </div>
 </div>
+
 
 
 
@@ -602,37 +620,42 @@
                 for (var i = 0; i < n; i++) {
                     var elem = $("#" + list[i].id);
 
-                    dateList[i] = elem.data("date-day") + "#"
-                    + elem.data("date-begin") + "#"
-                    + elem.data("date-end") + "#"
-                    + elem.data("date-iswdh") + "#"
-                    + elem.data("date-lastday") + "#"
-                    + elem.data("date-frequency");
+                    dateList[i] = elem.data("date-day") +
+                        "#" +
+                        elem.data("date-begin") +
+                        "#" +
+                        elem.data("date-end") +
+                        "#" +
+                        elem.data("date-iswdh") +
+                        "#" +
+                        elem.data("date-lastday") +
+                        "#" +
+                        elem.data("date-frequency");
                 }
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("CreateCourseDate")',
+                        data: {
+                            CourseId: courseId,
+                            DozIds: dozList,
+                            RoomIds: roomList,
+                            Dates: dateList
+                        },
+                        success: function(data, success, xhr) {
+                            $("#loading").hide();
+
+                            window.location = data.url;
+                        }
+                    });
+
+            } else {
+                $("#loading").hide();
+                alert("Terminangaben fehlen");
             }
 
 
-            $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("CreateCourseDate")',
-                data: {
-                    CourseId: courseId,
-                    DozIds: dozList,
-                    RoomIds: roomList,
-                    Dates: dateList
-                },
-                success: function(data, success, xhr) {
-                    $("#loading").hide();
-
-                    alert("Termin(e) angelegt");
-
-                    // jetzt noch Eingaben löschen oder nicht
-                    $("#dozList").html("");
-                    $("#dateList").html("");
-                    $("#roomList").html("");
-                }
-            });
         }
 
 

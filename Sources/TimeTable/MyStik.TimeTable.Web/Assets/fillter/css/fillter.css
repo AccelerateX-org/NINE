@@ -523,12 +523,15 @@ h1, .h1 {
 }
 
 .dashboard-stat .details .number {
-    font-size: 24px;
+    padding-top: 21px;
+    font-size: 20px;
     line-height: 36px;
     letter-spacing: 0px;
     margin-bottom: 0px;
     font-weight: 600;
 }
+
+
 
 .dashboard-stat .more {
     clear: both;
@@ -541,3 +544,27 @@ h1, .h1 {
     opacity: 0.9;
     filter: alpha(opacity=90);
 }
+
+
+.panel-faculty {
+    border-color: #ce2548;
+}
+    .panel-faculty > .panel-heading {
+        color: #5b1232;
+        background-color: #dd5773;
+        border-color: #ce2548;
+    }
+        .panel-faculty > .panel-heading + .panel-collapse > .panel-body {
+            border-top-color: #ce2548;
+        }
+.panel-faculty > .panel-heading .badge {
+    color: #fcf8e3;
+    background-color: #8a6d3b;
+}
+    .panel-faculty > .panel-footer + .panel-collapse > .panel-body {
+        border-bottom-color: #ce2548;
+    }
+
+
+
+

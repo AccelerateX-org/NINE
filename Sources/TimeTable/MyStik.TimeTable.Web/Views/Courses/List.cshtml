@@ -32,12 +32,12 @@
                     <div class="form-inline">
                         <div class="form-group">
                             <a href="@Url.Action("Index")" class="btn btn-default">
-                                <i class="fa fa-group"></i> nach Gruppen
+                                <i class="fa fa-arrow-left"></i> zurück
                             </a>
                         </div>
                         <div class="form-group">
-                            <a href="@Url.Action("List")" class="btn btn-default active">
-                                <i class="fa fa-list"></i> als Liste
+                            <a href="@Url.Action("SemesterReport", "Courses")" class="btn btn-default">
+                                <i class="fa fa-download"></i> als .csv Datei
                             </a>
                         </div>
                         @if (ViewBag.UserRight.IsCourseAdmin)
@@ -85,7 +85,11 @@
                             {
                                 <tr>
                                     <td>
-                                        @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new { id = c.Course.Id }, null)
+                                        @if (c.Course.IsInternal)
+                                        {
+                                            <i class="fa fa-lock"></i>
+                                        }
+                                        @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new {id = c.Course.Id}, null)
                                     </td>
                                     <td>
                                         @Html.GroupList(c.Course.SemesterGroups, true)

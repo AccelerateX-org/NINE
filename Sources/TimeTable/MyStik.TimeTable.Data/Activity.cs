@@ -73,6 +73,12 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<SemesterTopic> SemesterTopics { get; set; }
 
+        /// <summary>
+        /// Für die Verortung, bisher nur bei Sprechstunde und Exam
+        /// Vermeintliche Doppelung zu den Semestergruppen
+        /// </summary>
+        public virtual Semester Semester { get; set; }
+
 
         public virtual Occurrence Occurrence { get; set; }
 

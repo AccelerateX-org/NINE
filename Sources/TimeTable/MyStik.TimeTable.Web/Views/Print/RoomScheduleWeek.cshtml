@@ -1,0 +1,69 @@
+﻿@model MyStik.TimeTable.Web.Models.RoomScheduleModel
+@{
+    ViewBag.Title = "Raumplan";
+    var now = DateTime.Now;
+
+    var calendarHeight = 795;
+    var calenderFontSize = "12pt";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    
+    <style>
+        .table-condensed-print > thead > tr > th,
+        .table-condensed-print > tbody > tr > th,
+        .table-condensed-print > tfoot > tr > th,
+        .table-condensed-print > thead > tr > td,
+        .table-condensed-print > tbody > tr > td,
+        .table-condensed-print > tfoot > tr > td {
+            padding: 2px;
+        }
+
+    </style>
+}
+
+<div class="row">
+    <div class="col-sm-6">
+        <h5>Belegungsplan Raum @Model.Room.Number</h5>
+        <h6>Stand: @now.ToString("dd.MM.yyyy HH:mm:ss")</h6>
+    </div>
+    <div class="col-sm-6">
+        <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 60px; width: auto"/></span>
+    </div>
+</div>
+
+<div class="row">
+    <div id="calendar" style="font-family: arial; font-size: @calenderFontSize">
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            initPrintCalendar(@calendarHeight, @Json.Encode(ViewBag.IsMoSa), '@ViewBag.DefaultDate');
+            
+            $('#calendar').fullCalendar('removeEvents');
+
+            $('#calendar').fullCalendar('addEventSource', 
+            {
+                url: '@Url.Action("RoomPrintPlanWeek", "Calendar", new { roomId = Model.Room.Id })',
+                type: 'POST'
+            });
+            
+        });
+
+    </script>
+}

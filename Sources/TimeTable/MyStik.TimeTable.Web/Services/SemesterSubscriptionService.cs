@@ -185,26 +185,36 @@ namespace MyStik.TimeTable.Web.Services
         /// <param name="userId"></param>
         /// <param name="semester"></param>
         /// <returns></returns>
-        internal Curriculum GetBestCurriculum(string userId, Semester semester)
+        public Curriculum GetBestCurriculum(string userId, Semester semester)
         {
             var subscription = _db.Subscriptions.OfType<SemesterSubscription>().FirstOrDefault(s =>
                 s.UserId.Equals(userId) &&
                 s.SemesterGroup.Semester.Id == semester.Id
                 );
 
-            if (subscription != null)
-                return subscription.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum;
-            return null;
+            return subscription?.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum;
         }
 
-        internal SemesterGroup GetSemesterGroup(string userId, Semester semester)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semester"></param>
+        /// <returns></returns>
+        public SemesterGroup GetSemesterGroup(string userId, Semester semester)
         {
             return _db.SemesterGroups.FirstOrDefault(g =>
                 g.Semester.Id == semester.Id &&
                 g.Subscriptions.Any(s => s.UserId.Equals(userId)));
         }
 
-        internal SemesterSubscription GetSubscription(string userId, Guid semId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="semId"></param>
+        /// <returns></returns>
+        public SemesterSubscription GetSubscription(string userId, Guid semId)
         {
             return _db.Subscriptions.OfType<SemesterSubscription>().FirstOrDefault(s =>
                 s.UserId.Equals(userId) &&

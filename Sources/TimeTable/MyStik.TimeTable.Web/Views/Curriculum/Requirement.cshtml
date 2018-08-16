@@ -1,0 +1,60 @@
+﻿@model MyStik.TimeTable.Data.CurriculumRequirement
+@{
+    ViewBag.Title = "Modulbeschreibung";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Modulbeschreibung</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5>Bezeichnungen</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            <ul>
+                                <li>@Model.Name</li>
+                                <li>@Model.ShortName</li>
+                                <li>@Model.CatalogId</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5>Kennzahlen</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            <ul>
+                                <li>@Model.ECTS ECTS</li>
+                                <li>@Model.USCredits US Credits</li>
+                                <li>@Model.SWS SWS</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5>Einordnung ins Curriculum</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            <ul>
+                                <li>@Model.Option.Package.Name</li>
+                                <li>@Model.Option.Name</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @foreach (var section in Model.Criterias)
+            {
+                
+            }
+        </div>
+    </div>
+</div>
+

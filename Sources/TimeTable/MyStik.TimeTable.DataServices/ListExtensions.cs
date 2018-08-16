@@ -8,7 +8,7 @@ namespace MyStik.TimeTable.DataServices
     /// http://stackoverflow.com/questions/273313/randomize-a-listt-in-c-sharp
     /// http://en.wikipedia.org/wiki/Fisher-Yates_shuffle
     /// </summary>
-    static class ListExtensions
+    public static class ListExtensions
     {
         static readonly Random Random = new Random();
         public static void Shuffle<T>(this IList<T> list)

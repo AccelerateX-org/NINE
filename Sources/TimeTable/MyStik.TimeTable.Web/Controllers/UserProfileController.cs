@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
@@ -45,7 +46,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 LastName = user.LastName,
             };
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var subscription = Db.Subscriptions.OfType<SemesterSubscription>().SingleOrDefault(x => 
                 x.UserId.Equals(user.Id) &&
@@ -111,7 +112,7 @@ namespace MyStik.TimeTable.Web.Controllers
             //InitSelectionLists(user);
 
             ViewBag.CalendarToken = user.Id;
-            ViewBag.CalendarPeriod = GetSemester().Name;
+            ViewBag.CalendarPeriod = SemesterService.GetSemester(DateTime.Today).Name;
 
 
             return View(model);

@@ -27,5 +27,16 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<LecturerViewModel> Lecturers { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Semester NextSemester { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<CourseSummaryModel> NextCourses { get; set; }
+
     }
 }

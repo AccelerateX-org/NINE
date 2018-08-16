@@ -1,0 +1,53 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.PlanerGroupViewModel
+@{
+    ViewBag.Title = "Semestergruppen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        Studiengruppen in @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var group in Model.Curriculum.CurriculumGroups.OrderBy(x => x.Name))
+                    {
+                        <div class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>
+                                    <a href="@Url.Action("CurriculumGroup", "Planer", new {semId = @Model.Semester.Id, groupId = group.Id})">@group.Name</a>
+                                </h5>
+                            </div>
+                            @if (group.CapacityGroups.Count > 1)
+                            {
+                                <div class="list-group-item-text">
+                                    <ul>
+                                        @foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
+                                        {
+                                            <li><a href="@Url.Action("CapacityGroup", "Planer", new {semId = @Model.Semester.Id, groupId = capGroup.Id})">@capGroup.Name</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

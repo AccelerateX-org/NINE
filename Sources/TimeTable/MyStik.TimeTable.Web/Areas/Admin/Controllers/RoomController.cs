@@ -27,6 +27,34 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
+        public ActionResult Create()
+        {
+            var model = new Room();
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Create(Room model)
+        {
+            if (ModelState.IsValid)
+            {
+                Db.Entry(model).State = EntityState.Added;
+                Db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult UnAssigned()
         {
             var model = Db.Rooms.Where(x => !x.Assignments.Any() && (!x.Number.StartsWith("T") && !x.Number.StartsWith("R"))).ToList();

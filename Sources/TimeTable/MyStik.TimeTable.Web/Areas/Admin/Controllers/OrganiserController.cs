@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -20,7 +22,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var model = Db.Organisers.ToList();
+            var model = Db.Organisers.OrderBy(x => x.ShortName).ToList();
             
             return View(model);
         }
@@ -71,6 +73,46 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ActivityOrganiser activityorganiser = Db.Organisers.Find(id);
+            if (activityorganiser == null)
+            {
+                return HttpNotFound();
+            }
+            return View(activityorganiser);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activityorganiser"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "Id,Name,ShortName,HtmlColor,IsFaculty,IsStudent,IsVisible")] ActivityOrganiser activityorganiser)
+        {
+            if (ModelState.IsValid)
+            {
+                Db.Entry(activityorganiser).State = EntityState.Modified;
+                Db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(activityorganiser);
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -364,6 +406,47 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Capture(Guid id)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
+
+            // wenn es den Veranstaler nicht gibt, zurück zur Übersicht
+            if (org == null)
+                return RedirectToAction("Index");
+
+            Session["OrgAdminId"] = org.Id;
+
+            return RedirectToAction("Details", new {id = org.Id});
+        }
+
+        public ActionResult EditCurriculum(Guid id)
+        {
+            var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditCurriculum(Curriculum model)
+        {
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.Id);
+
+            var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(model.Organiser.ShortName));
+            if (org != null && curriculum.Organiser.Id != org.Id)
+            {
+                // der neue Veranstalter
+                curriculum.Organiser = org;
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("Details", new {id = model.Organiser.Id});
+        }
 
     }
 

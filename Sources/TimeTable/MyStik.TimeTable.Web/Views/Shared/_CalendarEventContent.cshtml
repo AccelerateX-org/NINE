@@ -59,7 +59,14 @@
             @Html.Raw(" @")
             foreach (var r in Model.Summary.Date.Rooms)
             {
-                @Html.ActionLink(r.Number, "Index", "Room", new { id = r.Id }, null)
+                if (string.IsNullOrEmpty(r.Number))
+                {
+                    @Html.ActionLink("N.N", "Index", "Room", new { id = r.Id }, null)
+                }
+                else
+                {
+                    @Html.ActionLink(r.Number, "Index", "Room", new { id = r.Id }, null)
+                }
                 if (r != Model.Summary.Date.Rooms.Last())
                 {
                     @Html.Raw(", ")
@@ -74,7 +81,15 @@
         @Html.Raw("<div>")
         foreach (var r in Model.Summary.Date.Rooms)
         {
-            @Html.ActionLink(r.Number, "Index", "Room", new { id = r.Id }, null)
+            if (string.IsNullOrEmpty(r.Number))
+            {
+                @Html.ActionLink("N.N", "Index", "Room", new { id = r.Id }, null)
+            }
+            else
+            {
+                @Html.ActionLink(r.Number, "Index", "Room", new { id = r.Id }, null)
+            }
+
             if (r != Model.Summary.Date.Rooms.Last())
             {
                 @Html.Raw(", ")
@@ -82,4 +97,8 @@
         }
         @Html.Raw("</div>")
     }
+}
+@if (Model.Summary.Slot != null)
+{
+    <div><strong>@Model.Summary.Slot.Begin.ToString("HH:mm")</strong></div>
 }

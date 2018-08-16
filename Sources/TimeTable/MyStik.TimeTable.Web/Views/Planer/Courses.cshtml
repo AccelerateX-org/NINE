@@ -1,152 +1,203 @@
 ﻿@model MyStik.TimeTable.Web.Models.DashboardStudentViewModel
 
 @{
-    ViewBag.Title = "Meine Lehveranstaltungen";
+    ViewBag.Title = "Meine Lehrveranstaltungen";
+    ViewBag.ShowState = false;
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Meine lehrveranstaltungen im @Model.Semester.Name</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-pencil"></i>
-                        <span class="caption-subject bold uppercase"> Meine Lehrveranstaltungen</span>
-                    </div>
-                    <div class="actions">
-                        <a href="@Url.Action("Index", "Planer")" class="btn btn-circle btn-icon-only btn-default">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        <a href="@Url.Action("Index", "Activity")" class="btn btn-circle btn-icon-only btn-default">
-                            <i class="fa fa-calendar"></i>
-                        </a>
-                    </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-pencil"></i> In diese Lehrveranstaltungen habe ich mich eingetragen (@Model.Semester.Name)
+                    </h4>
                 </div>
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th>Bezeichnung</th>
-                        <th><i class="fa fa-envelope-o"></i></th>
-                        <th><i class="fa fa-group"></i></th>
-                        <th><i class="fa fa-random"></i></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var act in Model.MyCourseSubscriptions)
+                <div class="list-group">
+                    @foreach (var course in Model.Courses)
                     {
-                        var activityFlag = act.State != null ? "Activity_" + act.State.Occurrence.Id : string.Empty;
-                        var lvName = string.Format("{0} ({1})", act.Activity.Name, act.Activity.Activity.ShortName);
-                        <tr id="@activityFlag">
-                            <td>
-                                @Html.ActionLink(
-                                    lvName,
-                                    act.Activity.Action, act.Activity.Controller, new { id = act.Activity.Id }, null)
-                            </td>
-                            <td><i class="fa fa-check text-success"></i></td>
-                            @if (act.State.Subscription.OnWaitingList)
-                            {
-                                <td><i class="fa fa-hourglass-o text-danger"></i></td>
-                            }
-                            else
-                            {
-                                if (act.State.Subscription.IsConfirmed)
-                                {
-                                    <td>
-                                        <i class="fa fa-check text-success"></i>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-ticket text-warning"></i></td>
-                                }
-                            }
-                            @if (act.Lottery != null)
-                            {
-                                <td><a href="@Url.Action("MySelection", "Lottery", new {id = act.Lottery.Id})"><i class="fa fa-arrow-circle-right text-primary"></i></a></td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                        </tr>
+                        @Html.Partial("_CourseSummaryListItem", course)
                     }
-                    </tbody>
-                </table>
-                <div class="alert alert-info">
-                    <i class="fa fa-random"></i>: Diese Lehveranstaltung hat eine Platzverlosung
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>
-                        <span class="caption-subject bold uppercase"> Meine Termine (nur bestätigte Plätze und Reservierungen)</span>
-                    </div>
-                    <div class="actions">
-                        <a href="@Url.Action("Index", "Planer")" class="btn btn-circle btn-icon-only btn-default">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        <a href="@Url.Action("Index", "Activity")" class="btn btn-circle btn-icon-only btn-default">
-                            <i class="fa fa-calendar"></i>
-                        </a>
-                    </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-print"></i> Weitere Ansichten</h4>
                 </div>
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Von</th>
-                        <th>Bis</th>
-                        <th>Lehrveranstaltung</th>
-                    </tr>
-                    <tbody>
-                    @foreach (var courseDate in Model.CourseDates.OrderBy(x => x.Day))
-                    {
-                        var n = courseDate.Dates.Count;
-                        var ordered = courseDate.Dates.OrderBy(x => x.Begin).ToList();
+                <div class="list-group">
+                    <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Kalenderansicht
+                        </h5>
+                        <p class="list-group-item-text">Kalenderansicht mit Tagesdatum. Zum Durchklicken.</p>
+                    </a>
+                    <a href="@Url.Action("PersonalPlanWeekly", "Activity", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Wochenplan
+                        </h5>
+                        <p class="list-group-item-text">Kalenderansicht mit Wochentagen (Mo-So).</p>
+                    </a>
+                    <a href="@Url.Action("List", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Terminliste
+                        </h5>
+                        <p class="list-group-item-text">
+                            Nach Tagen sortierte Liste mit alle Terminen.
+                        </p>
+                    </a>
+                    <a href="@Url.Action("Index", "UserProfile")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Terminliste als iCal Feed
+                        </h5>
+                        <p class="list-group-item-text">
+                            Die Termine automatsisch über Google-Calender u.ä. abrufen lassen.
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-pencil"></i> Planung (<strong>@Model.Semester.Name</strong>)
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("Index", "Planer", new {semId = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Nach Studienplan
+                        </h5>
+                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen nach Studiengang und Semestergruppen und Themengebieten.</p>
+                    </a>
+                    <a href="@Url.Action("Search", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Nach Zeiträumen
+                        </h5>
+                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen zu bestimmten Zeiten.</p>
+                    </a>
+                    <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Platzverlosungen
+                        </h5>
+                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen über die Platzverlosungen.</p>
+                    </a>
+                    <a href="@Url.Action("Dictionary", "Planer")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            Vorlesungsverzeichnis
+                        </h5>
+                        <p class="list-group-item-text">Suche im gesamten Vorlesungsverzeichnis aller Studiengänge.</p>
+                    </a>
 
-                        foreach (var activityDate in ordered)
-                        {
-                            if (activityDate.Equals(ordered.First()))
-                            {
-                                <tr>
-                                    <td rowspan="@n">@courseDate.Day.ToShortDateString()</td>
-                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
-                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
-                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
-                                </tr>
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
-                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
-                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
-                                </tr>
-                            }
-                        }
-                    }
-                    </tbody>
-                </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 
+@section styles
+{
+    <style>
+
+        .selectable {
+            cursor: pointer;
+        }
+
+        .discardable {
+            cursor: pointer;
+        }
+
+        .lottery {
+            cursor: pointer;
+        }
+    </style>
+}
+
+@section scripts
+{
+
+    <script>
+        $(document).ready(function() {
+
+            // Wählen bzw. Abwählen eines Projekte, diese bekommt dann ein Häkchen
+            $('.selectable').click(function() {
+                if ($(this).hasClass('disabled')) {
+                } else {
+                    if ($(this).hasClass('discardable')) {
+
+                        $(this).addClass('disabled');
+
+                        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+                        var ocId = $(this).data("occid");
+
+                        var saveElement = $(this);
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("DischargeActivity", "Activity")',
+                                data: {
+                                    Id: ocId
+                                },
+                                success: function(data, success, xhr) {
+
+                                    saveElement.html(
+                                        '<span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-pencil fa-stack-1x"></i></span>');
+
+                                    saveElement.removeClass('discardable');
+                                    saveElement.removeClass('disabled');
+
+                                }
+                            });
+
+
+                    } else {
+
+
+                        $(this).addClass('disabled');
+
+                        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+                        var ocId = $(this).data("occid");
+
+                        var saveElement = $(this);
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("SubscribeActivity", "Activity")',
+                                data: {
+                                    Id: ocId
+                                },
+                                success: function(data, success, xhr) {
+
+                                    saveElement.html(
+                                        '<span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-success"></i><i class="fa fa-check fa-stack-1x fa-inverse"></i></span>');
+
+                                    saveElement.addClass('discardable');
+                                    saveElement.removeClass('disabled');
+
+                                }
+                            });
+                    }
+                }
+            });
+
+            $('.lottery').click(function() {
+
+                var ocId = $(this).data("lotid");
+                var url = '@Url.Action("Overview", "Lottery")';
+                url += "/" + ocId;
+
+                window.location = url;
+            });
+
+
+        });
+
+    </script>
+
+}

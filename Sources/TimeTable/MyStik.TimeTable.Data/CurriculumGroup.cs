@@ -8,10 +8,9 @@ namespace MyStik.TimeTable.Data
     {
         public CurriculumGroup()
         {
-            SemesterGroups = new HashSet<SemesterGroup>();
-            Modules = new HashSet<CurriculumModule>();
+            //SemesterGroups = new HashSet<SemesterGroup>();
             CapacityGroups = new HashSet<CapacityGroup>();
-            Accreditations = new HashSet<ModuleAccreditation>();
+            Criterias = new HashSet<CurriculumCriteria>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,6 +22,11 @@ namespace MyStik.TimeTable.Data
         /// Beispiele: 1, 2, 3, 3 TEC, 3 BIO
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Die Nummer des Semesters
+        /// </summary>
+        public int Term { get; set; }
 
         /// <summary>
         /// Gruppen, die von Studierenden belegbar sind
@@ -45,25 +49,15 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Liste der Semestergruppen - veraltet
         /// </summary>
-        public virtual ICollection<SemesterGroup> SemesterGroups { get; set; }
+        // public virtual ICollection<SemesterGroup> SemesterGroups { get; set; }
 
-        /// <summary>
-        /// Liste der Module
-        /// m-n Beziehung
-        /// Überflüssig! Wurde durch Akkreditierung ersetzt
-        /// </summary>
-        public virtual ICollection<CurriculumModule> Modules { get; set; }
 
+        public virtual ICollection<CurriculumCriteria> Criterias { get; set; }
 
         /// <summary>
         /// Liste der regeln
         /// </summary>
         public virtual ICollection<CriteriaRule> Rules { get; set; }
-
-        /// <summary>
-        /// Alle Akkreditierungen => Zugang zu Modulen
-        /// </summary>
-        public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
 
     }
 }

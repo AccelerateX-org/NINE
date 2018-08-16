@@ -1,6 +1,15 @@
-﻿@model MyStik.TimeTable.Web.Models.OfficeHourCharacteristicModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
 @{
     ViewBag.Title = "Sprechstunde";
+    var now = DateTime.Now;
+    var historicDates = Model.Dates.Where(x => x.Date.End <= now).OrderBy(x => x.Date.Begin).ToList();
+    var futureDates = Model.Dates.Where(x => x.Date.End > now).OrderBy(x => x.Date.Begin).ToList();
+    var maxFutureSubscriptions = 999;
+    if (Model.OfficeHour.FutureSubscriptions.HasValue && Model.OfficeHour.FutureSubscriptions > 0)
+    {
+        maxFutureSubscriptions = Model.OfficeHour.FutureSubscriptions.Value;
+    }
 }
 
 <div class="panel panel-default">
@@ -20,61 +29,163 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
-
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Datum</th>
-                            <th>Zeitraum</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var slot in Model.CurrentSlots)
+                <div class="panel-heading">
+                    <h4>Zukünftige Termine</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var date in futureDates)
+                    {
+                        if (date.IsAvailable || (!date.IsAvailable && date.Subscription != null))
                         {
-                            if (!slot.IsHistory)
+                            if (date.Subscription == null)
                             {
-                                <tr>
-                                    @if (slot.RowNo == 1)
-                                    {
-                                        if (slot.ActivityDate.Occurrence.IsCanceled)
-                                        {
-                                            <td rowspan="@slot.RowCount"><del>@slot.Date.ToShortDateString()</del></td>
-                                        }
-                                        else
-                                        {
-                                            <td rowspan="@slot.RowCount">@slot.Date.ToShortDateString()</td>
-                                        }
-                                    }
-                                    @if (slot.SubscriptionNo == 1)
-                                    {
-                                        if (slot.ActivityDate.Occurrence.IsCanceled)
-                                        {
-                                            <td rowspan="@slot.SubscriptionCount"><del>@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</del></td>
-                                        }
-                                        else
-                                        {
-                                            <td rowspan="@slot.SubscriptionCount">@slot.From.ToString(@"hh\:mm") - @slot.Until.ToString(@"hh\:mm")</td>
-                                        }
-                                    }
-                                    @if (slot.SubscriptionNo == 1)
-                                    {
-                                        if (Model.OfficeHour.ByAgreement)
-                                        {
-                                            <td>Terminvereinbarung per e-mail</td>
-                                        }
-                                        else
-                                        {
-                                            <td rowspan="@slot.SubscriptionCount">@Html.Partial("_SubscriptionState", slot.State)</td>
-                                        }
-                                    }
-                                </tr>
+                                if (Model.FutureSubCount >= maxFutureSubscriptions)
+                                {
+                                    <a class="list-group-item" href="@Url.Action("SubscribeDate", new {id = date.Date.Id})">
+                                        <div class="list-group-item-heading">
+                                            <h5>@Html.TimeSpanWithDate(date.Date) - nicht verfügbar</h5>
+                                        </div>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-li fa-exclamation-triangle text-warning"></i>Ich habe das Maximum an zukünftigen Eintragungen ausgeschöpft</li>
+                                                @if (!string.IsNullOrEmpty(@date.Date.Title))
+                                                {
+                                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>@date.Date.Title</li>
+                                                }
+                                                @if (date.Date.Slots.Any())
+                                                {
+                                                    <li><i class="fa fa-li fa-user"></i>Slotbuchung</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-li fa-group"></i>Offener Termin</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="list-group-item" href="@Url.Action("SubscribeDate", new {id = date.Date.Id})">
+                                        <div class="list-group-item-heading">
+                                            <h5>@Html.TimeSpanWithDate(date.Date) - <span class="text-success">Plätze verfügbar</span></h5>
+                                        </div>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                @if (!string.IsNullOrEmpty(@date.Date.Title))
+                                                {
+                                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>@date.Date.Title</li>
+                                                }
+                                                @if (date.Date.Slots.Any())
+                                                {
+                                                    <li><i class="fa fa-li fa-user"></i>Slotbuchung</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-li fa-group"></i>Offener Termin</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                if (date.IsCancelled)
+                                {
+                                    <a class="list-group-item list-group-item-danger" href="@Url.Action("SubscriptionDetails", new {id = date.Date.Id})">
+                                        <div class="list-group-item-heading">
+                                            @if (date.Date.Slots.Any())
+                                            {
+                                                <h5>@Html.TimeSpanWithDate(date.Slot) - gebucht, ABGESAGT</h5>
+                                            }
+                                            else
+                                            {
+                                                <h5>@Html.TimeSpanWithDate(date.Date) - gebucht, ABGESAGT</h5>
+                                            }
+                                        </div>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                @if (!string.IsNullOrEmpty(@date.Date.Title))
+                                                {
+                                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>@date.Date.Title</li>
+                                                }
+                                                @if (!string.IsNullOrEmpty(date.Subscription.SubscriberRemark))
+                                                {
+                                                    <li><i class="fa fa-li fa-pencil"></i>Mein Anliegen: @date.Subscription.SubscriberRemark</li>
+
+                                                }
+                                            </ul>
+                                        </div>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="list-group-item list-group-item-info" href="@Url.Action("SubscriptionDetails", new {id = date.Date.Id})">
+                                        <div class="list-group-item-heading">
+                                            @if (date.Date.Slots.Any())
+                                            {
+                                                <h5>@Html.TimeSpanWithDate(date.Slot) - gebucht, Slot</h5>
+                                            }
+                                            else
+                                            {
+                                                <h5>@Html.TimeSpanWithDate(date.Date) - gebucht, offener Termin</h5>
+                                            }
+                                        </div>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                @if (!string.IsNullOrEmpty(@date.Date.Title))
+                                                {
+                                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>@date.Date.Title</li>
+                                                }
+                                                @if (!string.IsNullOrEmpty(date.Subscription.SubscriberRemark))
+                                                {
+                                                    <li><i class="fa fa-li fa-pencil"></i>Mein Anliegen: @date.Subscription.SubscriberRemark</li>
+
+                                                }
+                                            </ul>
+                                        </div>
+                                    </a>
+                                }
                             }
                         }
-                    </tbody>
-                </table>
+                        else
+                        {
+                            var msg = "";
+                            if (date.IsCancelled)
+                            {
+                                msg = "abgesagt";
+                            }
+                            if (date.IsFullyBooked)
+                            {
+                                msg = "ausgebucht";
+                            }
+                            if (date.IsExpired)
+                            {
+                                msg = "Die Frist für die Eintragung ist abgelaufen";
+                            }
 
+                            <div class="list-group-item list-group-item-danger">
+                                <div class="list-group-item-heading">
+                                    <h5>@Html.TimeSpanWithDate(date.Date) - @msg</h5>
+                                </div>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        @if (!string.IsNullOrEmpty(@date.Date.Title))
+                                        {
+                                            <li><i class="fa fa-li fa-info-circle text-primary"></i>@date.Date.Title</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+

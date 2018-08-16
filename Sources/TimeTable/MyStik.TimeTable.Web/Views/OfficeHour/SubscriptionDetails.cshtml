@@ -1,0 +1,68 @@
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourDateSubscriptionViewModel
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "Sprechstundentermin";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Model.Slot != null)
+                    {
+                        <h1>@Model.Host.Name - Sprechstundentermin Slot @Html.TimeSpanWithDate(Model.Slot)</h1>
+                    }
+                    else
+                    {
+                        <h1>@Model.Host.Name - Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h1>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Informationen zu meinem Sprechstundentermin</h4>
+                </div>
+                <div class="panel-body">
+                    <h5>Mein Anliegen</h5>
+                    <p>@Model.Subscription.SubscriberRemark</p>
+                    
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Lecturer", new {id = Model.Host.Id, semId = Model.Semester.Id})" class="btn btn-default">
+                            <i class="fa fa-arrow-left"></i>
+                            Zurück zur Terminliste
+                        </a>
+                        <a href="@Url.Action("EditDateSubscription", new {id = Model.Date.Id})" class="btn btn-default">
+                            <i class="fa fa-pencil"></i> Anliegen ändern
+                        </a>
+                        @if (Model.IsExpired)
+                        {
+                            <a href="" class="btn btn-danger disabled">
+                                <i class="fa fa-times"></i>
+                                Nach Ende der Eintragungsfrist ist kein Austragen mehr möglich
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("UnsubscribeDateSubscription", new {id = Model.Subscription.Id})" class="btn btn-danger">
+                                <i class="fa fa-times"></i>
+                                austragen
+                            </a>
+
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

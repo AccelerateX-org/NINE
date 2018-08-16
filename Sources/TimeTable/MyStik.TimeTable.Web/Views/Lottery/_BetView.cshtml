@@ -1,0 +1,105 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryGambleCourseViewModel
+
+@if (ViewBag.NextDrawing != null)
+{
+    <h4>Punkte setzen</h4>
+    <p>Meine eingesetzen Punkte: @Model.PoinstForSubscription</p>
+
+    <p>Aus Warteliste: @Model.Subscription.LapCount</p>
+
+    foreach (var bet in Model.Budgets)
+    {
+        <p>Aus @bet.Bet.Budget.Name: @bet.Bet.Amount eingesetzt</p>
+        <p>Für gesicherte Plätze verbraucht sind bisher: @bet.PointsUsed</p>
+        <p>Maximal verfügbar sind noch: @bet.PointsAvailable</p>
+        <p>Aktuell einsetzbar sind noch: @bet.PointsFeasible</p>
+    }
+
+    <p>Kann hier maximal noch @Model.AvailableBudget Punkte einsetzen</p>
+    if (Model.LotPot.Any(x => x.Subscription.Id == Model.Subscription.Id))
+    {
+        <p>Bin im Lostopf</p>
+    }
+    else
+    {
+        if (Model.LotPot.Any())
+        {
+            var delta = Model.PoinstForSubscription - Model.LotPot.Last().Points;
+            var budget = Model.AvailableBudget;
+
+            if (budget >= delta)
+            {
+                <p>Mir fehlen @delta Punkte bis zum Lostopf</p>
+            }
+            else
+            {
+                <p>Aktuell reichen meine Punkte nicht mehr, um in den Lostopf zu kommen</p>
+            }
+
+        }
+        else
+        {
+            <p>Bin aktuell chancenlos</p>
+        }
+    }
+
+    if (Model.Budgets.Any())
+    {
+        @Ajax.ActionLink("Punkte setzen", "EditBet", new { courseId = Model.Course.Id, lotteryId = Model.Lottery.Id },
+                 new AjaxOptions
+                 {
+                     HttpMethod = "Post",
+                     InsertionMode = InsertionMode.Replace,
+                     UpdateTargetId = Model.Subscription.Id.ToString()
+                 },
+                 new { @class = "btn btn-default" })
+    }
+}
+else
+{
+    @*
+    <h4>Mein Punkteeinsatz</h4>
+    <p>Meine eingesetzen Punkte: @Model.Points</p>
+
+    <p>Aus Warteliste: @Model.Subscription.LapCount</p>
+
+    foreach (var bet in Model.Budgets)
+    {
+        <p>Aus @bet.Bet.Budget.Name: @bet.Bet.Amount eingesetzt</p>
+        <p>Für gesicherte Plätze verbraucht sind bisher: @bet.PointsUsed</p>
+        <p>Maximal verfügbar wären gewesen: @bet.PointsAvailable</p>
+        <p>Einsetzbar wären gewesen: @bet.PointsFeasible</p>
+    }
+
+    <p>Kann hier maximal noch @Model.AvailableBudget Punkte einsetzen</p>
+    if (Model.LotPot.Any(x => x.Subscription.Id == Model.Subscription.Id))
+    {
+        <p>War im Lostopf</p>
+    }
+    else
+    {
+        if (Model.LotPot.Any())
+        {
+            var delta = Model.Points - Model.LotPot.Last().Points;
+            var budget = Model.AvailableBudget;
+
+            if (budget >= delta)
+            {
+                <p>Mir haben @delta Punkte bis zum Lostopf gefehlt</p>
+            }
+            else
+            {
+                <p>Meine Punkte haben nicht mehr gereicht, um in den Lostopf zu kommen</p>
+            }
+
+        }
+        else
+        {
+            <p>War chancenlos</p>
+        }
+    }
+        *@
+}
+
+<a href="@Url.Action("Discharge", "Lottery", new {occId = Model.Subscription.Occurrence.Id, lotId = Model.Lottery.Id})"
+   class="btn btn-default"><i class="fa fa-times"></i> Austragen</a>

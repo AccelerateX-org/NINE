@@ -10,12 +10,17 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <h6>@ev.Event.Organiser.Name.ToUpper()</h6>
-                                    <address>
-                                        <strong>@ev.NextDate.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</strong><br>
-                                        @Html.TimeSpan(ev.NextDate)<br>
-                                        @Html.RoomList(ev.NextDate.Rooms)<br>
-                                    </address>
-                                    <p>@Html.Partial("_SubscriptionState", ev.State)</p>
+                                    @foreach (var evDate in ev.Dates)
+                                    {
+                                        <div class="alert alert-info">
+                                        <address>
+                                            <strong>@evDate.Date.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</strong><br>
+                                            @Html.TimeSpan(evDate.Date)<br>
+                                            @Html.RoomList(evDate.Date.Rooms)<br>
+                                        </address>
+                                            <p>@Html.Partial("_SubscriptionState", evDate.State)</p>
+                                        </div>
+                                    }
                                 </div>
                                 <div class="col-md-9">
                                     <h4><a href="@Url.Action("Details", new {id=ev.Event.Id})">@ev.Event.Name</a></h4>
@@ -29,7 +34,7 @@
                                                  @Html.Raw(ev.Event.Description)
                                              }
                                     </p>
-                                    <p>@ev.NextDate.Description</p>
+                                    @*<p>@ev.NextDate.Description</p>*@
                                 </div>
                             </div>
                         </div>

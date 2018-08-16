@@ -3,37 +3,45 @@
 @{
     ViewBag.Title = "Details";
 }
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1>
+                    @Model.ShortName <small>@Model.Name</small>
+                </h1>
+            </div>
+        </div>
+    </div>
 
-<div class="page-header">
-    <h1>
-        @Model.ShortName <small>@Model.Name</small>
-    </h1>
-</div>
+    @{
+        var admins = Model.Members.Where(x => x.IsAdmin).ToList();
+        var userService = new UserInfoService();
+    }
 
-@{
-    var admins = Model.Members.Where(x => x.IsAdmin).ToList();
-    var userService = new UserInfoService();
-}
-
-<div class="row">
-    <div class="col-md-2">
-        <div class="list-group">
-            <a href="#" class="list-group-item active">
-                Übersicht
-            </a>
-            <a href="#" class="list-group-item">Admins <span class="badge">@admins.Count</span></a>
-            <a href="#" class="list-group-item">Studiengänge <span class="badge">@Model.Curricula.Count</span></a>
-        </div>    </div>
-    <div class="col-md-10">
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Admins</h4>
-                    <a href="@Url.Action("CreateAdmin", new {id = Model.Id})" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-condensed">
-                        <thead>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="list-group">
+                <a href="#" class="list-group-item active">
+                    Übersicht
+                </a>
+                <a href="@Url.Action("Capture", new {id = Model.Id})" class="list-group-item list-group-item-warning"><i class="fa fa-fw fa-legal"></i> Übernehmen</a>
+                <a href="@Url.Action("Edit", new {id = Model.Id})" class="list-group-item">Einstellungen</a>
+                <a href="#" class="list-group-item">Admins <span class="badge">@admins.Count</span></a>
+                <a href="#" class="list-group-item">Studiengänge <span class="badge">@Model.Curricula.Count</span></a>
+                <a href="@Url.Action("Delete", new {id = Model.Id})" class="list-group-item list-group-item-danger"><i class="fa fa-fw fa-trash-o"></i> Löschen</a>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Admins</h4>
+                        <a href="@Url.Action("CreateAdmin", new {id = Model.Id})" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed">
+                            <thead>
                             <tr>
                                 <th>Kurzname</th>
                                 <th>Name</th>
@@ -41,8 +49,8 @@
                                 <th>Status</th>
                                 <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             @foreach (var admin in admins)
                             {
                                 var user = userService.GetUser(admin.UserId);
@@ -65,46 +73,48 @@
                                     </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Studiengänge</h4>
-                    <a href="@Url.Action("CreateCurriculum", new {id = Model.Id})" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-condensed">
-                        <thead>
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Studiengänge</h4>
+                        <a href="@Url.Action("CreateCurriculum", new {id = Model.Id})" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed">
+                            <thead>
                             <tr>
                                 <th>Kurzname</th>
                                 <th>Name</th>
                                 <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             @foreach (var curr in Model.Curricula)
                             {
                                 <tr>
                                     <td>@curr.ShortName</td>
                                     <td>@curr.Name</td>
                                     <td>
-                                        <a href="@Url.Action("EditAdmin", new {id = curr.Id})" class="btn btn-default btn-xs"><i class="fa fa-edit"></i> ändern</a>
-                                        <a href="@Url.Action("DeleteCurriculum", new {id = curr.Id})" class="btn btn-default btn-xs"><i class="fa fa-trash"></i> löschen</a>
+                                        <a href="@Url.Action("EditCurriculum", new {id = curr.Id})" class="btn btn-default btn-xs"><i class="fa fa-edit"></i> ändern</a>
                                     </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
+
 </div>
+
 
 
 

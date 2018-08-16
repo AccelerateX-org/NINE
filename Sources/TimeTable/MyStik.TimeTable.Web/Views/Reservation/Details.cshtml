@@ -1,0 +1,82 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Reservation
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Raumreservierung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Raumreservierung @Model.Name</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-left"></i> zurück</a>
+                        @if (ViewBag.UserRight.IsRoomAdmin)
+                        {
+                            <a href="@Url.Action("CreateDate", new {id = Model.Id})" class="btn btn-primary"><i class="fa fa-plus"></i> Neuen Termin anlegen</a>
+                        }
+                    </div>
+                    @if (ViewBag.UserRight.IsRoomAdmin)
+                    {
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-danger" id="delete" href="@Url.Action("DeleteReservation", new {id = Model.Id})"><i class="fa fa-trash"></i> Reservierung löschen</a>
+                        </div>
+                    }
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Beginn</th>
+                                <th>Ende</th>
+                                <th>Bezeichnung</th>
+                                <th>Lehrende</th>
+                                <td>Räume</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var date in Model.Dates.OrderBy(x => x.Begin))
+                            {
+                                <tr>
+                                    @if (ViewBag.UserRight.IsRoomAdmin)
+                                    {
+
+                                        <td><a href="@Url.Action("MoveDate", new {id = date.Id})">@date.Begin.Date.ToShortDateString()</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@date.Begin.Date.ToShortDateString()</td>
+
+                                    }
+                                    <td>@date.Begin.ToString("HH:mm")</td>
+                                    <td>@date.End.ToString("HH:mm")</td>
+                                    <td>@date.Title</td>
+                                    <td>@Html.LecturerList(date.Hosts)</td>
+                                    <td>@Html.RoomList(date.Rooms)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

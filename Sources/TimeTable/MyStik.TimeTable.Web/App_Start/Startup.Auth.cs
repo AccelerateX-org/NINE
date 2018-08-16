@@ -3,7 +3,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Providers;
 using Owin;
 
 namespace MyStik.TimeTable.Web
@@ -69,6 +71,25 @@ namespace MyStik.TimeTable.Web
             app.UseGoogleAuthentication(
                 clientId: "563733444568-hr161m7gijet73a81r2g58jcfioenh2a.apps.googleusercontent.com",
                 clientSecret: "_ksB7M4Af62GppxoO5gB2owd");
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ConfigureOAuth(IAppBuilder app)
+        {
+            OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
+            {
+                AllowInsecureHttp = true,
+                TokenEndpointPath = new PathString("/token"),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                Provider = new SimpleAuthorizationServerProvider()
+            };
+
+            // Token Generation
+            app.UseOAuthAuthorizationServer(OAuthServerOptions);
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 
         }
     }

@@ -13,143 +13,70 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Person ändern</h1>
+                    <h1>Lehrender @Model.Name (@Model.ShortName)</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div class="container-fluid">
-
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> Angaben zur Person und Rollen
-                    </div>
-                    <div class="actions">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-user"></i> Angaben zur Identifizierung innerhalb von @ViewBag.Member.Organiser.ShortName
+                </h4>
+                <div class="panel-body">
+                    @using (Html.BeginForm("EditMember", "Organiser", FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+        ))
+    {
+                @Html.AntiForgeryToken()
+        if (ViewData.ModelState.Any(x => x.Value.Errors.Any())) 
+        { 
+            <div class="alert alert-danger"> 
+                @Html.ValidationSummary(true)
+            </div>
+        }
+        <div class="form-group">
+                    @Html.HiddenFor(item => item.MemberId)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(item => item.Name, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(item => item.Name, new { @class = "form-control" })
                     </div>
                 </div>
-                <div class="portlet-body">
+                <div class="form-group">
+                    @Html.LabelFor(item => item.ShortName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(item => item.ShortName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(item => item.UserName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(item => item.UserName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(item => item.Role, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(item => item.Role, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-4 col-md-8">
+                        @Html.CheckBoxFor(item => item.IsAssociated)
+                        @Html.LabelFor(item => item.IsAssociated, new { @class = "control-label" })
+                    </div>
+                </div>
 
-
-                    @using (Html.BeginForm("EditMember", "Organiser", FormMethod.Post, new {@class = "form-horizontal", role = "form"}
-                        ))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(true)
-                        <div class="form-group">
-                            @Html.HiddenFor(item => item.MemberId)
-                        </div>
-                        if (User.IsInRole("SysAdmin"))
-                        {
-                            <div class="form-group">
-                                @Html.LabelFor(item => item.ShortName, new {@class = "col-md-4 control-label"})
-                                <div class="col-md-8">
-                                    @Html.TextBoxFor(item => item.ShortName, new {@class = "form-control"})
-                                </div>
-                            </div>
-                        }
-                        <div class="form-group">
-                            @Html.LabelFor(item => item.UserName, new {@class = "col-md-4 control-label"})
-                            <div class="col-md-8">
-                                @Html.TextBoxFor(item => item.UserName, new {@class = "form-control"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(item => item.Role, new {@class = "col-md-4 control-label"})
-                            <div class="col-md-8">
-                                @Html.TextBoxFor(item => item.Role, new {@class = "form-control"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(item => item.Name, new {@class = "col-md-4 control-label"})
-                            <div class="col-md-8">
-                                @Html.TextBoxFor(item => item.Name, new {@class = "form-control"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(item => item.Description, new {@class = "col-md-4 control-label"})
-                            <div class="col-md-8">
-                                @Html.TextAreaFor(item => item.Description, new {@class = "form-control", rows = 10})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(item => item.UrlProfile, new {@class = "col-md-4 control-label"})
-                            <div class="col-md-8">
-                                @Html.TextBoxFor(item => item.UrlProfile, new {@class = "form-control"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-offset-4 col-md-8">
-                                @Html.CheckBoxFor(item => item.IsAssociated)
-                                @Html.LabelFor(item => item.IsAssociated, new {@class = "control-label"})
-                            </div>
-                        </div>
-
-                    @*
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsMemberAdmin)
-            @Html.LabelFor(item => item.IsMemberAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsRoomAdmin)
-            @Html.LabelFor(item => item.IsRoomAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsSemesterAdmin)
-            @Html.LabelFor(item => item.IsSemesterAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsCurriculumAdmin)
-            @Html.LabelFor(item => item.IsCurriculumAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsCourseAdmin)
-            @Html.LabelFor(item => item.IsCourseAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsStudentAdmin)
-            @Html.LabelFor(item => item.IsStudentAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsAlumniAdmin)
-            @Html.LabelFor(item => item.IsAlumniAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsEventAdmin)
-            @Html.LabelFor(item => item.IsEventAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-8">
-            @Html.CheckBoxFor(item => item.IsNewsAdmin)
-            @Html.LabelFor(item => item.IsNewsAdmin, new {@class = "control-label"})
-        </div>
-    </div>
-                    *@
-                        <div class="form-group">
-                            <div class="col-md-offset-4 col-md-8">
-                                <input type="submit" value="Speichern" class="btn btn-primary"/>
-                            </div>
-                        </div>
-                    }
+                <div class="form-group">
+                    <div class="col-md-offset-4 col-md-8">
+                        <input type="submit" value="Speichern" class="btn btn-primary" />
+                    </div>
+                </div>
+}
                 </div>
             </div>
         </div>

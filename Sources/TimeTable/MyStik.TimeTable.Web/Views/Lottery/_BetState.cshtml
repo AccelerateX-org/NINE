@@ -1,0 +1,103 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryGambleCourseViewModel
+
+@{
+    var i = 0;
+}
+
+<div id="@Model.Course.Id.ToString()">
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Platz</th>
+                        <th>Status</th>
+                        <th>Punkte</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var subscription in Model.Subscriptions.OrderBy(x => x.Rank).ThenByDescending(x => x.Points))
+                    {
+                        i++;
+                        var p = subscription.Points;
+                        var rowcolor = "info";
+                        var isMySubscription = false;
+                        var showPoints = false;
+                        if (i > Model.ParticipientCount && i <= Model.Capacity)
+                        {
+                            rowcolor = "success";
+                            showPoints = true;
+                        }
+                        else if (i > Model.Capacity)
+                        {
+                            rowcolor = "danger";
+                            showPoints = true;
+                        }
+                        if (Model.Subscription != null && Model.Subscription.Id == subscription.Subscription.Id)
+                        {
+                            isMySubscription = true;
+                            showPoints = true;
+                        }
+                        <tr class="@rowcolor">
+                            <td>@i</td>
+                            <td>
+                                @if (isMySubscription)
+                                {
+                                    <i class="fa fa-user-circle"></i>
+                                }
+                                @Html.SubscriptionLabel(subscription.Subscription)
+                            </td>
+                            @if (showPoints)
+                            {
+                                <td>@p</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            @{
+                var remainingSeats = Model.SeatsAvailable;
+            }
+            @if (remainingSeats > 0)
+            {
+                if (Model.LotPot.Any())
+                {
+            <ul class="fa-ul">
+                <li><i class="fa-li fa fa-cubes"></i>@Model.Capacity Plätze insgesamt</li>
+                <li><i class="fa-li fa fa-ticket"></i>@remainingSeats freie Plätze</li>
+                <li><i class="fa-li fa fa-tags"></i>@Model.LotPot.Count Eintragungen mit Chancen</li>
+                <li><i class="fa-li fa fa-thumbs-o-down"></i>@Model.Looser.Count Eintragungen ohne Chance</li>
+                <li><i class="fa-li fa fa-money"></i>@Model.LotPot.Last().Points Punkte als Mindestgebot</li>
+                <li><i class="fa-li fa fa-user-circle"></i>Meine Eintragung</li>
+            </ul>
+                }
+                else
+                {
+                    <p>Kein Lostopf</p>
+                }
+            }
+            else
+            {
+                <p>Ausgebucht</p>
+            }
+        </div>
+    </div>
+    <div clas="row">
+        <div class="col-md-12">
+            @Ajax.ActionLink("Aktualisieren", "Refresh", new { courseId = Model.Course.Id, lotteryId = Model.Lottery.Id }, new AjaxOptions
+            {
+                HttpMethod = "Post",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = Model.Course.Id.ToString()
+            }, new { @class = "btn btn-default center-block", id=Model.Lottery.Id })
+
+        </div>
+    </div>
+</div>

@@ -1,133 +1,85 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model ICollection<MyStik.TimeTable.Data.Semester>
+﻿@model MyStik.TimeTable.Web.Models.SemesterViewModel
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = Resources.SemesterString;
 }
 
-<h2>Semesterverwaltung</h2>
-
-<div class="row">
-    <div class="col-xs-6 col-sm-3" id="sidebar" role="navigation">
-        <ul class="list-group">
-            <li class="list-group-item disabled">Menü</li>
-            <li class="list-group-item">
-                <i class="fa fa-list fa-fw"></i>
-                <span class="badge">@Model.Count</span>
-                @Html.ActionLink("Semesterliste", "Index")  
-            </li>
-            <li class="list-group-item">
-                <i class="fa fa-plus-square fa-fw"></i>
-                @Html.ActionLink("Neues Semester", "Create")
-            </li>
-            <li class="list-group-item disabled">Spezialfunktionen</li>
-            <li class="list-group-item">@Html.ActionLink("Gruppe anlegen", "CreateGroup")</li>
-            <li class="list-group-item">@Html.ActionLink("Gruppe löschen", "DeleteGroup")</li>
-            <li class="list-group-item">@Html.ActionLink("Gruppe transferieren", "TransferGroup")</li>
-            <li class="list-group-item">@Html.ActionLink("Gruppen", "GroupList")</li>
-            <li class="list-group-item">@Html.ActionLink("Korrekturen", "BugFixing")</li>
-        </ul>
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Resources.SubMenuStudiesSemester</h1>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-xs-6 col-sm-9">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Semesterliste</h4>
-            </div>  
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Vorlesungszeitraum</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            @if (item.BookingEnabled)
-                            {
-                                <td><i class="fa fa-pencil text-primary"></i></td>
-                            }
-                            else
-                            {
-                                <td>
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-pencil fa-stack-1x"></i>
-                                        <i class="fa fa-ban fa-stack-2x text-danger"></i>
-                                    </span>
-                                </td>
-                            }
-                            <td>@Html.ActionLink(item.Name, "Details", new { id = item.Name})</td>
-                            <td>@item.StartCourses.ToShortDateString() bis @item.EndCourses.ToShortDateString()</td>
-                            <td>
-                                @Html.ActionButton("fa-database", "GPUNTIS", "GpUntis", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                                @if (item.BookingEnabled)
-                                {
-                                    @Html.ActionButton("fa-power-off", "abschalten", "Switch", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                                }
-                                else
-                                {
-                                    @Html.ActionButton("fa-bullhorn", "freischalten", "Switch", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                                }
-                                @Html.ActionButton("fa-paw", "initialisieren", "Init", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                                @Html.ActionButton("fa-trash", "löschen", "Delete", "Semester", new { id = item.Id }, new { @class = "btn btn-danger btn-xs" })
-                           </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-                      
+</div>
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.DropDownListFor(model => model.Semester.Name, (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-@*
-<div class="row">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Bezeichnung</th>
-                <th>Von</th>
-                <th>Bis</th>
-                <th>Vorlesungsfreie Zeiten</th>
-                <th>Semestergruppen</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.StartCourses.ToShortDateString()</td>
-                    <td>@item.EndCourses.ToShortDateString()</td>
-                    <td>
-                        @foreach (var date in item.Dates)
-                        {
-                            var label = date.Description + " [" + date.From.ToShortDateString() + " bis " + date.To.ToShortDateString() + "]";
-                            <div>@label</div>
-                        }
-                    </td>
-                    <td>
-                        @foreach (var group in item.Groups.Where(g => g.CurriculumGroup != null).OrderBy(g => g.CurriculumGroup.Curriculum.ShortName))
-                        {
-                            if (group.CurriculumGroup != null)
-                            {
-                                var label = group.CurriculumGroup.Curriculum.ShortName + " - " + group.CurriculumGroup.Name + " (" + group.Activities.OfType<Course>().Count() + " Lehrveranstaltungen)";
-                                <div>@Html.ActionLink(label, "Group", new {id = group.Id})</div>
-                            }
-                            else
-                            {
-                                var label = "Ohne Zuordnung (" + group.Activities.OfType<Course>().Count() + " Lehrveranstaltungen)";
-                                <div class="text-danger"><strong>@Html.ActionLink(label, "Group", new { id = group.Id })</strong></div>
-                            }
-                        }
-                    </td>
-                    <td><a href="@Url.Action("Switch", new { id = item.Id})" class="btn btn-default"><i class="fa fa-bullhorn"></i> Umschalten</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="semProfile">
+            </div>
+        </div>
+    </div>
 </div>
-*@
+
+
+
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            onSemesterChanged();
+        });
+
+
+        function onSemesterChanged() {
+            var group = $('#Semester_Name option:selected').val();
+
+            $('#semProfile').html('');
+            $('#loading').show();
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("DateList", "Semester")',
+                data: {
+                    semGroupId: group
+                },
+                success: function (data, success, xhr) {
+                    $('#semProfile').html(data);
+                    $('#loading').hide();
+                },
+                error: function (data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            });
+        }
+
+
+
+    </script>
+}
+
+
+
+
+
+

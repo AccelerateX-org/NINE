@@ -1,7 +1,14 @@
-﻿namespace MyStik.TimeTable.Data
+﻿using System.Collections.Generic;
+
+namespace MyStik.TimeTable.Data
 {
     public class OccurrenceSubscription : Subscription
     {
+        public OccurrenceSubscription()
+        {
+            Bets = new List<LotteryBet>();    
+        }
+
         public int? Priority { get; set; }
 
         public int? Position { get; set; }
@@ -19,6 +26,8 @@
         public bool IsConfirmed { get; set; }
 
         public virtual Occurrence Occurrence { get; set; }
+
+        public virtual ICollection<LotteryBet> Bets { get; set; }
 
     }
 }

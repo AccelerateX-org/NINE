@@ -51,10 +51,10 @@ namespace MyStik.TimeTable.Data
             {
                 if (CurriculumGroup != null && CurriculumGroup.Curriculum != null)
                 {
-                    return string.Format("{0} - {1} {2}",
-                        CurriculumGroup.Curriculum.ShortName,
-                        CurriculumGroup.Name,
-                        Name);
+                    if (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(CurriculumGroup.Name))
+                        return CurriculumGroup.Curriculum.ShortName;
+
+                    return $"{CurriculumGroup.Curriculum.ShortName} - {CurriculumGroup.Name} {Name}";
                 }
                 
                 return "keine Zuordnung";

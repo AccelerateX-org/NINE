@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
-using Hangfire;
 using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -29,7 +27,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
             ViewBag.Organiser = org;
-            ViewBag.Semester = GetSemester();
+            ViewBag.Semester = SemesterService.GetSemester(DateTime.Today);
             ViewBag.UserRight = GetUserRight();
             ViewBag.Curricula = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList();
 
@@ -52,10 +50,12 @@ namespace MyStik.TimeTable.Web.Controllers
             if (occ != null)
             {
                 var summary = new ActivityService().GetSummary(id);
+                var subscribers = summary.Subscriptions;
 
                 model.OccurrenceId = occ.Id;
                 model.Name = summary.Name;
                 model.Subject = string.Format("[{0}]", summary.Name);
+                model.ReceiverCount = subscribers.Count;
             }
 
             return View(model);
@@ -176,7 +176,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var semester = GetSemester();
+                var semester = SemesterService.GetSemester(DateTime.Today);
                 var org = GetMyOrganisation();
 
                 /*
@@ -267,7 +267,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AllMembers(OccurrenceMailingModel model)
         {
             var logger = LogManager.GetLogger("AllMember");
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             if (ModelState.IsValid)
             {
@@ -316,7 +316,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult StudentGroup()
         {
-            ViewBag.SemesterList = Db.Semesters.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
+            var org = GetMyOrganisation();
+
+            var semesterList = SemesterService.GetActiveSemester(org);
+
+            ViewBag.SemesterList = semesterList.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
             {
                 Text = f.Name,
                 Value = f.Name,
@@ -327,7 +331,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new SemesterViewModel
             {
-                Semester = GetSemester()
+                Semester = SemesterService.GetSemester(DateTime.Today)
             };
 
             return View(model);
@@ -365,6 +369,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult StudentGroupMail()
         {
+            if (Session["GroupList"] == null)
+            {
+                return RedirectToAction("StudentGroup");
+            }
+
             var model = new OccurrenceMailingModel();
 
             ViewBag.GroupList = Session["GroupList"] as ICollection<SemesterGroup>;
@@ -380,7 +389,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult GroupList(string semId)
         {
-            var semester = GetSemester(semId);
+            var semester = SemesterService.GetSemester(semId);
             var org = GetMyOrganisation();
 
             var model = Db.SemesterGroups
@@ -624,10 +633,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var delivery in deliveryModel.Deliveries)
                 {
-                    writer.Write("{0};{1};{2};{3};{4}",
-                        delivery.User.LastName, delivery.User.FirstName, delivery.User.Email,
-                        delivery.DeliverySuccessful ? "OK" : "FEHLER",
-                        delivery.ErrorMessage);
+                    if (delivery.DeliverySuccessful)
+                    {
+                        writer.Write("{0};{1};;{2};",
+                            delivery.User.LastName, delivery.User.FirstName,
+                            delivery.DeliverySuccessful ? "OK" : "FEHLER");
+                    }
+                    else
+                    {
+                        writer.Write("{0};{1};{2};{3};{4}",
+                            delivery.User.LastName, delivery.User.FirstName, delivery.User.Email,
+                            delivery.DeliverySuccessful ? "OK" : "FEHLER",
+                            delivery.ErrorMessage);
+
+                    }
                     writer.Write(Environment.NewLine);
                 }
 
@@ -712,7 +731,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curr = Db.Curricula.SingleOrDefault(c => c.Id == id);
 
-            var sem = GetSemester();
+            var sem = SemesterService.GetSemester(DateTime.Today);
 
             var subscriber = Db.Subscriptions.OfType<SemesterSubscription>().Where(s => s.SemesterGroup.Semester.Id == sem.Id &&
                                                                        s.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Id ==

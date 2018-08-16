@@ -195,4 +195,48 @@ namespace MyStik.TimeTable.Web.Models
         public SemesterGroup Group { get; set; }
         
     }
+
+
+    public class CurriculumSubscriptionViewModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Semester Studienbeginn")]
+        public Guid SemId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Fakultät")]
+        public Guid OrgId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Studienprogramm")]
+        public Guid CurrId { get; set; }
+
+
+        [Display(Name = "Teilzeit (Angabe freiwillig)")]
+        public bool IsPartTime { get; set; }
+
+        [Display(Name = "Duales Studium (Angabe frewillig)")]
+        public bool IsDual { get; set; }
+
+        [Display(Name = "Matrikelnummer")]
+        public string Number { get; set; }
+
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+
+        public Semester Semester { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public Student Student { get; set; }
+    }
+
 }

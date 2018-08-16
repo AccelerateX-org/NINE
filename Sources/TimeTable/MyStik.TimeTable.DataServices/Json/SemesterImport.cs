@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using fk11.Model;
 using log4net;
 using MyStik.TimeTable.Data;
-using Spire.Pdf.General.Render.Decode.Jpeg2000.j2k.util;
+using MyStik.TimeTable.DataServices.Json.Data;
 
 namespace MyStik.TimeTable.DataServices.Json
 {
@@ -32,12 +29,17 @@ namespace MyStik.TimeTable.DataServices.Json
 
         private bool _isValid = true;
 
+        private StringBuilder _report = new StringBuilder();
+
 
         public SemesterImport(ImportContext import, Guid semId, Guid orgId)
         {
             _import = import;
             _semId = semId;
             _orgId = orgId;
+
+            _report.AppendLine("<html>");
+            _report.AppendLine("<body>");
         }
 
 
@@ -93,11 +95,38 @@ namespace MyStik.TimeTable.DataServices.Json
                 return;
         }
 
+        public string GetReport()
+        {
+            _report.AppendLine("</body>");
+            _report.AppendLine("</html>");
+
+            return _report.ToString();
+        }
+
+
+        public string ImportActivity(ScheduleCourse scheduleCourse)
+        {
+            if (scheduleCourse.Groups.Any())
+            {
+                bool isCourse = !scheduleCourse.Groups.Any(g => string.IsNullOrEmpty(g.CurriculumShortName));
+                if (isCourse)
+                    return ImportCourse(scheduleCourse);
+            }
+
+            return ImportReservation(scheduleCourse);
+        }
+
+
+
         public string ImportCourse(ScheduleCourse scheduleCourse)
         {
             string msg;
 
             _Logger.DebugFormat("Importiere Fach: {0}", scheduleCourse.Name);
+            _report.AppendFormat("<h1>Erzeuge LV \"{0} ({1})\" - [{2}]</h1>", scheduleCourse.Name, scheduleCourse.ShortName,
+                scheduleCourse.CourseId);
+            _report.AppendLine();
+
             var db = new TimeTableDbContext();
 
             var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
@@ -107,12 +136,12 @@ namespace MyStik.TimeTable.DataServices.Json
             var course = new Course
             {
                 ExternalSource = "JSON",
-                ExternalId = scheduleCourse.CourseId.ToString(),
+                ExternalId = scheduleCourse.CourseId,
                 Organiser = organiser,
                 ShortName = scheduleCourse.ShortName,
                 Name = scheduleCourse.Name,
                 Description = scheduleCourse.Description,
-                Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction),
+                Occurrence = CreateDefaultOccurrence(scheduleCourse.SeatRestriction ?? 0),
                 IsInternal = true,
             };
             // Kurs sofort speichern, damit die ID gesichert ist
@@ -121,6 +150,14 @@ namespace MyStik.TimeTable.DataServices.Json
             long msEnd = sw.ElapsedMilliseconds;
             _Logger.DebugFormat("Dauer: {0}ms", msEnd - msStart);
             msStart = msEnd;
+
+            _report.AppendLine("<h2>Bezeichnungen</h2>");
+            _report.AppendLine("<table>");
+            _report.AppendFormat("<tr><td>Name</td><td>{0}</td></tr>", course.Name);
+            _report.AppendFormat("<tr><td>Kurzname</td><td>{0}</td></tr>", course.ShortName);
+            _report.AppendFormat("<tr><td>Beschreibung</td><td>{0}</td></tr>", course.Description);
+            _report.AppendLine("</table>");
+
 
             // jetzt die Gruppen
             foreach (var scheduleGroup in scheduleCourse.Groups)
@@ -132,7 +169,7 @@ namespace MyStik.TimeTable.DataServices.Json
                 var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(scheduleGroup.CurriculumShortName));
                 if (curr == null)
                 {
-                    curr = new Data.Curriculum
+                    curr = new TimeTable.Data.Curriculum
                     {
                         ShortName = scheduleGroup.CurriculumShortName,
                         Name = scheduleGroup.CurriculumName,
@@ -143,13 +180,32 @@ namespace MyStik.TimeTable.DataServices.Json
                 }
 
                 // Studiengruppe innerhalb des Studiengangs ermitteln
-                var currGroup = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(scheduleGroup.GroupName));
+                var groupName = scheduleGroup.GroupName;
+
+                // Sonderlocke FK 11
+                // aus der LV-Nummer das Semester raussuchen
+                /* OHI 20180720: wieder ausgebaut, weil Schnittstelle jetzt sauber befüllt ist
+                if (org.ShortName.Equals("FK 11"))
+                {
+                    if (!string.IsNullOrEmpty(course.ShortName))
+                    {
+                        groupName = course.ShortName[1].ToString();
+
+                    }
+                    else
+                    {
+                        groupName = "#N.V.";
+                    }
+                }
+                */
+
+                var currGroup = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(groupName));
                 if (currGroup == null)
                 {
                     currGroup = new CurriculumGroup
                     {
                         Curriculum = curr,
-                        Name = scheduleGroup.GroupName,
+                        Name = groupName,
                         IsSubscribable = true,
                     };
                     db.CurriculumGroups.Add(currGroup);
@@ -284,6 +340,9 @@ namespace MyStik.TimeTable.DataServices.Json
             }
 
             // zum Schluss die Termine
+            _report.AppendLine("<h2>Neue Termine</h2>");
+            _report.AppendLine("<table>");
+
             foreach (var scheduleDate in scheduleCourse.Dates)
             {
                 // Der Tag
@@ -310,9 +369,13 @@ namespace MyStik.TimeTable.DataServices.Json
                         Activity = course,
                         Occurrence = CreateDefaultOccurrence(),
                     };
+                    _report.AppendLine("<tr>");
+                    _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", occ.Begin.ToShortDateString(), occ.Begin.ToShortTimeString(), occ.End.ToShortTimeString());
 
+                    _report.AppendFormat("<td>");
                     foreach (var scheduleDateRoom in scheduleDate.Rooms)
                     {
+                        _report.AppendFormat("<p>{0}", scheduleDateRoom.RoomNumber);
                         if (!string.IsNullOrEmpty(scheduleDateRoom.RoomNumber))
                         {
                             var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
@@ -329,6 +392,7 @@ namespace MyStik.TimeTable.DataServices.Json
                                 db.SaveChanges();
 
                                 _numRooms++;
+                                _report.AppendFormat(" !!!NEUER RAUM!!!");
                             }
 
 
@@ -350,11 +414,16 @@ namespace MyStik.TimeTable.DataServices.Json
                             }
 
                             occ.Rooms.Add(room);
+                            _report.AppendFormat("</p>");
                         }
                     }
+                    _report.AppendFormat("</td>");
 
+                    _report.AppendFormat("<td>");
                     foreach (var scheduleDateLecturer in scheduleDate.Lecturers)
                     {
+                        _report.AppendFormat("<p>{0} ({1})", scheduleDateLecturer.Name, scheduleDateLecturer.ShortName);
+
                         var lecturer = organiser.Members.SingleOrDefault(l => l.ShortName.Equals(scheduleDateLecturer.ShortName));
                         if (lecturer == null)
                         {
@@ -369,15 +438,23 @@ namespace MyStik.TimeTable.DataServices.Json
                             db.Members.Add(lecturer);
                             db.SaveChanges();
                             _numLecturers++;
+                            _report.AppendFormat(" !!!NEUER DOZENT!!!");
                         }
 
                         occ.Hosts.Add(lecturer);
+                        _report.AppendFormat("</p>");
                     }
+                    _report.AppendFormat("</td>");
 
                     db.ActivityDates.Add(occ);
+
+                    _report.AppendLine();
+                    _report.AppendLine("</tr>");
+
                 }
             }
 
+            _report.AppendLine("</table>");
             db.SaveChanges();
 
             msEnd = sw.ElapsedMilliseconds;
@@ -389,11 +466,190 @@ namespace MyStik.TimeTable.DataServices.Json
         }
 
 
+        public string ImportReservation(ScheduleCourse scheduleCourse)
+        {
+            string msg;
+
+            _Logger.DebugFormat("Importiere Raumreservierung: {0}", scheduleCourse.Name);
+            _report.AppendFormat("<h1>Erzeuge LV \"{0} ({1})\" - [{2}]</h1>", scheduleCourse.Name, scheduleCourse.ShortName,
+                scheduleCourse.CourseId);
+            _report.AppendLine();
+
+            var db = new TimeTableDbContext();
+
+            var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
+            var sem = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+
+            long msStart = sw.ElapsedMilliseconds;
+            var course = new Reservation
+            {
+                ExternalSource = "JSON",
+                ExternalId = scheduleCourse.CourseId,
+                Organiser = organiser,
+                ShortName = scheduleCourse.ShortName,
+                Name = scheduleCourse.Name,
+                Description = scheduleCourse.Description,
+                Occurrence = null,
+                IsInternal = true,
+            };
+            // Kurs sofort speichern, damit die ID gesichert ist
+            db.Activities.Add(course);
+            db.SaveChanges();
+            long msEnd = sw.ElapsedMilliseconds;
+            _Logger.DebugFormat("Dauer: {0}ms", msEnd - msStart);
+            msStart = msEnd;
+
+            _report.AppendLine("<h2>Bezeichnungen</h2>");
+            _report.AppendLine("<table>");
+            _report.AppendFormat("<tr><td>Name</td><td>{0}</td></tr>", course.Name);
+            _report.AppendFormat("<tr><td>Kurzname</td><td>{0}</td></tr>", course.ShortName);
+            _report.AppendFormat("<tr><td>Beschreibung</td><td>{0}</td></tr>", course.Description);
+            _report.AppendLine("</table>");
+
+
+            // jetzt die Gruppen
+            // Eine Raumreservierung hat keine Gruppen
+
+            db.SaveChanges();
+
+            // zum Schluss die Termine
+            _report.AppendLine("<h2>Neue Termine</h2>");
+            _report.AppendLine("<table>");
+
+            foreach (var scheduleDate in scheduleCourse.Dates)
+            {
+                // Der Tag
+                var occDate = scheduleDate.Begin.Date;
+
+                bool isVorlesung = true;
+                foreach (var sd in _semester.Dates)
+                {
+                    // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                    if (sd.From.Date <= occDate.Date &&
+                        occDate.Date <= sd.To.Date &&
+                        sd.HasCourses == false)
+                    {
+                        isVorlesung = false;
+                    }
+                }
+
+                if (isVorlesung)
+                {
+                    var occ = new ActivityDate
+                    {
+                        Begin = scheduleDate.Begin,
+                        End = scheduleDate.End,
+                        Activity = course,
+                        Occurrence = null,
+                    };
+                    _report.AppendLine("<tr>");
+                    _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", occ.Begin.ToShortDateString(), occ.Begin.ToShortTimeString(), occ.End.ToShortTimeString());
+
+                    _report.AppendFormat("<td>");
+                    foreach (var scheduleDateRoom in scheduleDate.Rooms)
+                    {
+                        _report.AppendFormat("<p>{0}", scheduleDateRoom.RoomNumber);
+                        if (!string.IsNullOrEmpty(scheduleDateRoom.RoomNumber))
+                        {
+                            var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
+                            if (room == null)
+                            {
+                                room = new Room
+                                {
+                                    Number = scheduleDateRoom.RoomNumber,
+                                    Capacity = 0,
+                                    Description = string.Empty,
+                                    Owner = string.Empty,
+                                };
+                                db.Rooms.Add(room);
+                                db.SaveChanges();
+
+                                _numRooms++;
+                                _report.AppendFormat(" !!!NEUER RAUM!!!");
+                            }
+
+
+                            var assignment = db.RoomAssignments.SingleOrDefault(x =>
+                                x.Room.Id == room.Id &&
+                                x.Organiser.Id == organiser.Id);
+                            if (assignment == null)
+                            {
+                                assignment = new RoomAssignment
+                                {
+                                    Organiser = organiser,
+                                    InternalNeedConfirmation = false, // offen für interne
+                                    ExternalNeedConfirmation = true // geschlossen für externe
+                                };
+
+                                room.Assignments.Add(assignment);
+                                db.RoomAssignments.Add(assignment);
+                                db.SaveChanges();
+                            }
+
+                            occ.Rooms.Add(room);
+                            _report.AppendFormat("</p>");
+                        }
+                    }
+                    _report.AppendFormat("</td>");
+
+                    _report.AppendFormat("<td>");
+                    foreach (var scheduleDateLecturer in scheduleDate.Lecturers)
+                    {
+                        _report.AppendFormat("<p>{0} ({1})", scheduleDateLecturer.Name, scheduleDateLecturer.ShortName);
+
+                        var lecturer = organiser.Members.SingleOrDefault(l => l.ShortName.Equals(scheduleDateLecturer.ShortName));
+                        if (lecturer == null)
+                        {
+                            lecturer = new OrganiserMember
+                            {
+                                ShortName = scheduleDateLecturer.ShortName,
+                                Name = scheduleDateLecturer.Name,
+                                Role = String.Empty,
+                                Description = String.Empty
+                            };
+                            organiser.Members.Add(lecturer);
+                            db.Members.Add(lecturer);
+                            db.SaveChanges();
+                            _numLecturers++;
+                            _report.AppendFormat(" !!!NEUER DOZENT!!!");
+                        }
+
+                        occ.Hosts.Add(lecturer);
+                        _report.AppendFormat("</p>");
+                    }
+                    _report.AppendFormat("</td>");
+
+                    db.ActivityDates.Add(occ);
+
+                    _report.AppendLine();
+                    _report.AppendLine("</tr>");
+
+                }
+            }
+
+            _report.AppendLine("</table>");
+            db.SaveChanges();
+
+            msEnd = sw.ElapsedMilliseconds;
+            _Logger.DebugFormat("Dauer {0}ms", msEnd - msStart);
+
+            msg = $"Raumreservierung {course.ShortName} mit Terminen importiert";
+
+            return msg;
+        }
+
+
+
         public string UpdateCourse(Course c, ScheduleCourse scheduleCourse)
         {
             string msg;
 
-            _Logger.DebugFormat("Importiere Fach: {0}", scheduleCourse.Name);
+            _Logger.DebugFormat("Aktualisiere Fach: {0}", scheduleCourse.Name);
+
+            _report.AppendFormat("<h1>Aktualisiere LV \"{0} ({1})\" - [{2}]</h1>", scheduleCourse.Name, scheduleCourse.ShortName,
+                scheduleCourse.CourseId);
+            _report.AppendLine();
+
             var db = new TimeTableDbContext();
 
             var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
@@ -403,8 +659,35 @@ namespace MyStik.TimeTable.DataServices.Json
             var course = db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == c.Id);
 
             // Ober sticht Unter => zuerst alle termine raus!
+            _report.AppendLine("<h2>Gelöschte Termine</h2>");
+            _report.AppendLine("<table>");
             foreach (var date in course.Dates.ToList())
             {
+                _report.AppendLine("<tr>");
+                _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", date.Begin.ToShortDateString(), date.Begin.ToShortTimeString(), date.End.ToShortTimeString());
+
+                _report.AppendLine("<td>");
+                foreach (var room in date.Rooms)
+                {
+                    _report.AppendFormat("<p>{0}</p>", room.Number);
+                }
+                _report.AppendLine("</td>");
+
+                _report.AppendLine("<td>");
+                foreach (var host in date.Hosts)
+                {
+                    _report.AppendFormat("<p>{0} ({1})</p>", host.Name, host.ShortName);
+                }
+                _report.AppendLine("</td>");
+
+                _report.AppendFormat("<td>{0}</td>", date.Title);
+                _report.AppendFormat("<td>{0}</td>", date.Description);
+                _report.AppendFormat("<td>{0}</td>", date.Occurrence.Information);
+
+                _report.AppendLine();
+                _report.AppendLine("</tr>");
+
+
                 db.Occurrences.Remove(date.Occurrence);
 
                 foreach (var change in date.Changes.ToList())
@@ -424,18 +707,37 @@ namespace MyStik.TimeTable.DataServices.Json
             }
             db.SaveChanges();
 
+            _report.AppendLine("</table>");
 
 
             // Die Bezeichnung
+            _report.AppendLine("<h2>Bezeichnungen</h2>");
+            _report.AppendLine("<h3>Alt</h3>");
+            _report.AppendLine("<table>");
+            _report.AppendFormat("<tr><td>Name</td><td>{0}</td></tr>", course.Name);
+            _report.AppendFormat("<tr><td>Kurzname</td><td>{0}</td></tr>", course.ShortName);
+            _report.AppendFormat("<tr><td>Beschreibung</td><td>{0}</td></tr>", course.Description);
+            _report.AppendLine("</table>");
+
             course.Name = scheduleCourse.Name;
             course.ShortName = scheduleCourse.ShortName;
             course.Description = scheduleCourse.Description;
 
+            _report.AppendLine("<h3>Neu</h3>");
+            _report.AppendLine("<table>");
+            _report.AppendFormat("<tr><td>Name</td><td>{0}</td></tr>", course.Name);
+            _report.AppendFormat("<tr><td>Kurzname</td><td>{0}</td></tr>", course.ShortName);
+            _report.AppendFormat("<tr><td>Beschreibung</td><td>{0}</td></tr>", course.Description);
+            _report.AppendLine("</table>");
+
             // Platzkontingent
-            course.Occurrence.Capacity = scheduleCourse.SeatRestriction;
+            course.Occurrence.Capacity = scheduleCourse.SeatRestriction ?? 0;
 
             // Termine einfügen
             // zum Schluss die Termine
+            _report.AppendLine("<h2>Neue Termine</h2>");
+            _report.AppendLine("<table>");
+
             foreach (var scheduleDate in scheduleCourse.Dates)
             {
                 // Der Tag
@@ -464,8 +766,13 @@ namespace MyStik.TimeTable.DataServices.Json
                         Occurrence = CreateDefaultOccurrence(),
                     };
 
+                    _report.AppendLine("<tr>");
+                    _report.AppendFormat("<td>{0}</td><td>{1}</td><td>{2}</td>", occ.Begin.ToShortDateString(), occ.Begin.ToShortTimeString(), occ.End.ToShortTimeString());
+
+                    _report.AppendFormat("<td>");
                     foreach (var scheduleDateRoom in scheduleDate.Rooms)
                     {
+                        _report.AppendFormat("<p>{0}", scheduleDateRoom.RoomNumber);
                         if (!string.IsNullOrEmpty(scheduleDateRoom.RoomNumber))
                         {
                             var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(scheduleDateRoom.RoomNumber));
@@ -482,6 +789,8 @@ namespace MyStik.TimeTable.DataServices.Json
                                 db.SaveChanges();
 
                                 _numRooms++;
+
+                                _report.AppendFormat(" !!!NEUER RAUM!!!");
                             }
 
 
@@ -503,11 +812,16 @@ namespace MyStik.TimeTable.DataServices.Json
                             }
 
                             occ.Rooms.Add(room);
+
+                            _report.AppendFormat("</p>");
                         }
                     }
+                    _report.AppendFormat("</td>");
 
+                    _report.AppendFormat("<td>");
                     foreach (var scheduleDateLecturer in scheduleDate.Lecturers)
                     {
+                        _report.AppendFormat("<p>{0} ({1})", scheduleDateLecturer.Name, scheduleDateLecturer.ShortName);
                         var lecturer = organiser.Members.SingleOrDefault(l => l.ShortName.Equals(scheduleDateLecturer.ShortName));
                         if (lecturer == null)
                         {
@@ -522,14 +836,26 @@ namespace MyStik.TimeTable.DataServices.Json
                             db.Members.Add(lecturer);
                             db.SaveChanges();
                             _numLecturers++;
+
+                            _report.AppendFormat(" !!!NEUER DOZENT!!!");
                         }
 
                         occ.Hosts.Add(lecturer);
+
+                        _report.AppendFormat("</p>");
+
                     }
+                    _report.AppendFormat("</td>");
+
 
                     db.ActivityDates.Add(occ);
+
+                    _report.AppendLine();
+                    _report.AppendLine("</tr>");
+
                 }
             }
+            _report.AppendLine("</table>");
 
             db.SaveChanges();
 
@@ -572,7 +898,7 @@ namespace MyStik.TimeTable.DataServices.Json
 
             if (dbLottery == null)
             {
-                dbLottery = new Data.Lottery
+                dbLottery = new TimeTable.Data.Lottery
                 {
                     Name = lottery.Name,
                     DrawingFrequency = DrawingFrequency.Daily,

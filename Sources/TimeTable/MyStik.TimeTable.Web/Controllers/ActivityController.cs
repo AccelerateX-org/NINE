@@ -6,6 +6,7 @@ using System.Text;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
@@ -27,13 +28,33 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("PersonalPlan");
         }
 
+        public ActionResult State(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var user = AppUser;
+
+            // Anzahl der LVs
+
+            var activities = Db.Activities.OfType<Course>().Where(a =>
+                a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+
+            var model = new ActivitySemesterViewModel
+            {
+                Semester = semester,
+                Courses = activities
+            };
+
+            return View(model);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public ActionResult AdminPlan()
         {
-            ViewBag.Semester = GetSemester();
             ViewBag.Organiser = GetMyOrganisation();
             return View();
         }
@@ -48,141 +69,13 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Nur Anzeige des Kalenders
         /// </summary>
         /// <returns></returns>
         public ActionResult PersonalPlan()
         {
-            var user = AppUser;
-            var semester = GetSemester();
-
             var model = new ActivityPlanModel();
-            model.IsDuringLottery = new SystemConfig().IsLotteryEnabled;
-            model.HasLottery = false;
-
-            // Alle Termine als Teilnehmer
-            var activities = Db.Activities.Where(a => a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
-            foreach (var activity in activities)
-            {
-                if ((activity.Dates.Any() && activity.Dates.Last().End >= GlobalSettings.Today) ||
-                    !activity.Dates.Any())
-                {
-                    model.MySubscriptions.Add(new ActivitySubscriptionModel
-                    {
-                        Activity = new ActivitySummary {Activity = activity},
-                        State = ActivityService.GetActivityState(activity.Occurrence, user, semester)
-                    });
-
-                    if (activity.Occurrence.LotteryEnabled)
-                        model.HasLottery = true;
-                }
-            }
-
-            var dates = Db.ActivityDates.Where(d => d.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
-            foreach (var activityDate in dates)
-            {
-                if (activityDate.End >= GlobalSettings.Today)
-                {
-                    model.MySubscriptions.Add(new ActivitySubscriptionModel
-                    {
-                        Activity = new ActivityDateSummary {Date = activityDate},
-                        State = ActivityService.GetActivityState(activityDate.Occurrence, user, semester)
-                    });
-                }
-            }
-
-            var slots = Db.ActivitySlots.Where(s => s.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
-            foreach (var activitySlot in slots)
-            {
-                if (activitySlot.ActivityDate.End >= GlobalSettings.Today)
-                {
-                    model.MySubscriptions.Add(new ActivitySubscriptionModel
-                    {
-                        Activity = new ActivitySlotSummary {Slot = activitySlot},
-                        State = ActivityService.GetActivityState(activitySlot.Occurrence, user, semester)
-                    });
-                }
-            }
-
-
-            // Alle Termine als Veranstalter
-            // Alle egal, ob das Semester nun aktiv ist oder nicht
-            /*
-            var doz = Db.Members.SingleOrDefault(m => m.UserId == user.Id);
-            if (doz != null)
-            {
-                var lectureActivities =
-                    Db.Activities.Where(a => 
-                        a.Dates.Any(d => d.Hosts.Any(l => l.ShortName.Equals(doz.ShortName)))).ToList();
-             */
-            var lectureActivities =
-                Db.Activities.Where(a =>
-                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))).ToList();
-            foreach (var activity in lectureActivities)
-                {
-                    // nur die, bei denen es noch Termine in der Zukunft gibt
-                    if ((activity.Dates.Any() && activity.Dates.OrderBy(d => d.End).Last().End >= GlobalSettings.Today))
-                    {
-                        var summary = new ActivitySummary {Activity = activity};
-
-                            var currentDate =
-                                activity.Dates.Where(d => d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End)
-                                    .OrderBy(d => d.Begin)
-                                    .FirstOrDefault();
-                            var nextDate =
-                                activity.Dates.Where(d => d.Begin >= GlobalSettings.Now)
-                                    .OrderBy(d => d.Begin)
-                                    .FirstOrDefault();
-
-                            if (currentDate != null)
-                            {
-                                summary.CurrentDate = new CourseDateStateModel
-                                {
-                                    Summary = new ActivityDateSummary {Date = currentDate},
-                                    State = ActivityService.GetSubscriptionState(currentDate.Occurrence, currentDate.Begin, currentDate.End),
-                                };
-                            }
-
-                            if (nextDate != null)
-                            {
-                                summary.NextDate = new CourseDateStateModel
-                                {
-                                    Summary = new ActivityDateSummary {Date = nextDate},
-                                    State = ActivityService.GetSubscriptionState(nextDate.Occurrence, nextDate.Begin, nextDate.End ),
-                                };
-                            }
-                        model.MyActivities.Add(summary);
-                    }
-                }
-            //}
-
-            var org = GetMyOrganisation();
-            var userRight = GetUserRight(User.Identity.Name, org.ShortName, true);
-
-            ViewBag.CalendarToken = user.Id;
-            ViewBag.CalendarPeriod = GetSemester().Name;
-            ViewBag.UserRight = userRight;
-            ViewBag.IsProf = HasUserRole(User.Identity.Name, org.ShortName, "Prof");
-
-            if (userRight.IsOrgMember)
-            {
-                var member = GetMember(User.Identity.Name, org.ShortName);
-                if (member != null)
-                {
-                    ViewBag.ShortName = member.ShortName;
-
-                    if (ViewBag.IsProf)
-                    {
-                        var officeHour = new OfficeHourService().GetOfficeHour(member, semester);
-                        ViewBag.HasOfficeHour = (officeHour != null);
-                        ViewBag.HostId = member.Id;
-                    }
-                }
-            }
-
-            // test => funktioniert so
-            // ViewBag.MenuId = "menu-dashboard";
-
+            ViewBag.UserRight = GetUserRight();
             return View(model);
         }
 
@@ -190,9 +83,86 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult PersonalPlanMobile()
+        public ActionResult PersonalPlanDaily()
         {
-            return View();
+            var model = new AgendaViewModel();
+
+            var user = UserManager.FindByName(User.Identity.Name);
+
+
+            var begin = DateTime.Today;
+            var end = DateTime.Today.AddDays(7);
+
+            // Alle Dates bei denen der Benutzer als Dozent eingetragen ist
+            var lectureDates =
+                Db.ActivityDates.Where(d =>
+                    d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)) &&
+                    d.End >= begin && d.End <= end).OrderBy(d => d.Begin).ToList();
+
+            foreach (var date in lectureDates)
+            {
+                var agendaDay = model.Days.SingleOrDefault(d => d.Day.Date == date.Begin.Date);
+                if (agendaDay == null)
+                {
+                    agendaDay = new AgendaDayViewModel
+                    {
+                        Day = date.Begin.Date
+                    };
+                    model.Days.Add(agendaDay);
+                }
+
+                var agendaActivity = new AgendaActivityViewModel
+                {
+                    Date = date
+                };
+
+                agendaDay.Activities.Add(agendaActivity);
+            }
+
+            // Alle Eintragungen
+            var subscriptions =
+            Db.ActivityDates.Where(d =>
+                (d.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                 d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                 d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))) &&
+                d.End >= begin && d.End <= end).OrderBy(d => d.Begin).ToList();
+
+            foreach (var date in subscriptions)
+            {
+                var agendaDay = model.Days.SingleOrDefault(d => d.Day.Date == date.Begin.Date);
+                if (agendaDay == null)
+                {
+                    agendaDay = new AgendaDayViewModel
+                    {
+                        Day = date.Begin.Date
+                    };
+                    model.Days.Add(agendaDay);
+                }
+
+                var agendaActivity = new AgendaActivityViewModel
+                {
+                    Date = date
+                };
+
+                // den slot prüfen
+                agendaActivity.Slot =
+                    date.Slots.FirstOrDefault(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+
+                agendaDay.Activities.Add(agendaActivity);
+            }
+
+
+            return View(model);
+        }
+
+
+        public ActionResult PersonalPlanWeekly(Guid id)
+        {
+            var model = new ActivityPlanModel();
+
+            model.Semester = SemesterService.GetSemester(id);
+
+            return View(model);
         }
 
 
@@ -271,7 +241,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Status neu ermittelt
             var activity = Db.Occurrences.SingleOrDefault(ac => ac.Id == Id);
-            var model = ActivityService.GetActivityState(activity, AppUser, GetSemester());
+            var model = ActivityService.GetActivityState(activity, AppUser);
 
             return PartialView("_SubscriptionState", model);
         }
@@ -355,8 +325,16 @@ namespace MyStik.TimeTable.Web.Controllers
                         Db.SubscriptionDrawings.Remove(drawing);
                     }
 
+
+                    var bets = subscription.Bets.ToList();
+                    foreach (var bet in bets)
+                    {
+                        Db.LotteriyBets.Remove(bet);
+                    }
+
                     activity.Subscriptions.Remove(subscription);
                     Db.Subscriptions.Remove(subscription);
+
                     Db.SaveChanges();
 
                     logger.InfoFormat("{0} ({1}) by [{2}]",
@@ -388,7 +366,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="Id"></param>
-        public void Subscribe(Guid Id)
+        public OccurrenceSubscription Subscribe(Guid Id)
         {
             var activity = Db.Occurrences.SingleOrDefault(ac => ac.Id == Id);
 
@@ -436,8 +414,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     var mail = new MailController();
                     mail.Subscription(mailModel).Deliver();
                 }
+
+                return msg.Subscription;
             }
 
+            return null;
         }
 
 
@@ -454,8 +435,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = UserManager.FindByName(User.Identity.Name);
 
 
-            var begin = GlobalSettings.Today;
-            var end = GlobalSettings.Today.AddDays(7);
+            var begin = DateTime.Today;
+            var end = DateTime.Today.AddDays(7);
 
             // Alle Dates bei denen der Benutzer als Dozent eingetragen ist
             var lectureDates =
@@ -508,6 +489,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     Date = date
                 };
 
+                // den slot prüfen
+                agendaActivity.Slot =
+                    date.Slots.FirstOrDefault(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+
                 agendaDay.Activities.Add(agendaActivity);
             }
 
@@ -526,11 +511,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new ActivityCurrentModel();
 
             model.CurrentDates =
-                Db.ActivityDates.Where(d => d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End && d.Occurrence.IsCanceled == false).OrderBy(d => d.Begin).ToList();
+                Db.ActivityDates.Where(d => d.Begin <= DateTime.Now && DateTime.Now <= d.End && d.Occurrence != null && d.Occurrence.IsCanceled == false).OrderBy(d => d.Begin).ToList();
 
             model.CanceledDates =
                 Db.ActivityDates.Where(d =>
-                    (d.Begin <= GlobalSettings.Now && GlobalSettings.Now <= d.End) && d.Occurrence.IsCanceled
+                    (d.Begin <= DateTime.Now && DateTime.Now <= d.End) && d.Occurrence != null && d.Occurrence.IsCanceled
                     ).ToList();
 
 
@@ -689,7 +674,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             }
                         }
                         writer.Write(";");
-                        if (activityDate.Occurrence.IsCanceled)
+                        if (activityDate.Occurrence != null && activityDate.Occurrence.IsCanceled)
                         {
                             writer.Write("abgesagt");
                         }
@@ -718,6 +703,148 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
+        public ActionResult FacultyPlanDaily()
+        {
+            var model = new DashboardViewModel();
+            var org = GetMyOrganisation();
 
+            // Was läuft gerade
+            var now = DateTime.Now;
+            var endOfDay = DateTime.Today.AddDays(1);
+
+            var nowPlaying = Db.ActivityDates.Where(d =>
+                    d.Activity is Course &&
+                    (d.Begin <= now && now < d.End || d.Begin > now && d.Begin < endOfDay) &&
+                    d.Activity.SemesterGroups.Any(g =>
+                        g.CapacityGroup != null &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+
+            model.Organiser = org;
+            model.NowPlayingDates = nowPlaying;
+
+
+            return View(model);
+        }
+
+        public ActionResult PersonalCoursePlan(Guid? id)
+        {
+            var user = AppUser;
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+
+            var model = new ActivityPlanModel();
+            model.Organiser = org;
+            model.Semester = semester;
+
+            // Alle Termine als Teilnehmer
+            /*
+            var activities = Db.Activities.Where(a => a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+            foreach (var activity in activities)
+            {
+                if ((activity.Dates.Any() && activity.Dates.Last().End >= GlobalSettings.Today) ||
+                    !activity.Dates.Any())
+                {
+                    model.MySubscriptions.Add(new ActivitySubscriptionModel
+                    {
+                        Activity = new ActivitySummary {Activity = activity},
+                        State = ActivityService.GetActivityState(activity.Occurrence, user, semester)
+                    });
+
+                    if (activity.Occurrence.LotteryEnabled)
+                        model.HasLottery = true;
+                }
+            }
+
+            var dates = Db.ActivityDates.Where(d => d.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+            foreach (var activityDate in dates)
+            {
+                if (activityDate.End >= GlobalSettings.Today)
+                {
+                    model.MySubscriptions.Add(new ActivitySubscriptionModel
+                    {
+                        Activity = new ActivityDateSummary {Date = activityDate},
+                        State = ActivityService.GetActivityState(activityDate.Occurrence, user, semester)
+                    });
+                }
+            }
+
+            var slots = Db.ActivitySlots.Where(s => s.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+            foreach (var activitySlot in slots)
+            {
+                if (activitySlot.ActivityDate.End >= GlobalSettings.Today)
+                {
+                    model.MySubscriptions.Add(new ActivitySubscriptionModel
+                    {
+                        Activity = new ActivitySlotSummary {Slot = activitySlot},
+                        State = ActivityService.GetActivityState(activitySlot.Occurrence, user, semester)
+                    });
+                }
+            }
+            */
+
+            // Alle Termine als Veranstalter im Semester
+            var lectureActivities =
+                Db.Activities.OfType<Course>().Where(a =>
+                    a.SemesterGroups.Any(x => x.Semester.Id == semester.Id) &&
+                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))).ToList();
+            foreach (var activity in lectureActivities)
+            {
+                var summary = new ActivitySummary {Activity = activity};
+
+                var currentDate =
+                    activity.Dates.Where(d => d.Begin <= DateTime.Now && DateTime.Now <= d.End)
+                        .OrderBy(d => d.Begin)
+                        .FirstOrDefault();
+                var nextDate =
+                    activity.Dates.Where(d => d.Begin >= DateTime.Now)
+                        .OrderBy(d => d.Begin)
+                        .FirstOrDefault();
+
+                if (currentDate != null)
+                {
+                    summary.CurrentDate = new CourseDateStateModel
+                    {
+                        Summary = new ActivityDateSummary {Date = currentDate},
+                        State = ActivityService.GetSubscriptionState(currentDate.Occurrence, currentDate.Begin, currentDate.End),
+                    };
+                }
+
+                if (nextDate != null)
+                {
+                    summary.NextDate = new CourseDateStateModel
+                    {
+                        Summary = new ActivityDateSummary {Date = nextDate},
+                        State = ActivityService.GetSubscriptionState(nextDate.Occurrence, nextDate.Begin, nextDate.End ),
+                    };
+                }
+
+                model.MyActivities.Add(summary);
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Today()
+        {
+            var org = GetMyOrganisation();
+
+            var beginOfDay = DateTime.Today;
+            var endOfDay = beginOfDay.AddDays(1);
+
+            var nowPlaying = Db.ActivityDates.Where(d =>
+                    d.Activity is Course &&
+                    (d.Begin > beginOfDay && d.Begin < endOfDay) &&
+                    d.Activity.SemesterGroups.Any(g =>
+                        g.CapacityGroup != null &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+
+
+            ViewBag.Organiser = org;
+
+            return View(nowPlaying);
+        }
     }
 }

@@ -11,7 +11,8 @@ namespace MyStik.TimeTable.Data
             Dates = new HashSet<ActivityDate>();
             Assignments = new HashSet<RoomAssignment>();
             Bookings = new HashSet<RoomBooking>();
-
+            Ressources = new HashSet<BinaryStorage>();
+            Equipments = new HashSet<RoomEquipment>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -33,7 +34,7 @@ namespace MyStik.TimeTable.Data
         public int Capacity { get; set; }
 
         /// <summary>
-        /// Beschreibung, z.B. Hörsall, Labor etc.
+        /// Beschreibung, z.B. Hörsaal, Labor etc.
         /// </summary>
         public string Description { get; set; }
 
@@ -42,6 +43,16 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Owner { get; set; }
 
+        /// <summary>
+        /// Steht als Lernraum zur Verfügung
+        /// Bei Suche nach freien Räumen
+        /// </summary>
+        public bool IsForLearning { get; set; }
+
+        /// <summary>
+        /// Hat Zugangskontrolle, z.B. Labor
+        /// </summary>
+        public bool HasAccessControl { get; set; }
 
         /// <summary>
         /// Die echten Belegungstermine mit Datum und Uhrzeit
@@ -56,6 +67,13 @@ namespace MyStik.TimeTable.Data
 
 
         public virtual ICollection<RoomAssignment> Assignments { get; set; }
+
+        /// <summary>
+        /// Bilder und Dokumente
+        /// </summary>
+        public virtual ICollection<BinaryStorage> Ressources { get; set; }
+
+        public virtual ICollection<RoomEquipment> Equipments { get; set; }
 
         public string FullName => string.IsNullOrEmpty(Name) ? Number : $"{Number} ({Name})";
     }

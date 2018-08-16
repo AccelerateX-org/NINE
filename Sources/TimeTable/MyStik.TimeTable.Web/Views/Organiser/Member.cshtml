@@ -1,5 +1,4 @@
 ﻿@using MyStik.TimeTable.Data
-@using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.LecturerCharacteristicModel
 @{
     ViewBag.Title = "Index";
@@ -16,25 +15,58 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>@Model.Lecturer.Name (@Model.Lecturer.ShortName) - @Model.Lecturer.Organiser.ShortName</h1>
+                    <h1>@Model.Lecturer.Name - @Model.Lecturer.Organiser.ShortName</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Index", "OrganiserMembers")" class="btn btn-default">
+                                    <i class="fa fa-arrow-left"></i> zurück zur Liste
+                                </a>
+                            </div>
+                            @if (ViewBag.UserRight.IsMemberAdmin)
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("EditMember", "Organiser", new {id = Model.Lecturer.Id})" class="btn btn-default">
+                                        <i class="fa fa-cog"></i> Einstellungen
+                                    </a>
+                                </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("Responsibilities", "OrganiserMembers", new {id = Model.Lecturer.Id})" class="btn btn-default">
+                                        <i class="fa fa-flask"></i> Verantwortungsbereiche
+                                    </a>
+                                </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("DeleteMember", "Organiser", new {id = Model.Lecturer.Id})" class="btn btn-danger">
+                                        <i class="fa fa-trash-o"></i> Lehrenden löschen
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>Sprechstunde (@ViewBag.Semester.Name)
-                    </div>
-                    <div class="actions">
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-user-md"></i> Sprechstunde (@ViewBag.Semester.Name)</h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     @if (Model.OfficeHour != null)
                     {
                         if (Model.OfficeHour.Dates.Any())
@@ -43,12 +75,23 @@
                         }
                         else
                         {
-                            <h2>Terminvereinbarung per E-Mail</h2>
+                            if (Model.OfficeHour.ByAgreement)
+                            {
+                                <div class="alert alert-info">
+                                    <h5>Nach Vereinbarung</h5>
+                                    @if (!string.IsNullOrEmpty(Model.OfficeHour.Description))
+                                    {
+                                    <p>@Html.Raw(@Model.OfficeHour.Description)</p>
+                                    }
+                                </div>
+                            }
                         }
                     }
                     else
                     {
-                        <h2>Bietet keine Sprechstundentermine an</h2>
+                        <div class="alert alert-warning">
+                            <h5>Es wird keine Sprechstunde angeboten</h5>
+                        </div>
                     }
                 </div>
             </div>
@@ -56,21 +99,26 @@
     </div>
 
 
-@if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+@if (ViewBag.UserRight.IsStaff)
 {
 
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>Aktuelle Lehrveranstaltungen (@ViewBag.Semester.Name)
-                    </div>
-                    <div class="actions">
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@ViewBag.Semester.Name)</h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
+                    @if (Model.Courses.Any())
+                    {
                         @Html.Partial("_CourseListSummary", Model.Courses)
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <h5>Es werden keine Lehrveranstaltungen angeboten</h5>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -83,16 +131,21 @@ else
     {
         <div class="row">
             <div class="col-md-12">
-                <div class="portlet light bordered">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-calendar"></i>Aktuelle Lehrveranstaltungen (@ViewBag.Semester.Name)
-                        </div>
-                        <div class="actions">
-                        </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@ViewBag.Semester.Name)</h4>
                     </div>
-                    <div class="portlet-body">
-                        @Html.Partial("_CourseListSummary", Model.Courses)
+                    <div class="panel-body">
+                        @if (Model.Courses.Any())
+                        {
+                            @Html.Partial("_CourseListSummary", Model.Courses)
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <h5>Es werden keine Lehrveranstaltungen angeboten</h5>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -100,7 +153,7 @@ else
     }
 }
 
-    @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+    @if (ViewBag.UserRight.IsStaff)
     {
         <div class="row">
             <div class="col-md-12">

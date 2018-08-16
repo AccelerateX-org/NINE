@@ -238,7 +238,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public OfficeHourDatePreviewModel()
         {
-            CurrentSlots = new List<OfficeHourSlotViewModel>();
+            Subscriptions = new List<OccurrenceSubscription>();
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public List<OfficeHourSlotViewModel> CurrentSlots { get; private set; }
+        public List<OccurrenceSubscription> Subscriptions { get; private set; }
     }
 
 
@@ -348,6 +348,10 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class OfficeHourCreateModel
     {
+        public OrganiserMember Member { get; set; }
+
+        public Semester Semester { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -376,6 +380,11 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         [Display(Name = "Ende")]
         public string EndTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string NewDateEnd { get; set; }
 
         /// <summary>
         /// 
@@ -422,6 +431,12 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public bool IsWeekly { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool UseSlots { get; set; }
 
         /// <summary>
         /// 
@@ -539,6 +554,12 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class OfficeHourDateViewModel
     {
+        public OfficeHourDateViewModel()
+        {
+            Subscriptions = new List<OccurrenceSubscription>();
+            AvailableSlots = new List<ActivitySlot>();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -584,15 +605,102 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public List<ActivitySlot> AvailableSlots { get; set; }
 
+        public int AvailableSeats { get; set; }
+
+
+        public List<OccurrenceSubscription> Subscriptions { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         public ActivityDate AvailableDate { get; set; }
 
+        public DateTime EndOfSubscriptionPeriod { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         public string Remark { get; set; }
+
+        public DateTime Begin
+        {
+            get
+            {
+                if (Slot != null)
+                    return Slot.Begin;
+                return Date.Begin;
+            }
+        }
+
+        public DateTime End
+        {
+            get
+            {
+                if (Slot != null)
+                    return Slot.End;
+                return Date.End;
+            }
+        }
+
+        public bool IsAvailable
+        {
+            get
+            {
+                if (Date.Occurrence.IsCanceled)
+                    return false;
+
+                if ((AvailableSlots == null || AvailableSlots.Count == 0) && AvailableSeats == 0)
+                    return false;
+
+                if (EndOfSubscriptionPeriod < DateTime.Now)
+                    return false;
+
+                return true;
+            }
+        }
+
+        public bool IsCancelled
+        {
+            get { return Date.Occurrence.IsCanceled; }
+        }
+
+        public bool IsFullyBooked
+        {
+            get { return (AvailableSlots == null || AvailableSlots.Count == 0) && AvailableSeats == 0; }
+        }
+
+        public bool IsExpired
+        {
+            get { return EndOfSubscriptionPeriod < DateTime.Now; }
+        }
+
+        public string Capacity
+        {
+            get
+            {
+                if (Date.Slots.Any())
+                {
+                    return Date.Slots.Count.ToString();
+                }
+
+                if (Date.Occurrence.Capacity < 1)
+                    return "unbegrenzt";
+
+                return Date.Occurrence.Capacity.ToString();
+            }
+        }
+
+        public string EndOfSubscription
+        {
+            get
+            {
+                if (!Date.Occurrence.UntilIsRestricted)
+                    return "unbeschränkt";
+
+                return EndOfSubscriptionPeriod.ToString();
+            }
+        }
+
     }
 
     /// <summary>
@@ -694,6 +802,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<ActivitySlot> MySlots { get; set; }
+
+        public int FutureSubCount { get; set; }
     }
 
     /// <summary>
@@ -770,6 +880,32 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public OfficeHour MyOfficeHour { get; set; }
     }
+
+
+    public class OfficeHourDateSubscriptionViewModel
+    {
+        public ActivityDate Date { get; set; }
+
+        public ActivitySlot Slot { get; set; }
+
+        public OrganiserMember Host { get; set; }
+        
+        public string Description { get; set; }
+
+
+        public Semester Semester { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public List<ActivitySlot> AvailableSlots { get; set; }
+
+        public Guid SlotID { get; set; }
+
+        public bool IsExpired { get; set; }
+
+    }
+
+
 
 }
 

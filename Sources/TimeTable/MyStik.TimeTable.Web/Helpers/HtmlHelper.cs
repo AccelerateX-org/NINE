@@ -123,8 +123,9 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <param name="htmlHelper"></param>
         /// <param name="groups"></param>
         /// <param name="showAvailability"></param>
+        /// <param name="showLink"></param>
         /// <returns></returns>
-        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, ICollection<SemesterGroup> groups, bool showAvailability=false)
+        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, ICollection<SemesterGroup> groups, bool showAvailability=false, bool showLink=true)
         {
             var sb = new StringBuilder();
             foreach (var group in groups)
@@ -134,7 +135,14 @@ namespace MyStik.TimeTable.Web.Helpers
                 {
                     linkName += "(!)";
                 }
-                sb.Append(htmlHelper.ActionLink(linkName, "Group", "Semester", new { id = group.Id }, null));
+                if (showLink)
+                {
+                    sb.Append(htmlHelper.ActionLink(linkName, "Group", "Dictionary", new {semId = group.Semester.Id, groupId = group.CapacityGroup.Id}, null));
+                }
+                else
+                {
+                    sb.Append(linkName);
+                }
                 if (group != groups.Last())
                 {
                     sb.Append(htmlHelper.Raw(", "));
@@ -187,6 +195,24 @@ namespace MyStik.TimeTable.Web.Helpers
 
             return new MvcHtmlString(sb.ToString());
         }
+
+        public static MvcHtmlString TopicList(this HtmlHelper htmlHelper, ICollection<SemesterTopic> topics)
+        {
+            var sb = new StringBuilder();
+            foreach (var group in topics)
+            {
+                var linkName = group.TopicName;
+                sb.Append(linkName);
+
+                if (group != topics.Last())
+                {
+                    sb.Append(htmlHelper.Raw(", "));
+                }
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
 
         /// <summary>
         /// 
@@ -309,16 +335,94 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<div>");
 
-                sb.AppendFormat("{0} [{1} - {2}]",
+                sb.AppendFormat("{0} [{1:HH\\:mm} - {2:HH\\:mm}]",
                     courseDate.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE")),
-                    courseDate.Begin.ToString(@"hh\:mm"),
-                    courseDate.End.ToString(@"hh\:mm"));
+                    courseDate.Begin,
+                    courseDate.End);
 
                 sb.Append("</div>");
 
             }
 
             return new MvcHtmlString(sb.ToString());
+        }
+
+
+        public static MvcHtmlString Date(this HtmlHelper htmlHelper, ActivityDate courseDate)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendFormat("{0} [{1:HH\\:mm} - {2:HH\\:mm}]",
+                courseDate.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE")), courseDate.Begin, courseDate.End);
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="org"></param>
+        /// <param name="icon"></param>
+        /// <returns></returns>
+        public static MvcHtmlString FacultyLabel(this HtmlHelper htmlHelper, ActivityOrganiser org, string icon=null)
+        {
+            var sb = new StringBuilder();
+
+            var color = string.IsNullOrEmpty(org.HtmlColor) ? "#ddd" : org.HtmlColor;
+
+            if (string.IsNullOrEmpty(icon))
+            {
+                sb.AppendFormat(
+                    "<span class=\"label\" style=\"background-color: {0}; color: white\">{1}</span>",
+                    color, org.ShortName);
+            }
+            else
+            {
+                sb.AppendFormat(
+                    "<span class=\"label\" style=\"background-color: {0}; color: white\"><i class=\"fa {1}\"></i> {2}</span>",
+                    color, icon, org.ShortName);
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        public static MvcHtmlString SubscriptionLabel(this HtmlHelper htmlHelper, OccurrenceSubscription subscription)
+        {
+            var sb = new StringBuilder();
+
+            var iconName = "";
+            if (subscription.OnWaitingList)
+            {
+                iconName = "fa-hourglass";
+            }
+            else
+            {
+                if (subscription.IsConfirmed)
+                {
+                    iconName = "fa-group";
+                }
+                else
+                {
+                    iconName = "fa-ticket";
+                }
+            }
+
+            sb.AppendFormat(
+                "<i class=\"fa {0}\"></i>", iconName);
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        public static MvcHtmlString AssemblyVersion(this HtmlHelper helper)
+        {
+            //var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            var version = @System.Diagnostics.FileVersionInfo
+                .GetVersionInfo(typeof(MyStik.TimeTable.Web.Startup).Assembly.Location).ProductVersion;
+
+            return MvcHtmlString.Create(version);
         }
     }
 }

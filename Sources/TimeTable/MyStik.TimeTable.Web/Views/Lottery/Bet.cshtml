@@ -1,0 +1,212 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryGambleCourseViewModel
+
+@{
+    ViewBag.Title = "Punkte setzen";
+    var isEditMode = Model.Subscription != null && Model.Subscription.OnWaitingList;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Punkte setzen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("MySelection", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>@Model.Course.Name (@Model.Course.ShortName)</h4>
+                </div>
+                <div class="panel-body">
+                    <ul class="fa-ul">
+                        <li><i class="fa-li fa fa-group"></i>Semestergruppe(n): @Html.GroupList(Model.Course.SemesterGroups)</li>
+                        <li><i class="fa-li fa fa-graduation-cap"></i>Dozent(en): @Html.LecturerList(Model.Summary.Lecturers)</li>
+                        @if (Model.Summary.Dates.Count > 1)
+                        {
+                            <li><i class="fa-li fa fa-calendar"></i>Termine: verschiedene Wochentage/Zeiten</li>
+                        }
+                        else
+                        {
+                            <li><i class="fa-li fa fa-calendar"></i>@Html.DateList(Model.Summary.Dates)</li>
+                        }
+                        <li><i class="fa-li fa fa-info-circle"></i>Beschreibung etc. <a href="@Url.Action("Details", "Course", new {id = Model.Course.Id})">hier</a></li>
+                        <li class="list"></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Aktueller Stand der Eintragungen</h4>
+                </div>
+                <div class="panel-body">
+                    @Html.Partial("_BetState", Model)
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Mein Einsatz</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th rowspan="2">Budget</th>
+                            <th colspan="3">Punkte insgesamt</th>
+                            <th rowspan="2">Einsatz</th>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <th><i class="fa fa-user"></i><i class="fa fa-ticket"></i></th>
+                            <th>Gesetzt</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Warteliste</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            @if (Model.Subscription != null)
+                            {
+                                <td>
+                                    @Model.Subscription.LapCount
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        </tr>
+                        @foreach (var budget in Model.Budgets)
+                        {
+                            var betted = budget.PointsBetted;
+                            if (budget.Bet != null)
+                            {
+                                betted -= budget.Bet.Amount;
+                            }
+
+                            <tr>
+                                <td>@budget.Budget.Name</td>
+                                <td>@budget.Budget.Size</td>
+                                <td>@budget.PointsUsed</td>
+                                <td>@betted</td>
+                                @if (isEditMode)
+                                {
+                                    <td>
+                                        @Html.DropDownList(budget.Bet.Id.ToString(), budget.PointList, new { @class = "form-control" })
+                                    </td>
+                                }
+                                else
+                                {
+                                    if (Model.Subscription != null)
+                                    {
+                                        <td>
+                                            @budget.Bet.Amount
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                    @if (isEditMode)
+                    {
+                        <button class="btn btn-default btn-block" onclick="onBet()">Punkte setzen</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+
+        function onBet() {
+            var list = $("select").get();
+
+
+            var n = list.length;
+
+            if (n > 0) {
+                var budgetList = new Array();
+                var pointList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    budgetList[i] = list[i].name;
+                    pointList[i] = list[i].value;
+                }
+
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("EnterBet")',
+                        data: {
+                            courseId: "@Model.Course.Id",
+                            lotteryId: "@Model.Lottery.Id",
+                            bets: budgetList,
+                            points: pointList
+                        },
+                        success: function (data, success, xhr) {
+                            $("#@Model.Lottery.Id").removeClass("btn-default");
+                            $("#@Model.Lottery.Id").addClass("btn-success");
+                        }
+                    });
+
+
+            }
+        }
+
+
+    </script>
+
+
+}
+
+

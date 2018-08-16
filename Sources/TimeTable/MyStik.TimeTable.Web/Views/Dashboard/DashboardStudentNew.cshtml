@@ -1,0 +1,327 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.DashboardStudentViewModel
+@{
+    ViewBag.Title = Resources.MenuDashboard;
+}
+
+<div class="container-fluid">
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-md-12">
+
+        <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+                <h4>
+                    <i class="fa fa-film"></i> <span class="hidden-xs hidden-sm">Mein Semester</span>
+                </h4>
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
+                <h4>
+                    <i class="fa fa-graduation-cap"></i> <span class="hidden-xs hidden-sm">Mein Studium</span> [@Model.Student.Curriculum.ShortName]
+                </h4>
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">
+                <h4>
+                    <i class="fa fa-university"></i> <span class="hidden-xs hidden-sm">Meine Fakultät</span>  [@Model.Student.Curriculum.Organiser.ShortName]
+                </h4>
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">
+                <h4>
+                    <i class="fa fa-money"></i> <span class="hidden-xs hidden-sm">Jobs, Stipendien & Co</span>
+                </h4>
+            </a>
+        </li>
+    </ul>
+
+
+        <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+            <div class="panel panel-default">
+                <div class="panel-heading visible-xs visible-sm">
+                    <h4>Mein Semester</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-pencil"></i> Lehrveranstaltungen und Sprechstunden
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @if (Model.TodaysActivities.Any())
+                                {
+                                    <ul class="fa-ul">
+                                        @foreach (var act in Model.TodaysActivities)
+                                        {
+                                            if (act.Begin <= DateTime.Now)
+                                            {
+                                                if (act.Date.Occurrence.IsCanceled)
+                                                {
+                                                    <li><i class="fa fa-li fa-clock-o text-danger"></i>@act.Begin.ToShortTimeString(): @act.Date.Activity.Name (abgesagt)</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-li fa-clock-o text-danger"></i>@act.Begin.ToShortTimeString() [@Html.RoomList(act.Date.Rooms, false, false)]: @act.Date.Activity.Name</li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (act.Date.Occurrence.IsCanceled)
+                                                {
+                                                    <li><i class="fa fa-li fa-clock-o"></i>@act.Begin.ToShortTimeString(): @act.Date.Activity.Name (abgesagt)</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-li fa-clock-o"></i>@act.Begin.ToShortTimeString() [@Html.RoomList(act.Date.Rooms, false, false)]: @act.Date.Activity.Name</li>
+                                                }
+                                            }
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <i>heute keine Termine</i>
+                                }
+                            </div>
+                            <div class="col-md-4">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-calendar"></i><a href="@Url.Action("PersonalPlan", "Activity")">Mein Kalender</a></li>
+                                    <li><i class="fa fa-li fa-map-o"></i><a href="@Url.Action("Semester", "Planer")">Meine Stundenpläne</a></li>
+                                    <li><i class="fa fa-li fa-microphone"></i><a href="@Url.Action("Subscriptions", "OfficeHour")">Meine Sprechstundentermine</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-book"></i><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
+                                    <li><i class="fa fa-li fa-user-md"></i><a href="@Url.Action("Index", "OfficeHour")">Sprechstundenverzeichnis</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-random"></i> Wahlverfahren [@Model.Student.Curriculum.ShortName]
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="fa-ul">
+                                    @if (Model.Lotteries.Any())
+                                    {
+                                        foreach (var lottery in Model.Lotteries)
+                                        {
+                                            if (lottery.IsActiveFrom.HasValue && lottery.IsActiveUntil.HasValue)
+                                            {
+                                                if (lottery.IsActiveFrom > DateTime.Today)
+                                                {
+                                                    <li><i class="fa fa-li fa-info-circle"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">Ab @lottery.IsActiveFrom.Value.ToShortDateString(): @lottery.Name</a></li>
+                                                }
+                                                else
+                                                {
+                                                    if (lottery.IsActiveUntil <= DateTime.Today)
+                                                    {
+                                                        <li><i class="fa fa-li fa-exclamation text-danger"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">Noch bis @lottery.IsActiveUntil.Value.ToShortDateString(): @lottery.Name</a></li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li><i class="fa fa-li fa-exclamation text-danger"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">@lottery.Name</a></li>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa fa-li fa-info-circle"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">@lottery.Name</a></li>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-li fa-info"></i><i>Aktuell keine aktiven Wahlverfahren</i></li>
+                                    }
+                                    <li><i class="fa fa-li fa-external-link"></i><a href="">AW-Fächer</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.Requests.Any())
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-book"></i> Anfragen zur Betreuung einer Abschlussarbeit
+                            </h5>
+                            <ul class="fa-ul">
+                                @foreach (var request in Model.Requests)
+                                {
+                                    <li>
+                                        <i class="fa fa-li fa-question"></i>@request.Subscription.TimeStamp.ToShortDateString(): <a href="@Url.Action("RequestDetails", "Supervision", new {id = request.Subscription.Id})">@request.Supervision.Name (@request.Lecturer.FullName)</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    @if (Model.Theses.Any())
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-book"></i> Abschlussarbeit
+                            </h5>
+                            <ul class="fa-ul">
+                                @foreach (var thesis in Model.Theses)
+                                {
+                                    <li>
+                                        <i class="fa fa-li fa-clock-o"></i>@thesis.Thesis.ExpirationDate.ToShortDateString(): <a href="@Url.Action("Details", "Thesis", new {id = thesis.Thesis.Id})">@thesis.Thesis.TitleDe</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-legal"></i> Fristen und Termine
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-external-link"></i><a href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank">Prüfungsanmeldung, Rückmeldung und mehr</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div role="tabpanel" class="tab-pane" id="profile">
+            <div class="panel panel-default">
+                <div class="panel-heading visible-xs visible-sm">
+                    <h4>Mein Studium  [@Model.Student.Curriculum.ShortName]</h4>
+                </div>
+
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-map-marker"></i> Überblick
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-tag"></i><a href="@Url.Action("Curricula", "Subscription")">@Model.Student.Curriculum.ShortName seit @Model.Student.FirstSemester.Name</a></li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-wrench"></i> Praktisches Studiensemester
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("Internship", "Advertisements")">Digitaler Schaukasten</a></li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-globe"></i> Auslandsaufenthalt
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("Abroad", "Advertisements")">Digitaler Schaukasten</a></li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-book"></i> Abschlussarbeit
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("Thesis", "Advertisements")">Digitaler Schaukasten</a></li>
+                            <li><i class="fa fa-li fa-user-md"></i><a href="@Url.Action("Index", "Supervision")">Betreuungsangebote</a></li>
+                            @foreach (var request in Model.Requests)
+                            {
+                                <li>
+                                    <i class="fa fa-li fa-question"></i>@request.Subscription.TimeStamp.ToShortDateString(): <a href="@Url.Action("RequestDetails", "Supervision", new {id = request.Subscription.Id})">@request.Supervision.Name (@request.Lecturer.FullName)</a>
+                                </li>
+                            }
+                            @foreach (var thesis in Model.Theses)
+                            {
+                                <li>
+                                    <i class="fa fa-li fa-clock-o"></i>@thesis.Thesis.ExpirationDate.ToShortDateString(): <a href="@Url.Action("Details", "Thesis", new {id = thesis.Thesis.Id})">@thesis.Thesis.TitleDe</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="messages">
+            <div class="panel panel-default">
+                <div class="panel-heading visible-xs visible-sm">
+                    <h4>Meine Fakultät  [@Model.Student.Curriculum.Organiser.ShortName]</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-paw"></i> Fachschaft
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-group"></i><a href="@Url.Action("Index", "Union")">Startseite</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="settings">
+            <div class="panel panel-default">
+                <div class="panel-heading visible-xs visible-sm">
+                    <h4>Jobs, Stipendien & Co</h4>
+                </div>
+
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-trophy"></i> Studentische Wettbewerbe
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("Competition", "Advertisements")">Digitaler Schaukasten</a></li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-certificate"></i> Stipendien
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("Advancement", "Advertisements")">Digitaler Schaukasten</a></li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-flask"></i> Studentische Hilfskräfte & Tutortätigkeiten
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("Tutor", "Advertisements")">Digitaler Schaukasten</a></li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-industry"></i> Werkstudententätigkeiten & Praktika
+                        </h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-window-maximize"></i><a href="@Url.Action("WorkingStudent", "Advertisements")">Digitaler Schaukasten</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>    
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

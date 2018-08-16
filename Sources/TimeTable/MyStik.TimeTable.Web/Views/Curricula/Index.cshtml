@@ -1,15 +1,9 @@
-﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+﻿@using MyStik.TimeTable.Web.Helpers
+@model List<IGrouping <MyStik.TimeTable.Data.ActivityOrganiser, MyStik.TimeTable.Data.Curriculum>>
 @{
     ViewBag.Title = Resources.SubMenuStudiesCurricula;
+    var i = 0;
 }
-
-@section styles
-{
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
-}
-
-
 
 
 
@@ -18,7 +12,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>@Resources.AllCurriculas <small>@Resources.StudyProcessComment</small></h1>
+                    <h1>@Resources.AllCurriculas</h1>
                 </div>
             </div>
         </div>
@@ -28,48 +22,35 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> @Resources.SubMenuStudiesCurricula
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">            
+            @foreach (var org in Model.Where(x => x.Key.IsVisible))
+            {
+                i++;
+                var collapseName = "collapse" + i;
+                var isIn = i == 1 ? "in" : "";
+                    
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="@org.Key.Id">
+                        <h5>
+                            @Html.FacultyLabel(org.Key)
+                                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#@collapseName">
+                                                    @org.Key.ShortName
+                                                </a>
+                                            </h5>
                     </div>
-                    <div class="actions">
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <table id="tabCurr" class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th>@Resources.ShortNameString</th>
-                            <th>@Resources.Name</th>
-                            <th>@Resources.FacultyField</th>
-                            <th>@Resources.CriteriaString</th>
-                            <th>@Resources.GroupsString</th>
-                            <th>@Resources.ModulesString</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var curr in Model)
-                        {
-                            <tr>
-                                <td><a href="@Url.Action("Details", new {id = curr.Id})">@curr.ShortName</a></td>
-                                <td>@curr.Name</td>
-                                <td>@curr.Organiser.Name</td>
-                                <td>@curr.Criterias.Count</td>
-                                <td>@curr.CurriculumGroups.Count</td>
-                                <td>@curr.Modules.Count</td>
-                                <td>
-                                    @if (ViewBag.HasEditRights)
-                                    {
+                    <div id="@collapseName" class="panel-collapse collapse @isIn" role="tabpanel">
+                        <div class="list-group">
+                            @foreach (var curr in org)
+                            {
+                                <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
+                                    <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
+                                </a>
+                            }
 
-                                    }
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
                 </div>
+            }
             </div>
         </div>
     </div>
@@ -77,16 +58,3 @@
 
 
 
-
-@section scripts
-{
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-
-    <script>
-        $(document).ready(function () {
-            $('#tabCurr').DataTable();
-        });
-    </script>
-}

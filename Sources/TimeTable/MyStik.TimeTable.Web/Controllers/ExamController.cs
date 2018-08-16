@@ -39,6 +39,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var currs = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList();
 
             // pro Studiengang das kriterium Abschlussarbeit
+            /*
             foreach (var curriculum in currs)
             {
                 var crit = curriculum.Criterias.FirstOrDefault(x => x.Name.Equals("Abschlussarbeit"));
@@ -64,6 +65,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
             }
+            */
 
 
             return View(model);
@@ -75,6 +77,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult RegisterThesis()
         {
+            /*
             var org = GetMyOrganisation();
 
             var model = new List<ThesisCriteriaListModel>();
@@ -103,10 +106,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     });
                 }
             }
+            */
 
 
-
-            return View(model);
+            return View();
         }
 
         /// <summary>

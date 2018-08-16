@@ -1,0 +1,132 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisDetailModel
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Details zur Abschlussarbeit</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Angaben</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Betreuung</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.Lecturer.FullName (@Model.Lecturer.Organiser.ShortName)</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Titel (deutsch)</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.Thesis.TitleDe</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Titel (englisch)</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.Thesis.TitleEn</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Datum der Ausgabe</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.Thesis.IssueDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Abgabedatum</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.Thesis.ExpirationDate.ToShortDateString()</p>
+                            </div>
+                        </div>
+
+                        <div class="btn btn-group">
+                            <a class="btn btn-default" href="@Url.Action("Index", "Dashboard")">zurück</a>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (Model.Thesis.Student.UserId.Equals(ViewBag.UserRight.User.Id))
+            {
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Verwaltung - Studierende</h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Edit", new {id = Model.Thesis.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading"><i class="fa fa-pencil"></i> Titel ändern</h5>
+                            <div class="list-group-item-text">
+                                Der Titel kann sich im Laufe der Bearbeitung jederzeit ändern.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        @if (Model.Lecturer.UserId.Equals(ViewBag.UserRight.User.Id))
+        {
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Verwaltung - Betreuende(r)</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action()" class="list-group-item disabled">
+                        <h5 class="list-group-item-heading"><i class="fa fa-question-circle"></i> Fraglich</h5>
+                        <div class="list-group-item-text">
+                            Betreuende sollten keinen Einfluss ausüben oder als "Dienstleister" fungieren.
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Verwaltung - Vorgang</h4>
+                        </div>
+                        <div class="list-group">
+                            <a href="@Url.Action()" class="list-group-item">
+                                <h5 class="list-group-item-heading"><i class="fa fa-check"></i> Abgabe verzeichnen</h5>
+                                <div class="list-group-item-text">
+                                    Die Arbeit wurde abgegeben.
+                                </div>
+                            </a>
+                            <a href="@Url.Action()" class="list-group-item">
+                                <h5 class="list-group-item-heading"><i class="fa fa-clock-o"></i> Verlängern</h5>
+                                <div class="list-group-item-text">
+                                    Zeitraum der Bearbeitung verlängern. Genehmigter Antrag muss vorliegen.
+                                </div>
+                            </a>
+                            <a href="@Url.Action()" class="list-group-item">
+                                <h5 class="list-group-item-heading"><i class="fa fa-calculator"></i> Abrechnen</h5>
+                                <div class="list-group-item-text">
+                                    Die Arbeit als abgerechnet markieren und archivieren
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+    </div>
+</div>
+

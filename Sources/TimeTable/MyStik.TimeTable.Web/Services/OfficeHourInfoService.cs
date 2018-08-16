@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -26,6 +27,11 @@ namespace MyStik.TimeTable.Web.Services
             UserManager = userManager;
         }
 
+        internal OrganiserMember GetHost(OfficeHour officeHour)
+        {
+            return officeHour.Owners.First().Member;
+        }
+
 
         internal OfficeHourDatePreviewModel GetPreviewNextDate(OfficeHour officeHour)
         {
@@ -34,7 +40,7 @@ namespace MyStik.TimeTable.Web.Services
                 OfficeHour = officeHour,
             };
 
-            DateTime x = GlobalSettings.Now;
+            DateTime x = DateTime.Now;
 
             // nächster Termin => endet in der Zukunft
             var nextDate = officeHour.Dates.Where(d => d.End >= x && d.Occurrence.IsAvailable)
@@ -46,156 +52,8 @@ namespace MyStik.TimeTable.Web.Services
             if (nextDate == null)
                 return model;
 
-
             var date = nextDate;
-
-            if (date.Slots.Any())
-            {
-                #region Slots
-
-                OfficeHourSlotViewModel firstSlotOnDate = null;
-                var i = 1;
-
-                // Slots
-                foreach (var ohSlot in date.Slots)
-                {
-                    if (ohSlot.Occurrence.Subscriptions.Any())
-                    {
-                        #region Slot mit Eintragungen
-
-                        OfficeHourSlotViewModel firstSlotOnSlot = null;
-                        var j = 1;
-                        var nSub = 0;
-
-                        foreach (
-                            var subscription in ohSlot.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
-                        {
-                            var user = UserManager.FindById(subscription.UserId);
-
-                            // pro Subscription eine Zeile
-
-                            var slot = new OfficeHourSlotViewModel
-                            {
-                                Date = date.Begin.Date,
-                                From = ohSlot.Begin.TimeOfDay,
-                                Until = ohSlot.End.TimeOfDay,
-                                DateOccurrenceId = date.Occurrence.Id,
-                                Member = new CourseMemberModel()
-                                {
-                                    Subscription = subscription,
-                                    User = user,
-                                },
-                                RowCount = 1,
-                                RowNo = i,
-                                SubscriptionCount = 1,
-                                SubscriptionNo = j,
-                                Occurrence = ohSlot.Occurrence,
-                                ActivityDate = ohSlot.ActivityDate,
-                            };
-
-                            if (firstSlotOnDate == null)
-                            {
-                                firstSlotOnDate = slot;
-                            }
-
-                            if (firstSlotOnSlot == null)
-                            {
-                                firstSlotOnSlot = slot;
-                            }
-
-                            model.CurrentSlots.Add(slot);
-                            i++;
-                            j++;
-                            nSub++;
-                        }
-                        firstSlotOnSlot.SubscriptionCount = j - 1;
-
-                        #endregion
-                    }
-                    else
-                    {
-                        #region Slot ohne Eintragungen - erst mal nicht
-                        var slot = new OfficeHourSlotViewModel
-                        {
-                            Date = date.Begin.Date,
-                            From = date.Begin.TimeOfDay,
-                            Until = date.End.TimeOfDay,
-                            DateOccurrenceId = date.Occurrence.Id,
-                            Member = null,
-                            RowCount = 1,
-                            RowNo = i,
-                            SubscriptionCount = 1,
-                            SubscriptionNo = i,
-                            // ist der aktuelle User eingetragen?
-                            Occurrence = date.Occurrence,
-                            ActivityDate = date,
-                        };
-                        model.CurrentSlots.Add(slot);
-
-
-                        #endregion
-                    }
-                }
-
-                if (firstSlotOnDate != null)
-                {
-                    firstSlotOnDate.RowCount = i - 1;
-                }
-
-                #endregion
-            }
-            else
-            {
-                #region Keine Slots
-
-                // keine Slots
-                if (date.Occurrence.Subscriptions.Any())
-                {
-                    OfficeHourSlotViewModel firstSlot = null;
-                    var i = 1;
-                    var nSub = 0;
-
-                    foreach (var subscription in date.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
-                    {
-                        var user = UserManager.FindById(subscription.UserId);
-
-                        var slot = new OfficeHourSlotViewModel
-                        {
-                            Date = date.Begin.Date,
-                            From = date.Begin.TimeOfDay,
-                            Until = date.End.TimeOfDay,
-                            DateOccurrenceId = date.Occurrence.Id,
-                            Member = new CourseMemberModel()
-                            {
-                                Subscription = subscription,
-                                User = user,
-                            },
-                            RowCount = 1,
-                            RowNo = i,
-                            SubscriptionCount = 1,
-                            SubscriptionNo = i,
-                            // ist der aktuelle User eingetragen?
-                            Occurrence = date.Occurrence,
-                            ActivityDate = date,
-                        };
-
-                        if (firstSlot == null)
-                        {
-                            firstSlot = slot;
-                        }
-
-                        model.CurrentSlots.Add(slot);
-                        i++;
-                        nSub++;
-                    }
-
-                    firstSlot.RowCount = i - 1;
-                    firstSlot.SubscriptionCount = nSub;
-                }
-
-                #endregion
-            }
-
+            model.Subscriptions.AddRange(GetSubscriptions(date));
 
             return model;
         }
@@ -206,7 +64,7 @@ namespace MyStik.TimeTable.Web.Services
         internal OfficeHourDateViewModel GetNextSubscription(OfficeHour officeHour, string userId)
         {
             OfficeHourDateViewModel ohm = new OfficeHourDateViewModel();
-            DateTime x = GlobalSettings.Now;
+            DateTime x = DateTime.Now;
 
             // das nächste Datum
             var nextDate = officeHour.Dates.Where(d => 
@@ -245,6 +103,202 @@ namespace MyStik.TimeTable.Web.Services
 
             return ohm;
         }
-        
+
+        /// <summary>
+        /// Liefert alle Eintragungen eines Users in einer Sprechstunde
+        /// </summary>
+        /// <param name="officeHour"></param>
+        /// <param name="userId"></param>
+        internal void GetSubscriptions(OfficeHour officeHour, string userId)
+        {
+            
+        }
+
+        /// <summary>
+        /// Liste aller Termine aus Sicht eines Users
+        /// </summary>
+        /// <param name="officeHour"></param>
+        /// <param name="userId"></param>
+        internal ICollection<OfficeHourDateViewModel> GetDates(OfficeHour officeHour, string userId)
+        {
+            var allDates = officeHour.Dates.OrderBy(x => x.Begin).ToList();
+
+            var model = new List<OfficeHourDateViewModel>();
+
+            foreach (var date in allDates)
+            {
+                var dateModel = new OfficeHourDateViewModel();
+                dateModel.OfficeHour = officeHour;
+                dateModel.Date = date;
+
+                // Weiche Slots / kein Slots
+                if (date.Slots.Any())
+                {
+                    // bin ich im Slot eingetragen?
+                    var slot = date.Slots.FirstOrDefault(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId)));
+                    if (slot != null)
+                    {
+                        dateModel.Slot = slot;
+                        dateModel.Subscription = slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(userId));
+                    }
+                }
+                else
+                {
+                    dateModel.Subscription = date.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(userId));
+                }
+
+                // Ergebnisse
+                // bin eingetragen (ja/nein) => ist über die Subscription gekennzeichnet
+                // darf mich eintragen (ja/nein)
+                // Ende der Einschreibeperiode
+                dateModel.EndOfSubscriptionPeriod = DateTime.MaxValue;
+                if (date.Occurrence.UntilIsRestricted && date.Occurrence.UntilTimeSpan.HasValue)
+                {
+                    dateModel.EndOfSubscriptionPeriod =
+                            date.Begin.AddHours(-date.Occurrence.UntilTimeSpan.Value.Hours)
+                                .AddMinutes(-date.Occurrence.UntilTimeSpan.Value.Minutes);
+                }
+
+
+
+                // ja
+                // Liste der verfügbaren Slots bzw. Plätze
+                if (date.Slots.Any())
+                {
+                    dateModel.AvailableSlots.AddRange(date.Slots.Where(x => x.Occurrence.Subscriptions.Count == 0 && x.Occurrence.IsAvailable));
+                }
+                else
+                {
+                    dateModel.AvailableSeats = date.Occurrence.Capacity <= 0 ? 1 : date.Occurrence.Capacity - date.Occurrence.Subscriptions.Count;
+                }
+
+                model.Add(dateModel);
+            }
+
+            return model;
+        }
+
+
+        /// <summary>
+        /// Liste aller Termine aus Sicht eines Users
+        /// </summary>
+        /// <param name="officeHour"></param>
+        /// <param name="userId"></param>
+        internal ICollection<OfficeHourDateViewModel> GetDates(OfficeHour officeHour)
+        {
+            var allDates = officeHour.Dates.OrderBy(x => x.Begin).ToList();
+
+            var model = new List<OfficeHourDateViewModel>();
+            var now = DateTime.Now;
+
+            foreach (var date in allDates)
+            {
+                var dateModel = new OfficeHourDateViewModel();
+                dateModel.OfficeHour = officeHour;
+                dateModel.Date = date;
+
+                // Ende der Einschreibeperiode
+                dateModel.EndOfSubscriptionPeriod = DateTime.MaxValue;
+                if (date.Occurrence.UntilIsRestricted && date.Occurrence.UntilTimeSpan.HasValue)
+                {
+                    dateModel.EndOfSubscriptionPeriod =
+                        date.Begin.AddHours(-date.Occurrence.UntilTimeSpan.Value.Hours)
+                            .AddMinutes(-date.Occurrence.UntilTimeSpan.Value.Minutes);
+                }
+
+                // ja
+                // Liste der verfügbaren Slots bzw. Plätze
+                if (date.Slots.Any())
+                {
+                    dateModel.AvailableSlots.AddRange(date.Slots.Where(x => x.Occurrence.Subscriptions.Count == 0 && x.Occurrence.IsAvailable));
+
+                    foreach (var slot in date.Slots)
+                    {
+                        dateModel.Subscriptions.AddRange(slot.Occurrence.Subscriptions);
+                    }
+                }
+                else
+                {
+                    dateModel.AvailableSeats = date.Occurrence.Capacity <= 0 ? 1 : date.Occurrence.Capacity - date.Occurrence.Subscriptions.Count;
+                    dateModel.Subscriptions.AddRange(date.Occurrence.Subscriptions);
+                }
+
+                model.Add(dateModel);
+            }
+
+            return model;
+        }
+
+
+        internal bool HasSubscription(ActivityDate date, string userId)
+        {
+            if (date.Slots.Any())
+            {
+                return date.Slots.Any(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId)));
+            }
+
+            return date.Occurrence.Subscriptions.Any(x => x.UserId.Equals(userId));
+        }
+
+        internal OccurrenceSubscription GetSubscription(ActivityDate date, string userId)
+        {
+            if (date.Slots.Any())
+            {
+                foreach (var slot in date.Slots)
+                {
+                    var sub = slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(userId));
+                    if (sub != null)
+                        return sub;
+                }
+                return null;
+            }
+
+            return date.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(userId));
+        }
+
+        internal ActivitySlot GetSubscribedSlot(ActivityDate date, string userId)
+        {
+            if (!date.Slots.Any())
+                return null;
+
+            return date.Slots.FirstOrDefault(x => x.Occurrence.Subscriptions.Any(y => y.UserId.Equals(userId)));
+        }
+
+        internal ICollection<OccurrenceSubscription> GetSubscriptions(ActivityDate date)
+        {
+            var list = new List<OccurrenceSubscription>();
+
+            if (date.Slots.Any())
+            {
+                foreach (var slot in date.Slots)
+                {
+                    list.AddRange(slot.Occurrence.Subscriptions);
+                }
+            }
+
+            list.AddRange(date.Occurrence.Subscriptions);
+
+            return list;
+        }
+
+        internal bool IsExpired(ActivityDate date)
+        {
+            if (!date.Occurrence.UntilIsRestricted)
+            {
+                return date.Begin < DateTime.Now;
+            }
+
+
+            if (date.Occurrence.UntilTimeSpan.HasValue)
+            {
+                var endOfSubscriptionPeriod =
+                    date.Begin.AddHours(-date.Occurrence.UntilTimeSpan.Value.Hours)
+                        .AddMinutes(-date.Occurrence.UntilTimeSpan.Value.Minutes);
+
+                return endOfSubscriptionPeriod < DateTime.Now;
+            }
+
+            return false;
+        }
     }
 }

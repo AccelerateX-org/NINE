@@ -12,8 +12,8 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class AdminDashboardController : BaseController
     {
-        DateTime today = GlobalSettings.Today;
-        DateTime tomorrow = GlobalSettings.Today.AddDays(1);
+        DateTime today = DateTime.Today;
+        DateTime tomorrow = DateTime.Today.AddDays(1);
 
         /// <summary>
         /// 

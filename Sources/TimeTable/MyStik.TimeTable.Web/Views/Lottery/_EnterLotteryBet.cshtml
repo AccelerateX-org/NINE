@@ -1,0 +1,15 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryGambleBudgetViewModel
+    
+@{
+    var maxPoints = Model.PointsFeasible + Model.Bet.Amount;
+}
+@using (Html.BeginCollectionItem("Budgets"))
+{
+    @Html.HiddenFor(m => m.Bet.Id)
+    <div class="form-group">
+        <label class="col-md-8 control-label">Aus @Model.Budget.Name</label>
+        <div class="col-md-4">
+            @Html.DropDownListFor(m => m.Bet.Amount, (IEnumerable<SelectListItem>) Model.PointList, new {@class = "form-control"})
+        </div>
+    </div>
+}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace MyStik.TimeTable.Data
 {
@@ -11,6 +12,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Fremdschlüssel auf UserDB (Guid)
+        /// veraltet
         /// </summary>
         public string UserId { get; set; }
 
@@ -23,7 +25,20 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ShortName { get; set; }
 
+        /// <summary>
+        /// veraltet
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// veraltet
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// veraltet
+        /// </summary>
+        public string Title { get; set; }
 
         /// <summary>
         /// Beschreibung der Rolle(n)
@@ -33,13 +48,13 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Freitext für Beschreibung, z.B. personenbezogene Daten
+        /// veraltet
         /// </summary>
         public string Description { get; set; }
         
         /// <summary>
         /// Administrator des Organistors
-        /// Darf alle Activities, Dates und Slots ändern
-        /// veraltet - soll raus
+        /// Vergibt weitere Rechte
         /// </summary>
         public bool IsAdmin { get; set; }
 
@@ -53,14 +68,32 @@ namespace MyStik.TimeTable.Data
         public bool IsAlumniAdmin { get; set; }
         public bool IsEventAdmin { get; set; }
         public bool IsNewsAdmin { get; set; }
+        public bool IsExamAdmin { get; set; }
 
         /// <summary>
         /// Gäste, LBs etc sind nur "assoziiert"
         /// </summary>
         public bool IsAssociated { get; set; }
 
+        /// <summary>
+        /// Generelle Anzeige des Titles
+        /// veraltet
+        /// </summary>
+        public bool ShowTitle { get; set; }
 
+        /// <summary>
+        /// Beschreibung wird bei Suche oder Profilanzeigen eingeblendet
+        /// Sichtbar für alle
+        /// veraltet
+        /// </summary>
+        public bool ShowDescription { get; set; }
+
+
+        /// <summary>
+        /// veraltet
+        /// </summary>
         public string UrlProfile { get; set; }
+
 
         public virtual ActivityOrganiser Organiser { get; set; }
 
@@ -72,5 +105,33 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<CurriculumModule> Modules { get; set; }
 
         public virtual ICollection<ActivityOwner> Ownerships { get; set; }
+
+        public virtual ICollection<MemberExport> Exports { get; set; }
+
+
+        public virtual ICollection<MemberResponsibility> Responsibilities { get; set; }
+
+        public virtual ICollection<MemberSkill> Skills { get; set; }
+
+        public string FullName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                if (string.IsNullOrEmpty(Title))
+                {
+                    sb.AppendFormat("{0} ", Title);
+                }
+
+                if (!string.IsNullOrEmpty(FirstName))
+                {
+                    sb.AppendFormat("{0} ", FirstName);
+                }
+
+                sb.Append(Name);
+
+                return sb.ToString();
+            }
+        }
     }
 }

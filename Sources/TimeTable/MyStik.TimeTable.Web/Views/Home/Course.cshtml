@@ -1,0 +1,39 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseScheduleViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+
+    ViewBag.Title = "Terminliste";
+}
+
+<div class="container" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-book"></i> Terminliste @Model.Course.Name</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var date in Model.Course.Dates.OrderBy(x => x.Begin))
+                    {
+                        if (date.Rooms.Any())
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">@Html.Date(date))</h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa-li fa fa-user-md"></i>@Html.LecturerList(date.Hosts, false)</li>
+                                        <li><i class="fa-li fa fa-building"></i>@Html.RoomList(date.Rooms, false)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

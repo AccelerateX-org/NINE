@@ -1,0 +1,286 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.GroupSelectionViewModel
+@{
+    ViewBag.Title = "Vorlesungsverzeichnis";
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Vorlesungsverzeichnis nach</h4></div>
+                <div class="panel-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Faculty">Fakultät</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-university fa-fw"></i></span>
+                                    @Html.DropDownListFor(model => model.Faculty, (IEnumerable<SelectListItem>) ViewBag.Faculties, new {@class = "form-control", onchange = "onFacultyChanged()"})
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Semester">Semester</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
+                                    @Html.DropDownListFor(model => model.Semester, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control", onchange = "onSemesterChanged()" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Curriculum">Studiengang</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-book fa-fw"></i></span>
+                                    @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Group">Studiengruppe</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-bookmark fa-fw"></i></span>
+                                    @Html.DropDownListFor(model => model.Group, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control", onchange = "onGroupChanged()" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-music"></i>
+                        <span class="caption-subject bold uppercase"> Lehrveranstaltungen</span>
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                    <div class="actions">
+                        <div class="btn-group">
+                            <a class="btn btn-icon-only btn-default" id="displayCalendar" href="javascript:switchDisplay(true)" data-toggle="tooltip" data-placement="top" title="Kalenderansicht"><i class="fa fa-calendar"></i></a>
+                            <a class="btn btn-icon-only btn-default" id="displayTable" href="javascript:switchDisplay(false)" data-toggle="tooltip" data-placement="top" title="Listenansicht"><i class="fa fa-list"></i></a>
+                        </div>
+                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"></a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="calendar"></div>
+                    <div id="calendarList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#loading').hide();
+
+            initCalendar(true, false);
+
+            // die Listen sind entsprechend gefüllt
+            //onTopicChanged();
+            switchDisplay(false);
+        });
+
+
+        function onFacultyChanged() {
+            var fk = $('#Faculty option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SemesterList", "Curriculum")',
+                    data: {
+                        orgId: fk
+                    },
+                    success: function(data, success, xhr) {
+                        $('#Semester').html(data);
+                        onSemesterChanged();
+                    }
+                });
+
+            HideCalendar();
+        }
+
+        function onSemesterChanged() {
+            var fk = $('#Faculty option:selected').val();
+            var sem = $('#Semester option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CurriculaList", "Curriculum")',
+                    data: {
+                        orgId: fk,
+                        semId: sem
+                    },
+                    success: function(data, success, xhr) {
+                        $('#Curriculum').html(data);
+                        onCurriculumChanged();
+                    }
+                });
+
+            HideCalendar();
+        }
+
+        function onCurriculumChanged() {
+
+            var prog = $('#Curriculum option:selected').val();
+            var sem = $('#Semester option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("GroupList", "Curriculum")',
+                    data: {
+                        currId: prog,
+                        semId: sem
+                    },
+                    success: function(data, success, xhr) {
+                        $('#Group').html(data);
+                        onGroupChanged();
+                    }
+                });
+
+            HideCalendar();
+        }
+
+        function onGroupChanged() {
+            var group = $('#Group option:selected').val();
+
+
+            if ($('#displayCalendar').hasClass('active')) {
+                $('#calendarList').hide();
+                $('#calendar').show();
+                $('#calendar').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
+                $('#calendar').fullCalendar('addEventSource',
+                    {
+                        url: '@Url.Action("CourseEventsByProgram", "Calendar")',
+                        type: 'POST',
+                        data: {
+                            semGroupId: group,
+                            topicId: null,
+                            showPersonalDates: true
+                        }
+                    });
+            } else {
+
+                $('#calendar').hide('');
+                if (group != null) {
+                    $('#loading').show();
+                    $.ajax(
+                        {
+                            type: 'POST',
+                            url: '@Url.Action("CourseListByProgram", "Planer")',
+                            data: {
+                                semGroupId: group,
+                                topicId: null,
+                                compact: false
+                            },
+                            success: function(data, success, xhr) {
+                                $('#calendarList').html(data);
+                                $('#calendarList').show();
+                                $('#loading').hide();
+                            },
+                            error: function(data, type, ex) {
+                                alert("Fehler beim laden der Daten." + ex);
+                                $('#loading').hide();
+                            }
+                        });
+                }
+            }
+        }
+
+        function onCompleteFaculty() {
+            var fk = $('#Faculty option:selected').val();
+            var sem = $('#Semester option:selected').val();
+
+            $('#loading').show();
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListByFaculty", "Planer")',
+                    data: {
+                        orgId: fk,
+                        semId: sem,
+                        compact: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#calendarList').html(data);
+                        $('#calendarList').show();
+                        $('#loading').hide();
+                        $('#tabCourses').DataTable(
+                            {
+                                "paging": false
+                            }
+                        );
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+
+
+        function HideCalendar() {
+            if ($('#displayCalendar').hasClass('active')) {
+                $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').hide();
+            } else {
+                $('#calendarList').hide();
+            }
+        }
+
+        function switchDisplay(showCalendar) {
+            if (showCalendar === true) {
+                $('#displayCalendar').addClass('active');
+                $('#displayTable').removeClass('active');
+                $('#calendar').show();
+                $('#calendarList').hide();
+                //initCalendar(true, false);
+                $('#listComplete').hide();
+            } else {
+                $('#displayCalendar').removeClass('active');
+                $('#displayTable').addClass('active');
+                $('#calendar').hide();
+                $('#calendarList').html('');
+                $('#calendarList').show();
+                $('#listComplete').show();
+            }
+            onGroupChanged();
+        }
+
+
+    </script>
+}
+
+
+ 
+

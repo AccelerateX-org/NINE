@@ -1,0 +1,22 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <h4><i class="fa fa-envelope-o"></i> Auswahl erfolgreich abgeschlossen</h4>
+    </div>
+    <div class="panel-body">
+        <h5>Ihre Auswahl wurde erfolgreich gespeichert</h5>
+        <p>Zu Ihrer Information wurde eine E-Mail mit den von Ihnen gewählten Lehrveranstaltungen an die von Ihnen hinterlegte E-Mail Adresse versendet.</p>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="btn-group-vertical btn-block">
+        <a class="btn btn-primary btn-block" href="@Url.Action("Overview", new {id=Model.Lottery.Id})">Zur Startseite des Wahlverfahrens</a>
+    </div>
+</div>
+
+
+
+

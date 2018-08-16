@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /// <summary>
+    /// Das Fach
+    /// </summary>
     public class CurriculumModule
     {
         public CurriculumModule ()
@@ -43,6 +46,12 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Description { get; set; }
 
+        public string PreRequisites { get; set; }
+
+        public string Competences { get; set; }
+
+        public string Literature { get; set; }
+
         /// <summary>
         /// Zugehörige Studiengruppe
         /// Überflüssig!
@@ -51,11 +60,13 @@ namespace MyStik.TimeTable.Data
 
 
         /// <summary>
-        /// Modulverantwortlicher
+        /// Fachverantwortlicher
         /// </summary>
         public virtual OrganiserMember MV { get; set; }
-        
 
+
+        
+        /*
         /// <summary>
         /// Dozent
         /// </summary>
@@ -100,6 +111,7 @@ namespace MyStik.TimeTable.Data
         /// Literatur
         /// </summary>
         public int Books { get; set; }
+        */
 
         /// <summary>
         /// Liste der akkreditierten Module

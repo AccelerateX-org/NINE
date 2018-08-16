@@ -21,7 +21,7 @@ namespace MyStik.TimeTable.Test
             // Guid userId = tis.CreateStudent("MBA", "3");
 
 
-            SubscriptionService service = new SubscriptionService();
+            //SubscriptionService service = new SubscriptionService();
 
             // student => user => id
             // course => id

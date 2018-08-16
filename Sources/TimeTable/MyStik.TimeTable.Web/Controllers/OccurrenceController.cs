@@ -20,8 +20,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="IsWaiting"></param>
         /// <returns></returns>
-        public FileResult SubscriptionList(Guid id)
+        public FileResult SubscriptionList(Guid id, bool? IsWaiting)
         {
             var summary = ActivityService.GetSummary(id);
 
@@ -29,14 +30,14 @@ namespace MyStik.TimeTable.Web.Controllers
             logger.InfoFormat("List for [{0}]", summary.Activity.Name);
 
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var ms = new MemoryStream();
             var writer = new StreamWriter(ms, Encoding.Default);
 
 
             writer.Write(
-                "Name;Vorname;E-Mail;Studiengruppe;Status");
+                "Name;Vorname;Studiengruppe;Status");
 
             writer.Write(Environment.NewLine);
 
@@ -51,6 +52,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         .FirstOrDefault(s => s.UserId.Equals(user.Id) && s.SemesterGroup.Semester.Id == semester.Id);
 
                     var group = "keine Angabe";
+                    var select = true;
 
                     if (semSub != null)
                     {
@@ -61,18 +63,28 @@ namespace MyStik.TimeTable.Web.Controllers
                     if (subscription.OnWaitingList)
                     {
                         subState = "Warteliste";
+                        if (IsWaiting.HasValue && !IsWaiting.Value)
+                        {
+                            select = false;
+                        }
                     }
                     else
                     {
                         subState = subscription.IsConfirmed ? "Teilnehmer" : "Teilnehmer (unbestätigt)";
+                        if (IsWaiting.HasValue && IsWaiting.Value)
+                        {
+                            select = false;
+                        }
                     }
 
-
-                    writer.Write("{0};{1};{2};{3};{4}",
-                        user.LastName, user.FirstName, user.Email,
-                        group,
-                        subState);
-                    writer.Write(Environment.NewLine);
+                    if (select)
+                    {
+                        writer.Write("{0};{1};{2};{3}",
+                            user.LastName, user.FirstName, 
+                            group,
+                            subState);
+                        writer.Write(Environment.NewLine);
+                    }
                 }
             }
 
@@ -88,6 +100,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
+
 
         /// <summary>
         /// 

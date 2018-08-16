@@ -1,0 +1,19 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.MemberMoveDateMailModel
+
+@{
+    Layout = "~/Views/Mail/_AnonymousTemplate.cshtml";
+}
+
+
+<p>Von @Model.AdminMember.FullName wurden folgende Terminübertragungen vorgenommen</p>
+<p>Von: @Model.SourceMember.FullName (@Model.SourceMember.ShortName, @Model.SourceMember.Organiser.ShortName)</p>
+<p>An: @Model.TargetMember.FullName (@Model.TargetMember.ShortName, @Model.TargetMember.Organiser.ShortName)</p>
+<p>Termine</p>
+<ul>
+    @foreach (var date in Model.Dates)
+    {
+        <li>@Html.Date(date) - @date.Activity.Name (@date.Activity.ShortName)</li>
+    }
+</ul>
+

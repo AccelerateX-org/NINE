@@ -8,11 +8,16 @@ namespace MyStik.TimeTable.Data
     {
         public ModuleAccreditation()
         {
-            Groups = new HashSet<CurriculumGroup>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+
+        /// <summary>
+        /// Verpflichtend
+        /// Sonst Wahlmöglichkeit
+        /// </summary>
+        public bool IsMandatory { get; set; }
     
         /// <summary>
         /// Die akkreditierte Modul
@@ -24,13 +29,5 @@ namespace MyStik.TimeTable.Data
         /// Aspekt "Prüfung"
         /// </summary>
         public virtual CurriculumCriteria Criteria { get; set; }
-
-        /// <summary>
-        /// Zuordnung zu allen denkbaren, sinnvollen Studiengruppen
-        /// Aspekt "Stundenplan" / "Lehrveranstaltung"
-        /// </summary>
-        public virtual ICollection<CurriculumGroup> Groups { get; set; }
-
-
     }
 }

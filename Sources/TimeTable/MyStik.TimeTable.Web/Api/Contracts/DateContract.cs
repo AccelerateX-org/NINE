@@ -116,4 +116,35 @@ namespace MyStik.TimeTable.Web.Api.Contracts
         /// </summary>
         public string LecturerName { get; set; }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CalendarEntry
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string title { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string begin { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string end { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<string> hosts { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<string> rooms { get; set; }
+    }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices.Curriculum;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Models
@@ -116,10 +115,5 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Models
         /// 
         /// </summary>
         public Curriculum Curriculum { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public IModuleCatalog ModuleCatalog { get; set; }
     }
 }

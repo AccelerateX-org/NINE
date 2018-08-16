@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 using Pitchfork.QRGenerator;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -12,6 +13,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [OutputCache(VaryByParam = "*", Duration = 0, NoStore = true)]
     public class PrintController : BaseController
     {
         /// <summary>
@@ -42,9 +44,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult PersonalSchedule()
+        public ActionResult PersonalSchedule(Guid? id)
         {
-            ViewBag.Semester = GetSemester();
+            ViewBag.Semester = SemesterService.GetSemester(id);
             ViewBag.Name = GetCurrentUser().FullName;
             return View();
         }
@@ -54,10 +56,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Schedule(Guid id)
+        public ActionResult Schedule(Guid id, Guid? semId)
         {
             var member = Db.Members.SingleOrDefault(m => m.Id == id);
-            ViewBag.Semester = GetSemester();
+            ViewBag.Semester = SemesterService.GetSemester(semId);
             return View("PersonalSchedule", member);
         }
 
@@ -65,12 +67,73 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="showCalendar"></param>
+        /// <param name="showDateList"></param>
+        /// <param name="isMoSa"></param>
         /// <returns></returns>
-        public ActionResult RoomSchedule(Guid id)
+        public ActionResult RoomSchedule(Guid id, Guid? semId, bool showCalendar, bool showDateList, bool isMoSa)
         {
-            var room = Db.Rooms.SingleOrDefault(r => r.Id == id);
-            return View(room);
+            var semester = SemesterService.GetSemester(semId);
+
+            var roomService = new RoomService();
+
+            var model = roomService.GetRoomSchedule(id, semester);
+
+            ViewBag.ShowCalendar = showCalendar;
+            ViewBag.ShowDateList = showDateList;
+            ViewBag.IsMoSa = isMoSa;
+            ViewBag.UseDates = false;
+
+            return View(model);
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult RoomScheduleCurrentWeek(Guid id)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var roomService = new RoomService();
+
+            var model = roomService.GetRoomSchedule(id, semester);
+
+            ViewBag.ShowCalendar = true;
+            ViewBag.ShowDateList = false;
+            ViewBag.IsMoSa = true;
+            ViewBag.DefaultDate = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.UseDates = true;
+
+            return View("RoomScheduleWeek", model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult RoomScheduleNextWeek(Guid id)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var roomService = new RoomService();
+
+            var model = roomService.GetRoomSchedule(id, semester);
+
+            ViewBag.ShowCalendar = true;
+            ViewBag.ShowDateList = false;
+            ViewBag.IsMoSa = true;
+            ViewBag.DefaultDate = DateTime.Today.AddDays(7).ToString("yyyy-MM-dd");
+            ViewBag.UseDates = true;
+
+            return View("RoomScheduleWeek", model);
+        }
+
+
 
         /// <summary>
         /// 

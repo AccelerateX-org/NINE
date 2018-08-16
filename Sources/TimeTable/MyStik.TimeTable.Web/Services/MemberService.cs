@@ -260,8 +260,15 @@ namespace MyStik.TimeTable.Web.Services
             // Bei Studenten nach einer Eintragung suchen
             if (user.MemberState == MemberState.Student)
             {
+                // das aktuelle Studium
+                var student = db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).FirstOrDefault();
+                if (student != null)
+                    return student.Curriculum.Organiser;
+
+                // nur noch zu Absicherung
                 // existiert eine Eintragung?
-                var subscription = db.Subscriptions.OfType<SemesterSubscription>().FirstOrDefault(s => s.UserId.Equals(user.Id));
+                // nimm die aktuellste
+                var subscription = db.Subscriptions.OfType<SemesterSubscription>().Where(s => s.UserId.Equals(user.Id)).OrderByDescending(s => s.SemesterGroup.Semester.StartCourses).FirstOrDefault();
                 if (subscription != null && subscription.SemesterGroup.CapacityGroup.CurriculumGroup != null)
                 {
                     return subscription.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser;

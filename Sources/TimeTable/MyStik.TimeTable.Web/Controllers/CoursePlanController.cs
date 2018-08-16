@@ -180,7 +180,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // jetzt noch die Mappings aufbauen
 
             // willkürliche Annahme: jeder fängt in diesem Semester
-            var firstSemester = GetSemester(semester);
+            var firstSemester = SemesterService.GetSemester(DateTime.Today);
 
             foreach (var curriculumGroup in richtung)
             {
@@ -199,7 +199,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     myPlan.Semester.Add(moduleSemester);
                 }
 
-
+                /*
                 foreach (var accreditation in curriculumGroup.Accreditations)
                 {
 
@@ -213,6 +213,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     myPlan.ModuleMappings.Add(mapping);
 
                 }
+                */
             }
 
             // den neuen Plan zu DB hinzufügen

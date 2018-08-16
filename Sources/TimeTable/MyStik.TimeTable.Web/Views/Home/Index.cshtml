@@ -1,4 +1,5 @@
-﻿@{
+﻿@model MyStik.TimeTable.Web.Models.HomeViewModel
+@{
     Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
     ViewBag.Title = "Willkommen";
 }
@@ -53,7 +54,8 @@
                                         <div class="carousel-caption" style="color: #2b542c; text-shadow: 0px">
                                             <h2><span class="label label-default" style="background-color: @fac.Organiser.HtmlColor">@fac.Organiser.Name</span>
                                             </h2>
-                                            <p>@fac.StudentCount Studierende in @Model.Semester.Name</p>
+                                            <p>Online im @Model.Semester.Name<br/> @fac.StudentCount Studierende<br/>
+                                            @fac.Organiser.Members.Count(x => !string.IsNullOrEmpty(x.UserId)) Lehrende</p>
                                             <a href="@fac.Organiser.SupportUrl">Mehr Infos</a>
                                         </div>
                                     </div>
@@ -66,7 +68,8 @@
                                             <h2>
                                                 <span class="label label-default" style="background-color: @fac.Organiser.HtmlColor">@fac.Organiser.Name</span>
                                             </h2>
-                                            <p>@fac.StudentCount Studierende in @Model.Semester.Name</p>
+                                            <p>Online im @Model.Semester.Name<br/> @fac.StudentCount Studierende<br/>
+                                                @fac.Organiser.Members.Count(x => !string.IsNullOrEmpty(x.UserId)) Lehrende</p>
                                             <a href="@fac.Organiser.SupportUrl">Mehr Infos</a>
                                         </div>
                                     </div>
@@ -156,7 +159,7 @@
     <hr>
     <div class="row">
         <div class="col-md-12">
-            <h4><img src="@Url.Content("~/Assets/fillter/img/logo.svg")" style="background-color:#080808;width:40px;padding-bottom: 5px "> Die Fillter-Apps</h4>
+            <h4><img src="@Url.Content("~/Assets/fillter/img/logo_fillter.svg")" style="background-color:#080808;width:40px;padding-bottom: 5px "> Die Fillter-Apps</h4>
             <p>
                 Die Zusammenstellung des Stundenplans, das Eintragen in Sprechstunden, etc. dafür gibt es NINE.
                 Für das Smartphone wollten viele ein App, die nur die wichtigsten Infos "rausfilltert", z.B. die tagesaktuellen Termine, den Mensaspeiseplan.

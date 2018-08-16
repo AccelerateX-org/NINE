@@ -101,7 +101,10 @@
                             </tr>
                             <tr>
                                 <td><strong>Räume</strong></td>
-                                <td>Anlegen, Ändern, Löschen von Raumreservierungen und Raumzuordnungen</td>
+                                <td>
+                                    <p>Anlegen, Ändern, Löschen von Raumreservierungen und Raumzuordnungen</p>
+                                    <p>Zugriff auf alle Räume der Fakultät</p>
+                                </td>
                                 <td>
                                     @foreach (var member in Model.Members.Where(m => m.Member.IsRoomAdmin))
                                     {
@@ -167,6 +170,23 @@
                                     }
                                 </td>
                             </tr>
+                        <tr>
+                            <td><strong>Students</strong></td>
+                            <td>Einladen von Studierenden, Verwaltung von Angaben zum Studium</td>
+                            <td>
+                                @foreach (var member in Model.Members.Where(m => m.Member.IsStudentAdmin))
+                                {
+                                    if (member.User != null)
+                                    {
+                                        <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                    }
+                                    else
+                                    {
+                                        <div>@member.Member.ShortName (@member.Member.Name)</div>
+                                    }
+                                }
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

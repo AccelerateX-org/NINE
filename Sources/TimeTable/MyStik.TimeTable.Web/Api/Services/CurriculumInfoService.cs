@@ -166,7 +166,7 @@ namespace MyStik.TimeTable.Web.Api.Services
                     {
                         Rooms=RoomList.Any() ? RoomList : null,
                         Lecturers = LecturerList.Any() ? LecturerList : null,
-                        isCanceled= date.Occurrence.IsCanceled,
+                        isCanceled= date.Occurrence?.IsCanceled ?? false,
                         Date = date.Begin.Date.ToString("dd.MM.yyyy"),
                         Begin = date.Begin.TimeOfDay.ToString("hh\\:mm"),
                         End=date.End.TimeOfDay.ToString("hh\\:mm"),

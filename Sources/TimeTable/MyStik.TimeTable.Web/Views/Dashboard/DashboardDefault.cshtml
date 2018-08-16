@@ -38,30 +38,6 @@
                     </div>
                     <div class="portlet-body">
                         <div class="list-group">
-                            @foreach (var oh in Model.OfficeHours.OrderBy(x => x.Owners.First().Member.Name))
-                            {
-                                var lec = oh.Owners.First().Member;
-
-                                if (oh.ByAgreement)
-                                {
-                                    var txt = "Sprechstunde nach Vereinbarung";
-                                    if (!string.IsNullOrEmpty(oh.Description))
-                                    {
-                                        txt = oh.Description;
-                                    }
-                                    <a href="@Url.Action("Member", "Organiser", new {id = lec.Id})" class="list-group-item">
-                                        <span class="badge">@txt</span>
-                                        @lec.Name (@lec.ShortName)
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("Member", "Organiser", new {id=lec.Id})" class="list-group-item">
-                                        <span class="badge">Sprechstunde mit Terminen</span>
-                                        @lec.Name (@lec.ShortName)
-                                    </a>
-                                }
-                            }
                         </div>
                     </div>
                 </div>

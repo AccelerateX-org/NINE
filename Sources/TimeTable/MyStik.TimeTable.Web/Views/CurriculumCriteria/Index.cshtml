@@ -32,7 +32,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            <a href="@Url.Action("Index", "ModuleAccreditation", new {id = item.Id})">@item.Name</a>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.ShortName)

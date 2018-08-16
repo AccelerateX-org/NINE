@@ -1,96 +1,103 @@
-﻿using System;
+﻿using MyStik.TimeTable.Data;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    public class ThesisOverviewModel
+    {
+        public ThesisOverviewModel()
+        {
+            Thesis = new List<ThesisOfferViewModel>();
+        }
+
+        public Semester Semester { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public List<ThesisOfferViewModel> Thesis { get; private set; }
+    }
+
+
+    public class ThesisOfferViewModel
+    {
+        public Exam Thesis { get; set; }
+
+        public OrganiserMember Lecturer { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+    }
+
     /// <summary>
     /// 
     /// </summary>
-    public class Thesis
+    public class ThesisAdminModel
+    {
+        public ThesisAdminModel()
+        {
+            Exams = new List<ThesisExamModel>();
+            Requests = new List<ThesisRequestModel>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Exam Thesis { get; set; }
+
+        public List<ThesisRequestModel> Requests { get; private set; }
+
+        public List<ThesisExamModel> Exams { get; private set; }
+    }
+
+    public class ThesisRequestModel
+    {
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public ApplicationUser User { get; set; }
+    }
+
+
+    public class ThesisExamModel
+    {
+        public StudentExam Exam { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public ApplicationUser User { get; set; }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ThesisDetailModel
     {
         /// <summary>
         /// 
         /// </summary>
-        public string Titel { get; set; }
+        public Thesis Thesis { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Deskription { get; set; }
+        public OrganiserMember Lecturer { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Matrikelnr { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string E_Mail { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Studiengang { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Richtung { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Semester { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Abgabe { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Bekanntgabe { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string FirmaName { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public string FirmaAbteilung { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string FirmaPerson { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string FirmaKontakt { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Thema { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string MailStu { get; set; }
-
-
-
+        public OccurrenceSubscription Subscription { get; set; }
     }
+
+
+
+    public class ThesisEditModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Thesis Thesis { get; set; }
+
+        public string TitleDe { get; set; }
+
+        public string TitleEn { get; set; }
+    }
+
 
     /// <summary>
     /// 
@@ -162,4 +169,58 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string End { get; set; }
     }
+
+    public class ThesisRejectModel
+    {
+        public Exam Thesis { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+    }
+
+    public class ThesisAcceptModel
+    {
+        public Supervision Supervision { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+
+        public OrganiserMember Lecturer { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+
+        [Display(Name = "Titel")]
+        public string Title { get; set; }
+
+        public int Period { get; set; }
+
+        public DateTime IssueDate { get; set; }
+
+        public DateTime DeliveryDate { get; set; }
+    }
+
+    public class ThesisSemesterSummaryModel
+    {
+        public Semester Semester { get; set; }
+        
+        public List<Supervision> Supervisions { get; set; }
+
+        public List<Thesis> Theses { get; set; }
+    }
+
+    public class ThesisIssueModel
+    {
+        public string UserName { get; set; }
+
+        public string TitleGer { get; set; }
+
+        public string TitleEng { get; set; }
+
+        public string IssueDate { get; set; }
+    }
+
 }

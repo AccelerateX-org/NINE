@@ -11,10 +11,6 @@
         /// </summary>
         public bool ByAgreement { get; set; }
 
-        /// <summary>
-        /// Für die Verortung
-        /// </summary>
-        public Semester Semester { get; set; }
 
         /// <summary>
         /// Anzahl der Slots pro Termin

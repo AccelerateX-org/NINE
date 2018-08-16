@@ -1,0 +1,52 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterActivityModel
+
+@{
+    var isAvailable = Model.Semester.Groups.Any(x => x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id && x.IsAvailable);
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>
+            @Model.Semester.Name
+            @if (isAvailable)
+            {
+                <small>(veröffentlicht)</small>
+            }
+        </h4>
+    </div>
+    <div class="list-group">
+        <a href="@Url.Action("Groups", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+            <h5 class="list-group-item-heading">
+                <i class="fa fa-fw fa-group"></i> Nach Semestergruppen
+            </h5>
+            <p class="list-group-item-text"></p>
+        </a>
+        <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
+            <h5 class="list-group-item-heading">
+                <i class="fa fa-fw fa-random"></i> Wahlverfahren
+            </h5>
+            <p class="list-group-item-text"></p>
+        </a>
+        <a href="@Url.Action("List", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+            <h5 class="list-group-item-heading">
+                <i class="fa fa-fw fa-list"></i> Als Datentabelle
+            </h5>
+            <p class="list-group-item-text">Suchen und Sortieren nach Stichwörten, Lehrenden, Räume und Zeiten</p>
+        </a>
+        <a href="@Url.Action("SemesterReport", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+            <h5 class="list-group-item-heading">
+                <i class="fa fa-fw fa-download"></i> Semesterbericht
+            </h5>
+            <p class="list-group-item-text">Download einer .csv Datei mit wichtigsten Informationen</p>
+        </a>
+        @if (ViewBag.UserRight.IsCourseAdmin)
+        {
+            <a href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                <h5 class="list-group-item-heading">
+                    <i class="fa fa-fw fa-cogs"></i> Verwaltung
+                </h5>
+                <p class="list-group-item-text">Semestergruppen anlegen, freigeben, etc.</p>
+            </a>
+        }
+    </div>
+</div>

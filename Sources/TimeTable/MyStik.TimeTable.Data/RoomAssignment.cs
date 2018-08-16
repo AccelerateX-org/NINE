@@ -22,12 +22,12 @@ namespace MyStik.TimeTable.Data
         //public bool IsExclusive { get; set; }
 
         /// <summary>
-        /// Mitglieder der Organisation müssen sich Belegungen bestätigen lassen
+        /// interne Raum Admins dürfen diesen Raum belegen
         /// </summary>
         public bool InternalNeedConfirmation { get; set; }
 
         /// <summary>
-        /// Mitglieder von anderen Organisationen müssen sich Belegungen bestätigen lassen
+        /// externe Raum Admins dürfen diesen Raum belegen
         /// </summary>
         public bool ExternalNeedConfirmation { get; set; }
 

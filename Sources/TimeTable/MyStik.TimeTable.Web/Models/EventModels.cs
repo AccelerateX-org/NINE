@@ -12,20 +12,31 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class EventViewModel
     {
+        public EventViewModel()
+        {
+            Dates = new List<EventDateStateViewModel>();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         public Event Event { get; set; }
 
+        public List<EventDateStateViewModel> Dates { get; private set; }
+    }
+
+    public class EventDateStateViewModel
+    {
         /// <summary>
         /// 
         /// </summary>
-        public ActivityDate NextDate { get; set; }
+        public ActivityDate Date { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public OccurrenceStateModel State { get; set; }
+
     }
 
     /// <summary>
@@ -469,6 +480,34 @@ namespace MyStik.TimeTable.Web.Models
         public List<CourseMemberModel> Member { get; set; }
     }
 
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class EventDateCreateModelExtended
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid CourseId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> DozIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> RoomIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<string> Dates { get; set; }
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -538,11 +577,102 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ICollection<Guid> RoomIds { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> DozIds { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         public ICollection<Guid> LecturerIds { get; set; }
+
+        public Guid OrganiserId2 { get; set; }
+        public Guid OrganiserId3 { get; set; }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class EventDateCreatenModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Activity Course { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid CourseId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RoomListStateModel RoomList { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public LecturerListStateModel LecturerList { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<OrganiserMember> Lecturers { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Room> Rooms { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Datum")]
+        public string NewDate { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Beginn")]
+        public string NewBegin { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Ende")]
+        public string NewEnd { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> RoomIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<Guid> LecturerIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsWeekly { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid OrganiserId2 { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid OrganiserId3 { get; set; }
+    }
+
+
 
     /// <summary>
     /// 
@@ -583,15 +713,10 @@ namespace MyStik.TimeTable.Web.Models
         public string Description2 { get; set; }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Curriculum { get; set; }
+        public ActivityDate Date { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Group { get; set; }
+        public Guid OrganiserId { get; set; }
+
     }
 
 

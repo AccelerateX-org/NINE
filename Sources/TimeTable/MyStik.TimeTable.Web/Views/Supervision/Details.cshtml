@@ -1,0 +1,40 @@
+﻿@model MyStik.TimeTable.Web.Models.SupervisionCreateModel
+@{
+    ViewBag.Title = "Betreuungsangebot";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Betreuungsangebot für Abschlussarbeiten</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Angaben</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-info">
+                        <h4>@Model.Supervision.Name</h4>
+                        <p>@Html.Raw(Model.Supervision.Description)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

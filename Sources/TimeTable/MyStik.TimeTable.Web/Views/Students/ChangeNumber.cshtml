@@ -1,0 +1,56 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumSubscriptionViewModel
+@{
+    ViewBag.Title = "Matrikelnummer ändern";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Model.Student != null)
+                    {
+                        <h1>
+                            @Model.User.FirstName @Model.User.LastName | @Model.Student.Curriculum.ShortName (@Model.Student.FirstSemester.Name)
+                        </h1>
+                    }
+                    else
+                    {
+                        <h1>
+                            @Model.User.FirstName @Model.User.LastName
+                        </h1>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Matrikelnummer</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal", @role = "form"}))
+                    {
+                        @Html.ValidationSummary(true, "", new {@class = "alert alert-danger"})
+                        @Html.HiddenFor(m => m.Student.Id)
+                    <fieldset>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Number, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(model => model.Number, new { @class = "form-control", placeholder = "Matrikelnummer" })
+                            </div>
+                        </div>
+                        <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
+                        <a href="@Url.Action("CoursePlan", new {id=Model.User.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> Abbrechen</a>
+                    </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

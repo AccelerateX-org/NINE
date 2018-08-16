@@ -1,0 +1,247 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "MoveDates";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Termine übertragen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Index")" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-user-o"></i> Termine gibt ab.... <i class="fa fa-arrow-right"></i>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Fakultät</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">@Model.Organiser.ShortName</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="SourceDozId">Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control  input-sm" id="SourceDozId" name="SourceDozId" placeholder="Name/Kurzname des Lehrenden">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-arrow-right"></i> Empfänger ist <i class="fa fa-user-o"></i>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="form form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Fakultät</label>
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(m => m.Organiser.Id, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="TargetDozId">Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control  input-sm" id="TargetDozId" name="TargetDozId" placeholder="Name/Kurzname des Lehrenden">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-primary" onclick="moveDates()"><i class="fa fa-save"></i> Übertragen und Benachrichtigen</button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        Alle zukünftigen Termine
+                    </h4>
+                </div>
+                <div id="dateList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+
+<script>
+
+    var sourceDozId;
+    var targetDozId;
+
+    $(function() {
+        $('#SourceDozId').autocomplete({
+            source: function(request, response) {
+                var org = "@Model.Organiser.Id";
+
+                $.ajax({
+                    url: '@Url.Action("LecturerList", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        orgId: org,
+                        name: request.term
+                    },
+
+                    success: function(data, success, xhr) {
+                        response($.map(data, function(item) {
+
+                            return {
+                                text: item.id,
+                                label: item.name,
+                                value: item.name
+                            };
+                        }));
+
+                    },
+
+                    error: function(data) { alert(data); },
+                });
+
+            },
+            select: function(event, ui) {
+
+                var dozId = ui.item.text;
+                sourceDozId = dozId;
+
+                $.ajax({
+                    url: '@Url.Action("DateList", "OrganiserMembers")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        id: dozId
+                    },
+
+                    success: function(data, success, xhr) {
+                        $("#dateList").html(data);
+                    },
+
+                    error: function(data) { alert(data); },
+                });
+            }
+        });
+
+
+
+        $('#TargetDozId').autocomplete({
+            source: function(request, response) {
+                var org = $("#Organiser_Id option:selected").val();
+
+                $.ajax({
+                    url: '@Url.Action("LecturerList", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        orgId: org,
+                        name: request.term
+                    },
+
+                    success: function(data, success, xhr) {
+                        response($.map(data, function(item) {
+
+                            return {
+                                text: item.id,
+                                label: item.name,
+                                value: item.name
+                            };
+                        }));
+
+                    },
+
+                    error: function(data) { alert(data); },
+                });
+
+            },
+            select: function(event, ui) {
+
+                var dozId = ui.item.text;
+                targetDozId = dozId;
+
+            }
+        });
+
+    });
+
+
+    function moveDates() {
+
+        $.ajax({
+            url: '@Url.Action("MoveDates", "OrganiserMembers")',
+            type: 'POST',
+            //dataType: "json",
+
+            data: {
+                sourceDozId: sourceDozId,
+                targetDozId: targetDozId
+            },
+
+            success: function(data, success, xhr) {
+                window.location.replace("@Url.Action("Index", "OrganiserMembers")");
+            },
+
+            error: function(data) { alert(data); },
+        });
+
+    }
+
+</script>
+
+
+}

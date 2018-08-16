@@ -15,16 +15,17 @@ namespace MyStik.TimeTable.Web.Api.Services
         /// <summary>
         /// Ermittelt alle Räume des R-Baus, die zum aktuellen Zeitpunkt noch mindestens x-Minuten frei sind
         /// </summary>
+        /// <param name="code"></param>
         /// <param name="minutes">Zeitraum, in der ein Raum mindestestens frei sein muss.</param>
         /// <returns>Informationen zu den freien Räumen</returns>
-        public IEnumerable<FreeRoomContract> GetFreeRoomsNow(int minutes=30)
+        public IEnumerable<FreeRoomContract> GetFreeRoomsNow(string code, int minutes=30)
         {
             //Initialisierung des RoomService von NINE
             var roomService = new RoomService();
 
             // Alle Räume, die jetzt noch mindestens ... frei sind
             // auf den nächsten 15 min Slot stützen
-            var atTime = GlobalSettings.Now;
+            var atTime = DateTime.Now;
             var minFree = new TimeSpan(0, 0, minutes, 0);
             var factor = (int)Math.Round((double)(atTime.Minute % 15) / 15, 0);
             var delta = factor * 15 - atTime.Minute % 15;
@@ -33,27 +34,25 @@ namespace MyStik.TimeTable.Web.Api.Services
             var until = from.Add(minFree);
 
             //Nutzung des RoomService durch Abfrage der freien Räume im Zeitraum "from" bis "until" und Zwischenspeicherung dieser als Liste roomList
-            var roomList = roomService.GetFreeRooms(from, until, false);
-            //Kürzung der Liste, sodass nur Räume die mit "R" anfangen enthalten sind und Ordnung nach der Raumnummer
-            var smallList = roomList.Where(r => r.Number.StartsWith("R")).OrderBy(r => r.Number);
+            var roomList = roomService.GetFreeRooms(null, false, from, until);
 
             //Erstellen einer neuen Liste mit FreeRoomContract-Elementen zur späteren Rückgabe
             var roomContracts = new List<FreeRoomContract>();
             //Schleife, die jeden Raum der Liste durchgeht
-            foreach (var room in smallList)
+            foreach (var room in roomList)
             {
                 var nextDate = room.Dates.Where(occ => occ.Begin >= from).OrderBy(occ => occ.Begin).FirstOrDefault();
 
                 DateTime? ok = null;
 
                 //1.Fall: Wenn es ein Termin gibt der stattfindet und wenn der Termin heute ist
-                if (nextDate != null && nextDate.Begin.Date == GlobalSettings.Now.Date)
+                if (nextDate != null && nextDate.Begin.Date == DateTime.Now.Date)
                 {
                     //Da Termin existiert und heute ist, Datum übernehmen
                     ok = nextDate.Begin;
 
                     //Berechnung der restlichen freien Zeit
-                    TimeSpan Span = (nextDate.Begin - GlobalSettings.Now);
+                    TimeSpan Span = (nextDate.Begin - DateTime.Now);
 
                     //Hinzufügen eines neuen FreeRoomContract-Elements zur späteren Response roomContracts
                     roomContracts.Add(new FreeRoomContract
@@ -112,7 +111,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var roomService = new RoomService();
 
-            var roomList = roomService.GetFreeRooms(from, until, false);
+            var roomList = roomService.GetFreeRooms(null, false, from, until);
 
             var roomContracts = new List<FreeRoomContract>();
 

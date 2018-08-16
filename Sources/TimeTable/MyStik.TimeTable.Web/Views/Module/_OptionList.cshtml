@@ -1,0 +1,6 @@
+﻿@model MyStik.TimeTable.Data.CurriculumPackage
+
+@foreach (var option in Model.Options)
+{
+    <option value="@option.Id">@option.Name</option>
+}

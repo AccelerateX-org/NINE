@@ -1,0 +1,96 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+@{
+    ViewBag.Title = "Module";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Module @Model.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-book"></i> Eintragungen</h4>
+                </div>
+                <table id="tabParticipient" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Bezeichnung</th>
+                            <th>Kurzname</th>
+                            <th>Modul-Ver.</th>
+                            <th>Paket</th>
+                            <th>Option</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pck in Model.Packages)
+                        {
+                            foreach (var option in pck.Options)
+                            {
+                                foreach (var req in option.Requirements)
+                                {
+                                    <tr id="@req.Id">
+                                        <td>@req.CatalogId</td>
+                                        <td>@req.Name</td>
+                                        <td>@req.ShortName</td>
+                                        @if (req.LecturerInCharge != null)
+                                        {
+                                            <td>@req.LecturerInCharge</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td>@pck.Name</td>
+                                        <td>@option.Name</td>
+                                    </tr>
+
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            var t = $('#tabParticipient').DataTable({
+                "paging": false
+            });
+
+        })
+    </script>
+}
+
+
+
+

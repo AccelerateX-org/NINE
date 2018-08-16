@@ -35,12 +35,15 @@
                             @Html.Raw(", ")
                         }
                     }
-            </p>
+                </p>
+            </div>
         </div>
     </div>
 </div>
-</div>
+
 <div class="container-fluid">
+
+
     <div class="row">
         <div class="col-md-6">
             <div class="portlet light bordered">
@@ -98,17 +101,17 @@
                                         </thead>
                                         <tbody id="dozList">
                                             @foreach (var doz in Model.Date.Hosts)
-                                            {
-                                                <tr id="@doz.Id">
-                                                    <td>@doz.Organiser.ShortName</td>
-                                                    <td>@doz.Name</td>
-                                                    <td>
-                                                        <button class="btn btn-default btn-sm" onclick="deleteRow('@doz.Id')">
-                                                            <i class="fa fa-trash-o"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            }
+                        {
+                            <tr id="@doz.Id">
+                                <td>@doz.Organiser.ShortName</td>
+                                <td>@doz.Name</td>
+                                <td>
+                                    <button class="btn btn-default btn-sm" onclick="deleteRow('@doz.Id')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+    }
                                         </tbody>
                                     </table>
                                 </div>
@@ -116,7 +119,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DozTable">Raum/Räume</label>
+                            <label class="col-sm-3 control-label" for="RoomTable">Raum/Räume</label>
                             <div class="col-sm-9">
                                 <div id="RoomTable">
                                     <table class="table table-condensed">
@@ -129,7 +132,7 @@
                                             </tr>
                                             <tr>
                                                 <th>
-                                                    @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
+                                                    @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm", disabled = "" })
                                                 </th>
                                                 <th>
                                                     <input type="text" class="form-control  input-sm" id="RoomId">
@@ -140,34 +143,34 @@
                                         </thead>
                                         <tbody id="roomList">
                                             @foreach (var room in Model.Date.Rooms)
-                                            {
-                                                <tr id="@room.Id">
-                                                    <td></td>
-                                                    <td>@room.FullName</td>
-                                                    <td id="state_@room.Id">
-                                                        unbekannt
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-default btn-sm" onclick="deleteRow('@room.Id')">
-                                                            <i class="fa fa-trash-o"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            }
+                        {
+                            <tr id="@room.Id">
+                                <td></td>
+                                <td>@room.FullName</td>
+                                <td id="state_@room.Id">
+                                    unbekannt
+                                </td>
+                                <td>
+                                    <button class="btn btn-default btn-sm" onclick="deleteRow('@room.Id')">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+    }
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
 
-
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
-                                <a class="btn btn-default" href="@Url.Action("Admin", new {id = Model.Course.Id})"><i class="fa fa-left"></i> abbrechen</a>
+                                <a class="btn btn-default" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="fa fa-arrow-left"></i> abbrechen</a>
                                 <button class="btn btn-default" onclick="moveDate()"><i class="fa fa-save"></i> speichern</button>
                                 <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -301,7 +304,7 @@
 
                             return {
                                 text: item.id,
-                                label: item.name,
+                                label: item.name + ' - ' + item.capacity + ' Plätze',
                                 value: item.name
                             };
                         }));
@@ -359,7 +362,7 @@
         $.ajax(
         {
             type: "POST",
-            url: '@Url.Action("MoveDate")',
+            url: '@Url.Action("MoveDate", "Course")',
                 data: {
                     ActivityDateId: dateId,
                     NewDate: newDate,
@@ -369,7 +372,7 @@
                     DozIds: dozList
                 },
                 success: function(data, success, xhr) {
-                    window.location.replace("@Url.Action("Admin", new {id = Model.Course.Id})");
+                    window.location.replace("@Url.Action("AdminNewDates", new {id = Model.Course.Id})");
                 }
             });
 

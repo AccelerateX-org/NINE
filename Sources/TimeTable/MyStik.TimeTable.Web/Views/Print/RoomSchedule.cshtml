@@ -1,23 +1,95 @@
-﻿@model MyStik.TimeTable.Data.Room
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Utils.Helper
+@model MyStik.TimeTable.Web.Models.RoomScheduleModel
 @{
     ViewBag.Title = "Raumplan";
+    var now = DateTime.Now;
+
+    var calendarHeight = 395;
+    var calenderFontSize = "6pt";
+    var dateListFontSize = "6pt";
+    if (ViewBag.ShowCalendar)
+    {
+        if (ViewBag.ShowDateList)
+        {
+            calendarHeight = 520;
+            calenderFontSize = "8pt";
+        }
+        else
+        {
+            calendarHeight = 795;
+            calenderFontSize = "12pt";
+        }
+    }
+    else
+    {
+        dateListFontSize = "10pt";
+    }
+
+
 }
 
 @section styles
 {
     <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    
+    <style>
+        .table-condensed-print > thead > tr > th,
+        .table-condensed-print > tbody > tr > th,
+        .table-condensed-print > tfoot > tr > th,
+        .table-condensed-print > thead > tr > td,
+        .table-condensed-print > tbody > tr > td,
+        .table-condensed-print > tfoot > tr > td {
+            padding: 2px;
+        }
+
+    </style>
 }
 
-
-<h2>Belegungsplan Raum @Model.Number
-    <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Id})" style="height: 100px; width: auto" /></span>
-    </h2>
-
-
-<div id="calendar">
+<div class="row">
+    <div class="col-sm-6">
+        <h5>Belegungsplan Raum @Model.Room.Number - @Model.Semester.Name</h5>
+        <h6>Stand: @now.ToString("dd.MM.yyyy HH:mm:ss")</h6>
+    </div>
+    <div class="col-sm-6">
+        <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 60px; width: auto"/></span>
+    </div>
 </div>
 
+@if (ViewBag.ShowCalendar)
+{
+    <div class="row">
+        <div id="calendar" style="font-family: arial; font-size: @calenderFontSize">
+        </div>
+    </div>
+}
 
+@if (ViewBag.ShowDateList)
+{
+    <div class="row">
+
+        <table class="table table-condensed-print table-striped" style="font-family: arial; font-size: @dateListFontSize">
+            <tbody>
+            @foreach (var date in Model.SingleDates.OrderBy(x => x.Begin))
+            {
+                if (date.Begin.DayOfWeek != DayOfWeek.Saturday && date.Begin.DayOfWeek != DayOfWeek.Sunday && date.Begin > now)
+                {
+                    <tr>
+                        <td>@date.Begin.Date.ToShortDateString()</td>
+                        <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
+                        <td>@date.Begin.ToString("HH:mm")</td>
+                        <td>@date.End.ToString("HH:mm")</td>
+                        <td>@date.Activity.ShortName.Truncate(6)</td>
+                        <td>@date.Activity.Name.Truncate(50)</td>
+                        <td>@Html.LecturerList(date.Hosts, false)</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+}
 
 
 @section scripts
@@ -32,17 +104,16 @@
         $(document).ready(function() {
             $('#loading').hide();
 
-            initPrintCalendar();
-            //initCalendar(false);
-
-
+            initPrintCalendar(@calendarHeight, @Json.Encode(ViewBag.IsMoSa));
+            
             $('#calendar').fullCalendar('removeEvents');
 
-            $('#calendar').fullCalendar('addEventSource',
+            $('#calendar').fullCalendar('addEventSource', 
             {
-                url: '@Url.Action("RoomPrintPlan", "Calendar", new { roomId = Model.Id})',
+                url: '@Url.Action("RoomPrintPlan", "Calendar", new { roomId = Model.Room.Id })',
                 type: 'POST'
             });
+            
         });
 
     </script>

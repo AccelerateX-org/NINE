@@ -1,0 +1,59 @@
+﻿@model MyStik.TimeTable.Web.Models.DashboardStudentViewModel
+
+@{
+    ViewBag.Title = "List";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-calendar"></i> Meine Termine (nur bestätigte Plätze und Reservierungen)
+                    </h4>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Von</th>
+                        <th>Bis</th>
+                        <th>Lehrveranstaltung</th>
+                    </tr>
+                    <tbody>
+                    @foreach (var courseDate in Model.CourseDates.OrderBy(x => x.Day))
+                    {
+                        var n = courseDate.Dates.Count;
+                        var ordered = courseDate.Dates.OrderBy(x => x.Begin).ToList();
+
+                        foreach (var activityDate in ordered)
+                        {
+                            if (activityDate.Equals(ordered.First()))
+                            {
+                                <tr>
+                                    <td rowspan="@n">@courseDate.Day.ToShortDateString()</td>
+                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                                </tr>
+                            }
+                        }
+                    }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

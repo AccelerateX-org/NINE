@@ -6,6 +6,7 @@
 
 @section styles
 {
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
@@ -16,7 +17,7 @@
     <div class="panel-body bg-fillter-lecturer">
         <div class="row">
             <div class="col-md-12">
-                <h4>@Model.Event.Name (@Model.Event.ShortName)</h4>
+                <h4>@Model.Event.Name.ToUpper()</h4>
                 <p>
                     @Model.Date.Begin.ToShortDateString() | @Html.TimeSpan(Model.Date)
                     @foreach (var group in Model.Event.SemesterGroups)
@@ -39,124 +40,162 @@
         </div>
     </div>
 </div>
+
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <a class="btn btn-default" href="@Url.Action("Admin", new {id=Model.Event.Id})"><i class="fa fa-left"></i> zurück</a>
-                    <a class="btn btn-default" id="saveAll" href="#"><i class="fa fa-save"></i> speichern</a>
-                    <div id="saveResult"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">Datum und Zeitraum ändern</div>
-                <div class="panel-body">
+        <div class="col-md-6">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Angaben zu Termin</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
                     @Html.HiddenFor(m => m.ActivityDateId)
                     <div class="form form-horizontal">
                         <div class="form-group">
-                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
+                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
                                 @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
-
                                 @Html.ValidationMessageFor(m => m.NewDate)
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
+                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
                                 @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
-
                                 @Html.ValidationMessageFor(m => m.NewBegin)
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
+                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-9">
                                 @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
-
                                 @Html.ValidationMessageFor(m => m.NewEnd)
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="DozTable">Dozent(en)</label>
+                            <div class="col-sm-9">
+                                <div id="DozTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Fakultät</th>
+                                                <th>Name</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="form-control  input-sm" id="DozId">
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dozList">
+                                            @foreach (var doz in Model.Date.Hosts)
+                                            {
+                                                <tr id="@doz.Id">
+                                                    <td>@doz.Organiser.ShortName</td>
+                                                    <td>@doz.Name</td>
+                                                    <td>
+                                                        <button class="btn btn-default btn-sm" onclick="deleteRow('@doz.Id')">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="RoomTable">Raum/Räume</label>
+                            <div class="col-sm-9">
+                                <div id="RoomTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Fakultät</th>
+                                                <th>Raumnummer</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm", disabled = "" })
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="form-control  input-sm" id="RoomId">
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="roomList">
+                                            @foreach (var room in Model.Date.Rooms)
+                                            {
+                                                <tr id="@room.Id">
+                                                    <td></td>
+                                                    <td>@room.FullName</td>
+                                                    <td id="state_@room.Id">
+                                                        unbekannt
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-default btn-sm" onclick="deleteRow('@room.Id')">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <a class="btn btn-default" href="@Url.Action("AdminNewDates", new {id = Model.Event.Id})"><i class="fa fa-arrow-left"></i> abbrechen</a>
+                                <button class="btn btn-default" onclick="moveDate()"><i class="fa fa-save"></i> speichern</button>
+                                <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="AvailableTable">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-calendar"></i>
+                            <span class="caption-subject bold uppercase"> Freie Räume</span>
+                        </div>
+                        <div class="tools">
+                            <a href="" class="collapse"> </a>
+                            <a id="btnReload" href="" class="reload" onclick="reloadFreeRooms()"> </a>
+                        </div>
+
+                    </div>
+                    <div class="portlet-body">
+                        <div id="roomTable">
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">Räume</div>
-                <div class="panel-body">
-                    <div id="roomTable">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Nummer</th>
-                                    <th>Plätze</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
-                                {
-                                    <tr>
-                                        @if (Model.Date.Rooms.Any(r => r.Id == room.Id))
-                                        {
-                                            <td><input id="@room.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="" checked="checked"></td>
-                                        }
-                                        else
-                                        {
-                                            <td><input id="@room.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
-                                        }
-
-                                        <td>@room.Number</td>
-                                        <td>@room.Capacity</td>
-                                        <td id="state_@room.Id">unbekannt</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">Dozent(en)</div>
-                <div class="panel-body">
-                    <div id="lecturerTable">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var doz in Model.Lecturers.OrderBy(r => r.Name))
-                                {
-                                    <tr>
-                                        @if (Model.Date.Hosts.Any(h => h.Id == doz.Id))
-                                        {
-                                            <td><input id="@doz.Id" type="checkbox" onclick=" toggleDateCheck(this) " value="" checked="checked"></td>
-                                        }
-                                        else
-                                        {
-                                            <td><input id="@doz.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
-                                        }
-                                        <td>@doz.Name</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <div id="ConflictTable"></div>
         </div>
     </div>
 </div>
@@ -173,130 +212,338 @@
 
     <script>
 
-        $(function () {
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
+    var isInit = true;
 
-            $('.timepicker-24').timepicker({
-                autoclose: true,
-                minuteStep: 15,
-                showSeconds: false,
-                showMeridian: false
-            });
+    $(function() {
+        isInit = true;
+        checkRoomStates();
+        $("#loading").hide();
 
-            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function (e) {
-                e.preventDefault();
-                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
-            });
+        $('.datepicker').datepicker({
+            orientation: "left",
+            autoclose: true,
+            format: "dd.mm.yyyy",
+            weekStart: 1,
+            calendarWeeks: true,
+            language: "de"
         });
 
-        function onDateChanged() {
-            onUpdateRoomState();
-        }
+        $('.timepicker-24').timepicker({
+            autoclose: true,
+            minuteStep: 15,
+            showSeconds: false,
+            showMeridian: false
+        });
 
-        function onBeginChanged() {
-            onUpdateRoomState();
-        }
+        $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
+            e.preventDefault();
+            $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+        });
 
-        function onEndChanged() {
-            onUpdateRoomState();
-        }
+        $('#DozId').autocomplete({
+            source: function(request, response) {
+                var org = $("#OrganiserId2 option:selected").val();
 
+                $.ajax({
+                    url: '@Url.Action("LecturerList", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
 
-        function onUpdateRoomState() {
-
-            var newDate = $("#NewDate").val();
-            var newBegin = $("#NewBegin").val();
-            var newEnd = $("#NewEnd").val();
-            var dateId = $("#ActivityDateId").val();
-
-
-            var list = $("#roomTable > table > tbody > tr input[type='checkbox']").get();
-            var n = list.length;
-            var i;
-            for (i = 0; i < n; i++) {
-
-                $("#state_" + list[i].id).html("<i class=\"fa fa-spinner fa-spin\"></i>");
-
-                $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("GetState", "Room")',
                     data: {
-                        dateId: dateId,
-                        roomId: list[i].id,
-                        date: newDate,
-                        begin: newBegin,
-                        end: newEnd
+                        orgId: org,
+                        name: request.term
                     },
-                    success: function (data, success, xhr) {
-                        $("#state_" + data.RoomId).html(data.State);
-                    }
+
+                    success: function(data, success, xhr) {
+                        response($.map(data, function(item) {
+
+                            return {
+                                text: item.id,
+                                label: item.name,
+                                value: item.name
+                            };
+                        }));
+
+                    },
+
+                    error: function(data) { alert(data); },
                 });
 
+            },
+            select: function(event, ui) {
 
+                var orgText = $("#OrganiserId2 option:selected").text();
+
+
+                $("#dozList").append("<tr id=\""
+                    + ui.item.text + "\"><td>"
+                    + orgText + "</td><td>"
+                    + ui.item.value + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+                    + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
 
             }
+        });
 
 
-        }
+        $('#RoomId').autocomplete({
+            source: function(request, response) {
+                var org = $("#OrganiserId3 option:selected").val();
 
+                $.ajax({
+                    url: '@Url.Action("RoomListByOrg", "Curriculum")',
+                    type: 'POST',
+                    //dataType: "json",
 
-        function toggleDateCheck(elem) {
-            // das elem ist das HTML-Element
-            // aus dem mache ich ein jQuery Element
-            // dann erst kann ich die DOM Eigenschaft über attr ändern
-            // damit sie später auch wieder über jQuery ausgewertet werden kann
-            $("#" + elem.id).attr("checked", elem.checked);
-        }
+                    data: {
+                        orgId: org,
+                        number: request.term
+                    },
 
+                    success: function(data, success, xhr) {
+                        response($.map(data, function(item) {
 
-        $("#saveAll").click(function () {
+                            return {
+                                text: item.id,
+                                label: item.name + ' - ' + item.capacity + ' Plätze',
+                                value: item.name
+                            };
+                        }));
 
-            var dateId = $("#ActivityDateId").val();
-            var newDate = $("#NewDate").val();
-            var newBegin = $("#NewBegin").val();
-            var newEnd = $("#NewEnd").val();
+                    },
 
-            var list = $("#roomTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-            var n = list.length;
-            var roomList = new Array();
-            var i;
-            for (i = 0; i < n; i++) {
-                roomList[i] = list[i].id;
+                    error: function(data) { alert(data); },
+                });
+
+            },
+            select: function(event, ui) {
+
+                var roomId = ui.item.text;
+                var roomNumber = ui.item.value;
+
+                addRoom(roomId, roomNumber);
             }
+        });
 
-            list = $("#lecturerTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-            n = list.length;
-            var dozList = new Array();
-            for (i = 0; i < n; i++) {
+        reloadFreeRooms();
+
+        isInit = false;
+
+    });
+
+    function moveDate() {
+
+        $("#loading").show();
+
+        var dateId = $("#ActivityDateId").val();
+        var newDate = $("#NewDate").val();
+        var newBegin = $("#NewBegin").val();
+        var newEnd = $("#NewEnd").val();
+        var dozList = new Array();
+        var roomList = new Array();
+
+        var list = $("#DozTable > table > tbody > tr").get();
+        var n = list.length;
+        if (n > 0) {
+            for (var i = 0; i < n; i++) {
                 dozList[i] = list[i].id;
             }
+        }
+
+        list = $("#RoomTable > table > tbody > tr").get();
+        n = list.length;
+        if (n > 0) {
+            for (var i = 0; i < n; i++) {
+                roomList[i] = list[i].id;
+            }
+        }
 
 
-            $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("MoveDate")',
+
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("MoveDate", "Event")',
                 data: {
                     ActivityDateId: dateId,
                     NewDate: newDate,
                     NewBegin: newBegin,
                     NewEnd: newEnd,
                     RoomIds: roomList,
-                    LecturerIds: dozList
+                    DozIds: dozList
                 },
-                success: function (data, success, xhr) {
-                    $("#saveResult").html(data);
+                success: function(data, success, xhr) {
+                    window.location.replace("@Url.Action("AdminNewDates", new {id = Model.Event.Id})");
                 }
             });
+
+        }
+
+
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+        function onDateChanged() {
+            if (!isInit) {
+                checkRoomStates();
+                reloadFreeRooms();
+            }
+        }
+
+        function onBeginChanged() {
+            if (!isInit) {
+                checkRoomStates();
+                reloadFreeRooms();
+            }
+        }
+
+        function onEndChanged() {
+            if (!isInit) {
+                checkRoomStates();
+                reloadFreeRooms();
+            }
+        }
+
+
+        // aktualisiert einen Raum
+        function checkRoomState(roomId) {
+
+            var newDate = $("#NewDate").val();
+            var newBegin = $("#NewBegin").val();
+            var newEnd = $("#NewEnd").val();
+            var dateId = $("#ActivityDateId").val();
+
+
+            var dateList = new Array();
+            var n = 1;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+
+                    dateList[i] = newDate + "#"
+                        + newBegin + "#"
+                        + newEnd + "#"
+                        + "false";
+
+                }
+
+                $("#" + roomId).addClass("info");
+                $("#state_" + roomId).innerHTML = "<i class=\"fa fa-spinner fa-spin text-muted\"></i>";
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetStates", "Room")',
+                data: {
+                    dateId: dateId,
+                    roomId: roomId,
+                    dates: dateList
+                },
+                success: function(data, success, xhr) {
+                    $("#" + roomId).removeClass("info");
+                    $("#" + roomId).removeClass("success");
+                    $("#" + roomId).removeClass("danger");
+
+                    if (data < 0) {
+                        $("#state_" + roomId).html("unbekannt");
+
+                    } else if (data == 0) {
+                        $("#" + roomId).addClass("success");
+                        $("#state_" + roomId).html("verfügbar");
+                    } else {
+                        $("#" + roomId).addClass("danger");
+                        $("#state_" + roomId).html("<button class=\"btn btn-default\" onclick=\"showConflicts('"
+                            + roomId
+                            + "')\">Konflikte <span class=\"badge\">" + data + "</span></button>");
+                    }
+                }
+            });
+        }
+
+    }
+
+    // aktualisiert die Raumliste
+    function checkRoomStates() {
+        var list = $("#RoomTable > table > tbody > tr").get();
+        var n = list.length;
+        if (n > 0) {
+            for (var i = 0; i < n; i++) {
+                checkRoomState(list[i].id);
+            }
+        }
+    }
+
+    function showConflicts(roomId) {
+        var newDate = $("#NewDate").val();
+        var newBegin = $("#NewBegin").val();
+        var newEnd = $("#NewEnd").val();
+
+        var dateList = new Array();
+        var n = 1;
+        if (n > 0) {
+            for (var i = 0; i < n; i++) {
+                dateList[i] = newDate + "#"
+                    + newBegin + "#"
+                    + newEnd + "#"
+                    + "false";
+            }
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("GetConflicts", "Room")',
+                data: {
+                    RoomId: roomId,
+                    Dates: dateList
+                },
+                success: function(data, success, xhr) {
+                    $("#ConflictTable").html(data);
+                }
+            });
+        }
+    }
+
+
+    function selectRoom(roomId, roomNumber) {
+        // Zuerst die Zeile aus der Tabelle der freien Räume löschen
+        deleteRow(roomId);
+
+        // dann erst neue Zeile einfügen
+        // Grund: es wird die roomId als id verwendet
+        addRoom(roomId, roomNumber);
+    }
+
+    function addRoom(roomId, roomNumber) {
+
+        $("#roomList").append("<tr id=\""
+            + roomId + "\"><td></td><td>"
+            + roomNumber + "</td><td id=\"state_"
+            + roomId + "\">unbekannt</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+            + roomId + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+
+        checkRoomState(roomId);
+
+    }
+
+    function reloadFreeRooms() {
+        var newDate = $("#NewDate").val();
+        var newBegin = $("#NewBegin").val();
+        var newEnd = $("#NewEnd").val();
+
+        $.ajax(
+        {
+            type: "POST",
+            url: '@Url.Action("GetAvailableRooms", "Room")',
+            data: {
+                date: newDate,
+                begin: newBegin,
+                end: newEnd
+            },
+            success: function (data, success, xhr) {
+                $("#roomTable").html(data);
+            }
         });
+
+    }
 
 
     </script>

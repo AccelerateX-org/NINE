@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -17,19 +13,21 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public HomeViewModel()
         {
-            Faculties = new List<FacultyViewModel>();
+            ActiveSemester = new List<SemesterActiveViewModel>();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public ICollection<FacultyViewModel> Faculties { get; }
+        public List<SemesterActiveViewModel> ActiveSemester { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Semester Semester { get; set; }
 
+        public int OnlineUsers { get; set; }
+
+        public int Students { get; set; }
+
+        public int Lecturers { get; set; }
+
+        public int Curricula { get; set; }
+
+        public int Rooms { get; set; }
     }
 
     /// <summary>
@@ -46,5 +44,70 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public int StudentCount { get; set; }
+
+        public bool HasCurrentSchedule { get; set; }
+
+        public bool HasNextSchedule { get; set; }
+
     }
+
+    public class SemesterActiveViewModel
+    {
+        public SemesterActiveViewModel()
+        {
+            Topics = new List<TopicSummaryModel>();
+            Courses = new List<CourseSummaryModel>();
+            Events = new List<Event>();
+        }
+
+        public Semester Semester { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public ICollection<ActivityOrganiser> Organisers { get; set; }
+
+        public ICollection<Curriculum> Curricula { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+
+        public CapacityGroup CapacityGroup { get; set; }
+
+        public SemesterGroup SemesterGroup { get; set; }
+
+        public List<TopicSummaryModel> Topics { get; set; }
+
+        public List<CourseSummaryModel> Courses { get; set; }
+
+        public List<Event> Events { get; set; }
+
+
+    }
+
+    public class SemesterScheduleViewModel
+    {
+        public SemesterScheduleViewModel()
+        {
+            Courses = new List<CourseSummaryModel>();
+        }
+
+        public Semester Semester { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+
+        public List<CourseSummaryModel> Courses { get; private set; }
+    }
+
+    public class CourseScheduleViewModel
+    {
+        public Semester Semester { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+
+
+        public Course Course { get; set; }
+    }
+
+
 }

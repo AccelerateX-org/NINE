@@ -1,6 +1,8 @@
-﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.CurriculumViewModel
 @{
-    ViewBag.Title = "Studienfortschritt";
+    ViewBag.Title = "Studiengang";
 }
 
 
@@ -9,20 +11,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Studiengänge</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        @Html.DropDownListFor(model => model.Curriculum, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control", onchange = "onCurriculumChanged()" })
-                    </div>
+                    <h1>@Html.FacultyLabel(Model.Curriculum.Organiser) @Model.Curriculum.Name (@Model.Curriculum.ShortName)</h1>
                 </div>
             </div>
         </div>
@@ -31,51 +20,143 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <div id="semProfile">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-calendar"></i> Vorlesungsverzeichnisse
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var sem in Model.ActiveSemesters.OrderByDescending(x => x.StartCourses))
+                    {
+                        <a href="@Url.Action("Curriculum", "Dictionary", new {currId = Model.Curriculum.Id, semId = sem.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                @sem.Name
+                            </h5>
+                        </a>
+                    }
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            @if (ViewBag.UserRight.IsCurriculumAdmin)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-map-o"></i> Aufbau und Ablauf
+                        </h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Structure", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-map-signs"></i> Inhaltliche Struktur
+                            </h5>
+                            <p class="list-group-item-text">Zusammenfassung von Modulen nach inhaltlichen Aspekten sowie Wahlmöglichkeiten</p>
+                        </a>
+                        <a href="@Url.Action("Terms", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-road"></i> Zeitliche Struktur
+                            </h5>
+                            <p class="list-group-item-text">Anordnung der Module entlang der Semester</p>
+                        </a>
+                        <a href="@Url.Action("Milestones", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-legal"></i> Meilensteine
+                            </h5>
+                            <p class="list-group-item-text">Vorrückens- und andere Regelungen</p>
+                        </a>
+                        <a href="@Url.Action("Modules", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-book"></i> Modulkatalog
+                            </h5>
+                            <p class="list-group-item-text">Liste aller Module</p>
+                        </a>
+
+
+                        <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" class="list-group-item" target="_blank">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-file-pdf-o"></i> Dokumente <i class="fa fa-external-link"></i>
+                            </h5>
+                            <p class="list-group-item-text">Seite der HM mit offiziellen Dokumenten zu allen Studiengängen</p>
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-map-o"></i> Aufbau und Ablauf
+                        </h4>
+                    </div>
+                    <div class="list-group-item list-group-item-danger">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-legal"></i> Zugang gesperrt
+                        </h5>
+                        <div class="list-group-item-text">
+                            Zum aktuellen Zeitpunkt stehen diese Informationen nur Administratoren zur Verfügung
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            @if (ViewBag.UserRight.IsCurriculumAdmin)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>
+                    <i class="fa fa-cogs"></i> Verwaltung
+                </h4>
+            </div>
+            <div class="list-group">
+                <a href="@Url.Action("Edit", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-cog"></i> Allgemeine Einstellungen
+                    </h5>
+                </a>
+                <a href="@Url.Action("GroupList", "Curricula", new {id=Model.Curriculum.Id})" class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-group"></i> Studiengruppen
+                    </h5>
+                </a>
+                <a href="@Url.Action("Index", "CurriculumPackage", new {id=Model.Curriculum.Id})" class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-suitcase"></i> Anforderungen
+                    </h5>
+                </a>
+                <a href="@Url.Action("Import", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-upload"></i> Import
+                    </h5>
+                    <p class="list-group-item-text">Einlesen von Textdateien</p>
+                </a>
+                <a href="@Url.Action("Export", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-download"></i> Export
+                    </h5>
+                    <p class="list-group-item-text">Einlesen von Textdateien</p>
+                </a>
+                <a href="@Url.Action("Delete", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-trash-o"></i> Struktur Löschen
+                    </h5>
+                    <p class="list-group-item-text">Löscht Pakete, Optionen sowie Module. Studiengruppen bleiben bestehen.</p>
+                </a>
             </div>
         </div>
-    </div>
+}
+        </div>
+
+        </div>
 </div>
-
-
-
-    @section scripts
-{
-        <script>
-
-            $(document).ready(function () {
-                onCurriculumChanged();
-            });
-
-
-            function onCurriculumChanged() {
-                var group = $('#Curriculum option:selected').val();
-
-                $('#semProfile').html('');
-                $('#loading').show();
-                $.ajax(
-                {
-                    type: 'POST',
-                    url: '@Url.Action("Details", "Curriculum")',
-                    data: {
-                        FakultyID: Curriculum,
-                    },
-                    success: function (data, success, xhr) {
-                        $('#semProfile').html(data);
-                        $('#loading').hide();
-                    },
-                    error: function (data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
-                    }
-                });
-            }
-
-
-
-        </script>
-    }
 
 
 

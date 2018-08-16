@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Data.ActivityOwner
+@using MyStik.TimeTable.Web.Helpers
+
+<tr>
+    <td>@Html.FacultyLabel(Model.Member.Organiser)</td>
+    <td>@Model.Member.Name</td>
+    <td>@Model.Member.ShortName</td>
+    <td><a href="@Url.Action("DeleteOwner", new {id = Model.Id})"><i class="fa fa-trash-o"></i> Löschen</a></td>
+</tr>
+

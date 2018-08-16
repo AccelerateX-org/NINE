@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MyStik.TimeTable.Data</RootNamespace>
     <AssemblyName>MyStik.TimeTable.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -17,6 +17,7 @@
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,60 +45,40 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Lab|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Lab\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    <Reference Include="EntityFramework6.Npgsql, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework6.Npgsql.3.2.0\lib\net45\EntityFramework6.Npgsql.dll</HintPath>
     </Reference>
-    <Reference Include="Spire.Doc">
-      <HintPath>..\..\packages\Spire.Doc.5.4\lib\net40\Spire.Doc.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.License">
-      <HintPath>..\..\packages\Spire.Doc.5.4\lib\net40\Spire.License.dll</HintPath>
-    </Reference>
-    <Reference Include="Spire.Pdf">
-      <HintPath>..\..\packages\Spire.Doc.5.4\lib\net40\Spire.Pdf.dll</HintPath>
+    <Reference Include="Npgsql, Version=4.0.2.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Npgsql.4.0.2\lib\net451\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
@@ -105,6 +86,7 @@
     <Compile Include="ActivityOrganiser.cs" />
     <Compile Include="ActivityOwner.cs" />
     <Compile Include="Advertisement.cs" />
+    <Compile Include="AdvertisementInfo.cs" />
     <Compile Include="AdvertisementRole.cs" />
     <Compile Include="Alumnus.cs" />
     <Compile Include="BinaryStorage.cs" />
@@ -113,15 +95,15 @@
     <Compile Include="CapacityCourse.cs" />
     <Compile Include="CapacityGroup.cs" />
     <Compile Include="CorporateContact.cs" />
+    <Compile Include="CourseModuleNexus.cs" />
+    <Compile Include="CriteriaSample.cs" />
     <Compile Include="CurriculumChapter.cs" />
+    <Compile Include="CurriculumPackage.cs" />
+    <Compile Include="CurriculumRequirement.cs" />
     <Compile Include="CurriculumTopic.cs" />
-    <Compile Include="DefaultData\FK02_BAUDUAL_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK08_GNWP_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK08_GUG_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK08_MGEO_Modulkatalog1.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK06_BOB1.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK08_GNWP.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK08_MGEO1.cs" />
+    <Compile Include="CurriculumVariation.cs" />
+    <Compile Include="Degree.cs" />
+    <Compile Include="Exam.cs" />
     <Compile Include="Examiner.cs" />
     <Compile Include="ExamPaper.cs" />
     <Compile Include="Level.cs" />
@@ -131,70 +113,6 @@
     <Compile Include="CurriculumCriteria.cs" />
     <Compile Include="CurriculumGroup.cs" />
     <Compile Include="CurriculumModule.cs" />
-    <Compile Include="DefaultData\FK11 SA_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK01_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK03_LRB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK03_MBB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK14_BTM_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK03_FAB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK08_KG_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK02_BAU_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK06_PAB_Molulkatalog.cs" />
-    <Compile Include="DefaultData\KF06_PHT_Modulkatalog.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK12.cs" />
-    <Compile Include="DefaultData\FK12_DE_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK06_AOB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK02_Curricula.cs" />
-    <Compile Include="DefaultData\FK06_BOB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK06_CHB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK06 MFB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK06_Curricula.cs" />
-    <Compile Include="DefaultData\FK05_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK05_Curricula.cs" />
-    <Compile Include="DefaultData\FK04_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK01_Institution.cs" />
-    <Compile Include="DefaultData\FK03_Institution.cs" />
-    <Compile Include="DefaultData\FK03_MB_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK04_Institution.cs" />
-    <Compile Include="DefaultData\FK05_Institution.cs" />
-    <Compile Include="DefaultData\FK06_Institution.cs" />
-    <Compile Include="DefaultData\FK07_Institution.cs" />
-    <Compile Include="DefaultData\FK08_Institution.cs" />
-    <Compile Include="DefaultData\FK09_Curricula.cs" />
-    <Compile Include="DefaultData\FK10_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK10_Institution.cs" />
-    <Compile Include="DefaultData\FK10_Curricula.cs" />
-    <Compile Include="DefaultData\FK11_Institution.cs" />
-    <Compile Include="DefaultData\FK12_Institution.cs" />
-    <Compile Include="DefaultData\FK13_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK13_Institution.cs" />
-    <Compile Include="DefaultData\FK13_Curricula.cs" />
-    <Compile Include="DefaultData\FK01_Curricula.cs" />
-    <Compile Include="DefaultData\FK04_Curricula.cs" />
-    <Compile Include="DefaultData\FK03_Curricula.cs" />
-    <Compile Include="DefaultData\FK08_Curricula.cs" />
-    <Compile Include="DefaultData\FK07_Curricula.cs" />
-    <Compile Include="DefaultData\FK02_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK02_Institution.cs" />
-    <Compile Include="DefaultData\FK14_Curricula.cs" />
-    <Compile Include="DefaultData\FK09_Institution.cs" />
-    <Compile Include="DefaultData\FK09_WI_Modulkatalog.cs" />
-    <Compile Include="DefaultData\FK11_Curricula.cs" />
-    <Compile Include="DefaultData\FK12_Curricula.cs" />
-    <Compile Include="DefaultData\FK14_Institution.cs" />
-    <Compile Include="DefaultData\InfrastructureData.cs" />
-    <Compile Include="DefaultData\ModulCatalog_FK03_LRB.cs" />
-    <Compile Include="DefaultData\ModulCatalog_FK03_MBB.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK03_FAB.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK08_KG.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK06_MFB.cs" />
-    <Compile Include="DefaultData\ModulCatalog_FK06_CHB.cs" />
-    <Compile Include="DefaultData\ModulCatalog_FK14_BTM.cs" />
-    <Compile Include="DefaultData\ModuleCatalog2.cs" />
-    <Compile Include="DefaultData\ModuleCatalog3.cs" />
-    <Compile Include="DefaultData\ModuleCatalogs.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK06_AOB.cs" />
-    <Compile Include="DefaultData\ModuleCatalog_FK08_GUG.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="GroupAlias.cs" />
     <Compile Include="InfoAnnouncement.cs" />
@@ -204,7 +122,14 @@
     <Compile Include="Initializers\InitNewDatabase.cs" />
     <Compile Include="Institution.cs" />
     <Compile Include="Lottery.cs" />
+    <Compile Include="LotteryBet.cs" />
+    <Compile Include="LotteryBudget.cs" />
+    <Compile Include="LotteryBundle.cs" />
     <Compile Include="LotteryDrawing.cs" />
+    <Compile Include="LotteryGame.cs" />
+    <Compile Include="MemberExport.cs" />
+    <Compile Include="MemberResponsibility.cs" />
+    <Compile Include="MemberSkill.cs" />
     <Compile Include="Migrations\201411090617524_SeemsterGroup.cs" />
     <Compile Include="Migrations\201411090617524_SeemsterGroup.Designer.cs">
       <DependentUpon>201411090617524_SeemsterGroup.cs</DependentUpon>
@@ -317,6 +242,82 @@
     <Compile Include="Migrations\201708050915055_Contact_v1.Designer.cs">
       <DependentUpon>201708050915055_Contact_v1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710260713244_MemberLinkingv1.cs" />
+    <Compile Include="Migrations\201710260713244_MemberLinkingv1.designer.cs">
+      <DependentUpon>201710260713244_MemberLinkingv1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711161521334_LotteryV3.cs" />
+    <Compile Include="Migrations\201711161521334_LotteryV3.designer.cs">
+      <DependentUpon>201711161521334_LotteryV3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712271149410_ExamV2.cs" />
+    <Compile Include="Migrations\201712271149410_ExamV2.designer.cs">
+      <DependentUpon>201712271149410_ExamV2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712291128017_ExamV3.cs" />
+    <Compile Include="Migrations\201712291128017_ExamV3.designer.cs">
+      <DependentUpon>201712291128017_ExamV3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712291440413_ExamV4.cs" />
+    <Compile Include="Migrations\201712291440413_ExamV4.designer.cs">
+      <DependentUpon>201712291440413_ExamV4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801161623452_LotteryV4.cs" />
+    <Compile Include="Migrations\201801161623452_LotteryV4.designer.cs">
+      <DependentUpon>201801161623452_LotteryV4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801191110037_CurriculumV2.cs" />
+    <Compile Include="Migrations\201801191110037_CurriculumV2.designer.cs">
+      <DependentUpon>201801191110037_CurriculumV2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801281410130_CurriculumV3.cs" />
+    <Compile Include="Migrations\201801281410130_CurriculumV3.designer.cs">
+      <DependentUpon>201801281410130_CurriculumV3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802131606435_CurriculumV4.cs" />
+    <Compile Include="Migrations\201802131606435_CurriculumV4.designer.cs">
+      <DependentUpon>201802131606435_CurriculumV4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802231632051_CurriculumV5.cs" />
+    <Compile Include="Migrations\201802231632051_CurriculumV5.designer.cs">
+      <DependentUpon>201802231632051_CurriculumV5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805120826108_MemberV3.cs" />
+    <Compile Include="Migrations\201805120826108_MemberV3.designer.cs">
+      <DependentUpon>201805120826108_MemberV3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805140704211_ThesisV2.cs" />
+    <Compile Include="Migrations\201805140704211_ThesisV2.designer.cs">
+      <DependentUpon>201805140704211_ThesisV2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805211534274_AdvertisementV3.cs" />
+    <Compile Include="Migrations\201805211534274_AdvertisementV3.designer.cs">
+      <DependentUpon>201805211534274_AdvertisementV3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805281536058_AdvertisementV4.cs" />
+    <Compile Include="Migrations\201805281536058_AdvertisementV4.designer.cs">
+      <DependentUpon>201805281536058_AdvertisementV4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805291538348_MiscV2.cs" />
+    <Compile Include="Migrations\201805291538348_MiscV2.designer.cs">
+      <DependentUpon>201805291538348_MiscV2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806120521459_LotteryV5.cs" />
+    <Compile Include="Migrations\201806120521459_LotteryV5.designer.cs">
+      <DependentUpon>201806120521459_LotteryV5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806191501259_CurriculumV6.cs" />
+    <Compile Include="Migrations\201806191501259_CurriculumV6.designer.cs">
+      <DependentUpon>201806191501259_CurriculumV6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806210732289_LotteryV6.cs" />
+    <Compile Include="Migrations\201806210732289_LotteryV6.designer.cs">
+      <DependentUpon>201806210732289_LotteryV6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807030702493_LotteryV7.cs" />
+    <Compile Include="Migrations\201807030702493_LotteryV7.designer.cs">
+      <DependentUpon>201807030702493_LotteryV7.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -332,10 +333,10 @@
     <Compile Include="OccurrenceSubscription.cs" />
     <Compile Include="OfficeHour.cs" />
     <Compile Include="OrganiserMember.cs" />
+    <Compile Include="PackageOption.cs" />
     <Compile Include="PersonalContact.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="$(SolutionDir)\SolutionInfo.cs"
-        Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
+    <Compile Include="$(SolutionDir)\SolutionInfo.cs" Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
       <link>Properties\SolutionInfo.cs</link>
     </Compile>
     <Compile Include="Reservation.cs" />
@@ -343,6 +344,7 @@
     <Compile Include="RoomAllocationChange.cs" />
     <Compile Include="RoomAssignment.cs" />
     <Compile Include="RoomBooking.cs" />
+    <Compile Include="RoomEquipment.cs" />
     <Compile Include="Semester.cs" />
     <Compile Include="SemesterDate.cs" />
     <Compile Include="SemesterGroup.cs" />
@@ -354,7 +356,10 @@
     <Compile Include="StudentExam.cs" />
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionDrawing.cs" />
+    <Compile Include="Supervision.cs" />
+    <Compile Include="Tag.cs" />
     <Compile Include="TeachingModule.cs" />
+    <Compile Include="Thesis.cs" />
     <Compile Include="ThesisAnnouncement.cs" />
     <Compile Include="ThesisFeedback.cs" />
     <Compile Include="ThesisProvider.cs" />
@@ -446,6 +451,66 @@
     <EmbeddedResource Include="Migrations\201708050915055_Contact_v1.resx">
       <DependentUpon>201708050915055_Contact_v1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710260713244_MemberLinkingv1.resx">
+      <DependentUpon>201710260713244_MemberLinkingv1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711161521334_LotteryV3.resx">
+      <DependentUpon>201711161521334_LotteryV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712271149410_ExamV2.resx">
+      <DependentUpon>201712271149410_ExamV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712291128017_ExamV3.resx">
+      <DependentUpon>201712291128017_ExamV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712291440413_ExamV4.resx">
+      <DependentUpon>201712291440413_ExamV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801161623452_LotteryV4.resx">
+      <DependentUpon>201801161623452_LotteryV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801191110037_CurriculumV2.resx">
+      <DependentUpon>201801191110037_CurriculumV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801281410130_CurriculumV3.resx">
+      <DependentUpon>201801281410130_CurriculumV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802131606435_CurriculumV4.resx">
+      <DependentUpon>201802131606435_CurriculumV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802231632051_CurriculumV5.resx">
+      <DependentUpon>201802231632051_CurriculumV5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805120826108_MemberV3.resx">
+      <DependentUpon>201805120826108_MemberV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805140704211_ThesisV2.resx">
+      <DependentUpon>201805140704211_ThesisV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805211534274_AdvertisementV3.resx">
+      <DependentUpon>201805211534274_AdvertisementV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805281536058_AdvertisementV4.resx">
+      <DependentUpon>201805281536058_AdvertisementV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805291538348_MiscV2.resx">
+      <DependentUpon>201805291538348_MiscV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806120521459_LotteryV5.resx">
+      <DependentUpon>201806120521459_LotteryV5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806191501259_CurriculumV6.resx">
+      <DependentUpon>201806191501259_CurriculumV6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806210732289_LotteryV6.resx">
+      <DependentUpon>201806210732289_LotteryV6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807030702493_LotteryV7.resx">
+      <DependentUpon>201807030702493_LotteryV7.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

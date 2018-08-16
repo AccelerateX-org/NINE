@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -24,15 +26,29 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var reservationList = Db.Activities.OfType<Reservation>().Where(r => r.Organiser.Id == org.Id).ToList();
 
-            var model = new List<ReservationViewModel>();
+            var courseService = new CourseService(Db);
+
+            var model = new ReservationListViewModel();
+            model.Organiser = org;
 
             foreach (var res in reservationList)
             {
-                model.Add(new ReservationViewModel
-                {
-                    Reservation = res,
-                    Owner = UserManager.FindById(res.UserId)
-                });
+                var rm =
+                    new ReservationViewModel
+                    {
+                        Reservation = res,
+                        Owner = UserManager.FindById(res.UserId)
+                    };
+
+                rm.FirstDate = res.Dates.OrderBy(x => x.Begin).FirstOrDefault();
+                rm.LastDate = res.Dates.OrderByDescending(x => x.Begin).FirstOrDefault();
+
+                var summary = courseService.GetCourseSummary(res);
+                rm.Hosts = summary.Lecturers;
+                rm.Rooms = summary.Rooms;
+
+
+                model.Reservations.Add(rm);
             }
 
             ViewBag.UserRight = GetUserRight();
@@ -40,13 +56,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+
+        public ActionResult Details(Guid id)
+        {
+            var model = Db.Activities.OfType<Reservation>().SingleOrDefault(x => x.Id == id);
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+
+
         public ActionResult CreateReservation()
         {
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var memberService = new MemberService(Db, UserManager);
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
@@ -56,7 +79,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var userRight = GetUserRight(User.Identity.Name, org.ShortName);
 
             // Alle Räume, auf die der Veranstalter Zugriff hat
-            var rooms = roomService.GetRooms(org.ShortName, userRight.IsRoomAdmin);
+            var rooms = roomService.GetRooms(org.Id, userRight.IsRoomAdmin);
 
             var now = DateTime.Now;
             var minute = DateTime.Now.Minute;
@@ -65,15 +88,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new ReservationCreateModel
             {
-                NewDate = GlobalSettings.Today.ToShortDateString(),
+                NewDate = DateTime.Today.ToShortDateString(),
                 NewBegin = time.TimeOfDay.ToString(),
                 NewEnd = time.TimeOfDay.ToString(),
-                DailyEnd = GlobalSettings.Today.ToShortDateString(),
-                WeeklyEnd = GlobalSettings.Today.ToShortDateString(),
+                DailyEnd = DateTime.Today.ToShortDateString(),
+                WeeklyEnd = DateTime.Today.ToShortDateString(),
                 IsDaily = false,
                 IsWeekly = false,
-                Rooms = rooms
+                Rooms = rooms,
+                OrganiserId = org.Id
             };
+
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
 
 
             return View(model);
@@ -85,7 +115,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult CreateReservation(ReservationCreateModel model)
+        public JsonResult CreateReservation(ReservationCreateModel model)
         {
             // Doppelungen von Namen pro Organiser vermeiden
             var org = GetMyOrganisation();
@@ -119,7 +149,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var sDateEndWeekly = DateTime.Parse(model.WeeklyEnd);
 
 
-            var semester = GetSemester();
+            var semester = SemesterService.GetSemester(DateTime.Today);
 
             var dayOfWeek = sDate.DayOfWeek;
 
@@ -182,13 +212,21 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
 
+                if (model.DozIds != null)
+                {
+                    foreach (var dozId in model.DozIds )
+                    {
+                        date.Hosts.Add(Db.Members.SingleOrDefault(x => x.Id == dozId));
+                    }
+                }
+
+
                 reservation.Dates.Add(date);
             }
 
             Db.SaveChanges();
 
-
-            return PartialView("_CreateReservationSuccess");
+            return Json(new { result = "Redirect", url = Url.Action("Details", new { id = reservation.Id }) });
         }
 
         /// <summary>
@@ -219,12 +257,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var date in dateList)
             {
-                Db.ActivityDates.Remove(date);
+                DeleteService.DeleteActivityDate(date.Id);
             }
 
-            reservation.Dates.Clear();
             Db.Activities.Remove(reservation);
-
             Db.SaveChanges();
 
             return RedirectToAction("Index");
@@ -235,20 +271,267 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult DeleteReservationDate(Guid id)
+        public ActionResult DeleteReservationDate(Guid id)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == id);
 
             var activity = date.Activity;
             
-            activity.Dates.Remove(date);
+            DeleteService.DeleteActivityDate(id);
 
-            Db.ActivityDates.Remove(date);
+            return RedirectToAction("Details", new {id=activity.Id});
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult MoveDate(Guid id)
+        {
+            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == id);
+            var course = date.Activity;
+
+            var model = new CourseMoveDateModel
+            {
+                Course = course,
+                ActivityDateId = date.Id,
+                Date = date,
+                NewDate = date.Begin.ToShortDateString(),
+                NewBegin = date.Begin.TimeOfDay.ToString(),
+                NewEnd = date.End.TimeOfDay.ToString(),
+                OrganiserId2 = course.Organiser.Id,
+                OrganiserId3 = course.Organiser.Id,
+            };
+
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult MoveDate(CourseMoveDateModel model)
+        {
+            var logger = LogManager.GetLogger("Course");
+
+            var activityDate = Db.ActivityDates.SingleOrDefault(d => d.Id == model.ActivityDateId);
+
+            // Berechnung der neuen Zeiten
+            var day = DateTime.Parse(model.NewDate);
+            var from = DateTime.Parse(model.NewBegin);
+            var to = DateTime.Parse(model.NewEnd);
+
+            var start = day.Add(from.TimeOfDay);
+            var end = day.Add(to.TimeOfDay);
+
+            // Das Änderungsobjekt anlegen
+            var changeService = new ChangeService(Db);
+            var changeObject = changeService.CreateActivityDateChange(activityDate, start, end, model.RoomIds);
+
+            // Es hat keine Änderungen gegeben, die eine Notification ergeben!
+            // es können sicht aber immer noch die Dozenten verändert haben
+            // Das Umsetzen was geändert wurde
+
+            activityDate.Hosts.Clear();
+            if (model.DozIds != null)
+            {
+                foreach (var dozId in model.DozIds)
+                {
+                    activityDate.Hosts.Add(Db.Members.SingleOrDefault(m => m.Id == dozId));
+                }
+            }
+
+            if (changeObject != null)
+            {
+                // Es liegt eine Änderung vor => Änderung in DB speichern
+                // Änderung umsetzen
+                changeObject.UserId = AppUser.Id;
+                Db.DateChanges.Add(changeObject);
+
+                // Änderungen am DateObjekt vornehmen
+                activityDate.Begin = start;
+                activityDate.End = end;
+
+                // es kommen die neuen Räume und Dozenten
+                // => zuerst alle löschen!
+                activityDate.Rooms.Clear();
+
+                if (model.RoomIds != null)
+                {
+                    foreach (var roomId in model.RoomIds)
+                    {
+                        activityDate.Rooms.Add(Db.Rooms.SingleOrDefault(r => r.Id == roomId));
+                    }
+                }
+            }
+
+            // Um die Anzahl der Transaktionen klein zu halten werden erst
+            // an dieser Stelle alle Änderungen am Datum und 
+            // dem ChangeObjekt gespeichert
+            Db.SaveChanges();
+
+            // Jetzt erst die Notification auslösen
+            if (changeObject != null)
+            {
+                NotificationService nservice = new NotificationService();
+                nservice.CreateSingleNotification(changeObject.Id.ToString());
+            }
+
+            return Json(new { result = "Redirect", url = Url.Action("Details", new { id = activityDate.Activity.Id }) });
+
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult CreateDate(Guid id)
+        {
+            var course = Db.Activities.SingleOrDefault(c => c.Id == id);
+            var org = GetMyOrganisation();
+
+
+            var model = new CourseDateCreatenModel
+            {
+                Course = course,
+                CourseId = course.Id,
+                OrganiserId2 = org.Id,
+                OrganiserId3 = org.Id,
+                NewDate = DateTime.Today.ToShortDateString(),
+                NewBegin = DateTime.Now.TimeOfDay.ToString(),
+                NewEnd = DateTime.Now.TimeOfDay.ToString(),
+            };
+
+
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            // Liste aller Fakultäten, auf die Zugriff auf Räume bestehen
+            // aktuell nur meine
+            ViewBag.RoomOrganiser = Db.Organisers.Where(x => x.Id == org.Id).OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult CreateDate(CourseDateCreateModelExtended model)
+        {
+            var course = Db.Activities.SingleOrDefault(c => c.Id == model.CourseId);
+
+            // Jetzt die Termine - falls vorhanden
+            var dozList = new List<OrganiserMember>();
+            if (model.DozIds != null)
+            {
+                dozList.AddRange(model.DozIds.Select(dozId => Db.Members.SingleOrDefault(g => g.Id == dozId))
+                    .Where(doz => doz != null));
+            }
+
+            var roomList = new List<Room>();
+            if (model.RoomIds != null)
+            {
+                roomList.AddRange(model.RoomIds.Select(roomId => Db.Rooms.SingleOrDefault(g => g.Id == roomId))
+                    .Where(doz => doz != null));
+            }
+
+            // Termine anelegen
+            var semesterService = new SemesterService();
+
+            if (model.Dates != null)
+            {
+                foreach (var date in model.Dates)
+                {
+                    string[] elems = date.Split('#');
+                    var day = DateTime.Parse(elems[0]);
+                    var begin = TimeSpan.Parse(elems[1]);
+                    var end = TimeSpan.Parse(elems[2]);
+                    var isWdh = bool.Parse(elems[3]);
+
+
+                    ICollection<DateTime> dayList;
+                    // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
+                    // sonst nimm nur den Einzeltag
+                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
+                    {
+                        var lastDay = DateTime.Parse(elems[4]);
+                        var frequency = int.Parse(elems[5]);
+                        dayList = semesterService.GetDays(day, lastDay, frequency);
+                    }
+                    else
+                    {
+                        dayList = new List<DateTime> { day };
+                    }
+
+
+                    foreach (var dateDay in dayList)
+                    {
+                        var activityDate = new ActivityDate
+                        {
+                            Activity = course,
+                            Begin = dateDay.Add(begin),
+                            End = dateDay.Add(end),
+                            Occurrence = new Occurrence
+                            {
+                                Capacity = -1,
+                                IsAvailable = true,
+                                FromIsRestricted = false,
+                                UntilIsRestricted = false,
+                                IsCanceled = false,
+                                IsMoved = false,
+                                UseGroups = false,
+                            },
+
+                        };
+
+                        foreach (var room in roomList)
+                        {
+                            activityDate.Rooms.Add(room);
+                        }
+
+                        foreach (var doz in dozList)
+                        {
+                            activityDate.Hosts.Add(doz);
+                        }
+
+                        Db.ActivityDates.Add(activityDate);
+
+                    }
+                }
+            }
 
             Db.SaveChanges();
 
-            return PartialView("_EmptyRow");
+            return Json(new { result = "Redirect", url = Url.Action("Details", new { id = course.Id }) });
+
         }
+
+
+
+
+
     }
 }

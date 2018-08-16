@@ -109,6 +109,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var gs = c.CurriculumGroups.ToList();
                 foreach (var g in gs)
                 {
+                    /*
                     var sgs = g.SemesterGroups.ToList();
                     foreach (var sg in sgs)
                     {
@@ -129,17 +130,18 @@ namespace MyStik.TimeTable.Web.Controllers
                         g.SemesterGroups.Remove(sg);
                         Db.SemesterGroups.Remove(sg);
                     }
-                    
+                    */
                     c.CurriculumGroups.Remove(g);
                     Db.CurriculumGroups.Remove(g);
                 }
-
+                /*
                 var alias = c.GroupAliases.ToList();
                 foreach (var a in alias)
                 {
                     c.GroupAliases.Remove(a);
                     Db.GroupAliases.Remove(a);
                 }
+                */
 
                 Db.Curricula.Remove(c);
             }

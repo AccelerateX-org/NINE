@@ -1,0 +1,168 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryLotPotModel
+@{
+    ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Platzverlosung "@Model.Lottery.Name"</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Index", new {id=Model.Lottery.Semester.Id})" class="btn btn-default">
+                                    <i class="fa fa-arrow-left"></i> Zurück
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Select", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-list"></i> Zusammensetzung
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Delete", new {id=Model.Lottery.Id})" class="btn btn-danger">
+                                    <i class="fa fa-trash-o"></i> Löschen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel light bordered">
+                        <div class="panel-heading">
+                            <h4>
+                                <i class="fa fa-list"></i>
+                                <span class="caption-subject bold uppercase"> Beteiligte Lehrveranstaltungen</span>
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="CourseTable">
+                                <table class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th>Bezeichnung</th>
+                                        <th>Lehrende</th>
+                                        <th>Gruppen</th>
+                                        <th>Erste Termin</th>
+                                        <th>Letzte Termin</th>
+                                        <th><i class="fa fa-cubes"></i></th>
+                                        <th><i class="fa fa-group"></i></th>
+                                        <th><i class="fa fa-hourglass-half"></i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="activityTable">
+                                    @foreach (var activity in Model.PotElements)
+                                    {
+                                        var nCap = activity.ActivitySummary.Summary.Activity.Occurrence.Capacity;
+                                        if (activity.ActivitySummary.Summary.Activity.Occurrence.UseGroups)
+                                        {
+                                            nCap = activity.ActivitySummary.Summary.Activity.Occurrence.Groups.Sum(x => x.Capacity);
+                                        }
+
+
+                                        var nConfirmed = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => x.IsConfirmed);
+                                        var nReserved = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => !x.IsConfirmed && !x.OnWaitingList);
+                                        var nWaiting = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
+
+                                        var maxLap = 0;
+                                        if (activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Any())
+                                        {
+                                            maxLap = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Max(x => x.LapCount);
+                                        }
+                                        var nMax = activity.ActivitySummary.Summary.Activity.Occurrence.Subscriptions.Count(x => x.LapCount == maxLap);
+
+
+                                        var rowColor = "";
+                                        if (nCap > -1)
+                                        {
+                                            if (nConfirmed >= nCap)
+                                            {
+                                                rowColor = "danger";
+                                            }
+                                            else if (nConfirmed > 0.8 * nCap && nConfirmed < nCap)
+                                            {
+                                                rowColor = "warning";
+                                            }
+                                        }
+
+                                        <tr class="@rowColor">
+                                            <td>
+                                                <a href="@Url.Action("Details", "Course", new {id = activity.CourseSummary.Course.Id})">@activity.ActivitySummary.Name (@activity.CourseSummary.Course.ShortName)</a>
+                                            </td>
+                                            <td>@Html.LecturerList(activity.CourseSummary.Lecturers)</td>
+                                            <td>@Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)</td>
+                                            @if (activity.CourseSummary.Course.Dates.Any())
+                                            {
+                                                <td>@activity.CourseSummary.Course.Dates.OrderBy(x => x.Begin).First().Begin.Date.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
+                                                <td>@activity.CourseSummary.Course.Dates.OrderBy(x => x.Begin).Last().Begin.Date.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
+                                            }
+                                            else
+                                            {
+                                                <td colspan="2">Keine Termine</td>
+                                            }
+                                            @if (activity.ActivitySummary.Summary.Activity.Occurrence.UseGroups)
+                                            {
+                                                <td>*@nCap</td>
+                                            }
+                                            else
+                                            {
+                                                if (nCap > -1)
+                                                {
+                                                    <td>@nCap</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>n.b.</td>
+                                                }
+                                            }
+                                            <td>@nConfirmed</td>
+                                            <td>@nWaiting</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    <script>
+    </script>
+}
+
+
+

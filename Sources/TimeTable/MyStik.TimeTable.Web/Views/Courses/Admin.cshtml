@@ -1,0 +1,80 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Admin";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Verwaltung Lehrangebot @Model.Organiser.ShortName für @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Semestergruppen</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("InitGroups", new {id = Model.Semester.Id})" class="list-group-item">
+                        <i class="fa fa-plus"></i> Semestergruppen anlegen / ergänzen
+                    </a>
+                    @if (Model.Semester.Groups.Any(x =>
+                        x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id &&
+                        x.Semester.Id == Model.Semester.Id))
+                    {
+                        <a href="@Url.Action("Enable", new {id = Model.Semester.Id})" class="list-group-item">
+                            <i class="fa fa-check"></i> Semestergruppen freigeben
+                        </a>
+                        <a href="@Url.Action("Disable", new {id = Model.Semester.Id})" class="list-group-item">
+                            <i class="fa fa-ban"></i> Semestergruppen zurückziehen
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lehrveranstaltungen</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("UnLockCourses", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Änderungen freigeben</h5>
+                        <div class="list-group-item-text">Änderungen durch Lehrende ermöglichen</div>
+                    </a>
+                    <a href="@Url.Action("LockCourses", new {id = Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> LVs für Änderungen sperren</h5>
+                        <div class="list-group-item-text">Änderungen durch Lehrende unterbinden</div>
+                    </a>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("EnableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
+                        <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Eintragungen freigeben</h5>
+                        <div class="list-group-item-text">Eintragungen durch Studierende ermöglichen</div>
+                    </a>
+                    <a href="@Url.Action("DisableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
+                        <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> LVs für Eintragungen sperren</h5>
+                        <div class="list-group-item-text">Eintragungen durch Studierende unterbinden</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

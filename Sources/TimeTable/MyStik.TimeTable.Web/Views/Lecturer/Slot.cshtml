@@ -4,6 +4,9 @@
 @{
     ViewBag.Title = "Sprechstunde";
     var userService = new UserInfoService();
+    var today = DateTime.Today;
+    var historicDates = Model.Dates.Where(x => x.Begin < today.AddDays(1)).OrderBy(x => x.Begin);
+    var futureDates = Model.Dates.Where(x => x.Begin >= today).OrderBy(x => x.Begin);
 }
 
 <div class="panel panel-default">
@@ -40,6 +43,11 @@
                             </a>
                         </div>
                         <div class="form-group">
+                            <a href="javascript:showHistory()" class="btn btn-default">
+                                <i class="fa fa-calendar"></i> Historie anzeigen
+                            </a>
+                        </div>
+                        <div class="form-group">
                             <a href="@Url.Action("Lecturer", "OfficeHour", new {id = Model.Owners.First().Member.Id})" class="btn btn-default">
                                 <i class="fa fa-calendar"></i> Terminliste
                             </a>
@@ -62,9 +70,53 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
+            <div id="tabHistory" class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                Historie
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            @foreach (var activityDate in historicDates)
+                            {
+                                <h4>@Html.TimeSpanWithDate(activityDate)</h4>
+                                <table class="table table-condensed">
+                                    <tbody>
+                                    @foreach (var slot in activityDate.Slots)
+                                    {
+                                        if (slot.Occurrence.Subscriptions.Any())
+                                        {
+                                            var sub = slot.Occurrence.Subscriptions.FirstOrDefault();
+                                            var name = userService.GetUserName(sub.UserId);
+                                            <tr>
+                                                <td>@Html.TimeSpan(slot)</td>
+                                                <td>
+                                                    <a href="@Url.Action("CoursePlan", "Students", new {id = sub.UserId})">@name</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr id="@slot.Id">
+                                                <td>@Html.TimeSpan(slot)</td>
+                                                <td>keine Belegeung</td>
+                                            </tr>
+
+                                        }
+                                    }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12">
-                    @foreach (var activityDate in Model.Dates.OrderBy(x => x.Begin))
+                    @foreach (var activityDate in futureDates)
                     {
                         <div class="row">
                             <div class="col-md-12">
@@ -75,35 +127,48 @@
                                             <span class="caption-subject bold uppercase"> @Html.TimeSpanWithDate(activityDate)</span>
                                         </div>
                                         <div class="actions">
-                                            @if (!activityDate.Slots.Any(x => x.Occurrence.Subscriptions.Any()))
+                                            <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                <i class="fa fa-envelope"></i> E-Mail senden
+                                            </a>
+
+                                            @if (activityDate.Occurrence.IsCanceled)
                                             {
-                                                <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
-                                                    <i class="fa fa-trash-o"></i> löschen
+                                                <a href="@Url.Action("ReactivateDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                    <i class="fa fa-recycle"></i> reaktivieren
                                                 </a>
                                             }
                                             else
                                             {
-                                                <a href="@Url.Action("CancelDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
-                                                    <i class="fa fa-times"></i> absagen
-                                                </a>
+                                                if (!activityDate.Slots.Any(x => x.Occurrence.Subscriptions.Any()))
+                                                {
+                                                    <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                        <i class="fa fa-trash-o"></i> löschen
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("CancelDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
+                                                        <i class="fa fa-times"></i> absagen
+                                                    </a>
+                                                }
                                             }
                                             <a href="@Url.Action("MoveDate", "OfficeHour", new {id = activityDate.Occurrence.Id})" class="btn btn-circle btn-default">
                                                 <i class="fa fa-calendar"></i> verschieben
                                             </a>
 
                                             <a href="@Url.Action("OfficeHourDate", "Print", new {id = activityDate.Occurrence.Id})"
-                                               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1'); return false;"
+                                               onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1');return false;"
                                                class="btn btn-circle btn-default"><i class="fa fa-print"></i> drucken</a>
                                         </div>
                                     </div>
                                     <div class="portlet-body">
                                         <table class="table table-condensed">
                                             <thead>
-                                                <tr>
-                                                    <th>Slot</th>
-                                                    <th>Eintragung</th>
-                                                    <th></th>
-                                                </tr>
+                                            <tr>
+                                                <th>Slot</th>
+                                                <th>Eintragung</th>
+                                                <th></th>
+                                            </tr>
                                             </thead>
                                             <tbody>
                                             @foreach (var slot in activityDate.Slots)
@@ -112,30 +177,43 @@
                                                 {
                                                     var sub = slot.Occurrence.Subscriptions.FirstOrDefault();
                                                     var name = userService.GetUserName(sub.UserId);
-                                                    <tr>
+                                                    <tr id="@slot.Id">
                                                         <td>@Html.TimeSpan(slot)</td>
-                                                        <td>@name</td>
-                                                        <td></td>
+                                                        <td>
+                                                            <a href="@Url.Action("CoursePlan", "Students", new {id = sub.UserId})">@name</a>
+                                                        </td>
+                                                        <td>
+                                                            @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
+                                                                new {id = slot.Occurrence.Id, userId = sub.UserId},
+                                                                new AjaxOptions()
+                                                                {
+                                                                    HttpMethod = "Post",
+                                                                    InsertionMode = InsertionMode.Replace,
+                                                                    UpdateTargetId = slot.Id.ToString(),
+                                                                },
+                                                                new {@class = "btn btn-default btn-xs"})
+                                                            
+                                                        </td>
                                                     </tr>
                                                 }
                                                 else
                                                 {
                                                     if (slot.Occurrence.IsAvailable)
-                                                     {
-                                                         <tr id="@slot.Id">
-                                                             <td>@Html.TimeSpan(slot)</td>
-                                                             <td></td>
-                                                             <td>@Html.Partial("_LockedSlot", slot)</td>
-                                                         </tr>
-                                                     }
-                                                     else
-                                                     {
-                                                         <tr id="@slot.Id">
-                                                             <td>@Html.TimeSpan(slot)</td>
-                                                             <td></td>
-                                                             <td>@Html.Partial("_LockedSlot", slot)</td>
-                                                         </tr>
-                                                     }
+                                                    {
+                                                        <tr id="@slot.Id">
+                                                            <td>@Html.TimeSpan(slot)</td>
+                                                            <td></td>
+                                                            <td>@Html.Partial("_LockedSlot", slot)</td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr id="@slot.Id">
+                                                            <td>@Html.TimeSpan(slot)</td>
+                                                            <td></td>
+                                                            <td>@Html.Partial("_LockedSlot", slot)</td>
+                                                        </tr>
+                                                    }
                                                 }
                                             }
                                             </tbody>
@@ -160,7 +238,12 @@
 @section scripts{
 
  <script>
-    $(document).ready(function() {
-    });
+     $(document).ready(function () {
+         $("#tabHistory").hide();
+     });
+
+     function showHistory() {
+         $("#tabHistory").show();
+     }
 </script>
 }

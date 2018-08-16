@@ -1,0 +1,388 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryGambleViewModel
+@{
+    ViewBag.Title = "Platzverlosung";
+    var x = DateTime.Now.ToString("s");
+}
+
+@section styles{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinFlat.css")" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Platzverlosung @Model.Lottery.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" id="lotteryView">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Informationen</h4>
+                </div>
+                <div class="panel-body">
+                    <ul class="fa-ul">
+                        <li><i class="fa-li fa fa-user"></i>Es können maximal @Model.Lottery.MaxConfirm Plätze angenommen werden</li>
+                        <li><i class="fa-li fa fa-pencil"></i>Es können maximal in @Model.Lottery.MaxSubscription Lehrveranstaltungen Eintragungen gemacht werden</li>
+
+                        @if (ViewBag.NextDrawing != null)
+                        {
+                            <li><i class="fa-li fa fa-clock-o"></i>Nächste Verlosung am: <strong>@ViewBag.NextDrawing</strong></li>
+                            <li>
+                                <i class="fa-li fa fa-hourglass-3"></i>
+                                Zeit bis zur Verlosung: <span id="lotteryTimer"></span>
+                            </li>
+                            <li>
+                                <i class="fa-li fa fa-exclamation"></i>
+                                Das Fenster wird 5s vor Beginn der Verlosung automatisch deaktiviert
+                            </li>
+                        }
+                        else
+                        {
+                            <li><i class="fa-li fa fa-times"></i><strong>Verlosung beendet</strong></li>
+                            <li><i class="fa-li fa fa-pencil"></i>Ein-/Austragen noch möglich. Es können keine Punkte mehr gesetzt werden.</li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var course in Model.Courses)
+            {
+                var itemColor = "";
+                if (course.Subscription != null)
+                {
+                    if (!course.Subscription.OnWaitingList && course.Subscription.IsConfirmed)
+                    {
+                        itemColor = "list-group-item-success";
+                    }
+                    if (!course.Subscription.OnWaitingList && !course.Subscription.IsConfirmed)
+                    {
+                        itemColor = "list-group-item-info";
+                    }
+                }
+
+                <div class="list-group-item @itemColor">
+                    <h4 class="list-group-item-heading">@course.Course.Name (@course.Course.ShortName)</h4>
+                    <div class="list-group-item-text">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="fa-ul">
+                                    <li><i class="fa-li fa fa-cubes"></i>Insgesamt <strong>@course.Capacity</strong> Pätze</li>
+                                    <li><i class="fa-li fa fa-user"></i>Noch <strong>@course.SeatsAvailable</strong> freie Pätze</li>
+                                    <li><i class="fa-li fa fa-tags"></i>@course.LotPot.Count Eintragungen mit Chancen</li>
+                                    <li><i class="fa-li fa fa-thumbs-o-down"></i>@course.Looser.Count Eintragungen ohne Chance</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                @if (course.Subscription != null)
+                                {
+                                    <ul class="fa-ul">
+                                        @if (course.Subscription.OnWaitingList)
+                                        {
+                                            if (course.LotPot.Any(y => y.Subscription.Id == course.Subscription.Id))
+                                            {
+                                                <li><i class="fa-li fa fa-tags"></i>Meine Eintragung hat Chancen (@course.PoinstForSubscription Punkte gesetzt)</li>
+                                                <li><i class="fa-li fa fa-exclamation-circle"></i>Ich kann jederzeit rausfallen, wenn jemand anderer mehr Punkte einsetzt</li>
+                                            }
+                                            else
+                                            {
+                                                if (course.LotPot.Any())
+                                                {
+                                                    var delta = course.LotPot.Last().Points - course.PoinstForSubscription;
+                                                    var budget = course.AvailableBudget;
+
+                                                    if (budget >= delta)
+                                                    {
+                                                        <li><i class="fa-li fa fa-info-circle text-warning"></i>Aktuell keine Chance. Habe noch Punkte. Muss mindestens @delta Punkte mehr einsetzen</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li><i class="fa-li fa fa-info-circle text-danger"></i>Aktuell keine Chance. Habe nicht mehr genug Punkte zur Verfügung, um in dieser LV einen Platz zu bekommen. Sollte besser eine andere LV wählen, die nicht so voll ist. Oder ggf. meine gesetzten Punkte anders verteilen.</li>
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa-li fa fa-thumbs-o-down"></i>Lehrveranstaltung ausgebucht</li>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (course.Subscription.IsConfirmed)
+                                            {
+                                                <li><i class="fa-li fa fa-thumbs-o-up"></i>Platz gehört mir. Habe @course.PoinstForSubscription Punkte eingesetzt</li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa-li fa fa-ticket"></i>Habe eine Reservierung</li>
+                                                if (Model.Confirmed >= Model.Lottery.MaxConfirm)
+                                                {
+                                                    <li><i class="fa-li fa fa-times"></i>Habe bereits die max. Anzahl an Plätzen angenommen. Kann keine weiteren Reservierungen mehr bestätigen.</li>
+                                                }
+                                            }
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    if (Model.Lottery.MaxSubscription > 0 && Model.Subscribed >= Model.Lottery.MaxSubscription)
+                                    {
+                                        <ul class="fa-ul">
+                                            <li>
+                                                <i class="fa-li fa fa-ban"></i>Habe maximale Anzahl an Eintragungen erreicht. Kann mich in keine weitere Lehrveranstaltung mehr eintragen.
+                                            </li>
+
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <ul class="fa-ul">
+                                            <li>
+                                                <i class="fa-li fa fa-money"></i>Beim Eintragen werden automatisch Anteile der noch verfügbaren Punkte gesetzt.
+                                                <ul>
+                                                    @foreach (var budget in course.Budgets)
+                                                    {
+                                                        <li>@budget.Budget.Name: @budget.PointsAutoBet Punkte werden gesetzt.</li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+
+
+
+                        @if (course.Subscription != null)
+                        {
+                            if (course.Subscription.OnWaitingList)
+                            {
+                                <div class="btn-group  btn-group-justified">
+                                    @if (Model.Lottery.IsActive)
+                                    {
+                                        <a href="@Url.Action("Bet", "Lottery", new {courseId = course.Course.Id, lotId = Model.Lottery.Id})" class="btn btn-default">
+                                            <i class="fa fa-money"></i> Punkte setzen
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Bet", "Lottery", new {courseId = course.Course.Id, lotId = Model.Lottery.Id})" class="btn btn-default">
+                                            <i class="fa fa-money"></i> Punkte ansehen
+                                        </a>
+
+                                    }
+                                    <a href="@Url.Action("Discharge", "Lottery", new {occId = course.Subscription.Occurrence.Id, lotId = Model.Lottery.Id})"
+                                       class="btn btn-default"><i class="fa fa-times"></i>Austragen</a>
+                                </div>
+                            }
+                            else
+                            {
+                                if (course.Subscription.IsConfirmed)
+                                {
+                                    <div class="btn-group  btn-group-justified">
+                                        <a href="@Url.Action("Bet", "Lottery", new {courseId = course.Course.Id, lotId = Model.Lottery.Id})" class="btn btn-default">
+                                            <i class="fa fa-money"></i> Punkte ansehen
+                                        </a>
+                                        <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModal"
+                                           data-lotteryid="@Model.Lottery.Id" data-occurrencid="@course.Subscription.Occurrence.Id">
+                                            <i class="fa fa-times"></i> Platz zurückgeben
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Model.Confirmed < Model.Lottery.MaxConfirm)
+                                    {
+                                        <div class="btn-group  btn-group-justified">
+                                            <a href="#" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal2"
+                                               data-lotteryid="@Model.Lottery.Id" data-occurrencid="@course.Subscription.Occurrence.Id">
+                                                <i class="fa fa-pencil"></i> Reservierung bestätigen
+                                            </a>
+                                            <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModal"
+                                               data-lotteryid="@Model.Lottery.Id" data-occurrencid="@course.Subscription.Occurrence.Id">
+                                                <i class="fa fa-times"></i> Reservierung zurückgeben
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="btn-group  btn-group-justified">
+                                            <a href="@Url.Action("Bet", "Lottery", new {courseId = course.Course.Id, lotId = Model.Lottery.Id})" class="btn btn-default">
+                                                <i class="fa fa-money"></i> Punkte ansehen
+                                            </a>
+                                            <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModal"
+                                               data-lotteryid="@Model.Lottery.Id" data-occurrencid="@course.Subscription.Occurrence.Id">
+                                                <i class="fa fa-times"></i> Reservierung zurückgeben
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="btn-group  btn-group-justified">
+                                <a href="@Url.Action("Bet", "Lottery", new {courseId = course.Course.Id, lotId = Model.Lottery.Id})" class="btn btn-default">
+                                    <i class="fa fa-money"></i> Punkte ansehen
+                                </a>
+                                @if (Model.Lottery.MaxSubscription > 0 && Model.Subscribed >= Model.Lottery.MaxSubscription)
+                                {
+                                    <div class="btn btn-default"><i class="fa fa-ban"></i></div>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Subscribe", "Lottery", new {courseId = course.Course.Id, lotId = Model.Lottery.Id})" class="btn btn-default btn-block">
+                                        <i class="fa fa-pencil"></i> Eintragen und Punkte einsetzen
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid" id="drawingView" hidden>
+    <div class="row">
+        <div class="col-md-12">
+            
+            <h1><i class="fa fa-random"></i> Verlosung läuft
+            </h1>
+            <a href="@Url.Action("MySelection", new {id = Model.Lottery.Id})" class="btn btn-default btn-lg"><i class="fa fa-refresh"></i> Aktualisieren</a>
+        </div>
+    </div>
+</div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Platz zurückgeben</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Wenn ich den Platz zurückgebe, dann rutsche ich an das Ende der Warteliste. Das verringert die Chancen später wieder eine Reserverierung in dieser Lehrveranstaltung zu erhalten.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    <a id="modalBtnRelease" href="" class="btn btn-danger"><i class="fa fa-times"></i> Ja, ich will diesen Platz zurückgeben</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Reservierung bestätigen</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Wenn ich diese Reservierung bestätige, dann habe ich mir einen Platz gesichert. Ich kann unter Umständen keine weitere Reservierung mehr in dieser Lotterie bestätigen.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    <a id="modalBtnConfirm" href="" class="btn btn-success"><i class="fa fa-pencil"></i> Ich will die Reservierung bestätigen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @section scripts{
+        <script src="@Url.Content("~/Assets/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js")" type="text/javascript"></script>
+        <script src="@Url.Content("~/Assets/global/plugins/jquery.sparkline.min.js")" type="text/javascript"></script>
+
+        <script>
+            $('#myModal').on('show.bs.modal',
+                function (event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var lotteryId = button.data('lotteryid'); // Extract info from data-* attributes
+                    var occurrenceId = button.data('occurrencid'); // Extract info from data-* attributes
+
+                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                    //var modal = $('#modelBtnConfirm');
+                    //modal.find('#modelBtnConfirm').
+                    var href = '/Lottery/Release?lotId=' + lotteryId + '&occId=' + occurrenceId;
+                    $('#modalBtnRelease').attr('href', href);
+                })
+        </script>
+
+        <script>
+            $('#myModal2').on('show.bs.modal',
+                function (event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var lotteryId = button.data('lotteryid'); // Extract info from data-* attributes
+                    var occurrenceId = button.data('occurrencid'); // Extract info from data-* attributes
+
+                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                    //var modal = $('#modelBtnConfirm');
+                    //modal.find('#modelBtnConfirm').
+                    var href = '/Lottery/Confirm?lotId=' + lotteryId + '&occId=' + occurrenceId;
+                    $('#modalBtnConfirm').attr('href', href);
+                })
+        </script>
+        
+        @if (ViewBag.NextDrawing != null)
+        {
+            <script>
+                // Set the date we're counting down to
+                var countDownDate = new Date('@ViewBag.NextDrawing.ToString("s")').getTime();
+
+// Update the count down every 1 second
+                var x = setInterval(function() {
+
+                        // Get todays date and time
+                        var now = new Date().getTime();
+
+                        // Find the distance between now an the count down date
+                        var distance = countDownDate - now;
+
+                        // Time calculations for days, hours, minutes and seconds
+                        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        // Display the result in the element with id="demo"
+                        document.getElementById("lotteryTimer").innerHTML =
+                            days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+
+                        // If the count down is finished, write some text
+                        if (distance < 5) {
+                            clearInterval(x);
+                            document.getElementById("lotteryTimer").innerHTML = "EXPIRED";
+                            $("#lotteryView").hide();
+                            $("#drawingView").show();
+                        }
+                    },
+                    1000);
+            </script>
+        }
+    }

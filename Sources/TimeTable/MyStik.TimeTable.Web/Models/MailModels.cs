@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using MyStik.TimeTable.Data;
 
@@ -243,5 +244,91 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public UserMailModel TemplateContent { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class OrgMemberMailModel : UserMailModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Token { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActivityOrganiser Organiser { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ThesisRequestMailModel : UserMailModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Supervision Supervision { get; set; }
+
+        public OccurrenceSubscription Request { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ApplicationUser Requester { get; set; }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ThesisRejectMailModel : UserMailModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Exam Thesis { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ApplicationUser Lecturer { get; set; }
+    }
+
+    public class MemberMoveDateMailModel : UserMailModel
+    {
+        public ApplicationUser SourceUser { get; set; }
+        public ApplicationUser TargetUser { get; set; }
+
+        public OrganiserMember SourceMember { get; set; }
+
+        public OrganiserMember TargetMember { get; set; }
+
+        public OrganiserMember AdminMember { get; set; }
+
+        public ICollection<ActivityDate> Dates { get; set; }
+    }
+
+    public class LotterySelectionMailModel : UserMailModel
+    {
+        public LotterySelectionMailModel()
+        {
+            Courses = new List<LotteryOverviewCourseModel>();
+        }
+        public Lottery Lottery { get; set; }
+
+        public Student Student { get; set; }
+
+        public LotteryGame Game { get; set; }
+
+        public List<LotteryOverviewCourseModel> Courses { get; set; }
+
+        public int ConfirmCount { get; set; }
+
+        public bool AcceptAny { get; set; }
+
+        public DateTime SelectDate { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Web.Services
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Course
 @{
     ViewBag.Title = "Lostopf";
@@ -34,23 +35,38 @@
                             <div id="CourseTable">
                                 <table class="table table-condensed">
                                     <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Runde</th>
-                                    </tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Zeit</th>
+                                            <th>Priorität</th>
+                                            <th>Runde</th>
+                                            <th>Punkte</th>
+                                            <th>Einsätze</th>
+                                        </tr>
                                     </thead>
                                     <tbody id="activityTable">
-                                    @foreach (var subscription in Model.Occurrence.Subscriptions.OrderByDescending(x => x.LapCount))
-                                    {
-                                        var userName = userService.GetUserName(subscription.UserId);
-                                        i++;
+                                        @foreach (var subscription in Model.Occurrence.Subscriptions.OrderByDescending(x => (x.LapCount + x.Bets.Sum(y => y.Amount))))
+                                        {
+                                            var userName = userService.GetUserName(subscription.UserId);
+                                            i++;
                                         <tr>
                                             <td>@i</td>
+                                            <td>@Html.SubscriptionLabel(subscription)</td>
                                             <td>@userName</td>
+                                            <td>@subscription.TimeStamp</td>
+                                            <td>@subscription.Priority</td>
                                             <td>@subscription.LapCount</td>
+                                            <td>@subscription.Bets.Sum(x => x.Amount)</td>
+                                            <td>
+                                                @foreach (var bet in subscription.Bets)
+        {
+                                        <div>@bet.Amount (@bet.Id) <a href="@Url.Action("RemoveBet", new {id=bet.Id})">Löschen</a> </div>
+}
+                                            </td>
                                         </tr>
-                                    }
+                                        }
                                     </tbody>
 
                                 </table>

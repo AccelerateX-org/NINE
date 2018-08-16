@@ -1,0 +1,70 @@
+﻿@model MyStik.TimeTable.Web.Areas.Admin.Models.ChangeSummaryModel
+@{
+    ViewBag.Title = "Terminänderungen";
+}
+
+<div class="page-header">
+    <h1>
+        Terminänderungen <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+    </h1>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        @using (Ajax.BeginForm("Search", "Change", null,
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "userTable"
+                            },
+                            new { @class = "form", role = "form" }))
+                        {
+                            <div class="form-group">
+                                <label for="searchString">Suche nach:</label>
+                                <input type="text" name="searchString" id="searchString" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Suchen" class="btn btn-primary" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <ul class="nav">
+                            <li>@Html.ActionLink("Löschen", "DeleteAll")</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul>
+                        <li>@Model.Count Änderungen</li>
+                        <li>Erste: @Model.First</li>
+                        <li>Letzte: @Model.Last</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+<script>
+</script>
+}

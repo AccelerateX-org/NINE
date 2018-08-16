@@ -1,0 +1,58 @@
+﻿@model MyStik.TimeTable.Web.Models.OfficeHourOverviewModel
+@{
+    ViewBag.Title = "Sprechstunden";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lehrende @Model.Organiser.ShortName mit Sprechstunde im @Model.Semester.Name</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var item in Model.OfficeHours.OrderBy(x => x.Lecturer.Name))
+                    {
+                        <div class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>@item.Lecturer.Name</h5>
+                            </div>
+                            <ul class="fa-ul">
+                                @if (!string.IsNullOrEmpty(item.OfficeHour.Description))
+                                {
+                                    <li>
+                                        <i class="fa fa-li fa-info-circle"></i>
+                                        @Html.Raw(item.OfficeHour.Description)
+                                    </li>
+                                }
+                                <li>
+                                    <i class="fa fa-li fa-calendar"></i>
+                                    @if (item.OfficeHour.ByAgreement)
+                                    {
+                                        <div>Sprechstunde nach Vereinbarung</div>
+                                    }
+                                    else
+                                    {
+                                        if (item.Date != null)
+                                        {
+                                            @Html.ActionLink("zur Terminliste", "Lecturer", "OfficeHour", new { id = item.Lecturer.Id, semId = Model.Semester.Id }, null)
+                                        }
+                                        else
+                                        {
+                                            <div>Keine Termine mehr im laufenden Semester</div>
+                                        }
+                                    }
+                                </li>
+                                @if (!string.IsNullOrEmpty(item.Lecturer.UrlProfile))
+                                {
+                                    <li><i class="fa fa-li fa-globe"></i> <a href="@item.Lecturer.UrlProfile">Profilseite</a></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,121 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.Room>
+@{
+    ViewBag.Title = "Rooms";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Türschilder @ViewBag.Organiser.ShortName @ViewBag.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Räume</h4>
+                </div>
+                <table id="tabRooms" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Raumnummer</th>
+                            <th>Name</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var room in Model)
+                        {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Room", new {id = room.Id})">@room.Number</a>
+                            </td>
+                            <td>@room.Name</td>
+                            <td>
+                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=true, showDateList=false, isMoSa=false })"
+                                   target="_blank"
+                                   class="btn btn-default btn-xs">
+                                    Wochentage (Mo-Fr)
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=true, showDateList=false, isMoSa=true })"
+                                   target="_blank"
+                                   class="btn btn-default btn-xs">
+                                    Wochentage (Mo-Sa)
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("RoomScheduleCurrentWeek", "Print", new { id = room.Id })"
+                                   target="_blank"
+                                   class="btn btn-default btn-xs">
+                                    Aktuelle Woche
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("RoomScheduleNextWeek", "Print", new { id = room.Id })"
+                                   target="_blank"
+                                   class="btn btn-default btn-xs">
+                                    Nächste Woche
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=false, showDateList=true, isMoSa=false })"
+                                   target="_blank"
+                                   class="btn btn-default btn-xs">
+                                    Nur Datumsliste
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=true, showDateList=true, isMoSa=false })"
+                                   target="_blank"
+                                   class="btn btn-default btn-xs">
+                                    Wochentage (Mo-Fr) mit Datumsliste
+                                </a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabRooms').DataTable({
+                paging: false
+            });
+        });
+    </script>
+}

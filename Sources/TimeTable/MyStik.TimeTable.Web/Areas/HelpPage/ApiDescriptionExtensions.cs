@@ -5,9 +5,6 @@ using System.Web.Http.Description;
 
 namespace MyStik.TimeTable.Web.Areas.HelpPage
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public static class ApiDescriptionExtensions
     {
         /// <summary>

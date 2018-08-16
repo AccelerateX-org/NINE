@@ -14,6 +14,94 @@ namespace MyStik.TimeTable.Web.Controllers
     public class UnionController : BaseController
     {
         /// <summary>
+        /// Übersicht der Fachschaft
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index(Guid? id)
+        {
+            ActivityOrganiser union = null;
+
+            if (id != null)
+            {
+                union = GetOrganiser(id.Value);
+            }
+            else
+            {
+                var org = GetMyOrganisation();
+
+                if (org == null)
+                    return View("NoOrg");
+
+                var unionName = org.ShortName.Replace("FK", "FS");
+                union = GetOrganiser(unionName);
+
+                ViewBag.Faculty = org;
+            }
+
+            if (union == null)
+                return View("NoUnion");
+
+            var userRight = GetUserRight(union);
+
+            ViewBag.Union = union;
+            ViewBag.UserRight = userRight;
+
+            if (userRight.IsSysAdmin)
+                return View();
+
+            var member = GetMember(AppUser.UserName, union.ShortName);
+            if (member == null)
+                return View("NoMember");
+
+            // Fälle
+            // Ich bin Admin        => Startseite mit Adminbereich
+            // Ich bin Mitglied     => Startseite ohne Adminbereich
+            // Ich habe angefragt   => No Entry
+            if (member.IsAssociated)
+            {
+                return View("NoEntry");
+            }
+
+            return View();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Member(Guid id)
+        {
+            var union = GetOrganiser(id);
+            var userRight = GetUserRight(union);
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Semester = SemesterService.GetSemester(DateTime.Today);
+
+            return View(union);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Newsletter(Guid id)
+        {
+            var union = GetOrganiser(id);
+            var userRight = GetUserRight(union);
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Semester = SemesterService.GetSemester(DateTime.Today);
+            ViewBag.Union = union;
+
+            var newsletters = Db.Activities.OfType<Newsletter>().Where(x => x.Organiser.Id == union.Id).ToList();
+
+
+
+            return View(newsletters);
+        }
+
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
@@ -70,7 +158,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
 
-                return RedirectToAction("Details", new { id = org.Id });
+                return RedirectToAction("Member", new {id = org.Id});
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -131,7 +219,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
                 // Redirect zu den Members
-                return RedirectToAction("Details", new { id = member.Organiser.Id });
+                return RedirectToAction("Details", new {id = member.Organiser.Id});
             }
 
             return RedirectToAction("Index", "Students");
@@ -153,24 +241,111 @@ namespace MyStik.TimeTable.Web.Controllers
             if (user == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
+
+            // nach dem Benutzer suchen
             var member = organiser.Members.FirstOrDefault(m => m.UserId.Equals(user.Id));
-            if (member != null)
+            if (member == null)
             {
-                return RedirectToAction("Details", new { id = id });
+
+                member = new OrganiserMember
+                {
+                    IsAdmin = false,
+                    UserId = user.Id,
+                    IsAssociated = true // "Gast"
+                };
+
+                organiser.Members.Add(member);
             }
+            // Den Token generieren
+            var token = System.Web.Security.Membership.GeneratePassword(8, 2);
+            member.ShortName = token;
 
-            var prospect = new OrganiserMember
-            {
-                IsAdmin = false,
-                Role = "Prospect",
-                Name = user.FullName,
-                UserId = user.Id
-            };
-
-            organiser.Members.Add(prospect);
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { id = id });
+            // Eine E-Mail senden
+            var mailModel = new OrgMemberMailModel
+            {
+                User = user,
+                Organiser = organiser,
+                Token = token,
+            };
+
+            new MailController().RegisterUnionEMail(mailModel).Deliver();
+
+            return RedirectToAction("Index");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult ConfirmMember(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(x => x.Id == id);
+
+            return View(member);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ConfirmMember(Guid id, string token)
+        {
+            var member = Db.Members.SingleOrDefault(x => x.Id == id);
+            var org = member.Organiser;
+
+            if (member.ShortName.Equals(token))
+            {
+                member.ShortName = string.Empty;
+                member.IsAssociated = false;
+
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("Member", new {id = org.Id});
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult AddAdmin(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(x => x.Id == id);
+            var org = member.Organiser;
+
+            member.IsAdmin = true;
+            member.IsAssociated = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Member", new { id = org.Id });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult RemoveAdmin(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(x => x.Id == id);
+            var org = member.Organiser;
+
+            member.IsAdmin = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Member", new { id = org.Id });
+
+        }
+
+
     }
 }

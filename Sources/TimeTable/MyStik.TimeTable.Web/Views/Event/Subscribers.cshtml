@@ -21,7 +21,7 @@
                                 <th>Name</th>
                                 <th>Vorname</th>
                                 <th>Studienprogramm</th>
-                                <th>Studiengruppe</th>
+                                <th>Studienbeginn</th>
                                 <th>Datum Eintragung</th>
                                 <th>
                                 </th>
@@ -34,8 +34,16 @@
                                     <td>@member.Number</td>
                                     <td>@member.User.LastName</td>
                                     <td>@member.User.FirstName</td>
-                                    <td>@member.User.Curriculum</td>
-                                    <td>@member.User.Group</td>
+                                    @if (member.Student != null)
+                                    {
+                                        <td>@member.Student.Curriculum.ShortName</td>
+                                        <td>@member.Student.FirstSemester.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                    }
                                     <td>@member.Subscription.TimeStamp</td>
                                     <td>
                                         @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOrgAdmin)

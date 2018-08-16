@@ -1,8 +1,9 @@
 ﻿using System;
 using log4net;
 using Microsoft.AspNet.SignalR;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.Lottery;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Hubs
 {
@@ -21,7 +22,9 @@ namespace MyStik.TimeTable.Web.Hubs
 
             var report = new LotteryDrawingReportModel();
 
-            var lotteryService = new LotteryService();
+            var db = new TimeTableDbContext();
+
+            var lotteryService = new LotteryService(db, id);
 
 
             var msg = "Vorbereitung";
@@ -29,7 +32,7 @@ namespace MyStik.TimeTable.Web.Hubs
             var perc2 = 0;
             Clients.Caller.updateProgress(msg, perc1, perc2);
 
-            var lottery = lotteryService.GetLottery(id);
+            var lottery = lotteryService.GetLottery();
 
             if (lottery == null)
             {
@@ -40,7 +43,7 @@ namespace MyStik.TimeTable.Web.Hubs
 
             report.Lottery = lottery;
 
-            var wpmList = lotteryService.GetLotteryCourseList(id);
+            var wpmList = lotteryService.GetLotteryCourseList();
 
             var i = 0;
             var n = wpmList.Count;

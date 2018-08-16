@@ -19,67 +19,84 @@
         @foreach (var date in Model.Dates.OrderBy(d => d.Begin))
         {
             var histAttr = "";
-            if (date.End < GlobalSettings.Now)
+            if (date.End < DateTime.Now)
             {
                 histAttr = "history";
             }
             if (date.Occurrence.IsCanceled)
             {
-                <tr @histAttr>
-                    <td>
-                        @if (date.End >= GlobalSettings.Now)
-                        {
-                            <input id="@date.Id" type="checkbox" onclick="toggleDateCheck(this)" value="" class="chk">
-                        }
-                    </td>
-                    <td>@date.Begin.DayOfWeek</td>
-                    <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
-                    <td><del>@Html.TimeSpan(date)</del></td>
-                    <td colspan="4">abgesagt</td>
-                    <td>
-                        @if (date.End >= GlobalSettings.Now)
-                        {
-                            <div class="btn-group pull-right" role="group">
-                                @Ajax.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate2", "Course",
-                                    new {dateId = date.Id},
-                                    new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
-                                    new {@class = "btn btn-default btn-sm"}
-                                    )
+        <tr @histAttr>
+            <td>
+                @if (date.End >= DateTime.Now)
+                {
+                    <input id="@date.Id" type="checkbox" onclick="toggleDateCheck(this)" value="" class="chk">
+                }
+            </td>
+            <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
+            <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
+            <td><del>@Html.TimeSpan(date)</del></td>
+            <td colspan="4">abgesagt</td>
+            <td>
+                @if (date.End >= DateTime.Now)
+                {
+                    <div class="btn-group pull-right" role="group">
+                        @Ajax.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate2", "Course",
+                            new {dateId = date.Id},
+                            new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
+                            new {@class = "btn btn-default btn-xs"}
+                            )
 
-                                @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
-                                    new {dateId = date.Id},
-                                    new AjaxOptions()
-                                    {
-                                        HttpMethod = "Post",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = "modalDelete",
-                                        OnSuccess = "showEditDateInformation()"
-                                    },
-                                    new {@class = "btn btn-default btn-sm"}
-                                    )
+                        @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                            new {dateId = date.Id},
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "modalDelete",
+                                OnSuccess = "showEditDateInformation()"
+                            },
+                            new {@class = "btn btn-default btn-xs"}
+                            )
 
 
-                                @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
-                                    new {dateId = date.Id},
-                                    new AjaxOptions()
-                                    {
-                                        HttpMethod = "Post",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = "modalDelete",
-                                        OnSuccess = "showConfirmDeleteDate()"
-                                    },
-                                    new {@class = "btn btn-danger btn-sm"}
-                                    )
-                            </div>
-                        }
-                    </td>
-                </tr>
+                        @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                            new {dateId = date.Id},
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "modalDelete",
+                                OnSuccess = "showConfirmDeleteDate()"
+                            },
+                            new {@class = "btn btn-danger btn-xs"}
+                            )
+                    </div>
+                }
+                else
+                {
+                    if (ViewBag.UserRight.IsCourseAdmin)
+                    {
+                        @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                            new { dateId = date.Id },
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "modalDelete",
+                                OnSuccess = "showConfirmDeleteDate()"
+                            },
+                            new { @class = "btn btn-danger btn-xs" }
+                            )
+                    }
+                }
+            </td>
+        </tr>
             }
             else
             {
                 <tr @histAttr>
                     <td>
-                        @if (date.End >= GlobalSettings.Now)
+                        @if (date.End >= DateTime.Now)
                         {
                             <input id="@date.Id" type="checkbox" onclick="toggleDateCheck(this)" value="" class="chk">
                         }
@@ -89,14 +106,16 @@
                     <td>@Html.TimeSpan(date)</td>
                     <td>@Html.RoomList(date.Rooms)</td>
                     <td>@Html.LecturerList(date.Hosts)</td>
-                    @if (string.IsNullOrEmpty(date.Title) && string.IsNullOrEmpty(date.Title))
+                    @if (string.IsNullOrEmpty(date.Title) && string.IsNullOrEmpty(date.Description))
                     {
                         <td>
                         </td>
                     }
                     else
                     {
-                        <td><i class="fa fa-info-circle text-primary"></i></td>
+                        <td><strong>@date.Title</strong>
+                            <div>@date.Description</div>
+                        </td>
                     }
                     @if (string.IsNullOrEmpty(date.Occurrence.Information))
                     {
@@ -107,7 +126,7 @@
                         <td><i class="fa fa-info-circle text-primary"></i></td>
                     }
                     <td>
-                        @if (date.End >= GlobalSettings.Now)
+                        @if (date.End >= DateTime.Now)
                         {
 
                             <div class="btn-group pull-right" role="group">
@@ -147,6 +166,26 @@
 
                             </div>
                         }
+                        else
+                        {
+                            if (ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                    new { dateId = date.Id },
+                                    new AjaxOptions()
+                                    {
+                                        HttpMethod = "Post",
+                                        InsertionMode = InsertionMode.Replace,
+                                        UpdateTargetId = "modalDelete",
+                                        OnSuccess = "showConfirmDeleteDate()"
+                                    },
+                                    new { @class = "btn btn-danger btn-sm" }
+                                    )
+                            }
+                        }
+
+
+
 
                     </td>
                 </tr>

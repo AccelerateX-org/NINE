@@ -1,0 +1,171 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Lehrveranstaltungen " + Model.Organiser.ShortName;
+}
+
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+
+}
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName im @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-group"></i> Semestergruppen
+                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var group in Model.Groups)
+                    {
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading"><a href="#@group.Key.Id" data-toggle="collapse">@group.Key.ShortName</a></h5>
+                        <div class="collapse" id="@group.Key.Id">
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    @foreach (var semGroup in group)
+                                    {
+                                        var iconName = semGroup.IsAvailable ? "fa-check text-success" : "fa-ban text-danger";
+
+                                        <li><i class="fa fa-li @iconName"></i> <a href="javascript:onShowGroup('@semGroup.Id')">@semGroup.FullName</a></li>
+                                    }
+                                </ul>
+                            </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-group"></i> Details</h4>
+                </div>
+                <div class="panel-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#settings" aria-controls="profile" role="tab" data-toggle="tab">Wochenkalender</a></li>
+                        <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Tageskalender</a></li>
+                        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Liste</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="settings">
+                            <div class="panel panel-default">
+                                <div id="weekCal"></div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="panel panel-default">
+                                <div id="dayCal"></div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">
+                            <div class="panel panel-default">
+                                <div id="courseList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+
+
+
+@section scripts
+{
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
+    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            initWeeklyCalendar(630, true, null, "weekCal");
+            initCalendar(false, false, true, "dayCal");
+            $('#dayCal').hide();
+            $('#weekCal').hide();
+        });
+
+
+        function onShowGroup(id) {
+
+            $('#loading').show();
+            $('#dayCal').show();
+            $('#weekCal').show();
+
+            $('#dayCal').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
+            $('#dayCal').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("CourseEventsByProgram", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: id,
+                        topicId: null,
+                        showPersonalDates: false
+                    }
+                });
+
+            $('#weekCal').fullCalendar('removeEventSource', '@Url.Action("GroupPrintPlan", "Calendar")');
+            $('#weekCal').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("GroupPrintPlan", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    }
+                });
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListByProgram", "Curriculum")',
+                    data: {
+                        semGroupId: id,
+                        topicId: null,
+                        compact: true
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseList').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+    </script>
+
+}
+
+

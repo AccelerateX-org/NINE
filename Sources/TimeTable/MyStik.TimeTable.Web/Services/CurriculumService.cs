@@ -310,6 +310,7 @@ namespace MyStik.TimeTable.Web.Services
                 // alle zugehörigen Semestergruppen löschen 
                 // => Die Kurse sind davon nicht betroffen
                 //    sie werden u.U. nicht mehr angezeigt / gefunden
+                /*
                 foreach (var semesterGroup in group.SemesterGroups.ToList())
                 {
                     group.SemesterGroups.Remove(semesterGroup);
@@ -324,6 +325,7 @@ namespace MyStik.TimeTable.Web.Services
 
                     Db.SemesterGroups.Remove(semesterGroup);
                 }
+                */
 
                 // NEUE STRUKTUR
                 // alle zugehörigen CapactityGroups löschen
@@ -331,7 +333,7 @@ namespace MyStik.TimeTable.Web.Services
                 {
                     foreach (var semesterGroup in capGroup.SemesterGroups.ToList())
                     {
-                        group.SemesterGroups.Remove(semesterGroup);
+                        //group.SemesterGroups.Remove(semesterGroup);
 
                         // Alle ggf. vorhandenen Eintragungen (Subscriptions) der
                         // Semestergruppe löschen

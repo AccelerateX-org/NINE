@@ -125,7 +125,7 @@ namespace MyStik.TimeTable.Web
             public async Task<DateTime> StoreLogInAsync(string userId)
             {
                 var user = await FindByIdAsync(userId);
-                var now = GlobalSettings.Now;
+                var now = DateTime.Now;
                 user.LastLogin = now;
 
                 // in jedem Fall wieder auf aktiv für E-Mail setzen

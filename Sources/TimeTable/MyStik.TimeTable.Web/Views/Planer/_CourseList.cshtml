@@ -25,7 +25,7 @@
     {
         var linkText = c.Course.Name + " (" + c.Course.ShortName + ")";
         <tr>
-            @if (c.HasLottery)
+            @if (c.Lottery != null)
             {
                 <td><i class="fa fa-random"></i></td>
 
@@ -65,7 +65,14 @@
             <td>
                 @if (c.Course is Course)
                 {
-                    @Html.Partial("_SubscriptionState", c.State)
+                    if (c.Lottery != null)
+                     {
+                <a href="@Url.Action("Overview", "Lottery", new {id=c.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
+                     }
+                     else
+                     {
+                         @Html.Partial("_SubscriptionState", c.State)
+                     }
                 }
             </td>
         </tr>

@@ -1,0 +1,12 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisRejectModel
+@{
+    ViewBag.Title = "Reject";
+}
+
+<h2>Betreuung der Abschlussarbeit ablehnen</h2>
+
+<p>Die Anfrage wird gelöscht</p>
+<p>Der Studierende wird per E-Mail informiert</p>
+
+<a href="@Url.Action("RejectConfiremd", new {id=@Model.Subscription.Id})" class="btn btn-danger">Ablehnung bestätigen</a>
+

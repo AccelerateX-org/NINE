@@ -1,140 +1,143 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Mitglieder " + Model.Organiser.ShortName;
+    ViewBag.Title = "Lehrende " + Model.Organiser.ShortName;
 }
-
-@section styles
-{
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
-}
-
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-lecturer">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Leherende in @Model.Organiser.ShortName</h1>
+                    <h1>Lehrende @Model.Organiser.ShortName</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Index")" class="btn btn-default active">
-                                <i class="fa fa-list"></i> als Liste
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Today")" class="btn btn-default">
-                                <i class="fa fa-coffee"></i> heute da
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Active")" class="btn btn-default">
-                                <i class="fa fa-calendar"></i> Status @Model.Semester.Name
-                            </a>
-                        </div>
-                        @if (ViewBag.UserRight.IsMemberAdmin)
-                        {
-                            <div class="form-group">
-                                <a href="@Url.Action("CreateMember", "Organiser", new {id = Model.Organiser.Id})" class="btn btn-default">
-                                    <i class="fa fa-plus-circle"></i> Dozent anlegen
-                                </a>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 <div class="container-fluid">
-
     <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> Alle Personen
-                    </div>
-                    <div class="actions">
-                    </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-address-card-o"></i> Mitglieder <small>Alle, die der Fakultät angehören</small>
+                    </h4>
                 </div>
-                <div class="portlet-body">
-                    <table id="tabMembers" class="table table-condensed table-striped">
-                        <thead>
-                        <tr>
-                            <th>Kurzname</th>
-                            <th>Name</th>
-                            <th>Rolle</th>
-                            @if (ViewBag.UserRight.IsOrgMember)
-                            {
-                                <th>Beschreibung</th>
-                            }
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Members)
-                            {
-                                <tr>
-                                    <td>@item.Member.ShortName</td>
-                                    @if (string.IsNullOrEmpty(item.Member.Name))
-                                    {
-                                        <td>
-                                            @Html.ActionLink("N.N.", "Member", "Organiser", new {id = item.Member.Id}, null)
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td>
-                                            @Html.ActionLink(item.Member.Name, "Member", "Organiser", new {id = item.Member.Id}, null)
-                                        </td>
-                                    }
-                                    <td>@item.Member.Role</td>
-                                    @if (ViewBag.UserRight.IsOrgMember)
-                                    {
-                                        <td>@item.Member.Description</td>
-                                    }
-                                    <td>
-                                        @if (ViewBag.UserRight.IsMemberAdmin)
-                                        {
-                                            @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMember", "Organiser", new {id = item.Member.Id}, null)
-                                            @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new {id = item.Member.Id}, null)
-                                        }
-                                    </td>
-                                </tr>
-                            }
+                <div class="list-group">
+                    <a href="@Url.Action("List", "OrganiserMembers")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-list"></i> Als Datentabelle
+                        </h5>
+                        <p class="list-group-item-text">
+                            Datentabelle zum Suchen
+                        </p>
+                    </a>
+                    <a href="@Url.Action("Roles", "OrganiserMembers")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-user-md"></i> Nach Rollen
+                        </h5>
+                        <p class="list-group-item-text">
+                            Profs, LBs, MAs, etc.
+                        </p>
+                    </a>
+                    <a href="@Url.Action("Responsibilities", "OrganiserMembers")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-user-md"></i> Nach Verantwortungsbereichen
+                        </h5>
+                        <p class="list-group-item-text">
+                            Ansprechpartner für Studierende, z.B. Praktikumsbetreuung, Studienfachberatung
+                        </p>
+                    </a>
 
-                        </tbody>
-                    </table>
+                    <a href="@Url.Action("Today", "OrganiserMembers")" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-coffee"></i> Heute aktiv
+                        </h5>
+                        <p class="list-group-item-text">
+                            Wen kann ich heute erreichen?
+                        </p>
+                    </a>
                 </div>
             </div>
         </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-microphone"></i> Dozentinnen und Dozenten <small>Alle, die in Lehrveranstaltungen der Fakultät aktiv sind</small>
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @if (Model.PreviousSemester != null)
+                    {
+                        <a href="@Url.Action("Active", "OrganiserMembers", new {id=Model.PreviousSemester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-backward"></i> Letztes Semester (@Model.PreviousSemester.Name)
+                            </h5>
+                            <p class="list-group-item-text"></p>
+                        </a>
+                    }
+                    <a href="@Url.Action("Active", "OrganiserMembers", new {id=Model.Semester.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-pause"></i> Aktuelles Semester (@Model.Semester.Name)
+                        </h5>
+                        <p class="list-group-item-text"></p>
+                    </a>
+                    @if (Model.NextSemester != null)
+                    {
+                        <a href="@Url.Action("Active", "OrganiserMembers", new {id = Model.NextSemester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-forward"></i> Nächstes Semester (@Model.NextSemester.Name)
+                            </h5>
+                            <p class="list-group-item-text"></p>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (ViewBag.UserRight.IsMemberAdmin)
+        {
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-cogs"></i> Verwaltung
+                        </h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("CreateMember", "Organiser")" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-plus"></i> Lehrenden anlegen
+                            </h5>
+                            <p class="list-group-item-text">
+
+                            </p>
+                        </a>
+                        <a href="@Url.Action("MoveDates", "OrganiserMembers")" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-handshake-o"></i> Termine übertragen
+                            </h5>
+                            <p class="list-group-item-text">
+                                Bei Ausfall, Organisation von "Importen"
+                            </p>
+                        </a>
+                        <a href="@Url.Action("Manage", "OrganiserMembers")" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-trash-o"></i> Bereinigen
+                            </h5>
+                            <p class="list-group-item-text">
+                                Inaktive oder ausgeschiedene Lehrende löschen
+                            </p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
-
-@section scripts
-{
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-
-    <script>
-        $(document).ready(function () {
-            $('#tabMembers').DataTable();
-        });
-    </script>
-}

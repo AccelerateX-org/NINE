@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Room = room;
                 // Alle Belegungen, die heute stattfinden und deren Ende nach dem aktuellen Zeitpunkt liegen
                 model.CurrentDates = room.Dates.Where(d =>
-                    d.End >= GlobalSettings.Now && d.End <= GlobalSettings.Today.AddDays(1) &&
+                    d.End >= DateTime.Now && d.End <= DateTime.Today.AddDays(1) &&
                     !d.Occurrence.IsCanceled)
                     .OrderBy(d => d.Begin).ToList();
 
@@ -39,7 +39,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (nextDate != null)
                 {
-                    if (GlobalSettings.Now <= nextDate.End)
+                    if (DateTime.Now <= nextDate.End)
                     {
                         model.CurrentDate = nextDate;
                     }

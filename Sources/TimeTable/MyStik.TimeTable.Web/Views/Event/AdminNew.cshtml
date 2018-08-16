@@ -1,0 +1,102 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.EventDetailViewModel
+
+
+@{
+    ViewBag.Title = "Verwaltung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>@Model.Event.Name</h4>
+                <p>@Html.LecturerList(Model.Lecturers, showLinks: false)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-film"></i> Aktuelles</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Termine diese Woche</h5>
+                        <ul>
+                            <li>Keine Termine</li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Nächste Woche</h5>
+                        <ul>
+                            <li>Dienstag 12.06.2018 - 09:00-10:30 in R 1.083</li>
+                        </ul>
+                    </div>
+                @*
+                    <a href="@Url.Action("Download", new {id=Model.Event.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-download"></i> Teilnehmerlisten</h5>
+                    </a>
+                    <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Event.Occurrence.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-envelope-o"></i> Mail senden</h5>
+                    </a>
+                    *@
+                    <a href="@Url.Action("Details", null, new {id=Model.Event.Id})" class="list-group-item list-group-item-info">
+                        <h5 class="list-group-item-heading"><i class="fa fa-rocket"></i> Studierendensicht</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-wrench"></i> Verwaltung</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("AdminNewDates", new {id = Model.Event.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-calendar"></i> Termine</h5>
+                        <div class="list-group-item-text">
+                            Absagen, Verlegen, Verschieben, Löschen, Anlegen
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-cogs"></i> Einstellungen</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("AdminNewInfos", new {id = Model.Event.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-info-circle"></i> Allgemeine Informationen</h5>
+                        <div class="list-group-item-text">
+                            Kursbeschreibung, Angaben zu moodle Kurs, etc.
+                        </div>
+                    </a>
+                    <a href="@Url.Action("ChangeGroups", new {id = Model.Event.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading"><i class="fa fa-group"></i> Semestergruppen</h5>
+                        <div class="list-group-item-text">
+                            Einordnung im Vorlesungsverzeichnis
+                        </div>
+                    </a>
+                    @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                    {
+                        <a href="@Url.Action("Owners", new {id = Model.Event.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading"><i class="fa fa-user-circle-o"></i> Besitzer</h5>
+                        </a>
+                        <a href="@Url.Action("DeleteEvent", new {id = Model.Event.Id})" class="list-group-item list-group-item-danger">
+                            <h5 class="list-group-item-heading"><i class="fa fa-trash-o"></i> Löschen</h5>
+                        </a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

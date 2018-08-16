@@ -199,7 +199,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                     if (nDays < 0)
                         nDays += 7;
 
-                    DateTime occDate = semester.StartCourses.AddDays(nDays);
+                    DateTime occDate = semesterAnfang.AddDays(nDays);
 
 
                     //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
@@ -236,13 +236,19 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                             foreach (Raum raum in termin.Raeume)
                             {
                                 var room = InitRoom(db, raum, organiser);
-                                occ.Rooms.Add(room);
+                                if (room != null)
+                                {
+                                    occ.Rooms.Add(room);
+                                }
                             }
 
                             foreach (var dozent in termin.Dozenten)
                             {
                                 var lecturer = InitLecturer(db, dozent, organiser);
-                                occ.Hosts.Add(lecturer);
+                                if (lecturer != null)
+                                {
+                                    occ.Hosts.Add(lecturer);
+                                }
                             }
 
                             db.ActivityDates.Add(occ);
@@ -279,7 +285,11 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
         private OrganiserMember InitLecturer(TimeTableDbContext db, Dozent dozent, ActivityOrganiser organiser)
         {
-            var lecturer = organiser.Members.SingleOrDefault(l => l.ShortName.Equals(dozent.DozentID));
+            var n = organiser.Members.Count(l => l.ShortName.Equals(dozent.DozentID));
+            if (n > 1)
+                return null;
+
+            var lecturer = organiser.Members.FirstOrDefault(l => l.ShortName.Equals(dozent.DozentID));
             if (lecturer == null)
             {
                 string profileUrl = null;
@@ -306,7 +316,7 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
         private Room InitRoom(TimeTableDbContext db, Raum raum, ActivityOrganiser organiser)
         {
-            var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(raum.Nummer));
+            var room = db.Rooms.FirstOrDefault(r => r.Number.Equals(raum.Nummer));
             if (room == null)
             {
                 room = new Room
@@ -479,17 +489,15 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                     var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(raum.Nummer));
                     if (room == null)
                     {
-                        _import.AddErrorMessage("Import", 
-                            string.Format(
-                                "Raum [{0}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {1} zugeordnet",
-                                raum.Nummer, org.ShortName), false);
+                        _import.AddErrorMessage("Import",
+                            $"Raum [{raum.Nummer}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet", false);
                     }
                     else
                     {
                         if (room.Assignments.All(a => a.Organiser.Id != org.Id))
                         {
-                            _import.AddErrorMessage("Import", string.Format("Raum [{0}] existiert hat aber keine Zurodnung zu {1}. Zuordnung wird bei Import automatisch angelegt.",
-                                raum.Nummer, org.ShortName), false);
+                            _import.AddErrorMessage("Import",
+                                $"Raum [{raum.Nummer}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.", false);
                         }
                     }
 
@@ -510,10 +518,18 @@ namespace MyStik.TimeTable.DataServices.GpUntis
 
             foreach (var doz in _import.Dozenten.Where(d => d.IsTouched))
             {
-                var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz.DozentID));
-                if (lec == null)
+                if (org.Members.Count(m => m.ShortName.Equals(doz.DozentID)) > 1)
                 {
-                    _import.AddErrorMessage("Import", string.Format("Dozent [{0} ({1})] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz.Name, doz.DozentID), false);
+                    _import.AddErrorMessage("Import", string.Format("Kurzname {0} existieren mehrfach in Datenbank. Dozent wird keinem Termin zugeordnet", doz.DozentID), true);
+                }
+                else
+                {
+                    var lec = org.Members.SingleOrDefault(m => m.ShortName.Equals(doz.DozentID));
+                    if (lec == null)
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Dozent [{0} ({1})] existiert nicht in Datenbank. Wird bei Import automatisch angelegt.", doz.Name, doz.DozentID), false);
+                    }
+
                 }
             }
         }
@@ -538,18 +554,18 @@ namespace MyStik.TimeTable.DataServices.GpUntis
                     // Alias existiert nicht in der Datenbank
                     // wenn es im Context eine Vorgabe gibt, dann wäre diese jetzt zu verwenden!
 
-                    // gibt es eine Zuordnung?
+                    // gibt es eine Zuordnung? in der Curriculumsdati
                     var z = _import.GruppenZuordnungen.Any(x => x.Alias.Equals(gruppe.GruppenID));
                     if (!z)
                     {
                         // auch kein Alias => diese Gruppe passt nicht
                         gruppe.IsValid = false;
-                        _import.AddErrorMessage("Import", string.Format("Alias für Gruppe [{0}] existiert nicht! Gruppe wird nicht importiert.", gruppe.GruppenID), true);
+                        _import.AddErrorMessage("Import", string.Format("Studiengruppe für Klasse [{0}] existiert nicht! Daten zu dieser Klasse werden nicht importiert.", gruppe.GruppenID), true);
                     }
                     else
                     {
                         // Alias vorhanden => wird angelegt
-                        _import.AddErrorMessage("Import", string.Format("Alias für Gruppe [{0}] wird angelegt.", gruppe.GruppenID), false);
+                        _import.AddErrorMessage("Import", string.Format("Studiengruppe für Klasse [{0}] existiert. Die Klasse wird als Alias in der Studiengruppe ergänzt.", gruppe.GruppenID), false);
                     }
 
                 }

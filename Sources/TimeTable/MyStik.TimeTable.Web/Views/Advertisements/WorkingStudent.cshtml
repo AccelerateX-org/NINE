@@ -1,0 +1,68 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Advertisement>
+@{
+    ViewBag.Title = "Ausschreibungen für Praxissemester";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-industry"></i> Ausschreibungen für Werkstudententätigkeiten
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var adv in Model)
+                    {
+                        var linkDescription = string.Format("desc{0}", adv.Id);
+
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                @adv.Title (@adv.Created.ToShortDateString())
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-user-md"></i>Kontakt: @adv.Owner.FullName</li>
+                                        @if (adv.Attachment != null)
+                                        {
+                                            <li><i class="fa fa-li fa-file-pdf-o"></i><a href="@Url.Action("ShowFile", new {id = adv.Attachment.Id})" target="_blank">Weitere Informationen</a></li>
+                                        }
+                                        @if (!string.IsNullOrEmpty(adv.Description))
+                                        { 
+                                            <li>
+                                                <i class="fa-li fa fa-info-circle"></i>Beschreibung: <a href="#@linkDescription" data-toggle="collapse">einblenden</a>
+                                                <div class="collapse" id="@linkDescription">
+                                                    <div class="panel panel-default">
+                                                        @Html.Raw(adv.Description)
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="fa-ul">
+                                        @if (adv.ForThesis)
+                                        {
+                                            <li><i class="fa fa-li fa-graduation-cap"></i>Abschlussarbeit</li>
+                                        }
+                                        @if (adv.ForStayAbroad)
+                                        {
+                                            <li><i class="fa fa-li fa-globe"></i>Auslandsaufenthalt</li>
+                                        }
+                                        @if (adv.ForAdvancement)
+                                        {
+                                            <li><i class="fa fa-li fa-money"></i>Förderung</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

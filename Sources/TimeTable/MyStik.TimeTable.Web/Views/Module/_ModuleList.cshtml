@@ -1,0 +1,6 @@
+﻿@model MyStik.TimeTable.Data.PackageOption  
+
+@foreach (var req in Model.Requirements)
+{
+    <option value="@req.Id">@req.Name</option>
+}

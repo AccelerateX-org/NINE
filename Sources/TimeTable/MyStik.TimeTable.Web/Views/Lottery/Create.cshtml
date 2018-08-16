@@ -38,44 +38,29 @@
                     </div>
                 </div>
                 <div class="portlet-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal", role = "form"}
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
                         ))
                     {
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true)
+                        @Html.HiddenFor(m => m.SemesterId)
                         <div class="form-group">
-                            @Html.LabelFor(m => m.Name, new {@class = "col-sm-4 control-label"})
+                            @Html.LabelFor(m => m.Name, new { @class = "col-sm-4 control-label" })
                             <div class="col-sm-8">
-                                @Html.TextBoxFor(m => m.Name, new {@class = "form-control"})
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
                             </div>
                         </div>
+
                         <div class="form-group">
-                            @Html.LabelFor(m => m.MaxConfirm, new { @class = "col-sm-4 control-label" })
+                            @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
                             <div class="col-sm-8">
-                                @Html.TextBoxFor(m => m.MaxConfirm, new { @class = "form-control" })
+                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows=10 })
                             </div>
                         </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.FirstDrawing, new {@class = "col-sm-4 control-label"})
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.FirstDrawing, new {@class = "form-control datepicker"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.LastDrawing, new {@class = "col-sm-4 control-label"})
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.LastDrawing, new {@class = "form-control datepicker"})
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.DrawingTime, new {@class = "col-sm-4 control-label"})
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.DrawingTime, new {@class = "form-control timepicker timepicker-24"})
-                            </div>
-                        </div>
+
                         <div class="form-group">
                             <div class="col-md-offset-4 col-md-8">
-                                <input type="submit" value="Anlegen" class="btn btn-primary"/>
+                                <input type="submit" value="Anlegen" class="btn btn-primary" />
                             </div>
                         </div>
                     }

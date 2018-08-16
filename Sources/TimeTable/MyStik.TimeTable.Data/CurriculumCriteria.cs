@@ -4,12 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /// <summary>
+    /// Der Modulbereich
+    /// </summary>
     public class CurriculumCriteria
     {
         public CurriculumCriteria()
         {
             Accreditations = new HashSet<ModuleAccreditation>();    
             Rules = new HashSet<CriteriaRule>();
+            Groups = new HashSet<CurriculumGroup>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,13 +21,25 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Der zugehörige Studiengang
+        /// deprecated
+        /// geht zukünftig über die Option
         /// </summary>
-        public virtual Curriculum Curriculum { get; set; }
+        //public virtual Curriculum Curriculum { get; set; }
+
+        /// <summary>
+        /// Die zugehörige Anforderung
+        /// </summary>
+        public virtual CurriculumRequirement Requirement { get; set; }
 
         /// <summary>
         /// Bezeichnung, z.B. Grundstudium
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Nummer des Fachsemesters
+        /// </summary>
+        public int Term { get; set; }
 
         /// <summary>
         /// Kurzbezeichnung, z.B. GS
@@ -50,8 +66,26 @@ namespace MyStik.TimeTable.Data
         public int Option { get; set; }
 
 
+        /// <summary>
+        /// Der fachliche Bereich, z.B. GOP, Studienrichtung, Modulbereich
+        /// </summary>
+        public virtual CurriculumChapter Chapter { get; set; }
+
+        /// <summary>
+        /// die zeitliche Anordnung
+        /// es gilt 1 Kriterium ertsreckt sich genau über ein Semester
+        /// </summary>
+        public virtual ICollection<CurriculumGroup> Groups { get; set; }
+
+        /// <summary>
+        /// Die Akkreditierungen
+        /// </summary>
         public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
 
+        /// <summary>
+        /// Das sind die zeitlichen Regeln, hier steckt die Verknüpfung zu den Gruppen
+        /// </summary>
         public virtual ICollection<CriteriaRule> Rules { get; set; } 
+
     }
 }

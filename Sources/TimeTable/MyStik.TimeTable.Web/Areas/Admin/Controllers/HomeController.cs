@@ -5,8 +5,6 @@ using System.Linq;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Data.DefaultData;
-using MyStik.TimeTable.DataServices.Curriculum;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Models;
@@ -43,14 +41,12 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 model.Organisers.Add(orgModel);
             }
 
-            var mc = new ModuleCatalogService();
             var allCurr = Db.Curricula.ToList();
             foreach (var curriculum in allCurr)
             {
                 model.Curricula.Add(new CurriculumState
                 {
                     Curriculum = curriculum,
-                    ModuleCatalog = mc.GetCatalog(curriculum.Organiser.ShortName, curriculum.ShortName)
                 });
 
             }
@@ -156,6 +152,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
+        /*
         public ActionResult InitFK09()
         {
             var data = new InfrastructureData();
@@ -247,7 +244,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
-
+        */
         /// <summary>
         /// 
         /// </summary>

@@ -1,5 +1,9 @@
 ﻿
-function initCalendar(isInteractive, isMoFr, isSmall) {
+function initCalendar(isInteractive, isMoFr, isSmall, idCal) {
+
+    if (idCal == null || idCal === "")
+        idCal = "calendar";
+
     $('body').popover({
         selector: '[data-toggle="popover"]'
     });
@@ -10,34 +14,6 @@ function initCalendar(isInteractive, isMoFr, isSmall) {
 
     $('#loading').hide();
 
-
-    ////
-    // Den Kalender "druckbar" machen
-    // Gefunden http://code.google.com/p/fullcalendar/issues/detail?id=35 #42
-    /*
-    var w = $('#calendar').css('width');
-    var beforePrint = function () {
-        // prepare calendar for printing
-        $('#calendar').css('width', '7.5in');
-        $('#calendar').fullCalendar('render');
-    };
-    var afterPrint = function () {
-        $('#calendar').css('width', w);
-        $('#calendar').fullCalendar('render');
-    };
-    if (window.matchMedia) {
-        var mediaQueryList = window.matchMedia('print');
-        mediaQueryList.addListener(function (mql) {
-            if (mql.matches) {
-                beforePrint();
-            } else {
-                afterPrint();
-            }
-        });
-    }
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-        */
 
     var smallScreen = false;
     if (window.innerWidth < 768)
@@ -52,8 +28,8 @@ function initCalendar(isInteractive, isMoFr, isSmall) {
     }
 
 
-    $('#calendar').fullCalendar('destroy'); // destroy the calendar
-    $('#calendar').fullCalendar({
+    $('#' + idCal).fullCalendar('destroy'); // destroy the calendar
+    $('#' + idCal).fullCalendar({
         weekNumbers: true,
         header: {
             left: 'title',
@@ -70,10 +46,10 @@ function initCalendar(isInteractive, isMoFr, isSmall) {
         firstDay: 1,
         contentHeight: contentHeight,
         eventRender: function (event, element, view) {
-
+            
             if (event.htmlToolbarInfo != null || (event.htmlToolbar != null && isInteractive)) {
 
-                var htmlToolBar = "<span  class=\"btn-group nine-fc-event-subscription\">";
+                var htmlToolBar = "";
 
                 if (event.htmlToolbarInfo != null) {
                     htmlToolBar += event.htmlToolbarInfo;
@@ -82,11 +58,15 @@ function initCalendar(isInteractive, isMoFr, isSmall) {
                 if (event.htmlToolbar != null && isInteractive) {
                     htmlToolBar += event.htmlToolbar;
                 }
-                htmlToolBar += "</span>";
 
-                element.find('.fc-content').prepend(htmlToolBar);
+                htmlToolBar = htmlToolBar.trim();
+
+                if (htmlToolBar.length > 0) {
+                    var html = "<span  class=\"btn-group nine-fc-event-subscription\">" + htmlToolBar + "</span>";
+                    element.find('.fc-content').prepend(html);
+                }
             }
-
+            
             if (event.htmlContent != null) element.find('.fc-content').append(event.htmlContent);
         },
         loading: function (bool) {
@@ -98,16 +78,17 @@ function initCalendar(isInteractive, isMoFr, isSmall) {
     });
 }
 
-function initPrintCalendar() {
+function initPrintCalendar(height, isMoSa, defaultDate) {
 
     $('#loading').hide();
 
     // Den Kalender "druckbar" machen
     // Gefunden http://code.google.com/p/fullcalendar/issues/detail?id=35 #42
+    /*
     var w = $('#calendar').css('width');
     var beforePrint = function () {
         // prepare calendar for printing
-        $('#calendar').css('width', '7.5in');
+        //$('#calendar').css('width', '21.5cm');
         $('#calendar').fullCalendar('render');
     };
     var afterPrint = function () {
@@ -126,7 +107,8 @@ function initPrintCalendar() {
     }
     window.onbeforeprint = beforePrint;
     window.onafterprint = afterPrint;
-
+    */
+    
 
     $('#calendar').fullCalendar('destroy'); // destroy the calendar
     $('#calendar').fullCalendar({
@@ -141,29 +123,17 @@ function initPrintCalendar() {
         slotDuration: "00:30:00",
         minTime: "08:00:00",
         maxTime: "22:00:00",
-        columnFormat: "dddd",
+        columnFormat: defaultDate ? "dd DD.MM.YYYY" : "dddd",
         slotEventOverlap: false,
-        hiddenDays: null,
+        hiddenDays: isMoSa ? [0] : [0, 6],
         firstDay: 1,
-        //contentHeight: 1088,
+        height: height,
+        defaultDate: defaultDate,
+        /*
         eventRender: function (event, element, view) {
-            /*
-            if (event.htmlToolbarInfo != null) {
-
-                var htmlToolBar = "<span  class=\"btn-group nine-fc-event-subscription\">";
-
-                if (event.htmlToolbarInfo != null) {
-                    htmlToolBar += event.htmlToolbarInfo;
-                }
-
-                htmlToolBar += "</span>";
-
-                element.find('.fc-content').prepend(htmlToolBar);
-            }
-            */
-
             if (event.htmlContent != null) element.find('.fc-content').append(event.htmlContent);
         },
+        */
         loading: function (bool) {
             if (bool)
                 $('#loading').show();
@@ -172,6 +142,46 @@ function initPrintCalendar() {
         },
     });
 }
+
+
+
+function initWeeklyCalendar(height, isMoSa, defaultDate, idCal) {
+
+
+    if (idCal == null || idCal === "")
+        idCal = "calendar";
+
+    $('#loading').hide();
+
+
+    $('#' + idCal).fullCalendar('destroy'); // destroy the calendar
+    $('#' + idCal).fullCalendar({
+        weekNumbers: false,
+        header: {
+            left: '',
+            center: '',
+            right: ''
+        },
+        defaultView: 'agendaWeek',
+        allDaySlot: false,
+        slotDuration: "00:30:00",
+        minTime: "08:00:00",
+        maxTime: "22:00:00",
+        columnFormat: defaultDate ? "dd DD.MM.YYYY" : "dddd",
+        slotEventOverlap: false,
+        hiddenDays: isMoSa ? [0] : [0, 6],
+        firstDay: 1,
+        height: height,
+        defaultDate: defaultDate,
+        loading: function (bool) {
+            if (bool)
+                $('#loading').show();
+            else
+                $('#loading').hide();
+        },
+    });
+}
+
 
 
 function initMobileCalendar(isInteractive, isMoFr) {

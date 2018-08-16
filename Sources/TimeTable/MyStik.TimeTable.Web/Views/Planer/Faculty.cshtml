@@ -1,0 +1,84 @@
+﻿@model MyStik.TimeTable.Web.Models.PlanerGroupViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="panel panel-default panel-menu" style="margin-top: 0px">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <a href="@Url.Action("Index")" class="btn btn-default">
+                            <i class="fa fa-group"></i> Alles von meiner Semestergruppe
+                        </a>
+                        <a href="@Url.Action("Dictionary")" class="btn btn-default">
+                            <i class="fa fa-book"></i> Das komplette Verzeichnis
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lehrveranstaltungen für @Model.Organiser.ShortName im @Model.Semester.Name <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                </div>
+                <div class="panel-body">
+                    <div id="courseTable"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListByFaculty", "Planer")',
+                    data: {
+                        orgId: "@Model.Organiser.Id.ToString()",
+                        semId: "@Model.Semester.Id",
+                        compact: false
+                    },
+                    success: function(data, success, xhr) {
+                        $('#courseTable').html(data);
+                        $('#loading').hide();
+                        $('#tabCourses').DataTable(
+                            {
+                                "paging": false
+                            }
+                        );
+
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        });
+    </script>
+}

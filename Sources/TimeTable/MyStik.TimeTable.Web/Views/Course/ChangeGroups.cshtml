@@ -7,29 +7,19 @@
 {
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Gruppenzugehörigkeit für @Model.Course.Name ändern</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@Html.Partial("_CourseSummaryHeader", Model.Summary)
+
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8">
-            <div class="portlet light bordered">
+            <div class="panel panel-default">
                 <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>
-                        <span class="caption-subject bold uppercase"> Gruppen der Lehrveranstaltung</span>
-                    </div>
+                    <h4>
+                        <i class="fa fa-book"></i> Einordnung im Vorlesungsverzeichnis nach Semestergruppen
+                    </h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     <div class="form-horizontal">
                         @Html.HiddenFor(m => m.CourseId)
                         <div class="form-group">
@@ -38,43 +28,43 @@
                                 <div id="GroupTable">
                                     <table class="table table-condensed">
                                         <thead>
-                                        <tr>
-                                            <th>Fakultät</th>
-                                            <th>Semester</th>
-                                            <th>Studiengang</th>
-                                            <th>Gruppenname</th>
-                                            <th>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control  input-sm", onchange = "onFacultyChanged()" })
-                                            </th>
-                                            <th>
-                                                @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
-                                            </th>
-                                            <th>
-                                                @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control  input-sm", onchange = "onCurriculumChanged()" })
-                                            </th>
-                                            <th>
-                                                @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control  input-sm" })
-                                            </th>
-                                            <th>
-                                                <button class="btn btn-default btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
-                                            </th>
-                                        </tr>
+                                            <tr>
+                                                <th>Fakultät</th>
+                                                <th>Semester</th>
+                                                <th>Studiengang</th>
+                                                <th>Gruppenname</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control  input-sm", onchange = "onFacultyChanged()" })
+                                                </th>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
+                                                </th>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control  input-sm", onchange = "onCurriculumChanged()" })
+                                                </th>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control  input-sm" })
+                                                </th>
+                                                <th>
+                                                    <button class="btn btn-default btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
+                                                </th>
+                                            </tr>
                                         </thead>
                                         <tbody id="groupList">
-                                        @foreach (var group in Model.Course.SemesterGroups)
-                                        {
-                                            <tr id="@group.Id">
-                                                <td>@group.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName</td>
-                                                <td>@group.Semester.Name</td>
-                                                <td>@group.CapacityGroup.CurriculumGroup.Curriculum.ShortName</td>
-                                                <td>@group.CapacityGroup.GroupName</td>
-                                                <td><button class="btn btn-default btn-sm" onclick="deleteRow('@group.Id');"><i class="fa fa-trash-o"></i></button></td>
-                                            </tr>
-                                        }
+                                            @foreach (var group in Model.Course.SemesterGroups)
+                                            {
+                                                <tr id="@group.Id">
+                                                    <td>@group.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName</td>
+                                                    <td>@group.Semester.Name</td>
+                                                    <td>@group.CapacityGroup.CurriculumGroup.Curriculum.ShortName</td>
+                                                    <td>@group.CapacityGroup.GroupName</td>
+                                                    <td><button class="btn btn-default btn-sm" onclick="deleteRow('@group.Id');"><i class="fa fa-trash-o"></i></button></td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -91,18 +81,13 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <span class="caption-subject bold">Erläuterungen</span>
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Erläuterungen</h4>
                 </div>
-                <div class="portlet-body">
-                    <p>Die Zuordnung der Semestergruppen bietet die folgenden Möglichkeiten:</p>
-                    <ul>
-                        <li>Die Lehrveranstaltung lässt sich über das Vorlesungsverzeichnis finden.</li>
-                        <li>Bei Platzbeschränkungen kann eine Zuteilung der Plätze nach Studiengang und -gruppe erfolgen.</li>
-                    </ul>
+                <div class="panel-body">
+                    <p>Die Lehrveranstaltung wird in die hier angegebenene Semestergruppen ins Vorlesungsverzeichnis eingetragen.</p>
+                    <p>Die Seemstergruppen sagen nichts über die Zugehörigkeit der Lehrveranstaltung zu einem Studiengang etc. aus!</p>
                 </div>
             </div>
         </div>

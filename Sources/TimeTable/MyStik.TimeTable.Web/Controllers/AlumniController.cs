@@ -29,7 +29,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // für alle Studiengänge die Anzahl der Studierenden und Alumni ermitteln
             var model = new List<AlumniStatisticModel>();
-            var sem = GetSemester();
+            var sem = SemesterService.GetSemester(DateTime.Today);
             foreach (var curr in Db.Curricula.ToList())
             {
                 model.Add(new AlumniStatisticModel
@@ -190,7 +190,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 invitation.Invited = false;
 
-                var now = GlobalSettings.Now;
+                var now = DateTime.Now;
                 var newUser = false;
                 if (invitation.User == null)
                 {

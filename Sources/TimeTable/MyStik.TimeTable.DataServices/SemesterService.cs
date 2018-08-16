@@ -19,22 +19,26 @@ namespace MyStik.TimeTable.DataServices
             _db = db;
         }
 
+        public Semester GetSemester(Guid? id)
+        {
+            return id.HasValue ? GetSemester(id.Value) : GetSemester(DateTime.Today);
+        }
+
+
         /// <summary>
         /// Liefert das aktuelle Semester
         /// Kriterium: aktuelles Datum liegt in der Vorlesungszeit
         /// </summary>
         /// <returns></returns>
-        public Semester GetCurrentSemester()
+        public Semester GetSemester(DateTime day)
         {
-            var today = DateTime.Today;
-            return _db.Semesters.FirstOrDefault(s => s.StartCourses <= today && today <= s.EndCourses);
+            return _db.Semesters.FirstOrDefault(s => s.StartCourses <= day && day <= s.EndCourses);
         }
 
-        public Semester GetNextSemester()
-        {
-            var today = DateTime.Today;
 
-            var sem = _db.Semesters.Where(s => s.StartCourses > today).OrderBy(s => s.StartCourses).FirstOrDefault();
+        public Semester GetNextSemester(DateTime day)
+        {
+            var sem = _db.Semesters.Where(s => s.StartCourses > day).OrderBy(s => s.StartCourses).FirstOrDefault();
 
             return sem;
         }
@@ -49,9 +53,9 @@ namespace MyStik.TimeTable.DataServices
         }
 
 
-        public Semester GetPreviousSemester()
+        public Semester GetPreviousSemester(Semester semester)
         {
-            var today = DateTime.Today;
+            var today = semester.EndCourses;
             
             var sem = _db.Semesters.Where(s => s.EndCourses < today).OrderByDescending(s => s.EndCourses).FirstOrDefault();
 
@@ -80,12 +84,6 @@ namespace MyStik.TimeTable.DataServices
                 (from <= s.StartCourses && to >= s.StartCourses) ||
                 (to >= s.EndCourses && from <= s.EndCourses));
 
-            return semester;
-        }
-
-        public Semester GetSemester(DateTime at)
-        {
-            var semester = _db.Semesters.SingleOrDefault(s => (s.StartCourses <= at && at <= s.EndCourses));
             return semester;
         }
 
@@ -241,33 +239,97 @@ namespace MyStik.TimeTable.DataServices
             return sub;
         }
 
-        public ICollection<Data.Curriculum> GetActiveCurricula(Semester semester)
+        /// <summary>
+        /// Alle Lehrangebote
+        /// </summary>
+        /// <param name="semester"></param>
+        /// <param name="availableOnly"></param>
+        /// <returns></returns>
+        public ICollection<Data.Curriculum> GetActiveCurricula(Semester semester, bool availableOnly)
         {
-            return 
-            _db.Curricula.Where(
-                x => x.Organiser.Activities.Any(a => 
-                    a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable))).ToList();
+            if (availableOnly)
+            {
+                return
+                    _db.Curricula.Where(
+                        x => x.CurriculumGroups.Any(g => g.CapacityGroups.Any(a =>
+                            a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable)))).ToList();
+            }
+            return
+                _db.Curricula.Where(
+                    x => x.CurriculumGroups.Any(g => g.CapacityGroups.Any(a =>
+                        a.SemesterGroups.Any(s => s.Semester.Id == semester.Id)))).ToList();
         }
 
-        public ICollection<Data.Curriculum> GetActiveCurricula(ActivityOrganiser org, Semester semester)
+        public ICollection<Data.Curriculum> GetActiveCurricula(ActivityOrganiser org, Semester semester, bool availableOnly)
         {
             if (org == null)
                 return new List<Data.Curriculum>();
 
+            if (availableOnly)
+            {
+                return
+                    _db.Curricula.Where(
+                        x => x.Organiser.Id == org.Id &&
+                             x.CurriculumGroups.Any(
+                                 y => y.CapacityGroups.Any(
+                                     z => z.SemesterGroups.Any(
+                                         k => k.IsAvailable && k.Semester.Id == semester.Id)
+                                 )))
+                                 .ToList();
+            }
+
             return
-            _db.Curricula.Where(
-                x => x.Organiser.Id == org.Id &&
-                    x.Organiser.Activities.Any(a =>
-                    a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable))).ToList();
+                _db.Curricula.Where(
+                        x => x.Organiser.Id == org.Id &&
+                             x.CurriculumGroups.Any(
+                                 y => y.CapacityGroups.Any(
+                                     z => z.SemesterGroups.Any(
+                                         k => k.Semester.Id == semester.Id)
+                                 )))
+                    .ToList();
         }
 
 
-        public ICollection<Data.ActivityOrganiser> GetActiveOrganiser(Semester semester)
+        public ICollection<Data.ActivityOrganiser> GetActiveOrganiser(Semester semester, bool availableOnly)
+        {
+            if (availableOnly)
+            {
+                return
+                    _db.Organisers.Where(
+                        x => x.IsFaculty && x.Curricula.Any(c => c.CurriculumGroups.Any(d => d.CapacityGroups.Any(a => 
+                                 a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable))))).ToList();
+            }
+            return
+                _db.Organisers.Where(
+                    x => x.IsFaculty && x.Curricula.Any(c => c.CurriculumGroups.Any(d => d.CapacityGroups.Any(a =>
+                             a.SemesterGroups.Any(s => s.Semester.Id == semester.Id))))).ToList();
+        }
+
+        public ICollection<Data.ActivityOrganiser> GetActiveEventOrganiser(Semester semester)
         {
             return
-            _db.Organisers.Where(
-                x => x.IsFaculty && x.Activities.Any(a =>
-                    a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable))).ToList();
+                _db.Organisers.Where(
+                    x => x.Activities.OfType<Event>().Any(
+                        e => e.Dates.Any(
+                            d => semester.StartCourses <= d.Begin && d.Begin <= semester.EndCourses))).ToList();
+        }
+
+
+        public ICollection<Course> GetCourses(Semester semester, Data.Curriculum curr)
+        {
+            return
+            _db.Activities.OfType<Course>().Where(x => x.SemesterGroups.Any(g =>
+                g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)).ToList();
+        }
+
+        public ICollection<Data.Semester> GetActiveSemester(ActivityOrganiser org)
+        {
+            if (org == null)
+                return new List<Data.Semester>();
+
+            return
+                _db.Semesters.Where(
+                    x => x.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
         }
 
     }

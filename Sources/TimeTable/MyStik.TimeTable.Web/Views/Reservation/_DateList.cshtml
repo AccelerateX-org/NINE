@@ -19,7 +19,7 @@
                 <td>@Html.TimeSpan(date)</td>
                 <td>@Html.RoomList(date.Rooms)</td>
                 <td>
-                    @if (ViewBag.UserRight.IsOrgAdmin)
+                    @if (ViewBag.UserRight.IsRoomAdmin)
                     {
                         @Ajax.ActionButton("fa-trash-o", "", "DeleteReservationDate", null, new {id = date.Id},
                             new AjaxOptions

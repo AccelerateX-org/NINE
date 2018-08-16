@@ -29,13 +29,12 @@
         @using (Html.BeginForm("SelectFiles", null, FormMethod.Post, new { @class = "form form-horizontal" }))
         {
             <fieldset>
-                @*Html.HiddenFor(m => m.SemesterId)*@
                 @Html.HiddenFor(m => m.OrganiserId)
                 
                 <div class="form-group">
                     @Html.LabelFor(model => model.SemesterId, new {@class = "col-sm-3 control-label"})
                     <div class="col-sm-6">
-                        @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>) ViewBag.Semester, new {@class = "form-control"})
+                        @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>) ViewBag.Semester, new {@class = "form-control", onchange="onSemesterChanged()"})
                     </div>
                 </div>
                 
@@ -58,7 +57,7 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Anzahl vorhandene Kurse in Datenbank</label>
                     <div class="col-sm-3">
-                        <p class="form-control-static">@Model.Existing</p>
+                        <p id="courseCount" class="form-control-static">@Model.Existing</p>
                     </div>
                     <div class="col-sm-3">
                         <a href="#" id="btnDelete" class="btn btn-danger"><i class="fa fa-trash-o"></i> löschen</a>
@@ -78,7 +77,7 @@
 
                 <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-9">
-                        <button type="submit" class="btn btn-default"><i class="fa fa-right"></i> Weiter</button>
+                        <button type="submit" class="btn btn-default"><i class="fa fa-arrow-right"></i> Weiter</button>
                     </div>
                 </div>
 
@@ -108,7 +107,7 @@
 
     <script type="text/javascript">
 
-        $(function () {
+        $(function() {
             $('.datepicker').datepicker({
                 orientation: "left",
                 autoclose: true,
@@ -120,25 +119,43 @@
 
             var connection = $.connection.gpUntisHub;
 
-            connection.client.updateProgress = function (message, perc1) {
+            connection.client.updateProgress = function(message, perc1) {
 
                 $("#pogresslabel").html("<p>" + message + "</p>");
                 $("#progressbar1").html(perc1 + "%");
                 $("#progressbar1").css("width", perc1 + "%");
             };
 
-            $("#btnDelete").click(function () {
+            $("#btnDelete").click(function() {
                 var semId = $("#SemesterId").val();
                 var orgId = "@Model.Organiser.Id";
 
-                connection.server.deleteSemester(semId, orgId).done(function () {
+                connection.server.deleteSemester(semId, orgId).done(function() {
                     //                    alert("habe fertig");
                 });
             });
 
 
             $.connection.hub.start();
-        })
+        });
+
+        function onSemesterChanged() {
+            var semId = $("#SemesterId").val();
+            var orgId = "@Model.Organiser.Id";
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCourseStat")',
+                    data: {
+                        semId: semId,
+                        orgId: orgId
+                    },
+                    success: function (data, success, xhr) {
+                        $("#courseCount").html(data.nCourses);
+                    }
+                });
+        }
 
     </script>
 

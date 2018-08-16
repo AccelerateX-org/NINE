@@ -204,7 +204,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        [Display(Name = "Datum")]
+        [Display(Name = "Startdatum")]
         public string NewDate { get; set; }
 
         /// <summary>
@@ -218,6 +218,22 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         [Display(Name = "Ende")]
         public string NewEnd { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Enddatum")]
+        public string NewDate2 { get; set; }
+
+
+        public bool IsMonday { get; set; }
+        public bool IsTuesday { get; set; }
+        public bool IsWednesday { get; set; }
+        public bool IsThursday { get; set; }
+        public bool IsFriday { get; set; }
+        public bool IsSaturday { get; set; }
+        public bool IsSunday { get; set; }
+
 
         /// <summary>
         /// 
@@ -474,6 +490,94 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<ActivityDate> Dates { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RoomDateSummaryModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public RoomDateSummaryModel()
+        {
+            Dates = new List<ActivityDate>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Activity Activity { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DayOfWeek DayOfWeek { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime Start { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime End { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int SlotCount { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ActivityDate> Dates { get; }
+        
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RoomScheduleModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public RoomScheduleModel()
+        {
+            RegularDates = new List<RoomDateSummaryModel>();
+            SingleDates = new List<ActivityDate>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Room Room { get; set; }
+
+        public Semester Semester { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<RoomDateSummaryModel> RegularDates { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ActivityDate> SingleDates { get; }
+    }
+
+    public class RoomSearchResultModel
+    {
+        public TimeSpan Begin { get; set; }
+
+        public TimeSpan End { get; set; }
+
+        public List<DateTime> DayList { get; set; }
+
+        public List<Room> Rooms { get; set; }
     }
 
 }

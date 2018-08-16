@@ -95,8 +95,22 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Platzverteilung erfolgt exakt nach Studiengang und Studiengruppe
+        /// Pro Gruppe gibt es Plätze
+        /// Ohne Semestergruppe gibt es das nicht mehr
+        /// nur noch pro Studiengang
         /// </summary>
         public bool UseExactFit { get; set; }
+
+        /// <summary>
+        /// Studierende der zugeordneten Fakultäten werden bevorzugt
+        /// </summary>
+        public bool HasHomeBias { get; set; }
+
+        /// <summary>
+        /// Geschlossene Gesellschaft
+        /// Zugang nur für Studierende der zugeordneten Fakultäten
+        /// </summary>
+        public bool IsCoterie { get; set; }
 
         public virtual ICollection<OccurrenceSubscription> Subscriptions { get; set; }
 

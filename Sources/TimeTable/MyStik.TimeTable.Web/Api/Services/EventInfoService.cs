@@ -19,7 +19,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var db = new TimeTableDbContext();
 
-            var now = GlobalSettings.Now;
+            var now = DateTime.Now;
 
             var eventList =
                 db.Activities.OfType<Event>()
@@ -78,7 +78,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
             var currentEvent = db.Activities.OfType<Event>().SingleOrDefault(ev => ev.Id == id);
 
-            var now = GlobalSettings.Now.AddMinutes(-1);
+            var now = DateTime.Now.AddMinutes(-1);
 
             // Gib mir von dem Event das Ende des nächsten Termins in der Zukunft
             var currentDate = currentEvent.Dates.Where(d => d.End >= now).OrderBy(d => d.End).FirstOrDefault();
@@ -131,7 +131,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var db = new TimeTableDbContext();
 
-            var now = GlobalSettings.Now;
+            var now = DateTime.Now;
             //alle zukünftigen Events
             var events = db.Activities.OfType<Event>()
                     .Where(ev =>  ev.Dates.Any(d => d.End >= now)).ToList();

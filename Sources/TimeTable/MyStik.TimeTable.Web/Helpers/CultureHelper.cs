@@ -18,7 +18,7 @@ namespace MyStik.TimeTable.Web.Helpers
 
         // Include ONLY cultures you are implementing
         private static readonly List<string> _cultures = new List<string> {
-            "de"  // first culture is the DEFAULT
+            "de", "en", "fr", "es"  // first culture is the DEFAULT
         };
 
         /// <summary>

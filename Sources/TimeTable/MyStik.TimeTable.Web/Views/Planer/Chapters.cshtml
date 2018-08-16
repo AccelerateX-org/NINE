@@ -1,0 +1,50 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.PlanerGroupViewModel
+@{
+    ViewBag.Title = "Themengebiete";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot von @Model.Organiser.ShortName</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        Themengebiete in @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var chapter in Model.Curriculum.Chapters.OrderBy(x => x.Name))
+                    {
+                        <div class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>
+                                    <a href="@Url.Action("Chapter", "Planer", new {semId = @Model.Semester.Id, chapterId = chapter.Id})">@chapter.Name</a>
+                                </h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    @foreach (var topic in chapter.Topics.OrderBy(x => x.Name))
+                                    {
+                                        <li><i class="fa fa-li fa-tag"></i> <a href="@Url.Action("Topic", "Planer", new {semId=@Model.Semester.Id, topicId=topic.Id})">@topic.Name</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

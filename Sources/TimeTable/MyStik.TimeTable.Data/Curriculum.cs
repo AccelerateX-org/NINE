@@ -12,10 +12,8 @@ namespace MyStik.TimeTable.Data
         public Curriculum()
         {
             CurriculumGroups = new HashSet<CurriculumGroup>();
-            GroupAliases = new HashSet<GroupAlias>();
-            Modules = new HashSet<CurriculumModule>();
-            Criterias = new HashSet<CurriculumCriteria>();
             Chapters = new HashSet<CurriculumChapter>();
+            Packages = new HashSet<CurriculumPackage>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -24,6 +22,54 @@ namespace MyStik.TimeTable.Data
         public string Name { get; set; }
 
         public string ShortName { get; set; }
+
+        /// <summary>
+        /// Als Teilzeitmodell einsetzbar
+        /// Zusatzoption
+        /// </summary>
+        public bool AsPartTime { get; set; }
+
+        /// <summary>
+        /// Weiterbildungsangebot
+        /// ja oder nein, aber nicht beides
+        /// </summary>
+        public bool IsQualification { get; set; }
+
+        /// <summary>
+        /// Duales Studium
+        /// Unterkategorien (werden aktuell nicht unterschieden)
+        /// Verbundstidum
+        /// Vertiefte Praxis
+        /// Zusatzoption
+        /// </summary>
+        public bool AsDual { get; set; }
+
+        /// <summary>
+        /// Großer Schalter: alles was nicht published ist bekommen nur die Admins zu sehen
+        /// </summary>
+        public bool IsPublished { get; set; }
+
+        /// <summary>
+        /// Gilt nicht mehr, z.B. bei Erstsemestern
+        /// </summary>
+        public bool IsDeprecated { get; set; }
+
+        /// <summary>
+        /// Eine Idee der Versionierung
+        /// z.B. für die interne Revision "beta"
+        /// </summary>
+        public string Version { get; set; }
+
+        /// <summary>
+        /// Gültig ab Semester
+        /// </summary>
+        public virtual Semester ValidSince { get; set; }
+
+        /// <summary>
+        /// Der Abschluss
+        /// da gibt es immer nur einen
+        /// </summary>
+        public virtual Degree  Degree { get; set; }
 
         /// <summary>
         /// Studiengangleiter
@@ -38,22 +84,18 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Werden diese noch benötigt?
         /// </summary>
-        public virtual ICollection<GroupAlias> GroupAliases { get; set; }
-
-        /// <summary>
-        /// Module
-        /// raus!
-        /// </summary>
-        public virtual ICollection<CurriculumModule> Modules { get; set; }
-
-        /// <summary>
-        /// Anforderungen
-        /// </summary>
-        public virtual ICollection<CurriculumCriteria> Criterias { get; set; }
+        // public virtual ICollection<GroupAlias> GroupAliases { get; set; }
 
         /// <summary>
         /// Inhaltliche Struktur
         /// </summary>
         public virtual ICollection<CurriculumChapter> Chapters { get; set; }
+
+
+        /// <summary>
+        /// Pakete
+        /// Pflicht, WPM, Absarbeit
+        /// </summary>
+        public virtual ICollection<CurriculumPackage> Packages { get; set; }
     }
 }

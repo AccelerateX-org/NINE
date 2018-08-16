@@ -1,0 +1,79 @@
+﻿@model MyStik.TimeTable.Web.Models.SupervisionRequestModel
+@{
+    ViewBag.Title = "Anfrage Betreuung";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Anfrage Betreuung Abschlussarbeit</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Anfrage</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-info">
+                        <h4>@Model.Supervision.Name</h4>
+                        <p>@Html.Raw(Model.Supervision.Description)</p>
+                        <p>Betreuung: <strong>@Model.Supervision.Owners.First().Member.Name</strong></p>
+                    </div>
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(m => m.Subscription.Id)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Anschreiben (Titel, Typ, ggf. weitere Infos)</label>
+                                <div class="col-sm-6">
+                                    @Html.TextAreaFor(m => m.Description, new {@class = "form-control", rows = "10"})
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-4 col-md-6">
+                                    <input type="submit" value="Anfrage speichern" class="btn btn-primary"/>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+                $(function () {
+                    $("#Description").cleditor();
+
+                });
+
+
+    </script>
+}

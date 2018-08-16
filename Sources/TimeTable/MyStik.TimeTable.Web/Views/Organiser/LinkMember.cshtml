@@ -1,0 +1,128 @@
+﻿@model MyStik.TimeTable.Web.Models.MemberViewModel
+@{
+    ViewBag.Title = "Exporte";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Verwaltung Exporte</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> Link hinzufügen
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+
+
+                    @using (Html.BeginForm("LinkMember", "Organiser", FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                ))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <input name="id" hidden="" value="@Model.Member.Id"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="orgName">Veranstalter</label>
+                            <div class="col-md-8">
+                                <input id="orgName" name="orgName" type="text" class="form-control" placeholer="Kurzname des Veranstalter" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="shortName">Kurzname</label>
+                            <div class="col-md-8">
+                                <input id="shortName" name="shortName" type="text" class="form-control" placeholer="Kurzname des Lehrenden beim Veranstalter" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-8">
+                                <input type="submit" value="Speichern" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-university"></i> Alle Links
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Fakultät</th>
+                            <th>Kurzname</th>
+                            <th>Kurzname</th>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var export in Model.Exports)
+                        {
+                            <tr>
+                                <td>@export.Export.Organiser.ShortName</td>
+                                <td>@export.Export.ShortName</td>
+                                @if (export.Activity != null)
+                                {
+                                    <td>@export.Activity.ShortName</td>
+                                    <td>@export.Activity.Name</td>
+
+                                    <td><a href="@Url.Action("ImportExport", new {exportId=export.Export.Id, courseId=export.Activity.Id})">Umhängen</a></td>
+                                }
+                                else
+                                {
+                                    if (export.ExternalMember != null)
+                                    {
+                                        <td colspan="2">In der @export.ExternalMember.Organiser.ShortName gibt es noch das Mitglied @export.ExternalMember.ShortName</td>
+                                        <td><a href="@Url.Action("DeleteExternalMember", new {memberId = Model.Member.Id, externalMemberId = export.ExternalMember.Id})">Externes Mitglied in @export.ExternalMember.Organiser.ShortName löschen</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="2">Das externe Mitglied existiert nicht</td>
+                                        <td><a href="@Url.Action("DeleteLink", new {id = export.Export.Id})">Export löschen</a></td>
+                                    }
+                                }
+                            </tr>
+                        }
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+

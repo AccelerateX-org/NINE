@@ -1,0 +1,94 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.CourseSummaryModel>
+
+<table id="tabCourses" class="table table-condensed">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Gruppe</th>
+        <th>Bezeichnung</th>
+        <th>Kurzname</th>
+        <th>Wochentag</th>
+        <th>Von</th>
+        <th>Bis</th>
+        <th>Raum</th>
+        <th>Lehrende</th>
+        @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
+        {
+            <th></th>
+        }
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
+    {
+        var linkText = c.Course.Name;
+        <tr>
+            @if (c.Lottery != null)
+            {
+                <td><i class="fa fa-random"></i></td>
+
+            }
+            else
+            {
+                <td></td>
+            }
+            <td>
+                @c.SemesterGroup.FullNameCompact
+            </td>
+            <td>
+                @Html.ActionLink(linkText, c.Summary.Action, c.Summary.Controller, new { id = c.Summary.Id }, null)
+            </td>
+            <td>
+                @c.Course.ShortName
+            </td>
+            @if (!c.Dates.Any())
+            {
+                <td>Keine Termine</td>
+                <td></td>
+                <td></td>
+            }
+            else if (c.Dates.Count > 1)
+            {
+                <td>diverse Termine</td>
+                <td></td>
+                <td></td>
+            }
+            else
+            {
+                var date = c.Dates.First();
+                <td>@date.DefaultDate.ToString("dddd", new CultureInfo("de-DE"))</td>
+                <td>@date.StartTime.ToString(@"hh\:mm")</td>
+                <td>@date.EndTime.ToString(@"hh\:mm")</td>
+            }
+            <td>
+                @Html.RoomList(c.Rooms)
+            </td>
+            <td>
+                @Html.LecturerList(c.Lecturers)
+            </td>
+            @if (ViewBag.UserRight != null && ViewBag.UserRight.IsOrgMember)
+            {
+                <td>@c.Course.Occurrence.Subscriptions.Count</td>
+            }
+            <td>
+                @if (c.Course is Course)
+                {
+                    if (c.Lottery != null)
+                     {
+                <a href="@Url.Action("Overview", "Lottery", new {id=c.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
+                     }
+                     else
+                     {
+                         @Html.Partial("_SubscriptionState", c.State)
+                     }
+                }
+            </td>
+        </tr>
+    }
+
+    </tbody>
+</table>

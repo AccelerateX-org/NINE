@@ -53,7 +53,13 @@
                                             <td>
                                                 @foreach (var capacityGroup in group.CapacityGroups)
                                                 {
-                                                    <div>@capacityGroup.Name</div>
+                                                    <div>
+                                                        @capacityGroup.Name (@foreach (var alias in capacityGroup.Aliases)
+                                                        {
+                                                            @Html.Raw(alias.Name + ", ")
+                                                        }
+                                                        )
+                                                    </div>
                                                 }
                                             </td>
                                             <td>

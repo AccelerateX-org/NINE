@@ -12,6 +12,11 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class ModuleController : BaseController
     {
+        public ActionResult Disclaimer()
+        {
+            return View();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -92,7 +97,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     foreach (var course in courseList)
                     {
                         // TODO: hier noch die richtige Zugehröigkeit kontrollieren
-                        moduleCourse.Courses.Add(course);
+                        //moduleCourse.Courses.Add(course);
                     }
                 }
                 Db.SaveChanges();
@@ -108,6 +113,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Accredition()
         {
+            /*
             // für jedes Modul
             // Kriterium im Studiengang anlegen
             // Alle Gruppen transportieren => mit Regel
@@ -128,7 +134,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         // nur Kriterien anlegen, die es noch nicht gibt
                         criteria = new CurriculumCriteria
                         {
-                            Curriculum = curriculum,
+                            //Curriculum = curriculum,
                             Name = module.Name,
                         };
 
@@ -165,7 +171,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
             }
-
+            */
             return RedirectToAction("Index");
         }
 
@@ -241,5 +247,211 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new {id = id});
         }
+
+
+        public ActionResult CreateFromCourse(Guid courseId, Guid currId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            // jetzt die Default Packages
+
+
+            var model = new ModuleCreateViewModel
+            {
+                Course = course,
+                Curriculum = curr,
+                MV = GetMyMembership(),
+                Name = course.Name,
+                ShortName = course.ShortName,
+                Description = course.Description
+            };
+
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateFromCourse(ModuleCreateViewModel model)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == model.Course.Id);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            var pck = curr.Packages.SingleOrDefault(x => x.Name.Equals("Gesamt"));
+            if (pck == null)
+            {
+                pck = new CurriculumPackage
+                {
+                    Curriculum = curr,
+                    Name = "Gesamt",
+                };
+
+                Db.CurriculumPackages.Add(pck);
+                Db.SaveChanges();
+            }
+
+            var option = pck.Options.SingleOrDefault(x => x.Name.Equals("Standard"));
+            if (option == null)
+            {
+                option = new PackageOption
+                {
+                    Package = pck,
+                    Name = "Standard"
+                };
+
+                Db.PackageOptions.Add(option);
+                Db.SaveChanges();
+            }
+
+
+            // Doppelte ausschließen
+            var isExisting = option.Requirements.Any(x =>
+                x.Name.Equals(model.Name) || x.ShortName.Equals(model.ShortName) ||
+                x.CatalogId.Equals(model.CatalogId));
+
+            if (isExisting)
+            {
+                ModelState.AddModelError("", "Modul existiert bereits");
+                
+                // Modell wieder vervollständigen
+                model.Course = course;
+                model.Curriculum = curr;
+                model.MV = GetMyMembership();
+
+                return View(model);
+            }
+
+
+            var module = new CurriculumRequirement
+            {
+                Name = model.Name,
+                ShortName = model.ShortName,
+                CatalogId = model.CatalogId,
+                ECTS = model.Ects,
+                SWS = model.Sws,
+                USCredits = model.UsCredits,
+                LecturerInCharge = GetMyMembership(),
+                Option = option,
+            };
+
+            Db.Requirements.Add(module);
+
+            var nexus = new CourseModuleNexus
+            {
+                Course = course,
+                Requirement = module
+            };
+
+            Db.CourseNexus.Add(nexus);
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Admin", "Course", new {id = course.Id});
+        }
+
+        [HttpPost]
+        public PartialViewResult OptionList(Guid pckId)
+        {
+            var model = Db.CurriculumPackages.SingleOrDefault(x => x.Id == pckId);
+            return PartialView("_OptionList", model);
+        }
+
+        [HttpPost]
+        public PartialViewResult ModuleList(Guid optionId)
+        {
+            var model = Db.PackageOptions.SingleOrDefault(x => x.Id == optionId);
+            return PartialView("_ModuleList", model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult ModuleSummary(Guid moduleId)
+        {
+            var model = Db.Requirements.SingleOrDefault(x => x.Id == moduleId);
+            return PartialView("_ModuleSummary", model);
+        }
+
+
+        public ActionResult SelectForCourse(Guid courseId, Guid currId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            ViewBag.Packages = curr.Packages.OrderBy(x => x.Name).Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            });
+            var pck = curr.Packages.FirstOrDefault();
+
+
+            ViewBag.Options = pck.Options.OrderBy(x => x.Name).Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            });
+
+            var option = pck.Options.FirstOrDefault();
+
+
+            ViewBag.Modules = option.Requirements.OrderBy(x => x.Name).Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString(),
+            });
+
+            var module = option.Requirements.FirstOrDefault();
+
+            var model = new ModuleSelectViewModel
+            {
+                Curriculum = curr,
+                Course = course,
+                PackageId = pck.Id,
+                OptionId = option.Id,
+                ModuleId = module.Id
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult SelectModuleForCourse(Guid courseId, Guid moduleId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+            var module = Db.Requirements.SingleOrDefault(x => x.Id == moduleId);
+
+            if (module != null)
+            {
+                if (string.IsNullOrEmpty(module.ShortName))
+                {
+                    module.ShortName = course.ShortName;
+                }
+
+                if (module.LecturerInCharge == null)
+                {
+                    module.LecturerInCharge = GetMyMembership();
+                }
+
+
+                var nexus = new CourseModuleNexus
+                {
+                    Course = course,
+                    Requirement = module
+                };
+
+                Db.CourseNexus.Add(nexus);
+
+                Db.SaveChanges();
+
+            }
+
+
+
+
+            return Json(new { result = "Redirect", url = Url.Action("Admin", "Course", new { id = course.Id}) });
+        }
+
     }
 }

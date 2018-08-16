@@ -1,7 +1,7 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Mitglieder " + Model.Organiser.ShortName;
+    ViewBag.Title = "Lehrende " + Model.Organiser.ShortName;
 }
 
 @section styles
@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Dozenten in @Model.Organiser.ShortName</h1>
+                    <h1>Lehrende @Model.Organiser.ShortName</h1>
                 </div>
             </div>
         </div>
@@ -30,22 +30,7 @@
                     <div class="form-inline">
                         <div class="form-group">
                             <a href="@Url.Action("Index")" class="btn btn-default active">
-                                <i class="fa fa-list"></i> als Liste
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Today")" class="btn btn-default">
-                                <i class="fa fa-coffee"></i> heute da
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Active")" class="btn btn-default">
-                                <i class="fa fa-calendar"></i> Status @Model.Semester.Name
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("CreateMember", "Organiser", new {id = Model.Organiser.Id})" class="btn btn-default">
-                                <i class="fa fa-plus-circle"></i> Dozent anlegen
+                                <i class="fa fa-arrow-left"></i> zurück zur Liste
                             </a>
                         </div>
                     </div>
@@ -63,7 +48,7 @@
             <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption">
-                        <i class="fa fa-university"></i> Alle Personen
+                        <i class="fa fa-university"></i> Alle aktiven Lehrenden im @Model.Semester.Name
                     </div>
                     <div class="actions">
                     </div>
@@ -72,63 +57,33 @@
                     <table id="tabMembers" class="table table-condensed table-striped">
                         <thead>
                         <tr>
-                            <th>Kurzname</th>
                             <th>Name</th>
-                            <th>Rolle</th>
-                            @if (ViewBag.UserRight.IsOrgMember)
-                            {
-                                <th>Beschreibung</th>
-                                <th>@ViewBag.ThisSemester</th>
-                                <th>@ViewBag.LastSemester</th>                            }
-                            <th></th>
+                            <th>Lehrveranstaltung</th>
+                            <th>Semestergruppe(n)</th>
                         </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.Members)
                             {
-                                <tr>
-                                    <td>@item.Member.ShortName</td>
-                                    @if (string.IsNullOrEmpty(item.Member.Name))
-                                    {
-                                        <td>
-                                            @Html.ActionLink("N.N.", "Member", "Organiser", new {id = item.Member.Id}, null)
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td>
-                                            @Html.ActionLink(item.Member.Name, "Member", "Organiser", new {id = item.Member.Id}, null)
-                                        </td>
-                                    }
-                                    <td>@item.Member.Role</td>
-                                    @if (ViewBag.UserRight.IsOrgMember)
-                                    {
-                                        <td>@item.Member.Description</td>
-                                        if (item.IsActive)
+                                foreach (var course in item.ActiveCourses)
+                                {
+                                    <tr>
+                                        @if (string.IsNullOrEmpty(item.Member.Name))
                                         {
-                                            <td class="text-success"><strong>X</strong></td>
+                                            <td>
+                                                @Html.ActionLink("N.N.", "Member", "Organiser", new {id = item.Member.Id}, null)
+                                            </td>
                                         }
                                         else
                                         {
-                                            <td></td>
+                                            <td>
+                                                <a href="@Url.Action("Member", "Organiser", new {id = item.Member.Id})">@item.Member.Name (@item.Member.ShortName)</a>
+                                            </td>
                                         }
-                                        if (item.WasActiveLastSemester)
-                                        {
-                                            <td class="text-success"><strong>X</strong></td>
-                                        }
-                                        else
-                                        {
-                                            <td></td>
-                                        }
-                                    }
-                                    <td>
-                                        @if (ViewBag.UserRight.IsMemberAdmin)
-                                        {
-                                            @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMember", "Organiser", new {id = item.Member.Id}, null)
-                                            @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new {id = item.Member.Id}, null)
-                                        }
-                                    </td>
-                                </tr>
+                                        <td>@course.Name (@course.ShortName)</td>
+                                        <td>@Html.GroupList(course.SemesterGroups)</td>
+                                    </tr>
+                                }
                             }
 
                         </tbody>

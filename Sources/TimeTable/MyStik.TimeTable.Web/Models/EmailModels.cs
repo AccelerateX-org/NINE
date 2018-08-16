@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices.Drawing.Data;
 using Postal;
 
 namespace MyStik.TimeTable.Web.Models
@@ -55,6 +54,72 @@ namespace MyStik.TimeTable.Web.Models
         public int Count { get; set; }
     }
 
+    public class LotteryDrawingReportEmail : BaseEmail
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public LotteryDrawingReportEmail(string mailTemplate) : base(mailTemplate)
+        {
+            Courses = new List<LotteryDrawingCourseReport>();
+        }
+
+        public ApplicationUser User { get; set; }
+
+        public LotteryDrawing Drawing { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<LotteryDrawingCourseReport> Courses { get; private set; }
+    }
+
+    public class LotteryDrawingCourseReport
+    {
+
+        public Course Course { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public int Rank
+        {
+            get
+            {
+                if (Subscription == null)
+                    return 0;
+
+                if (Subscription.OnWaitingList)
+                    return 1;
+
+                if (!Subscription.IsConfirmed)
+                    return 2;
+
+                return 3;
+            }
+        }
+
+        public string State
+        {
+            get
+            {
+                if (Subscription == null)
+                    return "nicht eingetragen";
+
+                if (Subscription.OnWaitingList)
+                    return "Warteliste";
+
+                if (!Subscription.IsConfirmed)
+                    return "Reservierung";
+
+                return "Teilnehmer";
+            }
+        }
+
+
+    }
+
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -88,5 +153,42 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string ListName { get; set; }
     }
+
+    public class LotteryDrawingStudentEmail : BaseEmail
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public LotteryDrawingStudentEmail(string mailTemplate) : base(mailTemplate)
+        {
+            
+        }
+
+        public ApplicationUser User { get; set; }
+
+        public DrawingGame Game { get; set; }
+
+        public LotteryDrawing Drawing { get; set; }
+
+        public OrganiserMember Member { get; set; }
+
+    }
+
+    public class SubscriptionEmail : BaseEmail
+    {
+        public SubscriptionEmail(string registration) : base(registration)
+        {
+        }
+
+        public Course Course { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public ApplicationUser Actor { get; set; }
+
+        public ApplicationUser Student { get; set; }
+
+    }
+
 
 }

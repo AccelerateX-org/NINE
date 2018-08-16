@@ -1,0 +1,8 @@
+﻿
+@{
+    ViewBag.Title = "NoMember";
+}
+
+<h2>Ich bin noch kein Mitglied der Fachschaft (@ViewBag.Union.ShortName)</h2>
+
+<a href="@Url.Action("GetMember", "Union", new {id = ViewBag.Union.Id})" class="btn btn-primary btn-lg"><i class="fa fa-paw"></i> Mitmachen</a>

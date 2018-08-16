@@ -78,13 +78,31 @@
                            }, null)
                             </li>
                             <li>
-                                @Ajax.ActionLink("Inaktiv", "Inactive", null, new AjaxOptions
+                                @Ajax.ActionLink("Inaktive Gäste", "InactiveGuests", null, new AjaxOptions
                            {
                                HttpMethod = "Post",
                                InsertionMode = InsertionMode.Replace,
                                UpdateTargetId = "userTable",
                                LoadingElementId = "loading"
                            }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Inaktive Studierende", "InactiveStudents", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable",
+                                    LoadingElementId = "loading"
+                                }, null)
+                            </li>
+                            <li>
+                                @Ajax.ActionLink("Inaktive Lehrende", "InactiveStaff", null, new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "userTable",
+                                    LoadingElementId = "loading"
+                                }, null)
                             </li>
                             <li>
                                 @Ajax.ActionLink("Nie angemeldet", "NeverLoggedIn", null, new AjaxOptions

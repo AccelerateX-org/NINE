@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MyStik.TimeTable.Web</RootNamespace>
     <AssemblyName>MyStik.TimeTable.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>44300</IISExpressSSLPort>
@@ -30,6 +30,7 @@
     <Use64BitIISExpress />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,231 +51,204 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ActionMailer.Net">
+    <Reference Include="ActionMailer.Net, Version=0.7.4.0, Culture=neutral, PublicKeyToken=e62db3114c02a1c2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ActionMailer.0.7.4\lib\Net40\ActionMailer.Net.dll</HintPath>
     </Reference>
-    <Reference Include="ActionMailer.Net.Mvc">
+    <Reference Include="ActionMailer.Net.Mvc, Version=0.7.4.0, Culture=neutral, PublicKeyToken=e62db3114c02a1c2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ActionMailer.0.7.4\lib\Net40\ActionMailer.Net.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ical.Net.2.3.0\lib\net45\antlr.runtime.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Elmah">
+    <Reference Include="BeginCollectionItem, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\BeginCollectionItem.1.2.1.0\lib\net35\BeginCollectionItem.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
     </Reference>
-    <Reference Include="Elmah.Mvc">
-      <HintPath>..\..\packages\Elmah.MVC.2.1.1\lib\net40\Elmah.Mvc.dll</HintPath>
+    <Reference Include="Elmah.Mvc, Version=2.1.2.1389, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Elmah.Mvc.2.1.2\lib\net40\Elmah.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Hangfire.Core, Version=1.6.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Hangfire.Core.1.6.12\lib\net45\Hangfire.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="EntityFramework6.Npgsql">
+      <HintPath>..\..\packages\EntityFramework6.Npgsql.3.2.0\lib\net45\EntityFramework6.Npgsql.dll</HintPath>
     </Reference>
-    <Reference Include="Hangfire.SqlServer, Version=1.6.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Hangfire.SqlServer.1.6.12\lib\net45\Hangfire.SqlServer.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hangfire.Core, Version=1.6.19.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hangfire.Core.1.6.19\lib\net45\Hangfire.Core.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Hangfire.SqlServer, Version=1.6.19.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hangfire.SqlServer.1.6.19\lib\net45\Hangfire.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Ical.Net, Version=2.1.0.30342, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ical.Net.2.3.0\lib\net45\Ical.Net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="HtmlAgilityPack, Version=1.6.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlAgilityPack.1.6.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="Ical.Net.Collections, Version=2.1.0.30341, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ical.Net.2.3.0\lib\net45\Ical.Net.Collections.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Ical.Net, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ical.Net.4.1.5\lib\net45\Ical.Net.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Core">
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Owin">
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.2.2.2\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.2\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.2.2.3\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Microsoft.Owin, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Cors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Cors.4.0.0\lib\net451\Microsoft.Owin.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.4.0.0\lib\net451\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.4.0.0\lib\net451\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Cookies.4.0.0\lib\net451\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Facebook.4.0.0\lib\net451\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Google.4.0.0\lib\net451\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.MicrosoftAccount.4.0.0\lib\net451\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.4.0.0\lib\net451\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Twitter.4.0.0\lib\net451\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.Cookies.3.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Facebook, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.Facebook.3.1.0\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Google, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.Google.3.1.0\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.1.0\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Twitter, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.Security.Twitter.3.1.0\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MigraDoc.DocumentObjectModel">
+    <Reference Include="MigraDoc.DocumentObjectModel, Version=1.32.4334.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.DocumentObjectModel.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.Rendering">
+    <Reference Include="MigraDoc.Rendering, Version=1.32.4334.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.Rendering.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.RtfRendering">
+    <Reference Include="MigraDoc.RtfRendering, Version=1.32.4334.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ical.Net.2.3.0\lib\net45\NodaTime.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NodaTime, Version=2.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NodaTime.2.3.0\lib\net45\NodaTime.dll</HintPath>
     </Reference>
-    <Reference Include="PagedList">
+    <Reference Include="Npgsql, Version=3.2.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Npgsql.4.0.2\lib\net451\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
     </Reference>
-    <Reference Include="PagedList.Mvc">
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp">
+    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp.Charting">
+    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.Charting.dll</HintPath>
     </Reference>
-    <Reference Include="Pitchfork.QRGenerator">
+    <Reference Include="Pitchfork.QRGenerator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Pitchfork.QRGenerator.1.0.0\lib\Pitchfork.QRGenerator.dll</HintPath>
     </Reference>
     <Reference Include="Postal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=45719375b8b4d528, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Postal.Mvc5.1.2.0\lib\net45\Postal.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.9.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RazorEngine.3.9.3\lib\net45\RazorEngine.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Activities" />
     <Reference Include="System.Data">
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.TypeExtensions, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reflection.TypeExtensions.4.5.0\lib\net461\System.Reflection.TypeExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Runtime.Serialization.Primitives, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.Runtime.Serialization.Primitives.4.3.0\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    <Reference Include="System.Web.Http, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.6\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Owin.5.2.6\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.6\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Optimization">
+    <Reference Include="System.Web.Mvc, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.6\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.6\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Abstractions" />
-    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest">
-    </Reference>
-    <Reference Include="Antlr3.Runtime">
-      <Private>True</Private>
-      <HintPath>..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Owin">
-      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -287,10 +261,30 @@
     <Compile Include="Api\Controller\AccountController.cs" />
     <Compile Include="Api\Controller\ApiBaseController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
+    <Compile Include="Api\Controller\CampusController.cs" />
+    <Compile Include="Api\Controller\CieCourseController.cs" />
+    <Compile Include="Api\Controller\CieHomeController.cs" />
+    <Compile Include="Api\Controller\CoursesController.cs" />
+    <Compile Include="Api\Controller\CurriculaController.cs" />
     <Compile Include="Api\Controller\CurriculumController.cs" />
+    <Compile Include="Api\Controller\FacultyController.cs" />
     <Compile Include="Api\Controller\LecturerController.cs" />
+    <Compile Include="Api\Controller\LoginController.cs" />
+    <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\RoomController.cs" />
+    <Compile Include="Api\Controller\RoomsController.cs" />
+    <Compile Include="Api\Controller\SemesterController.cs" />
+    <Compile Include="Api\Controller\StudiesController.cs" />
+    <Compile Include="Api\DTOs\AccountDto.cs" />
+    <Compile Include="Api\DTOs\ActionDto.cs" />
+    <Compile Include="Api\DTOs\BaseDto.cs" />
+    <Compile Include="Api\DTOs\CourseDto.cs" />
+    <Compile Include="Api\DTOs\CurriculumDto.cs" />
+    <Compile Include="Api\DTOs\OrganiserDto.cs" />
+    <Compile Include="Api\DTOs\RoomDto.cs" />
+    <Compile Include="Api\DTOs\SemesterDto.cs" />
+    <Compile Include="Api\DTOs\SubscriptionDto.cs" />
     <Compile Include="Api\Responses\AccountResponses.cs" />
     <Compile Include="Api\Responses\ActivityResponses.cs" />
     <Compile Include="Api\Responses\CurriculumResponse.cs" />
@@ -298,6 +292,7 @@
     <Compile Include="Api\Responses\NotificationResponses.cs" />
     <Compile Include="Api\Responses\RoomResponses.cs" />
     <Compile Include="Api\Services\ActivityInfoService.cs" />
+    <Compile Include="Api\Services\CourseConverter.cs" />
     <Compile Include="Api\Services\CurriculumInfoService.cs" />
     <Compile Include="Api\Services\EventInfoService.cs" />
     <Compile Include="Api\Services\LecturerInfoService.cs" />
@@ -311,16 +306,22 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\ChangeController.cs" />
     <Compile Include="Areas\Admin\Controllers\CurriculumController.cs" />
     <Compile Include="Areas\Admin\Controllers\DatabaseController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\IntegrationController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LogController.cs" />
     <Compile Include="Areas\Admin\Controllers\ModuleController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrganiserController.cs" />
+    <Compile Include="Areas\Admin\Controllers\RepairController.cs" />
     <Compile Include="Areas\Admin\Controllers\RoomController.cs" />
     <Compile Include="Areas\Admin\Controllers\SemesterController.cs" />
+    <Compile Include="Areas\Admin\Controllers\TestController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserController.cs" />
+    <Compile Include="Areas\Admin\Models\ChangeModels.cs" />
     <Compile Include="Areas\Admin\Models\DataAdminModel.cs" />
+    <Compile Include="Areas\Admin\Models\LogModels.cs" />
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
     <Compile Include="Areas\Fillter\Controllers\HomeController.cs" />
     <Compile Include="Areas\Fillter\FillterAreaRegistration.cs" />
@@ -360,22 +361,31 @@
     <Compile Include="Controllers\AdminDashboardController.cs" />
     <Compile Include="Controllers\AdvertisementsController.cs" />
     <Compile Include="Controllers\AlumniController.cs" />
+    <Compile Include="Controllers\ArchiveController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\CoursePlanController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
     <Compile Include="Controllers\CurriculaController.cs" />
     <Compile Include="Controllers\CurriculumCriteriaController.cs" />
+    <Compile Include="Controllers\CurriculumPackageController.cs" />
+    <Compile Include="Controllers\CurriculumRequirementController.cs" />
+    <Compile Include="Controllers\DictionaryController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\ExamController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
+    <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
+    <Compile Include="Controllers\PackageOptionController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\PrintController.cs" />
     <Compile Include="Controllers\RoomReportController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
+    <Compile Include="Controllers\SupervisionController.cs" />
+    <Compile Include="Controllers\TagController.cs" />
     <Compile Include="Controllers\ThesisAnnouncementsController.cs" />
     <Compile Include="Controllers\ThesisController.cs" />
     <Compile Include="Controllers\ThesisWorkflowController.cs" />
@@ -390,7 +400,6 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\LecturerController.cs" />
-    <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\MailController.cs" />
     <Compile Include="Controllers\MailingController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -416,10 +425,6 @@
     <Compile Include="Controllers\UnionController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserProfileController.cs" />
-    <Compile Include="Controllers\WpmController.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="GlobalSettings.cs" />
     <Compile Include="Helpers\AjaxHelper.cs" />
     <Compile Include="Helpers\CookieHelpers.cs" />
@@ -430,8 +435,8 @@
     <Compile Include="Hubs\FamosHub.cs" />
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
-    <Compile Include="Hubs\TestDataHub.cs" />
     <Compile Include="Hubs\WpmHub.cs" />
+    <Compile Include="Jobs\LotteryJob.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.Designer.cs">
       <DependentUpon>201501310845153_UserProfile.cs</DependentUpon>
@@ -451,6 +456,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActivityModels.cs" />
+    <Compile Include="Models\AdvertisementModels.cs" />
     <Compile Include="Models\AlumniModels.cs" />
     <Compile Include="Models\AgendaModels.cs" />
     <Compile Include="Models\CalendarModels.cs" />
@@ -467,10 +473,11 @@
     <Compile Include="Models\ExamModels.cs" />
     <Compile Include="Models\HomeModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ImportModels.cs" />
     <Compile Include="Models\LecturerModels.cs" />
     <Compile Include="Models\LevelModels.cs" />
-    <Compile Include="Models\LogModels.cs" />
     <Compile Include="Models\LotteryModels.cs" />
+    <Compile Include="Models\LotteryReportModels.cs" />
     <Compile Include="Models\MailingModels.cs" />
     <Compile Include="Models\MailModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -479,6 +486,7 @@
     <Compile Include="Models\OccurrenceModels.cs" />
     <Compile Include="Models\OfficeHourModels.cs" />
     <Compile Include="Models\OrganiserModels.cs" />
+    <Compile Include="Models\PlanerModels.cs" />
     <Compile Include="Models\PublicModels.cs" />
     <Compile Include="Models\ReservationModels.cs" />
     <Compile Include="Models\RoomModels.cs" />
@@ -488,15 +496,16 @@
     <Compile Include="Models\StudentsModels.cs" />
     <Compile Include="Models\StudyBookModels.cs" />
     <Compile Include="Models\SubscriptionModels.cs" />
+    <Compile Include="Models\SupervisionModels.cs" />
     <Compile Include="Models\ThesisModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Models\UserProfileModels.cs" />
     <Compile Include="Models\WPMModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="$(SolutionDir)\SolutionInfo.cs"
-        Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
+    <Compile Include="$(SolutionDir)\SolutionInfo.cs" Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
       <link>Properties\SolutionInfo.cs</link>
     </Compile>
+    <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Resources.de.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -518,22 +527,33 @@
       <DependentUpon>Resources.fr.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\ActivityService.cs" />
+    <Compile Include="Services\BaseMailService.cs" />
+    <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\ChangeService.cs" />
     <Compile Include="Services\CourseService.cs" />
+    <Compile Include="Services\CourseSummaryService.cs" />
     <Compile Include="Services\CurriculumService.cs" />
     <Compile Include="Services\EventService.cs" />
+    <Compile Include="Services\LotteryMailService.cs" />
+    <Compile Include="Services\LotteryService.cs" />
     <Compile Include="Services\MailService.cs" />
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\OccurrenceService.cs" />
     <Compile Include="Services\OfficeHourInfoService.cs" />
+    <Compile Include="Services\OfficeHourService.cs" />
     <Compile Include="Services\RoomService.cs" />
+    <Compile Include="Services\SemesterGroupService.cs" />
     <Compile Include="Services\SemesterSubscriptionService.cs" />
+    <Compile Include="Services\StudentService.cs" />
+    <Compile Include="Services\SubscriptionMailService.cs" />
+    <Compile Include="Services\SubscriptionService.cs" />
     <Compile Include="Services\UserInfoService.cs" />
     <Compile Include="Services\WpmService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="SystemConfig.cs" />
     <Compile Include="Utils\Helper\IconHelper.cs" />
+    <Compile Include="Utils\Helper\StringHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -635,13 +655,18 @@
     <Content Include="Assets\fillter\css\fillter.css" />
     <Content Include="Assets\fillter\css\style.css" />
     <Content Include="Assets\fillter\fonts\icomoon.svg" />
+    <Content Include="Assets\fillter\img\deselect.svg" />
     <Content Include="Assets\fillter\img\Download_on_the_App_Store_Badge_US-UK_135x40.svg" />
     <Content Include="Assets\fillter\img\Hoko Screenwerbung.jpg" />
     <Content Include="Assets\fillter\img\HOKO_Weeks_Stundenplan.jpg" />
     <Content Include="Assets\fillter\img\logo-mvg.jpg" />
     <Content Include="Assets\fillter\img\logo.svg" />
     <Content Include="Assets\fillter\img\logoName.svg" />
+    <Content Include="Assets\fillter\img\logo_fillter.svg" />
+    <Content Include="Assets\fillter\img\logo_nine.svg" />
     <Content Include="Assets\fillter\img\NINE-Logo-rot.png" />
+    <Content Include="Assets\fillter\img\selectable.svg" />
+    <Content Include="Assets\fillter\img\selected.svg" />
     <Content Include="Assets\fillter\img\white.gif" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
     <Content Include="Assets\global\css\components-md.css" />
@@ -1805,6 +1830,7 @@
     <Content Include="Assets\global\plugins\datatables\plugins\images\sort_both.png" />
     <Content Include="Assets\global\plugins\datatables\plugins\images\sort_desc.png" />
     <Content Include="Assets\global\plugins\datatables\plugins\images\sort_desc_disabled.png" />
+    <Content Include="Assets\global\plugins\datatables\plugins\sorting\date-de.js" />
     <Content Include="Assets\global\plugins\dropzone\css\basic.css" />
     <Content Include="Assets\global\plugins\dropzone\css\dropzone.css" />
     <Content Include="Assets\global\plugins\dropzone\dropzone.js" />
@@ -2123,14 +2149,20 @@
     <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.css" />
     <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.Metronic.css" />
     <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.skinFlat.css" />
+    <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.skinHTML5.css" />
+    <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.skinModern.css" />
     <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.skinNice.css" />
     <Content Include="Assets\global\plugins\ion.rangeslider\css\ion.rangeSlider.skinSimple.css" />
+    <Content Include="Assets\global\plugins\ion.rangeslider\css\normalize.css" />
     <Content Include="Assets\global\plugins\ion.rangeslider\css\normalize.min.css" />
     <Content Include="Assets\global\plugins\ion.rangeslider\img\sprite-skin-flat.png" />
+    <Content Include="Assets\global\plugins\ion.rangeslider\img\sprite-skin-modern.png" />
     <Content Include="Assets\global\plugins\ion.rangeslider\img\sprite-skin-nice.png" />
     <Content Include="Assets\global\plugins\ion.rangeslider\img\sprite-skin-simple.png" />
     <Content Include="Assets\global\plugins\ion.rangeslider\js\ion-rangeSlider\ion.rangeSlider.js" />
     <Content Include="Assets\global\plugins\ion.rangeslider\js\ion-rangeSlider\ion.rangeSlider.min.js" />
+    <Content Include="Assets\global\plugins\ion.rangeslider\js\ion.rangeSlider.js" />
+    <Content Include="Assets\global\plugins\ion.rangeslider\js\ion.rangeSlider.min.js" />
     <Content Include="Assets\global\plugins\ion.rangeslider\js\vendor\jquery-1.11.0.min.js" />
     <Content Include="Assets\global\plugins\jcrop\css\Jcrop.gif" />
     <Content Include="Assets\global\plugins\jcrop\css\jquery.Jcrop.css" />
@@ -2846,11 +2878,10 @@
     <Content Include="Assets\fillter\css\fullcalendar.print.css" />
     <Content Include="Assets\fillter\css\PagedList.css" />
     <Content Include="Assets\fillter\css\login.css" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\room_error.png" />
+    <Content Include="Content\images\room_ok.png" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Global.asax" />
     <Content Include="Assets\fillter\css\Site.css" />
     <Content Include="Areas\InfoScreen\Views\web.config" />
     <Content Include="Areas\InfoScreen\Views\_ViewStart.cshtml" />
@@ -3139,9 +3170,6 @@
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Areas\Admin\Views\Organiser\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Organiser\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Organiser\Details.cshtml" />
@@ -3178,29 +3206,45 @@
     <Content Include="Areas\Admin\Views\Room\Links.cshtml" />
     <Content Include="Areas\Admin\Views\Room\Delete.cshtml" />
     <Content Include="MyStik.TimeTable.Web.nuspec" />
+    <Content Include="Areas\Admin\Views\Change\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Change\_ChangeList.cshtml" />
+    <Content Include="Areas\Admin\Views\Log\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Log\_LogTable.cshtml" />
+    <Content Include="Areas\Admin\Views\Organiser\CreateCurriculum.cshtml" />
+    <Content Include="Areas\Admin\Views\Organiser\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Organiser\EditCurriculum.cshtml" />
+    <Content Include="Areas\Admin\Views\Repair\ChangeDoz.cshtml" />
+    <Content Include="Areas\Admin\Views\Room\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Semester\CreateDate.cshtml" />
+    <Content Include="Areas\Admin\Views\Semester\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\Semester\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\Semester\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Semester\EditDate.cshtml" />
+    <Content Include="Areas\Admin\Views\Test\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\User\ChangeUserName.cshtml" />
+    <Content Include="Areas\Admin\Views\User\Student.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
+    <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion.pubxml" />
-    <None Include="Properties\PublishProfiles\Test %28it09.de%29.pubxml" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\angular.min.js.map" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.3.0.js" />
+    <Content Include="Scripts\jquery.signalR-2.3.0.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\nine.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Web.config" />
@@ -3621,7 +3665,6 @@
     <Content Include="Views\Organiser\_MemberRow.cshtml" />
     <Content Include="Views\Organiser\Dates.cshtml" />
     <Content Include="Views\Organiser\Rooms.cshtml" />
-    <Content Include="Views\Organiser\Dates.cshtml" />
     <Content Include="Views\Mailing\_StudentGroupSelect.cshtml" />
     <Content Include="Views\Organiser\Curricula.cshtml" />
     <Content Include="Views\Organiser\Groups.cshtml" />
@@ -3719,7 +3762,254 @@
     <Content Include="Views\Exam\RegisterThesis.cshtml" />
     <Content Include="Views\Module\CreateExam.cshtml" />
     <Content Include="Views\Exam\CreateThesis.cshtml" />
+    <Content Include="Views\Activity\FacultyPlanDaily.cshtml" />
+    <Content Include="Views\Activity\PersonalCoursePlan.cshtml" />
+    <Content Include="Views\Activity\PersonalPlanDaily.cshtml" />
+    <Content Include="Views\Activity\PersonalPlanWeekly.cshtml" />
+    <Content Include="Views\Activity\State.cshtml" />
+    <Content Include="Views\Activity\Today.cshtml" />
+    <Content Include="Views\Advertisements\Abroad.cshtml" />
+    <Content Include="Views\Advertisements\Advancement.cshtml" />
+    <Content Include="Views\Advertisements\Competition.cshtml" />
+    <Content Include="Views\Advertisements\Create.cshtml" />
+    <Content Include="Views\Advertisements\Details.cshtml" />
+    <Content Include="Views\Advertisements\Edit.cshtml" />
+    <Content Include="Views\Advertisements\Internship.cshtml" />
+    <Content Include="Views\Advertisements\Thesis.cshtml" />
+    <Content Include="Views\Advertisements\Tutor.cshtml" />
+    <Content Include="Views\Advertisements\WorkingStudent.cshtml" />
+    <Content Include="Views\Archive\Index.cshtml" />
+    <Content Include="Views\Courses\Admin.cshtml" />
+    <Content Include="Views\Courses\Calendar.cshtml" />
+    <Content Include="Views\Courses\Groups.cshtml" />
+    <Content Include="Views\Courses\GroupsNew.cshtml" />
+    <Content Include="Views\Courses\Schedule.cshtml" />
+    <Content Include="Views\Courses\Semester.cshtml" />
+    <Content Include="Views\Courses\_PanelSemester.cshtml" />
+    <Content Include="Views\Course\AdminNew.cshtml" />
+    <Content Include="Views\Course\AdminNewDates.cshtml" />
+    <Content Include="Views\Course\AdminNewInfos.cshtml" />
+    <Content Include="Views\Course\AdminNewModule.cshtml" />
+    <Content Include="Views\Course\AdminNewParticipients.cshtml" />
+    <Content Include="Views\Course\AdminNewRules.cshtml" />
+    <Content Include="Views\Course\ChangeTopics.cshtml" />
+    <Content Include="Views\Course\DetailsNew.cshtml" />
+    <Content Include="Views\Course\Download.cshtml" />
+    <Content Include="Views\Course\Owners.cshtml" />
+    <Content Include="Views\Course\SubscriptionList.cshtml" />
+    <Content Include="Views\Course\_CourseSummaryHeader.cshtml" />
+    <Content Include="Views\Course\_OwnerRow.cshtml" />
+    <Content Include="Views\Course\_SubscriptionProfile.cshtml" />
+    <Content Include="Views\Curricula\Disclaimer.cshtml" />
+    <Content Include="Views\CurriculumPackage\Create.cshtml" />
+    <Content Include="Views\CurriculumPackage\Delete.cshtml" />
+    <Content Include="Views\CurriculumPackage\Details.cshtml" />
+    <Content Include="Views\CurriculumPackage\Edit.cshtml" />
+    <Content Include="Views\CurriculumPackage\Index.cshtml" />
+    <Content Include="Views\CurriculumRequirement\Create.cshtml" />
+    <Content Include="Views\CurriculumRequirement\Delete.cshtml" />
+    <Content Include="Views\CurriculumRequirement\Details.cshtml" />
+    <Content Include="Views\CurriculumRequirement\Edit.cshtml" />
+    <Content Include="Views\CurriculumRequirement\Index.cshtml" />
+    <Content Include="Views\Curriculum\Import.cshtml" />
+    <Content Include="Views\Curriculum\Milestones.cshtml" />
+    <Content Include="Views\Curriculum\Modules.cshtml" />
+    <Content Include="Views\Curriculum\Requirement.cshtml" />
+    <Content Include="Views\Curriculum\Terms.cshtml" />
+    <Content Include="Views\Dashboard\DashboardStudentNew.cshtml" />
+    <Content Include="Views\Dashboard\Schedule.cshtml" />
+    <Content Include="Views\Dashboard\_PortletActivities.cshtml" />
+    <Content Include="Views\Dashboard\_PortletActivitiesCompact.cshtml" />
+    <Content Include="Views\Dashboard\_PortletCurrentCompact.cshtml" />
+    <Content Include="Views\Dashboard\_PortletHistory.cshtml" />
+    <Content Include="Views\Dashboard\_PortletProcess.cshtml" />
+    <Content Include="Views\Dictionary\CourseList.cshtml" />
+    <Content Include="Views\Dictionary\CourseListByTopics.cshtml" />
+    <Content Include="Views\Dictionary\Curriculum.cshtml" />
+    <Content Include="Views\Dictionary\Group.cshtml" />
+    <Content Include="Views\Dictionary\Index.cshtml" />
+    <Content Include="Views\Dictionary\Organiser.cshtml" />
+    <Content Include="Views\Dictionary\Semester.cshtml" />
+    <Content Include="Views\Emails\LotteryClearedStudent.cshtml" />
+    <Content Include="Views\Emails\LotteryClearedStudent.Html.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingDefaultNotification.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingDefaultNotification.Html.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingFinalNotification.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingFinalNotification.Html.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingInitialNotification.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingInitialNotification.Html.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingStudent.cshtml" />
+    <Content Include="Views\Emails\LotteryDrawingStudent.Html.cshtml" />
+    <Content Include="Views\Emails\LotteryResetStudent.cshtml" />
+    <Content Include="Views\Emails\LotteryResetStudent.Html.cshtml" />
+    <Content Include="Views\Emails\Subscription.cshtml" />
+    <Content Include="Views\Emails\Subscription.Html.cshtml" />
+    <Content Include="Views\Events\Index.cshtml" />
+    <Content Include="Views\Events\Semester.cshtml" />
+    <Content Include="Views\Event\AdminNew.cshtml" />
+    <Content Include="Views\Event\AdminNewDates.cshtml" />
+    <Content Include="Views\Event\AdminNewInfos.cshtml" />
+    <Content Include="Views\Event\CreateDate2.cshtml" />
+    <Content Include="Views\Event\EventList.cshtml" />
+    <Content Include="Views\Event\Semester.cshtml" />
+    <Content Include="Views\Event\_DateTable.cshtml" />
+    <Content Include="Views\Event\_DlgAddDate.cshtml" />
+    <Content Include="Views\Event\_DlgConfirmDeleteDate.cshtml" />
+    <Content Include="Views\Event\_DlgEditInformation.cshtml" />
+    <Content Include="Views\Home\Course.cshtml" />
+    <Content Include="Views\Home\Dictionary.cshtml" />
+    <Content Include="Views\Home\Fillter.cshtml" />
+    <Content Include="Views\Home\Landing.cshtml" />
+    <Content Include="Views\Home\LandingNew.cshtml" />
+    <Content Include="Views\Home\Semester.cshtml" />
+    <Content Include="Views\Home\TermsOfUse.cshtml" />
+    <Content Include="Views\Home\UniversityCalendar.cshtml" />
+    <Content Include="Views\Import\Reports.cshtml" />
+    <Content Include="Views\Lecturer\DateDetails.cshtml" />
+    <Content Include="Views\Lecturer\DateList.cshtml" />
+    <Content Include="Views\Lecturer\EditDate.cshtml" />
+    <Content Include="Views\Lecturer\Responsibilities.cshtml" />
+    <Content Include="Views\Lecturer\Thesis.cshtml" />
+    <Content Include="Views\Lottery\AddBudget.cshtml" />
+    <Content Include="Views\Lottery\Bet.cshtml" />
+    <Content Include="Views\Lottery\Budgets.cshtml" />
+    <Content Include="Views\Lottery\Check.cshtml" />
+    <Content Include="Views\Lottery\Course.cshtml" />
+    <Content Include="Views\Lottery\DetailsOld.cshtml" />
+    <Content Include="Views\Lottery\DrawingPots.cshtml" />
+    <Content Include="Views\Lottery\EditBudget.cshtml" />
+    <Content Include="Views\Lottery\EditReference.cshtml" />
+    <Content Include="Views\Lottery\Game.cshtml" />
+    <Content Include="Views\Lottery\InitTest.cshtml" />
+    <Content Include="Views\Lottery\MyHiddenSelection.cshtml" />
+    <Content Include="Views\Lottery\MySelectionNew.cshtml" />
+    <Content Include="Views\Lottery\Overview.cshtml" />
+    <Content Include="Views\Lottery\RemoveSelection.cshtml" />
+    <Content Include="Views\Lottery\Repair.cshtml" />
+    <Content Include="Views\Lottery\Run.cshtml" />
+    <Content Include="Views\Lottery\SelectCourses.cshtml" />
+    <Content Include="Views\Lottery\Selection.cshtml" />
+    <Content Include="Views\Lottery\Students.cshtml" />
+    <Content Include="Views\Lottery\SubscriberReport.cshtml" />
+    <Content Include="Views\Lottery\TestRun.cshtml" />
+    <Content Include="Views\Lottery\_BetEditor.cshtml" />
+    <Content Include="Views\Lottery\_BetState.cshtml" />
+    <Content Include="Views\Lottery\_BetView.cshtml" />
+    <Content Include="Views\Lottery\_ConfirmSelection.cshtml" />
+    <Content Include="Views\Lottery\_CourseList.cshtml" />
+    <Content Include="Views\Lottery\_EnterLotteryBet.cshtml" />
+    <Content Include="Views\Lottery\_LotteryRunning.cshtml" />
+    <Content Include="Views\Lottery\_RankCourses.cshtml" />
+    <Content Include="Views\Lottery\_SelectionFinished.cshtml" />
+    <Content Include="Views\Mail\LotterySelectionEMail.html.cshtml" />
+    <Content Include="Views\Mail\MemberMoveDateEMail.html.cshtml" />
+    <Content Include="Views\Mail\RegisterUnionEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisRejectEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisRequestEMail.html.cshtml" />
+    <Content Include="Views\Mail\_AnonymousTemplate.cshtml" />
+    <Content Include="Views\ModuleAccreditation\Create.cshtml" />
+    <Content Include="Views\ModuleAccreditation\Delete.cshtml" />
+    <Content Include="Views\ModuleAccreditation\Details.cshtml" />
+    <Content Include="Views\ModuleAccreditation\Edit.cshtml" />
+    <Content Include="Views\ModuleAccreditation\Index.cshtml" />
+    <Content Include="Views\Module\CreateFromCourse.cshtml" />
+    <Content Include="Views\Module\Disclaimer.cshtml" />
+    <Content Include="Views\Module\SelectForCourse.cshtml" />
+    <Content Include="Views\Module\_ModuleList.cshtml" />
+    <Content Include="Views\Module\_ModuleSummary.cshtml" />
+    <Content Include="Views\Module\_OptionList.cshtml" />
+    <Content Include="Views\Newsletter\Delete.cshtml" />
+    <Content Include="Views\OfficeHour\Create.cshtml" />
+    <Content Include="Views\OfficeHour\EditDateSubscription.cshtml" />
+    <Content Include="Views\OfficeHour\HasSubscription.cshtml" />
+    <Content Include="Views\OfficeHour\Semester.cshtml" />
+    <Content Include="Views\OfficeHour\SemesterDates.cshtml" />
+    <Content Include="Views\OfficeHour\SemesterList.cshtml" />
+    <Content Include="Views\OfficeHour\SubscribeSlot.cshtml" />
+    <Content Include="Views\OfficeHour\SubscriptionDetails.cshtml" />
+    <Content Include="Views\OfficeHour\_RemoveSubscriptionDate.cshtml" />
+    <Content Include="Views\OfficeHour\_RemoveSubscriptionSlot.cshtml" />
+    <Content Include="Views\OrganiserMembers\List.cshtml" />
+    <Content Include="Views\OrganiserMembers\Manage.cshtml" />
+    <Content Include="Views\OrganiserMembers\MoveDates.cshtml" />
+    <Content Include="Views\OrganiserMembers\Profile.cshtml" />
+    <Content Include="Views\OrganiserMembers\Responsibilities.cshtml" />
+    <Content Include="Views\OrganiserMembers\Roles.cshtml" />
+    <Content Include="Views\OrganiserMembers\_DateList.cshtml" />
+    <Content Include="Views\Organiser\LinkMember.cshtml" />
+    <Content Include="Views\Organiser\RoomList.cshtml" />
+    <Content Include="Views\PackageOption\Create.cshtml" />
+    <Content Include="Views\PackageOption\Delete.cshtml" />
+    <Content Include="Views\PackageOption\Details.cshtml" />
+    <Content Include="Views\PackageOption\Edit.cshtml" />
+    <Content Include="Views\PackageOption\Index.cshtml" />
+    <Content Include="Views\Planer\CapacityGroup.cshtml" />
+    <Content Include="Views\Planer\Chapter.cshtml" />
+    <Content Include="Views\Planer\Chapters.cshtml" />
+    <Content Include="Views\Planer\CurriculumGroup.cshtml" />
+    <Content Include="Views\Planer\Dictionary.cshtml" />
+    <Content Include="Views\Planer\Faculty.cshtml" />
+    <Content Include="Views\Planer\Groups.cshtml" />
+    <Content Include="Views\Planer\List.cshtml" />
+    <Content Include="Views\Planer\Search.cshtml" />
+    <Content Include="Views\Planer\Semester.cshtml" />
+    <Content Include="Views\Planer\Topic.cshtml" />
+    <Content Include="Views\Planer\_CourseListComplete.cshtml" />
+    <Content Include="Views\Print\RoomScheduleWeek.cshtml" />
+    <Content Include="Views\Reservation\CreateDate.cshtml" />
+    <Content Include="Views\Reservation\Details.cshtml" />
+    <Content Include="Views\Reservation\MoveDate.cshtml" />
+    <Content Include="Views\Reservation\_Index.cshtml" />
+    <Content Include="Views\Room\DateList.cshtml" />
+    <Content Include="Views\Room\Details.cshtml" />
+    <Content Include="Views\Room\Labels.cshtml" />
+    <Content Include="Views\Room\Rules.cshtml" />
+    <Content Include="Views\Room\_ErrorMsg.cshtml" />
+    <Content Include="Views\Room\_LinkRow.cshtml" />
+    <Content Include="Views\Room\_SearchResultList.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
+    <Content Include="Views\Shared\_CourseListFit.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryListItem.cshtml" />
+    <Content Include="Views\Shared\_Disclaimer.cshtml" />
+    <Content Include="Views\Students\ChangeCurriculum.cshtml" />
+    <Content Include="Views\Students\ChangeNumber.cshtml" />
+    <Content Include="Views\Students\SemesterGroups.cshtml" />
+    <Content Include="Views\Students\StartGroups.cshtml" />
+    <Content Include="Views\Students\_Profile.cshtml" />
+    <Content Include="Views\Subscription\Change.cshtml" />
+    <Content Include="Views\Subscription\ChangeConfirm.cshtml" />
+    <Content Include="Views\Subscription\Curricula.cshtml" />
+    <Content Include="Views\Supervision\AcceptRequest.cshtml" />
+    <Content Include="Views\Supervision\Create.cshtml" />
+    <Content Include="Views\Supervision\Details.cshtml" />
+    <Content Include="Views\Supervision\Edit.cshtml" />
+    <Content Include="Views\Supervision\EditRequest.cshtml" />
+    <Content Include="Views\Supervision\Index.cshtml" />
+    <Content Include="Views\Supervision\Request.cshtml" />
+    <Content Include="Views\Supervision\RequestDetails.cshtml" />
+    <Content Include="Views\ThesisWorkflow\Issue.cshtml" />
+    <Content Include="Views\Thesis\Admin.cshtml" />
+    <Content Include="Views\Thesis\Announce.cshtml" />
+    <Content Include="Views\Thesis\CreateThesis.cshtml" />
+    <Content Include="Views\Thesis\Details.cshtml" />
+    <Content Include="Views\Thesis\Edit.cshtml" />
+    <Content Include="Views\Thesis\EditPaper.cshtml" />
+    <Content Include="Views\Thesis\Issue.cshtml" />
+    <Content Include="Views\Thesis\List.cshtml" />
+    <Content Include="Views\Thesis\Reject.cshtml" />
+    <Content Include="Views\Thesis\_CreateThesisSuccess.cshtml" />
+    <Content Include="Views\Union\ConfirmMember.cshtml" />
+    <Content Include="Views\Union\Index.cshtml" />
+    <Content Include="Views\Union\Member.cshtml" />
+    <Content Include="Views\Union\Newsletter.cshtml" />
+    <Content Include="Views\Union\NoEntry.cshtml" />
+    <Content Include="Views\Union\NoMember.cshtml" />
+    <Content Include="Views\Union\NoOrg.cshtml" />
+    <Content Include="Views\Union\NoUnion.cshtml" />
     <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Lab.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
@@ -3744,6 +4034,7 @@
     <Folder Include="Views\Notification\" />
     <Folder Include="Views\Site\" />
     <Folder Include="Views\Storage\" />
+    <Folder Include="Views\Tag\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -3785,6 +4076,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.en.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources.es.resx" />
     <EmbeddedResource Include="Resources.fr.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.fr.Designer.cs</LastGenOutput>
@@ -3800,6 +4092,16 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SystemTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>App_Data/XmlDocument.xml</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Lab|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>

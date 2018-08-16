@@ -1,74 +1,91 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.DashboardViewModel
 
 
 @{
     var now = DateTime.Now;
 }
-<div class="portlet light bordered">
-    <div class="portlet-title">
-        <div class="caption">
-            <i class="fa fa-film"></i>
-            <span class="caption-subject bold uppercase"> Was läuft heute wann und wo?</span>
-        </div>
-        <div class="actions">
-            <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-circle btn-icon-only btn-default">
-                <i class="fa fa-calendar"></i>
-            </a>
-        </div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4><i class="fa fa-film"></i> Was läuft wann und wo?
+            <span class="btn-group pull-right">
+                <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-default">
+                    <i class="fa fa-calendar"></i>
+                </a>
+            </span>
+        </h4>
     </div>
-    <div class="portlet-body">
-        @if (Model.NowPlayingDates.Any())
-        {
-            <div class="infoscreen">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>Zeitraum</th>
-                        <th>Raum</th>
-                        <th>Name</th>
-                        <th>Dozent</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var date in Model.NowPlayingDates)
-                        {
-                            var iconName = "fa fa-check text-warning";
-                            if (date.Begin > now)
+    @if (Model.NowPlayingDates != null && Model.NowPlayingDates.Any())
+    {
+        <div class="infoscreen">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Zeitraum</th>
+                    <th>Raum</th>
+                    <th>Name</th>
+                    <th>Dozent</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var date in Model.NowPlayingDates)
+                {
+                    var iconName = "fa fa-check text-warning";
+                    if (date.Begin > now)
+                    {
+                        iconName = "fa fa-clock-o text-info";
+                    }
+                    if (date.Occurrence.IsCanceled)
+                    {
+                        <tr class="danger">
+                            <td><i class="@iconName"></i></td>
+                            <td>@Html.TimeSpan(date)</td>
+                            <td>abgesagt</td>
+                            @if (date.Activity is Course)
                             {
-                                iconName = "fa fa-clock-o text-info";
-                            }
-                            if (date.Occurrence.IsCanceled)
-                            {
-                                <tr class="danger">
-                                    <td><i class="@iconName"></i></td>
-                                    <td>@Html.TimeSpan(date)</td>
-                                    <td>abgesagt</td>
-                                    <td>@date.Activity.Name</td>
-                                    <td>@Html.LecturerList(date.Hosts, false)</td>
-                                </tr>
+                                <td><a href="@Url.Action("Details", "Course", new {id =date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
                             }
                             else
                             {
-                                <tr>
-                                    <td><i class="@iconName"></i></td>
-                                    <td>@Html.TimeSpan(date)</td>
-                                    <td>@Html.RoomList(date.Rooms, false, false)</td>
-                                    <td>@date.Activity.Name</td>
-                                    <td>@Html.LecturerList(date.Hosts, false)</td>
-                                </tr>
+                                <td>@date.Activity.Name</td>
                             }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
+                            <td>@Html.LecturerList(date.Hosts, true)</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td><i class="@iconName"></i></td>
+                            <td>@Html.TimeSpan(date)</td>
+                            <td>@Html.RoomList(date.Rooms, true, false)</td>
+                            @if (date.Activity is Course)
+                            {
+                                <td><a href="@Url.Action("Details", "Course", new {id =date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
+                            }
+                            else
+                            {
+                                <td>@date.Activity.Name</td>
+                            }
+                            <td>@Html.LecturerList(date.Hosts, true)</td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="panel-body">
+
             <h1 class="text-success">...heute nix mehr</h1>
-        }
-    </div>
+        </div>
+    }
 </div>
+
+
+
 
 

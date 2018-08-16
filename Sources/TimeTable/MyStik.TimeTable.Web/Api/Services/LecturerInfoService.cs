@@ -29,7 +29,7 @@ namespace MyStik.TimeTable.Web.Api.Services
             foreach(var officeHour in officeHours)
             {
                 //Nur buchbaren zukünftige Termine bis gewälten Zeitpunkt
-                var nextDate = officeHour.Dates.Where(oc => oc.Begin >= GlobalSettings.Now && oc.Begin <= until && oc.Occurrence.IsAvailable).OrderBy(oc => oc.Begin).ToList();
+                var nextDate = officeHour.Dates.Where(oc => oc.Begin >= DateTime.Now && oc.Begin <= until && oc.Occurrence.IsAvailable).OrderBy(oc => oc.Begin).ToList();
 
                 if(nextDate!=null)
                 {
@@ -87,7 +87,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
             if(officeHours!=null)
             {
-                var nextDate = officeHours.Dates.Where(oc => oc.Begin >= GlobalSettings.Now && oc.Begin <= until && oc.Occurrence.IsAvailable).OrderBy(oc => oc.Begin).ToList();
+                var nextDate = officeHours.Dates.Where(oc => oc.Begin >= DateTime.Now && oc.Begin <= until && oc.Occurrence.IsAvailable).OrderBy(oc => oc.Begin).ToList();
                 
                 foreach (var date in nextDate)
                 {

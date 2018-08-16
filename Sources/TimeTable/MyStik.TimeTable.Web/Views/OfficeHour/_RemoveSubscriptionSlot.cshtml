@@ -1,0 +1,9 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.ActivitySlot
+<tr>
+    <td>@Html.TimeSpan(Model)</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>@Html.Partial("_LockedSlot", Model)</td>
+</tr>

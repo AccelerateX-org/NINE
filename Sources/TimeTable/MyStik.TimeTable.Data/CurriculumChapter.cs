@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
@@ -12,6 +9,7 @@ namespace MyStik.TimeTable.Data
         public CurriculumChapter()
         {
             Topics = new HashSet<CurriculumTopic>();
+            Criteria = new HashSet<CurriculumCriteria>();
         }
 
 
@@ -29,6 +27,9 @@ namespace MyStik.TimeTable.Data
         /// Die Topics
         /// </summary>
         public virtual ICollection<CurriculumTopic> Topics { get; set; }
+
+
+        public virtual ICollection<CurriculumCriteria> Criteria { get; set; }
 
     }
 }

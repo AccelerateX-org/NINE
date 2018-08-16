@@ -93,6 +93,16 @@ namespace MyStik.TimeTable.DataServices
             DeleteActivity(course);
         }
 
+        public void DeleteActivity(Guid courseId)
+        {
+            var course = _db.Activities.SingleOrDefault(c => c.Id == courseId);
+            if (course == null)
+                return;
+
+            DeleteActivity(course);
+        }
+
+
         public void DeleteEvent(Guid courseId)
         {
             var course = _db.Activities.OfType<Event>().SingleOrDefault(c => c.Id == courseId);
@@ -139,7 +149,18 @@ namespace MyStik.TimeTable.DataServices
             {
                 _db.ActivityOwners.Remove(activityOwner);
             }
-            
+
+            if (activity is Course)
+            {
+                var course = activity as Course;
+
+                foreach (var nexus in course.Nexus.ToList())
+                {
+                    _db.CourseNexus.Remove(nexus);
+                }
+            }
+
+
             _db.Activities.Remove(activity);
 
             _db.SaveChanges();
@@ -164,6 +185,14 @@ namespace MyStik.TimeTable.DataServices
                 {
                     _db.SubscriptionDrawings.Remove(drawing);
                 }
+
+
+                var allBets = _db.LotteriyBets.Where(x => x.Subscription.Id == subscription.Id).ToList();
+                foreach (var lotteryBet in allBets)
+                {
+                    _db.LotteriyBets.Remove(lotteryBet);
+                }
+
             }
             subs.ForEach(s => _db.Subscriptions.Remove(s));
 
@@ -200,16 +229,18 @@ namespace MyStik.TimeTable.DataServices
                     _db.CapacityGroups.Remove(capacityGroup);
                 }
 
+                /*
                 var semGroups = curriculumGroup.SemesterGroups.ToList();
                 foreach (var semesterGroup in semGroups)
                 {
                     _db.SemesterGroups.Remove(semesterGroup);
                 }
+                */
 
                 _db.CurriculumGroups.Remove(curriculumGroup);
 
             }
-
+            /*
             var modules = curriculum.Modules.ToList();
             foreach (var module in modules)
             {
@@ -228,7 +259,8 @@ namespace MyStik.TimeTable.DataServices
                 _db.CurriculumModules.Remove(module);
 
             }
-            
+            */
+
             _db.Curricula.Remove(curriculum);
 
             _db.SaveChanges();

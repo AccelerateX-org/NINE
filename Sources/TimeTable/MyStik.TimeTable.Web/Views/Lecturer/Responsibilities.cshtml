@@ -1,0 +1,139 @@
+﻿@model MyStik.TimeTable.Data.OrganiserMember
+@{
+    ViewBag.Title = "Aufgaben";
+}
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Name - Verantwortungsbereiche</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-user-md"></i> Bestehende Verantwortungsbereiche</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Bezeichnung</th>
+                                <th>Beschreibung</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var resp in Model.Responsibilities)
+                            {
+                                <tr>
+                                    <td>@resp.Tag.Name</td>
+                                    <td>@resp.Description</td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-user-md"></i> Verantwortungsbereich hinzufügen</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Ajax.BeginForm("AddResp", null,
+                        new AjaxOptions()
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "userTable"
+
+                        }, new { @role = "form", @class = "form-horizontal" }))
+                    {
+                        <div class="form-group">
+                            <label for="tag" class="col-sm-3 control-label">Schlagwort:</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="tag" id="tag" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="col-sm-3 control-label">Beschreibung:</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="description" id="description" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+
+                                <button type="submit" class="btn btn-default"><i class="fa fa-save"></i> Hinzufügen</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function() {
+
+            $('#tag').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: '@Url.Action("List", "Tag")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            txt: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data,
+                                function(item) {
+
+                                    return {
+                                        text: item.id,
+                                        label: item.name, // + ' (' + item.capacity + ' Nennungen)',
+                                        value: item.name
+                                    };
+                                }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) {
+
+                    /*
+                    var roomId = ui.item.text;
+                    var roomNumber = ui.item.value;
+
+                    addRoom(roomId, roomNumber);
+                    */
+                }
+            });
+        });
+    </script>
+}

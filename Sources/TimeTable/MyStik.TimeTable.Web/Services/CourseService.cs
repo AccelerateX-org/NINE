@@ -10,43 +10,55 @@ namespace MyStik.TimeTable.Web.Services
     /// <summary>
     /// 
     /// </summary>
-    public class CourseService
+    public class CourseService : BaseService
     {
-        private TimeTableDbContext db = new TimeTableDbContext();
-        private Course _course;
+
 
         /// <summary>
         /// 
         /// </summary>
-        protected IdentifyConfig.ApplicationUserManager UserManager;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CourseService()
-        {
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <param name="db"></param>
         /// <param name="userManager"></param>
-
-        public CourseService(IdentifyConfig.ApplicationUserManager userManager)
+        public CourseService(TimeTableDbContext db) : base(db)
         {
-            UserManager = userManager;
         }
+
+        public Course GetCourse(Guid id)
+        {
+            return Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id ==id );
+        }
+
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userManager"></param>
-        /// <param name="courseId"></param>
-        public CourseService(IdentifyConfig.ApplicationUserManager userManager, Guid courseId)
+        /// <param name="semester"></param>
+        /// <param name="lecturer"></param>
+        /// <returns></returns>
+        public List<Course> GetCourses(Semester semester, OrganiserMember lecturer)
         {
-            UserManager = userManager;
-            _course = db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var list = new List<Course>();
+
+            if (lecturer != null && semester != null)
+            {
+                list =
+                    Db.Activities.OfType<Course>().Where(c =>
+                            c.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)))
+                        .OrderBy(c => c.Name)
+                        .ToList();
+            }
+
+            return list;
         }
+
+        public List<Course> GetCourses(ApplicationUser user, SemesterGroup group)
+        {
+            return Db.Activities.OfType<Course>().Where(x =>
+                x.SemesterGroups.Any(g => g.Id == group.Id) &&
+                x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+        }
+
 
         /// <summary>
         /// 
@@ -57,12 +69,12 @@ namespace MyStik.TimeTable.Web.Services
         public List<CourseSummaryModel> GetCourses(string semesterName, OrganiserMember lecturer)
         {
             var list = new List<CourseSummaryModel>();
-            var semester = db.Semesters.SingleOrDefault(l => l.Name.ToUpper().Equals(semesterName.ToUpper()));
+            var semester = Db.Semesters.SingleOrDefault(l => l.Name.ToUpper().Equals(semesterName.ToUpper()));
 
             if (lecturer != null && semester != null)
             {
                 var courses =
-                    db.Activities.OfType<Course>().Where(c =>
+                    Db.Activities.OfType<Course>().Where(c =>
                         c.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
                         c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)))
                         .OrderBy(c => c.Name)
@@ -114,7 +126,7 @@ namespace MyStik.TimeTable.Web.Services
             if (lecturer != null)
             {
                 var courses =
-                    db.Activities.OfType<Course>().Where(c =>
+                    Db.Activities.OfType<Course>().Where(c =>
                         c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)))
                         .OrderBy(c => c.Name)
                         .ToList();
@@ -160,12 +172,12 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public List<CourseSummaryModel> SearchCourses(string semesterName, string searchString)
         {
-            var semester = db.Semesters.SingleOrDefault(l => l.Name.ToUpper().Equals(semesterName.ToUpper()));
+            var semester = Db.Semesters.SingleOrDefault(l => l.Name.ToUpper().Equals(semesterName.ToUpper()));
 
             if (semester != null)
             {
                 var courses =
-                    db.Activities.OfType<Course>().Where(
+                    Db.Activities.OfType<Course>().Where(
                         c => c.SemesterGroups.Any(g => g.Semester.Id == semester.Id &&
                                                        (c.Name.ToUpper().Contains(searchString) ||
                                                         c.ShortName.ToUpper().Contains(searchString) ||
@@ -191,7 +203,7 @@ namespace MyStik.TimeTable.Web.Services
         public List<CourseSummaryModel> SearchUnassignedCourses(string searchString)
         {
             var courses =
-                db.Activities.OfType<Course>().Where(
+                Db.Activities.OfType<Course>().Where(
                     c => !c.SemesterGroups.Any()).ToList();
 
             return CreateCourseSummaries(courses);
@@ -272,113 +284,10 @@ namespace MyStik.TimeTable.Web.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="lecturer"></param>
-        /// <param name="sem"></param>
-        /// <returns></returns>
-        public OfficeHour GetOfficeHour(OrganiserMember lecturer, Semester sem)
-        {
-            // zuerst richtg
-            var officeHour =
-                db.Activities.OfType<OfficeHour>().FirstOrDefault(x =>
-                    x.Semester.Id == sem.Id &&
-                    x.Owners.Any(k => k.Member.Id == lecturer.Id)
-                );
-
-            if (officeHour != null)
-                return officeHour;
-
-            // jetzt irgendwie suchen
-            // alle mit Terminen
-            var allOfficeHours =
-                db.Activities.OfType<OfficeHour>().Where(
-                        c =>
-                            c.Semester.Id == sem.Id &&
-                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)))
-                    .ToList();
-            
-            // keine mit Terminen
-            if (!allOfficeHours.Any())
-            {
-                // alle ohne Termine
-                allOfficeHours =
-                    db.Activities.OfType<OfficeHour>().Where(
-                            c =>
-                                c.Semester.Id == sem.Id &&
-                                c.Name.Equals("Sprechstunde") &&
-                                c.ShortName.Equals(lecturer.ShortName))
-                        .ToList();
-
-                // ok! wirklich keine
-                if (!allOfficeHours.Any())
-                    return null;
-
-                // wenn mhr als 1, dann reparieren
-                return allOfficeHours.First();
-            }
-
-            // wenn mehr als 1 => dann reparieren
-            return allOfficeHours.First();
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="lecturer"></param>
-        /// <returns></returns>
-        public List<OfficeHourSummaryModel> GetOfficeHours(OrganiserMember lecturer)
-        {
-            var list = new List<OfficeHourSummaryModel>();
-            
-            if (lecturer != null)
-            {
-                var courses =
-                    db.Activities.OfType<OfficeHour>().Where(
-                        c => c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)))
-                        .ToList();
-
-                foreach (var course in courses)
-                {
-                    var summary = new OfficeHourSummaryModel { OfficeHour = course };
-                    summary.Lecturers.Add(lecturer);
-
-                    var days = (from occ in course.Dates
-                                select
-                                    new
-                                    {
-                                        Day = occ.Begin.DayOfWeek,
-                                        Begin = occ.Begin.TimeOfDay,
-                                        End = occ.End.TimeOfDay,
-                                    }).Distinct();
-
-                    foreach (var day in days)
-                    {
-                        var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                        var courseDate = new CourseDateModel
-                        {
-                            DayOfWeek = day.Day,
-                            StartTime = day.Begin,
-                            EndTime = day.End,
-                            DefaultDate = defaultDay.Begin
-                        };
-                        summary.Dates.Add(courseDate);
-                    }
-
-                    list.Add(summary);
-                }
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="courseId"></param>
         public void DeleteAllDates(Guid courseId)
         {
-            var course = db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
             if (course != null)
             {
                 var date = course.Dates.OrderBy(d => d.Begin).FirstOrDefault();
@@ -394,7 +303,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <param name="dateTime"></param>
         public void DeleteAllDatesAfter(Guid courseId, DateTime dateTime)
         {
-            var course = db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
 
             if (course != null)
             {
@@ -408,41 +317,34 @@ namespace MyStik.TimeTable.Web.Services
                         foreach (var sub in slot.Occurrence.Subscriptions.ToList())
                         {
                             slot.Occurrence.Subscriptions.Remove(sub);
-                            db.Subscriptions.Remove(sub);
+                            Db.Subscriptions.Remove(sub);
                         }
-                        db.Occurrences.Remove(slot.Occurrence);
+                        Db.Occurrences.Remove(slot.Occurrence);
                         date.Slots.Remove(slot);
-                        db.ActivitySlots.Remove(slot);
+                        Db.ActivitySlots.Remove(slot);
                     }
 
                     foreach (var sub in date.Occurrence.Subscriptions.ToList())
                     {
                         date.Occurrence.Subscriptions.Remove(sub);
-                        db.Subscriptions.Remove(sub);
+                        Db.Subscriptions.Remove(sub);
                     }
 
                     date.Hosts.Clear();
                     date.Rooms.Clear();
 
-                    db.Occurrences.Remove(date.Occurrence);
+                    Db.Occurrences.Remove(date.Occurrence);
                     course.Dates.Remove(date);
-                    db.ActivityDates.Remove(date);
+                    Db.ActivityDates.Remove(date);
                 }
 
-                db.SaveChanges();
+                Db.SaveChanges();
             }
         }
 
-        internal bool IsAvailableFor(Course course, string curriculum)
+        internal List<CourseDateModel> GetDateSummary(Course course)
         {
-            return course.SemesterGroups.Any(g => 
-                g.CapacityGroup.CurriculumGroup != null &&
-                g.CapacityGroup.CurriculumGroup.Curriculum.ShortName.Equals(curriculum));
-        }
-
-        internal List<CourseDateModel> GetDateSummary()
-        {
-            var days = (from occ in _course.Dates
+            var days = (from occ in course.Dates
                         select
                             new
                             {
@@ -455,7 +357,7 @@ namespace MyStik.TimeTable.Web.Services
 
             foreach (var day in days)
             {
-                var defaultDay = _course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
+                var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
 
                 var courseDate = new CourseDateModel
                 {
@@ -471,97 +373,120 @@ namespace MyStik.TimeTable.Web.Services
             return summary;
         }
 
-        internal List<OrganiserMember> GetLecturerList()
+        internal List<OrganiserMember> GetLecturerList(Course course)
         {
-            return db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == _course.Id)).ToList();
+            return Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
         }
 
-        internal List<Room> GetRoomList()
+        internal List<Room> GetRoomList(Course course)
         {
-            return db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == _course.Id)).ToList();
+            return Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
         }
 
-        internal ActivityDate GetNextDate(bool activeOnly = false)
+        internal ActivityDate GetNextDate(Course course, bool activeOnly = false)
         {
             if (activeOnly)
-                return _course.Dates
-                    .Where(occ => occ.End >= GlobalSettings.Now && !occ.Occurrence.IsCanceled)
+                return course.Dates
+                    .Where(occ => occ.End >= DateTime.Now && !occ.Occurrence.IsCanceled)
                     .OrderBy(occ => occ.Begin)
                     .FirstOrDefault();
 
-            return _course.Dates
-                .Where(occ => occ.End >= GlobalSettings.Now)
+            return course.Dates
+                .Where(occ => occ.End >= DateTime.Now)
                 .OrderBy(occ => occ.Begin)
                 .FirstOrDefault();
         }
 
-        internal List<SubscriptionDetailViewModel> GetWaitingList()
+        internal List<ActivityDate> GetDatesThisWeek(Course course)
+        {
+            var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+            var endOfWeek = startOfWeek.AddDays(7);
+
+            return course.Dates
+                .Where(occ => occ.Begin >= startOfWeek && occ.End <= endOfWeek)
+                .OrderBy(occ => occ.Begin).ToList();
+        }
+
+
+        internal List<ActivityDate> GetDatesNextWeek(Course course)
+        {
+            var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday + 7);
+            var endOfWeek = startOfWeek.AddDays(7);
+
+            return course.Dates
+                .Where(occ => occ.Begin >= startOfWeek && occ.End <= endOfWeek)
+                .OrderBy(occ => occ.Begin).ToList();
+        }
+
+
+        internal List<SubscriptionDetailViewModel> GetWaitingList(Course course)
         {
             var pList = new List<SubscriptionDetailViewModel>();
 
-            foreach (var subscription in _course.Occurrence.Subscriptions.Where(s => s.OnWaitingList==true))
+            foreach (var subscription in course.Occurrence.Subscriptions.Where(s => s.OnWaitingList==true))
             {
-                var user = UserManager.FindById(subscription.UserId);
-                if (user != null)
+                pList.Add(new SubscriptionDetailViewModel
                 {
-                    pList.Add(new SubscriptionDetailViewModel
-                    {
-                        Subscription = subscription,
-                        User = user
-                    });
-                }
+                    Subscription = subscription,
+                });
             }
 
             return pList;
         }
 
-        internal List<SubscriptionDetailViewModel> GetTotalParticipantList()
+        internal List<SubscriptionDetailViewModel> GetTotalParticipantList(Course course)
         {
             var pList = new List<SubscriptionDetailViewModel>();
 
-            foreach (var subscription in _course.Occurrence.Subscriptions)
+            foreach (var subscription in course.Occurrence.Subscriptions)
             {
-                var user = UserManager.FindById(subscription.UserId);
-                if (user != null)
+                pList.Add(new SubscriptionDetailViewModel
                 {
-                    pList.Add(new SubscriptionDetailViewModel
-                    {
-                        Subscription = subscription,
-                        User = user
-                    });
-                }
+                    Subscription = subscription,
+                });
             }
 
             return pList;
         }
 
-        internal List<SubscriptionDetailViewModel> GetParticipantList()
+        internal List<SubscriptionDetailViewModel> GetParticipantList(Course course)
         {
             var pList = new List<SubscriptionDetailViewModel>();
 
-            foreach (var subscription in _course.Occurrence.Subscriptions.Where(s => s.OnWaitingList == false))
+            foreach (var subscription in course.Occurrence.Subscriptions.Where(s => s.OnWaitingList == false && s.IsConfirmed))
             {
-                var user = UserManager.FindById(subscription.UserId);
-                if (user != null)
+                pList.Add(new SubscriptionDetailViewModel
                 {
-                    pList.Add(new SubscriptionDetailViewModel
-                    {
-                        Subscription = subscription,
-                        User = user
-                    });
-                }
+                    Subscription = subscription,
+                });
             }
 
             return pList;
         }
 
-        internal List<OccurrenceGroupCapacityModel> GetSubscriptionGroups()
+        internal List<SubscriptionDetailViewModel> GetReservationList(Course course)
+        {
+            var pList = new List<SubscriptionDetailViewModel>();
+
+            foreach (var subscription in course.Occurrence.Subscriptions.Where(s => s.OnWaitingList == false && s.IsConfirmed==false))
+            {
+                pList.Add(new SubscriptionDetailViewModel
+                {
+                    Subscription = subscription,
+                });
+            }
+
+            return pList;
+        }
+
+
+        internal List<OccurrenceGroupCapacityModel> GetSubscriptionGroups(Course course)
         {
             var groups = new List<OccurrenceGroupCapacityModel>();
 
-            foreach (var semGroup in _course.SemesterGroups)
+            foreach (var semGroup in course.SemesterGroups)
             {
-                var occGroup = _course.Occurrence.Groups.SingleOrDefault(g => g.SemesterGroups.Any(s => s.Id == semGroup.Id));
+                var occGroup = course.Occurrence.Groups.FirstOrDefault(g => g.SemesterGroups.Any(s => s.Id == semGroup.Id));
 
                 // u.U. fehlende Gruppen automatisch ergänzen
                 if (occGroup == null)
@@ -572,13 +497,13 @@ namespace MyStik.TimeTable.Web.Services
                         Capacity = 0,
                     };
                     occGroup.SemesterGroups.Add(semGroup);
-                    _course.Occurrence.Groups.Add(occGroup);
-                    db.SaveChanges();
+                    course.Occurrence.Groups.Add(occGroup);
+                    Db.SaveChanges();
                 }
 
                 groups.Add(new OccurrenceGroupCapacityModel
                 {
-                    CourseId = _course.Id,
+                    CourseId = course.Id,
                     SemesterGroupId = semGroup.Id,
                     Semester = semGroup.Semester.Name,
                     Curriculum = semGroup.CapacityGroup.CurriculumGroup.Curriculum.ShortName,
@@ -591,7 +516,7 @@ namespace MyStik.TimeTable.Web.Services
             return groups;
         }
 
-        internal List<OccurrenceCapacityOption> GetCapacitySettings()
+        internal List<OccurrenceCapacityOption> GetCapacitySettings(Course course)
         {
             var model = new List<OccurrenceCapacityOption>();
 
@@ -599,7 +524,7 @@ namespace MyStik.TimeTable.Web.Services
             {
                 Id = 1,
                 HasValue = false,
-                Selected = _course.Occurrence.UseGroups == false && _course.Occurrence.Capacity < 0,
+                Selected = course.Occurrence.UseGroups == false && course.Occurrence.Capacity < 0,
                 Text = "Keine Platzbeschränkung",
             });
 
@@ -607,16 +532,16 @@ namespace MyStik.TimeTable.Web.Services
             {
                 Id = 2,
                 HasValue = true,
-                Selected = !_course.Occurrence.UseGroups && _course.Occurrence.Capacity >= 0,
+                Selected = !course.Occurrence.UseGroups && course.Occurrence.Capacity >= 0,
                 Text = "Gesamtzahl an Plätzen festlegen (ohne Berücksichtigung der Gruppeninformationen)",
-                Capacity = _course.Occurrence.Capacity
+                Capacity = course.Occurrence.Capacity
             });
 
             model.Add(new OccurrenceCapacityOption
             {
                 Id = 3,
                 HasValue = false,
-                Selected = _course.Occurrence.UseGroups && !_course.Occurrence.UseExactFit,
+                Selected = course.Occurrence.UseGroups && !course.Occurrence.UseExactFit,
                 Text = "Platzbeschränkung auf Ebene Studienprogramme festlegen",
             });
 
@@ -624,11 +549,17 @@ namespace MyStik.TimeTable.Web.Services
             {
                 Id = 4,
                 HasValue = false,
-                Selected = _course.Occurrence.UseGroups && _course.Occurrence.UseExactFit,
+                Selected = course.Occurrence.UseGroups && course.Occurrence.UseExactFit,
                 Text = "Platzbeschränkung auf Ebene der Semestergruppen festlegen",
             });
 
             return model;
+        }
+
+        public CourseSummaryModel GetCourseSummary(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+            return GetCourseSummary(course);
         }
 
         /// <summary>
@@ -640,15 +571,24 @@ namespace MyStik.TimeTable.Web.Services
         {
             var summary = new CourseSummaryModel();
 
-            summary.Course = course;
+            summary.Course = course as Course;
 
             var lectures =
-                db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+                Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
             summary.Lecturers.AddRange(lectures);
 
             var rooms =
-                db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+                Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
             summary.Rooms.AddRange(rooms);
+
+
+            foreach (var semesterGroup in course.SemesterGroups)
+            {
+                if (!summary.Curricula.Contains(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum))
+                {
+                    summary.Curricula.Add(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum);
+                }
+            }
 
 
             var days = (from occ in course.Dates
@@ -679,8 +619,10 @@ namespace MyStik.TimeTable.Web.Services
 
         internal bool IsActive(OrganiserMember member, Semester semester)
         {
-            return db.ActivityDates.Any(d => d.Hosts.Any(h => h.Id == member.Id) &&
+            return Db.ActivityDates.Any(d => d.Hosts.Any(h => h.Id == member.Id) &&
                                              d.Activity.SemesterGroups.Any(s => s.Semester.Id == semester.Id));
         }
+
+        
     }
 }

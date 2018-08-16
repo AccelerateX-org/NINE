@@ -90,9 +90,8 @@ namespace MyStik.TimeTable.Web.Services
         /// </summary>
         /// <param name="occurrence"></param>
         /// <param name="user"></param>
-        /// <param name="semester"></param>
         /// <returns>Der Benutzer ist bereits eingetragen, es ist eine Eintragung möglich. Wenn keine Eintragung möglich, dann wird es als Fehler angegeben (mit Grund).</returns>
-        public OccurrenceStateModel GetActivityState(Occurrence occurrence, ApplicationUser user, Semester semester)
+        public OccurrenceStateModel GetActivityState(Occurrence occurrence, ApplicationUser user)
         {
             var state = new OccurrenceStateModel();
             state.Occurrence = occurrence;
@@ -159,24 +158,21 @@ namespace MyStik.TimeTable.Web.Services
 
             if (user.MemberState == MemberState.Student && summary.Activity is Course)
             {
-                /*
-                 * Überprüfung, ob eine Einschreibung für das im Parameter angegebene Semester vorliegt
-                var hasSubscription =
-                    DB.SemesterGroups.Any(
-                        g => g.Semester.Id == semester.Id && g.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
-                        */
-
+                /* OHI 20180528 - Umstellung auf Studiengäge
                 // Überprüfen, ob zu den Semestern des Kurses auch eine Einschreibung vorliegt
                 var allSemIds = summary.Activity.SemesterGroups.Select(x => x.Semester.Id).ToList();
                 var allSubIds = DB.Subscriptions.OfType<SemesterSubscription>().Where(x => x.UserId.Equals(user.Id))
                     .Select(x => x.SemesterGroup.Semester.Id).ToList();
 
                 var hasSubscription = allSemIds.Any(x => allSubIds.Contains(x));
+                */
+
+                var hasSubscription = DB.Students.Any(x => x.UserId.Equals(user.Id));
 
                 if (!hasSubscription)
                 {
                     state.HasError = true;
-                    state.ErrorMessage = "Angabe der aktuellen Semestergruppe erforderlich";
+                    state.ErrorMessage = "Angabe eines Studiengangs erforderlich";
                     return state;
                 }
             }
@@ -188,6 +184,12 @@ namespace MyStik.TimeTable.Web.Services
             {
                 // Bei Aktivitäten gibt es Wartelisten, daher keine Beschränkungen mehr auf Zeit und Kapazität hier prüfen
                 state.State = SubscriptionState.DuringSubscriptionPhase;
+
+                // wenn die Teilnehmerliste gesperrt ist, dann auf "nicht mehr eintragen" setzen
+                if (!occurrence.IsAvailable)
+                {
+                    state.State = SubscriptionState.AfterSubscriptionPhase;
+                }
             }
             else if (summary is ActivityDateSummary)
             {
@@ -261,7 +263,7 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public SubscriptionState GetSubscriptionState(Occurrence occurrence, DateTime start, DateTime end)
         {
-            var now = GlobalSettings.Now;
+            var now = DateTime.Now;
 
             // alles nach Beginn des Ereignisses
             if (start <= now)

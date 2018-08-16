@@ -1,0 +1,52 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Student>
+@{
+    ViewBag.Title = "Studiengänge";
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-graduation-cap"></i> Meine Studiengänge</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-info">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-info-circle"></i> Information
+                        </h5>
+                        <div class="list-group-item-text">
+                            <p>Die Angabe des Studiengangs ist für einige Funktionen, z.B. Teilnahme an Wahlverfahren, erforderlich.</p>
+                            <p>Es können beliebig viele Studiengänge angegeben werden. Aktuell wird nur der zuletzt angelegte Studiengang für Wahlverfahren etc. verwendet.</p>
+                        </div>
+                    </div>
+                    @foreach (var student in Model)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                @student.Curriculum.Name (@student.Curriculum.ShortName)
+                            </h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-university"></i>@student.Curriculum.Organiser.Name (@student.Curriculum.Organiser.ShortName)</li>
+                                    <li><i class="fa fa-li fa-calendar"></i>Studienbeginn: @student.FirstSemester.Name</li>
+                                    @if (student.IsPartTime)
+                                    {
+                                        <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                                    }
+                                    @if (student.IsDual)
+                                    {
+                                        <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                                    }
+                                    <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Created</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,106 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumSubscriptionViewModel
+@{
+    ViewBag.Title = "Angabe des Studiengangs";
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4><i class="fa fa-info-circle"></i> Hinweis:</h4>
+                <p>Bisher war jedes Semester die Angabe einer "Semestergruppe" erforderlich. Die "Semestergruppe" ist letztlich eine Kombination aus "Studiengang" und einer "Semesterangabe". 
+                    Diese Information wird aus organisatorischen Gründen bei allen Lehrveranstaltungen benötigt, die irgendwelchen Teilnahmebeschränkungen unterliegen. 
+                    Beispiele sind Laborpraktika und Wahlverfahren (Wahlpflicht, Projekte). Die Angabe konnte jederzeit verändert werden, was leider teilweise auch missbraucht wurde, in dem Versuch sich bei Wahlverfahren Vorteile zu verschaffen.
+                    Wir haben die Semestergruppe auch als eine Art "Rückmeldung" verwendet, um "aktive" Studierende zu erkennen und den Anteil an "fehlgeleiteten" E-Mails möglichst gering zu halten.
+                </p>
+                <p>Die semesterweise Angabe sowie die Auswahl einer "irgendwie passenden" Semestergruppe führte teilweise zu Verwirrung. Daher haben wir dies jetzt verändert.</p>
+                <p>Ab jetzt muss nur noch einmalig der Studiengang und das Semester des Studienbeginns angegeben werden. Die Angabe kann dann nur noch auf Antrag durch die jeweilige Studiengangsbetreuung geändert werden.</p>
+                <p>Wir hoffen dadurch die Nutzung von NINE für alle Beteiligten zu verbessern.</p>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-graduation-cap"></i> Mein aktueller Studiengang</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("ChangeConfirm", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+                    {
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                    <fieldset>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(model => model.OrgId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control", onchange = "onFacultyChanged()" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CurrId, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(model => model.CurrId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SemId, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(model => model.SemId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Zusatzinformationen</label>
+                            <div class="col-sm-4">
+                                @Html.CheckBoxFor(item => item.IsPartTime)
+                                @Html.LabelFor(item => item.IsPartTime, new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                @Html.CheckBoxFor(item => item.IsDual)
+                                @Html.LabelFor(item => item.IsDual, new { @class = "control-label" })
+                            </div>
+                        </div>
+
+
+                        <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
+                    </fieldset>
+                    }
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            onFacultyChanged();
+        });
+
+
+        function onFacultyChanged() {
+            var prog = $('#OrgId option:selected').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CurriculaList2", "Curriculum")',
+                    data: {
+                        orgId: prog
+                    },
+                    success: function (data, success, xhr) {
+                        $('#CurrId').html(data);
+                    }
+                });
+        }
+
+    </script>
+}
+
+

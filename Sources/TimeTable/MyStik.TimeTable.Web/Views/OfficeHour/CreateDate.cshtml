@@ -30,33 +30,77 @@
                 <div class="panel-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                     {
-                        <fieldset>
-                            @Html.ValidationSummary()
-                            @Html.HiddenFor(model => model.OfficeHourId)
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Wochentag und Zeitraum</label>
-                                <div class="col-sm-2">
-                                    @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker" })
-                                </div>
-                                <div class="col-sm-2">
-                                    @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
-                                </div>
-                                <div class="col-sm-2">
-                                    @Html.TextBoxFor(model => model.EndTime, new {@class = "form-control timepicker timepicker-24"})
-                                </div>
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(model => model.OfficeHourId)
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Datum</label>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker" })
                             </div>
-                            <div class="form-group">
-                                <label>
-                                    @Html.CheckBoxFor(model => model.IsWeekly)
-                                    Termine bis Ende des Semesters wöchentlich generieren
-                                </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Beginn</label>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-3 col-md-6">
-                                    <input type="submit" value="Termin anlegen" class="btn btn-default" />
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Ende</label>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.EndTime, new { @class = "form-control timepicker timepicker-24" })
                             </div>
-                        </fieldset>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-offset-4">
+                                @Html.CheckBoxFor(model => model.IsWeekly)
+                                Termine wöchentlich generieren bis  @Html.TextBoxFor(model => model.NewDateEnd, new { @class = "form-control datepicker" })
+                            </label>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Eintragung für Studierende bis</label>
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>)ViewBag.Limits, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Anzahl Plätze</label>
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(model => model.Capacity, (IEnumerable<SelectListItem>)ViewBag.Capacities, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-offset-4">
+                                @Html.CheckBoxFor(model => model.UseSlots)
+                                Slotsystem verwenden (Anzahl Plätze wird dann automatisch auf 1 gesetzt)
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SlotDuration, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(model => model.SlotDuration, (IEnumerable<SelectListItem>)ViewBag.SlotDurations, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SpareSlots, new { @class = "col-sm-4 control-label" })
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(model => model.SpareSlots, (IEnumerable<SelectListItem>)ViewBag.SpareSlots, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-md-6">
+                                <input type="submit" value="Termin(e) anlegen" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </fieldset>
                     }
                 </div>
             </div>

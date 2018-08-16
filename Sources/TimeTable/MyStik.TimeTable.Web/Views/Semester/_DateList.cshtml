@@ -26,7 +26,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach (var date in Model.Dates)
+                    <tr>
+                        <td>@Model.StartCourses</td>
+                        <td>HM</td>
+                        <td>Vorlesungsbeginn</td>
+                    </tr>
+                    @foreach (var date in Model.Dates.OrderBy(x => x.From))
                     {
                         <tr>
                             <td>@Html.TimeSpan(date)</td>
@@ -41,8 +46,15 @@
                             }
                         </tr>
                     }
+                    <tr>
+                        <td>@Model.EndCourses</td>
+                        <td>HM</td>
+                        <td>Vorlesungsende</td>
+                    </tr>
+
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>

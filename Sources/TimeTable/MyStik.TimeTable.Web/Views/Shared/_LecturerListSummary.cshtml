@@ -1,29 +1,53 @@
-﻿@model ICollection<MyStik.TimeTable.Web.Models.LecturerViewModel>
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Web.Models.LecturerViewModel>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+@if (Model.Any())
+{
+    <div class="list-group">
         @foreach (var lec in Model)
         {
-            <tr>
-                <td><a href="@Url.Action("Member", "Organiser", new {orgId = lec.Lecturer.Organiser.ShortName, shortName = lec.Lecturer.ShortName})">@lec.Lecturer.Name</a></td>
-                @if (string.IsNullOrEmpty(lec.Lecturer.UrlProfile))
-                {
-                    <td></td>
-                }
-                else
-                {
-                    <td><a href="@lec.Lecturer.UrlProfile" target="_blank">@lec.Lecturer.UrlProfile</a> <i class="fa fa-external-link"></i></td>
-                }
-                
-            </tr>
-        }
-    </tbody>
-</table>
+            var linkDescription = string.Format("desc{0}", lec.Lecturer.Id);
 
+            <div class="list-group-item">
+                <h5 class="list-group-item-heading">
+                    @Html.FacultyLabel(lec.Lecturer.Organiser)
+                    <a href="@Url.Action("Member", "Organiser", new {id = lec.Lecturer.Id})">@lec.Lecturer.Name</a>
+                </h5>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="fa-ul">
+                            @if (!string.IsNullOrEmpty(lec.Lecturer.UrlProfile))
+                            {
+                                <li>
+                                    <i class="fa-li fa fa-globe"></i>
+                                    <a href="@lec.Lecturer.UrlProfile" target="_blank">@lec.Lecturer.UrlProfile</a>
+                                    <i class="fa fa-external-link"></i>
+
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(lec.Lecturer.Description) && lec.Lecturer.ShowDescription)
+                            {
+                                <li>
+                                    <i class="fa-li fa fa-info-circle"></i>Beschreibung: <a href="#@linkDescription" data-toggle="collapse">einblenden</a>
+                                    <div class="collapse" id="@linkDescription">
+                                        <div class="panel panel-default">
+                                            @Html.Raw(lec.Lecturer.Description)
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="panel-body">
+        <h2>Keine Lehrenden gefunden</h2>
+    </div>
+}
 

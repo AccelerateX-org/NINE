@@ -1,0 +1,78 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    var number = 0;
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4><i class="fa fa-check"></i> Schritt 3: Kontrolle und Bestätigung</h4>
+    </div>
+    <div class="panel-body">
+        <h5>Gewählte Lehrveranstaltungen</h5>
+        <ul class="projektliste">
+            @foreach (var course in Model.Courses)
+            {
+                number++;
+                <li id="@course.Course.Id" class="ui-state-default">
+                    <h5>Priorität @number</h5>
+                    <h6>@course.Course.Name</h6>
+                    <p>@Html.LecturerList(course.CourseSummary.Lecturers, false)</p>
+                </li>
+            }
+        </ul>
+
+        @if (Model.Lottery.MaxConfirm == Model.Lottery.MaxExceptionConfirm)
+        {
+            <h5><i class="fa fa-heartbeat"></i> Ich erhalte maximal in @Model.Lottery.MaxConfirm Lehrveranstaltungen einen Platz
+            </h5>
+        }
+
+        @if (Model.Lottery.MaxConfirm < Model.Lottery.MaxExceptionConfirm)
+        {
+            <h5><i class="fa fa-heartbeat"></i> Ich möchte @Model.ConfirmCount Lehrveranstaltungen belegen.
+            </h5>
+        }
+
+        @if (Model.AcceptAny)
+        {
+            <h5>
+                <i class="fa fa-frown-o"></i> Im Falle, dass meine Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptiere ich jeweils einen Platz in nicht von mir gewählten Lehrveranstaltungen zu erhalten.
+            </h5>
+        }
+        else
+        {
+            <h5>
+                <i class="fa fa-frown-o"></i> Im Falle, dass meine Wahl nicht bzw. nicht vollständig erfüllt werden kann, akzeptiere ich eine geringe Anzahl an Plätzen, als ich angegeben habe.
+            </h5>
+        }
+
+        @if (Model.Lottery.LoINeeded)
+        {
+            <h5><i class="fa fa-pencil"></i> Im Rahmen des Wahlverfahrens kann ich Bewerbungsschreiben einreichen. Dies kann nach Abschluss der Auswahl machen.
+            </h5>
+        }
+
+        <input hidden="" value="@Model.ConfirmCount" id="confirm"/>
+        @if (Model.AcceptAny)
+        {
+            <input hidden="" value="1" id="acceptAny"/>
+        }
+        else
+        {
+            <input hidden="" value="0" id="acceptAny"/>
+        }
+
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="btn-group-vertical btn-block">
+        <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default btn-block">Vorauswahl ändern</a>
+        <a class="btn btn-primary btn-block" id="hauptbutton3">Auswahl bestätigen und Wahl verbindlich abschließen</a>
+    </div>
+</div>
+
+
+

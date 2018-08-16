@@ -1,0 +1,143 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    ViewBag.Title = "Overview";
+    ViewBag.ShowState = false;
+    var prio = 0;
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-star"></i> Meine gewählten Lehrveranstaltungen im Wahlverfahren @Model.Lottery.Name</h4>
+                </div>
+                <div class="list-group">
+                    @if (Model.Game.DrawingDate.HasValue)
+                    {
+                        <div class="list-group-item list-group-item-success">
+                            <div class="list-group-item-heading">
+                                <h5><i class="fa fa-random"></i> Meine Auswahl wurde in der Verteilung vom @Model.Game.DrawingDate.Value.ToShortDateString() berücksichtigt</h5>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group-item list-group-item-warning">
+                            <div class="list-group-item-heading">
+                                <h5><i class="fa fa-random"></i> Bisher wurde meine Auswahl in keiner Verteilung berücksichtigt.</h5>
+                            </div>
+                        </div>
+
+                    }
+                    @foreach (var course in Model.Courses.OrderByDescending(x => x.Points))
+                    {
+                        prio++;
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <i class="fa fa-hourglass-half"></i>
+                                    <div>Auf Warteliste</div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="list-group-item-heading">
+                                        <h5>Priorität @prio: @course.Course.Name</h5>
+                                    </div>
+                                    <div class="list-group-item-text">
+                                        <ul class="fa-ul">
+                                            @if (Model.Lottery.LoINeeded)
+                                            {
+                                                if (string.IsNullOrEmpty(course.Subscription.SubscriberRemark))
+                                                {
+                                                    <li>Noch kein Bewerbungsschreiben abgegeben</li>
+                                                }
+                                                else
+                                                {
+                                                    <li>Bewerbungsschreiben abgegeben</li>
+                                                }
+                                            }
+                                            <li>Weitere Infos</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="btn-group-vertical btn-block">
+                                        @if (Model.Lottery.LoINeeded)
+                                        {
+                                            <a class="btn btn-default btn-block" href="@Url.Action("EditReference", new {lotteryID = Model.Lottery.Id, courseId = course.Course.Id})">Bewerbungsschreiben</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-cogs"></i> Ablauf des Verfahrens</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5>Rahmenbedingungen</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            <ul>
+                                <li>Ich muss mindestens @Model.Lottery.MinSubscription Lehrveranstaltungen auswählen</li>
+                                <li>Ich kann maximal @Model.Lottery.MaxSubscription Lehrveranstaltungen auswählen</li>
+                                <li>Ich kann in bis zu @Model.Lottery.MaxExceptionConfirm Lehrveranstaltungen einen Platz erhalten</li>
+                                @if (Model.Lottery.IsActiveFrom.HasValue && Model.Lottery.IsActiveUntil.HasValue)
+                                {
+                                    <li>Ich kann von @Model.Lottery.IsActiveFrom.Value.ToShortDateString() bis @Model.Lottery.IsActiveUntil.Value.ToShortDateString() Lehrveranstaltungen wählen</li>
+                                }
+                                else
+                                {
+                                    <li>ich kann laufend Lehrveranstaltungen wählen</li>
+                                }
+                                @if (Model.Lottery.IsFixed)
+                                {
+                                    <li>Ich kann meine einmal getroffene Auswahl nicht mehr verändern</li>
+                                }
+                                else
+                                {
+                                    <li>Ich kann meine Auswahl während des oben angegeben Zeitraums verändern.</li>
+                                }
+                                <li>Die Verteilung der Plätze findet statt zwischen dem @Model.Lottery.FirstDrawing.ToShortDateString() und @Model.Lottery.LastDrawing.ToShortDateString()</li>
+                            </ul>
+                        </div>
+                    </div>
+                    @if (!Model.Lottery.IsFixed)
+                    {
+                        <a class="list-group-item list-group-item-info" href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})">
+                            <h5 class="list-group-item-heading"><i class="fa fa-shopping-cart"></i> Auswahl ändern</h5>
+                            <div class="list-group-item-text">
+                                Durch die Veränderung der Auswahl verliere ich sämtliche Plätze
+                            </div>
+                        </a>
+                    }
+                    @if (Model.Game.DrawingDate.HasValue)
+                    {
+                        <a class="list-group-item list-group-item-info" href="@Url.Action("ClearSelection", new {id = Model.Lottery.Id})">
+                            <h5 class="list-group-item-heading"><i class="fa fa-shopping-cart"></i> Auswahl bereinigen</h5>
+                            <div class="list-group-item-text">
+                                Ich bin mit den erhaltenen Plätzen zufrieden und möchte mich aus allen Wartelisten austragen.
+                            </div>
+                        </a>
+                    }
+                    <a class="list-group-item list-group-item-danger" href="@Url.Action("RemoveSelection", new {id = Model.Lottery.Id})">
+                        <h5 class="list-group-item-heading"><i class="fa fa-trash-o"></i> Alles löschen</h5>
+                        <div class="list-group-item-text">
+                            Alle meine Plätze gehen verloren.
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
