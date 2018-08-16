@@ -289,6 +289,36 @@
             Name des Dozenten
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Contracts.CalendarEntry">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CalendarEntry.title">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CalendarEntry.begin">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CalendarEntry.end">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CalendarEntry.hosts">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Contracts.CalendarEntry.rooms">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Contracts.NextEventContract">
             <summary>
             Contract zur Abfrage der nächsten Events
@@ -854,17 +884,7 @@
             
             </summary>
         </member>
-        <member name="F:MyStik.TimeTable.Web.Api.Controller.AccountController._userManager">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Api.Controller.AccountController.#ctor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Api.Controller.AccountController.UserManager">
             <summary>
             
             </summary>
@@ -955,6 +975,114 @@
             <param name="EventId">EventId des Eventtermins</param>
             <returns>Informationen zum gewünschten Event</returns>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.CampusRoom">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.CampusRoom.id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.CampusRoom.number">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.CampusRoom.name">
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.CampusRoom.capacity">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.CampusController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CampusController.Get">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CampusController.Get(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CampusController.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel.User">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel.Courses">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.SubscriptionCourseModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.CoursesController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.GetCourses">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.GetCourse(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.GetCourses(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.GetCourseSummaries(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.Subscribe(MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.Unsubscribe(MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CoursesController.Subscriptions(MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.CurriculaController">
             <summary>
             Abfrage von Studiengängen
@@ -997,6 +1125,71 @@
             </summary>
             <param name="LectureId">Id der Vorlesung</param>
             <returns>Alle Termine einer Vorlesung</returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.Faculty">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Faculty.id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Faculty.name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Faculty.shortname">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Faculty.curricula">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.Curriculum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Curriculum.id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Curriculum.name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.Curriculum.shortname">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.FacultyController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.FacultyController.Get">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.FacultyController.Get(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.FacultyController.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.LecturerController">
             <summary>
@@ -1152,14 +1345,552 @@
             Anfrage von Rauminformationen
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetRooms">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetRoomLabel(System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetRoomDisplay(System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetRoomImage(System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.SemesterController">
             <summary>
             https://docs.microsoft.com/de-de/aspnet/web-api/overview/web-api-routing-and-actions/create-a-rest-api-with-attribute-routing
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.AccountDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.AccountDto.User">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.AccountDto.Curriculum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.UserDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.UserDto.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.UserDto.FirstName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.UserDto.LastName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ActionDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ActionDto.Title">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ActionDto.Href">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.BaseDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.BaseDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.BaseDto.Actions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.NamedDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.NamedDto.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.NamedDto.ShortName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CourseDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDto.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDto.Description">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDto.IsCoterie">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDto.HasHomeBias">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDto.Correlations">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDto.Dates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CorrelationDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CorrelationDto.Organiser">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CorrelationDto.Curriculum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.Begin">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.End">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.Title">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.IsCanceled">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.Rooms">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.Lecturer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.RoomDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomDto.Number">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomDto.Building">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomDto.Campus">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.LecturerDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.LecturerDto.Title">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.LecturerDto.FirstName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.LecturerDto.LastName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Description">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.IsCoterie">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.HasHomeBias">
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Category">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Department">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Level">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Ects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Sws">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.UsCredits">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Locations">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Lecturer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Appointments">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto.Modules">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.AppointmentDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.AppointmentDto.DayOfWeekName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.AppointmentDto.TimeBegin">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.AppointmentDto.TimeEnd">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ModuleDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Curriculum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Ects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.UsCredits">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Sws">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumDto.Organiser">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumPackageDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.CurriculumPackageDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumPackageDto.Options">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumOptionDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.CurriculumOptionDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumOptionDto.Modules">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleDto.Ects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleDto.Sections">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleSectionDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleSectionDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleSectionDto.Semester">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumModuleSectionDto.Subjects">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumSubjectDto">
             <summary>
             Das Fach
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumSubjectDto.CourseTypes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumSubjectDto.ExamTypes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumSubjectDto.IsMandatory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermDto.Number">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermDto.Sections">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Ects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Package">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Option">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Module">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Subjects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.OrganiserDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.OrganiserDto.Color">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.RoomSummaryDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomSummaryDto.Number">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomSummaryDto.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.RoomLabelDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomLabelDto.Title">
+            <summary>
+            
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomLabelDto.ImageFileType">
@@ -1170,6 +1901,56 @@
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomLabelDto.ImageData">
             <summary>
             Die Bilddaten
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.SemesterDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SemesterDto.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.SemesterStatisticsDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SemesterStatisticsDto.Curriculum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SemesterStatisticsDto.Subscriptions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.SubscriptionDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SubscriptionDto.CourseId">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SubscriptionDto.IsValid">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SubscriptionDto.OnWaitingList">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.SubscriptionDto.Message">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Responses.UserIdResponse">
@@ -1407,6 +2188,31 @@
             </summary>
             <param name="DateId"></param>
             <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Services.CourseConverter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.CourseConverter.#ctor(MyStik.TimeTable.Data.TimeTableDbContext)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.CourseConverter.Convert(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.CourseConverter.Convert(MyStik.TimeTable.Data.Course)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.CourseConverter.ConvertSummary(MyStik.TimeTable.Data.Course)">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Services.CurriculumInfoService">
             <summary>
@@ -1760,6 +2566,11 @@
             For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
             </summary>
             <param name="app"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Startup.ConfigureOAuth(Owin.IAppBuilder)">
+            <summary>
+            
+            </summary>
         </member>
         <member name="M:MyStik.TimeTable.Web.Startup.Configuration(Owin.IAppBuilder)">
             <summary>
@@ -20610,6 +21421,34 @@
             </summary>
             <param name="userId"></param>
             <param name="semId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.StudentService.GetCurrentStudent(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.StudentService.GetCurrentStudent(MyStik.TimeTable.Web.Models.ApplicationUser)">
+            <summary>
+            
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.StudentService.GetStudentHistory(MyStik.TimeTable.Web.Models.ApplicationUser)">
+            <summary>
+            
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.StudentService.GetStudents(MyStik.TimeTable.Data.SemesterGroup)">
+            <summary>
+            
+            </summary>
+            <param name="group"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Services.UserInfoService">
