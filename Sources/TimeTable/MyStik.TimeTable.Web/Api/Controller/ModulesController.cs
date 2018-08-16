@@ -7,6 +7,9 @@ using System.Web.Http;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ModulesController : ApiBaseController
     {
     }

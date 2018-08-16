@@ -28,6 +28,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult Create()
         {
             var model = new AdvertisementCreateModel();
@@ -37,6 +40,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [HttpPost]
         public ActionResult Create(AdvertisementCreateModel model)
         {

@@ -8,19 +8,34 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LoginModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string username { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string password { get; set; }
     }
 
 
+    /// <summary>
+    /// 
+    /// </summary>
     // http://bitoftech.net/2014/06/01/token-based-authentication-asp-net-web-api-2-owin-asp-net-identity/
     [RoutePrefix("api/v2/account")]
 
     public class LoginController : ApiBaseController
     {
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("login")]
         public AccountDto Login([FromBody] LoginModel model)
         {

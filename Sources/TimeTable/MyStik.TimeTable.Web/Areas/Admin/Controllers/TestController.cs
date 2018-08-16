@@ -11,10 +11,15 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class TestController : BaseController
     {
 
-        // GET: Admin/Test
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult Index()
         {
             var userDb = new ApplicationDbContext();
@@ -38,6 +43,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
 
         public ActionResult CreateTestUser()
         {
@@ -82,6 +90,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         private ApplicationUser CreateUser(string userName, string firstName, string lastName, MemberState state)
         {
             var user = UserManager.FindByName(userName);

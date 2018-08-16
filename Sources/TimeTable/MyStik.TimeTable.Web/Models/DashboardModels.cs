@@ -100,7 +100,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public new ActivityDate NextOfficeHourDate { get; set; }
+        public ActivityDate NextOfficeHourDate { get; set; }
 
         /// <summary>
         /// 

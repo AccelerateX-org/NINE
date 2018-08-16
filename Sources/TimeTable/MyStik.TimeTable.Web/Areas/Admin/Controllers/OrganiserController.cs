@@ -424,6 +424,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", new {id = org.Id});
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult EditCurriculum(Guid id)
         {
             var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
@@ -431,6 +434,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [HttpPost]
         public ActionResult EditCurriculum(Curriculum model)
         {

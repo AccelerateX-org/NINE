@@ -8,10 +8,16 @@ using MyStik.TimeTable.Web.Api.DTOs;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [RoutePrefix("api/v2/apps/cie")]
 
     public class CieHomeController : ApiBaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("")]
         public IQueryable<SemesterDto> GetSemester()
         {

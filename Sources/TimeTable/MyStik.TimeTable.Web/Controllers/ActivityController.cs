@@ -28,6 +28,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("PersonalPlan");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult State(Guid id)
         {
             var semester = SemesterService.GetSemester(id);
@@ -156,6 +159,9 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult PersonalPlanWeekly(Guid id)
         {
             var model = new ActivityPlanModel();
@@ -703,6 +709,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult FacultyPlanDaily()
         {
             var model = new DashboardViewModel();
@@ -826,6 +835,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult Today()
         {
             var org = GetMyOrganisation();

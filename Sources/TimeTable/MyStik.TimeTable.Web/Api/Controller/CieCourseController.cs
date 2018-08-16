@@ -10,10 +10,16 @@ using MyStik.TimeTable.Web.Api.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [RoutePrefix("api/v2/apps/cie/courses")]
 
     public class CieCourseController : ApiBaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("{semester}")]
         public IQueryable<CourseSummaryDto> GetCourses(string semester)
         {

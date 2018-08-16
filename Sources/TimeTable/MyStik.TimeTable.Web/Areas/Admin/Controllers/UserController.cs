@@ -72,6 +72,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [HttpPost]
         public PartialViewResult GuestAccounts()
         {
@@ -493,6 +496,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult Student(string id)
         {
             var user = UserManager.FindById(id);
@@ -501,6 +507,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult DeleteStudent(Guid id)
         {
             var student = Db.Students.SingleOrDefault(x => x.Id == id);

@@ -934,6 +934,11 @@
             
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ApiBaseController.GetUser(System.String)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.ActivityController">
             <summary>
             
@@ -1023,6 +1028,26 @@
             
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.CieCourseController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CieCourseController.GetCourses(System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.CieHomeController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CieHomeController.GetSemester">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.SubscriptionBasketModel">
             <summary>
             
@@ -1039,6 +1064,11 @@
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.SubscriptionCourseModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.SubscriptionCourseModel.Id">
             <summary>
             
             </summary>
@@ -1086,6 +1116,21 @@
         <member name="T:MyStik.TimeTable.Web.Api.Controller.CurriculaController">
             <summary>
             Abfrage von Studiengängen
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurricula">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurrciulumStructure(System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurrciulumSchedule(System.String,System.String)">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.CurriculumController">
@@ -1262,6 +1307,36 @@
             <param name="userId"></param>
             <returns></returns>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.LoginModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.LoginModel.username">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.Controller.LoginModel.password">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.LoginController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.LoginController.Login(MyStik.TimeTable.Web.Api.Controller.LoginModel)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.ModulesController">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.NotificationController">
             <summary>
             
@@ -1368,6 +1443,21 @@
         <member name="T:MyStik.TimeTable.Web.Api.Controller.SemesterController">
             <summary>
             https://docs.microsoft.com/de-de/aspnet/web-api/overview/web-api-routing-and-actions/create-a-rest-api-with-attribute-routing
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.SemesterController.GetSemester">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.SemesterController.GetSemesterStatistics(System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.StudiesController">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.AccountDto">
@@ -2935,6 +3025,36 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.OrganiserController.EditCurriculum(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.OrganiserController.EditCurriculum(MyStik.TimeTable.Data.Curriculum)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.Admin.Controllers.RepairController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.RepairController.ChangeDoz">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.RepairController.ChangeDoz(MyStik.TimeTable.Web.Models.SemesterImportModel)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.RepairController.ChangeGroups">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Areas.Admin.Controllers.RoomController">
             <summary>
             
@@ -3135,6 +3255,26 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.Admin.Controllers.TestController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.TestController.Index">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.TestController.CreateTestUser">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.TestController.CreateUser(System.String,System.String,System.String,MyStik.TimeTable.Web.Models.MemberState)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Areas.Admin.Controllers.UserController">
             <summary>
             
@@ -3157,6 +3297,11 @@
             Zeigt die Logins der letzten 15 min
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.UserController.GuestAccounts">
+            <summary>
+            
+            </summary>
         </member>
         <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.UserController.LatestRegistrations">
             <summary>
@@ -3286,6 +3431,16 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.UserController.Student(System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.UserController.DeleteStudent(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Areas.Admin.Controllers.UserController.ChangeUserName(System.String)">
             <summary>
             
@@ -3299,6 +3454,26 @@
             </summary>
             <param name="model"></param>
             <returns></returns>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.Admin.Models.ChangeSummaryModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.Admin.Models.ChangeSummaryModel.First">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.Admin.Models.ChangeSummaryModel.Last">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Areas.Admin.Models.ChangeSummaryModel.Count">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Areas.Admin.Models.DataAdminModel">
             <summary>
@@ -3493,6 +3668,11 @@
             
             </summary>
             <param name="context"></param>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ApiDescriptionExtensions">
+            <summary>
+            
+            </summary>
         </member>
         <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.ApiDescriptionExtensions.GetFriendlyId(System.Web.Http.Description.ApiDescription)">
             <summary>
@@ -4534,6 +4714,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.State(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.AdminPlan">
             <summary>
             
@@ -4557,6 +4742,11 @@
             
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.PersonalPlanWeekly(System.Guid)">
+            <summary>
+            
+            </summary>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.SubscribeActivity(System.Guid)">
             <summary>
@@ -4637,6 +4827,16 @@
             <param name="date"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.FacultyPlanDaily">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.Today">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.AdminDashboardController">
             <summary>
             
@@ -4687,6 +4887,16 @@
             
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.AdvertisementsController.Create">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.AdvertisementsController.Create(MyStik.TimeTable.Web.Models.AdvertisementCreateModel)">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.AlumniController">
             <summary>

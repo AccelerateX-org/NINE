@@ -11,9 +11,15 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RepairController : BaseController
     {
         // GET: Admin/Repair
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult ChangeDoz()
         {
             var model = new SemesterImportModel();
@@ -24,6 +30,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [HttpPost]
         public ActionResult ChangeDoz(SemesterImportModel model)
         {
@@ -67,6 +76,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ActionResult ChangeGroups()
         {
             var sem = SemesterService.GetSemester(DateTime.Today);
@@ -100,99 +112,5 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             return RedirectToAction("Index", "Dashboard");
         }
-
-
-        /*
-        public ActionResult ChangeGroups()
-        {
-            var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals("FK 11"));
-            var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals("BASA Präsenz"));
-
-            for (var i = 1; i <=7; i ++)
-            {
-                var sGroupVZ = $"{i} VZ";
-                var sGroupTZ = $"{i} TZ";
-
-                var currGroupVZ = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(sGroupVZ));
-                var capGroupVZ = currGroupVZ.CapacityGroups.FirstOrDefault();
-
-
-                var currGroupTZ = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(sGroupTZ));
-                if (currGroupTZ != null)
-                {
-                    // alle SemesterSubscriptions umhängen
-                    var subscriptions = Db.Subscriptions.OfType<SemesterSubscription>()
-                        .Where(x => x.SemesterGroup.CapacityGroup.CurriculumGroup.Id == currGroupTZ.Id).ToList();
-
-                    foreach (var subscription in subscriptions)
-                    {
-                        if (capGroupVZ != null)
-                        {
-                            subscription.SemesterGroup.CapacityGroup = capGroupVZ;
-                        }
-                    }
-
-                    // alle Semestergruppen löschen
-                    var semGroupsTZ = Db.SemesterGroups.Where(x => x.CapacityGroup.CurriculumGroup.Id == currGroupTZ.Id)
-                        .ToList();
-
-                    foreach (var semesterGroup in semGroupsTZ)
-                    {
-                        Db.SemesterGroups.Remove(semesterGroup);
-                    }
-
-                    // jetzt die CurrGrupp löschen
-                    foreach (var capacityGroup in currGroupTZ.CapacityGroups.ToList())
-                    {
-                        Db.CapacityGroups.Remove(capacityGroup);
-                    }
-                    Db.CurriculumGroups.Remove(currGroupTZ);
-                }
-            }
-
-            var currGroupVZ7 = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals("7 VZ"));
-
-            for (var i = 8; i <= 14; i++)
-            {
-                var sGroupTZ = $"{i} TZ";
-
-                var currGroupTZ = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(sGroupTZ));
-                if (currGroupTZ != null)
-                {
-                    // alle SemesterSubscriptions umhängen
-                    var subscriptions = Db.Subscriptions.OfType<SemesterSubscription>()
-                        .Where(x => x.SemesterGroup.CapacityGroup.CurriculumGroup.Id == currGroupTZ.Id).ToList();
-
-                    foreach (var subscription in subscriptions)
-                    {
-                        if (currGroupVZ7 != null)
-                        {
-                            subscription.SemesterGroup.CapacityGroup = currGroupVZ7.CapacityGroups.First();
-                        }
-                    }
-
-                    // alle Semestergruppen löschen
-                    var semGroupsTZ = Db.SemesterGroups.Where(x => x.CapacityGroup.CurriculumGroup.Id == currGroupTZ.Id)
-                        .ToList();
-
-                    foreach (var semesterGroup in semGroupsTZ)
-                    {
-                        Db.SemesterGroups.Remove(semesterGroup);
-                    }
-
-                    // jetzt die CurrGrupp löschen
-                    foreach (var capacityGroup in currGroupTZ.CapacityGroups.ToList())
-                    {
-                        Db.CapacityGroups.Remove(capacityGroup);
-                    }
-                    Db.CurriculumGroups.Remove(currGroupTZ);
-                }
-            }
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Index", "Dashboard");
-        }
-        */
             }
         }

@@ -34,6 +34,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// </summary>
     public class SubscriptionCourseModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid Id { get; set; }
     }
 

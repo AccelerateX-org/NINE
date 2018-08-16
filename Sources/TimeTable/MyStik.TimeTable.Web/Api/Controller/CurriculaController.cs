@@ -15,6 +15,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
     [RoutePrefix("api/v2/curricula")]
     public class CurriculaController : ApiBaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("")]
         public IQueryable<CurriculumDto> GetCurricula()
         {
@@ -40,6 +43,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return result.AsQueryable();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("{org}/{name}/structure")]
         public IQueryable<CurriculumPackageDto> GetCurrciulumStructure(string org, string name)
         {
@@ -97,6 +103,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return result.AsQueryable();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("{org}/{name}/schedule")]
         public IQueryable<CurriculumTermDto> GetCurrciulumSchedule(string org, string name)
         {

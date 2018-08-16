@@ -30,6 +30,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
             protected set => _userManager = value;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected ApplicationUser GetUser(string id)
         {
             return UserManager.FindById(id);

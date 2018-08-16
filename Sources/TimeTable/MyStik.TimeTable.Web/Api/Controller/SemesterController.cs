@@ -17,6 +17,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
     [RoutePrefix("api/v2/semester")]
     public class SemesterController : ApiBaseController
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("")]
         public IQueryable<SemesterDto> GetSemester()
         {
@@ -35,6 +38,9 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return result.AsQueryable();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Route("{name}/statistics")]
         public IQueryable<SemesterStatisticsDto> GetSemesterStatistics(string name)
         {
