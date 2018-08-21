@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
     /// 
     /// </summary>
     [Authorize(Roles = "SysAdmin")]
-    public class LogController : Controller
+    public class LoggingController : Controller
     {
         /// <summary>
         /// 

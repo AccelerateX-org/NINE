@@ -317,7 +317,7 @@
     <Compile Include="Areas\Admin\Controllers\DatabaseController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\IntegrationController.cs" />
-    <Compile Include="Areas\Admin\Controllers\LogController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LoggingController.cs" />
     <Compile Include="Areas\Admin\Controllers\ModuleController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrganiserController.cs" />
     <Compile Include="Areas\Admin\Controllers\RepairController.cs" />
@@ -3214,8 +3214,8 @@
     <Content Include="MyStik.TimeTable.Web.nuspec" />
     <Content Include="Areas\Admin\Views\Change\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Change\_ChangeList.cshtml" />
-    <Content Include="Areas\Admin\Views\Log\Index.cshtml" />
-    <Content Include="Areas\Admin\Views\Log\_LogTable.cshtml" />
+    <Content Include="Areas\Admin\Views\Logging\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Logging\_LogTable.cshtml" />
     <Content Include="Areas\Admin\Views\Organiser\CreateCurriculum.cshtml" />
     <Content Include="Areas\Admin\Views\Organiser\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\Organiser\EditCurriculum.cshtml" />
