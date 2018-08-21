@@ -3306,7 +3306,6 @@
     <Content Include="Views\Shared\_CalendarEventToolbar.cshtml" />
     <Content Include="Views\Shared\_CalendarEventContent.cshtml" />
     <Content Include="Views\Mail\ResetPassword.html.cshtml" />
-    <Content Include="Views\Log\Index.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -3717,7 +3716,6 @@
     <Content Include="Views\OfficeHour\CreateOpenSystem.cshtml" />
     <Content Include="Views\OfficeHour\EditSlotSystem.cshtml" />
     <Content Include="Views\Lecturer\Open.cshtml" />
-    <Content Include="Views\Log\_LogTable.cshtml" />
     <Content Include="Views\Lecturer\Slot.cshtml" />
     <Content Include="Views\Lecturer\ByAgreement.cshtml" />
     <Content Include="Views\Shared\_LockedSlot.cshtml" />
