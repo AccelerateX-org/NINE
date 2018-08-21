@@ -1,0 +1,124 @@
+﻿@model IEnumerable<MyStik.TimeTable.Web.Areas.Admin.Models.Log>
+
+@{
+    ViewBag.Title = "Logs";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-hm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Log</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="well well-sm">
+                    <a href="@Url.Action("GetLogs")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Logdaten</a>
+                    <a href="@Url.Action("GetErrors")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Errors</a>
+                    <a href="@Url.Action("GetMails")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> SendMail</a>
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-download fa-2x"></i> Alle</a>
+                    <a href="@Url.Action("Clear")" class="btn btn-default"><i class="fa fa-trash-o fa-2x"></i> Löschen</a>
+                    <div class="form-inline">
+
+                        <div class="form-group">
+                            <input id="txtThread" class="form-control" type="text" />
+                        </div>
+                        <div class="form-group">
+                            <input id="txtLogger" class="form-control" type="text"/>
+                        </div>
+                        <div class="form-group">
+                            <button class="form-control" onclick="search()">Suchen</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div id="LogTable">
+                    <table class="table table-condensed table-bordered table-striped">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Date)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Thread)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Level)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Logger)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Message)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Exception)
+                            </th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Date)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Thread)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Level)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Logger)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Message)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Exception)
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        function search() {
+            var txtThread = $('#txtThread').val();
+            var txtLogger = $('#txtLogger').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("Search")',
+                    data: {
+                        thread: txtThread,
+                        logger: txtLogger
+                    },
+                    success: function (data, success, xhr) {
+                        $('#LogTable').html(data);
+                    }
+                });
+
+        }
+    </script>
+}
+
+
+
