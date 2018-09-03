@@ -22,6 +22,15 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public ICollection<ActionDto> Actions { get; }
+
+        internal void AddAction(string name, string url)
+        {
+            Actions.Add(new ActionDto
+            {
+                Title = name,
+                Href = url
+            });
+        }
     }
 
     /// <summary>

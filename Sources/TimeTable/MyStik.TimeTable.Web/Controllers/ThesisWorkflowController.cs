@@ -24,7 +24,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="a"></param>
         /// <returns></returns>
         public ActionResult Accept()
         {

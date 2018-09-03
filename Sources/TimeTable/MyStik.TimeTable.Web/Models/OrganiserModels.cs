@@ -102,9 +102,23 @@ namespace MyStik.TimeTable.Web.Models
 
     public class SemesterGroupViewModel
     {
+
         public SemesterGroup Group { get; set; }
 
         public List<string> UserIds { get; set; }
+    }
+
+
+    public class SemesterOverviewModel
+    {
+        public SemesterOverviewModel()
+        {
+            SemesterGroups = new List<SemesterGroupViewModel>();
+        }
+
+        public Semester Semester { get; set; }
+
+        public List<SemesterGroupViewModel> SemesterGroups { get; }
     }
 
 

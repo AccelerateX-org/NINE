@@ -618,7 +618,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>
         public ActionResult CreateMember()
         {
@@ -1122,7 +1121,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="roomAdminName"></param>
+        /// <param name="studentAdminName"></param>
         /// <returns></returns>
         [HttpPost]
         public PartialViewResult AddStudentAdminRight(string studentAdminName)

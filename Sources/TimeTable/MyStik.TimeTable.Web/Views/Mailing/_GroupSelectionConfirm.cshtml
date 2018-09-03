@@ -1,4 +1,4 @@
-﻿@model ICollection<MyStik.TimeTable.Data.SemesterGroup>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.SemesterGroupViewModel>
 
 <div class="container-fluid">
     <div class="row">
@@ -22,14 +22,14 @@
                                 @{
                                     var nStud = 0;
                                 }
-                                @foreach (var group in Model.Where(g => g.CapacityGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
+                                @foreach (var group in Model.Where(g => g.Group.CapacityGroup != null).OrderBy(g => g.Group.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.Group.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Group.Name))
                                 {
-                                    nStud += group.Subscriptions.Count;
+                                    nStud += group.UserIds.Count;
 
                                     <tr>
-                                        <td>@group.FullName</td>
+                                        <td>@group.Group.FullName</td>
                                         <td>
-                                            @group.Subscriptions.Count
+                                            @group.UserIds.Count
                                         </td>
                                     </tr>
                                 }

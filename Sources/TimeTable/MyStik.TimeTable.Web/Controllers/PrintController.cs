@@ -55,6 +55,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="semId"></param>
         /// <returns></returns>
         public ActionResult Schedule(Guid id, Guid? semId)
         {
@@ -67,6 +68,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="semId"></param>
         /// <param name="showCalendar"></param>
         /// <param name="showDateList"></param>
         /// <param name="isMoSa"></param>

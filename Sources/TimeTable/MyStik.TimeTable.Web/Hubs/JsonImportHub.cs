@@ -99,6 +99,7 @@ namespace MyStik.TimeTable.Web.Hubs
         /// </summary>
         /// <param name="semId"></param>
         /// <param name="orgId"></param>
+        /// <param name="formatId"></param>
         public string ImportSemester(Guid semId, Guid orgId, string formatId)
         {
             if (formatId.Equals("CIE"))

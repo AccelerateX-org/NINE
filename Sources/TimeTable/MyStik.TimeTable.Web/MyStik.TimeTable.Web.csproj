@@ -3963,7 +3963,7 @@
     <Content Include="Views\Supervision\Edit.cshtml" />
     <Content Include="Views\Supervision\EditRequest.cshtml" />
     <Content Include="Views\Supervision\Index.cshtml" />
-    <Content Include="Views\Supervision\Request.cshtml" />
+    <Content Include="Views\Supervision\CreateRequest.cshtml" />
     <Content Include="Views\Supervision\RequestDetails.cshtml" />
     <Content Include="Views\ThesisWorkflow\Issue.cshtml" />
     <Content Include="Views\Thesis\Admin.cshtml" />
@@ -3984,6 +3984,8 @@
     <Content Include="Views\Union\NoMember.cshtml" />
     <Content Include="Views\Union\NoOrg.cshtml" />
     <Content Include="Views\Union\NoUnion.cshtml" />
+    <Content Include="Views\Lecturer\DateListAgreement.cshtml" />
+    <Content Include="Views\Dictionary\_GroupList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

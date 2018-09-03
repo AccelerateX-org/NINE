@@ -158,7 +158,7 @@ namespace MyStik.TimeTable.Web.Services
             }
             catch (Exception e)
             {
-                notificationText = "FEHLER BEI DER TEXTERSTELLUNG";
+                notificationText = $"FEHLER BEI DER TEXTERSTELLUNG: {e.Message}";
             }
 
             return notificationText;

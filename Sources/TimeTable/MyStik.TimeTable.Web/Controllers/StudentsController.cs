@@ -84,7 +84,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public PartialViewResult Profile(string searchString)
+        public PartialViewResult Search(string searchString)
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
             var vorSemester = new SemesterService().GetSemester(semester, 1);
@@ -200,13 +200,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
                                 var invitation = new StudentInvitationModel
                                 {
-                                    LastName = words[0],
-                                    FirstName = words[1],
-                                    Email = words[2],
-                                    Organiser = words[3],
-                                    Curriculum = words[4],
-                                    Group = words[5],
-                                    Semester = words[6].Trim(),
+                                    LastName = words[0].Trim(),
+                                    FirstName = words[1].Trim(),
+                                    Email = words[2].Trim(),
+                                    Organiser = words[3].Trim(),
+                                    Curriculum = words[4].Trim(),
+                                    Semester = words[5].Trim(),
                                     Invite = true
                                 };
 
@@ -218,45 +217,34 @@ namespace MyStik.TimeTable.Web.Controllers
                                     invitation.Remark = "Hat bereits ein Benutzerkonto";
                                 }
 
+                                var sem = SemesterService.GetSemester(invitation.Semester);
+                                if (sem == null)
+                                {
+                                    invitation.Invite = false;
+                                    invitation.Remark += "Semester unbekannt";
+                                }
+
                                 var org = Db.Organisers.SingleOrDefault(x =>
-                                    x.ShortName.Equals(invitation.Organiser.Trim()));
+                                    x.ShortName.Equals(invitation.Organiser));
 
                                 if (org == null)
                                 {
+                                    invitation.Invite = false;
                                     invitation.Remark += "Veranstalter unbekannt";
                                 }
                                 else
                                 {
-                                    var curr = org.Curricula.SingleOrDefault(c => c.ShortName.Equals(invitation.Curriculum.Trim()));
+                                    var curr = org.Curricula.SingleOrDefault(c => c.ShortName.Equals(invitation.Curriculum));
                                     if (curr == null)
                                     {
+                                        invitation.Invite = false;
                                         invitation.Remark += "Studiengang unbekannt";
                                     }
-                                    else
-                                    {
+                                }
 
-                                        var groupList = Db.SemesterGroups.Where(g =>
-                                            g.Semester.Name.Equals(invitation.Semester) && g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id).ToList();
-
-                                        foreach (var group in groupList)
-                                        {
-                                            if (group.GroupName.Trim().Equals(invitation.Group.Trim()))
-                                            {
-                                                invitation.SemGroup = group;
-                                            }
-                                        }
-
-                                        if (invitation.SemGroup == null)
-                                        {
-                                            invitation.Invite = false;
-                                            invitation.Remark += "Studiengruppe unbekannt";
-                                        }
-                                    }
-
-                                    invitationList.Invitations.Add(invitation);
+                                invitationList.Invitations.Add(invitation);
                                 }
                             }
-                        }
                         i++;
                     }
                 }
@@ -271,6 +259,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View("InvitationList", invitationList);
         }
+
 
         /// <summary>
         /// 
@@ -372,8 +361,32 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         new MailController().InvitationMail(mailModel, host, model.TemplateLanguage).Deliver();
 
-                        // zur Semestergruppe zuordnen
-                        semSubService.Subscribe(user.Id, invitation.SemGroup.Id);
+                        // Student anlegen
+                        var student = Db.Students.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+                        if (student == null)
+                        {
+                            var sem = SemesterService.GetSemester(invitation.Semester);
+
+                            var org = Db.Organisers.SingleOrDefault(x =>
+                                x.ShortName.Equals(invitation.Organiser));
+
+                            var curr = org.Curricula.SingleOrDefault(c => c.ShortName.Equals(invitation.Curriculum));
+
+
+                            student = new Student
+                            {
+                                Created = DateTime.Now,
+                                Curriculum = curr,
+                                FirstSemester = sem,
+                                UserId = user.Id
+                            };
+
+                            Db.Students.Add(student);
+                            Db.SaveChanges();
+                        }
+
+                        //semSubService.Subscribe(user.Id, invitation.SemGroup.Id);
 
                         invitation.Invited = true;
                     }
@@ -667,6 +680,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /*
 
         /// <summary>
         /// Generates a Random Password
@@ -675,7 +689,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="opts">A valid PasswordOptions object
         /// containing the password strength requirements.</param>
         /// <returns>A random password</returns>
-        /*
         public static string GenerateRandomPassword(PasswordOptions opts = null)
         {
             if (opts == null) opts = new PasswordOptions()

@@ -214,6 +214,12 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public List<ModuleDto> Modules { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<CourseDateDto> Dates { get; set; }
+
     }
 
     /// <summary>

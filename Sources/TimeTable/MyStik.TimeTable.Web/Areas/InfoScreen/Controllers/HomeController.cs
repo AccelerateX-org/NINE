@@ -35,6 +35,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <param name="token"></param>
+        /// <param name="location"></param>
         /// <returns></returns>
         [HttpPost]
         [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]
@@ -67,6 +68,7 @@ namespace MyStik.TimeTable.Web.Areas.InfoScreen.Controllers
         /// 
         /// </summary>
         /// <param name="token"></param>
+        /// <param name="location"></param>
         /// <returns></returns>
         [HttpPost]
         [OutputCache(NoStore = true, Location = OutputCacheLocation.Client, Duration = 30)]

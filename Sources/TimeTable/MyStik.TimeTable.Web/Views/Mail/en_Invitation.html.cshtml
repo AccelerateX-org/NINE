@@ -10,7 +10,7 @@
 {
     <p>Your user account is created. Please use the email adress this message was sent to as user name.</p>
     <p>
-        For setting your personal password pleas follow the link 
+        For setting your personal password please follow the link 
         <a href="@Url.Action("ResetPassword", "Account", new {userId = Model.User.Id, code = Model.Token}, Request.Url.Scheme)">set password</a>
         or use the function <a href="@Url.Action("ForgotPassword", "Account")">forgot password</a> from the login screen.
     </p>

@@ -405,7 +405,6 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         /// <param name="date"></param>
         /// <param name="dateType"></param>
-        /// <param name="isSlot"></param>
         public ActivityDateSummary(ActivityDate date, ActivityDateType dateType)
         {
             Date = date;

@@ -115,7 +115,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Request(Guid id)
+        public ActionResult CreateRequest(Guid id)
         {
             var supervision = Db.Activities.OfType<Supervision>().SingleOrDefault(x => x.Id == id);
 
@@ -127,7 +127,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Request(SupervisionRequestModel model)
+        public ActionResult CreateRequest(SupervisionRequestModel model)
         {
             var user = GetCurrentUser();
             var supervision = Db.Activities.OfType<Supervision>().SingleOrDefault(x => x.Id == model.Supervision.Id);

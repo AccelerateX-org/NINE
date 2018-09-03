@@ -16,7 +16,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     public class CieHomeController : ApiBaseController
     {
         /// <summary>
-        /// 
+        /// Lists all semester with CIE Course
         /// </summary>
         [Route("")]
         public IQueryable<SemesterDto> GetSemester()

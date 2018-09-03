@@ -25,13 +25,14 @@
         <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4><i class="fa fa-search"></i> Suche</h4>
-                    @using (Ajax.BeginForm("Profile", "Students", null,
+                    <h4><i class="fa fa-search"></i> Suche <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                    @using (Ajax.BeginForm("Search", "Students", null,
                         new AjaxOptions
                         {
                             HttpMethod = "Post",
                             InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "StudList"
+                            UpdateTargetId = "StudList",
+                            LoadingElementId = "loading"
                         },
                         new {@class = "form-inline", role = "form"}))
                     {

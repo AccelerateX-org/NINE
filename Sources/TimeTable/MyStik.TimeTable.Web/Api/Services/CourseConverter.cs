@@ -78,6 +78,11 @@ namespace MyStik.TimeTable.Web.Api.Services
                     lecturer.LastName = host.Name;
                     lecturer.Title = host.Title;
 
+                    if (!string.IsNullOrEmpty(host.UrlProfile))
+                    {
+                        lecturer.AddAction("Profile", host.UrlProfile);
+                    }
+
                     if (courseDate.Lecturer == null)
                     {
                         courseDate.Lecturer = new List<LecturerDto>();
@@ -130,6 +135,76 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
+        internal void ConvertDates(CourseSummaryDto summary, Course course)
+        {
+            foreach (var activityDate in course.Dates)
+            {
+                var courseDate = new CourseDateDto();
+
+                courseDate.Begin = activityDate.Begin.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z");
+                courseDate.End = activityDate.End.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z");
+                courseDate.IsCanceled = activityDate.Occurrence.IsCanceled;
+                courseDate.Title = activityDate.Title;
+
+                foreach (var host in activityDate.Hosts)
+                {
+                    var lecturer = new LecturerDto();
+                    lecturer.FirstName = host.FirstName;
+                    lecturer.LastName = host.Name;
+                    lecturer.Title = host.Title;
+
+                    if (!string.IsNullOrEmpty(host.UrlProfile))
+                    {
+                        lecturer.AddAction("Profile", host.UrlProfile);
+                    }
+
+                    if (courseDate.Lecturer == null)
+                    {
+                        courseDate.Lecturer = new List<LecturerDto>();
+                    }
+
+                    courseDate.Lecturer.Add(lecturer);
+                }
+
+                foreach (var room in activityDate.Rooms)
+                {
+                    var courseRoom = new RoomDto();
+
+                    courseRoom.Number = room.Number;
+                    courseRoom.Building = room.Number.Substring(0, 1);
+
+                    if (courseRoom.Number.StartsWith("K") || courseRoom.Number.StartsWith("L"))
+                    {
+                        courseRoom.Campus = "Pasing";
+                    }
+                    else if (courseRoom.Number.StartsWith("F"))
+                    {
+                        courseRoom.Campus = "Karlstrasse";
+                    }
+                    else
+                    {
+                        courseRoom.Campus = "Lothstrasse";
+                    }
+
+                    if (courseDate.Rooms == null)
+                    {
+                        courseDate.Rooms = new List<RoomDto>();
+                    }
+
+                    courseDate.Rooms.Add(courseRoom);
+                }
+
+
+
+                if (summary.Dates == null)
+                {
+                    summary.Dates = new List<CourseDateDto>();
+                }
+
+                summary.Dates.Add(courseDate);
+            }
+        }
+
 
 
         /// <summary>
@@ -156,6 +231,11 @@ namespace MyStik.TimeTable.Web.Api.Services
                 lecturer.FirstName = host.FirstName;
                 lecturer.LastName = host.Name;
                 lecturer.Title = host.Title;
+
+                if (!string.IsNullOrEmpty(host.UrlProfile))
+                {
+                    lecturer.AddAction("Profile", host.UrlProfile);
+                }
 
                 if (dto.Lecturer == null)
                 {

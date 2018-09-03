@@ -183,7 +183,6 @@ namespace MyStik.TimeTable.Web.Services
         /// Liste aller Termine aus Sicht eines Users
         /// </summary>
         /// <param name="officeHour"></param>
-        /// <param name="userId"></param>
         internal ICollection<OfficeHourDateViewModel> GetDates(OfficeHour officeHour)
         {
             var allDates = officeHour.Dates.OrderBy(x => x.Begin).ToList();

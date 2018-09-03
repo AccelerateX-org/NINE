@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
 
 @{
@@ -40,7 +41,7 @@
                     @if (ViewBag.GroupList != null)
                     {
                         var nStud = 0;
-                        var groupList = ViewBag.GroupList as ICollection<SemesterGroup>;
+                        var groupList = ViewBag.GroupList as ICollection<SemesterGroupViewModel>;
                         <table class="table table-condensed">
                             <thead>
                             <tr>
@@ -50,14 +51,14 @@
                             </thead>
                             <tbody>
 
-                            @foreach (var group in groupList.Where(g => g.CapacityGroup != null).OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Name))
+                            @foreach (var group in groupList.Where(g => g.Group.CapacityGroup != null).OrderBy(g => g.Group.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.Group.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Group.Name))
                             {
-                            nStud += group.Subscriptions.Count;
+                            nStud += group.UserIds.Count;
 
                             <tr>
-                                <td>@group.FullName</td>
+                                <td>@group.Group.FullName</td>
                                 <td>
-                                    @group.Subscriptions.Count
+                                    @group.UserIds.Count
                                 </td>
                             </tr>
                             }

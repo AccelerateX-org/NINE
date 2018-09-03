@@ -15,7 +15,20 @@
 
 
 <div class="container-fluid">
-
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h4>Änderung der Verteiler - wichtiger Hinweis</h4>
+                <p>Bisher mussten Studierende jedes Semester eine Semestergruppe wählen. Das führte zu Missverständnissen bei Teilzeitstudierenden, Urlaubssemestern 
+                    und sonstigen Situationen, die nicht exakt nach Studienplan laufen. Darüber hinaus haben Studierende oftmals diese Wahl aus taktischen Gründen 
+                    geändert, z.B. um bei "zugangsbeschränkten Lehrveranstaltungen" sich Vorteile zu verschaffen.</p>
+                <p>Seit Juli 2018 müssen Studierende einmalig Studiengang und Semester des Studienbeginns angeben. Diese Angabe können Studierende nicht mehr 
+                    selbstständig ändern, sondern nur auf Anfrage bei den jeweiligen Administratoren.</p>
+                <p>Damit muss die Zugehörigkeit eiens Studierenden zu einer Semestergruppe neu definiert werden. Es wird die Eintragung in Lehrveranstaltungen herangezogen. 
+                    Mit anderen Worten: "Jeder, der sich in Lehrveranstaltungen des ersten Semester eingetragen hat, gilt als Erstsemester".</p>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default ">
@@ -26,8 +39,7 @@
                     <h4>Hinweise</h4>
                     <p>Die Mail geht an</p>
                     <ul>
-                        <li>Benutzer mit Status "Student", die sich im aktuellen Semester in einer Semestergruppe der @orgName eingetragen haben.</li>
-                        <li>Benutzer mit Status "Staff" der @orgName</li>
+                        <li>Benutzer mit Status "Student", die sich in einen Studiegang der @orgName eingetragen haben.</li>
                     </ul>
                     <p><strong>Wichtig:</strong> Es erhalten nur jene Benutzer eine E-Mail, die dies in ihrem Benutzerprofil aktiviert haben.</p>
 
@@ -45,7 +57,7 @@
                     <h4>Hinweise</h4>
                     <p>Die Mail geht an</p>
                     <ul>
-                        <li>Benutzer mit Status "Student", die sich in den ausgewählten Semestergruppe der @orgName eingetragen haben.</li>
+                        <li>Benutzer mit Status "Student", die sich <strong>in Lehrveranstaltungen</strong> der ausgewählten Semestergruppe der @orgName eingetragen haben.</li>
                         <li>Im nächsten Schritt können Semestergruppen auch vergangener Semester ausgwählt werden.</li>
                     </ul>
                     <p><strong>Wichtig:</strong> Es erhalten nur jene Benutzer eine E-Mail, die dies in ihrem Benutzerprofil aktiviert haben.</p>
@@ -55,45 +67,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-    @*
-    <div class="col-md-6">
-        <div class="panel panel-default ">
-            <div class="panel-heading"><i class="fa fa-download"></i> Adresslisten (@ViewBag.Semester.Name)
-            </div>
-
-            @if (ViewBag.UserRight.User.MemberState != MemberState.Staff)
-            {
-                <div class="alert alert-dangerer">
-                    <h4><i class="fa fa-ban"></i> Nicht verfügbar</h4>
-                </div>
-
-            }
-            else
-            {
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th>Studiengang</th>
-                        <th>Liste</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var item in ViewBag.Curricula)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@Html.ActionLink("Alle Studierenden", "AdressList", new {id = item.Id})</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            }
-        </div>
-    </div>
-    *@
     </div>
 </div>
 

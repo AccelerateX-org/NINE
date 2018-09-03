@@ -1,0 +1,6 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+
+@foreach (var course in Model.Courses)
+{
+    @Html.Partial("_CourseSummaryListItem", course)
+}

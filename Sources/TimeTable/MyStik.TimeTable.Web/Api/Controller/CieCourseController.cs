@@ -37,6 +37,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 var summary = converter.ConvertSummary(course);
 
+                converter.ConvertDates(summary, course);
+
 
                 // Sonderlocken
                 if (summary.IsCoterie)

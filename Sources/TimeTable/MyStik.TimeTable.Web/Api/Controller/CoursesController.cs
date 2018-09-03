@@ -10,6 +10,7 @@ using System.Web.Http.Description;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Services;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -176,6 +177,18 @@ namespace MyStik.TimeTable.Web.Api.Controller
                         subscription.Occurrence = course.Occurrence;
 
                         // TODO: Status "Warteliste" dafür dann den Service bauen
+                        // einfach: wenn LV zu CIE gehört, dann Warteliste
+
+                        bool isCie = course.SemesterGroups.Any(x =>
+                            x.CapacityGroup.CurriculumGroup.Curriculum.ShortName.StartsWith("CIE"));
+
+                        if (isCie)
+                            subscription.OnWaitingList = true;
+
+                        subscription.SubscriberRemark = "Über API eingeschrieben";
+
+                        subscription.Priority = 1;
+
 
                         Db.Subscriptions.Add(subscription);
                     }
@@ -201,6 +214,26 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [Route("unsubscribe")]
         public IQueryable<SubscriptionDto> Unsubscribe([FromBody] SubscriptionBasketModel model)
         {
+            var subService = new SubscriptionService(Db);
+
+            var user = GetUser(model.User.Id);
+
+            foreach (var courseModel in model.Courses)
+            {
+                var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseModel.Id);
+
+                if (course != null && user != null)
+                {
+                    var subscription =
+                        course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+
+                    if (subscription != null)
+                    {
+                        subService.DeleteSubscription(subscription);
+                    }
+                }
+            }
+
             return new List<SubscriptionDto>().AsQueryable();
         }
 
@@ -220,11 +253,14 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
                 foreach (var course in courses)
                 {
+                    var subscription =
+                        course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+
                     var subModel = new SubscriptionDto();
 
                     subModel.CourseId = course.Id;
                     subModel.IsValid = true;
-                    subModel.OnWaitingList = false;
+                    subModel.OnWaitingList = subscription.OnWaitingList;
 
                     list.Add(subModel);
                 }

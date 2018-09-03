@@ -30,7 +30,7 @@
                          <div class="list-group">
                              @foreach (var supervision in member.Value)
                              {
-                                 <a href="@Url.Action("Request", new {id = supervision.Id})" class="list-group-item">
+                                 <a href="@Url.Action("CreateRequest", new {id = supervision.Id})" class="list-group-item">
                                      <div class="list-group-item-heading">
                                          <h5>@supervision.Name</h5>
                                      </div>

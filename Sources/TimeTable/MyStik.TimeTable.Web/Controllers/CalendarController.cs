@@ -522,11 +522,13 @@ namespace MyStik.TimeTable.Web.Controllers
                     GetActivityPlan(User.Identity.Name, startDate, endDate),
                     true, true));
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult ActivityPrintPlan(string start, string end, Guid? id)
@@ -721,7 +723,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="roomId"></param>
-        /// <param name="semId"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
@@ -811,6 +812,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(events);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult RoomPrintPlanWeek(Guid roomId, string start, string end)
         {
@@ -1107,6 +1115,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult GroupPrintPlan(string start, string end, Guid? id)

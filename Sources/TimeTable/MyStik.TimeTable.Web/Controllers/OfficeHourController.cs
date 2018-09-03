@@ -311,6 +311,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// Sprechstundentermine des Dozenten im aktuellen Semester
         /// </summary>
         /// <param name="id">memberId des Dozenten</param>
+        /// <param name="semId"></param>
         /// <returns></returns>
         public ActionResult Lecturer(Guid id, Guid? semId)
         {
@@ -367,7 +368,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dateId"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         public ActionResult SubscribeDate(Guid id)
         {
@@ -549,102 +550,6 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dateId"></param>
-        /// <returns></returns>
-        /*
-        public PartialViewResult DateDetails(Guid dateId)
-        {
-            var date = Db.ActivityDates.SingleOrDefault(x => x.Id == dateId);
-            var officeHour = date.Activity as OfficeHour;
-
-            var myUser = AppUser;
-
-            var model = new OfficeHourDateSlotViewModel
-            {
-                OfficeHour = officeHour,
-                Semester = officeHour.Semester,
-                //Host = hostRequested,
-            };
-
-            // aktuelles Datum
-            var orderedDates = officeHour.Dates.OrderBy(x => x.End).ToList();
-            var currentDate = date;
-            if (currentDate == orderedDates.Last())
-            {
-                model.CurrentDate = orderedDates.LastOrDefault();
-                model.NextDate = null;
-                model.PreviousDate = orderedDates.LastOrDefault(x => x.End < model.CurrentDate.End);
-            }
-            else if (currentDate == orderedDates.First())
-            {
-                model.CurrentDate = currentDate;
-                model.PreviousDate = null;
-                model.NextDate = orderedDates.FirstOrDefault(x => x.End > currentDate.End);
-            }
-            else
-            {
-                model.CurrentDate = currentDate;
-                model.PreviousDate = orderedDates.LastOrDefault(x => x.End < model.CurrentDate.End);
-                model.NextDate = orderedDates.FirstOrDefault(x => x.End > currentDate.End);
-            }
-
-            model.State = ActivityService.GetActivityState(model.CurrentDate.Occurrence, myUser);
-
-
-            // die aktuellen Eintragungen
-            // Ansatz: Es gibt Slots
-            foreach (var slot in model.CurrentDate.Slots)
-            {
-                var ohSlot = new SingleSlotViewModel();
-                ohSlot.Begin = slot.Begin;
-                ohSlot.End = slot.End;
-                ohSlot.Occurrence = slot.Occurrence;
-
-                foreach (var subscription in slot.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
-                {
-                    var user = UserManager.FindById(subscription.UserId);
-
-                    var member = new CourseMemberModel()
-                    {
-                        Subscription = subscription,
-                        User = user,
-                    };
-
-                    ohSlot.Member.Add(member);
-                }
-                model.Slots.Add(ohSlot);
-            }
-
-            if (!model.CurrentDate.Slots.Any())
-            {
-                var ohSlot = new SingleSlotViewModel();
-                ohSlot.Begin = model.CurrentDate.Begin;
-                ohSlot.End = model.CurrentDate.End;
-                ohSlot.Occurrence = model.CurrentDate.Occurrence;
-
-                foreach (var subscription in model.CurrentDate.Occurrence.Subscriptions.OrderBy(s => s.TimeStamp))
-                {
-                    var user = UserManager.FindById(subscription.UserId);
-
-                    var member = new CourseMemberModel()
-                    {
-                        Subscription = subscription,
-                        User = user,
-                    };
-
-                    ohSlot.Member.Add(member);
-
-                }
-                model.Slots.Add(ohSlot);
-            }
-
-
-            return PartialView("_SingleDateViewHost", model);
-        }
-        */
 
  
         private void FillOfficeHourDateList(OfficeHourCharacteristicModel model, OrganiserMember hostRequested,

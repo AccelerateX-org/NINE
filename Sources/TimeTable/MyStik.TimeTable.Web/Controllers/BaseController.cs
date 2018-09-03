@@ -454,7 +454,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(shortName));
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         protected Curriculum GetCurriculum(Guid id)
         {
             return Db.Curricula.SingleOrDefault(x => x.Id == id);

@@ -247,7 +247,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new { id = course.Id });
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ChangeTopics(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -2658,7 +2662,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Lock(Guid id)
         {
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
@@ -2670,7 +2678,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new {id = course.Id});
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult UnLock(Guid id)
         {
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
@@ -2682,18 +2694,36 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new {id = course.Id});
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult SubscriptionList(Guid id)
         {
             var model = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="withPart"></param>
+        /// <param name="withWaiting"></param>
+        /// <param name="withDates"></param>
+        /// <returns></returns>
         public ActionResult SubscriptionList(Course c, bool withPart, bool withWaiting, bool withDates)
         {
             var model = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == c.Id);
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Owners(Guid id)
         {
             var model = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
@@ -2708,6 +2738,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult DeleteOwner(Guid id)
         {
             var owner = Db.ActivityOwners.SingleOrDefault(x => x.Id == id);
@@ -2722,6 +2757,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="dozId"></param>
+        /// <returns></returns>
         public PartialViewResult AddOwner(Guid courseId, Guid dozId)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
@@ -2743,6 +2784,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_OwnerRow", owner);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Download(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -2765,6 +2811,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public FileResult ParticipientTable(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
@@ -2823,6 +2874,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return list;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult AdminNewParticipients(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -2837,6 +2893,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public PartialViewResult SubscriptionProfile(Guid id)
         {
             var studentService = new StudentService(Db);
@@ -2931,7 +2992,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public ActionResult SetOnWaitingList2(Guid id, string userId)
         {
             var logger = LogManager.GetLogger("Course");
@@ -2996,6 +3062,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("AdminNewParticipients", new {id = course.Id});
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public ActionResult SetOnParticipiantList2(Guid id, string userId)
         {
             var logger = LogManager.GetLogger("Course");
@@ -3059,7 +3131,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("AdminNewParticipients", new { id = course.Id });
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public ActionResult RemoveSubscription2(Guid id, string userId)
         {
             var logger = LogManager.GetLogger("Course");
@@ -3112,6 +3189,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("AdminNewParticipients", new { id = course.Id });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult AdminNewInfos(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -3166,6 +3248,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new {id = course.Id});
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult AdminNewRules(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -3226,6 +3313,16 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="optAccess"></param>
+        /// <param name="optLimit"></param>
+        /// <param name="capacity"></param>
+        /// <param name="groupIds"></param>
+        /// <param name="groupCaps"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult SaveAdminNewRules(Guid courseId, int optAccess, int optLimit, int capacity, Guid[] groupIds, int[] groupCaps)
         {
@@ -3294,7 +3391,11 @@ namespace MyStik.TimeTable.Web.Controllers
             //return RedirectToAction("Admin", new { id = course.Id });
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult AdminNewDates(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
@@ -3318,7 +3419,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CreateCourseWizard()
         {
             var org = GetMyOrganisation();
@@ -3372,7 +3476,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("AdminNewInfos", new {id = course.Id});
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult AdminNewModule(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);

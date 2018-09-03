@@ -1,0 +1,63 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
+
+@{
+    ViewBag.Title = "Sprechstunde";
+    var now = DateTime.Now;
+    var historicDates = Model.Dates.Where(x => x.Date.End <= now).OrderBy(x => x.Date.Begin).ToList();
+    var futureDates = Model.Dates.Where(x => x.Date.End > now).OrderBy(x => x.Date.Begin).ToList();
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Sprechstunde im @Model.Semester.Name - Termine nach Vereinbarung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Verwaltung</h4>
+                </div>
+                <div class="list-group">
+                    <a class="list-group-item" href="@Url.Action("EditOpenSystem", "OfficeHour", new {id = Model.OfficeHour.Id})">
+                        <i class="fa fa-cogs"></i> Allgemeine Einstellungen ändern
+                    </a>
+                    <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteOfficeHour", "OfficeHour", new {id = Model.OfficeHour.Id})">
+                        <i class="fa fa-trash-o"></i> Sprechtunde komplett löschen
+                    </a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Allgemeine Einstellungen</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5>Beschreibungstext</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            @Html.Raw(Model.OfficeHour.Description)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+

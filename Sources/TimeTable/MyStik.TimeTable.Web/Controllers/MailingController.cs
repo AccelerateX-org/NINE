@@ -192,38 +192,20 @@ namespace MyStik.TimeTable.Web.Controllers
                 */
 
 
-                // Alle Studierenden und alle Staff, die E-Mails erhalten wollen
-                ICollection<ApplicationUser> userList;
-                userList = _userDb.Users.Where(u => 
-                    u.MemberState == MemberState.Student || 
-                    (u.MemberState == MemberState.Staff && u.LikeEMails)).ToList();
+                // Alle Studierenden in Studiengängen des Veranstalters
+                ICollection<ApplicationUser> userList = new List<ApplicationUser>();
 
-                // jetzt reduzieren, um nicht FK Mitglieder!
-                var deleteList = new List<ApplicationUser>();
+                var allStudents = Db.Students.Where(x => x.Curriculum.Organiser.Id == org.Id);
+                var allUserIds = allStudents.Select(s => s.UserId).Distinct().ToList();
 
-                var subService = new SemesterSubscriptionService(Db);
 
-                foreach (var user in userList)
+                foreach (var userId in allUserIds)
                 {
-                    if (user.MemberState == MemberState.Student)
+                    ApplicationUser user = UserManager.FindById(userId);
+                    if (user != null)
                     {
-                        var isInSem = subService.IsSubscribed(user.Id, semester, org);
-                        if (!isInSem)
-                            deleteList.Add(user);
+                        userList.Add(user);
                     }
-                    else
-                    {
-                        var isInFK = Db.Members.Any(x =>
-                            x.Organiser.Id == org.Id &&
-                            string.IsNullOrEmpty(x.UserId) && x.UserId.Equals(user.Id));
-                        if (!isInFK)
-                            deleteList.Add(user);
-                    }
-                }
-
-                foreach (var user in deleteList)
-                {
-                    userList.Remove(user);
                 }
 
 
@@ -356,7 +338,25 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Session["GroupList"] = groupList;
 
-                return PartialView("_GroupSelectionConfirm", groupList);
+
+                var model = new List<SemesterGroupViewModel>();
+
+                var studentService = new StudentService(Db);
+
+                foreach (var groupId in GroupIds)
+                {
+                    var group = Db.SemesterGroups.SingleOrDefault(g => g.Id == groupId);
+
+                    var groupModel = new SemesterGroupViewModel
+                    {
+                        Group = group,
+                        UserIds = studentService.GetStudents(group)
+                    };
+
+                    model.Add(groupModel);
+                }
+
+                return PartialView("_GroupSelectionConfirm", model);
             }
 
             
@@ -376,7 +376,26 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new OccurrenceMailingModel();
 
-            ViewBag.GroupList = Session["GroupList"] as ICollection<SemesterGroup>;
+            var groups = Session["GroupList"] as ICollection<SemesterGroup>;
+
+            var viewBagModel = new List<SemesterGroupViewModel>();
+
+            var studentService = new StudentService(Db);
+
+            foreach (var group in groups)
+            {
+
+                var groupModel = new SemesterGroupViewModel
+                {
+                    Group = group,
+                    UserIds = studentService.GetStudents(group)
+                };
+
+                viewBagModel.Add(groupModel);
+            }
+
+            ViewBag.GroupList = viewBagModel;
+
 
             return View(model);
         }
@@ -392,17 +411,28 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(semId);
             var org = GetMyOrganisation();
 
-            var model = Db.SemesterGroups
-                .Where(
-                    x =>
-                        x.Semester.Id == semester.Id &&
-                        x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
-                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
-                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name)
-                .ThenBy(g => g.Name)
-                .ToList();
+            var model = new SemesterOverviewModel();
+            model.Semester = semester;
 
-            ViewBag.Semester = semester;
+            // hier jetzt das ganze zu Fuss
+            var studentService = new StudentService(Db);
+
+            var groups = semester.Groups
+                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
+                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
+                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name).ToList();
+
+            foreach (var group in groups)
+            {
+                var groupModel = new SemesterGroupViewModel
+                {
+                    Group = group,
+                    UserIds = studentService.GetStudents(group)
+                };
+
+                model.SemesterGroups.Add(groupModel);
+            }
+
 
             return PartialView("_StudentGroupSelect", model);
         }
@@ -421,21 +451,36 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (ModelState.IsValid && groupList != null)
             {
-                // Basis: alle Staff, die E-Mails erhalten wollen => nein, das ist zu spezifisch
                 var userList =  new List<ApplicationUser>();
-                    //_userDb.Users.Where(u => (u.MemberState == MemberState.Staff && u.LikeEMails)).ToList();
 
+                // nur noch alle, die in LVs der Gruppen eingetrangen sind
+                var studentService = new StudentService(Db);
                 var sb = new StringBuilder();
+                List<string> userIds = new List<string>();
                 foreach (var group in groupList)
                 {
-                    foreach (var subscription in group.Subscriptions)
+                    var groupIds = studentService.GetStudents(group);
+                    userIds.AddRange(groupIds);
+
+                    logger.InfoFormat("Students in group {0}: {1}", group.FullName, groupIds.Count);
+
+                }
+
+                logger.InfoFormat("Total entries {0}", userIds.Count);
+                var userIdsNoDuplicates = userIds.Distinct().ToList();
+                logger.InfoFormat("Total entries after reduction {0}", userIdsNoDuplicates.Count);
+
+                foreach (var userId in userIdsNoDuplicates)
+                {
+                    ApplicationUser user = UserManager.FindById(userId);
+                    if (user != null)
                     {
-                        ApplicationUser user = UserManager.FindById(subscription.UserId);
-                        if (user != null && user.EmailConfirmed)
-                        {
-                            userList.Add(user);
-                        }
+                        userList.Add(user);
                     }
+                }
+
+                foreach (var group in groupList)
+                {
                     sb.Append(group.FullName);
                     if (group != groupList.Last())
                     {

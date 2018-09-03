@@ -57,7 +57,8 @@
                     <div class="alert alert-info ">
                         <strong>Erwartetes Format der Datei:</strong>
                         <p>CSV-Datei mit Trennzeichen ; sowie Kopfzeile. Aufbau der Spalten:</p>
-                        <p>Name;Vorname;E-Mail;Fakultät;Studiengang;Studiengruppe</p>
+                        <p>Name;Vorname;E-Mail;Fakultät;Studiengang;Semester</p>
+                        <strong>Semester = Semester des Studienbeginns, bzw. erstes Semester des Aufenthalts an der HM</strong>
                     </div>
 
                     @using (Html.BeginForm("Invitation", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))

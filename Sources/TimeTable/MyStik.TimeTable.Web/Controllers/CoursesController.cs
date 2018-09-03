@@ -77,6 +77,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Semester(Guid id)
         {
             var semester = SemesterService.GetSemester(id);
@@ -595,6 +600,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return model;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Admin(Guid id)
         {
             var semester = SemesterService.GetSemester(id);
@@ -609,6 +619,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CreateSemester()
         {
             var org = GetMyOrganisation();

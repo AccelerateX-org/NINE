@@ -112,5 +112,109 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             return RedirectToAction("Index", "Dashboard");
         }
-            }
+
+        public ActionResult CreateCie()
+        {
+            createCurricula("CIE-B", "CIE-Bachelor");
+            createCurricula("CIE-M", "CIE-Master");
+
+            return RedirectToAction("Index", "Dashboard");
         }
+
+
+        public ActionResult CreateCieGroups()
+        {
+            var semester = Db.Semesters.SingleOrDefault(x => x.Name.Equals("WiSe 2018"));
+
+            // Alle Curricula durchgehen
+            foreach (var curriculum in Db.Curricula.Where(x => x.ShortName.Equals("CIE-B") || x.ShortName.Equals("CIE-M")).ToList())
+            {
+                foreach (var curriculumGroup in curriculum.CurriculumGroups.ToList())
+                {
+                    foreach (var capacityGroup in curriculumGroup.CapacityGroups.ToList())
+                    {
+                        var exist = semester.Groups.Any(g => g.CapacityGroup.Id == capacityGroup.Id);
+
+                        if (!exist)
+                        {
+                            var semGroup = new SemesterGroup
+                            {
+                                CapacityGroup = capacityGroup,
+                                CurriculumGroup = capacityGroup.CurriculumGroup,        // nur noch aus Gründen der Sicherheit
+                                Semester = semester
+                            };
+
+                            semester.Groups.Add(semGroup);
+                            Db.SemesterGroups.Add(semGroup);
+                        }
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+
+
+        private void createCurricula(string shortName, string name)
+        { 
+            var orgs = Db.Organisers.Where(x => x.ShortName.StartsWith("FK")).ToList();
+
+            foreach (var org in orgs)
+            {
+                var cieB = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(shortName));
+
+                if (cieB == null)
+                {
+                    cieB = new Curriculum
+                    {
+                        Name = name,
+                        ShortName = shortName,
+                        Organiser = org
+                    };
+
+                    Db.Curricula.Add(cieB);
+                }
+
+                var firstGroup = cieB.CurriculumGroups.FirstOrDefault();
+                if (firstGroup != null)
+                {
+                    firstGroup.Name = string.Empty;
+                }
+                else
+                {
+                    firstGroup = new CurriculumGroup
+                    {
+                        Curriculum = cieB,
+                        Name = string.Empty,
+                        IsSubscribable = true
+                    };
+
+                    Db.CurriculumGroups.Add(firstGroup);
+                }
+
+                var firstCapGroup = firstGroup.CapacityGroups.FirstOrDefault();
+
+                if (firstCapGroup == null)
+                { 
+                    firstCapGroup = new  CapacityGroup
+                    {
+                        CurriculumGroup = firstGroup,
+                        Name = string.Empty,
+                        InSS = true,
+                        InWS = true
+                    };
+
+                    Db.CapacityGroups.Add(firstCapGroup);
+                }
+
+            }
+
+
+
+            Db.SaveChanges();
+        }
+    }
+}

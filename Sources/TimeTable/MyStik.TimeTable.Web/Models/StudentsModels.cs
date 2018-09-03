@@ -99,11 +99,6 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public string Group { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Semester { get; set; }
 
         /// <summary>

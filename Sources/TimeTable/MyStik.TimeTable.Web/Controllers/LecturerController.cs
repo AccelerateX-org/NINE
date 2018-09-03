@@ -110,6 +110,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 Host = infoService.GetHost(officeHour),
             };
 
+            if (officeHour.ByAgreement)
+            {
+                return View("DateListAgreement", model);
+            }
+
+
             model.Dates.AddRange(infoService.GetDates(officeHour));
 
 

@@ -18,7 +18,6 @@ namespace MyStik.TimeTable.Web.Services
         /// 
         /// </summary>
         /// <param name="db"></param>
-        /// <param name="userManager"></param>
         public CourseService(TimeTableDbContext db) : base(db)
         {
         }

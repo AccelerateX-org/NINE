@@ -339,12 +339,6 @@ namespace MyStik.TimeTable.Web.Models
         public Lottery Lottery { get; set; }
 
         /// <summary>
-        /// Die Eintragung des Teilnehmers
-        /// </summary>
-        //public LotteryGambleSubscriptionViewModel MySubscription { get; set; }
-
-
-        /// <summary>
         /// Die Eintragung
         /// </summary>
         public OccurrenceSubscription Subscription { get; set; }

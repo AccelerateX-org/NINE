@@ -1,5 +1,4 @@
-﻿@model ICollection<MyStik.TimeTable.Data.SemesterGroup>
-
+﻿@model MyStik.TimeTable.Web.Models.SemesterOverviewModel
 
 @{
     var nStud = 0;
@@ -9,7 +8,7 @@
         <div class="portlet light bordered">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-calendar"></i>Semestergruppen im @ViewBag.Semester.Name
+                    <i class="fa fa-calendar"></i>Semestergruppen im @Model.Semester.Name
                 </div>
             </div>
             <div class="portlet-body">
@@ -25,15 +24,15 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var group in Model)
+                                @foreach (var group in Model.SemesterGroups)
                                 {
-                                    nStud += group.Subscriptions.Count;
+                                    nStud += group.UserIds.Count;
 
                                     <tr>
-                                        <td><input id="@group.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
-                                        <td>@group.FullName</td>
+                                        <td><input id="@group.Group.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
+                                        <td>@group.Group.FullName</td>
                                         <td>
-                                            @group.Subscriptions.Count
+                                            @group.UserIds.Count
                                         </td>
                                     </tr>
                                 }
