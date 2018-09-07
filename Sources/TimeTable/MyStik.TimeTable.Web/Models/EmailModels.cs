@@ -172,6 +172,12 @@ namespace MyStik.TimeTable.Web.Models
 
         public OrganiserMember Member { get; set; }
 
+        public Course Course { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public Lottery Lottery { get; set; }
+
     }
 
     public class SubscriptionEmail : BaseEmail

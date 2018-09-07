@@ -110,8 +110,12 @@
 
             $('#calendar').fullCalendar('addEventSource', 
             {
-                url: '@Url.Action("RoomPrintPlan", "Calendar", new { roomId = Model.Room.Id })',
-                type: 'POST'
+                url: '@Url.Action("RoomPrintPlan", "Calendar")',
+                type: 'POST',
+                data: {
+                    roomId: '@Model.Room.Id',
+                    semId: '@Model.Semester.Id'
+                }
             });
             
         });

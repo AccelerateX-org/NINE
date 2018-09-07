@@ -266,8 +266,22 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        [Display(Name = "Diesem Raum sollen alle Belegungen zugeorndet werden")]
+        [Display(Name = "Diesem Raum sollen alle Belegungen zugeordnet werden")]
         public Guid TargetRoomId { get; set; }
+
+        [Display(Name = "Von Datum")]
+        public string StartDate { get; set; }
+
+        [Display(Name = "Uhrzeit")]
+        public string StartTime { get; set; }
+
+
+        [Display(Name = "Bis Datum")]
+        public string EndDate { get; set; }
+
+        [Display(Name = "Uhrzeit")]
+        public string EndTime { get; set; }
+
     }
 
     /// <summary>

@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Data.Lottery
+@{
+    ViewBag.Title = "Löschen";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Wahlverfahren "@Model.Name"</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h4><i class="fa fa-trash-o"></i> Löschen des Wahlverfahrens</h4>
+                <p>Alle Informationen werden unwiederbringlich gelöscht. Die Aktion kann nicht rückgängig gemacht werden.</p>
+                <a class="btn btn-danger" href="@Url.Action("DeleteConfirmed", new {id = Model.Id})"> Ja, das Wahlverfahren soll gelöscht werden</a>
+                <a class="btn btn-default" href="@Url.Action("Details", new {id = Model.Id})"> Abbrechen und zurück</a>
+            </div>
+        </div>
+    </div>
+</div>

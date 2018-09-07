@@ -723,11 +723,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="roomId"></param>
+        /// <param name="semId"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult RoomPrintPlan(Guid roomId, string start, string end)
+        public JsonResult RoomPrintPlan(Guid roomId, Guid? semId, string start, string end)
         {
             var startDate = GetDateTime(start);
             var endDate = GetDateTime(end);
@@ -739,7 +740,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Am Schluss muss alles in "Wochentage" umgerechnet werden
 
             // Alle Events abstrakt nah Wochentag
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            var semester = SemesterService.GetSemester(semId);
 
             var roomService = new RoomService();
 

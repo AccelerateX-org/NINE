@@ -666,9 +666,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (student != null)
             {
+                Db.Students.Remove(student);
+
+                /*
                 Db.Entry(student).State = EntityState.Modified;
 
                 student.HasCompleted = true;
+                */
+
 
                 Db.SaveChanges();
             }

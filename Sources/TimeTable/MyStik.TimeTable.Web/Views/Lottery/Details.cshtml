@@ -185,6 +185,12 @@
                             </div>
                             <div class="list-group-item-text">Alle Eintragungen auf Warteliste werden ausgetragen. Eingetragene Studierende werden per Mail informiert.</div>
                         </a>
+                        <a class="list-group-item list-group-item-danger" href="@Url.Action("Clearance", new {id = Model.Lottery.Id})">
+                            <div class="list-group-item-heading">
+                                <h5><i class="fa fa-fire-extinguisher"></i> Bereinigen</h5>
+                            </div>
+                            <div class="list-group-item-text">Alle Eintragungen ohne Prioritär werden gelöscht. Eingetragene Studierende werden per Mail informiert.</div>
+                        </a>
                         <a class="list-group-item list-group-item-danger" href="@Url.Action("Reset", new {id = Model.Lottery.Id})">
                             <div class="list-group-item-heading">
                                 <h5><i class="fa fa-bomb"></i> Zurücksetzen</h5>

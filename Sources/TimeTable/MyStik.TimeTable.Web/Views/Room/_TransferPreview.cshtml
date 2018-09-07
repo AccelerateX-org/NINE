@@ -1,0 +1,18 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.ActivityDate>
+    
+
+@if (Model != null && Model.Any())
+{
+    <h5>Folgende Termine werden übertragen</h5>
+    <ul>
+        @foreach (var date in Model)
+        {
+            <li>@Html.TimeSpanWithDate(date): @date.Activity.Name</li>
+        }
+    </ul>
+}
+else
+{
+    <h5>Keine Termine im angegebenen Zeitraum gefunden</h5>
+}

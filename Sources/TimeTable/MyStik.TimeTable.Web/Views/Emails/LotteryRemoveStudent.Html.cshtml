@@ -31,9 +31,22 @@ Content-Type: text/html; charset=utf-8
 
         <p>Sehr geehrte(r) @Model.User.FullName,</p>
 
-        <p>das Wahlverfahren "@Model.Game.Game.Lottery.Name" wurde am @Model.Drawing.Start.ToShortDateString() von @Model.Member.FullName zurückgesetzt.</p>
+        <p>das Wahlverfahren "@Model.Lottery.Name" wurde am @Model.Drawing.Start.ToShortDateString() von @Model.Member.FullName bereinigt.</p>
         
-        <p>Das bedeutet: alle Eintragungen wurden zurück auf Warteliste gesetzt. Die Prioritäten wurden nicht verändert.</p>
+        <p>Das bedeutet:</p> 
+        <ul>
+            <li>Eintragungen in Lehrveranstaltungen, welche außerhalb des Wahlverfahrens, i.d.R. vor dem offiziellen Anlegen und Freigabe des Wahlverfahrens gemacht wurden, werden gelöscht.</li>
+            <li>Eintragungen, welche innerhalb des Wahlverfahrens getätigt wurden, bleiben erhalten.</li>
+        </ul>
+        
+        <p>Folgende Eintragung wurde gelöscht:</p>
+        <ul>
+            <li>Lehrveranstaltung: @Model.Course.Name (@Model.Course.ShortName)</li>
+            <li>Eintragung vom @Model.Subscription.TimeStamp</li>
+        </ul>
+        
+        <p><strong>Eine erneute Eintragung in die oben genannte Lehrveranstaltung ist über das zugehörige Wahlverfahren entsprechend der jeweiligen Einstellungen und der von Ihnen getroffenen Auswahl möglich.</strong></p>
+       
 
         <h5>Hinweise:</h5>
         <ul>

@@ -441,7 +441,6 @@
     <Compile Include="Hubs\FamosHub.cs" />
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
-    <Compile Include="Hubs\WpmHub.cs" />
     <Compile Include="Jobs\LotteryJob.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.Designer.cs">
@@ -3588,7 +3587,6 @@
     <Content Include="Views\Lottery\_CourseTable.cshtml" />
     <Content Include="Views\Lottery\State.cshtml" />
     <Content Include="Views\Lottery\Drawing.cshtml" />
-    <Content Include="Views\Lottery\MySelection.cshtml" />
     <Content Include="Views\Lottery\List.cshtml" />
     <Content Include="Views\Lottery\Subscribers.cshtml" />
     <Content Include="Views\Lottery\Edit.cshtml" />
@@ -3708,7 +3706,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Lottery\Report.cshtml" />
     <Content Include="Views\Curriculum\Structure.cshtml" />
-    <Content Include="Views\Lottery\LotPot.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumGroupSelectList.cshtml" />
     <Content Include="Views\Curriculum\_ChapterSelectList.cshtml" />
     <Content Include="Views\Curriculum\_TopicSelectList.cshtml" />
@@ -3849,7 +3846,6 @@
     <Content Include="Views\Lecturer\Responsibilities.cshtml" />
     <Content Include="Views\Lecturer\Thesis.cshtml" />
     <Content Include="Views\Lottery\AddBudget.cshtml" />
-    <Content Include="Views\Lottery\Bet.cshtml" />
     <Content Include="Views\Lottery\Budgets.cshtml" />
     <Content Include="Views\Lottery\Check.cshtml" />
     <Content Include="Views\Lottery\Course.cshtml" />
@@ -3859,8 +3855,6 @@
     <Content Include="Views\Lottery\EditReference.cshtml" />
     <Content Include="Views\Lottery\Game.cshtml" />
     <Content Include="Views\Lottery\InitTest.cshtml" />
-    <Content Include="Views\Lottery\MyHiddenSelection.cshtml" />
-    <Content Include="Views\Lottery\MySelectionNew.cshtml" />
     <Content Include="Views\Lottery\Overview.cshtml" />
     <Content Include="Views\Lottery\RemoveSelection.cshtml" />
     <Content Include="Views\Lottery\Repair.cshtml" />
@@ -3986,6 +3980,12 @@
     <Content Include="Views\Union\NoUnion.cshtml" />
     <Content Include="Views\Lecturer\DateListAgreement.cshtml" />
     <Content Include="Views\Dictionary\_GroupList.cshtml" />
+    <Content Include="Views\Lottery\Delete.cshtml" />
+    <Content Include="Views\Lottery\Reset.cshtml" />
+    <Content Include="Views\Lottery\Clearance.cshtml" />
+    <Content Include="Views\Emails\LotteryRemoveStudent.Html.cshtml" />
+    <Content Include="Views\Emails\LotteryRemoveStudent.cshtml" />
+    <Content Include="Views\Room\_TransferPreview.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

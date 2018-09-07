@@ -3,24 +3,40 @@
 @{
     ViewBag.Title = "Meine Lehrveranstaltungen";
     ViewBag.ShowState = false;
+
+    var particpating = Model.Courses.Where(x => !x.Subscription.OnWaitingList).ToList();
+    var waiting = Model.Courses.Where(x => x.Subscription.OnWaitingList).ToList();
 }
 
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
         <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-pencil"></i> In diese Lehrveranstaltungen habe ich mich eingetragen (@Model.Semester.Name)
-                    </h4>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-pencil"></i> Meine Eintragungen mit Status "Teilnehmer" (@Model.Semester.Name)
+                        </h4>
+                    </div>
+                    <div class="list-group">
+                        @foreach (var course in particpating)
+                        {
+                            @Html.Partial("_CourseSummaryListItem", course)
+                        }
+                    </div>
                 </div>
-                <div class="list-group">
-                    @foreach (var course in Model.Courses)
-                    {
-                        @Html.Partial("_CourseSummaryListItem", course)
-                    }
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-pencil"></i> Meine Eintragungen mit Status "Warteliste" (@Model.Semester.Name)
+                        </h4>
+                    </div>
+                    <div class="list-group">
+                        @foreach (var course in waiting)
+                        {
+                            @Html.Partial("_CourseSummaryListItem", course)
+                        }
+                    </div>
                 </div>
-            </div>
         </div>
         <div class="col-md-4">
             <div class="panel panel-default">

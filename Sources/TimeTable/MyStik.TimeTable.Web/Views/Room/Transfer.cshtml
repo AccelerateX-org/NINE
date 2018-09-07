@@ -3,40 +3,177 @@
     ViewBag.Title = "Transfer";
 }
 
-<h4>Alle Veranstaltungen von einem Raum in den anderen übertragen</h4>
-<div class="alert alert-info">
-    <h4>Wichtig</h4>
-    <p>Das ist eine technische Fnuktion, keine organistorische.</p>
-    <p>Die Veranstaltungen werden ohne weitere Prüfung auf Überschneidungen übertragen.</p>
-</div>
-
-@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+@section styles
 {
-    <fieldset>
-        @Html.ValidationSummary()
-        <div class="form-group">
-            @Html.LabelFor(model => model.SourceRoomId, new { @class = "col-sm-4 control-label" })
-            <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.SourceRoomId, null, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.TargetRoomId, new { @class = "col-sm-4 control-label" })
-            <div class="col-sm-8">
-                @Html.DropDownListFor(model => model.TargetRoomId, null, new { @class = "form-control" })
-            </div>
-        </div>
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
-        <div class="form-group">
-            <div class="col-md-offset-4 col-md-10">
-                <input type="submit" value="Ja" class="btn btn-danger" />
-                <a href="@Url.Action("Index", "Room")" class="btn btn-default">Zurück</a>
-            </div>
-        </div>
-    </fieldset>
+
 }
 
 
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Raumverwaltung @ViewBag.Organiser.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4>Wichtig</h4>
+                <p>Das ist eine technische Fnuktion, keine organistorische.</p>
+                <p>Die Veranstaltungen werden ohne weitere Prüfung auf Überschneidungen übertragen.</p>
+            </div>
+            <div class="panel panel-default">
+                <h4 class="panel-heading">Alle Veranstaltungen von einem Raum in einen anderen übertragen</h4>
+
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SourceRoomId, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    @Html.DropDownListFor(model => model.SourceRoomId, null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TargetRoomId, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    @Html.DropDownListFor(model => model.TargetRoomId, null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartDate, new { @class = "col-md-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartTime, new { @class = "col-md-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndDate, new { @class = "col-md-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndTime, new { @class = "col-md-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.EndTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-md-offset-4 col-md-10">
+                                    <a href="javascript:onPreview()" class="btn btn-primary">Vorschau</a>
+                                    <button id="submitTransfer" type="submit" class="btn btn-danger">Termine übertragen</button>
+                                    <a href="@Url.Action("Rooms", "Organiser")" class="btn btn-default">Abbrechen und zurück</a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                    
+                    <div id="previewList"></div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+            $('#submitTransfer').hide();
+
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+        });
+
+
+        function onPreview() {
+            var roomId = $('#SourceRoomId').val();
+            var startDate = $('#StartDate').val();
+            var startTime = $('#StartTime').val();
+            var endDate = $('#EndDate').val();
+            var endTime = $('#EndTime').val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("TransferPreview")',
+                    data: {
+                        SourceRoomId: roomId,
+                        StartDate: startDate,
+                        StartTime: startTime,
+                        EndDate: endDate,
+                        EndTime: endTime
+                    },
+                    success: function (data, success, xhr) {
+                        $("#previewList").html(data);
+                        $('#submitTransfer').show();
+                    }
+                });
+
+
+            
+
+        }
+
+
+    </script>
+}
 
 
 

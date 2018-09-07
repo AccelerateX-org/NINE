@@ -49,45 +49,14 @@
                                 <i class="fa fa-list"></i> Terminliste
                             </a>
                         </div>
-                        <div class="form-group dropdown">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-print"></i> Türschild <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=true, showDateList=false, isMoSa=false })">
-                                        <i class="fa fa-calendar"></i> Wochenkalender (Mo-Fr)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=true, showDateList=false, isMoSa=true  })">
-                                        <i class="fa fa-calendar"></i> Wochenkalender (Mo-Sa)
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("RoomScheduleCurrentWeek", "Print", new { id = Model.Id  })">
-                                        <i class="fa fa-calendar"></i> Aktuelle Woche
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("RoomScheduleNextWeek", "Print", new { id = Model.Id  })">
-                                        <i class="fa fa-calendar"></i> Nächste Woche
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=false, showDateList=true, isMoSa=false })">
-                                        <i class="fa fa-list"></i> Nur Datumsliste
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("RoomSchedule", "Print", new { id = Model.Id, showCalendar=true, showDateList=true, isMoSa=false })">
-                                        <i class="fa fa-birthday-cake"></i> Wochenkalender und Datumsliste
-                                    </a>
-                                </li>
-                            </ul>
+                        <div class="form-group">
+                            <a href="@Url.Action("Labels", "Room")" class="btn btn-default">
+                                <i class="fa fa-print"></i> Türschilder
+                            </a>
                         </div>
 
-                    
+
+
                         @if (ViewBag.UserRight.IsRoomAdmin)
                         {
                             <div class="form-group">

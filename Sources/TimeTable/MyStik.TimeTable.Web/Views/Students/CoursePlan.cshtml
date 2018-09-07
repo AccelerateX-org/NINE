@@ -132,17 +132,14 @@
                             <h5>Matrikelnummer erfassen</h5>
                         </div>
                     </a>
-                    @if (Request.IsLocal)
-                    {
-                        <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteStudent", new {id = Model.Student.Id})">
-                            <div class="list-group-item-heading">
-                                <h5>Student löschen</h5>
-                            </div>
-                            <div class="list-group-item-text">
-                                Löscht lediglich die Zuordnung zum Studiengang. Studierende muss sich neu festlegen.
-                            </div>
-                        </a>
-                    }
+                    <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteStudent", new {id = Model.Student.Id})">
+                        <div class="list-group-item-heading">
+                            <h5>Student löschen</h5>
+                        </div>
+                        <div class="list-group-item-text">
+                            Löscht lediglich die Zuordnung zum Studiengang. Studierende muss sich neu festlegen.
+                        </div>
+                    </a>
                 </div>
             </div>
         }

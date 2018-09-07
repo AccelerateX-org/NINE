@@ -338,7 +338,70 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        public ActionResult Clearance(Guid id)
+        {
+            var model = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult ClearanceConfirmed(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+
+            var drawing = new LotteryDrawing();
+            drawing.Start = DateTime.Now;
+
+            var subService = new SubscriptionService(Db);
+
+            foreach (var course in model.Courses)
+            {
+                foreach (var subscription in course.Occurrence.Subscriptions.ToList())
+                {
+                    // nur die Eintragungen ohne Priorität
+                    if (!subscription.Priority.HasValue)
+                    {
+
+                        var mailService = new LotteryMailService(model);
+                        mailService.SendLotteryRemoveMail(drawing, GetMyMembership(), model.Lottery, course, subscription);
+
+                        subService.DeleteSubscription(subscription);
+                    }
+                }
+            }
+
+            // Am Ende eine Mail an den Ausführenden senden, wer alles informiert wurde
+
+
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+
+        /// <summary>
+        /// Confirmation for reset of lottery
+        /// </summary>
+        /// <param name="id">id of lottery</param>
+        /// <returns></returns>
         public ActionResult Reset(Guid id)
+        {
+            var model = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult ResetConfirmed(Guid id)
         {
 
             var model = new DrawingService(Db, id);
@@ -755,12 +818,20 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public ActionResult Delete(Guid id)
+        {
+            var model = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            return View(model);
+        }
+
+
+        /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="id"></param>
+            /// <returns></returns>
+            public ActionResult DeleteConfirmed(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
             var semester = lottery.Semester;
@@ -903,7 +974,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Subscribers(Guid id)
         {
-
             var lotteryService = new LotteryService(Db, id);
             var lottery = lotteryService.GetLottery();
 
@@ -1386,233 +1456,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult MySelection(Guid id)
         {
-            var userDb = new ApplicationDbContext();
-            var lotteryService = new LotteryService(Db, id);
-
-            var model = new LotteryGambleViewModel();
-            var lottery = lotteryService.GetLottery();
-            var user = AppUser;
-
-            // ist Lotterie gestartet?
-            var now = DateTime.Now;
-            var isRunning = lottery.Drawings.Any(x => x.Start <= now && now < x.End);
-
-
-            model.User = userDb.Users.SingleOrDefault(u => u.UserName.ToUpper().Equals(User.Identity.Name.ToUpper()));
-            model.Lottery = lottery;
-
-
-
-            if (isRunning)
-            {
-                return View("_LotteryRunning", model);
-            }
-
-
-            var wpmList = lotteryService.GetLotteryCourseList();
-
-            foreach (var wpm in wpmList)
-            {
-                // immer die doppelten entfernen
-                // TODO Doppelte Bets entfernen
-                // TODO Doppelte Eintragungen entfernen => immer den kleineren
-                // TODO Budgetgrenze prüfen???
-                // occurrenceService.CheckDoubles(wpm.Occurrence, model.User.Id);
-                var courseModel = GetCourseViewModel(model.Lottery, wpm, user);
-                model.Courses.Add(courseModel);
-
-                // Wie viele sind bereits angenommen?
-                if (courseModel.Subscription != null &&
-                    !courseModel.Subscription.OnWaitingList &&
-                    courseModel.Subscription.IsConfirmed)
-                    model.Confirmed++;
-
-                if (courseModel.Subscription != null)
-                    model.Subscribed++;
-            }
-
-
-            // Ist gleichverteilt gesetzt?
-            foreach (var lotteryBudget in lottery.Budgets)
-            {
-                var budgetModel = new LotteryGambleBudgetStateViewModel {Budget = lotteryBudget};
-
-                // alle Einsätze
-                foreach (var courseViewModel in model.Courses)
-                {
-                    // nur Wartelisteneinträge
-                    if (courseViewModel.Subscription != null && courseViewModel.Subscription.OnWaitingList)
-                    {
-                        var bet = courseViewModel.Subscription.Bets.FirstOrDefault(x =>
-                            x.Budget.Id == lotteryBudget.Id);
-                        budgetModel.Bets.Add(bet);
-                    }
-                }
-
-                model.BudgetStates.Add(budgetModel);
-            }
-
-
-            ViewBag.UserRight = GetUserRight();
-            // TODO: reale Loszeit
-
-            var today = DateTime.Today;
-            var firstDrawing = lottery.FirstDrawing.Add(lottery.DrawingTime);
-            var lastDrawing = lottery.LastDrawing.Add(lottery.DrawingTime);
-            var todayDrawing = today.Add(lottery.DrawingTime);
-
-            DateTime? nextDrawing = todayDrawing;
-
-            if (lastDrawing < todayDrawing)
-            {
-                nextDrawing = null;
-            }
-            else
-            {
-                if (todayDrawing < firstDrawing)
-                {
-                    nextDrawing = firstDrawing;
-                }
-                else
-                {
-                    if (todayDrawing <= DateTime.Now)
-                    {
-                        nextDrawing = todayDrawing.AddDays(1);
-                    }
-                }
-            }
-
-
-            ViewBag.NextDrawing = nextDrawing;
-
-            return View("MySelectionNew", model);
-        }
-
-
-
-        public ActionResult Bet(Guid courseId, Guid lotId)
-        {
-            var lottery = Db.Lotteries.SingleOrDefault(x => x.Id == lotId);
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
-            var user = GetCurrentUser();
-
-
-            var model = GetCourseViewModel(lottery, course, user);
-
-
-            return View(model);
+            return RedirectToAction("Overview", new {id = id});
         }
 
 
 
 
-
-        [HttpPost]
-        public PartialViewResult EnterBet(Guid courseId, Guid lotteryId, Guid[] bets, int[] points)
-        {
-            for (int i = 0; i < bets.Length; i++)
-            {
-                var id = bets[i];
-
-                var myBet = Db.LotteriyBets.SingleOrDefault(x => x.Id == id);
-
-                myBet.Amount = points[i];
-            }
-
-            Db.SaveChanges();
-
-            return PartialView("_EmptyRow");
-        }
-
-
-        [HttpPost]
-        public PartialViewResult EditBet(Guid courseId, Guid lotteryId)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
-            var lottery = Db.Lotteries.SingleOrDefault(x => x.Id == lotteryId);
-
-            var model = GetCourseViewModel(lottery, course, AppUser);
-
-            return PartialView("_BetEditor", model);
-        }
-
-        [HttpPost]
-        public PartialViewResult Refresh(Guid courseId, Guid lotteryId)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
-            var lottery = Db.Lotteries.SingleOrDefault(x => x.Id == lotteryId);
-
-            var model = GetCourseViewModel(lottery, course, AppUser);
-
-            return PartialView("_BetState", model);
-        }
-
-
-        public ActionResult Repair(Guid id)
-        {
-            var lotteryService = new LotteryService(Db, id);
-            var lottery = lotteryService.GetLottery();
-
-            // Alle LVs der Lottery
-            var courseList = lotteryService.GetLotteryCourseList();
-
-            // Alle Kurse der Lottery mit Einstragungen
-            /*
-            var occurrences = courseList.Where(c => c.Occurrence.Subscriptions.Any()).Select(o => o.Occurrence).ToList();
-
-            var result = Db.Subscriptions.OfType<OccurrenceSubscription>()
-                .Join(Db.Occurrences,
-                    s => s.Occurrence.Id,
-                    o => o.Id,
-                    (s, o) => new { Subscription = s, Occurrence = o })
-                .Where(x => x.Subscription.Occurrence.Id == x.Occurrence.Id).ToList();
-
-            var n = result.Count;
-            */
-
-            var allSubscriptionLists = courseList.Select(s => s.Occurrence.Subscriptions).ToList();
-
-            var allSubscriptions = new List<OccurrenceSubscription>();
-            foreach (var subs in allSubscriptionLists)
-            {
-                allSubscriptions.AddRange(subs);
-            }
-
-            var model = new LotterySummaryModel
-            {
-                Lottery = lottery,
-                Subscriptions = allSubscriptions.GroupBy(g => g.UserId).ToList()
-            };
-
-            return View(model);
-        }
-
-
-        public ActionResult AssignPoints(Guid betId, int? amount)
-        {
-            var bet = Db.LotteriyBets.SingleOrDefault(x => x.Id == betId);
-            var lottery = bet.Budget.Lottery;
-
-            if (amount.HasValue)
-            {
-                bet.Amount = amount.Value;
-                Db.SaveChanges();
-            }
-
-            return RedirectToAction("Repair", new {id = lottery.Id});
-        }
-
-        public ActionResult RemoveBet(Guid id)
-        {
-            var bet = Db.LotteriyBets.SingleOrDefault(x => x.Id == id);
-
-            var lottery = bet.Budget.Lottery;
-
-            Db.LotteriyBets.Remove(bet);
-            Db.SaveChanges();
-
-            return RedirectToAction("LotPot", new {id = lottery.Id});
-        }
 
         public ActionResult Check(Guid id)
         {

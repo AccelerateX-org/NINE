@@ -5691,7 +5691,28 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.Clearance(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.ClearanceConfirmed(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.Reset(System.Guid)">
+            <summary>
+            Confirmation for reset of lottery
+            </summary>
+            <param name="id">id of lottery</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.ResetConfirmed(System.Guid)">
             <summary>
             
             </summary>
@@ -5741,7 +5762,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.Delete(System.Guid)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.DeleteConfirmed(System.Guid)">
             <summary>
             
             </summary>
@@ -6543,11 +6564,12 @@
             <param name="end"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.RoomPrintPlan(System.Guid,System.String,System.String)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.RoomPrintPlan(System.Guid,System.Nullable{System.Guid},System.String,System.String)">
             <summary>
             
             </summary>
             <param name="roomId"></param>
+            <param name="semId"></param>
             <param name="start"></param>
             <param name="end"></param>
             <returns></returns>
@@ -9510,6 +9532,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.RoomController.TransferPreview(MyStik.TimeTable.Web.Models.RoomTransferModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.RoomController.Transfer(MyStik.TimeTable.Web.Models.RoomTransferModel)">
             <summary>
             
@@ -10488,17 +10517,6 @@
             <param name="semId"></param>
             <param name="orgId"></param>
             <param name="formatId"></param>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Hubs.WpmHub">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Hubs.WpmHub.ExecuteLottery(System.Guid)">
-            <summary>
-            Ad hoc Ausführung einer Platzverlosung
-            </summary>
-            <param name="id">Id der Platzverlosung</param>
         </member>
         <member name="M:MyStik.TimeTable.Web.Jobs.LotteryJob.RunLottery(System.Guid)">
             <summary>
@@ -21182,67 +21200,12 @@
             
             </summary>
         </member>
-        <member name="F:MyStik.TimeTable.Web.Services.LotteryService._reservations">
-            <summary>
-            Reservierungen nach der Verlosung
-            </summary>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Services.LotteryService.#ctor(MyStik.TimeTable.Data.TimeTableDbContext,System.Guid)">
             <summary>
             
             </summary>
             <param name="db"></param>
             <param name="id"></param>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.RunLottery(System.Guid)">
-            <summary>
-            deprectated
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.ExecuteLottery">
-            <summary>
-            Durchführung der Ziehung
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.RunLotteryForCourse(MyStik.TimeTable.Data.Course)">
-            <summary>
-            Verlosung für einen einzigen Kurs
-            </summary>
-            <param name="wpm">der Kurs</param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.LotteryForGroup(System.Collections.Generic.List{MyStik.TimeTable.Data.OccurrenceSubscription},System.Collections.Generic.List{MyStik.TimeTable.Data.OccurrenceSubscription},System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="waitingList">Die bereinigte Warteliste - unsortiert!</param>
-            <param name="participantList"></param>
-            <param name="capacity">Die Anzahl der Plätze insgesamt</param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.GetSubscriptionsForGroup(System.Collections.Generic.ICollection{MyStik.TimeTable.Data.OccurrenceSubscription},MyStik.TimeTable.Data.OccurrenceGroup,MyStik.TimeTable.Data.OccurrenceDrawing)">
-            <summary>
-            
-            </summary>
-            <param name="allSubscriptions">Liste aller Eintragungen</param>
-            <param name="group">Liste von Semestergruppen, denen die LV zugeordnet ist</param>
-            <param name="report"></param>
-            <returns>gefiltterte Liste der Eintragungen</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.SendInitialNotifications">
-            <summary>
-            Benachrichtung nach der ersten Verlosung
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.SendDefaultNotifications">
-            <summary>
-            Benachrichtung nur für reservierungen
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.LotteryService.SendFinalNotifications">
-            <summary>
-            Benachrichtung nach der ersten Verlosung
-            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Services.MailService">
             <summary>

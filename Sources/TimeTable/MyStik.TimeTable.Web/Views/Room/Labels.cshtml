@@ -38,12 +38,12 @@
                         <tr>
                             <th>Raumnummer</th>
                             <th>Name</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th>Aktuelle Woche</th>
+                            <th>Nächste Woche</th>
+                            <th>Wochentage (Mo-Fr)</th>
+                            <th>Wochentage (Mo-Sa)</th>
+                            <th>Nur Datumsliste</th>
+                            <th>Wochentage (Mo-Fr) mit Datumsliste</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,50 +51,89 @@
                         {
                         <tr>
                             <td>
-                                <a href="@Url.Action("Details", "Room", new {id = room.Id})">@room.Number</a>
+                                @room.Number
                             </td>
                             <td>@room.Name</td>
                             <td>
-                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=true, showDateList=false, isMoSa=false })"
-                                   target="_blank"
-                                   class="btn btn-default btn-xs">
-                                    Wochentage (Mo-Fr)
-                                </a>
-                            </td>
-                            <td>
-                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=true, showDateList=false, isMoSa=true })"
-                                   target="_blank"
-                                   class="btn btn-default btn-xs">
-                                    Wochentage (Mo-Sa)
-                                </a>
-                            </td>
-                            <td>
                                 <a href="@Url.Action("RoomScheduleCurrentWeek", "Print", new { id = room.Id })"
-                                   target="_blank"
-                                   class="btn btn-default btn-xs">
+                                   target="_blank">
                                     Aktuelle Woche
                                 </a>
                             </td>
                             <td>
                                 <a href="@Url.Action("RoomScheduleNextWeek", "Print", new { id = room.Id })"
-                                   target="_blank"
-                                   class="btn btn-default btn-xs">
+                                   target="_blank">
                                     Nächste Woche
                                 </a>
                             </td>
                             <td>
-                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=false, showDateList=true, isMoSa=false })"
-                                   target="_blank"
-                                   class="btn btn-default btn-xs">
-                                    Nur Datumsliste
-                                </a>
+                                <div>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.Semester.Id, showCalendar = true, showDateList = false, isMoSa = false})"
+                                       target="_blank">
+                                        @ViewBag.Semester.Name
+                                    </a>
+                                </div>
+                                @if (ViewBag.NextSemester != null)
+                                {
+                                    <div>
+                                        <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.NextSemester.Id, showCalendar = true, showDateList = false, isMoSa = false})"
+                                           target="_blank">
+                                            @ViewBag.NextSemester.Name
+                                        </a>
+                                    </div>
+                                }
                             </td>
                             <td>
-                                <a href="@Url.Action("RoomSchedule", "Print", new { id = room.Id, semId=ViewBag.Semester.Id, showCalendar=true, showDateList=true, isMoSa=false })"
-                                   target="_blank"
-                                   class="btn btn-default btn-xs">
-                                    Wochentage (Mo-Fr) mit Datumsliste
-                                </a>
+                                <div>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.Semester.Id, showCalendar = true, showDateList = false, isMoSa = true})"
+                                       target="_blank">
+                                        @ViewBag.Semester.Name
+                                    </a>
+
+                                </div>
+                                @if (ViewBag.NextSemester != null)
+                                {
+                                    <div>
+                                        <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.NextSemester.Id, showCalendar = true, showDateList = false, isMoSa = true})"
+                                           target="_blank">
+                                            @ViewBag.NextSemester.Name
+                                        </a>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <div>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.Semester.Id, showCalendar = false, showDateList = true, isMoSa = false})"
+                                       target="_blank">
+                                        @ViewBag.Semester.Name
+                                    </a>
+                                </div>
+                                @if (ViewBag.NextSemester != null)
+                                {
+                                    <div>
+                                        <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.NextSemester.Id, showCalendar = false, showDateList = true, isMoSa = false})"
+                                           target="_blank">
+                                            @ViewBag.NextSemester.Name
+                                        </a>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <div>
+                                    <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.Semester.Id, showCalendar = true, showDateList = true, isMoSa = false})"
+                                       target="_blank">
+                                        @ViewBag.Semester.Name
+                                    </a>
+                                </div>
+                                @if (ViewBag.NextSemester != null)
+                                {
+                                    <div>
+                                        <a href="@Url.Action("RoomSchedule", "Print", new {id = room.Id, semId = ViewBag.NextSemester.Id, showCalendar = true, showDateList = true, isMoSa = false})"
+                                           target="_blank">
+                                            @ViewBag.NextSemester.Name
+                                        </a>
+                                    </div>
+                                }
                             </td>
                         </tr>
                         }

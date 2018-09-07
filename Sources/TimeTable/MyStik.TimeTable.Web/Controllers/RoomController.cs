@@ -547,15 +547,47 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = new RoomTransferModel();
 
+            model.StartDate = DateTime.Today.ToShortDateString();
+            model.StartTime = "08:00";
+            model.EndDate = DateTime.Today.ToShortDateString();
+            model.EndTime = "22:00";
 
-            var roomList = Db.Rooms.OrderBy(r => r.Number).ToList();
 
-            ViewBag.SourceRoomId = new SelectList(roomList, "Id", "Number");
+            var org = GetMyOrganisation();
 
-            ViewBag.TargetRoomId = new SelectList(roomList, "Id", "Number");
+            var roomService = new MyStik.TimeTable.Web.Services.RoomService();
+            var rooms = roomService.GetRooms(org.Id, true).OrderBy(x => x.Number).ToList();
 
+            ViewBag.SourceRoomId = new SelectList(rooms, "Id", "FullName");
+            ViewBag.TargetRoomId = new SelectList(rooms, "Id", "FullName");
+            ViewBag.Organiser = org;
 
             return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult TransferPreview(RoomTransferModel model)
+        {
+            var sourceRoom = Db.Rooms.SingleOrDefault(r => r.Id == model.SourceRoomId);
+
+            var startDate = DateTime.Parse(model.StartDate);
+            var startTime = TimeSpan.Parse(model.StartTime);
+            var endDate = DateTime.Parse(model.EndDate);
+            var endTime = TimeSpan.Parse(model.EndTime);
+
+            var from = startDate.Add(startTime);
+            var until = endDate.Add(endTime);
+
+            var dates = sourceRoom.Dates.Where(x => (x.End > from && x.End <= until) ||
+                                                    (x.Begin >= from && x.Begin < until)).OrderBy(x => x.Begin).ToList();
+
+
+            return PartialView("_TransferPreview", dates);
         }
 
 
@@ -571,9 +603,21 @@ namespace MyStik.TimeTable.Web.Controllers
             var targetRoom = Db.Rooms.SingleOrDefault(r => r.Id == model.TargetRoomId);
 
             if (sourceRoom == null || targetRoom == null)
-                return RedirectToAction("Index");
+                return RedirectToAction("Rooms", "Organiser");
 
-            foreach (var date in sourceRoom.Dates.ToList())
+            var startDate = DateTime.Parse(model.StartDate);
+            var startTime = TimeSpan.Parse(model.StartTime);
+            var endDate = DateTime.Parse(model.EndDate);
+            var endTime = TimeSpan.Parse(model.EndTime);
+
+            var from = startDate.Add(startTime);
+            var until = endDate.Add(endTime);
+
+            var dates = sourceRoom.Dates.Where(x => (x.End > from && x.End <= until) ||
+                                                    (x.Begin >= from && x.Begin < until)).OrderBy(x => x.Begin).ToList();
+
+
+            foreach (var date in dates)
             {
                 date.Rooms.Remove(sourceRoom);
                 date.Rooms.Add(targetRoom);
@@ -582,7 +626,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Rooms", "Organiser");
         }
 
         /// <summary>
@@ -1145,6 +1189,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Labels(Guid? id)
         {
             var semester = SemesterService.GetSemester(id);
+            var nextSemester =  SemesterService.GetNextSemester(semester);
             var org = GetMyOrganisation();
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
@@ -1153,6 +1198,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
             ViewBag.Organiser = org;
             ViewBag.Semester = semester;
+            ViewBag.NextSemester = nextSemester;
 
 
             return View(rooms);

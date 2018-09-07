@@ -71,7 +71,7 @@
                         @foreach (var student in Model.Games)
                         {
                             var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
-                            var user = userService.GetUser(student.Student.UserId);
+                            var user = student.Student != null ? userService.GetUser(student.Student.UserId) : null;
 
                             <tr>
                                 @if (user == null)
@@ -107,13 +107,20 @@
                                 <td>
                                     @foreach (var seat in student.Seats)
                                     {
-                                        if (seat.Subscription.Priority.Value == 0)
+                                        if (seat.Subscription.Priority.HasValue)
                                         {
-                                            <div>@seat.Course.ShortName (*)</div>
+                                            if (seat.Subscription.Priority.Value == 0)
+                                            {
+                                                <div>@seat.Course.ShortName (*)</div>
+                                            }
+                                            else
+                                            {
+                                                <div>@seat.Course.ShortName (@seat.Subscription.Priority)</div>
+                                            }
                                         }
                                         else
                                         {
-                                            <div>@seat.Course.ShortName (@seat.Subscription.Priority)</div>
+                                            <div>@seat.Course.ShortName (No Prio)</div>
                                         }
                                     }
                                 </td>

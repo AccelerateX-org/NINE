@@ -114,6 +114,32 @@ namespace MyStik.TimeTable.Web.Services
             }
         }
 
+        public void SendLotteryRemoveMail(LotteryDrawing drawing, OrganiserMember member, Lottery lottery, Course course, OccurrenceSubscription subscription)
+        {
+            var email = new LotteryDrawingStudentEmail("LotteryRemoveStudent")
+            {
+                Subject = "[nine] Wahlverfahren " + Drawing.Lottery.Name,
+                Game = null,
+                User = UserService.GetUser(subscription.UserId),
+                Lottery = lottery,
+                Drawing = drawing,
+                Member = member,
+                Course = course,
+                Subscription = subscription,
+            };
+
+            try
+            {
+                EmailService.Send(email);
+                Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+            }
+            catch (Exception exMail)
+            {
+                Logger.ErrorFormat("Fehler bei E-Mail Versand an: {0} - Ursache {1}", email.User.Email,
+                    exMail.Message);
+            }
+        }
+
 
     }
-}
+    }
