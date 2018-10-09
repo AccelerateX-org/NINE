@@ -1,0 +1,61 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LecturerCharacteristicModel
+
+@{
+    ViewBag.Title = Model.Lecturer.FullName;
+}
+
+@section styles
+{
+    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+}
+
+    <div class="container-fluid">
+        <div class="row" style="margin-top: 20px">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            @Html.FacultyLabel(Model.Lecturer.Organiser) @Model.Lecturer.FullName
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+        @section scripts
+{
+            <script src="~/Assets/global/plugins/moment.min.js"></script>
+            <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+            <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+            <script src="~/Assets/fillter/scripts/calendar.js"></script>
+
+            <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#loading').hide();
+
+            initCalendar(false);
+
+            $('#calendar').fullCalendar('removeEvents');
+
+            $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("CourseEventsByLecturer", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        dozId: "@Model.Lecturer.Id",
+                        showPersonalDates: true
+                    }
+                });
+        });
+
+            </script>
+        }

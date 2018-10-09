@@ -118,7 +118,7 @@ namespace MyStik.TimeTable.Data
             get
             {
                 var sb = new StringBuilder();
-                if (string.IsNullOrEmpty(Title))
+                if (!string.IsNullOrEmpty(Title))
                 {
                     sb.AppendFormat("{0} ", Title);
                 }

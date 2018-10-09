@@ -11,6 +11,7 @@ using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -604,7 +605,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = f.Id.ToString(),
             });
 
-            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= DateTime.Today).OrderBy(x => x.StartCourses)
+            var futureDate = DateTime.Today.AddDays(180);
+
+            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= futureDate).OrderBy(x => x.StartCourses)
                 .Select(f => new SelectListItem
                     {
                         Text = f.Name,
@@ -682,6 +685,153 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = UserManager.FindById(student.UserId);
 
             return RedirectToAction("CoursePlan", new {id=user.Id});
+        }
+
+        public ActionResult Logs(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            
+            var db = new LogDbContext();
+
+            List<Log> logs = null;
+
+            if (student != null)
+            {
+                var user = GetUser(student.UserId);
+                logs = db.Log.Where(l => l.Thread.Equals(user.Email)).ToList();
+            }
+
+            return View(logs);
+        }
+
+        public ActionResult Subscribe(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = GetUser(student.UserId);
+
+            var model = new StudentSubscriptionModel();
+
+            model.Student = student;
+            model.User = user;
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Subscribe(StudentSubscriptionModel model)
+        {
+            var org = GetMyOrganisation();
+            var semester = SemesterService.GetSemester(model.SemesterName);
+
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x =>
+                x.ShortName.Equals(model.CourseShortName) &&
+                x.SemesterGroups.Any(g =>
+                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id));
+
+            var host = GetCurrentUser();
+
+            if (course != null)
+            {
+                var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+
+                if (subscription == null)
+                {
+                    subscription = new OccurrenceSubscription();
+                    subscription.TimeStamp = DateTime.Now;
+                    subscription.UserId = model.User.Id;
+                    subscription.OnWaitingList = false;
+                    subscription.Occurrence = course.Occurrence;
+                    course.Occurrence.Subscriptions.Add(subscription);
+                }
+
+                // wenn es ein Wahlverfahren gibt, dann als Prio 1
+                var lottery =
+                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+                if (lottery != null)
+                {
+                    subscription.Priority = 1;
+
+                    var game = lottery.Games.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+                    if (game == null)
+                    {
+                        game = new LotteryGame
+                        {
+                            Lottery = lottery,
+                            UserId = subscription.UserId,
+                            AcceptDefault = false,
+                            CoursesWanted = lottery.MaxConfirm,
+                            Created = DateTime.Now,
+                            LastChange = DateTime.Now
+                        };
+                        lottery.Games.Add(game);
+                    }
+                }
+
+                Db.SaveChanges();
+
+                // Bei Erfolg Mail versenden
+                var mailService = new SubscriptionMailService();
+                mailService.SendSubscriptionEMail(course, subscription, host);
+
+            }
+
+            
+
+
+            return RedirectToAction("CoursePlan", new {id = model.User.Id});
+        }
+
+
+
+        [HttpPost]
+        public ActionResult Unsubscribe(StudentSubscriptionModel model)
+        {
+            var org = GetMyOrganisation();
+            var semester = SemesterService.GetSemester(model.SemesterName);
+
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(x =>
+                x.ShortName.Equals(model.CourseShortName) &&
+                x.SemesterGroups.Any(g =>
+                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id));
+
+            var host = GetCurrentUser();
+
+            if (course != null)
+            {
+                var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+
+                if (subscription != null)
+                {
+                    var subService = new SubscriptionService(Db);
+                    subService.DeleteSubscription(subscription);
+
+                    var mailService = new SubscriptionMailService();
+                    mailService.SendSubscriptionEMail(course, model.User.Id, host);
+                }
+            }
+
+            return RedirectToAction("CoursePlan", new { id = model.User.Id });
+        }
+
+
+
+
+
+        public ActionResult Unsubscribe(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = GetUser(student.UserId);
+
+            var model = new StudentSubscriptionModel();
+
+            model.Student = student;
+            model.User = user;
+
+
+            return View(model);
         }
 
 

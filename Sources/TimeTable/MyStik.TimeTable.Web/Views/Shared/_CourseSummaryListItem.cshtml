@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CourseSummaryModel
 
 <div class="list-group-item">
@@ -68,8 +69,7 @@
             }
         </div>
         <div class="col-md-2">
-
-            @if (Model.User != null)
+            @if (Model.User != null && Model.User.MemberState != MemberState.Guest)
             {
                 <div class="panel panel-default" style="margin-bottom: 0pt">
                     <div class="list-group">

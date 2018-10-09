@@ -332,5 +332,19 @@ namespace MyStik.TimeTable.DataServices
                     x => x.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
         }
 
+        /// <summary>
+        /// das aktuellste aktive (freigegebene) Semester des Veranstalters
+        /// </summary>
+        /// <param name="org"></param>
+        /// <returns></returns>
+        public Semester GetLatestSemester(ActivityOrganiser org)
+        {
+            return 
+            _db.Semesters
+                .Where(x => x.Groups.Any(g =>
+                    g.IsAvailable && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .OrderByDescending(x => x.StartCourses).FirstOrDefault();
+        }
+
     }
 }

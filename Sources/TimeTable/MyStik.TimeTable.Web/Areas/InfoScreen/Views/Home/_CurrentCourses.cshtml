@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="portlet-body infoscreen">
-        @if (Model.NowPlayingDates.Any())
+        @if (Model.NowPlayingDates != null && Model.NowPlayingDates.Any())
         {
             <div class="infoscreen">
                 <table class="table table-striped">
@@ -50,7 +50,7 @@
         }
         else
         {
-            <h1 class="text-success">...nix</h1>
+            <h4>Keine Einträge</h4>
         }
     </div>
 </div>

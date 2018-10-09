@@ -1,6 +1,6 @@
-﻿@model ICollection<MyStik.TimeTable.Data.Semester>
+﻿@model MyStik.TimeTable.Web.Models.StudentPlanerModel
 @{
-    ViewBag.Title = "Semester";
+    ViewBag.Title = "Studiensemester";
 }
 
 <div class="container-fluid">
@@ -13,10 +13,26 @@
                     </h4>
                 </div>
                 <div class="list-group">
-                    @foreach (var semester in Model.OrderByDescending(x => x.EndCourses))
+                    @if (Model.LatestSemester != null)
                     {
-                        <a href="@Url.Action("Courses", "Planer", new {id = semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@semester.Name</h5>
+                        <a href="@Url.Action("Index", "Dictionary")" class="list-group-item list-group-item-warning">
+                            <h5 class="list-group-item-heading">@Model.LatestSemester.Name</h5>
+                            <div class="list-group-item-text">
+                                <ul>
+                                    <li>im aktuellen Semester habe ich mich noch in keiner Lehrveranstaltung eingetragen. Hier geht es zum Vorlesungsverzeichnis.</li>
+                                </ul>
+                            </div>
+                        </a>
+                    }
+                    @foreach (var semester in Model.Semester.OrderByDescending(x => x.Semester.EndCourses))
+                    {
+                        <a href="@Url.Action("Courses", "Planer", new {id = semester.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">@semester.Semester.Name</h5>
+                            <div class="list-group-item-text">
+                                <ul>
+                                    <li>in @semester.Courses.Count Lehrveranstaltungen eingetragen</li>
+                                </ul>
+                            </div>
                         </a>
                     }
                 </div>

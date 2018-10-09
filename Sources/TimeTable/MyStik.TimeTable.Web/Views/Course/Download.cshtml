@@ -50,13 +50,13 @@
                         </h5>
                         <p class="list-group-item-text"></p>
                     </a>
-                    <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id, IsWaiting=false })" class="list-group-item">
+                    <a href="@Url.Action("ParticipiantList", "Occurrence", new {id = Model.Course.Occurrence.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-group"></i> Nur Teilnehmer + Reservierungen
+                            <i class="fa fa-fw fa-group"></i> Nur Teilnehmer
                         </h5>
                         <p class="list-group-item-text"></p>
                     </a>
-                    <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id, IsWaiting=true})" class="list-group-item">
+                    <a href="@Url.Action("WaitingList", "Occurrence", new {id = Model.Course.Occurrence.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             <i class="fa fa-fw fa-group"></i> Nur Warteliste
                         </h5>

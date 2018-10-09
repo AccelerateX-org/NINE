@@ -125,6 +125,10 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public SemesterGroup SemGroup { get; set; }
+
+        public string Course { get; set; }
+
+        public string State { get; set; }
     }
 
     /// <summary>
@@ -159,4 +163,86 @@ namespace MyStik.TimeTable.Web.Models
 
         public int Count { get; set; }
     }
+
+    public class CieInvitationCheckModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public CieInvitationCheckModel()
+        {
+            Invitations = new List<CieInvitationModel>();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Error { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<CieInvitationModel> Invitations { get; private set; }
+    }
+
+    public class CieInvitationModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ApplicationUser User { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Curriculum Curriculum { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Semester Semester { get; set; }
+
+        public Course Course { get; set; }
+
+        public bool OnWaitinglist { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Invite { get; set; }
+
+    }
+
+
+    public class StudentSubscriptionModel
+    {
+        public Student Student { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public string SemesterName { get; set; }
+
+        public string CourseShortName { get; set; }
+    }
+
 }

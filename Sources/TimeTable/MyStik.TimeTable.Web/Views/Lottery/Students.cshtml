@@ -31,6 +31,16 @@
                                 <i class="fa fa-arrow-left"></i> Zurück
                             </a>
                         </div>
+                        @*
+        @if (ViewBag.UserRight.IsCourseAdmin)
+        {
+            <div class="form-group">
+                <a href="@Url.Action("Repair", new {id = Model.Lottery.Id})" class="btn btn-default">
+                    <i class="fa fa-wrench"></i> Reparieren
+                </a>
+            </div>
+        }
+                        *@
                     </div>
                 </div>
             </div>
@@ -71,12 +81,12 @@
                         @foreach (var student in Model.Games)
                         {
                             var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
-                            var user = student.Student != null ? userService.GetUser(student.Student.UserId) : null;
+                            var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.Game.UserId);
 
                             <tr>
-                                @if (user == null)
+                                @if (student.Student == null)
                                 {
-                                    <td colspan="3">@student.Game.UserId</td>
+                                    <td colspan="3">@user.FullName</td>
                                 }
                                 else
                                 {
@@ -107,15 +117,21 @@
                                 <td>
                                     @foreach (var seat in student.Seats)
                                     {
+                                        var txtClass = "";
+                                        if (seat.IsSurplus)
+                                        {
+                                            txtClass = "text-danger";
+                                        }
+
                                         if (seat.Subscription.Priority.HasValue)
                                         {
                                             if (seat.Subscription.Priority.Value == 0)
                                             {
-                                                <div>@seat.Course.ShortName (*)</div>
+                                                <div class="@txtClass">@seat.Course.ShortName (*) (@seat.Subscription.TimeStamp)</div>
                                             }
                                             else
                                             {
-                                                <div>@seat.Course.ShortName (@seat.Subscription.Priority)</div>
+                                                <div class="@txtClass">@seat.Course.ShortName (@seat.Subscription.Priority) (@seat.Subscription.TimeStamp)</div>
                                             }
                                         }
                                         else
@@ -134,16 +150,16 @@
                                         {
                                             if (lot.IsValid)
                                             {
-                                                <td class="success">@lot.Course.ShortName</td>
+                                                <td class="success">@lot.Course.ShortName (@lot.Subscription.TimeStamp)</td>
                                             }
                                             else
                                             {
-                                                <td class="warning">@lot.Course.ShortName</td>
+                                                <td class="warning">@lot.Course.ShortName (@lot.Subscription.TimeStamp)</td>
                                             }
                                         }
                                         else
                                         {
-                                            <td class="danger">@lot.Course.ShortName</td>
+                                                <td class="danger">@lot.Course.ShortName (@lot.Subscription.TimeStamp)</td>
                                         }
                                     }
                                     else

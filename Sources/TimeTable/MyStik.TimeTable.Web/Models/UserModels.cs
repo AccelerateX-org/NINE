@@ -228,6 +228,10 @@ namespace MyStik.TimeTable.Web.Models
         public List<UserCourseDatePlanModel> CourseDates { get; private set; }
 
         public OccurrenceSubscription Subscription { get; set; }
+
+        public Course Course { get; set; }
+
+        public CourseSummaryModel Summary { get; set; }
     }
 
     /// <summary>

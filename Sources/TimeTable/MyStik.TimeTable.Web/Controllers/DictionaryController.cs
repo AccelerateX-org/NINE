@@ -194,7 +194,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 // jetzt noch die ohne Topics
-                var withoutTopic = semGroup.Activities.Where(x => !x.SemesterTopics.Any()).ToList();
+                var withoutTopic = semGroup.Activities.OfType<Course>().Where(x => !x.SemesterTopics.Any()).ToList();
 
                 if (withoutTopic.Any())
                 {

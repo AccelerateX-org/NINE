@@ -136,7 +136,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new LecturerCharacteristicModel {Lecturer = member};
 
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            var semester = SemesterService.GetLatestSemester(member.Organiser);
             var user = AppUser;
 
             var courseService = new CourseService(Db);
@@ -159,13 +159,90 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Sprechstunde im aktuellen Semester
             var ohService = new OfficeHourService(Db);
-            model.OfficeHour = ohService.GetOfficeHour(member, semester);
+            model.OfficeHour = ohService.GetLatestOfficeHour(member);
 
-            ViewBag.Semester = semester;
+            model.Semester = semester;
+
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, member.Organiser.ShortName);
+
+            return View("MemberPublic", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult MemberAdmin(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(m => m.Id == id);
+            if (member == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            // Alle Vorlesungen
+            // Alle Sprechstunden
+            // Alle Newsletter
+            // Alle Veranstaltungen
+
+            // => 
+
+            var model = new LecturerCharacteristicModel { Lecturer = member };
+
+            var semester = SemesterService.GetLatestSemester(member.Organiser);
+            var user = AppUser;
+
+            var courseService = new CourseService(Db);
+
+            model.Courses = courseService.GetCourses(semester.Name, member);
+
+            foreach (var course in model.Courses)
+            {
+                var lectures =
+                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
+
+                course.Lecturers.AddRange(lectures);
+
+                var rooms =
+                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
+                course.Rooms.AddRange(rooms);
+
+                course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);
+            }
+
+            // Sprechstunde im aktuellen Semester
+            var ohService = new OfficeHourService(Db);
+            model.OfficeHour = ohService.GetLatestOfficeHour(member);
+
+            model.Semester = semester;
+
+            ViewBag.UserRight = GetUserRight(User.Identity.Name, member.Organiser.ShortName);
+
+            return View("Member", model);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Calendar(Guid id)
+        {
+            var member = Db.Members.SingleOrDefault(m => m.Id == id);
+            if (member == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var model = new LecturerCharacteristicModel
+            {
+                Lecturer = member
+            };
+
             ViewBag.UserRight = GetUserRight(User.Identity.Name, member.Organiser.ShortName);
 
             return View(model);
         }
+
+
 
         /// <summary>
         /// 

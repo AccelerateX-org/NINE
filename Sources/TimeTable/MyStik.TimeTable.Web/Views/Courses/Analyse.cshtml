@@ -1,0 +1,38 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+
+@{
+    ViewBag.Title = "Analyse";
+}
+
+<h2>Analyse</h2>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Angelegt von</th>
+            <th># Termine</th>
+            <th># Gruppen</th>
+            <th>Name</th>
+            <th>Kurzname</th>
+            <th>Beschreibung</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var course in Model.Courses)
+    {
+        <tr>
+            <td>@course.Course.Owners.First().Member.FullName</td>
+            <td>@course.Course.Dates.Count</td>
+            <td>@Html.GroupList(course.Course.SemesterGroups)</td>
+            <td><a href="@Url.Action("Admin", "Course", new {id = course.Course.Id})">@course.Course.Name</a></td>
+            <td>@course.Course.ShortName</td>
+            <td>@Html.Raw(course.Course.Description)</td>
+        </tr>
+    }
+
+    </tbody>
+</table>
+

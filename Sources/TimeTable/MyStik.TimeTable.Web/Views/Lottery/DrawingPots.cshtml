@@ -98,9 +98,14 @@
                         @foreach (var lotPot in Model.LotPots.OrderByDescending(x => x.BookingRank).ThenByDescending(x => x.Lots.Count(y => y.Priority == 1)))
                         {
                         <tr>
-                            <td>@lotPot.Course.Name (@lotPot.Course.ShortName)</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Course", new {id = lotPot.Course.Id})">@lotPot.Course.Name (@lotPot.Course.ShortName)</a>
+                            </td>
                             <td>@lotPot.Name</td>
                             <td>@lotPot.Capacity</td>
+                    <!--
+                    <td><a href="@Url.Action("AdminNewRules", "Course", new {id=lotPot.Course.Id})">@lotPot.Capacity</a></td>
+                    -->
                             <td>@lotPot.SeatsAvailable</td>
                             <td>@lotPot.BookingRank.ToString("0%")</td>
                             @for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)

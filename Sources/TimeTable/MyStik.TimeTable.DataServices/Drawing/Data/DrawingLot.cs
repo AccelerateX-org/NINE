@@ -20,5 +20,7 @@ namespace MyStik.TimeTable.DataServices.Drawing.Data
         public string Message { get; set; }
 
         public int Priority => Subscription.Priority ?? 0;
+
+        public bool IsSurplus { get; set; }
     }
 }

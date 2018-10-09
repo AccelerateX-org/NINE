@@ -286,12 +286,25 @@
                             }
                             else
                             {
-                                <div class="list-group-item">
-                                    <h5 class="list-group-item-heading"><i class="fa fa-ban"></i> Änderungen nicht mehr möglich</h5>
-                                    <div class="list-group-item-text">
-                                        Meine Auswahl wurde bereits berücksichtigt. Ich kann keine Änderungen mehr vornehmen.
+                                if (!Model.CoursesSelected.Any() || Model.CoursesSelected.All(x => x.Subscription.OnWaitingList))
+                                {
+                                    <a class="list-group-item" href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})">
+                                        <h5 class="list-group-item-heading"><i class="fa fa-refresh"></i> Auswahl starten</h5>
+                                        <div class="list-group-item-text">
+                                            Ich habe keinen Platz erhalten und kann daher erneut wählen.
+                                        </div>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="list-group-item">
+                                        <h5 class="list-group-item-heading"><i class="fa fa-ban"></i> Änderungen nicht mehr möglich</h5>
+                                        <div class="list-group-item-text">
+                                            Meine Auswahl wurde bereits berücksichtigt. Ich kann keine Änderungen mehr vornehmen.
+                                        </div>
                                     </div>
-                                </div>
+                                }
+
                             }
                         }
                     }
@@ -310,13 +323,16 @@
                     {
                         if (Model.Game.DrawingDate.HasValue)
                         {
-                            <a class="list-group-item" href="@Url.Action("ClearSelection", new {id = Model.Lottery.Id})">
-                                <h5 class="list-group-item-heading"><i class="fa fa-check"></i> Auswahl bereinigen</h5>
-                                <div class="list-group-item-text">
-                                    Ich bin mit den erhaltenen Plätzen zufrieden und möchte mich aus allen Wartelisten austragen.
-                                </div>
-                            </a>
-                            if (!Model.CoursesSelected.Any())
+                            if (Model.CoursesSelected.Any())
+                            {
+                                <a class="list-group-item" href="@Url.Action("ClearSelection", new {id = Model.Lottery.Id})">
+                                    <h5 class="list-group-item-heading"><i class="fa fa-check"></i> Auswahl bereinigen</h5>
+                                    <div class="list-group-item-text">
+                                        Ich bin mit den erhaltenen Plätzen zufrieden und möchte mich aus allen Wartelisten austragen.
+                                    </div>
+                                </a>
+                            }
+                            else
                             {
                                 <a class="list-group-item" href="@Url.Action("RemoveSelection", new {id = Model.Lottery.Id})">
                                     <h5 class="list-group-item-heading"><i class="fa fa-trash-o"></i> Teilnahme löschen</h5>

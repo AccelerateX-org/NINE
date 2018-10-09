@@ -280,11 +280,13 @@
     <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\RoomController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
+    <Compile Include="Api\Controller\CalendarController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
     <Compile Include="Api\Controller\StudiesController.cs" />
     <Compile Include="Api\DTOs\AccountDto.cs" />
     <Compile Include="Api\DTOs\ActionDto.cs" />
     <Compile Include="Api\DTOs\BaseDto.cs" />
+    <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
     <Compile Include="Api\DTOs\CurriculumDto.cs" />
     <Compile Include="Api\DTOs\OrganiserDto.cs" />
@@ -369,6 +371,7 @@
     <Compile Include="Controllers\AlumniController.cs" />
     <Compile Include="Controllers\ArchiveController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
+    <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\CoursePlanController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
@@ -3986,6 +3989,19 @@
     <Content Include="Views\Emails\LotteryRemoveStudent.Html.cshtml" />
     <Content Include="Views\Emails\LotteryRemoveStudent.cshtml" />
     <Content Include="Views\Room\_TransferPreview.cshtml" />
+    <Content Include="Views\Organiser\MemberPublic.cshtml" />
+    <Content Include="Views\Organiser\Calendar.cshtml" />
+    <Content Include="Views\Courses\Analyse.cshtml" />
+    <Content Include="Views\Cie\Invitation.cshtml" />
+    <Content Include="Views\Cie\InvitationList.cshtml" />
+    <Content Include="Views\Lottery\ForStudentsOnly.cshtml" />
+    <Content Include="Views\Students\Logs.cshtml" />
+    <Content Include="Views\Students\Subscribe.cshtml" />
+    <Content Include="Views\Students\Unsubscribe.cshtml" />
+    <Content Include="Views\Curriculum\Transfer.cshtml" />
+    <Content Include="Views\Curriculum\Destroy.cshtml" />
+    <Content Include="Views\OfficeHour\IsReserved.cshtml" />
+    <Content Include="Views\OfficeHour\DateListAdmin.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4105,7 +4121,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1566</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:1691/</IISUrl>
+          <IISUrl>https://localhost:44300/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>https://localhost:44305/</CustomServerUrl>

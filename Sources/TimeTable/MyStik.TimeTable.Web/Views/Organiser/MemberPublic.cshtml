@@ -1,0 +1,73 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LecturerCharacteristicModel
+
+@{
+    ViewBag.Title = Model.Lecturer.FullName;
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        @Html.FacultyLabel(Model.Lecturer.Organiser) @Model.Lecturer.FullName
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @if (!string.IsNullOrEmpty(Model.Lecturer.UrlProfile))
+                    {
+                        <a href="@Model.Lecturer.UrlProfile" class="list-group-item" target="_blank">
+                            <h5 class="list-group-item-heading"><i class="fa fa-globe"></i> Profilseite <i class="fa fa-external-link"></i></h5>
+                        </a>
+                    }
+                    @if (Model.OfficeHour != null)
+                    {
+                        if (Model.OfficeHour.Dates.Any())
+                        {
+                            <a href="@Url.Action("Lecturer", "OfficeHour", new {id = Model.Lecturer.Id, semId=Model.OfficeHour.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading"><i class="fa fa-user-md"></i> Sprechstundentermine</h5>
+                            </a>
+                        }
+                        else
+                        {
+                            if (Model.OfficeHour.ByAgreement)
+                            {
+                                <div class="list-group-item">
+                                    <h5 class="list-group-item-heading">Sprechstundentermine nach Vereinbarung</h5>
+                                    @if (!string.IsNullOrEmpty(Model.OfficeHour.Description))
+                                    {
+                                        <div class="list-group-item-text">@Html.Raw(@Model.OfficeHour.Description)</div>
+                                    }
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading"><i>Bietet derzeit keine Sprechstunde an</i></h5>
+                        </div>
+                    }
+                    @if (ViewBag.UserRight.IsStaff)
+                    {
+                        <a class="list-group-item" href="@Url.Action("Calendar", new {id=Model.Lecturer.Id})">
+                            <h5 class="list-group-item-heading"><i class="fa fa-calendar"></i> Kalender</h5>
+                        </a>
+                    }
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Aktuelle Lehrveranstaltungen (@Model.Semester.Name)</h5>
+                        <div class="list-group">
+                            @foreach (var course in Model.Courses)
+                            {
+                                @Html.Partial("_CourseSummaryListItem", course)
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

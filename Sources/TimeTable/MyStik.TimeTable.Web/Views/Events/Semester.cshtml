@@ -47,10 +47,11 @@
                     {
                         var firstDate = c.Dates.OrderBy(x => x.Begin).FirstOrDefault();
                         var lastDate = c.Dates.OrderBy(x => x.Begin).LastOrDefault();
+                        var eventName = string.IsNullOrEmpty(c.Name) ? "(keine Bezeichnug)" : c.Name;
 
                         <tr>
                             <td>
-                                @Html.ActionLink(c.Name, "Admin", "Event", new { id = c.Id }, null)
+                                @Html.ActionLink(@eventName, "Admin", "Event", new { id = c.Id }, null)
                             </td>
                             <td>
                                 @foreach (var owner in c.Owners)

@@ -339,7 +339,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Host = hostRequested,
             };
 
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, officeHour);
+            var userRight = GetUserRight(User.Identity.Name, officeHour);
+            ViewBag.UserRight = userRight;
 
             if (officeHour.ByAgreement)
             {
@@ -354,10 +355,62 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Berechnung aller zukünftigen Einschreibungen
                 model2.FutureSubCount = model2.Dates.Count(x => x.Date.End > DateTime.Now && x.Subscription != null);
 
-
                 return View("DateListPublic", model2);
             }
         }
+
+        /// <summary>
+        /// Sprechstundentermine des Dozenten im aktuellen Semester
+        /// </summary>
+        /// <param name="id">memberId des Dozenten</param>
+        /// <param name="semId"></param>
+        /// <returns></returns>
+        public ActionResult DateAdmin(Guid id, Guid? semId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var hostRequested = Db.Members.FirstOrDefault(l => l.Id == id);
+            var user = GetCurrentUser();
+
+            if (hostRequested == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var ohService = new OfficeHourService(Db);
+            var officeHour = ohService.GetOfficeHour(hostRequested, semester);
+            if (officeHour == null)
+            {
+                // TODO: keine Sprechstunde
+                return RedirectToAction("Index", "Lecturer");
+            }
+
+            var model2 = new OfficeHourSubscriptionViewModel
+            {
+                OfficeHour = officeHour,
+                Semester = semester,
+                Host = hostRequested,
+            };
+
+            var userRight = GetUserRight(User.Identity.Name, officeHour);
+            ViewBag.UserRight = userRight;
+
+            if (officeHour.ByAgreement)
+            {
+                return ByAgreement(model2);
+            }
+            else
+            {
+                // Generische Anzeige nach Datum
+                var infoService = new OfficeHourInfoService(UserManager);
+                model2.Dates.AddRange(infoService.GetDates(officeHour, user.Id));
+
+                // Berechnung aller zukünftigen Einschreibungen
+                model2.FutureSubCount = model2.Dates.Count(x => x.Date.End > DateTime.Now && x.Subscription != null);
+
+                return View("DateListAdmin", model2);
+            }
+        }
+
 
         private ActionResult ByAgreement(OfficeHourSubscriptionViewModel model)
         {
@@ -424,6 +477,21 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Slot = infoService.GetSubscribedSlot(date, user.Id);
                 model.Semester = officeHour.Semester;
                 return View("HasSubscription", model);
+            }
+
+            // ist der Slot schon besetzt?
+            if (date.Slots.Any())
+            {
+                var slot = date.Slots.SingleOrDefault(x => x.Id == model.SlotID);
+                if (slot != null && slot.Occurrence.Subscriptions.Any())
+                {
+                    // da ist schon wer drin
+                    model.Date = date;
+                    model.Host = infoService.GetHost(officeHour);
+                    model.Semester = officeHour.Semester;
+                    model.Slot = slot;
+                    return View("IsReserved", model);
+                }
             }
 
             // Subscription anlegen

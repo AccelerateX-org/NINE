@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -316,9 +317,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult DrawingPots(Guid id)
         {
+            var org = GetMyOrganisation();
             var model = new DrawingService(Db, id);
 
             model.InitLotPots();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
@@ -329,6 +332,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new DrawingService(Db, id);
 
             model.InitLotPots();
+            model.Analyse();
+
+            var org = GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(org);
+
 
             return View(model);
         }
@@ -613,7 +621,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
 
             var courses = Db.Activities.OfType<Course>().Where(a =>
-                    (a.Organiser != null && a.Organiser.Id == org.Id) &&
+                    ((a.Organiser != null && a.Organiser.Id == org.Id) ||
+                     a.Owners.Any(m => m.Member.Organiser.Id == org.Id)) &&
                     (a.Name.Contains(searchText) || a.ShortName.Contains(searchText)) &&
                     a.SemesterGroups.Any(s => s.Semester.Id == sem.Id))
                 .ToList();
@@ -1657,6 +1666,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return courseModel;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="studId"></param>
+        /// <returns></returns>
         public ActionResult Overview(Guid id)
         {
             var courseService = new CourseService(Db);
@@ -1664,7 +1679,15 @@ namespace MyStik.TimeTable.Web.Controllers
             var studentService = new StudentService(Db);
 
             var user = GetCurrentUser();
+
+            if (user.MemberState == MemberState.Guest)
+                return View("ForStudentsOnly");
+
+
             var student = studentService.GetCurrentStudent(user);
+            if (student == null)
+                return View("ForStudentsOnly");
+
             var lottery = lotteryService.GetLottery();
             var courses = lotteryService.GetLotteryCourseList();
 
@@ -2456,6 +2479,119 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("TestRun", new { id = lottery.Id });
+        }
+
+        public ActionResult Download(Guid id)
+        {
+            var lotteryService = new LotteryService(Db, id);
+            var subscriptionService = new SubscriptionService(Db);
+
+            var lottery = lotteryService.GetLottery();
+            var courses = lotteryService.GetLotteryCourseList();
+
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Stud;LV;Doz;Prio;Status;Eingetragen");
+
+            writer.Write(Environment.NewLine);
+            foreach (var course in courses)
+            {
+                foreach (var subscription in course.Occurrence.Subscriptions)
+                {
+                    var user = UserManager.FindById(subscription.UserId);
+                    var student = StudentService.GetCurrentStudent(user);
+
+                    var lectures =
+                        Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+
+
+
+                    if (user != null)
+                    {
+                        var userName = user.FullName;
+                        var courseName = string.IsNullOrEmpty(course.ShortName) ? course.Name : course.ShortName;
+                        var lecName = lectures.FirstOrDefault() != null ? lectures.First().ShortName : $"N.N. ({courseName})";
+                        var prio = subscription.Priority ?? 0;
+                        var timeStamp = subscription.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss");
+
+                        var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
+
+                        writer.Write("{0};{1};{2};{3};{4};{5}",
+                            userName, courseName, lecName, prio, subState, timeStamp);
+                        writer.Write(Environment.NewLine);
+                    }
+                }
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("WF_");
+            sb.Append(lottery.Name);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Repair(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+            var lottery = model.Lottery;
+
+            /*
+            model.InitLotPots();
+            model.Analyse();
+
+            
+
+
+            var list = new List<OccurrenceSubscription>();
+
+            foreach (var game in model.Games)
+            {
+                var surplusList = game.Seats.Where(x => x.IsSurplus).ToList();
+
+                foreach (var lot in surplusList)
+                {
+                    //subscriptionService.DeleteSubscription(lot.Subscription);
+                    list.Add(lot.Subscription);
+                }
+            }
+
+
+
+            var deleteDB = new TimeTableDbContext();
+            var subscriptionService = new SubscriptionService(deleteDB);
+            foreach (var subscription in list)
+            {
+                var sub = deleteDB.Subscriptions.OfType<OccurrenceSubscription>()
+                    .SingleOrDefault(x => x.Id == subscription.Id);
+                subscriptionService.DeleteSubscription(sub);
+            }
+
+            //deleteDB.SaveChanges();
+
+
+            logger.InfoFormat("Lotterie {0} repariert - alle überzählige Eintragungen gelöscht", lottery.Name);
+
+
+
+            //return View(list);
+            */
+
+            return RedirectToAction("Students", new { id = lottery.Id });
         }
 
     }

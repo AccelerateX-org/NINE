@@ -118,4 +118,13 @@ namespace MyStik.TimeTable.Web.Models
         public ICollection<IGrouping<int, CurriculumCriteria>> Terms { get; set; }
 
     }
+
+    public class CurriculumTransferModel
+    {
+        public Curriculum Curriculum { get; set; }
+
+        public Guid TargetCurrId { get; set; }
+
+    }
+
 }

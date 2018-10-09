@@ -24,6 +24,26 @@
     </div>
 </div>
 
+@if (ViewBag.userRight.IsMemberAdmin)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("DateAdmin", new {id = Model.Host.Id, semId=Model.Semester.Id})" class="btn btn-default">
+                                    <i class="fa fa-cog"></i> Admin
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 <div class="container-fluid">
     <div class="row">

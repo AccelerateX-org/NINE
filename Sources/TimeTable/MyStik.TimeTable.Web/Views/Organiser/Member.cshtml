@@ -64,7 +64,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4><i class="fa fa-user-md"></i> Sprechstunde (@ViewBag.Semester.Name)</h4>
+                    <h4><i class="fa fa-user-md"></i> </h4>
                 </div>
                 <div class="panel-body">
                     @if (Model.OfficeHour != null)
@@ -106,7 +106,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@ViewBag.Semester.Name)</h4>
+                    <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@Model.Semester.Name)</h4>
                 </div>
                 <div class="panel-body">
                     @if (Model.Courses.Any())
@@ -126,14 +126,14 @@
 }
 else
 {
-    var sem = ViewBag.Semester as Semester;
+    var sem = Model.Semester;
     if (sem.Groups.Any(x => x.IsAvailable && x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Lecturer.Organiser.Id))
     {
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@ViewBag.Semester.Name)</h4>
+                        <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@Model.Semester.Name)</h4>
                     </div>
                     <div class="panel-body">
                         @if (Model.Courses.Any())

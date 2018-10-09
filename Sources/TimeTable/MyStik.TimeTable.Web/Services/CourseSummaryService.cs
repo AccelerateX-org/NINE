@@ -71,6 +71,9 @@ namespace MyStik.TimeTable.Web.Services
                 }
             }
 
+            summary.Lottery =
+                Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
 
             return summary;
 

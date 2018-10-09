@@ -149,25 +149,38 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // bei der ersten Anzeige wird kein onChange ausgelöst
             var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
-            var curr = currList.FirstOrDefault();
-            model.CurriculumId = curr != null ? curr.Id : Guid.Empty;
             ViewBag.Curricula = currList.Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
 
-            var semGroups = Db.SemesterGroups.Where(g => g.Semester.Id == sem.Id &&
-                                                         g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
-                .ToList();
-
-            var group = semGroups.FirstOrDefault();
-            model.GroupId = group != null ? group.Id : Guid.Empty;
-            ViewBag.Groups = semGroups.Select(c => new SelectListItem
+            // Default Selection
+            var curr = currList.FirstOrDefault();
+            if (curr != null)
             {
-                Text = c.GroupName,
-                Value = c.Id.ToString(),
-            });
+                model.CurriculumId = curr.Id;
+
+                var semGroups = Db.SemesterGroups.Where(g => g.Semester.Id == sem.Id &&
+                                                             g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
+                    .ToList();
+
+                var group = semGroups.FirstOrDefault();
+
+                model.GroupId = group != null ? group.Id : Guid.Empty;
+                ViewBag.Groups = semGroups.Select(c => new SelectListItem
+                {
+                    Text = c.GroupName,
+                    Value = c.Id.ToString(),
+                });
+            }
+            else
+            {
+                model.CurriculumId = Guid.Empty;
+                model.GroupId = Guid.Empty;
+
+                ViewBag.Groups = new SelectList("Text", "Value");
+            }
 
 
             return View(model);
@@ -387,128 +400,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult RemoveSubscription(Guid id, string userId)
-        {
-            var logger = LogManager.GetLogger("Course");
-
-            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
-
-            if (occurrence != null && !string.IsNullOrEmpty(userId))
-            {
-                var subscription =
-                    occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(userId));
-
-                if (subscription != null)
-                {
-                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var drawing in allDrawings)
-                    {
-                        Db.SubscriptionDrawings.Remove(drawing);
-                    }
-
-                    var allBets = Db.LotteriyBets.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var lotteryBet in allBets)
-                    {
-                        Db.LotteriyBets.Remove(lotteryBet);
-                    }
-
-
-
-                    occurrence.Subscriptions.Remove(subscription);
-                    Db.Subscriptions.Remove(subscription);
-                    Db.SaveChanges();
-
-                    var summary = ActivityService.GetSummary(id);
-                    var user = UserManager.FindById(subscription.UserId);
-
-                    logger.InfoFormat("Subscription removed: {0}, {1} by {2}", summary.Name, user.UserName,
-                        User.Identity.Name);
-
-                    var mailModel = new SubscriptionMailModel
-                    {
-                        Summary = summary,
-                        Subscription = subscription,
-                        User = user,
-                        SenderUser = UserManager.FindByName(User.Identity.Name),
-                    };
-
-                    var mail = new MailController();
-                    mail.RemoveSubscription(mailModel).Deliver();
-
-                }
-                else
-                {
-                    logger.ErrorFormat("subscription missing {0}, {1}", occurrence.Id, userId);
-                }
-
-            }
-            else
-            {
-                logger.ErrorFormat("Occurrence or user missing [{0}], [{1}]", id, userId);
-            }
-
-
-            return PartialView("_RemoveSubscription");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="occurrenceId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult ClearSubscriptions(Guid occurrenceId)
-        {
-            var logger = LogManager.GetLogger("Course");
-
-            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == occurrenceId);
-
-            if (occurrence != null)
-            {
-                var summary = ActivityService.GetSummary(occurrenceId);
-
-                foreach (var subscription in occurrence.Subscriptions.ToList())
-                {
-                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var drawing in allDrawings)
-                    {
-                        Db.SubscriptionDrawings.Remove(drawing);
-                    }
-
-                    var allBets = Db.LotteriyBets.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var lotteryBet in allBets)
-                    {
-                        Db.LotteriyBets.Remove(lotteryBet);
-                    }
-
-                    occurrence.Subscriptions.Remove(subscription);
-
-                    Db.SaveChanges();
-
-                    var mailModel = new SubscriptionMailModel
-                    {
-                        Summary = summary,
-                        Subscription = subscription,
-                        User = UserManager.FindById(subscription.UserId),
-                        SenderUser = UserManager.FindByName(User.Identity.Name),
-                    };
-
-                    var mail = new MailController();
-                    mail.RemoveSubscription(mailModel).Deliver();
-                }
-
-                logger.InfoFormat("Subscription cleared {0} by {1}", summary.Name, User.Identity.Name);
-            }
-
-            return PartialView("_RemoveSubscription");
-        }
 
         /// <summary>
         /// 
@@ -2890,6 +2781,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Summary = courseSummaryService.GetCourseSummary(id),
             };
 
+            ViewBag.UserRight = GetUserRight();
+
             return View(model);
         }
 
@@ -2901,6 +2794,8 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult SubscriptionProfile(Guid id)
         {
             var studentService = new StudentService(Db);
+            var courseSummaryService = new CourseSummaryService(Db);
+
 
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
             var user = UserManager.FindById(subscription.UserId);
@@ -2926,7 +2821,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 User = user,
                 Student = student,
                 Subscription = subscription,
-                Semester = semester
+                Semester = semester,
+                Course = course,
+                Summary = courseSummaryService.GetCourseSummary(course.Id),
             };
 
 
@@ -2987,6 +2884,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             }
 
+            ViewBag.UserRight = GetUserRight();
+
             return PartialView("_SubscriptionProfile", model);
         }
 
@@ -3000,7 +2899,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult SetOnWaitingList2(Guid id, string userId)
         {
-            var logger = LogManager.GetLogger("Course");
+            var logger = LogManager.GetLogger("SubscribeActivity");
 
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
@@ -3044,6 +2943,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     var mailService = new SubscriptionMailService();
                     mailService.SendSubscriptionEMail(course, theOnlySubscription, host);
 
+                    var subscriber = GetUser(theOnlySubscription.UserId);
+                    logger.InfoFormat("{0} ({1}) for [{2}]: set on participient list",
+                        course.Name, course.ShortName, subscriber.UserName);
+
                 }
                 else
                 {
@@ -3056,11 +2959,51 @@ namespace MyStik.TimeTable.Web.Controllers
                 logger.ErrorFormat("Occurrence or user missing [{0}], [{1}]", id, userId);
             }
 
-            // TODO: Mail schreiben
+           
 
 
             return RedirectToAction("AdminNewParticipients", new {id = course.Id});
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult SetOnWaitingList(Guid id)
+        {
+            var logger = LogManager.GetLogger("SubscribeActivity");
+
+            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
+            var host = GetCurrentUser();
+
+            if (occurrence != null)
+            {
+                // nur die Teilnehmer
+                var subscriptions = occurrence.Subscriptions.Where(x => !x.OnWaitingList).ToList();
+
+                foreach (var subscription in subscriptions)
+                {
+                    subscription.OnWaitingList = true;
+                    subscription.LapCount = 0;
+                    subscription.IsConfirmed = false;
+                    Db.SaveChanges();
+
+                    var mailService = new SubscriptionMailService();
+                    mailService.SendSubscriptionEMail(course, subscription, host);
+
+                    var subscriber = GetUser(subscription.UserId);
+                    logger.InfoFormat("{0} ({1}) for [{2}]: set on waiting list",
+                        course.Name, course.ShortName, subscriber.UserName);
+                }
+            }
+
+
+            return RedirectToAction("AdminNewParticipients", new { id = course.Id });
+        }
+
 
         /// <summary>
         /// 
@@ -3070,7 +3013,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult SetOnParticipiantList2(Guid id, string userId)
         {
-            var logger = LogManager.GetLogger("Course");
+            var logger = LogManager.GetLogger("SubscribeActivity");
 
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
@@ -3113,6 +3056,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     var mailService = new SubscriptionMailService();
                     mailService.SendSubscriptionEMail(course, theOnlySubscription, host);
+
+                    var subscriber = GetUser(theOnlySubscription.UserId);
+                    logger.InfoFormat("{0} ({1}) for [{2}]: set on participient list",
+                        course.Name, course.ShortName, subscriber.UserName);
                 }
                 else
                 {
@@ -3125,7 +3072,45 @@ namespace MyStik.TimeTable.Web.Controllers
                 logger.ErrorFormat("Occurrence or user missing [{0}], [{1}]", id, userId);
             }
 
-            // TODO: Mail schreiben
+           
+
+            return RedirectToAction("AdminNewParticipients", new { id = course.Id });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult SetOnParticipiantList(Guid id)
+        {
+            var logger = LogManager.GetLogger("SubscribeActivity");
+
+            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
+            var host = GetCurrentUser();
+
+            if (occurrence != null)
+            {
+                // nur die, die auf Warteliste sind
+                var subscriptions = occurrence.Subscriptions.Where(x => x.OnWaitingList).ToList();
+
+                foreach (var subscription in subscriptions)
+                {
+                    subscription.OnWaitingList = false;
+                    subscription.LapCount = 0;
+                    subscription.IsConfirmed = false;
+
+                    Db.SaveChanges();
+
+                    var mailService = new SubscriptionMailService();
+                    mailService.SendSubscriptionEMail(course, subscription, host);
+
+                    var subscriber = GetUser(subscription.UserId);
+                    logger.InfoFormat("{0} ({1}) for [{2}]: set on participient list",
+                        course.Name, course.ShortName, subscriber.UserName);
+                }
+            }
 
 
             return RedirectToAction("AdminNewParticipients", new { id = course.Id });
@@ -3139,7 +3124,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult RemoveSubscription2(Guid id, string userId)
         {
-            var logger = LogManager.GetLogger("Course");
+            var logger = LogManager.GetLogger("DischargeActivity");
 
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
@@ -3152,27 +3137,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (subscription != null)
                 {
-                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var drawing in allDrawings)
-                    {
-                        Db.SubscriptionDrawings.Remove(drawing);
-                    }
-
-                    var allBets = Db.LotteriyBets.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var lotteryBet in allBets)
-                    {
-                        Db.LotteriyBets.Remove(lotteryBet);
-                    }
-
-
-
-                    occurrence.Subscriptions.Remove(subscription);
-                    Db.Subscriptions.Remove(subscription);
-                    Db.SaveChanges();
+                    var subService = new SubscriptionService(Db);
+                    subService.DeleteSubscription(subscription);
 
                     var mailService = new SubscriptionMailService();
                     mailService.SendSubscriptionEMail(course, userId, host);
 
+                    var subscriber = GetUser(subscription.UserId);
+                    logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
+                        course.Name, course.ShortName, subscriber.UserName);
                 }
                 else
                 {
@@ -3188,6 +3161,44 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("AdminNewParticipients", new { id = course.Id });
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult RemoveSubscription(Guid id)
+        {
+            var logger = LogManager.GetLogger("DischargeActivity");
+
+            var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
+            var host = GetCurrentUser();
+
+            if (occurrence != null)
+            {
+                // immer doppelte reparieren
+                var subscriptions = occurrence.Subscriptions.ToList();
+
+                foreach (var subscription in subscriptions)
+                {
+                    var subService = new SubscriptionService(Db);
+                    subService.DeleteSubscription(subscription);
+
+                    var mailService = new SubscriptionMailService();
+                    mailService.SendSubscriptionEMail(course, subscription.UserId, host);
+
+                    var subscriber = GetUser(subscription.UserId);
+                    logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
+                        course.Name, course.ShortName, subscriber.UserName);
+
+                }
+            }
+
+
+            return RedirectToAction("AdminNewParticipients", new { id = course.Id });
+        }
+
 
         /// <summary>
         /// 
@@ -3413,8 +3424,8 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
-            var userRights = GetUserRight(User.Identity.Name, model.Course);
-            ViewBag.UserRight = userRights;
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
 
             return View(model);
         }

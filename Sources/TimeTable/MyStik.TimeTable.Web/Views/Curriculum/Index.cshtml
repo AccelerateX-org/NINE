@@ -150,6 +150,18 @@
                     </h5>
                     <p class="list-group-item-text">Löscht Pakete, Optionen sowie Module. Studiengruppen bleiben bestehen.</p>
                 </a>
+                <a href="@Url.Action("Transfer", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-refresh"></i> Umhängen
+                    </h5>
+                    <p class="list-group-item-text">Studien- und Semestergruppen auf einen anderen Studiengang übertragen.</p>
+                </a>
+                <a href="@Url.Action("Destroy", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                    <h5 class="list-group-item-heading">
+                        <i class="fa fa-fw fa-trash-o"></i> Löschen
+                    </h5>
+                    <p class="list-group-item-text">Löscht, aber nur wenn es keine Semestergruppen gibt.</p>
+                </a>
             </div>
         </div>
 }

@@ -1,0 +1,30 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourDateSubscriptionViewModel
+@{
+    ViewBag.Title = "Terminbuchung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Host.Name - Sprechstundentermin @Html.TimeSpanWithDate(Model.Slot)</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <strong>Hinweis</strong>: Der Slot @Html.TimeSpanWithDate(Model.Slot) ist bereits ausgebucht. Bitte einen anderen Termin wählen
+                <p>
+                    <a href="@Url.Action("Lecturer", new {id=Model.Host.Id, semId=Model.Semester.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück zur Terminliste</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

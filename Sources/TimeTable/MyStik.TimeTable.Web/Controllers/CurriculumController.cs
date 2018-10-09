@@ -1243,5 +1243,34 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new {id = id});
         }
 
+        public ActionResult Transfer(Guid id)
+        {
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var curricula = Db.Curricula.Where(x => x.Organiser.Id == curriculum.Id && x.Id != curriculum.Id)
+                .OrderBy(f => f.ShortName);
+
+            var model = new CurriculumTransferModel
+            {
+                Curriculum = curriculum,
+                TargetCurrId = curricula.First().Id
+            };
+
+
+            ViewBag.Curricula = curricula.Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+            return View(model);
+        }
+
+        public ActionResult Destroy(Guid id)
+        {
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            return View();
+        }
+
     }
 }

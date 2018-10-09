@@ -59,4 +59,32 @@ namespace MyStik.TimeTable.Web.Models
 
         public Semester Semester { get; set; }
     }
+
+    public class StudentPlanerModel
+    {
+        public StudentPlanerModel()
+        {
+            Semester = new List<StudentSemesterPlanerModel>();
+        }
+
+        public ApplicationUser User { get; set; }
+
+        public Student Student { get; set; }
+
+        public List<StudentSemesterPlanerModel> Semester { get; set; }
+
+        public Semester LatestSemester { get; set; }
+    }
+
+    public class StudentSemesterPlanerModel
+    {
+        public StudentSemesterPlanerModel()
+        {
+            Courses = new List<Course>();
+        }
+
+        public Semester Semester { get; set; }
+
+        public List<Course> Courses { get; set; }
+    }
 }

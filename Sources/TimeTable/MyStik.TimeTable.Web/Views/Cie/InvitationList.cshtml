@@ -1,0 +1,84 @@
+﻿@model MyStik.TimeTable.Web.Models.CieInvitationCheckModel
+@{
+    ViewBag.Title = "Einladung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Studierende - Einladung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger">
+                    <h4>FEHLER BEIM EINLESEN DER DATEI</h4>
+                    <p>@Model.Error</p>
+                </div>
+            }
+
+
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Folgende Studierenden werden in die Kurse eingetragen</h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>E-Mail</th>
+                                <th>Curr.</th>
+                                <th>Semester</th>
+                                <th>LV</th>
+                                <th><i class="fa fa-user"></i></th>
+                                <th>Bemerkung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var invitation in Model.Invitations)
+                            {
+                            <tr>
+                                <td>@invitation.LastName</td>
+                                <td>@invitation.FirstName</td>
+                                <td>@invitation.Email</td>
+                                <td>@invitation.Curriculum.ShortName (@invitation.Curriculum.Organiser.ShortName)</td>
+                                <td>@invitation.Semester.Name</td>
+                                @if (invitation.Course != null)
+                                {
+                                    <td>@invitation.Course.Name (@invitation.Course.ShortName)</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                @if (invitation.OnWaitinglist)
+                                {
+                                    <td><i class="fa fa-hourglass"></i></td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-user"></i></td>
+                                }
+                                <td>@invitation.Remark</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

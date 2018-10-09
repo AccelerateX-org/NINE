@@ -1189,9 +1189,43 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.Semesters.Where(x =>
                     x.Groups.Any(g =>
                         g.Activities.Any(a => a.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))))
+                .OrderByDescending(x => x.StartCourses)
                 .ToList();
 
-            return View(allMySemester);
+            var student = StudentService.GetCurrentStudent(user);
+
+            var model = new StudentPlanerModel();
+            model.User = user;
+            model.Student = student;
+
+            // wenn es kein Student ist, dann nur eine Seite mit Link auf Startseite => Wahl des Studiengangs
+            if (student != null)
+            {
+                var latestSemester = SemesterService.GetLatestSemester(student.Curriculum.Organiser);
+                // das aktuelle Semester als Zusatz setzen
+                model.LatestSemester = latestSemester;
+
+                foreach (var semester in allMySemester)
+                {
+                    var courses = Db.Activities.OfType<Course>().Where(a =>
+                        a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                        a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
+
+                    var semModel = new StudentSemesterPlanerModel();
+                    semModel.Semester = semester;
+                    semModel.Courses.AddRange(courses);
+
+                    model.Semester.Add(semModel);
+
+                    if (semester.Id == latestSemester.Id)
+                    {
+                        model.LatestSemester = null;
+                    }
+                }
+            }
+
+
+            return View(model);
         }
     }
 }

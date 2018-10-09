@@ -132,6 +132,21 @@
                             <h5>Matrikelnummer erfassen</h5>
                         </div>
                     </a>
+                    <a class="list-group-item" href="@Url.Action("Logs", new {id = Model.Student.Id})">
+                        <div class="list-group-item-heading">
+                            <h5>Logdaten ansehen</h5>
+                        </div>
+                    </a>
+                    <a class="list-group-item" href="@Url.Action("Subscribe", new {id = Model.Student.Id})">
+                        <div class="list-group-item-heading">
+                            <h5>Eintragen</h5>
+                        </div>
+                    </a>
+                    <a class="list-group-item" href="@Url.Action("Unsubscribe", new {id = Model.Student.Id})">
+                        <div class="list-group-item-heading">
+                            <h5>Austragen</h5>
+                        </div>
+                    </a>
                     <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteStudent", new {id = Model.Student.Id})">
                         <div class="list-group-item-heading">
                             <h5>Student löschen</h5>

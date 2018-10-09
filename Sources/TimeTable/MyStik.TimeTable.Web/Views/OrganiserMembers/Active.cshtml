@@ -71,13 +71,13 @@
                                         @if (string.IsNullOrEmpty(item.Member.Name))
                                         {
                                             <td>
-                                                @Html.ActionLink("N.N.", "Member", "Organiser", new {id = item.Member.Id}, null)
+                                                @Html.ActionLink("N.N.", "MemberAdmin", "Organiser", new {id = item.Member.Id}, null)
                                             </td>
                                         }
                                         else
                                         {
                                             <td>
-                                                <a href="@Url.Action("Member", "Organiser", new {id = item.Member.Id})">@item.Member.Name (@item.Member.ShortName)</a>
+                                                <a href="@Url.Action("MemberAdmin", "Organiser", new {id = item.Member.Id})">@item.Member.Name (@item.Member.ShortName)</a>
                                             </td>
                                         }
                                         <td>@course.Name (@course.ShortName)</td>

@@ -14,7 +14,7 @@
                 <h4 class="panel-heading">
                     <i class="fa fa-film"></i> Was läuft heute wann und wo?
                 </h4>
-                @if (Model.NowPlayingDates.Any())
+                @if (Model.NowPlayingDates != null && Model.NowPlayingDates.Any())
                 {
                     <table class="table table-striped">
                         <thead>
@@ -61,7 +61,7 @@
                 else
                 {
                     <div class="panel-body">
-                        <h1 class="text-success">...heute nix mehr</h1>
+                        <h4>Keine Einträge</h4>
                     </div>
                 }
             </div>

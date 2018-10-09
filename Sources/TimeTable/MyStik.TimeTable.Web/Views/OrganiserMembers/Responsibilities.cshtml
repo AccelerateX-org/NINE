@@ -58,7 +58,7 @@
                             <div class="list-group">
                                 @foreach (var member in role)
                                 {
-                                    <a href="@Url.Action("Member", "Organiser", new {id = member.Member.Id})" class="list-group-item">
+                                    <a href="@Url.Action("MemberAdmin", "Organiser", new {id = member.Member.Id})" class="list-group-item">
                                         <h5 class="list-group-item-heading">@member.Member.FullName (@member.Member.ShortName)</h5>
                                     </a>
                                 }

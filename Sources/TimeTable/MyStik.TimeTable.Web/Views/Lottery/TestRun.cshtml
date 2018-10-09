@@ -38,6 +38,11 @@
                             </a>
                         </div>
                         <div class="form-group">
+                            <a href="@Url.Action("Download", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-download"></i> Rohdaten
+                            </a>
+                        </div>
+                        <div class="form-group">
                             <a href="@Url.Action("DrawLotPots", new {id=Model.Lottery.Id})" class="btn btn-default">
                                 <i class="fa fa-play"></i> Ausführen ohne Speichern
                             </a>

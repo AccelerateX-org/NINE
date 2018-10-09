@@ -11,7 +11,7 @@
             <i class="fa fa-film"></i> Was läuft jetzt?
         </h4>
     </div>
-    @if (Model.NowPlayingDates.Any())
+    @if (Model.NowPlayingDates != null && Model.NowPlayingDates.Any())
     {
         <div class="list-group">
             <a href="@Url.Action("Today", "Activity")" class="list-group-item list-group-item-info">
@@ -43,7 +43,7 @@
     else
     {
         <div class="panel-body">
-            <h1 class="text-success">...heute nix mehr</h1>
+            <h4>Keine Einträge</h4>
         </div>
 
     }

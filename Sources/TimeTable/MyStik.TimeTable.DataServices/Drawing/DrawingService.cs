@@ -30,10 +30,14 @@ namespace MyStik.TimeTable.DataServices.Drawing
             Lottery = db.Lotteries.SingleOrDefault(l => l.Id == id);
 
             Courses = new List<Course>();
-            Courses.AddRange(
-                Lottery.Occurrences.Select(
-                    occurrence => db.Activities.OfType<Course>().SingleOrDefault(
-                        c => c.Occurrence.Id == occurrence.Id)).Where(course => course != null));
+
+            if (Lottery != null)
+            {
+                Courses.AddRange(
+                    Lottery.Occurrences.Select(
+                        occurrence => db.Activities.OfType<Course>().SingleOrDefault(
+                            c => c.Occurrence.Id == occurrence.Id)).Where(course => course != null));
+            }
 
             LotPots = new List<DrawingLotPot>();
 
@@ -71,6 +75,7 @@ namespace MyStik.TimeTable.DataServices.Drawing
                                     x.UserId.Equals(subscription.UserId))
                                     .OrderByDescending(x => x.Created).FirstOrDefault();
 
+                            // Eintragung wurde außerhalb des Wahlverfahrens gemacht => Standard aufnehmen, damit Studierende an die Wahl dann auch rankommen
                             if (lotteryGame == null)
                             {
                                 lotteryGame = new LotteryGame();
@@ -79,9 +84,9 @@ namespace MyStik.TimeTable.DataServices.Drawing
                                 lotteryGame.AcceptDefault = false;
                                 lotteryGame.CoursesWanted = Lottery.MaxConfirm;
                                 lotteryGame.Created = DateTime.Now;
+                                lotteryGame.LastChange = DateTime.Now;  // bisher nicht angegeben
 
                                 Lottery.Games.Add(lotteryGame);
-
                             }
 
                             game = new DrawingGame();
@@ -155,6 +160,40 @@ namespace MyStik.TimeTable.DataServices.Drawing
             }
         }
 
+        public void Analyse()
+        {
+            foreach (var game in Games)
+            {
+                if ((game.Seats.Count > game.Game.CoursesWanted) && game.Seats.Any(x =>
+                        x.Subscription.Priority.HasValue && x.Subscription.Priority == 0))
+                {
+                    // alle mit Prio
+                    var allRegular = game.Seats.Where(x => x.Priority > 0).ToList();
+
+                    // alle ohne Prio
+                    var allQuestionable = game.Seats
+                        .Where(x => x.Subscription.Priority.HasValue && x.Subscription.Priority == 0)
+                        .OrderBy(x => x.Subscription.TimeStamp).ToList();
+
+                    // Anzahl fehlender
+                    var nMissing = game.Game.CoursesWanted - allRegular.Count;
+
+                    if (nMissing > 0)
+                    {
+                        // die fehlenden löschen
+                        allQuestionable.RemoveRange(0, nMissing);
+                    }
+
+                    foreach (var lot in allQuestionable)
+                    {
+                        lot.IsSurplus = true;
+                    }
+
+
+                }
+            }
+
+        }
 
         
 
@@ -324,7 +363,8 @@ namespace MyStik.TimeTable.DataServices.Drawing
                 var studentLots = game.Lots.OrderBy(x => x.Priority).ToList();
 
                 // Student ist Ober-Pechvogel, wenn er gar nichts erhalten hat => zuerst 1 Kurs
-                var isJinx = studentLots.All(x => x.IsValid && x.Subscription.OnWaitingList);
+                // gar nichts: Keinen Platz und auch kein Los auf der Warteliste
+                var isJinx = !game.Seats.Any() && studentLots.All(x => x.IsValid && x.Subscription.OnWaitingList);
 
                 if (isJinx)
                 {

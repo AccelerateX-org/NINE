@@ -38,6 +38,8 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         protected readonly CascadingDeleteService DeleteService;
 
+        protected readonly StudentService StudentService;
+
         /// <summary>
         /// 
         /// </summary>
@@ -71,6 +73,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ActivityService = new ActivityService(Db);
             SemesterService = new SemesterService(Db);
             DeleteService = new CascadingDeleteService(Db);
+            StudentService = new StudentService(Db);
         }
 
         /// <summary>

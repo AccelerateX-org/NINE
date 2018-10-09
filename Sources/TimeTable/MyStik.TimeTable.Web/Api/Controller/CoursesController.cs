@@ -157,6 +157,19 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             var user = GetUser(model.User.Id);
 
+            if (user == null)
+            {
+                var subModel = new SubscriptionDto
+                {
+                    CourseId = Guid.Empty,
+                    IsValid = false,
+                    Message = $"Invaild user with id {model.User.Id}"
+                };
+                list.Add(subModel);
+                return list.AsQueryable();
+            }
+
+
             foreach (var courseModel in model.Courses)
             {
                 var subModel = new SubscriptionDto();
@@ -165,7 +178,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
                 var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseModel.Id);
 
-                if (course != null && user != null)
+                if (course != null)
                 {
                     var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
 
@@ -197,7 +210,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 else
                 {
                     subModel.IsValid = false;
-                    subModel.Message = "Inavlid UserId or CourseId";
+                    subModel.Message = $"Inavlid Course with Id {courseModel.Id}";
                 }
 
                 list.Add(subModel);

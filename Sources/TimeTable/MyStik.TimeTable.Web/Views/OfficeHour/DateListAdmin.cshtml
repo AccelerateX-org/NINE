@@ -1,0 +1,51 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OfficeHourSubscriptionViewModel
+@{
+    ViewBag.Title = "Sprechstunde";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>@Model.Host.Name - Sprechstundentermine im Semester @Model.Semester.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Termine</h4>
+                </div>
+                <table class="table table-condensed">
+                    @foreach (var date in Model.Dates)
+                    {
+                        foreach (var slot in date.Date.Slots)
+                        {
+                            <tr>
+                                <td>@Html.TimeSpanWithDate(slot)</td>
+                                <td>
+                                    @foreach (var subscription in slot.Occurrence.Subscriptions)
+                                    {
+                                        <div>@subscription.UserId (@subscription.TimeStamp)</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

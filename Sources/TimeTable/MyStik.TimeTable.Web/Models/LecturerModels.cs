@@ -48,6 +48,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<CourseHistoryModel> OldCourses { get; set; }
+
+        public Semester Semester { get; set; }
     }
 
     /// <summary>

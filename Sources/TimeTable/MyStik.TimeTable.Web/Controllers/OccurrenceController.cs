@@ -20,9 +20,67 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="IsWaiting"></param>
         /// <returns></returns>
-        public FileResult SubscriptionList(Guid id, bool? IsWaiting)
+        public FileResult SubscriptionList(Guid id)
+        {
+            var summary = ActivityService.GetSummary(id);
+
+            var logger = LogManager.GetLogger("SubscriptionList");
+            logger.InfoFormat("List for [{0}]", summary.Activity.Name);
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Name;Vorname;Studiengang;Semester;Status");
+
+            writer.Write(Environment.NewLine);
+
+            foreach (var subscription in summary.Subscriptions.OrderBy(s => s.TimeStamp))
+            {
+                var user = UserManager.FindById(subscription.UserId);
+                var student = StudentService.GetCurrentStudent(user);
+
+                if (user != null)
+                {
+                    var group = "";
+                    var sem = "";
+
+                    if (student != null)
+                    {
+                        group = student.Curriculum.ShortName;
+                        sem = student.FirstSemester.Name;
+                    }
+
+                    var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
+
+                    writer.Write("{0};{1};{2};{3};{4}",
+                        user.LastName, user.FirstName, 
+                        group, sem,
+                        subState);
+                    writer.Write(Environment.NewLine);
+                }
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Eintragungen");
+            sb.Append(summary.Activity.ShortName);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public FileResult ParticipiantList(Guid id)
         {
             var summary = ActivityService.GetSummary(id);
 
@@ -37,54 +95,33 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             writer.Write(
-                "Name;Vorname;Studiengruppe;Status");
+                "Name;Vorname;Studiengang;Semester;Status");
 
             writer.Write(Environment.NewLine);
 
-            foreach (var subscription in summary.Subscriptions.OrderBy(s => s.TimeStamp))
+            foreach (var subscription in summary.Subscriptions.Where(x => !x.OnWaitingList).OrderBy(s => s.TimeStamp))
             {
                 var user = UserManager.FindById(subscription.UserId);
+                var student = StudentService.GetCurrentStudent(user);
+
                 if (user != null)
                 {
-                    // Aktuelle Semestergruppe aus SemesterSubscription ermitteln
-                    var semSub =
-                    Db.Subscriptions.OfType<SemesterSubscription>()
-                        .FirstOrDefault(s => s.UserId.Equals(user.Id) && s.SemesterGroup.Semester.Id == semester.Id);
+                    var group = "";
+                    var sem = "";
 
-                    var group = "keine Angabe";
-                    var select = true;
-
-                    if (semSub != null)
+                    if (student != null)
                     {
-                        group = semSub.SemesterGroup.FullName;
+                        group = student.Curriculum.ShortName;
+                        sem = student.FirstSemester.Name;
                     }
 
-                    string subState;
-                    if (subscription.OnWaitingList)
-                    {
-                        subState = "Warteliste";
-                        if (IsWaiting.HasValue && !IsWaiting.Value)
-                        {
-                            select = false;
-                        }
-                    }
-                    else
-                    {
-                        subState = subscription.IsConfirmed ? "Teilnehmer" : "Teilnehmer (unbestätigt)";
-                        if (IsWaiting.HasValue && IsWaiting.Value)
-                        {
-                            select = false;
-                        }
-                    }
+                    var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
 
-                    if (select)
-                    {
-                        writer.Write("{0};{1};{2};{3}",
-                            user.LastName, user.FirstName, 
-                            group,
-                            subState);
-                        writer.Write(Environment.NewLine);
-                    }
+                    writer.Write("{0};{1};{2};{3};{4}",
+                        user.LastName, user.FirstName,
+                        group, sem,
+                        subState);
+                    writer.Write(Environment.NewLine);
                 }
             }
 
@@ -100,6 +137,70 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public FileResult WaitingList(Guid id)
+        {
+            var summary = ActivityService.GetSummary(id);
+
+            var logger = LogManager.GetLogger("SubscriptionList");
+            logger.InfoFormat("List for [{0}]", summary.Activity.Name);
+
+
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Name;Vorname;Studiengang;Semester;Status");
+
+            writer.Write(Environment.NewLine);
+
+            foreach (var subscription in summary.Subscriptions.Where(x => x.OnWaitingList).OrderBy(s => s.TimeStamp))
+            {
+                var user = UserManager.FindById(subscription.UserId);
+                var student = StudentService.GetCurrentStudent(user);
+
+                if (user != null)
+                {
+                    var group = "";
+                    var sem = "";
+
+                    if (student != null)
+                    {
+                        group = student.Curriculum.ShortName;
+                        sem = student.FirstSemester.Name;
+                    }
+
+                    var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
+
+                    writer.Write("{0};{1};{2};{3};{4}",
+                        user.LastName, user.FirstName,
+                        group, sem,
+                        subState);
+                    writer.Write(Environment.NewLine);
+                }
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Warteliste");
+            sb.Append(summary.Activity.ShortName);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
 
 
         /// <summary>

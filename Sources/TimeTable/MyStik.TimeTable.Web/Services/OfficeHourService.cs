@@ -26,6 +26,20 @@ namespace MyStik.TimeTable.Web.Services
             return officeHour;
         }
 
+        /// <summary>
+        /// Ermittelt die aktuellste Sprechstunde
+        /// </summary>
+        /// <param name="lecturer"></param>
+        /// <returns></returns>
+        public OfficeHour GetLatestOfficeHour(OrganiserMember lecturer)
+        {
+            var officeHour =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                    x.Owners.Any(k => k.Member.Id == lecturer.Id)).OrderByDescending(x => x.Semester.StartCourses).FirstOrDefault();
+
+            return officeHour;
+        }
+
         public OfficeHour CreateOfficeHour(OfficeHourCreateRequest request)
         {
             var db = new TimeTableDbContext();
