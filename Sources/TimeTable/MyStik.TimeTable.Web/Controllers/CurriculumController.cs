@@ -221,14 +221,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Rooms()
-        {
-            return View();
-        }
 
         [HttpPost]
         public JsonResult OrgList(Guid? orgId, string number)
@@ -793,67 +785,6 @@ namespace MyStik.TimeTable.Web.Controllers
             if (compact)
                 return PartialView("_CourseListSummaryCompact", model);
 
-            return PartialView("_CourseListSummary", model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="roomId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult CourseListByRoom(string roomId)
-        {
-            var model = new List<CourseSummaryModel>();
-
-            var user = AppUser;
-
-            var room = Db.Rooms.SingleOrDefault(l => l.Number.Equals(roomId));
-
-            if (room != null)
-            {
-                var courses =
-                    Db.Activities.OfType<Course>()
-                        .Where(c => c.Dates.Any(oc => oc.Rooms.Any(l => l.Id == room.Id)))
-                        .ToList();
-
-                foreach (var course in courses)
-                {
-                    var lectures =
-                        Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-
-                    var summary = new CourseSummaryModel {Course = course};
-                    summary.Lecturers.AddRange(lectures);
-
-                    var days = (from occ in course.Dates
-                        select
-                            new
-                            {
-                                Day = occ.Begin.DayOfWeek,
-                                Begin = occ.Begin.TimeOfDay,
-                                End = occ.End.TimeOfDay,
-                            }).Distinct();
-
-                    foreach (var day in days)
-                    {
-                        var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                        var courseDate = new CourseDateModel
-                        {
-                            DayOfWeek = day.Day,
-                            StartTime = day.Begin,
-                            EndTime = day.End,
-                            DefaultDate = defaultDay.Begin
-                        };
-
-                        summary.Dates.Add(courseDate);
-                    }
-
-                    summary.State = ActivityService.GetActivityState(course.Occurrence, user);
-
-                    model.Add(summary);
-                }
-            }
             return PartialView("_CourseListSummary", model);
         }
 

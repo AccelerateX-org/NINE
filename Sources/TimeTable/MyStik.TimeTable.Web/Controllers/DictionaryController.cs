@@ -123,20 +123,20 @@ namespace MyStik.TimeTable.Web.Controllers
                     a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
             }
 
-            var courseService = new CourseSummaryService(Db);
+            var courseService = new CourseService(Db);
 
             if (allTopics.Any())
             {
                 foreach (var topic in allTopics)
                 {
-                    var courses = topic.Activities.ToList();
+                    var courses = topic.Activities.OfType<Course>().ToList();
 
                     var model2 = new List<CourseSummaryModel>();
 
 
                     foreach (var course in courses)
                     {
-                        var summary = courseService.GetCourseSummary(course.Id);
+                        var summary = courseService.GetCourseSummary(course);
 
                         if (Request.IsAuthenticated)
                         {
@@ -343,13 +343,13 @@ namespace MyStik.TimeTable.Web.Controllers
                     a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
             }
 
-            var courseService = new CourseSummaryService(Db);
+            var courseService = new CourseService(Db);
 
             var courses = semGroup.Activities.OfType<Course>().ToList();
 
             foreach (var course in courses)
             {
-                var summary = courseService.GetCourseSummary(course.Id);
+                var summary = courseService.GetCourseSummary(course);
 
                 if (Request.IsAuthenticated)
                 {

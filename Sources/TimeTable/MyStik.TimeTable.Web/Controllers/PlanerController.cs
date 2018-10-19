@@ -975,7 +975,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var topic in allTopics)
                 {
-                    var courses = topic.Activities.ToList();
+                    var courses = topic.Activities.OfType<Course>().ToList();
 
                     var model2 = new List<CourseSummaryModel>();
 
@@ -1004,7 +1004,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 // jetzt noch die ohne Topics
-                var withoutTopic = semGroup.Activities.Where(x => !x.SemesterTopics.Any()).ToList();
+                var withoutTopic = semGroup.Activities.OfType<Course>().Where(x => !x.SemesterTopics.Any()).ToList();
 
                 if (withoutTopic.Any())
                 {
@@ -1037,7 +1037,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             else
             {
-                var courses = semGroup.Activities.ToList();
+                var courses = semGroup.Activities.OfType<Course>().ToList();
 
                 var model = new List<CourseSummaryModel>();
 

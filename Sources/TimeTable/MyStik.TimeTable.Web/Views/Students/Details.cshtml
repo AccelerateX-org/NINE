@@ -1,0 +1,111 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.StudentDetailViewModel
+@{
+    ViewBag.Title = "Profil";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Model.Student != null)
+                    {
+                        if (Model.Student.Curriculum != null && Model.Student.FirstSemester != null)
+                        {
+                            <h1>
+                                @Model.User.FirstName @Model.User.LastName | @Model.Student.Curriculum.ShortName (@Model.Student.FirstSemester.Name)
+                            </h1>
+                        }
+                        else
+                        {
+                            <h1>
+                                @Model.User.FirstName @Model.User.LastName | KEIN STUDIUM
+                            </h1>
+                        }
+                    }
+                    else
+                    {
+                        <h1>
+                            @Model.User.FirstName @Model.User.LastName
+                        </h1>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Studiensemester</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var semesterViewModel in Model.Semester.OrderByDescending(x => x.Semester.StartCourses))
+                    {
+                        <a class="list-group-item" href="@Url.Action("CoursePlan", new {id=Model.User.Id, semid=semesterViewModel.Semester.Id})">
+                            <span class="badge badge-info">@semesterViewModel.Courses.Count LVs</span><h5 class="list-group-item-heading">@semesterViewModel.Semester.Name</h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="list-group">
+                    <a class="list-group-item" href="mailto:@Model.User.Email">
+                        <div class="list-group-item-heading">
+                            <h5><i class="fa fa-envelope-o"></i> E-Mail senden</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            @if (ViewBag.UserRight.IsStudentAdmin && Model.Student != null)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item" href="@Url.Action("ChangeCurriculum", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Studiengang ändern</h5>
+                            </div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("ChangeNumber", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Matrikelnummer erfassen</h5>
+                            </div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("Logs", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Logdaten ansehen</h5>
+                            </div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("Subscribe", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Eintragen</h5>
+                            </div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("Unsubscribe", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Austragen</h5>
+                            </div>
+                        </a>
+                        <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteStudent", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Student löschen</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                Löscht lediglich die Zuordnung zum Studiengang. Studierende muss sich neu festlegen.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

@@ -7,12 +7,12 @@
 }
 
 <div>
-
+    <h5>@Model.User.FullName</h5>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Eintragung</a></li>
         <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">@Model.Semester.Name</a></li>
-        @if (!hasLottery)
+        @if (!hasLottery || ViewBag.UserRight.IsCourseAdmin)
         {
             <li role="presentation"><a href="#setting" aria-controls="setting" role="tab" data-toggle="tab">Verwaltung</a></li>
         }

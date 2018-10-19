@@ -139,53 +139,18 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
-            var coursePage =
+            var courses =
                 Db.Activities.OfType<Course>().Where(c =>
                     c.SemesterGroups.Any(g =>
                         g.Semester.Id == semester.Id &&
                         g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id)
                 ).OrderBy(c => c.ShortName).ToList();
 
+            var courseService = new CourseService(Db);
 
-            ViewBag.CoursePage = coursePage;
-
-            foreach (var course in coursePage)
+            foreach (var course in courses)
             {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-
-                var summary = new CourseSummaryModel();
-                summary.Course = course;
-                summary.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-                summary.Rooms.AddRange(rooms);
-
-
-                var days = (from occ in course.Dates
-                    select
-                        new
-                        {
-                            Day = occ.Begin.DayOfWeek,
-                            Begin = occ.Begin.TimeOfDay,
-                            End = occ.End.TimeOfDay,
-                        }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
+                var summary = courseService.GetCourseSummary(course);
                 model.Courses.Add(summary);
             }
 
@@ -218,52 +183,17 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
-            var coursePage =
+            var courses =
                 Db.Activities.OfType<Course>().Where(c =>
                     c.Organiser.Id == organiser.Id &&
                     !c.SemesterGroups.Any()
                 ).OrderBy(c => c.ShortName).ToList();
 
+            var courseService = new CourseService(Db);
 
-            ViewBag.CoursePage = coursePage;
-
-            foreach (var course in coursePage)
+            foreach (var course in courses)
             {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-
-                var summary = new CourseSummaryModel();
-                summary.Course = course;
-                summary.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-                summary.Rooms.AddRange(rooms);
-
-
-                var days = (from occ in course.Dates
-                    select
-                        new
-                        {
-                            Day = occ.Begin.DayOfWeek,
-                            Begin = occ.Begin.TimeOfDay,
-                            End = occ.End.TimeOfDay,
-                        }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
+                var summary = courseService.GetCourseSummary(course);
                 model.Courses.Add(summary);
             }
 
@@ -687,45 +617,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
             };
 
+            var courseService = new CourseService(Db);
+
             var courses = Db.Activities.OfType<Course>().Where(x => x.Owners.Any(y => y.Member.Organiser.Id == org.Id)).ToList();
 
             foreach (var course in courses)
             {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-
-                var summary = new CourseSummaryModel();
-                summary.Course = course;
-                summary.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-                summary.Rooms.AddRange(rooms);
-
-
-                var days = (from occ in course.Dates
-                    select
-                        new
-                        {
-                            Day = occ.Begin.DayOfWeek,
-                            Begin = occ.Begin.TimeOfDay,
-                            End = occ.End.TimeOfDay,
-                        }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
+                var summary = courseService.GetCourseSummary(course);
                 model.Courses.Add(summary);
             }
 

@@ -397,7 +397,7 @@ namespace MyStik.TimeTable.Web.Services
             var allDates = room.Dates.Where(x => x.Begin >= semester.StartCourses && x.End <= semester.EndCourses.AddDays(1))
                 .OrderBy(x => x.Begin)
                 .ToList();
-            var ratio = 0.5;
+            var ratio = 0;
 
             while (allDates.Any())
             {
@@ -436,7 +436,7 @@ namespace MyStik.TimeTable.Web.Services
 
                 // regelmäßig oder nicht
                 var frequency = roomDateModel.Dates.Count / (double)roomDateModel.SlotCount;
-                if (frequency > ratio)
+                if (frequency > ratio && roomDateModel.Dates.Count > 1)
                 {
                     // regelmäßig
                     model.RegularDates.Add(roomDateModel);

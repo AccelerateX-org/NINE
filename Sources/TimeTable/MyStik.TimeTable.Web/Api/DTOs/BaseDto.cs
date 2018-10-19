@@ -21,6 +21,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// <summary>
         /// 
         /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<ActionDto> Actions { get; }
 
         internal void AddAction(string name, string url)

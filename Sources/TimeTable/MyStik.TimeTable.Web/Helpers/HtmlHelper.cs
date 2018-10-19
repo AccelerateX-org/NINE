@@ -303,6 +303,25 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <param name="htmlHelper"></param>
         /// <param name="dates"></param>
         /// <returns></returns>
+        public static MvcHtmlString Date(this HtmlHelper htmlHelper, CourseDateModel date)
+        {
+            var sb = new StringBuilder();
+
+
+            sb.AppendFormat("{0} [{1:hh\\:mm} - {2:hh\\:mm}]",
+                date.DefaultDate.ToString("dddd", new CultureInfo("de-DE")), date.StartTime, date.EndTime);
+
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="dates"></param>
+        /// <returns></returns>
         public static MvcHtmlString DateList(this HtmlHelper htmlHelper, ICollection<CourseDateModel> dates)
         {
             var sb = new StringBuilder();
@@ -340,6 +359,52 @@ namespace MyStik.TimeTable.Web.Helpers
                     courseDate.Begin,
                     courseDate.End);
 
+                sb.Append("</div>");
+
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="dates"></param>
+        /// <returns></returns>
+        public static MvcHtmlString DateListWithRooms(this HtmlHelper htmlHelper, ICollection<ActivityDate> dates)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var courseDate in dates)
+            {
+                var sbRoom = new StringBuilder();
+                foreach (var room in courseDate.Rooms)
+                {
+                    sbRoom.Append(room.Number);
+                    if (room != courseDate.Rooms.Last())
+                    {
+                        sbRoom.Append(htmlHelper.Raw(", "));
+                    }
+                }
+
+                sb.Append("<div>");
+
+                if (courseDate.Occurrence.IsCanceled)
+                {
+                    sb.Append("<del>");
+                }
+
+                sb.AppendFormat("{0} [{1:HH\\:mm} - {2:HH\\:mm}] {3}",
+                    courseDate.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE")),
+                    courseDate.Begin,
+                    courseDate.End,
+                    sbRoom.ToString());
+
+                if (courseDate.Occurrence.IsCanceled)
+                {
+                    sb.Append("</del> abgesagt");
+                }
                 sb.Append("</div>");
 
             }

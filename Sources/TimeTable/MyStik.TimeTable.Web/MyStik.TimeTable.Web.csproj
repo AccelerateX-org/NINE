@@ -278,6 +278,7 @@
     <Compile Include="Api\Controller\LoginController.cs" />
     <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\NotificationController.cs" />
+    <Compile Include="Api\Controller\OccupanciesController.cs" />
     <Compile Include="Api\Controller\RoomController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
     <Compile Include="Api\Controller\CalendarController.cs" />
@@ -289,6 +290,7 @@
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
     <Compile Include="Api\DTOs\CurriculumDto.cs" />
+    <Compile Include="Api\DTOs\OccupancyDto.cs" />
     <Compile Include="Api\DTOs\OrganiserDto.cs" />
     <Compile Include="Api\DTOs\RoomDto.cs" />
     <Compile Include="Api\DTOs\SemesterDto.cs" />
@@ -539,7 +541,6 @@
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\ChangeService.cs" />
     <Compile Include="Services\CourseService.cs" />
-    <Compile Include="Services\CourseSummaryService.cs" />
     <Compile Include="Services\CurriculumService.cs" />
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\LotteryMailService.cs" />
@@ -3249,7 +3250,6 @@
     <Content Include="Views\Shared\_CourseListSummary.cshtml" />
     <Content Include="Views\Curriculum\_CourseCalendar.cshtml" />
     <Content Include="Views\Room\Index.cshtml" />
-    <Content Include="Views\Curriculum\Rooms.cshtml" />
     <Content Include="Views\Room\Free.cshtml" />
     <Content Include="Views\Course\Index.cshtml" />
     <Content Include="Views\Course\Characteristics.cshtml" />
@@ -4002,6 +4002,7 @@
     <Content Include="Views\Curriculum\Destroy.cshtml" />
     <Content Include="Views\OfficeHour\IsReserved.cshtml" />
     <Content Include="Views\OfficeHour\DateListAdmin.cshtml" />
+    <Content Include="Views\Students\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

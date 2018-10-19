@@ -81,31 +81,7 @@ namespace MyStik.TimeTable.Web.Services
 
                 foreach (var course in courses)
                 {
-                    var summary = new CourseSummaryModel {Course = course};
-
-                    var days = (from occ in course.Dates
-                        select
-                            new
-                            {
-                                Day = occ.Begin.DayOfWeek,
-                                Begin = occ.Begin.TimeOfDay,
-                                End = occ.End.TimeOfDay,
-                            }).Distinct();
-
-                    foreach (var day in days)
-                    {
-                        var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                        var courseDate = new CourseDateModel
-                        {
-                            DayOfWeek = day.Day,
-                            StartTime = day.Begin,
-                            EndTime = day.End,
-                            DefaultDate = defaultDay.Begin
-                        };
-                        summary.Dates.Add(courseDate);
-                    }
-
+                    var summary = GetCourseSummary(course);
                     list.Add(summary);
                 }
             }
@@ -214,71 +190,13 @@ namespace MyStik.TimeTable.Web.Services
 
             foreach (var course in courses)
             {
-                var summary = new CourseSummaryModel { Course = course };
-
-                var days = (from occ in course.Dates
-                            select
-                                new
-                                {
-                                    Day = occ.Begin.DayOfWeek,
-                                    Begin = occ.Begin.TimeOfDay,
-                                    End = occ.End.TimeOfDay,
-                                }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
+                var summary = GetCourseSummary(course);
                 list.Add(summary);
             }
 
             return list;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="course"></param>
-        /// <returns></returns>
-        public CourseSummaryModel CreateCourseSummary(Course course)
-        {
-            var summary = new CourseSummaryModel { Course = course };
-
-            var days = (from occ in course.Dates
-                select
-                new
-                {
-                    Day = occ.Begin.DayOfWeek,
-                    Begin = occ.Begin.TimeOfDay,
-                    End = occ.End.TimeOfDay,
-                }).Distinct();
-
-            foreach (var day in days)
-            {
-                var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                var courseDate = new CourseDateModel
-                {
-                    DayOfWeek = day.Day,
-                    StartTime = day.Begin,
-                    EndTime = day.End,
-                    DefaultDate = defaultDay.Begin
-                };
-                summary.Dates.Add(courseDate);
-            }
-
-            return summary;
-        }
 
         /// <summary>
         /// 
@@ -339,47 +257,6 @@ namespace MyStik.TimeTable.Web.Services
 
                 Db.SaveChanges();
             }
-        }
-
-        internal List<CourseDateModel> GetDateSummary(Course course)
-        {
-            var days = (from occ in course.Dates
-                        select
-                            new
-                            {
-                                Day = occ.Begin.DayOfWeek,
-                                Begin = occ.Begin.TimeOfDay,
-                                End = occ.End.TimeOfDay,
-                            }).Distinct().ToList();
-
-            var summary = new List<CourseDateModel>();
-
-            foreach (var day in days)
-            {
-                var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                var courseDate = new CourseDateModel
-                {
-                    DayOfWeek = day.Day,
-                    StartTime = day.Begin, 
-                    EndTime = day.End,
-                    DefaultDate = defaultDay.Begin
-                };
-
-                summary.Add(courseDate);
-            }
-
-            return summary;
-        }
-
-        internal List<OrganiserMember> GetLecturerList(Course course)
-        {
-            return Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-        }
-
-        internal List<Room> GetRoomList(Course course)
-        {
-            return Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
         }
 
         internal ActivityDate GetNextDate(Course course, bool activeOnly = false)
@@ -566,38 +443,18 @@ namespace MyStik.TimeTable.Web.Services
         /// </summary>
         /// <param name="course"></param>
         /// <returns></returns>
-        public CourseSummaryModel GetCourseSummary(Activity course)
+        public CourseSummaryModel GetCourseSummary(Course course)
         {
-            var summary = new CourseSummaryModel();
-
-            summary.Course = course as Course;
-
-            var lectures =
-                Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-            summary.Lecturers.AddRange(lectures);
-
-            var rooms =
-                Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-            summary.Rooms.AddRange(rooms);
-
-
-            foreach (var semesterGroup in course.SemesterGroups)
-            {
-                if (!summary.Curricula.Contains(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum))
-                {
-                    summary.Curricula.Add(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum);
-                }
-            }
-
+            var summary = new CourseSummaryModel { Course = course };
 
             var days = (from occ in course.Dates
-                        select
-                            new
-                            {
-                                Day = occ.Begin.DayOfWeek,
-                                Begin = occ.Begin.TimeOfDay,
-                                End = occ.End.TimeOfDay,
-                            }).Distinct();
+                select
+                    new
+                    {
+                        Day = occ.Begin.DayOfWeek,
+                        Begin = occ.Begin.TimeOfDay,
+                        End = occ.End.TimeOfDay,
+                    }).Distinct();
 
             foreach (var day in days)
             {
@@ -611,6 +468,25 @@ namespace MyStik.TimeTable.Web.Services
                     DefaultDate = defaultDay.Begin
                 };
                 summary.Dates.Add(courseDate);
+            }
+
+            var lectures =
+                Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+            summary.Lecturers.AddRange(lectures);
+
+            var rooms =
+                Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
+            summary.Rooms.AddRange(rooms);
+
+            summary.Lottery =
+                Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+            foreach (var semesterGroup in course.SemesterGroups)
+            {
+                if (!summary.Curricula.Contains(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum))
+                {
+                    summary.Curricula.Add(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum);
+                }
             }
 
             return summary;

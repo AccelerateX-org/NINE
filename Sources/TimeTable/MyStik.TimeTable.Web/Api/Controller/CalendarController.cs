@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Xml.Linq;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Responses;
@@ -33,6 +34,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [HttpPost]
         public IQueryable<CalendarDateDto> Day([FromBody] CalendarDayRequestModel model)
         {
+            var converter = new CourseConverter(Db);
             var userService = new UserInfoService();
             var user = userService.GetUser(model.userid);
 
@@ -50,6 +52,17 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
                 calendarDate.Name = activityDate.Activity.Name;
                 calendarDate.ShortName = activityDate.Activity.ShortName;
+
+                if (activityDate.Activity is Course)
+                    calendarDate.Type = CalendarDateType.Course;
+                if (activityDate.Activity is Event)
+                    calendarDate.Type = CalendarDateType.Event;
+                if (activityDate.Activity is OfficeHour)
+                    calendarDate.Type = CalendarDateType.OfficeHour;
+
+                calendarDate.Date = converter.ConvertDate(activityDate);
+
+                // calendarDate.Subscription = converter.
 
                 list.Add(calendarDate);
             }

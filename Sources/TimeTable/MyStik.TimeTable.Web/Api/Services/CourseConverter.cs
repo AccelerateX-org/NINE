@@ -64,62 +64,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
             foreach (var activityDate in course.Dates)
             {
-                var courseDate = new CourseDateDto();
-
-                courseDate.Begin = activityDate.Begin.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z");
-                courseDate.End = activityDate.End.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z");
-                courseDate.IsCanceled = activityDate.Occurrence.IsCanceled;
-                courseDate.Title = activityDate.Title;
-
-                foreach (var host in activityDate.Hosts)
-                {
-                    var lecturer = new LecturerDto();
-                    lecturer.FirstName = host.FirstName;
-                    lecturer.LastName = host.Name;
-                    lecturer.Title = host.Title;
-
-                    if (!string.IsNullOrEmpty(host.UrlProfile))
-                    {
-                        lecturer.AddAction("Profile", host.UrlProfile);
-                    }
-
-                    if (courseDate.Lecturer == null)
-                    {
-                        courseDate.Lecturer = new List<LecturerDto>();
-                    }
-
-                    courseDate.Lecturer.Add(lecturer);
-                }
-
-                foreach (var room in activityDate.Rooms)
-                {
-                    var courseRoom = new RoomDto();
-
-                    courseRoom.Number = room.Number;
-                    courseRoom.Building = room.Number.Substring(0, 1);
-
-                    if (courseRoom.Number.StartsWith("K") || courseRoom.Number.StartsWith("L"))
-                    {
-                        courseRoom.Campus = "Pasing";
-                    }
-                    else if (courseRoom.Number.StartsWith("F"))
-                    {
-                        courseRoom.Campus = "Karlstrasse";
-                    }
-                    else
-                    {
-                        courseRoom.Campus = "Lothstrasse";
-                    }
-
-                    if (courseDate.Rooms == null)
-                    {
-                        courseDate.Rooms = new List<RoomDto>();
-                    }
-
-                    courseDate.Rooms.Add(courseRoom);
-                }
-
-
+                var courseDate = ConvertDate(activityDate);
 
                 if (dto.Dates == null)
                 {
@@ -130,71 +75,82 @@ namespace MyStik.TimeTable.Web.Api.Services
             }
 
 
-
             return dto;
 
+        }
+
+        internal CourseDateDto ConvertDate(ActivityDate activityDate)
+        {
+            var courseDate = new CourseDateDto
+            {
+                Id = activityDate.Id,
+                Begin = activityDate.Begin.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z"),
+                End = activityDate.End.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z"),
+                IsCanceled = activityDate.Occurrence.IsCanceled,
+                Title = activityDate.Title
+            };
+
+
+            foreach (var host in activityDate.Hosts)
+            {
+                var lecturer = new LecturerDto
+                {
+                    FirstName = host.FirstName,
+                    LastName = host.Name,
+                    Title = host.Title
+                };
+
+                if (!string.IsNullOrEmpty(host.UrlProfile))
+                {
+                    lecturer.AddAction("Profile", host.UrlProfile);
+                }
+
+                if (courseDate.Lecturer == null)
+                {
+                    courseDate.Lecturer = new List<LecturerDto>();
+                }
+
+                courseDate.Lecturer.Add(lecturer);
+            }
+
+            foreach (var room in activityDate.Rooms)
+            {
+                var courseRoom = new RoomDto
+                {
+                    Number = room.Number,
+                    Building = room.Number.Substring(0, 1)
+                };
+
+
+                if (courseRoom.Number.StartsWith("K") || courseRoom.Number.StartsWith("L"))
+                {
+                    courseRoom.Campus = "Pasing";
+                }
+                else if (courseRoom.Number.StartsWith("F"))
+                {
+                    courseRoom.Campus = "Karlstrasse";
+                }
+                else
+                {
+                    courseRoom.Campus = "Lothstrasse";
+                }
+
+                if (courseDate.Rooms == null)
+                {
+                    courseDate.Rooms = new List<RoomDto>();
+                }
+
+                courseDate.Rooms.Add(courseRoom);
+            }
+
+            return courseDate;
         }
 
         internal void ConvertDates(CourseSummaryDto summary, Course course)
         {
             foreach (var activityDate in course.Dates)
             {
-                var courseDate = new CourseDateDto();
-
-                courseDate.Begin = activityDate.Begin.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z");
-                courseDate.End = activityDate.End.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z");
-                courseDate.IsCanceled = activityDate.Occurrence.IsCanceled;
-                courseDate.Title = activityDate.Title;
-
-                foreach (var host in activityDate.Hosts)
-                {
-                    var lecturer = new LecturerDto();
-                    lecturer.FirstName = host.FirstName;
-                    lecturer.LastName = host.Name;
-                    lecturer.Title = host.Title;
-
-                    if (!string.IsNullOrEmpty(host.UrlProfile))
-                    {
-                        lecturer.AddAction("Profile", host.UrlProfile);
-                    }
-
-                    if (courseDate.Lecturer == null)
-                    {
-                        courseDate.Lecturer = new List<LecturerDto>();
-                    }
-
-                    courseDate.Lecturer.Add(lecturer);
-                }
-
-                foreach (var room in activityDate.Rooms)
-                {
-                    var courseRoom = new RoomDto();
-
-                    courseRoom.Number = room.Number;
-                    courseRoom.Building = room.Number.Substring(0, 1);
-
-                    if (courseRoom.Number.StartsWith("K") || courseRoom.Number.StartsWith("L"))
-                    {
-                        courseRoom.Campus = "Pasing";
-                    }
-                    else if (courseRoom.Number.StartsWith("F"))
-                    {
-                        courseRoom.Campus = "Karlstrasse";
-                    }
-                    else
-                    {
-                        courseRoom.Campus = "Lothstrasse";
-                    }
-
-                    if (courseDate.Rooms == null)
-                    {
-                        courseDate.Rooms = new List<RoomDto>();
-                    }
-
-                    courseDate.Rooms.Add(courseRoom);
-                }
-
-
+                var courseDate = ConvertDate(activityDate);
 
                 if (summary.Dates == null)
                 {

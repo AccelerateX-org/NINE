@@ -62,7 +62,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Alle Services, die benötigt werden
             var courseService = new CourseService(Db);
-            var courseSummaryService = new CourseSummaryService(Db);
 
             // Termin diese Woche
             // Termine nächste Woche
@@ -71,7 +70,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(id),
                 NextDate = courseService.GetNextDate(course),
                 DatesThisWeek = courseService.GetDatesThisWeek(course),
                 DatesNextWeek = courseService.GetDatesNextWeek(course),
@@ -88,9 +87,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Details(Guid id)
         {
-            var courseSummaryService = new CourseSummaryService(Db);
+            var courseService = new CourseService(Db);
 
-            var model = courseSummaryService.GetCourseSummary(id);
+            var model = courseService.GetCourseSummary(id);
 
             var userRights = GetUserRight(User.Identity.Name, model.Course);
             ViewBag.UserRight = userRights;
@@ -111,8 +110,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var org = GetMyOrganisation();
             var sem = SemesterService.GetSemester(DateTime.Today);
-            var courseSummaryService = new CourseSummaryService(Db);
-            var summary = courseSummaryService.GetCourseSummary(id);
+            var courseService = new CourseService(Db);
+            var summary = courseService.GetCourseSummary(id);
 
             var model = new CourseCreateModel3
             {
@@ -273,8 +272,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var org = GetMyOrganisation();
             var sem = SemesterService.GetSemester(DateTime.Today);
-            var courseSummaryService = new CourseSummaryService(Db);
-            var summary = courseSummaryService.GetCourseSummary(id);
+            var courseService = new CourseService(Db);
+            var summary = courseService.GetCourseSummary(id);
 
             var model = new CourseCreateModel3
             {
@@ -2686,13 +2685,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
 
             var courseService = new CourseService(Db);
-            var courseSummaryService = new CourseSummaryService(Db);
-
 
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(id),
             };
 
 
@@ -2773,12 +2770,12 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AdminNewParticipients(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var courseSummaryService = new CourseSummaryService(Db);
+            var courseService = new CourseService(Db);
 
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(course),
             };
 
             ViewBag.UserRight = GetUserRight();
@@ -2794,7 +2791,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult SubscriptionProfile(Guid id)
         {
             var studentService = new StudentService(Db);
-            var courseSummaryService = new CourseSummaryService(Db);
+            var courseService = new CourseService(Db);
 
 
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
@@ -2823,7 +2820,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Subscription = subscription,
                 Semester = semester,
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(course.Id),
+                Summary = courseService.GetCourseSummary(course),
             };
 
 
@@ -2834,47 +2831,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     .OrderBy(c => c.Name)
                     .ToList();
 
+            var courseSerive = new CourseService(Db);
+
             foreach (var c in courses)
             {
-                var summary = new CourseSummaryModel();
-
-                summary.Course = c;
-
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == c.Id)).ToList();
-                summary.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == c.Id)).ToList();
-                summary.Rooms.AddRange(rooms);
-
-
-                var days = (from occ in c.Dates
-                            select
-                                new
-                                {
-                                    Day = occ.Begin.DayOfWeek,
-                                    Begin = occ.Begin.TimeOfDay,
-                                    End = occ.End.TimeOfDay,
-                                }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = c.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
-                summary.Lottery =
-                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
+                var summary = courseSerive.GetCourseSummary(c);
 
                 model.CourseSubscriptions.Add(new UserCourseSubscriptionViewModel
                 {
@@ -3210,13 +3171,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
 
             var courseService = new CourseService(Db);
-            var courseSummaryService = new CourseSummaryService(Db);
 
 
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(course),
                 Description2 = course.Description
             };
 
@@ -3269,13 +3229,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
 
             var courseService = new CourseService(Db);
-            var courseSummaryService = new CourseSummaryService(Db);
 
 
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(course),
             };
 
             if (course.Occurrence.IsCoterie)
@@ -3413,13 +3372,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
 
             var courseService = new CourseService(Db);
-            var courseSummaryService = new CourseSummaryService(Db);
-
 
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(course),
                 Organiser = org
             };
 
@@ -3495,12 +3452,12 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult AdminNewModule(Guid id)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            var courseSummaryService = new CourseSummaryService(Db);
+            var courseService = new CourseService(Db);
 
             var model = new CourseDetailViewModel()
             {
                 Course = course,
-                Summary = courseSummaryService.GetCourseSummary(id),
+                Summary = courseService.GetCourseSummary(course),
             };
 
             // ein Modul finden

@@ -88,7 +88,6 @@ namespace MyStik.TimeTable.Web.Controllers
         public PartialViewResult Search(string searchString)
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
-            var vorSemester = new SemesterService().GetSemester(semester, 1);
 
             var model = new List<StudentViewModel>();
 
@@ -127,16 +126,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     studModel.CurrentCourses = courses;
 
-                    var lastCourses =
-                        Db.Activities.OfType<Course>()
-                            .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) &&
-                                        c.SemesterGroups.Any((g => g.Semester.Id == vorSemester.Id)))
-                            .OrderBy(c => c.Name)
-                            .ToList();
-
-                    studModel.LastCourses = lastCourses;
-
-
                     model.Add(studModel);
                 }
             }
@@ -144,7 +133,6 @@ namespace MyStik.TimeTable.Web.Controllers
             model = model.OrderBy(u => u.User.LastName).ToList();
 
             ViewBag.CurrentSemester = semester;
-            ViewBag.LastSemester = vorSemester;
 
             return PartialView("_Profile", model);
         }
@@ -464,15 +452,14 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("SendInvitationsSuccess", invitationList);
         }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult CoursePlan(string id)
+        public ActionResult Details(string id)
         {
-            var model = new UserCoursePlanViewModel();
+            var model = new StudentDetailViewModel();
             var user = UserManager.FindById(id);
 
             model.User = user;
@@ -482,11 +469,52 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(DateTime.Today);
             var org = GetMyOrganisation();
 
-            var nextSemester = SemesterService.GetNextSemester(semester);
-            var hasGroups = Db.SemesterGroups.Any(x =>
-                x.Semester.Id == nextSemester.Id && x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id);
-            if (hasGroups)
-                semester = nextSemester;
+            var allCourses = Db.Activities.OfType<Course>().Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+
+            foreach (var course in allCourses)
+            {
+                foreach (var semesterGroup in course.SemesterGroups)
+                {
+                    var semModel = model.Semester.FirstOrDefault(x => x.Semester.Id == semesterGroup.Semester.Id);
+                    if (semModel == null)
+                    {
+                        semModel = new StudentSemesterViewModel
+                        {
+                            Semester = semesterGroup.Semester
+                        };
+
+                        model.Semester.Add(semModel);
+                    }
+
+                    if (!semModel.Courses.Contains(course))
+                    {
+                        semModel.Courses.Add(course);
+                    }
+                }
+            }
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+
+        /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="id"></param>
+            /// <returns></returns>
+        public ActionResult CoursePlan(string id, Guid semId)
+        {
+            var model = new UserCoursePlanViewModel();
+            var user = UserManager.FindById(id);
+
+            model.User = user;
+            model.Student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
+                .FirstOrDefault();
+
+            var semester = SemesterService.GetSemester(semId);
+            var org = GetMyOrganisation();
 
 
             model.Semester = semester;
@@ -497,47 +525,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 .OrderBy(c => c.Name)
                 .ToList();
 
+            var courseService = new CourseService(Db);
+
             foreach (var course in courses)
             {
-                var summary = new CourseSummaryModel();
-
-                summary.Course = course;
-
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-                summary.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
-                summary.Rooms.AddRange(rooms);
-
-
-                var days = (from occ in course.Dates
-                            select
-                                new
-                                {
-                                    Day = occ.Begin.DayOfWeek,
-                                    Begin = occ.Begin.TimeOfDay,
-                                    End = occ.End.TimeOfDay,
-                                }).Distinct();
-
-                foreach (var day in days)
-                {
-                    var defaultDay = course.Dates.FirstOrDefault(d => d.Begin.DayOfWeek == day.Day);
-
-                    var courseDate = new CourseDateModel
-                    {
-                        DayOfWeek = day.Day,
-                        StartTime = day.Begin,
-                        EndTime = day.End,
-                        DefaultDate = defaultDay.Begin
-                    };
-                    summary.Dates.Add(courseDate);
-                }
-
-                summary.Lottery =
-                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
+                var summary = courseService.GetCourseSummary(course);
 
                 var subscriptions = course.Occurrence.Subscriptions.Where(s => s.UserId.Equals(id));
                 foreach (var subscription in subscriptions)
@@ -634,7 +626,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("CoursePlan", new {id = user.Id});
+            return RedirectToAction("Details", new {id = user.Id});
         }
 
         public ActionResult ChangeNumber(Guid id)
@@ -723,65 +715,84 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Subscribe(StudentSubscriptionModel model)
         {
             var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(model.SemesterName);
+            var semester = SemesterService.GetSemester(model.SemesterName.Trim());
 
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x =>
-                x.ShortName.Equals(model.CourseShortName) &&
-                x.SemesterGroups.Any(g =>
-                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id));
-
-            var host = GetCurrentUser();
-
-            if (course != null)
+            if (semester == null)
             {
-                var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
-
-                if (subscription == null)
-                {
-                    subscription = new OccurrenceSubscription();
-                    subscription.TimeStamp = DateTime.Now;
-                    subscription.UserId = model.User.Id;
-                    subscription.OnWaitingList = false;
-                    subscription.Occurrence = course.Occurrence;
-                    course.Occurrence.Subscriptions.Add(subscription);
-                }
-
-                // wenn es ein Wahlverfahren gibt, dann als Prio 1
-                var lottery =
-                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
-
-                if (lottery != null)
-                {
-                    subscription.Priority = 1;
-
-                    var game = lottery.Games.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
-                    if (game == null)
-                    {
-                        game = new LotteryGame
-                        {
-                            Lottery = lottery,
-                            UserId = subscription.UserId,
-                            AcceptDefault = false,
-                            CoursesWanted = lottery.MaxConfirm,
-                            Created = DateTime.Now,
-                            LastChange = DateTime.Now
-                        };
-                        lottery.Games.Add(game);
-                    }
-                }
-
-                Db.SaveChanges();
-
-                // Bei Erfolg Mail versenden
-                var mailService = new SubscriptionMailService();
-                mailService.SendSubscriptionEMail(course, subscription, host);
-
+                ModelState.AddModelError("SemesterName", "Es existiert kein Semester mit dieser Bezeichnung");
+                return View(model);
             }
 
-            
+
+            var courses = Db.Activities.OfType<Course>().Where(x =>
+                x.ShortName.Equals(model.CourseShortName.Trim()) &&
+                x.SemesterGroups.Any(g =>
+                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
+
+            if (!courses.Any())
+            {
+                ModelState.AddModelError("CourseShortName", "Es existiert keine Lehrveranstaltung mit dieser Bezeichnung");
+                return View(model);
+            }
+
+            if (courses.Count > 1)
+            {
+                ModelState.AddModelError("CourseShortName", $"Bezeichnung nicht eindeutig. Es existieren {courses.Count} Lehrveranstaltungen mit dieser Bezeichnung");
+                return View(model);
+            }
+
+            var host = GetCurrentUser();
+            var course = courses.First();
+
+            var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+
+            if (subscription != null)
+            {
+                ModelState.AddModelError("CourseShortName", "Ist bereits in dieser Lehrveranstaltung eingetragen.");
+                return View(model);
+            }
+
+            subscription = new OccurrenceSubscription();
+            subscription.TimeStamp = DateTime.Now;
+            subscription.UserId = model.User.Id;
+            subscription.OnWaitingList = false;
+            subscription.Occurrence = course.Occurrence;
+            course.Occurrence.Subscriptions.Add(subscription);
+
+            // wenn es ein Wahlverfahren gibt, dann als Prio 1
+            var lottery =
+                Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+            if (lottery != null)
+            {
+                subscription.Priority = 1;
+
+                var game = lottery.Games.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+                if (game == null)
+                {
+                    game = new LotteryGame
+                    {
+                        Lottery = lottery,
+                        UserId = subscription.UserId,
+                        AcceptDefault = false,
+                        CoursesWanted = lottery.MaxConfirm,
+                        Created = DateTime.Now,
+                        LastChange = DateTime.Now
+                    };
+                    lottery.Games.Add(game);
+                }
+            }
+
+            Db.SaveChanges();
+
+            // Bei Erfolg Mail versenden
+            var mailService = new SubscriptionMailService();
+            mailService.SendSubscriptionEMail(course, subscription, host);
+
+           
 
 
-            return RedirectToAction("CoursePlan", new {id = model.User.Id});
+            return RedirectToAction("CoursePlan", new {id = model.User.Id, semId = semester.Id });
         }
 
 
@@ -792,28 +803,48 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
             var semester = SemesterService.GetSemester(model.SemesterName);
 
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(x =>
-                x.ShortName.Equals(model.CourseShortName) &&
-                x.SemesterGroups.Any(g =>
-                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id));
-
-            var host = GetCurrentUser();
-
-            if (course != null)
+            if (semester == null)
             {
-                var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
-
-                if (subscription != null)
-                {
-                    var subService = new SubscriptionService(Db);
-                    subService.DeleteSubscription(subscription);
-
-                    var mailService = new SubscriptionMailService();
-                    mailService.SendSubscriptionEMail(course, model.User.Id, host);
-                }
+                ModelState.AddModelError("SemesterName", "Es existiert kein Semester mit dieser Bezeichnung");
+                return View(model);
             }
 
-            return RedirectToAction("CoursePlan", new { id = model.User.Id });
+
+            var courses = Db.Activities.OfType<Course>().Where(x =>
+                x.ShortName.Equals(model.CourseShortName.Trim()) &&
+                x.SemesterGroups.Any(g =>
+                    g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList();
+
+            if (!courses.Any())
+            {
+                ModelState.AddModelError("CourseShortName", "Es existiert keine Lehrveranstaltung mit dieser Bezeichnung");
+                return View(model);
+            }
+
+            if (courses.Count > 1)
+            {
+                ModelState.AddModelError("CourseShortName", $"Bezeichnung nicht eindeutig. Es existieren {courses.Count} Lehrveranstaltungen mit dieser Bezeichnung");
+                return View(model);
+            }
+
+            var host = GetCurrentUser();
+            var course = courses.First();
+
+            var subscription = course.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(model.User.Id));
+
+            if (subscription == null)
+            {
+                ModelState.AddModelError("CourseShortName", "Ist in dieser Lehrveranstaltung nicht eingetragen.");
+                return View(model);
+            }
+
+            var subService = new SubscriptionService(Db);
+            subService.DeleteSubscription(subscription);
+
+            var mailService = new SubscriptionMailService();
+            mailService.SendSubscriptionEMail(course, model.User.Id, host);
+
+            return RedirectToAction("CoursePlan", new { id = model.User.Id, semId=semester.Id });
         }
 
 

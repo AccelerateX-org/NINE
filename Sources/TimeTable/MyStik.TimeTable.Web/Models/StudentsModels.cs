@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Web;
 using MyStik.TimeTable.Data;
 
@@ -240,9 +241,38 @@ namespace MyStik.TimeTable.Web.Models
 
         public ApplicationUser User { get; set; }
 
+        [Display(Name = "Bezeichnung Semester")]
         public string SemesterName { get; set; }
 
+        [Display(Name="Kurzname der Lehrveranstaltung")]
         public string CourseShortName { get; set; }
+    }
+
+    public class StudentDetailViewModel
+    {
+        public StudentDetailViewModel()
+        {
+            Semester = new List<StudentSemesterViewModel>();
+        }
+
+        public Student Student { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public List<StudentSemesterViewModel> Semester { get; set; }
+
+    }
+
+    public class StudentSemesterViewModel
+    {
+        public StudentSemesterViewModel()
+        {
+            Courses = new List<Course>();
+        }
+
+        public Semester Semester { get; set; }
+
+        public List<Course> Courses { get; set; }
     }
 
 }

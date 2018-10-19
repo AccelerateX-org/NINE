@@ -2,6 +2,15 @@
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CourseSummaryModel
 
+@{
+    var linkDescription = string.Format("desc{0}", Model.Course.Id);
+    var linkDates = string.Format("dates{0}", Model.Course.Id);
+    var linkFit = string.Format("fit{0}", Model.Course.Id);
+    var linkNonFit = string.Format("nonfit{0}", Model.Course.Id);
+    var linkConflicts = string.Format("conflicts{0}", Model.Course.Id);
+
+}
+
 <div class="list-group-item">
     <h5 class="list-group-item-heading">
         @if (Model.ShowFaculty)
@@ -15,6 +24,22 @@
         <div class="col-md-5">
             <ul class="fa-ul">
                 <li>
+                    <i class="fa-li fa fa-info-circle"></i>
+                    @if (string.IsNullOrEmpty(Model.Course.Description))
+                    {
+                        <i>keine Beschreibung vorhanden</i>
+                    }
+                    else
+                    {
+                        <a href="#@linkDescription" data-toggle="collapse">Beschreibung</a>
+                        <div class="collapse" id="@linkDescription">
+                            <div class="panel panel-default">
+                                @Html.Raw(Model.Course.Description)
+                            </div>
+                        </div>
+                    }
+                </li>
+                <li>
                     <i class="fa-li fa fa-user-md"></i>
                     @if (Model.Lecturers.Any())
                     {
@@ -26,18 +51,21 @@
                     }
                 </li>
                 <li><i class="fa-li fa fa-group"></i>@Html.GroupList(Model.Course.SemesterGroups)</li>
-                <li><i class="fa-li fa fa-calendar"></i>@Html.DateList(Model.Dates)</li>
                 <li>
-                    <i class="fa-li fa fa-university"></i>
-                    @if (Model.Rooms.Any())
+                    <i class="fa-li fa fa-calendar"></i>
+                    @if (Model.Dates.Count == 1)
                     {
-                        @Html.RoomList(Model.Rooms)
+                        <a href="#@linkDates" data-toggle="collapse">@Html.Date(Model.Dates.First()) [@Html.RoomList(Model.Rooms, showLinks:false)]</a>
                     }
                     else
                     {
-                        <i>Keine Raumangaben verfügbar</i>
+                        <a href="#@linkDates" data-toggle="collapse">
+                            insgesamt @Model.Course.Dates.Count Termine
+                        </a>
                     }
-
+                    <div class="collapse" id="@linkDates">
+                        @Html.DateListWithRooms(Model.Course.Dates)
+                    </div>
                 </li>
             </ul>
         </div>

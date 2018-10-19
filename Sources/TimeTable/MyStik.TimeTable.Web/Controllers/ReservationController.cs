@@ -43,9 +43,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 rm.FirstDate = res.Dates.OrderBy(x => x.Begin).FirstOrDefault();
                 rm.LastDate = res.Dates.OrderByDescending(x => x.Begin).FirstOrDefault();
 
-                var summary = courseService.GetCourseSummary(res);
-                rm.Hosts = summary.Lecturers;
-                rm.Rooms = summary.Rooms;
+                var lectures =
+                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == res.Id)).ToList();
+
+                var rooms =
+                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == res.Id)).ToList();
+
+                rm.Hosts = lectures;
+                rm.Rooms = rooms;
 
 
                 model.Reservations.Add(rm);

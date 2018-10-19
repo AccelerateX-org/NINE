@@ -61,7 +61,7 @@
                             {
                                 if (Model.FutureSubCount >= maxFutureSubscriptions)
                                 {
-                                    <a class="list-group-item" href="@Url.Action("SubscribeDate", new {id = date.Date.Id})">
+                                    <div class="list-group-item disabled">
                                         <div class="list-group-item-heading">
                                             <h5>@Html.TimeSpanWithDate(date.Date) - nicht verfügbar</h5>
                                         </div>
@@ -82,7 +82,7 @@
                                                 }
                                             </ul>
                                         </div>
-                                    </a>
+                                    </div>
                                 }
                                 else
                                 {

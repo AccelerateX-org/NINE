@@ -12,7 +12,6 @@
             <th>Studiengang</th>
             <th>Studienbeginn</th>
             <th>@ViewBag.CurrentSemester.Name</th>
-            <th>@ViewBag.LastSemester.Name</th>
             <th></th>
         </tr>
         </thead>
@@ -30,7 +29,7 @@
                     
                 }
                 <td>
-                    <a href="@Url.Action("CoursePlan", "Students", new {id = user.User.Id})">@user.User.LastName</a>
+                    <a href="@Url.Action("Details", "Students", new {id = user.User.Id})">@user.User.LastName</a>
                 </td>
                 <td>@user.User.FirstName</td>
                 @if (user.Student != null)
@@ -52,7 +51,6 @@
                     <td></td>
                 }
                 <td>@user.CurrentCourses.Count</td>
-                <td>@user.LastCourses.Count</td>
                 <td>
                     <a href="mailto:@user.User.Email" class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i> E-Mail senden</a>
                 </td>

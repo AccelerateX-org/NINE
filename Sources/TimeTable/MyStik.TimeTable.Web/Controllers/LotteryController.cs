@@ -505,7 +505,7 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var occurrence in lottery.Occurrences)
             {
                 var actSummary = actService.GetSummary(occurrence);
-                var courseSummary = courseService.GetCourseSummary(actSummary.Activity);
+                var courseSummary = courseService.GetCourseSummary(actSummary.Activity as Course);
 
                 model.PotElements.Add(new LotteryLotPotCourseModel
                 {
@@ -1974,6 +1974,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Reihenfolge = Priorität
             // Vergabe der Punkte über den Lapcount - keine Budgets
+            var logger = LogManager.GetLogger("SubscribeActivity");
+
             var i = 0;
             foreach (var courseId in courseIds)
             {
@@ -1991,11 +1993,14 @@ namespace MyStik.TimeTable.Web.Controllers
                     subscription.Occurrence = course.Course.Occurrence;
 
                     Db.Subscriptions.Add(subscription);
+
                 }
 
                 i++;
                 subscription.Priority = i;      // Punkteumrechnung kommt später
 
+                logger.InfoFormat("{0} ({1}) by [{2}]: for lottery {3} with prio {4}",
+                    course.Course.Name, course.Course.ShortName, User.Identity.Name, lottery.Name, subscription.Priority.Value);
             }
 
             Db.SaveChanges();

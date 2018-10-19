@@ -1358,6 +1358,11 @@
             <param name="UserId"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.OccupanciesController.ByOrg(MyStik.TimeTable.Web.Api.Controller.OccupancyRequestModel)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.RoomController">
             <summary>
             
@@ -1526,6 +1531,11 @@
             </summary>
         </member>
         <member name="M:MyStik.TimeTable.Web.Api.DTOs.BaseDto.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.BaseDto.Id">
             <summary>
             
             </summary>
@@ -1959,6 +1969,41 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Subjects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.OccupancyDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.OccupancyDto.Room">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.OccupancyDto.Current">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.OccupancyDto.Next">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ReservationDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ReservationDto.Begin">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ReservationDto.End">
             <summary>
             
             </summary>
@@ -8430,12 +8475,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.Rooms">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.GroupList(System.Nullable{System.Guid},System.Guid,System.Boolean)">
             <summary>
             
@@ -8564,13 +8603,6 @@
             </summary>
             <param name="semGroupId"></param>
             <param name="compact"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.CourseListByRoom(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="roomId"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.List">
@@ -9823,7 +9855,14 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.StudentsController.CoursePlan(System.String)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.StudentsController.Details(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.StudentsController.CoursePlan(System.String,System.Guid)">
             <summary>
             
             </summary>
@@ -10513,6 +10552,14 @@
             <param name="until"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.Date(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Web.Models.CourseDateModel)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="dates"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Web.Models.CourseDateModel})">
             <summary>
             
@@ -10522,6 +10569,14 @@
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.ActivityDate})">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="dates"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.DateListWithRooms(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.ActivityDate})">
             <summary>
             
             </summary>
@@ -12107,6 +12162,11 @@
         <member name="P:MyStik.TimeTable.Web.Models.CourseDateModel.DefaultDate">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CourseDateModel.Dates">
+            <summary>
+            Liste der konkreten Termine
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.CourseDateModel.Rooms">
@@ -21165,13 +21225,6 @@
             <param name="searchString"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Services.CourseService.CreateCourseSummary(MyStik.TimeTable.Data.Course)">
-            <summary>
-            
-            </summary>
-            <param name="course"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Services.CourseService.DeleteAllDates(System.Guid)">
             <summary>
             
@@ -21185,24 +21238,11 @@
             <param name="courseId"></param>
             <param name="dateTime"></param>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Services.CourseService.GetCourseSummary(MyStik.TimeTable.Data.Activity)">
+        <member name="M:MyStik.TimeTable.Web.Services.CourseService.GetCourseSummary(MyStik.TimeTable.Data.Course)">
             <summary>
             
             </summary>
             <param name="course"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.CourseSummaryService.#ctor(MyStik.TimeTable.Data.TimeTableDbContext)">
-            <summary>
-            
-            </summary>
-            <param name="db"></param>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.CourseSummaryService.GetCourseSummary(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Services.CurriculumService">

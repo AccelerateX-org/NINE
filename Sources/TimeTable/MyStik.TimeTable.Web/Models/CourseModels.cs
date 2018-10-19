@@ -238,6 +238,7 @@ namespace MyStik.TimeTable.Web.Models
         {
             Rooms = new List<Room>();
             Lecturers = new List<OrganiserMember>();
+            Dates = new List<ActivityDate>();
         }
 
         /// <summary>
@@ -259,6 +260,11 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public DateTime DefaultDate { get; set; }
+
+        /// <summary>
+        /// Liste der konkreten Termine
+        /// </summary>
+        public List<ActivityDate> Dates { get; set; }
 
         /// <summary>
         /// 
