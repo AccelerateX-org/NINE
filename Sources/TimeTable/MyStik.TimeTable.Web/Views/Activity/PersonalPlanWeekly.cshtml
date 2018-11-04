@@ -13,21 +13,15 @@
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>
-                        <span class="caption-subject bold uppercase"> Mein Wochenplan (<strong>@Model.Semester.Name</strong>)</span>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
+                        <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-danger btn-sm"><i class="fa fa-pencil"></i> ändern</a>
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </div>
-                    <div class="actions">
-                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;"></a>
-                        <a href="@Url.Action("PersonalSchedule", "Print")"
-                           onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=500,toolbar=0,resizable=1'); return false;"
-                           class="btn btn-circle btn-icon-only btn-default"><i class="fa fa-print"></i></a>
-                    </div>
+                    </h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     <div id="calendar" class="has-toolbar">
                     </div>
                 </div>

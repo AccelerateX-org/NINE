@@ -6,6 +6,8 @@ namespace MyStik.TimeTable.Data
 {
     /// <summary>
     /// Der Modulbereich
+    /// Es unterteilt das Modul in einzelne Anforderungen
+    /// welche jedes für sich ECTS bringt
     /// </summary>
     public class CurriculumCriteria
     {
@@ -40,6 +42,9 @@ namespace MyStik.TimeTable.Data
         /// Nummer des Fachsemesters
         /// </summary>
         public int Term { get; set; }
+
+        // TODO
+        // double ECTS
 
         /// <summary>
         /// Kurzbezeichnung, z.B. GS

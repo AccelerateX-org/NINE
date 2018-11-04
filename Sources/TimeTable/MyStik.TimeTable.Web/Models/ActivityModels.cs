@@ -306,7 +306,20 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<OccurrenceSubscription> Subscriptions => Activity.Occurrence.Subscriptions;
+        public ICollection<OccurrenceSubscription> Subscriptions
+        {
+            get
+            {
+                if (Activity.Occurrence != null)
+                {
+                    return Activity.Occurrence.Subscriptions;
+                }
+                else
+                {
+                    return new List<OccurrenceSubscription>();
+                }
+            }
+        }
 
         /// <summary>
         /// 

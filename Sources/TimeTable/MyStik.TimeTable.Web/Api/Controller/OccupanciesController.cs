@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using MyStik.TimeTable.Web.Api.DTOs;
-using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
@@ -49,15 +46,17 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 occDto.Room.Number = room.Number;
 
                 // nächste Belegung
-                var nextDate = room.Dates.FirstOrDefault(x => x.Begin > from);
+                var nextDate = room.Dates.OrderBy(x => x.Begin).FirstOrDefault(x => x.Begin > from);
                 if (nextDate != null)
                 {
-                    var resDto = new ReservationDto();
-                    resDto.Begin = nextDate.Begin;
-                    resDto.End = nextDate.End;
-                    resDto.Name = nextDate.Activity.Name;
-                    resDto.ShortName = nextDate.Activity.ShortName;
-                    
+                    var resDto = new ReservationDto
+                    {
+                        Begin = nextDate.Begin,
+                        End = nextDate.End,
+                        Name = nextDate.Activity.Name,
+                        ShortName = nextDate.Activity.ShortName
+                    };
+
 
                     occDto.Next.Add(resDto);
                 }

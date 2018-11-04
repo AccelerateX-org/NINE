@@ -1,0 +1,51 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+@{
+    ViewBag.Title = "Studienplan";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Studienplan @Model.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    @foreach (var module in Model.Modules)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>@module.Name</h4>
+                    </div>
+                    <div class="list-group">
+                        @foreach (var subject in module.Subjects)
+                        {
+                        <div class="list-group-item">
+                            <span class="badge badge-info">@subject.Term Semester</span>
+                            <span class="badge badge-success">@subject.Ects ECTS</span>
+                            <div class="list-group-item-heading">
+                                <h5>@subject.Name</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                <ul>
+                                    @foreach (var option in subject.ContentModules)
+                                    {
+                                        <li>@option.Number</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+

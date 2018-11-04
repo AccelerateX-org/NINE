@@ -81,7 +81,7 @@
                     </h4>
                 </div>
                 <div class="list-group">
-                    <a href="@Url.Action("Index", "Planer", new {semId = Model.Semester.Id})" class="list-group-item">
+                    <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId=Model.Student.Curriculum.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             Nach Studienplan
                         </h5>

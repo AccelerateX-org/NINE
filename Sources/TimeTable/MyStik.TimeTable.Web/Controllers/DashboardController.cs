@@ -47,7 +47,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         return RedirectToAction("Change", "Subscription");
                     }
-                    return View("DashboardStudentNew", CreateDashboardModelStudent(userRight));
+                    return View("DashboardStudent", CreateDashboardModelStudent(userRight));
                 }
 
                 case MemberState.Staff:

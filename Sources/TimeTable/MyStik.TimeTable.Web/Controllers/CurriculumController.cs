@@ -59,6 +59,22 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Scheme(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(model);
+        }
+
 
         /// <summary>
         /// 
@@ -955,145 +971,70 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Import(CurriculumImportModel model)
+        public ActionResult Import(CurriculumImportModel model, string orgName, string currName)
         {
             string tempFile = Path.GetTempFileName();
 
             // Speichern der Config-Dateien
             model.AttachmentStructure?.SaveAs(tempFile);
 
+            var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(orgName));
+            var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(currName));
+
             var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
+
+            var i = 0;
 
             foreach (var line in lines)
             {
-                var words = line.Split(';');
-                var orgName = words[0].Trim();
-                var curName = words[1].Trim();
-                var pckName = words[2].Trim();
-                var optName = words[3].Trim();
-                var reqName = words[4].Trim();
-                var reqEcts = int.TryParse(words[5], out var result) ? result : 0;
-                var critName = words[6].Trim();
-                var critTerm = int.TryParse(words[7], out var result2) ? result2 : 0;
-                var subName = words[8].Trim();
-                var subLVs = words[9].Trim();
-                var subExams = words[10].Trim();
-
-                var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(orgName));
-
-                var cur = org?.Curricula.SingleOrDefault(x => x.ShortName.Equals(curName));
-                if (cur == null)
-                    continue;
-
-                var pck = cur.Packages.SingleOrDefault(x => x.Name.Equals(pckName));
-                if (pck == null)
+                if (i > 0)
                 {
-                    pck = new CurriculumPackage
+                    var words = line.Split(';');
+                    var moduleName = words[0].Trim();
+                    var weight = double.TryParse(words[1], out var result) ? result : 1;
+                    var subjectName = words[2].Trim();
+                    var subjectTerm = int.TryParse(words[3], out var result2) ? result2 : 0;
+                    var subjectEcts = double.TryParse(words[4], out var result3) ? result3 : 0;
+                    var optionNumber = words[5].Trim();
+                    var optionTags = words[6].Trim();
+
+                    var module = curr.Modules.SingleOrDefault(x => x.Name.Equals(moduleName));
+                    if (module == null)
                     {
-                        Name = pckName,
-                        Curriculum = cur,
-                    };
-                    cur.Packages.Add(pck);
-                }
-
-                var option = pck.Options.SingleOrDefault(x => x.Name.Equals(optName));
-                if (option == null)
-                {
-                    option = new PackageOption
-                    {
-                        Name = optName,
-                        Package = pck,
-                    };
-
-                    pck.Options.Add(option);
-                }
-
-                var req = option.Requirements.SingleOrDefault(x => x.Name.Equals(reqName));
-                if (req == null)
-                {
-                    req = new CurriculumRequirement
-                    {
-                        Option = option,
-                        Name = reqName
-                    };
-                    option.Requirements.Add(req);
-                }
-
-                // ECTS nur setzen, wenn größer als 0
-                if (reqEcts > 0)
-                    req.ECTS = reqEcts;
-
-                var crit = req.Criterias.SingleOrDefault(x => x.Name.Equals(critName));
-                if (crit == null)
-                {
-                    crit = new CurriculumCriteria
-                    {
-                        Name = critName,
-                        Requirement = req
-                    };
-
-                    req.Criterias.Add(crit);
-                }
-
-                // Semester nur wenn größer als 0
-                if (critTerm > 0)
-                    crit.Term = critTerm;
-
-                // Module => suchen und akkreditieren
-                // innerhalb der Module noch die Infos setzen
-
-                // Modul in den Akkreditierungen suchen
-                // wenn keine Akkreditierung vorhanden, dann
-                // Modul anlegen und automatisch akkreditieren
-                // Aufräumen ist spezielle Adminaufgabe
-
-                // gibt es das Modul schon als Akkreditierung in diesem Studiengang?
-                var allAccs = Db.Accreditations.Where(x => x.Criteria.Requirement.Option.Package.Curriculum.Id == cur.Id && x.Module.Name.Equals(subName)).ToList();
-                if (!allAccs.Any())
-                {
-                    // Modul anlegen
-                    var module = new CurriculumModule();
-                    module.Name = subName;
-                    // LVs und Prüfungen
-
-                    if (!string.IsNullOrEmpty(subLVs))
-                    {
-                        var lvs = subLVs.Split(',');
-
-                        foreach (var lv in lvs)
+                        module = new CertificateModule
                         {
-                            var c = new ModuleCourse();
-                            c.Name = lv;
-
-                            module.ModuleCourses.Add(c);
-                            Db.ModuleCourses.Add(c);
-                        }
+                            Name = moduleName,
+                            Weight = weight
+                        };
+                        curr.Modules.Add(module);
                     }
 
-
-                    if (!string.IsNullOrEmpty(subExams))
+                    var subject = module.Subjects.FirstOrDefault(x => x.Name.Equals(subjectName));
+                    if (subject == null)
                     {
-                        var exs = subExams.Split(',');
-
-                        foreach (var ex in exs)
+                        subject = new CertificateSubject
                         {
-                            var c = new ModuleExam();
-                            c.ExternalId = ex;
-
-                            module.ModuleExams.Add(c);
-                            Db.ModuleExams.Add(c);
-                        }
+                            Name = subjectName,
+                            Term = subjectTerm,
+                            Ects = subjectEcts
+                        };
+                        module.Subjects.Add(subject);
                     }
 
-                    Db.CurriculumModules.Add(module);
+                    var option = subject.ContentModules.SingleOrDefault(x => x.Number.Equals(optionNumber));
+                    if (option == null)
+                    {
+                        option = new ModuleAccreditation
+                        {
+                            Number = optionNumber,
+                            IsMandatory = true,
+                        };
 
-                    // Akkreditierung anlegen
-                    var acc = new ModuleAccreditation();
-                    acc.Module = module;
-                    acc.Criteria = crit;
-
-                    Db.Accreditations.Add(acc);
+                        subject.ContentModules.Add(option);
+                    }
                 }
+
+                i++;
             }
 
 

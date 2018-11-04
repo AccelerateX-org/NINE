@@ -487,6 +487,9 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ICollection<Guid> RoomIds { get; set; }
+
+        [AllowHtml]
+        public string Description { get; set; }
     }
 
     /// <summary>
@@ -928,6 +931,11 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
         /// 

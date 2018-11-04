@@ -30,6 +30,16 @@
                         foreach (var slot in date.Date.Slots)
                         {
                             <tr>
+                                <td>
+                                    @if (slot.Occurrence.IsAvailable)
+                                    {
+                                        <i class="fa fa-unlock"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-lock"></i>
+                                    }
+                                </td>
                                 <td>@Html.TimeSpanWithDate(slot)</td>
                                 <td>
                                     @foreach (var subscription in slot.Occurrence.Subscriptions)

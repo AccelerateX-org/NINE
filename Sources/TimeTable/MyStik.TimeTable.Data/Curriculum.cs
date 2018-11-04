@@ -88,6 +88,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Inhaltliche Struktur
+        /// veraltet
         /// </summary>
         public virtual ICollection<CurriculumChapter> Chapters { get; set; }
 
@@ -95,7 +96,14 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Pakete
         /// Pflicht, WPM, Absarbeit
+        /// veraltet
         /// </summary>
         public virtual ICollection<CurriculumPackage> Packages { get; set; }
+
+        /// <summary>
+        /// Die Module nach SPO
+        /// Falls nötig nur die abstrakten Bezeichnungen
+        /// </summary>
+        public virtual ICollection<CertificateModule> Modules { get; set; }
     }
 }

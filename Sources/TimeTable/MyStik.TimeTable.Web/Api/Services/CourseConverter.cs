@@ -84,6 +84,8 @@ namespace MyStik.TimeTable.Web.Api.Services
             var courseDate = new CourseDateDto
             {
                 Id = activityDate.Id,
+                From = activityDate.Begin,
+                Until = activityDate.End,
                 Begin = activityDate.Begin.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z"),
                 End = activityDate.End.ToUniversalTime().ToString(@"yyyyMMdd\THHmmss\Z"),
                 IsCanceled = activityDate.Occurrence.IsCanceled,

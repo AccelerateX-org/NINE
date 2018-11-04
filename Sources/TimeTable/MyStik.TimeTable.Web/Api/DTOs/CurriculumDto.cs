@@ -192,6 +192,56 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
     #endregion
 
+    #region Studienplan
+
+    public class CurriculumSchemeSemesterDto
+    {
+        public CurriculumSchemeSemesterDto()
+        {
+            Modules = new List<CurriculumSchemeModuleDto>();
+        }
+
+        public int Term { get; set; }
+
+        public List<CurriculumSchemeModuleDto> Modules { get; }
+    }
+
+    public class CurriculumSchemeModuleDto : NamedDto
+    {
+        public CurriculumSchemeModuleDto()
+        {
+            Subjects = new List<CurriculumSchemeSubjectDto>();
+        }
+
+        public List<CurriculumSchemeSubjectDto> Subjects { get; }
+
+    }
+
+    public class CurriculumSchemeSubjectDto : NamedDto
+    {
+        public CurriculumSchemeSubjectDto()
+        {
+            Options = new List<CurriculumSchemeOptionDto>();
+        }
+
+        public double ECTS { get; set; }
+
+        public List<CurriculumSchemeOptionDto> Options { get; }
+
+    }
+
+    /// <summary>
+    /// Hier steckt dann die ModulID drin, die zur Modulbeschreibung führt
+    /// </summary>
+    public class CurriculumSchemeOptionDto : NamedDto
+    {
+        public string Number { get; set; }
+        public bool IsMandatory { get; set; }
+    }
+
+
+    #endregion
+
 
 
 }

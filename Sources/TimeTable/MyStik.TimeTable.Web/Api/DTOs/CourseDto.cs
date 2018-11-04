@@ -75,6 +75,16 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// <summary>
         /// 
         /// </summary>
+        public DateTime From { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime Until { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string Title { get; set; }
 
         /// <summary>
@@ -242,37 +252,4 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// </summary>
         public string TimeEnd { get; set; }
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class ModuleDto : NamedDto
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CurriculumDto Curriculum { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double Ects { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double UsCredits { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double Sws { get; set; }
-
-    }
-
 }

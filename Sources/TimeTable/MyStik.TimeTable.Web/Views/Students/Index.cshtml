@@ -66,13 +66,11 @@
                             <h5><i class="fa fa-pencil"></i> Nach Kursbelegung in Semestergruppen</h5>
                         </div>
                     </a>
-                    @*
-        <a class="list-group-item" href="@Url.Action("Union")">
-            <div class="list-group-item-heading">
-                <h5>Fachschaft</h5>
-            </div>
-        </a>
-                    *@
+                    <a class="list-group-item" href="@Url.Action("Index", "Union")">
+                        <div class="list-group-item-heading">
+                            <h5>Fachschaft</h5>
+                        </div>
+                    </a>
                     @if (ViewBag.UserRight.IsStudentAdmin)
                     {
                         <a class="list-group-item" href="@Url.Action("Invitation")">

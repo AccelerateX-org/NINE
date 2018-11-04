@@ -54,7 +54,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 model.OccurrenceId = occ.Id;
                 model.Name = summary.Name;
-                model.Subject = string.Format("[{0}]", summary.Name);
+                model.Subject = $"[{summary.Name}]";
                 model.ReceiverCount = subscribers.Count;
             }
 

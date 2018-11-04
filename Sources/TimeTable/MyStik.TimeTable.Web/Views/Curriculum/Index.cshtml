@@ -52,32 +52,18 @@
                         </h4>
                     </div>
                     <div class="list-group">
-                        <a href="@Url.Action("Structure", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
+                        <a href="@Url.Action("Scheme", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
                             <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-map-signs"></i> Inhaltliche Struktur
+                                <i class="fa fa-fw fa-map-signs"></i> Studienplan
                             </h5>
-                            <p class="list-group-item-text">Zusammenfassung von Modulen nach inhaltlichen Aspekten sowie Wahlmöglichkeiten</p>
-                        </a>
-                        <a href="@Url.Action("Terms", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-road"></i> Zeitliche Struktur
-                            </h5>
-                            <p class="list-group-item-text">Anordnung der Module entlang der Semester</p>
-                        </a>
-                        <a href="@Url.Action("Milestones", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-legal"></i> Meilensteine
-                            </h5>
-                            <p class="list-group-item-text">Vorrückens- und andere Regelungen</p>
+                            <p class="list-group-item-text">Aufbereitung des Studienplans nach Semestern</p>
                         </a>
                         <a href="@Url.Action("Modules", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item">
                             <h5 class="list-group-item-heading">
                                 <i class="fa fa-fw fa-book"></i> Modulkatalog
                             </h5>
-                            <p class="list-group-item-text">Liste aller Module</p>
+                            <p class="list-group-item-text">Liste aller Module des Studiengangs</p>
                         </a>
-
-
                         <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" class="list-group-item" target="_blank">
                             <h5 class="list-group-item-heading">
                                 <i class="fa fa-fw fa-file-pdf-o"></i> Dokumente <i class="fa fa-external-link"></i>

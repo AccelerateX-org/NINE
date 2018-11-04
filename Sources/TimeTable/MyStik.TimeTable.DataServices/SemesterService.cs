@@ -346,5 +346,12 @@ namespace MyStik.TimeTable.DataServices
                 .OrderByDescending(x => x.StartCourses).FirstOrDefault();
         }
 
+        public int GetSemesterIndex(Semester semester)
+        {
+            var current = GetSemester(DateTime.Today);
+
+            return _db.Semesters
+                .Count(x => x.StartCourses >= semester.StartCourses && x.StartCourses <= current.StartCourses);
+        }
     }
 }

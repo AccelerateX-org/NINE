@@ -1,48 +1,89 @@
-﻿
+﻿@using MyStik.TimeTable.Web.Models
+
 @{
-    ViewBag.Title = "Startseite Fachschaft";
+    ViewBag.Title = "Fachschaft";
 }
 
-<h2>Die Startseite meiner Fachschaft (@ViewBag.Union.ShortName)</h2>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            @if (ViewBag.UserRight.IsOrgAdmin)
-            {
-            <div class="list-group">
-                <a href="#" class="list-group-item disabled">
-                    <strong>Admin Bereich</strong>
-                </a>
-                <a href="#" class="list-group-item disabled">
-                    <i class="fa fa-glass fa-fw"></i> Veranstaltungen
-                </a>
-                <a href="#" class="list-group-item disabled">
-                    <i class="fa fa-envelope fa-fw"></i> Mailverteiler
-                </a>
-                <a href="@Url.Action("Newsletter", new {id = ViewBag.Union.Id})" class="list-group-item">
-                    <i class="fa fa-newspaper-o fa-fw"></i> Newsletter
-                </a>
-                <a href="@Url.Action("Member", new {id = ViewBag.Union.Id})" class="list-group-item">
-                    <i class="fa fa-group fa-fw"></i> Wer ist dabei
-                </a>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Öffentlicher Bereich</h4>
+                </div>
+                <div class="list-group">
+                    <a class="list-group-item" href="@Url.Action("Organiser", "Event", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">
+                        <h5 class="list-group-item-heading"><i class="fa fa-calendar"></i> Veranstaltungen</h5>
+                        <div class="list-group-item-text">Sitzungen, Treffen, Events</div>
+                    </a>
+                    @*@
+                    <a class="list-group-item" href="@Url.Action("Newsletter", new {id=Model.Organiser.Id})">
+                        <h5 class="list-group-item-heading"><i class="fa fa-envelope-o"></i> Newsletter</h5>
+                        <div class="list-group-item-text">Nachrichtenverteiler zu verschiedenen Themen</div>
+                    </a>
+                    *@
+                    @if (ViewBag.UnionUserRight.User.MemberState == MemberState.Student)
+                    {
+                        if (ViewBag.UnionUserRight.Member == null)
+                        {
+                            <a class="list-group-item" href="@Url.Action("GetMember", new {id = Model.Organiser.Id})">
+                                <h5 class="list-group-item-heading"><i class="fa fa-pencil"></i> Eintragen</h5>
+                                <div class="list-group-item-text">Zugang beantragen</div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="list-group-item" href="@Url.Action("WithdrawMember", new {id = ViewBag.UnionUserRight.Member.Id})">
+                                <h5 class="list-group-item-heading"><i class="fa fa-times text-danger"></i> Austragen
+                                </h5>
+                                @if (ViewBag.UnionUserRight.Member.IsAssociated)
+                                {
+                                    <div class="list-group-item-text">Status: Zugang beantragt</div>
+                                }
+                            </a>
+
+                        }
+                    }
+                </div>
             </div>
+        </div>
+        @if (ViewBag.UnionUserRight.IsOrgAdmin)
+        {
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Interner Bereich</h4>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item" href="@Url.Action("CreateEvent", "Union")">
+                            <h5 class="list-group-item-heading"><i class="fa fa-plus"></i> Veranstaltung anlegen</h5>
+                        </a>
+                    @*
+                        <a class="list-group-item" href="@Url.Action("CreateNewsletter", "Union")">
+                            <h5 class="list-group-item-heading"><i class="fa fa-plus"></i> Newsletter anlegen</h5>
+                        </a>
+                        *@
+                    </div>
+                </div>
+            </div>
+        }
+            @if (ViewBag.FacultyUserRight.IsStudentAdmin || ViewBag.UnionUserRight.IsOrgAdmin)
+            {
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Administrativer Bereich</h4>
+                        </div>
+                        <div class="list-group">
+                            <a class="list-group-item" href="@Url.Action("Member", "Union", new {id=Model.Organiser.Id})">
+                                <h5 class="list-group-item-heading"><i class="fa fa-group"></i> Mitgliederverwaltung</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             }
         </div>
-        <div class="col-md-9">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        Infos für bestätigte Mitglieder
-                    </div>
-                    <div class="actions">
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <p>Auf dieser Seite können Infos für Mitglieder angezeigt werden. Was das sein soll? Keine Ahnung. Ideen werden jederzeit gerne entgegen genommen. Einfach einen "Fehler melden" (unten rechts).</p>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+
 
 

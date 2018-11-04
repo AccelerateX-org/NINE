@@ -21,28 +21,14 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(semId);
             var user = AppUser;
 
-            ActivityOrganiser org = null;
-            if (!orgId.HasValue)
+            var student = StudentService.GetCurrentStudent(user);
+            if (student?.FirstSemester == null || student.Curriculum == null || student.HasCompleted)
             {
-                if (user.MemberState == MemberState.Student && !User.IsInRole("SysAdmin"))
-                {
-                    var semesterGroup = semSubService.GetSemesterGroup(user.Id, semester);
-                    if (semesterGroup == null)
-                    {
-                        return RedirectToAction("Index", "Subscription");
-                    }
-                    // Wir starten mit allen Studiengängen
-                    org = semesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser;
-                }
-                else
-                {
-                    org = GetMyOrganisation();
-                }
+                return RedirectToAction("Change", "Subscription");
             }
-            else
-            {
-                org = GetOrganiser(orgId.Value);
-            }
+
+
+            ActivityOrganiser org = student.Curriculum.Organiser;
 
             var model = new PlanerGroupViewModel();
 
@@ -390,18 +376,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Search(Guid id)
         {
-            var semSubService = new SemesterSubscriptionService();
 
             var semester = SemesterService.GetSemester(id);
             var user = AppUser;
 
-            var semesterGroup = semSubService.GetSemesterGroup(user.Id, semester);
-
-            if (semesterGroup == null)
-            {
-                return RedirectToAction("Index", "Subscription");
-            }
-
+            var student = StudentService.GetCurrentStudent(user);
 
 
             var wd = new List<SelectionHelper>
@@ -416,13 +395,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.WeekDays = new SelectList(wd, "Value", "Text", "Montag");
 
+            var n = SemesterService.GetSemesterIndex(student.FirstSemester);
+
             var op = new List<SelectionHelper>
             {
-                new SelectionHelper {Text = $"Nur in meiner Semestergruppe ({semesterGroup.FullName})", Value = 1},
+                new SelectionHelper {Text = $"Nur in meinem aktuellen Semester ({n}. Semester)", Value = 1},
                 new SelectionHelper {Text =
-                    $"In meinem Studiengang ({semesterGroup.CapacityGroup.CurriculumGroup.Curriculum.ShortName})", Value = 2},
+                    $"In meinem Studiengang ({student.Curriculum.ShortName})", Value = 2},
                 new SelectionHelper {Text =
-                    $"Im gesamten Angebot meiner Fakultät ({semesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName})", Value = 3},
+                    $"Im gesamten Angebot meiner Fakultät ({student.Curriculum.Organiser.ShortName})", Value = 3},
                 new SelectionHelper {Text = "Im gesamten Angebot aller Fakultäten", Value = 4}
             };
 
@@ -447,7 +428,6 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult Search(Guid semId, int day, string from, string to, int radius)
         {
-            var semSubService = new SemesterSubscriptionService();
             var org = GetMyOrganisation();
 
             DateTime start = DateTime.Parse(from);
@@ -456,11 +436,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var semester = SemesterService.GetSemester(semId);
             var user = AppUser;
+            var student = StudentService.GetCurrentStudent(user);
 
-            var semesterGroup = semSubService.GetSemesterGroup(user.Id, semester);
+
 
             var courseService = new CourseService(Db);
-            
+
+            // Ermittlung der Semestergruppe
+            // das Fachsemester
+            var n = SemesterService.GetSemesterIndex(student.FirstSemester);
 
 
             List<Course> courses = null;
@@ -469,7 +453,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 courses = Db.Activities.OfType<Course>().Where(x =>
                         x.SemesterGroups.Any(g =>
-                            g.Id == semesterGroup.Id))
+                            g.Semester.Id == semId &&
+                            g.CapacityGroup.CurriculumGroup.Curriculum.Id == student.Curriculum.Id &&
+                            g.CapacityGroup.CurriculumGroup.Name.StartsWith(n.ToString())))
                     .ToList();
             }
             else if (radius == 2)   // nur in meinem Studiengang
@@ -477,7 +463,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 courses = Db.Activities.OfType<Course>().Where(x =>
                         x.SemesterGroups.Any(g =>
                             g.Semester.Id == semId && 
-                            g.CapacityGroup.CurriculumGroup.Curriculum.Id == semesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Id))
+                            g.CapacityGroup.CurriculumGroup.Curriculum.Id == student.Curriculum.Id))
                     .ToList();
             }
             else if (radius == 3)   // gesamt Fakultät
@@ -770,8 +756,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Courses(Guid? id)
         {
-            var semSubService = new SemesterSubscriptionService();
-
             var semester = SemesterService.GetSemester(id);
             var user = AppUser;
 
@@ -780,7 +764,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Semester = semester;
             model.User = user;
-            model.SemesterGroup = semSubService.GetSemesterGroup(model.User.Id, semester);
+            model.Student = StudentService.GetCurrentStudent(user);
 
             var courses = Db.Activities.OfType<Course>().Where(a => 
                 a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&

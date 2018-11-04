@@ -4,50 +4,45 @@
     var nStud = 0;
 }
 <div class="row">
-    <div class="col-md-12">
-        <div class="portlet light bordered">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-calendar"></i>Semestergruppen im @Model.Semester.Name
-                </div>
-            </div>
-            <div class="portlet-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div id="groupTable">
-                            <table class="table table-condensed">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Name</th>
-                                    <th>Anzahl Studierende</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var group in Model.SemesterGroups)
-                                {
-                                    nStud += group.UserIds.Count;
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <h4 class="panel-heading">
+                <i class="fa fa-calendar"></i> Semestergruppen im @Model.Semester.Name
+            </h4>
+            <div class="panel-body">
+                <div id="groupTable">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Anzahl Studierende</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var group in Model.SemesterGroups)
+                        {
+                            nStud += group.UserIds.Count;
 
-                                    <tr>
-                                        <td><input id="@group.Group.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
-                                        <td>@group.Group.FullName</td>
-                                        <td>
-                                            @group.UserIds.Count
-                                        </td>
-                                    </tr>
-                                }
-                                <tr>
-                                    <td><strong>Total</strong></td>
-                                    <td><strong>@nStud</strong></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <a class="btn btn-default" id="send" href="javascript:onSend()"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
-                        </div>
-                    </div>
+                            <tr>
+                                <td><input id="@group.Group.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
+                                <td>@group.Group.FullName</td>
+                                <td>
+                                    @group.UserIds.Count
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td><strong>@nStud</strong></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-default" id="send" href="javascript:onSend()"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 

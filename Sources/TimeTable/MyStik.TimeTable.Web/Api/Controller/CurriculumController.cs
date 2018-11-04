@@ -1,4 +1,9 @@
-﻿using MyStik.TimeTable.Web.Api.Responses;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+using MyStik.TimeTable.Web.Api.DTOs;
+using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
@@ -6,104 +11,83 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// <summary>
     /// 
     /// </summary>
+    [RoutePrefix("api/v2/curriculum")]
+
     public class CurriculumController : ApiBaseController
     {
-
-        //Fakultäts und Vorlesungs APIs
-        /// <summary>
-        /// Abfrage aller verfügbaren Fakultäten
-        /// </summary>
-        /// <returns>Liste aller verfügbaren Fakultäten</returns>
-        public FacultiesResponse GetAllFaculties()
+        [Route("{name}")]
+        public NamedDto GetCurriculumInfo(string name)
         {
-            var curriculumService = new CurriculumInfoService();
-
-            var facList = curriculumService.GetAllFaculties();
-
-            var response = new FacultiesResponse
-            {
-                Faculties = facList,
-            };
-            return response;
-
+            return new NamedDto();
         }
 
 
-        /// <summary>
-        /// Abfrage aller Studienprogramme 
-        /// </summary>
-        /// <returns>Liste aller Studienprogramme</returns>
-        public CurriculumStudyprogramsResponse GetAllStudyprograms()
+        [Route("{name}/versions")]
+        public IQueryable<NamedDto> GetCurriculumVersions(string name)
         {
-            var curriculumService = new CurriculumInfoService();
-
-            var programList = curriculumService.GetAllStudyprograms();
-
-            var response = new CurriculumStudyprogramsResponse
-            {
-                Studyprograms = programList,
-            };
-
-            return response;
+            return new List<NamedDto>().AsQueryable();
         }
 
-        /// <summary>
-        /// Abfrage aller Studiengruppen eines Studienprogramms
-        /// </summary>
-        /// <param name="StudyprogramId"> Id des Studienprograms</param>
-        /// <returns>Liste aller Studiengruppen eines Studienprogramms</returns>
-        public CurriculumStudygroupsResponse GetAllStudygroups(string StudyprogramId)
+        [Route("{name}/{version}/scheme")]
+        public IQueryable<CurriculumSchemeSemesterDto> GetCurriculumPlan(string name, string version)
         {
-            var curriculumService = new CurriculumInfoService();
+            var list = new List<CurriculumSchemeSemesterDto>();
 
-            var groupList = curriculumService.GetAllStudygroups(StudyprogramId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.ToUpper().Equals(name.Trim().ToUpper()));
 
-            var response = new CurriculumStudygroupsResponse
+            if (curr == null)
+                return list.AsQueryable();
+
+            var semesterSubjects = Db.CertificateSubjects.Where(x => x.CertificateModule.Curriculum.Id == curr.Id).GroupBy(x => x.Term).ToList();
+
+            foreach (var semester in semesterSubjects)
             {
-                Studygroups = groupList,
-            };
+                var semDto = new CurriculumSchemeSemesterDto()
+                {
+                    Term = semester.Key
+                };
 
-            return response;
+                var modules = semester.GroupBy(x => x.CertificateModule);
+                foreach (var module in modules)
+                {
+                    var moduleDto = new CurriculumSchemeModuleDto()
+                    {
+                        Name = module.Key.Name
+                    };
+
+                    foreach (var subject in module)
+                    {
+                        var subjectDto = new CurriculumSchemeSubjectDto()
+                        {
+                            Name = subject.Name,
+                            ECTS = subject.Ects
+                        };
+
+                        foreach (var contentModule in subject.ContentModules)
+                        {
+                            var optionDto = new CurriculumSchemeOptionDto()
+                            {
+                                Id = contentModule.TeachingBuildingBlock?.Id ?? Guid.Empty,
+                                Name = contentModule.TeachingBuildingBlock?.Name ?? string.Empty,
+                                Number = contentModule.Number,
+                                IsMandatory = contentModule.IsMandatory
+                            };
+
+                            subjectDto.Options.Add(optionDto);
+                        }
+
+                        moduleDto.Subjects.Add(subjectDto);
+                    }
+
+                    semDto.Modules.Add(moduleDto);
+                }
+
+                list.Add(semDto);
+            }
+
+
+            return list.AsQueryable();
         }
-        //alle Kurse einer Studiengruppe /Module
-        /// <summary>
-        /// Abfrage aller Kurse einer Studiengruppe
-        /// </summary>
-        /// <param name="StudygroupId">Id der Studiengruppe</param>
-        /// <returns>Liste aller Kurse einer Studiengruppe</returns>
-        public CurriculumStudygroupCoursesResponse GetStudygroupCourses(string StudygroupId)
-        {
-            var curriculumService = new CurriculumInfoService();
-
-            var courseList = curriculumService.GetAllStudygroupCourses(StudygroupId);
-
-            var response = new CurriculumStudygroupCoursesResponse
-            {
-                StudygroupLectures = courseList,
-            };
-
-            return response;
-        }
-
-        /// <summary>
-        /// Abfrage aller Termine eines Kurses
-        /// </summary>
-        /// <param name="LectureId">Id der Vorlesung</param>
-        /// <returns>Alle Termine einer Vorlesung</returns>
-        public CurriculumCourseDateResponse GetLectureDates(string LectureId)
-        {
-            var curriculumService = new CurriculumInfoService();
-
-            var courseList = curriculumService.GetCourseDates(LectureId);
-
-            var response = new CurriculumCourseDateResponse
-            {
-                LectureDates = courseList,
-            };
-
-            return response;
-        }
-
 
     }
 }

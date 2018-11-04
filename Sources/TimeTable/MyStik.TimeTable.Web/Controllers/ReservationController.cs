@@ -331,6 +331,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var activityDate = Db.ActivityDates.SingleOrDefault(d => d.Id == model.ActivityDateId);
 
+            activityDate.Description = model.Description;
+
             // Berechnung der neuen Zeiten
             var day = DateTime.Parse(model.NewDate);
             var from = DateTime.Parse(model.NewBegin);

@@ -1,0 +1,549 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseCreateModel2
+@{
+    ViewBag.Title = "Veranstaltung anlegen";
+}
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-events">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Neue Veranstaltung anlegen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Angaben für neue Veranstaltung</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Name">Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control  input-sm" id="Name" name="name" placeholder="Bezeichnung der Veranstaltung" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Description">Beschreibung</label>
+                            <div class="col-sm-9">
+                                <input type="text" rows="10" class="form-control  input-sm" id="Description" name="description" placeholder="Beschreibung der Lehrveranstaltung" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="DateTable">Termin(e)</label>
+                            <div class="col-sm-9">
+                                <div id="DateTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Datum</th>
+                                                <th>Von</th>
+                                                <th>Bis</th>
+                                                <th>Wdh</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <input type="text" class="form-control input-sm datepicker" id="DateDay">
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateBegin">
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateEnd">
+                                                </th>
+                                                <th>
+                                                    <input type="checkbox" class="form-control input-sm" id="DateWdh" value="">
+                                                </th>
+                                                <th>
+                                                    <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dateList"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="DozTable">Raum/Räume</label>
+                            <div class="col-sm-9">
+                                <div id="RoomTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Fakultät</th>
+                                                <th>Raumnummer</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="form-control  input-sm" id="RoomId">
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="roomList"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="cbKeepLists" type="checkbox"> Auswahl für nächste Veranstaltung beibehalten
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button class="btn btn-default" onclick="createCourse()"><i class="fa fa-save"></i> Veranstaltung anlegen</button>
+                                <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-calendar"></i>
+                        <span class="caption-subject bold uppercase"> Zuletzt von mir angelegte Veranstaltungen</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="CourseTable">
+                        <div>
+                            <i class="fa fa-spinner fa-spin text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="ConflictTable"></div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+        function onSemesterChanged() {
+            var sem = $("#SemesterId option:selected").val();
+            var curr = $("#CurriculumId option:selected").val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("GroupList", "Curriculum")',
+                data: {
+                    semId: sem,
+                    currId: curr
+                },
+                success: function(data, success, xhr) {
+                    $('#GroupId').html(data);
+                }
+            });
+        }
+
+        function onOrganiserChanged() {
+            var org = $("#OrganiserId option:selected").val();
+
+            $.ajax(
+            {
+                type: 'POST',
+                url: '@Url.Action("CurriculaList", "Curriculum")',
+                data: {
+                    orgId: org
+                },
+                success: function(data, success, xhr) {
+                    $('#CurriculumId').html(data);
+                    onSemesterChanged();
+                }
+            });
+        }
+
+        function addGroup() {
+            var groupId = $("#GroupId option:selected").val();
+
+            var semText = $("#SemesterId option:selected").text();
+            var orgText = $("#OrganiserId option:selected").text();
+            var currText = $("#CurriculumId option:selected").text();
+            var groupText = $("#GroupId option:selected").text();
+
+            $("#groupList").append("<tr id=\""
+                + groupId + "\"><td>"
+                + semText + "</td><td>"
+                + orgText + "</td><td>"
+                + currText + "</td><td>"
+                + groupText + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+                + groupId + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+        }
+
+        function addDate() {
+            var dayText = $("#DateDay").val();
+            var beginText = $("#DateBegin").val();
+            var endText = $("#DateEnd").val();
+            var isWdh = $("#DateWdh").is(':checked');
+
+            var id = 'id' + (new Date()).getTime();
+
+            $("#dateList").append("<tr id=\"" + id
+                + "\" data-date-day=\"" + dayText
+                + "\" data-date-begin=\"" + beginText
+                + "\" data-date-end=\"" + endText
+                + "\" data-date-iswdh=\"" + isWdh
+                + "\"><td>"
+                + dayText + "</td><td>"
+                + beginText + "</td><td>"
+                + endText + "</td><td>"
+                + isWdh + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+                + id + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+
+
+            checkRoomStates();
+        }
+
+
+        $(document).ready(function () {
+            $("#loading").hide();
+
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+
+            $('#DozId').autocomplete({
+                source: function(request, response) {
+                    var org = $("#OrganiserId2 option:selected").val();
+
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            name: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data, function(item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name,
+                                    value: item.name
+                                };
+                            }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) {
+
+                    var orgText = $("#OrganiserId2 option:selected").text();
+
+
+                    $("#dozList").append("<tr id=\""
+                        + ui.item.text + "\"><td>"
+                        + orgText + "</td><td>"
+                        + ui.item.value + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+                        + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+
+                },
+            });
+
+
+            $('#RoomId').autocomplete({
+                source: function(request, response) {
+                    var org = $("#OrganiserId3 option:selected").val();
+
+                    $.ajax({
+                        url: '@Url.Action("RoomListByOrg", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            number: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data, function(item) {
+
+                                return {
+                                    text: item.id,
+                                    label: item.name,
+                                    value: item.name
+                                };
+                            }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) {
+
+                    var orgText = $("#OrganiserId3 option:selected").text();
+
+
+                    $("#roomList").append("<tr id=\""
+                        + ui.item.text + "\"><td>"
+                        + orgText + "</td><td>"
+                        + ui.item.value + "</td><td id=\"state_"
+                        + ui.item.text + "\">unbekannt</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
+                        + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+
+                    checkRoomState(ui.item.text);
+                }
+            });
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("GetMyEventList", "Event")',
+                success: function (data, success, xhr) {
+                    $("#CourseTable").html(data);
+                }
+            });
+
+        });
+
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+        function checkRoomStates() {
+            var list = $("#RoomTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    checkRoomState(list[i].id);
+                }
+            }
+        }
+
+        function checkRoomState(roomId) {
+
+            var dateList = new Array();
+            var list = $("#DateTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+
+                    var elem = $("#" + list[i].id);
+
+                    dateList[i] = elem.data("date-day") + "#"
+                    + elem.data("date-begin") + "#"
+                    + elem.data("date-end") + "#"
+                    + elem.data("date-iswdh");
+                }
+
+                $("#" + roomId).addClass("info");
+                $("#state_" + roomId).innerHTML = "<i class=\"fa fa-spinner fa-spin text-muted\"></i>";
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetStates","Room")',
+                    data: {
+                        RoomId: roomId,
+                        Dates: dateList
+                    },
+                    success: function (data, success, xhr) {
+                        $("#" + roomId).removeClass("info");
+                        $("#" + roomId).removeClass("success");
+                        $("#" + roomId).removeClass("danger");
+
+                        if (data < 0) {
+                            $("#state_" + roomId).html("unbekannt");
+
+                        } else if (data == 0) {
+                            $("#" + roomId).addClass("success");
+                            $("#state_" + roomId).html("verfügbar");
+                        } else {
+                            $("#" + roomId).addClass("danger");
+                            $("#state_" + roomId).html("<button class=\"btn btn-default\" onclick=\"showConflicts('"
+                                + roomId
+                                + "')\">Konflikte <span class=\"badge\">" + data + "</span></button>");
+                        }
+                    }
+                });
+
+
+
+            }
+        }
+
+        function showConflicts(roomId) {
+            var dateList = new Array();
+            var list = $("#DateTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    var elem = $("#" + list[i].id);
+
+                    dateList[i] = elem.data("date-day") + "#"
+                    + elem.data("date-begin") + "#"
+                    + elem.data("date-end") + "#"
+                    + elem.data("date-iswdh");
+                }
+
+                $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetConflicts","Room")',
+                    data: {
+                        RoomId: roomId,
+                        Dates: dateList
+                    },
+                    success: function (data, success, xhr) {
+                        $("#ConflictTable").html(data);
+                    }
+                });
+            }
+        }
+
+
+        function createCourse() {
+
+            $("#loading").show();
+
+
+            var courseName = $("#Name").val();
+            var courseShortName = $("#ShortName").val();
+            var groupList = new Array();
+            var dozList = new Array();
+            var roomList = new Array();
+            var dateList = new Array();
+
+            var list = $("#GroupTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    groupList[i] = list[i].id;
+                }
+            }
+
+            list = $("#DozTable > table > tbody > tr").get();
+            n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    dozList[i] = list[i].id;
+                }
+            }
+
+            list = $("#RoomTable > table > tbody > tr").get();
+            n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    roomList[i] = list[i].id;
+                }
+            }
+
+            list = $("#DateTable > table > tbody > tr").get();
+            n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    var elem = $("#" + list[i].id);
+
+                    dateList[i] = elem.data("date-day") + "#"
+                    + elem.data("date-begin") + "#"
+                    + elem.data("date-end") + "#"
+                    + elem.data("date-iswdh");
+                }
+            }
+
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("CreateEvent")',
+                data: {
+                    ShortName: courseShortName,
+                    Name: courseName,
+                    GroupIds: groupList,
+                    DozIds: dozList,
+                    RoomIds: roomList,
+                    Dates: dateList
+                },
+                success: function(data, success, xhr) {
+                    $("#CourseList").append(data);
+                    $("#loading").hide();
+
+                    $("#Name").val("");
+                    $("#ShortName").val("");
+
+                    // jetzt noch Eingaben löschen oder nicht
+                    var keepLists = $("#cbKeepLists").is(':checked');
+                    if (keepLists == false) {
+                        $("#groupList").html("");
+                        $("#dozList").html("");
+                        $("#dateList").html("");
+                        $("#roomList").html("");
+                    }
+                }
+            });
+        }
+
+
+    </script>
+}

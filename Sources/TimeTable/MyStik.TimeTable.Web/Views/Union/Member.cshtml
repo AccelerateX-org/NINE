@@ -3,101 +3,178 @@
 @{
     ViewBag.Title = "Member";
     var userService = new UserInfoService();
-    var semSubService = new SemesterSubscriptionService();
+    var studentService = new StudentService();
+
+    var isAdmin = ViewBag.UnionUserRight.IsOrgAdmin || ViewBag.FacultyUserRight.IsStudentAdmin;
 }
 
-<h2>Mitglieder der Fachschaft @Model.ShortName</h2>
 
-@Html.ActionLink("zurück zur Startseite", "Index")
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
 
-<table class="table table-condensed">
-    <thead>
-    <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Rolle</th>
-        <th>Fakultät</th>
-        <th>Semestergruppe</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-        @foreach (var member in Model.Members)
-        {
-            var user = userService.GetUser(member.UserId);
-            var semGroup = semSubService.GetSemesterGroup(member.UserId, ViewBag.Semester);
 
-            if (user == null)
-            {
-                <tr>
-                    <td><i class="fa fa-ban"></i></td>
-                    <td colspan="4"></td>
-                    <td>
-                        @if (ViewBag.UserRight.IsOrgAdmin)
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mitglieder von @Model.ShortName</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Index")" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> zurück
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("Clear", new {id=Model.Id})" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Aufräumen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Mitglieder und Mitgliedsanfragen</h4>
+                </div>
+                <table class="table table-condensed" id="tabMembers">
+                    <thead>
+                        <tr>
+                            <th>Zugang</th>
+                            <th>Admin</th>
+                            <th>Name</th>
+                            <th>Studiengang</th>
+                            <th>Seit</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var member in Model.Members)
                         {
-                            <a href="@Url.Action("DeleteMember", new {id=member.Id})">Löschen</a>
-                        }
-                    </td>
-                </tr>
-            }
-            else
-            {
-                <tr>
-                    <td>
-                        @if (member.IsAdmin)
-                        {
-                            <i class="fa fa-legal"></i>
-                            if (member.IsAssociated)
+                            var user = userService.GetUser(member.UserId);
+
+                            if (user == null)
                             {
-                                <i class="fa fa-question"></i>
+                                <tr>
+                                    <td><i class="fa fa-ban"></i><span hidden="">2</span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        @if (isAdmin)
+                                        {
+                                            <a href="@Url.Action("DeleteMember", new {id=member.Id})">Löschen</a>
+                                        }
+                                    </td>
+                                </tr>
                             }
                             else
                             {
-                                <i class="fa fa-check"></i>
-                            }
-                        }
-                        else
-                        {
-                            if (member.IsAssociated)
-                            {
-                                <i class="fa fa-question"></i>
-                            }
-                            else
-                            {
-                                <i class="fa fa-check"></i>
-                            }
-                        }
-                    </td>
-                    <td>@user.FullName</td>
-                    <td>@user.MemberState</td>
-                    @if (semGroup == null)
-                    {
-                        <td colspan="2">keine Angabe für @ViewBag.Semester.Name</td>
-                    }
-                    else
-                    {
-                        <td>@semGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser.ShortName</td>
-                        <td>@semGroup.GroupName</td>
-                    }
-                    <td>@member.IsAdmin</td>
-                    <td>
-                        @if (ViewBag.UserRight.IsOrgAdmin)
-                        {
-                            <a href="@Url.Action("ConfirmMember", new {id = member.Id})">Bestätigen</a>
-                            if (member.IsAdmin)
-                            {
-                                <a href="@Url.Action("RemoveAdmin", new {id = member.Id})">Adminrechte entfernen</a>
-                            }
-                            else
-                            {
-                                <a href="@Url.Action("AddAdmin", new {id = member.Id})">Zum Admin machen</a>
-                            }
-                            <a href="@Url.Action("DeleteMember", new {id = member.Id})">Löschen</a>
-                        }
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+                                var student = studentService.GetCurrentStudent(user);
 
+                                <tr>
+                                    <td>
+                                        @if (member.IsAssociated)
+                                        {
+                                        <i class="fa fa-question"></i><span hidden="">1</span>
+                                        }
+                                        else
+                                        {
+                                        <i class="fa fa-check"></i><span hidden="">0</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (member.IsAdmin)
+                                        {
+                                            <i class="fa fa-legal"></i><span hidden="">1</span>
+                                        }
+                                        else
+                                        {
+                                            <span hidden="">0</span>
+                                        }
+                                    </td>
+
+                                    <td>@user.FullName</td>
+                                    @if (student == null)
+                                    {
+                                        <td>N.N.</td>
+                                        <td>N.N.</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@student.Curriculum.ShortName</td>
+                                        <td>@student.FirstSemester.Name</td>
+                                    }
+                                    <td>
+                                        @if (isAdmin)
+                                        {
+                                            if (member.IsAssociated)
+                                            {
+                                                <a href="@Url.Action("ConfirmMember", new {id = member.Id})" class="btn btn-default btn-xs">Zugang erteilen</a>
+                                            }
+                                            else
+                                            {
+                                                if (member.IsAdmin)
+                                                {
+                                                    <a href="@Url.Action("RemoveAdmin", new {id = member.Id})" class="btn btn-warning btn-xs">Adminrechte entfernen</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("AddAdmin", new {id = member.Id})" class="btn btn-info btn-xs">Zum Admin machen</a>
+                                                }
+                                                
+                                            }
+                                            <a href="@Url.Action("DeleteMember", new {id = member.Id})" class="btn btn-danger btn-xs">Löschen</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabMembers').DataTable({
+                pageLength: 25
+            });
+        });
+    </script>
+}

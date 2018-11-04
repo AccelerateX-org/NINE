@@ -28,6 +28,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Overview()
+        {
+            return View();
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -160,6 +160,15 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<Tag> Tags { get; set; }
 
+        public DbSet<CertificateModule> CertificateModules { get; set; }
+        public DbSet<CertificateSubject> CertificateSubjects { get; set; }
+        public DbSet<TeachingBuildingBlock> TeachingBuildingBlocks { get; set; }
+        public DbSet<TeachingForm> TeachingForms { get; set; }
+        public DbSet<TeachingUnit> TeachingUnits { get; set; }
+        public DbSet<ExaminationForm> ExaminationForms { get; set; }
+        public DbSet<ExaminationUnit> ExaminationUnits { get; set; }
+        public DbSet<Lecturer> Lecturers { get; set; }
+
 
 
         public TimeTableDbContext() : base()

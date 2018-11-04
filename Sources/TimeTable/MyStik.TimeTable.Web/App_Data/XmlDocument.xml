@@ -1138,39 +1138,6 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetAllFaculties">
-            <summary>
-            Abfrage aller verfügbaren Fakultäten
-            </summary>
-            <returns>Liste aller verfügbaren Fakultäten</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetAllStudyprograms">
-            <summary>
-            Abfrage aller Studienprogramme 
-            </summary>
-            <returns>Liste aller Studienprogramme</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetAllStudygroups(System.String)">
-            <summary>
-            Abfrage aller Studiengruppen eines Studienprogramms
-            </summary>
-            <param name="StudyprogramId"> Id des Studienprograms</param>
-            <returns>Liste aller Studiengruppen eines Studienprogramms</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetStudygroupCourses(System.String)">
-            <summary>
-            Abfrage aller Kurse einer Studiengruppe
-            </summary>
-            <param name="StudygroupId">Id der Studiengruppe</param>
-            <returns>Liste aller Kurse einer Studiengruppe</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculumController.GetLectureDates(System.String)">
-            <summary>
-            Abfrage aller Termine eines Kurses
-            </summary>
-            <param name="LectureId">Id der Vorlesung</param>
-            <returns>Alle Termine einer Vorlesung</returns>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.Faculty">
             <summary>
             
@@ -1335,6 +1302,22 @@
         <member name="T:MyStik.TimeTable.Web.Api.Controller.ModulesController">
             <summary>
             
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetCurricula">
+            <summary>
+            Liste aller Studiengänge
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetCurriculumVersions(System.String)">
+            <summary>
+            Liste aller Versionen eines Studiengangs
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetCurriculumModules(System.String,System.String,System.String)">
+            <summary>
+            Liste aller Semester einer Studiengangsversion jeweils mit
+            Angabe aller Module
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.NotificationController">
@@ -1625,6 +1608,16 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.From">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.Until">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.CourseDateDto.Title">
             <summary>
             
@@ -1788,36 +1781,6 @@
             
             </summary>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ModuleDto">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Id">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Curriculum">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Ects">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.UsCredits">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Sws">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumDto">
             <summary>
             
@@ -1969,6 +1932,41 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Subjects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumSchemeOptionDto">
+            <summary>
+            Hier steckt dann die ModulID drin, die zur Modulbeschreibung führt
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ModuleDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Curriculum">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Ects">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.UsCredits">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ModuleDto.Sws">
             <summary>
             
             </summary>
@@ -8442,6 +8440,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.Scheme(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.Terms(System.Guid)">
             <summary>
             
@@ -8833,13 +8838,6 @@
             
             </summary>
             <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.SubscribeSlot(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="slotId"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.Unsubscribe(System.Guid)">
@@ -9971,6 +9969,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.UnionController.WithdrawMember(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.UnionController.EditMember(System.Guid)">
             <summary>
             
@@ -10019,6 +10024,13 @@
             
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.UnionController.CreateEvent(MyStik.TimeTable.Web.Models.CourseCreateModelExtended)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.UserController">

@@ -1,4 +1,5 @@
-﻿@model ICollection<MyStik.TimeTable.Data.Advertisement>
+﻿@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Data.Advertisement>
 @{
     ViewBag.Title = "Ausschreibungen";
 }
@@ -24,7 +25,7 @@
     </div>
 </div>
 
-@if (ViewBag.UserRight.IsOrgMember)
+@if (ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff)
 {
     <div class="panel panel-default panel-menu">
         <div class="panel-body">

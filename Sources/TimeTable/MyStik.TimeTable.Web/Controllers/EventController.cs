@@ -1387,7 +1387,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Kehre zurück zur Seite der Aktivität
-            return RedirectToAction("Admin");
+            return RedirectToAction("Index");
         }
 
         /// <summary>

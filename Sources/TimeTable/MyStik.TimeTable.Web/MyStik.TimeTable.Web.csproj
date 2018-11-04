@@ -290,6 +290,7 @@
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
     <Compile Include="Api\DTOs\CurriculumDto.cs" />
+    <Compile Include="Api\DTOs\ModuleDto.cs" />
     <Compile Include="Api\DTOs\OccupancyDto.cs" />
     <Compile Include="Api\DTOs\OrganiserDto.cs" />
     <Compile Include="Api\DTOs\RoomDto.cs" />
@@ -4003,6 +4004,10 @@
     <Content Include="Views\OfficeHour\IsReserved.cshtml" />
     <Content Include="Views\OfficeHour\DateListAdmin.cshtml" />
     <Content Include="Views\Students\Details.cshtml" />
+    <Content Include="Views\Curriculum\Scheme.cshtml" />
+    <Content Include="Views\Advertisements\Overview.cshtml" />
+    <Content Include="Views\Union\CreateEvent.cshtml" />
+    <Content Include="Views\Union\_CreateEventSuccess.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

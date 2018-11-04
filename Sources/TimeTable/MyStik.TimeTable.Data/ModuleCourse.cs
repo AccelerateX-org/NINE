@@ -40,7 +40,7 @@ namespace MyStik.TimeTable.Data
         public CourseType CourseType { get; set; }
 
         /// <summary>
-        /// Anzahl der SWS
+        /// Anteil der SWS am Gesamtpaket
         /// </summary>
         public int SWS { get; set; }
 
