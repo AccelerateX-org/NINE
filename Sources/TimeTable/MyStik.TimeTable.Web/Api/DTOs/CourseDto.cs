@@ -144,6 +144,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public string LastName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Faculty { get; set; }
     }
 
 

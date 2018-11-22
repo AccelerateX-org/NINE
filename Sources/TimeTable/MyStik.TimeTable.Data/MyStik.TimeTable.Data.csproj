@@ -106,6 +106,7 @@
     <Compile Include="CurriculumVariation.cs" />
     <Compile Include="Degree.cs" />
     <Compile Include="Exam.cs" />
+    <Compile Include="ExaminationAid.cs" />
     <Compile Include="ExaminationForm.cs" />
     <Compile Include="ExaminationUnit.cs" />
     <Compile Include="Examiner.cs" />
@@ -327,6 +328,14 @@
     <Compile Include="Migrations\201810281746535_Curriculum_v7.Designer.cs">
       <DependentUpon>201810281746535_Curriculum_v7.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811210725497_Curriculum_v8.cs" />
+    <Compile Include="Migrations\201811210725497_Curriculum_v8.Designer.cs">
+      <DependentUpon>201811210725497_Curriculum_v8.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811221848527_Curiclum_v9.cs" />
+    <Compile Include="Migrations\201811221848527_Curiclum_v9.Designer.cs">
+      <DependentUpon>201811221848527_Curiclum_v9.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -522,6 +531,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810281746535_Curriculum_v7.resx">
       <DependentUpon>201810281746535_Curriculum_v7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811210725497_Curriculum_v8.resx">
+      <DependentUpon>201811210725497_Curriculum_v8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811221848527_Curiclum_v9.resx">
+      <DependentUpon>201811221848527_Curiclum_v9.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

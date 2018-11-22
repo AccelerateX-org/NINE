@@ -213,6 +213,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
             Subjects = new List<CurriculumSchemeSubjectDto>();
         }
 
+        public double TotalEcts { get; set; }
+
         public List<CurriculumSchemeSubjectDto> Subjects { get; }
 
     }

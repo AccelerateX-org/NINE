@@ -1,0 +1,57 @@
+﻿@model MyStik.TimeTable.Data.CertificateSubject
+@{
+    ViewBag.Title = "Modul";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Modulbereich - @Model.CertificateModule.Name</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><a href="@Url.Action("EditModule", new {id=Model.Id})">@Model.Name</a></h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Gewicht</th>
+                            <th>Teilmodul(e)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var modul in Model.ContentModules)
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("EditModule", new {id=modul.Id})">@modul.Number</a></td>
+                                <td>@modul.IsMandatory</td>
+                                @if (modul.TeachingBuildingBlock != null)
+                                {
+                                    <td>@modul.TeachingBuildingBlock.Name</td>
+                                }
+                                else
+                                {
+                                    <td>Kein akkreditiertes Modul</td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

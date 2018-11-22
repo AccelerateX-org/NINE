@@ -12,6 +12,12 @@ namespace MyStik.TimeTable.Web.Services
         {
         }
 
+        public OccurrenceSubscription GetSubscription(Guid occId, string userId)
+        {
+            return Db.Subscriptions.OfType<OccurrenceSubscription>()
+                .FirstOrDefault(x => x.Occurrence.Id == occId && x.UserId.Equals(userId));
+        }
+
         public void DeleteSubscription(OccurrenceSubscription subscription)
         {
             var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();

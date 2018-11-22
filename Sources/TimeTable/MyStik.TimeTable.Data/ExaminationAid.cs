@@ -7,21 +7,15 @@ using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
-    public class TeachingUnit
+    public class ExaminationAid
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public string Name2 { get; set; }
+        public string Name { get; set; }
 
+        public string Description { get; set; }
 
-        public string Description2 { get; set; }
-
-        public double SWS { get; set; }
-
-        public virtual TeachingForm Form { get; set; }
-
-
-        public virtual TeachingBuildingBlock Module { get; set; }
+        public virtual ExaminationUnit ExaminationUnit { get; set; }
     }
 }

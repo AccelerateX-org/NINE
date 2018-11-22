@@ -272,7 +272,6 @@
     <Compile Include="Api\Controller\CieHomeController.cs" />
     <Compile Include="Api\Controller\CoursesController.cs" />
     <Compile Include="Api\Controller\CurriculaController.cs" />
-    <Compile Include="Api\Controller\CurriculumController.cs" />
     <Compile Include="Api\Controller\FacultyController.cs" />
     <Compile Include="Api\Controller\LecturerController.cs" />
     <Compile Include="Api\Controller\LoginController.cs" />
@@ -307,6 +306,7 @@
     <Compile Include="Api\Services\CurriculumInfoService.cs" />
     <Compile Include="Api\Services\EventInfoService.cs" />
     <Compile Include="Api\Services\LecturerInfoService.cs" />
+    <Compile Include="Api\Services\ModuleConverter.cs" />
     <Compile Include="Api\Services\NotificationService.cs" />
     <Compile Include="Api\Services\RoomInfoService.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -373,6 +373,7 @@
     <Compile Include="Controllers\AdvertisementsController.cs" />
     <Compile Include="Controllers\AlumniController.cs" />
     <Compile Include="Controllers\ArchiveController.cs" />
+    <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
@@ -398,6 +399,7 @@
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\SupervisionController.cs" />
     <Compile Include="Controllers\TagController.cs" />
+    <Compile Include="Controllers\TeachingController.cs" />
     <Compile Include="Controllers\ThesisAnnouncementsController.cs" />
     <Compile Include="Controllers\ThesisController.cs" />
     <Compile Include="Controllers\ThesisWorkflowController.cs" />
@@ -470,6 +472,7 @@
     <Compile Include="Models\AdvertisementModels.cs" />
     <Compile Include="Models\AlumniModels.cs" />
     <Compile Include="Models\AgendaModels.cs" />
+    <Compile Include="Models\BookingModels.cs" />
     <Compile Include="Models\CalendarModels.cs" />
     <Compile Include="Models\CantineModels.cs" />
     <Compile Include="Models\BuildingModels.cs" />
@@ -508,6 +511,7 @@
     <Compile Include="Models\StudyBookModels.cs" />
     <Compile Include="Models\SubscriptionModels.cs" />
     <Compile Include="Models\SupervisionModels.cs" />
+    <Compile Include="Models\TeachingModels.cs" />
     <Compile Include="Models\ThesisModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Models\UserProfileModels.cs" />
@@ -540,6 +544,7 @@
     <Compile Include="Services\ActivityService.cs" />
     <Compile Include="Services\BaseMailService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\BookingService.cs" />
     <Compile Include="Services\ChangeService.cs" />
     <Compile Include="Services\CourseService.cs" />
     <Compile Include="Services\CurriculumService.cs" />
@@ -4008,6 +4013,17 @@
     <Content Include="Views\Advertisements\Overview.cshtml" />
     <Content Include="Views\Union\CreateEvent.cshtml" />
     <Content Include="Views\Union\_CreateEventSuccess.cshtml" />
+    <Content Include="Views\Curriculum\Admin.cshtml" />
+    <Content Include="Views\Curriculum\EditModule.cshtml" />
+    <Content Include="Views\Curriculum\EditSubject.cshtml" />
+    <Content Include="Views\Curriculum\AdminSubject.cshtml" />
+    <Content Include="Views\Teaching\Index.cshtml" />
+    <Content Include="Views\Teaching\CreateModule.cshtml" />
+    <Content Include="Views\Teaching\ModuleDetails.cshtml" />
+    <Content Include="Views\Dictionary\_GroupListNew.cshtml" />
+    <Content Include="Views\Booking\SelectCourse.cshtml" />
+    <Content Include="Views\Booking\_Discharge.cshtml" />
+    <Content Include="Views\Booking\_Subscribe.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -167,6 +167,7 @@ namespace MyStik.TimeTable.Data
         public DbSet<TeachingUnit> TeachingUnits { get; set; }
         public DbSet<ExaminationForm> ExaminationForms { get; set; }
         public DbSet<ExaminationUnit> ExaminationUnits { get; set; }
+        public DbSet<ExaminationAid> ExaminationAids { get; set; }
         public DbSet<Lecturer> Lecturers { get; set; }
 
 

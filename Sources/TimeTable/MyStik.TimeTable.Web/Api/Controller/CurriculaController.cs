@@ -19,23 +19,29 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// 
         /// </summary>
         [Route("")]
-        public IQueryable<CurriculumDto> GetCurricula()
+        public IQueryable<CurriculumDto> GetCurricula(string org="")
         {
-            var curriculaWithPlan = Db.Curricula.Where(x => x.Packages.Any()).ToList();
+            var curriculaWithPlan = 
+                string.IsNullOrEmpty(org) ?
+                    Db.Curricula.ToList() :
+                    Db.Curricula.Where(x => x.Organiser.ShortName.ToLower().Equals(org.ToLower())).ToList();
 
             var result = new List<CurriculumDto>();
 
             foreach (var curriculum in curriculaWithPlan)
             {
-                var curr = new CurriculumDto();
-
-                curr.Name = curriculum.Name;
-                curr.ShortName = curriculum.ShortName;
-
-                curr.Organiser = new OrganiserDto();
-                curr.Organiser.Name = curriculum.Organiser.Name;
-                curr.Organiser.ShortName = curriculum.Organiser.ShortName;
-                curr.Organiser.Color = curriculum.Organiser.HtmlColor;
+                var curr = new CurriculumDto
+                {
+                    Id = curriculum.Id,
+                    Name = curriculum.Name,
+                    ShortName = curriculum.ShortName,
+                    Organiser = new OrganiserDto
+                    {
+                        Name = curriculum.Organiser.Name,
+                        ShortName = curriculum.Organiser.ShortName,
+                        Color = curriculum.Organiser.HtmlColor
+                    }
+                };
 
                 result.Add(curr);
             }
@@ -43,141 +49,81 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return result.AsQueryable();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [Route("{org}/{name}/structure")]
-        public IQueryable<CurriculumPackageDto> GetCurrciulumStructure(string org, string name)
+        [Route("{name}")]
+        public NamedDto GetCurriculumInfo(string name)
         {
-            var curr = Db.Curricula.FirstOrDefault(x => x.Organiser.ShortName.Equals(org) && x.ShortName.Equals(name));
-
-            var result = new List<CurriculumPackageDto>();
-
-            foreach (var package in curr.Packages)
-            {
-                var pck = new CurriculumPackageDto();
-
-                pck.Name = package.Name;
-
-                foreach (var option in package.Options)
-                {
-                    var pckOpt = new CurriculumOptionDto();
-                    pckOpt.Name = option.Name;
-
-                    foreach (var requirement in option.Requirements)
-                    {
-                        var pckModule = new CurriculumModuleDto();
-                        pckModule.Name = requirement.Name;
-                        pckModule.Ects = requirement.ECTS;
-
-                        foreach (var criteria in requirement.Criterias)
-                        {
-                            var pckSection = new CurriculumModuleSectionDto();
-                            pckSection.Name = criteria.Name;
-                            pckSection.Semester = criteria.Term;
-
-                            // Hier werden Akkreditierug und Fach zusammengeführt
-                            foreach (var accreditation in criteria.Accreditations)
-                            {
-                                var pckSubject = new CurriculumSubjectDto();
-                                pckSubject.Name = accreditation.Module.Name;
-                                pckSubject.ShortName = accreditation.Module.ShortName;
-                                pckSubject.IsMandatory = accreditation.IsMandatory;
-
-                                pckSection.Subjects.Add(pckSubject);
-                            }
-
-                            pckModule.Sections.Add(pckSection);
-
-                        }
-
-                        pckOpt.Modules.Add(pckModule);
-                    }
-
-                    pck.Options.Add(pckOpt);
-                }
-
-                result.Add(pck);
-            }
-
-            return result.AsQueryable();
+            return new NamedDto();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [Route("{org}/{name}/schedule")]
-        public IQueryable<CurriculumTermDto> GetCurrciulumSchedule(string org, string name)
+
+        [Route("{name}/versions")]
+        public IQueryable<NamedDto> GetCurriculumVersions(string name)
         {
-            var curr = Db.Curricula.FirstOrDefault(x => x.Organiser.ShortName.Equals(org) && x.ShortName.Equals(name));
+            return new List<NamedDto>().AsQueryable();
+        }
 
-            var result = new List<CurriculumTermDto>();
+        [Route("{name}/{version}/scheme")]
+        public IQueryable<CurriculumSchemeSemesterDto> GetCurriculumPlan(string name, string version)
+        {
+            var list = new List<CurriculumSchemeSemesterDto>();
 
-            var terms = Db.Criterias.Where(x => x.Requirement.Option.Package.Curriculum.Id == curr.Id).GroupBy(x => x.Term).ToList();
+            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.ToUpper().Equals(name.Trim().ToUpper()));
 
-            foreach (var term in terms)
+            if (curr == null)
+                return list.AsQueryable();
+
+            var semesterSubjects = Db.CertificateSubjects.Where(x => x.CertificateModule.Curriculum.Id == curr.Id).GroupBy(x => x.Term).ToList();
+
+            foreach (var semester in semesterSubjects)
             {
-                var cTerm = new CurriculumTermDto();
-                cTerm.Number = term.Key;
-
-                foreach (var criteria in term)
+                var semDto = new CurriculumSchemeSemesterDto()
                 {
-                    var cSection = new CurriculumTermSectionDto();
+                    Term = semester.Key
+                };
 
-                    cSection.Name = criteria.Name;
-
-                    // berechnete ECTS
-                    // teile auf: ECTS werden gleichmäßig auf alle aufgeteilt
-                    cSection.Ects = criteria.Requirement.ECTS / (double)criteria.Requirement.Criterias.Count; ;
-
-                    // der Pfad
-                    cSection.Package = new CurriculumPackageDto{ Name = criteria.Requirement.Option.Package.Name };
-                    cSection.Option = new CurriculumOptionDto{ Name = criteria.Requirement.Option.Name };
-                    cSection.Module = new CurriculumModuleDto{ Name = criteria.Requirement.Name };
-
-                    // Liste aller möglichen Fächer
-                    foreach (var accreditation in criteria.Accreditations)
+                var modules = semester.GroupBy(x => x.CertificateModule);
+                foreach (var module in modules)
+                {
+                    var moduleDto = new CurriculumSchemeModuleDto()
                     {
-                        var cSubject = new CurriculumSubjectDto();
-                        cSubject.Name = accreditation.Module.Name;
-                        cSubject.IsMandatory = accreditation.IsMandatory;
+                        Name = module.Key.Name,
+                        TotalEcts = 0
+                    };
 
-                        var sbC = new StringBuilder();
-                        foreach (var course in accreditation.Module.ModuleCourses.ToList())
+                    foreach (var subject in module)
+                    {
+                        var subjectDto = new CurriculumSchemeSubjectDto()
                         {
-                            sbC.AppendFormat("{0}", course.Name);
-                            if (course != accreditation.Module.ModuleCourses.Last())
-                            {
-                                sbC.AppendFormat(", ");
-                            }
-                        }
-                        cSubject.CourseTypes = sbC.ToString();
+                            Name = subject.Name,
+                            ECTS = subject.Ects
+                        };
+                        moduleDto.TotalEcts += subject.Ects;
 
-
-                        var sbE = new StringBuilder();
-                        foreach (var exam in accreditation.Module.ModuleExams.ToList())
+                        foreach (var contentModule in subject.ContentModules)
                         {
-                            sbE.AppendFormat("{0}", exam.ExternalId);
-                            if (exam != accreditation.Module.ModuleExams.Last())
+                            var optionDto = new CurriculumSchemeOptionDto()
                             {
-                                sbE.AppendFormat(", ");
-                            }
-                        }
-                        cSubject.ExamTypes = sbE.ToString();
+                                Id = contentModule.Id,
+                                Number = contentModule.Number,
+                                IsMandatory = contentModule.IsMandatory
+                            };
 
-                        cSection.Subjects.Add(cSubject);
+                            subjectDto.Options.Add(optionDto);
+                        }
+
+                        moduleDto.Subjects.Add(subjectDto);
                     }
 
-                    cTerm.Sections.Add(cSection);
+                    semDto.Modules.Add(moduleDto);
                 }
 
-
-                result.Add(cTerm);
+                list.Add(semDto);
             }
 
 
-            return result.AsQueryable();
+            return list.AsQueryable();
         }
+
     }
 }
 

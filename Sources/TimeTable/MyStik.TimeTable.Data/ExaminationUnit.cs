@@ -9,6 +9,11 @@ namespace MyStik.TimeTable.Data
 {
     public class ExaminationUnit
     {
+        public ExaminationUnit()
+        {
+            ExaminationAids = new HashSet<ExaminationAid>();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -34,5 +39,7 @@ namespace MyStik.TimeTable.Data
         /// Das zugehörige Module
         /// </summary>
         public virtual TeachingBuildingBlock Module { get; set; }
+
+        public virtual ICollection<ExaminationAid> ExaminationAids { get; set; }
     }
 }

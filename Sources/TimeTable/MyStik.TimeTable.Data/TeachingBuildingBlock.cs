@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,13 @@ namespace MyStik.TimeTable.Data
     /// </summary>
     public class TeachingBuildingBlock
     {
+        public TeachingBuildingBlock()
+        {
+            Lecturers = new HashSet<Lecturer>();
+            TeachingUnits = new HashSet<TeachingUnit>();
+            ExaminationUnits = new HashSet<ExaminationUnit>();
+            CurriculumModules = new HashSet<ModuleAccreditation>();
+        }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

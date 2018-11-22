@@ -166,6 +166,8 @@
                                     saveElement.removeClass('discardable');
                                     saveElement.removeClass('disabled');
 
+                                    $('#' + ocId).html('<i class="fa fa-ban"></i>');
+
                                 }
                             });
 
@@ -196,6 +198,7 @@
                                     saveElement.addClass('discardable');
                                     saveElement.removeClass('disabled');
 
+                                    $('#' + ocId).html('<i class="fa fa-check"></i>');
                                 }
                             });
                     }

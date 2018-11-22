@@ -403,5 +403,89 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_GroupList", model);
         }
 
+        public PartialViewResult CourseListForGroupNew(Guid semGroupId)
+        {
+            var semGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semGroup.Semester,
+                Organiser = semGroup.CapacityGroup.CurriculumGroup.Curriculum.Organiser,
+                Curriculum = semGroup.CapacityGroup.CurriculumGroup.Curriculum,
+                CapacityGroup = semGroup.CapacityGroup,
+                SemesterGroup = semGroup
+            };
+
+            List<Course> activities = null;
+
+            if (Request.IsAuthenticated)
+            {
+                var user = GetCurrentUser();
+                activities = Db.Activities.OfType<Course>().Where(a =>
+                    a.SemesterGroups.Any(g => g.Semester.Id == semGroup.Semester.Id) &&
+                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+            }
+
+            var courseService = new CourseService(Db);
+
+            var courses = semGroup.Activities.OfType<Course>().ToList();
+
+            foreach (var course in courses)
+            {
+                var summary = courseService.GetCourseSummary(course);
+
+                if (Request.IsAuthenticated)
+                {
+                    var user = GetCurrentUser();
+
+                    var state = ActivityService.GetActivityState(course.Occurrence, user);
+
+                    summary.User = user;
+                    summary.Subscription = state.Subscription;
+
+                    summary.Lottery =
+                        Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+                    // Konflikte suchen
+                    foreach (var date in course.Dates)
+                    {
+                        var conflictingActivities = activities.Where(x => x.Dates.Any(d =>
+                                (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                (d.Begin >= date.Begin && d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                (d.Begin <= date.Begin &&
+                                 d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                        )).ToList();
+
+                        if (conflictingActivities.Any())
+                        {
+                            foreach (var conflictingActivity in conflictingActivities.Where(x => x.Id != course.Id)
+                            ) // nicht mit dem Vergleichen, wo selbst eingetragen
+                            {
+                                summary.ConflictingDates[date] = new List<ActivityDate>();
+
+                                var conflictingDates = conflictingActivity.Dates.Where(d =>
+                                        (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                        (d.Begin >= date.Begin &&
+                                         d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                        (d.Begin <= date.Begin &&
+                                         d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                                ).ToList();
+
+                                summary.ConflictingDates[date].AddRange(conflictingDates);
+                            }
+                        }
+
+                    }
+
+                }
+
+
+                model.Courses.Add(summary);
+            }
+
+            return PartialView("_GroupListNew", model);
+        }
+
+
     }
 }

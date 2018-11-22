@@ -1,0 +1,66 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Data.TeachingBuildingBlock>
+@{
+    ViewBag.Title = "Meine Lehre";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine Lehre</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("CreateModule")" class="btn btn-default">
+                                <i class="fa fa-plus"></i> Modul anlegen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-cube"></i> Module
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var module in Model)
+                    {
+                        <a href="@Url.Action("ModuleDetails", new {id=module.Id})" class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>@module.Name</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-microphone"></i>@module.TeachingUnits.Count Lehreinheiten</li>
+                                </ul>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

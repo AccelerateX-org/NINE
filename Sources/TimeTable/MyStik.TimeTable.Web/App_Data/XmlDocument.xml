@@ -1118,22 +1118,7 @@
             Abfrage von Studiengängen
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurricula">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurrciulumStructure(System.String,System.String)">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurrciulumSchedule(System.String,System.String)">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Api.Controller.CurriculumController">
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.CurriculaController.GetCurricula(System.String)">
             <summary>
             
             </summary>
@@ -1304,20 +1289,9 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetCurricula">
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetModules">
             <summary>
-            Liste aller Studiengänge
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetCurriculumVersions(System.String)">
-            <summary>
-            Liste aller Versionen eines Studiengangs
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.ModulesController.GetCurriculumModules(System.String,System.String,System.String)">
-            <summary>
-            Liste aller Semester einer Studiengangsversion jeweils mit
-            Angabe aller Module
+            Suche nache Modulesn
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.NotificationController">
@@ -1674,6 +1648,11 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.LecturerDto.LastName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.LecturerDto.Faculty">
             <summary>
             
             </summary>
@@ -2488,6 +2467,16 @@
             <param name="lecturer"></param>
             <param name="semester"></param>
             <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.ModuleConverter.#ctor(MyStik.TimeTable.Data.TimeTableDbContext)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Services.ModuleConverter.Convert(System.Guid)">
+            <summary>
+            
+            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Services.NotificationService">
             <summary>
@@ -4999,6 +4988,13 @@
             <summary>
             
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.BookingController.SelectCourse(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.BuildingController">
@@ -12732,6 +12728,11 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.CourseCreateModelExtended.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CourseCreateModelExtended.Description">
             <summary>
             
             </summary>
@@ -21166,6 +21167,37 @@
             </summary>
             <param name="date"></param>
             <returns></returns>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Services.BookingList.Capacity">
+            <summary>
+            Anzahl der Pläatze
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Services.BookingState.IsAvailable">
+            <summary>
+            Verfügbar für Eintragung oder nicht
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Services.BookingState.IsUnrestricted">
+            <summary>
+            Keine Einschränkung hinsichtlich Platzangebots
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.BookingService.CreateMiscList">
+            <summary>
+            Auf dieser Liste sind alle Einträge aus Studiengängen
+            die nicht zugeordnet sind
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.BookingService.CreateJoinedList">
+            <summary>
+            Ein Liste mit allen Studiengängen
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.BookingService.CreateListByCurriculum">
+            <summary>
+            Eine Liste pro Studiengang
+            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Services.ChangeService">
             <summary>

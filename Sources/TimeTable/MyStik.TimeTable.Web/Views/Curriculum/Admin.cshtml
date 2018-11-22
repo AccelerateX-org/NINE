@@ -1,0 +1,77 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+@{
+    ViewBag.Title = "Studienplan";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Studienplan @Model.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.UserRight.IsOrgMember)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("CreateModule", new {id = Model.Id})" class="btn btn-default">
+                                        <i class="fa fa-plus"></i> Modul anlegen
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Module - Ebene "Notenblatt"</h4>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gewicht</th>
+                        <th>Teilmodul(e)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var modul in Model.Modules)
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("EditModule", new {id=modul.Id})">@modul.Name</a></td>
+                                <td>@modul.Weight</td>
+                                <td>
+                                @foreach (var subject in modul.Subjects)
+                                {
+                                    <div><a href="@Url.Action("AdminSubject", new {id=subject.Id})"> @subject.Name (@subject.Ects ECTS)</a></div>
+                                }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
