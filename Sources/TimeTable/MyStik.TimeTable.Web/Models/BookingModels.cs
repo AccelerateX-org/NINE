@@ -15,6 +15,8 @@ namespace MyStik.TimeTable.Web.Models
         public OccurrenceSubscription Subscription { get; set; }
 
         public BookingState BookingState { get; set; }
+
+        public SemesterGroup SemesterGroup { get; set; }
     }
 
 

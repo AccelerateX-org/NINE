@@ -2,34 +2,39 @@
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 
-@foreach (var course in Model.Courses)
+@{
+    var sortedCourses = new List<CourseSummaryModel>();
+
+    sortedCourses.AddRange(Model.Courses.Where(x => x.Subscription != null && !x.Subscription.OnWaitingList).OrderBy(x => x.Course.Name));
+    sortedCourses.AddRange(Model.Courses.Where(x => x.Subscription != null && x.Subscription.OnWaitingList).OrderBy(x => x.Course.Name));
+    sortedCourses.AddRange(Model.Courses.Where(x => x.Subscription == null).OrderBy(x => x.Course.Name));
+}
+
+
+@foreach (var course in sortedCourses)
 {
     var linkDescription = string.Format("desc{0}", course.Course.Id);
     var linkDates = string.Format("dates{0}", course.Course.Id);
     var linkFit = string.Format("fit{0}", course.Course.Id);
     var linkNonFit = string.Format("nonfit{0}", course.Course.Id);
     var linkConflicts = string.Format("conflicts{0}", course.Course.Id);
+    var listGroupItemClass = "";
 
-    <a href="@Url.Action("SelectCourse", "Booking", new {id = course.Course.Id})" class="list-group-item">
-        @if (course.User != null && course.User.MemberState != MemberState.Guest)
+    if (course.Subscription != null)
+    {
+        if (course.Subscription.OnWaitingList)
         {
-            if (course.ConflictingDates.Any())
-            {
-                <span class="badge badge-warning"><i class="fa fa-calendar-times-o"></i> @course.ConflictingDates.Count Terminkollisionen</span>
-            }
-
-            if (course.Subscription != null)
-            {
-                if (course.Subscription.OnWaitingList)
-                {
-                    <span class="badge badge-warning"><i class="fa fa-hourglass-half"></i> Eingetragen auf Warteliste</span>
-                }
-                else
-                {
-                    <span class="badge badge-success"><i class="fa fa-user"></i> Eingetragen auf Teilnehmerliste</span>
-                }
-            }
+            listGroupItemClass = "list-group-item-warning";
         }
+        else
+        {
+            listGroupItemClass = "list-group-item-success";
+        }
+    }
+
+
+
+    <a href="javascript: onShowEventInfo('@course.Course.Id')" class="list-group-item @listGroupItemClass">
         <h5 class="list-group-item-heading">
             @course.Course.Name (@course.Course.ShortName)
         </h5>

@@ -210,13 +210,12 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     {
         public CurriculumSchemeModuleDto()
         {
-            Subjects = new List<CurriculumSchemeSubjectDto>();
         }
 
-        public double TotalEcts { get; set; }
-
-        public List<CurriculumSchemeSubjectDto> Subjects { get; }
-
+        /// <summary>
+        /// Summe der Ects im Semester
+        /// </summary>
+        public double Ects { get; set; }
     }
 
     public class CurriculumSchemeSubjectDto : NamedDto

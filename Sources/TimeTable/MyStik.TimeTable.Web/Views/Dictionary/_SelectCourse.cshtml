@@ -1,0 +1,150 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model  CourseSelectModel
+
+@{
+    var linkDescription = string.Format("desc{0}", Model.Summary.Course.Id);
+    var linkDates = string.Format("dates{0}", Model.Summary.Course.Id);
+    var linkFit = string.Format("fit{0}", Model.Summary.Course.Id);
+    var linkNonFit = string.Format("nonfit{0}", Model.Summary.Course.Id);
+    var linkConflicts = string.Format("conflicts{0}", Model.Summary.Course.Id);
+    
+}
+
+
+<div class="panel panel-default">
+<div class="panel-heading">
+    <h4>
+        @Model.Summary.Course.Name (@Model.Summary.Course.ShortName)<a href="javascript:onCloseDetails()" class="btn btn-default btn-xs pull-right"><i class="fa fa-times"></i></a>
+    </h4>
+    <ul class="fa-ul">
+        <li>
+            <i class="fa-li fa fa-user-md"></i>
+            @if (Model.Summary.Lecturers.Any())
+            {
+                @Html.LecturerList(Model.Summary.Lecturers, showLinks: false)
+            }
+            else
+            {
+                <i>Keine Angabe zu Lehrenden verfügbar</i>
+            }
+        </li>
+        <li>
+            @if (Model.Summary.Dates.Count == 1)
+            {
+                <i class="fa-li fa fa-calendar"></i>
+                <span>immer @Html.Date(Model.Summary.Dates.First()) in [@Html.RoomList(Model.Summary.Rooms, showLinks: false)]</span>
+            }
+            else
+            {
+                <i class="fa-li fa fa-calendar"></i>
+                <span>insgesamt @Model.Summary.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+            }
+        </li>
+        <li>
+            <i class="fa-li fa fa-book"></i>@Html.GroupList(Model.Summary.Course.Occurrence)
+        </li>
+    </ul>
+</div>
+<div class="list-group">
+    <div class="list-group-item">
+        @if (string.IsNullOrEmpty(Model.Summary.Course.Description))
+        {
+            <h5 class="list-group-item-heading"><i>Keine Beschreibung vorhanden</i></h5>
+        }
+        else
+        {
+            <h5 class="list-group-item-heading">Beschreibung</h5>
+            <div class="list-group-item-text">@Html.Raw(Model.Summary.Course.Description)</div>
+        }
+    </div>
+    <div class="list-group-item">
+        <span class="badge badge-danger">14 Terminkollisionen</span>
+        <h5 class="list-group-item-heading">
+            <a href="#@linkDates" data-toggle="collapse">Termine</a>
+        </h5>
+        <div class="list-group collapse" id="@linkDates">
+            @foreach (var date in Model.Summary.Course.Dates)
+            {
+                <div class="list-group-item">
+                    @Html.TimeSpanWithDate(date)
+                </div>
+            }
+        </div>
+    </div>
+    <div class="list-group-item">
+        <h5 class="list-group-item-heading">Zugangsbeschränkungen</h5>
+        <div class="list-group-item-text">
+            <ul class="fa-ul">
+                @if (Model.Summary.Course.Occurrence.HasHomeBias)
+                {
+                    if (Model.Summary.Course.Occurrence.IsCoterie)
+                    {
+                        <li><i class="fa-li fa fa-id-card"></i> Nur Studierende der angegebenen Studiengänge können sich eintragen</li>
+                    }
+                    else
+                    {
+                        <li><i class="fa-li fa fa-id-card"></i> Studierende der angegebenen Studiengänge werden bevorzugt. Studierende anderer Studiengänge landen automatisch auf der Warteliste</li>
+                    }
+                }
+                else
+                {
+                    <li><i class="fa-li fa fa-globe"></i> Jeder Studierende kann sich eintragen</li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="list-group-item">
+        <h5 class="list-group-item-heading">Platzbeschränkungen</h5>
+        <div class="list-group-item-text">
+            <ul class="fa-ul">
+                @if (Model.Summary.Course.Occurrence.Capacity < 0)
+                {
+                    <li><i class="fa-li fa fa-globe"></i>keine Platzbeschränkungen</li>
+                    if (Model.Summary.Lottery != null)
+                    {
+                        <li><i class="fa fa-li fa-random"></i>Platzvergabe über das Wahlverfahren "@Model.Summary.Lottery.Name"</li>
+                    }
+                }
+                else
+                {
+                    if (Model.Summary.Course.Occurrence.UseGroups)
+                    {
+                        <li><i class="fa-li fa fa-list"></i> Platzkontingent getrennt nach Studiengängen</li>
+                    }
+                    else
+                    {
+                        <li><i class="fa-li fa fa-list"></i> Platzkontingent studiengangsübergreifend</li>
+                        <li><i class="fa-li fa fa-bed"></i> Insgesamt @Model.Summary.Course.Occurrence.Capacity Plätze</li>
+                        if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
+                        {
+                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
+                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell hat es @Model.BookingState.MyBookingList.Waitinglist.Count Einträge auf der Warteliste</li>
+                        }
+
+                    }
+                    if (Model.Summary.Lottery != null)
+                    {
+                        <li><i class="fa fa-li fa-random"></i>Lehrveranstaltung ist dem Wahlverfahren @Model.Summary.Lottery.Name zugeordnet</li>
+                    }
+                    else
+                    {
+                        <li><i class="fa fa-li fa-clock-o"></i>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen</li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    @if (Request.IsAuthenticated && ViewBag.UserRight.User.MemberState != MemberState.Guest)
+    {
+        <div class="list-group-item" id="selectBox">
+            @Html.Partial("_BookingBox", Model)
+        </div>
+    }
+</div>
+</div>
+
+
+
+

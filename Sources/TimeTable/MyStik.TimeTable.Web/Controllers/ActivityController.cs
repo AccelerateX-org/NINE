@@ -171,6 +171,44 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public ActionResult PersonalPlanList(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var user = AppUser;
+
+            var courseService = new CourseService(Db);
+
+            var model = new DashboardStudentViewModel();
+
+            model.Semester = semester;
+            model.User = user;
+            model.Student = StudentService.GetCurrentStudent(user);
+            model.Courses = new List<CourseSummaryModel>();
+
+            var courses = Db.Activities.OfType<Course>().Where(a =>
+                a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(model.User.Id))).ToList();
+            foreach (var course in courses)
+            {
+                var summary = courseService.GetCourseSummary(course);
+                model.Courses.Add(summary);
+
+                var state = ActivityService.GetActivityState(course.Occurrence, user);
+
+                summary.User = user;
+                summary.Subscription = state.Subscription;
+
+                summary.Lottery =
+                    Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+            }
+
+            return View(model);
+        }
+
 
         /// <summary>
         /// 

@@ -37,6 +37,16 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
     }
 
+    public class CertificateModuleDto : NamedDto
+    {
+        public CertificateModuleDto()
+        {
+            Subjects = new List<AccreditatedModuleDto>();
+        }
+
+        public List<AccreditatedModuleDto> Subjects { get; set; }
+    }
+
     public class AccreditatedModuleDto : NamedDto
     {
         public AccreditatedModuleDto()
@@ -44,6 +54,10 @@ namespace MyStik.TimeTable.Web.Api.DTOs
             ModuleAccounts = new List<LecturerDto>();
             Lecturers = new List<LecturerDto>();
         }
+
+        public double Ects { get; set; }
+
+        public int Term { get; set; }
 
         public string Number { get; set; }
 

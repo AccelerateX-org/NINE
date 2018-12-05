@@ -1,0 +1,137 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+@using MyStik.TimeTable.Web.Helpers
+@{
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Vorlesungsverzeichnis";
+}
+
+<div class="@containerType">
+
+    <div class="row" style="margin-top: 20px">
+        <div id="panelCalendar" class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-book"></i>
+                        <a href="@Url.Action("Index", "Dictionary")">Start</a> /
+                        <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
+                        <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
+                        <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /
+                        @Model.CapacityGroup.FullName
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-success active"><i class="fa fa-group"></i> Teilnehmer</a>
+                            <a class="btn btn-warning active"><i class="fa fa-hourglass-half"></i> Warteliste</a>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("GroupCalendar", "Dictionary", new {semId = Model.Semester.Id, groupId = Model.SemesterGroup.CapacityGroup.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Kalenderdarstellung</a>
+                        </div>
+                    </div>
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+        <div id="panelDetails" class="col-md-4" hidden>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        var myId;
+
+        $(document).ready(function() {
+
+            showList();
+
+        });
+
+        function showList() {
+            $('#loading').show();
+            $.ajax(
+                {
+                    url: '@Url.Action("CourseListForGroupNew")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: '@Model.SemesterGroup.Id'
+                    },
+                    success: function (data, success, xhr) {
+                        $("#calendar").html(data);
+                        $('#loading').hide();
+                    },
+                    error: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+        }
+
+        function onShowEventInfo(id) {
+            $('#panelCalendar').removeClass('col-md-12');
+            $('#panelCalendar').addClass('col-md-8');
+            $('#panelDetails').show();
+            myId = id;
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("SelectCourse")',
+                    data: {
+                        Id: id
+                    },
+                    success: function(data, success, xhr) {
+                        $("#panelDetails").html(data);
+                    }
+                });
+
+        }
+
+        function onCloseDetails() {
+            $('#panelCalendar').removeClass('col-md-8');
+            $('#panelCalendar').addClass('col-md-12');
+            $('#panelDetails').html('');
+            $('#panelDetails').hide();
+        }
+
+        function onSubscribe(e) {
+            //alert('#'+e);
+            $('#selectBox').addClass('disabled');
+            $('#selectBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Subscribe")',
+                    data: {
+                        Id: e
+                    },
+                    success: function(data, success, xhr) {
+                        $('#selectBox').html(data);
+                        $('#selectBox').removeClass('disabled');
+                        showList();
+                    }
+                });
+
+        }
+
+
+    </script>
+}
+

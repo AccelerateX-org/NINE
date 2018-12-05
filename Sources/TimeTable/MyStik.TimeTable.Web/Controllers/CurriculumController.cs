@@ -1238,11 +1238,89 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var curr = model.CertificateModule.Curriculum;
 
+            foreach (var contentModule in model.ContentModules.ToList())
+            {
+                Db.Accreditations.Remove(contentModule);
+            }
+
             Db.CertificateSubjects.Remove(model);
             Db.SaveChanges();
 
             return RedirectToAction("Admin", new { id = curr.Id });
         }
 
+        public ActionResult ModuleDetails(Guid id)
+        {
+            var model = Db.CertificateModules.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
+
+            return View(model);
+        }
+
+        public ActionResult CreateSubject(Guid id)
+        {
+            var module = Db.CertificateModules.SingleOrDefault(x => x.Id == id);
+
+            var model = new CertificateSubject
+            {
+                CertificateModule = module
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateSubject(CertificateSubject model)
+        {
+            var module = Db.CertificateModules.SingleOrDefault(x => x.Id == model.CertificateModule.Id);
+
+            var subject = new CertificateSubject
+            {
+                Name = model.Name,
+                Ects = model.Ects,
+                CertificateModule = module
+            };
+
+            Db.CertificateSubjects.Add(subject);
+            Db.SaveChanges();
+
+            return RedirectToAction("ModuleDetails", new {id = module.Id});
+        }
+
+        public ActionResult AdminContentModule(Guid id)
+        {
+            var model = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(model.CertificateSubject.CertificateModule.Curriculum.Organiser);
+
+            return View(model);
+        }
+
+
+        public ActionResult AssignModule(Guid id)
+        {
+            var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+
+            var model = new ModuleAssignViewModel
+            {
+                Accreditation = accreditation
+            };
+
+            model.Modules = Db.TeachingBuildingBlocks.ToList();
+
+            return View(model);
+        }
+
+        public ActionResult SelectModule(Guid accid, Guid modId)
+        {
+            var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == accid);
+            var teachingBuildingBlock = Db.TeachingBuildingBlocks.SingleOrDefault(x => x.Id == modId);
+
+            accreditation.TeachingBuildingBlock = teachingBuildingBlock;
+            Db.SaveChanges();
+
+            return RedirectToAction("AdminContentModule", new {id = accreditation.Id});
+        }
     }
 }

@@ -17,13 +17,27 @@
                 <div class="panel-heading">
                     <h4>
                         <i class="fa fa-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
-                        <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-danger btn-sm"><i class="fa fa-pencil"></i> ändern</a>
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </h4>
                 </div>
-                <div class="panel-body">
-                    <div id="calendar" class="has-toolbar">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-success active"><i class="fa fa-group"></i> Teilnehmer</a>
+                            <a id="btnWaiting" href="javascript:onToogleWaiting()" class="btn btn-default"><i class="fa fa-hourglass-half"></i> Warteliste</a>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("PersonalPlanList", "Activity", new {id=Model.Semester.Id})" class="btn btn-default"><i class="fa fa-list"></i> Listendarstellung</a>
+                            <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default"><i class="fa fa-calendar-o"></i> Tageskalender</a>
+                            <a href="@Url.Action("List", "Planer", new {id = Model.Semester.Id})"  class="btn btn-default"><i class="fa fa-list"></i> Terminliste</a>
+                            <a href="@Url.Action("Index", "UserProfile")" class="btn btn-default"><i class="fa fa-recycle"></i> Abruf iCal-Daten</a>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-primary"><i class="fa fa-pencil"></i> Planer</a>
+                        </div>
                     </div>
+                <div class="list-group-item">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
@@ -40,18 +54,49 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
-            $('#loading').hide();
-
             initWeeklyCalendar(630, true);
+            updateCalendar(false);
+        });
+
+        function onToogleWaiting() {
+            if ($('#btnWaiting').hasClass("active")) {
+                $('#btnWaiting').removeClass("active");
+                $('#btnWaiting').removeClass("btn-warning");
+                $('#btnWaiting').addClass("btn-default");
+                updateCalendar(false);
+            } else {
+                $('#btnWaiting').addClass("active");
+                $('#btnWaiting').removeClass("btn-default");
+                $('#btnWaiting').addClass("btn-warning");
+                updateCalendar(true);
+            }
+        }
+
+        function updateCalendar(showWL) {
+            $('#loading').show();
+
+            // $('#calendar').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
 
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
-            {
-                url: '@Url.Action("ActivityPrintPlan", "Calendar", new {id=Model.Semester.Id})',
-                type: 'POST'
-            });
-        });
-
+                {
+                    url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        semId: '@Model.Semester.Id',
+                        showWaiting: showWL
+                    },
+                    success: function(data, success, xhr) {
+                        $('#calendarList').html(data);
+                        $('#calendarList').show();
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+        }
     </script>
 }

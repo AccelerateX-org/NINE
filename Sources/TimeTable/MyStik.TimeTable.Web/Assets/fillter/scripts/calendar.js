@@ -44,6 +44,7 @@ function initCalendar(isInteractive, isMoFr, isSmall, idCal) {
         slotEventOverlap: false,
         hiddenDays: isMoFr ? [ 0, 6 ] : null,
         firstDay: 1,
+        displayEventTime: false,
         contentHeight: contentHeight,
         eventRender: function (event, element, view) {
             
@@ -68,6 +69,14 @@ function initCalendar(isInteractive, isMoFr, isSmall, idCal) {
             }
             
             if (event.htmlContent != null) element.find('.fc-content').append(event.htmlContent);
+        },
+        eventClick: function (calEvent, jsEvent, view) {
+
+            onShowEventInfo(calEvent.courseId);
+
+            // change the border color just for fun
+            // $(this).css('border-color', 'red');
+
         },
         loading: function (bool) {
             if (bool)

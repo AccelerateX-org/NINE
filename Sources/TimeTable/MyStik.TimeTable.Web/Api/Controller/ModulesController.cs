@@ -33,13 +33,19 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [ResponseType(typeof(AccreditatedModuleDto))]
         public async Task<IHttpActionResult> GetModule(Guid id)
         {
-            if (!(await Db.Accreditations.FindAsync(id) is ModuleAccreditation module))
+            if (!(await Db.CertificateModules.FindAsync(id) is CertificateModule module))
+            {
+                return NotFound();
+            }
+
+            // unvollständige Modulbeschreibungen werden gelten als nicht gefunden
+            if (module.Subjects.Any(x => x.ContentModules.Any(y => y.TeachingBuildingBlock == null)))
             {
                 return NotFound();
             }
 
             var converter = new ModuleConverter(Db);
-            var dto = converter.Convert(id);
+            var dto = converter.ConvertCertificateModule(id);
 
             return Ok(dto);
         }

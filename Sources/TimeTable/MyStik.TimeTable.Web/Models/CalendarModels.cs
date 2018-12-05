@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// Uniquely identifies the given event. Different instances of repeating events should all have the same id.
         /// </summary>
-        public int Id { get; set; }
+        public string id { get; set; }
 
         /// <summary>
         /// The text on an event's element.
@@ -91,6 +91,8 @@ namespace MyStik.TimeTable.Web.Models
         /// Inhalt
         /// </summary>
         public string htmlContent { get; set; }
+
+        public string courseId { get; set; }
     }
 
     /// <summary>

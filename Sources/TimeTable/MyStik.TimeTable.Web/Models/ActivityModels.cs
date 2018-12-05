@@ -424,6 +424,20 @@ namespace MyStik.TimeTable.Web.Models
             DateType = dateType;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="dateType"></param>
+        public ActivityDateSummary(ActivityDate date, OccurrenceSubscription sub)
+        {
+            Date = date;
+            DateType = ActivityDateType.Subscription;
+            Subscription = sub;
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -448,6 +462,9 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ActivitySlot Slot { get; set; }
+
+
+        public OccurrenceSubscription Subscription { get; set; }
 
         /// <summary>
         /// 
@@ -607,28 +624,41 @@ namespace MyStik.TimeTable.Web.Models
                     return "#F00";
                 }
 
-                
 
-                // wenn der Termin ausfällt, immer roter Hintergrund
-                if (Date.Occurrence.IsCanceled)
-                    return "#FFB5C5"; 
-
-                switch (DateType)
+                if (Subscription == null)
                 {
-                       
-                    case ActivityDateType.Offer:
-                        // Eigene Angebote: weiss
-                        return "#FFF";
-                    case ActivityDateType.SearchResult:
-                        // Suchergebnisse: grau
-                        return "#CCC";
-                    case ActivityDateType.Subscription:
-                        // Eintragungen: grün = findet statt
-                        return "#ffffb3";
-                    
-                    default:
-                        return "#FFF";
-                
+                    // wenn der Termin ausfällt, immer roter Hintergrund
+                    if (Date.Occurrence.IsCanceled)
+                        return "#FFB5C5";
+
+                    switch (DateType)
+                    {
+
+                        case ActivityDateType.Offer:
+                            // Eigene Angebote: weiss
+                            return "#FFF";
+                        case ActivityDateType.SearchResult:
+                            // Suchergebnisse: grau
+                            return "#CCC";
+                        case ActivityDateType.Subscription:
+                            // Eintragungen: grün = findet statt
+                            return "#ffffb3";
+
+                        default:
+                            return "#FFF";
+
+                    }
+                }
+                else
+                {
+                    if (Subscription.OnWaitingList)
+                    {
+                        return "#c89f23";
+                    }
+                    else
+                    {
+                        return "#37918b";
+                    }
                 }
             }
         }

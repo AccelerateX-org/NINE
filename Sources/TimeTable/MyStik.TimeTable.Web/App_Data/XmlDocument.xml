@@ -1632,6 +1632,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.RoomDto.Description">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.LecturerDto">
             <summary>
             
@@ -1913,6 +1918,11 @@
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumTermSectionDto.Subjects">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.CurriculumSchemeModuleDto.Ects">
+            <summary>
+            Summe der Ects im Semester
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.CurriculumSchemeOptionDto">
@@ -2473,7 +2483,7 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Services.ModuleConverter.Convert(System.Guid)">
+        <member name="M:MyStik.TimeTable.Web.Api.Services.ModuleConverter.ConvertAccreditatedModule(System.Guid)">
             <summary>
             
             </summary>
@@ -4797,6 +4807,11 @@
             
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.PersonalPlanList(System.Guid)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.SubscribeActivity(System.Guid)">
             <summary>
             
@@ -4988,13 +5003,6 @@
             <summary>
             
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BookingController.SelectCourse(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.BuildingController">
@@ -5602,6 +5610,20 @@
             
             </summary>
             <param name="disposing"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.DictionaryController.SelectCourse(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">Id des Kurses</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.DictionaryController.Subscribe(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id">Id des Kurses</param>
+            <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.ExamController">
             <summary>
@@ -6626,6 +6648,15 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.PersonalPlanWeekly(System.String,System.String,System.Nullable{System.Guid},System.Nullable{System.Boolean})">
+            <summary>
+            
+            </summary>
+            <param name="start"></param>
+            <param name="end"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.ActivityPlanMobile(System.String,System.String)">
             <summary>
             
@@ -6690,6 +6721,17 @@
             <param name="start"></param>
             <param name="end"></param>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.GroupCalendar(System.Guid,System.Boolean,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="semGroupId"></param>
+            <param name="topicId"></param>
+            <param name="showPersonalDates"></param>
+            <param name="start"></param>
+            <param name="end"></param>
             <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.CantineController">
@@ -10502,6 +10544,16 @@
             <param name="groups"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.Occurrence)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="groups"></param>
+            <param name="showAvailability"></param>
+            <param name="showLink"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.TimeSpan(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.ActivityDate)">
             <summary>
             
@@ -11212,6 +11264,13 @@
             <param name="date"></param>
             <param name="dateType"></param>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Models.ActivityDateSummary.#ctor(MyStik.TimeTable.Data.ActivityDate,MyStik.TimeTable.Data.OccurrenceSubscription)">
+            <summary>
+            
+            </summary>
+            <param name="date"></param>
+            <param name="dateType"></param>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.ActivityDateSummary.Activity">
             <summary>
             
@@ -11585,7 +11644,7 @@
             Referenz: http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.Id">
+        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.id">
             <summary>
             Uniquely identifies the given event. Different instances of repeating events should all have the same id.
             </summary>

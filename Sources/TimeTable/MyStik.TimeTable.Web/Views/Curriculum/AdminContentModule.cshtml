@@ -1,0 +1,111 @@
+﻿@model MyStik.TimeTable.Data.ModuleAccreditation
+@{
+    ViewBag.Title = "Modulakkreditierung";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Modulakkreditierung - @Model.Number</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.UserRight.IsOrgMember)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("AdminSubject", new {id = Model.CertificateSubject.Id})" class="btn btn-default">
+                                        <i class="fa fa-arrow-left"></i> Zurück
+                                    </a>
+                                </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("EditContentModule", new {id = Model.Id})" class="btn btn-default">
+                                        <i class="fa fa-cogs"></i> Einstellungen
+                                    </a>
+                                </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("AssignModule", new {id = Model.Id})" class="btn btn-default">
+                                        <i class="fa fa-cogs"></i> Inhaltsmodul zuordnen
+                                    </a>
+                                </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("DeleteContentModule", new {id = Model.Id})" class="btn btn-danger">
+                                        <i class="fa fa-trash"></i> Inhaltsmodul löschen
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-cube"></i> Einordnung
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="list-group-item-heading">
+                            <h5>Einordnung im Studiengang</h5>
+                            <div class="list-group-item-text">
+                                <ul>
+                                    <li>Katalognummer: @Model.Number</li>
+                                    <li>Pflicht / Wahl: @Model.IsMandatory</li>
+                                    <li>Teilmodul: @Model.CertificateSubject.Name im @Model.CertificateSubject.Term Semester</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-cube"></i> Akkreditiertes Inhaltsmodul
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @if (Model.TeachingBuildingBlock != null)
+                    {
+                         <div class="list-group-item">
+                             <div class="list-group-item-heading">
+                                 <h5>@Model.TeachingBuildingBlock.Name</h5>
+                             </div>
+                         </div>
+                    }
+                    else
+                    {
+                        <div class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>Kein Modul ausgewählt</h5>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

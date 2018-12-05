@@ -373,7 +373,6 @@
     <Compile Include="Controllers\AdvertisementsController.cs" />
     <Compile Include="Controllers\AlumniController.cs" />
     <Compile Include="Controllers\ArchiveController.cs" />
-    <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
@@ -3213,6 +3212,7 @@
     <Content Include="Areas\Admin\Views\User\ChangeUserName.cshtml" />
     <Content Include="Areas\Admin\Views\User\Student.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
+    <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion.pubxml" />
     <Content Include="Scripts\angular-mocks.js" />
@@ -3810,7 +3810,7 @@
     <Content Include="Views\Dictionary\CourseList.cshtml" />
     <Content Include="Views\Dictionary\CourseListByTopics.cshtml" />
     <Content Include="Views\Dictionary\Curriculum.cshtml" />
-    <Content Include="Views\Dictionary\Group.cshtml" />
+    <Content Include="Views\Dictionary\GroupList.cshtml" />
     <Content Include="Views\Dictionary\Index.cshtml" />
     <Content Include="Views\Dictionary\Organiser.cshtml" />
     <Content Include="Views\Dictionary\Semester.cshtml" />
@@ -4021,10 +4021,21 @@
     <Content Include="Views\Teaching\CreateModule.cshtml" />
     <Content Include="Views\Teaching\ModuleDetails.cshtml" />
     <Content Include="Views\Dictionary\_GroupListNew.cshtml" />
-    <Content Include="Views\Booking\SelectCourse.cshtml" />
-    <Content Include="Views\Booking\_Discharge.cshtml" />
-    <Content Include="Views\Booking\_Subscribe.cshtml" />
+    <Content Include="Views\Curriculum\ModuleDetails.cshtml" />
+    <Content Include="Views\Curriculum\CreateSubject.cshtml" />
+    <Content Include="Views\Curriculum\AdminContentModule.cshtml" />
+    <Content Include="Views\Curriculum\AssignModule.cshtml" />
+    <Content Include="Views\Activity\PersonalPlanList.cshtml" />
+    <Content Include="Views\Dictionary\GroupCalendar.cshtml" />
+    <Content Include="Views\Dictionary\GroupListByTopic.cshtml" />
+    <Content Include="Views\Shared\_CalendarEventContentPlaner.cshtml" />
+    <Content Include="Views\Shared\_CalendarEventToolbarPlaner.cshtml" />
+    <Content Include="Views\Dictionary\_SelectCourse.cshtml" />
+    <Content Include="Views\Dictionary\_BookingBox.cshtml" />
     <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Lab.config">
@@ -4125,6 +4136,15 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DocumentationFile>App_Data/XmlDocument.xml</DocumentationFile>
     <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>

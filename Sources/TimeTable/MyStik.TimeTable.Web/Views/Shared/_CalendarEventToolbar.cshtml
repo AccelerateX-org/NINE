@@ -75,7 +75,7 @@
                 }
                 else
                 {
-                    @Ajax.ActionButton("fa-times text-danger", "", "DischargeActivity", "Activity",
+                    @Ajax.ActionButton("fa-times", "", "DischargeActivity", "Activity",
                                 new { Id = Model.State.Occurrence.Id },
                                 new AjaxOptions()
                                 {
@@ -84,7 +84,7 @@
                                     UpdateTargetId = activityFlag,
                                     OnSuccess = "UpdateCalendar()"
                                 },
-                                new { @class = "btn btn-default btn-xs" })
+                                new { @class = "btn btn-danger btn-xs" })
                 }
 
             }

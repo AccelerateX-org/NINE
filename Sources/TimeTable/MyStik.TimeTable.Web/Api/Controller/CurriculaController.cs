@@ -86,32 +86,15 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 {
                     var moduleDto = new CurriculumSchemeModuleDto()
                     {
+                        Id = module.Key.Id,
                         Name = module.Key.Name,
-                        TotalEcts = 0
+                        Ects = 0,
+
                     };
 
                     foreach (var subject in module)
                     {
-                        var subjectDto = new CurriculumSchemeSubjectDto()
-                        {
-                            Name = subject.Name,
-                            ECTS = subject.Ects
-                        };
-                        moduleDto.TotalEcts += subject.Ects;
-
-                        foreach (var contentModule in subject.ContentModules)
-                        {
-                            var optionDto = new CurriculumSchemeOptionDto()
-                            {
-                                Id = contentModule.Id,
-                                Number = contentModule.Number,
-                                IsMandatory = contentModule.IsMandatory
-                            };
-
-                            subjectDto.Options.Add(optionDto);
-                        }
-
-                        moduleDto.Subjects.Add(subjectDto);
+                        moduleDto.Ects += subject.Ects;
                     }
 
                     semDto.Modules.Add(moduleDto);

@@ -24,6 +24,11 @@
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <div class="form-group">
+                                    <a href="@Url.Action("Index", new {id = Model.Id})" class="btn btn-default">
+                                        <i class="fa fa-arrow-left"></i> Zurück
+                                    </a>
+                                </div>
+                                <div class="form-group">
                                     <a href="@Url.Action("CreateModule", new {id = Model.Id})" class="btn btn-default">
                                         <i class="fa fa-plus"></i> Modul anlegen
                                     </a>
@@ -57,7 +62,7 @@
                         @foreach (var modul in Model.Modules)
                         {
                             <tr>
-                                <td><a href="@Url.Action("EditModule", new {id=modul.Id})">@modul.Name</a></td>
+                                <td><a href="@Url.Action("ModuleDetails", new {id=modul.Id})">@modul.Name</a></td>
                                 <td>@modul.Weight</td>
                                 <td>
                                 @foreach (var subject in modul.Subjects)

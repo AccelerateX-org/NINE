@@ -20,17 +20,45 @@ namespace MyStik.TimeTable.Web.Api.Services
             _db = db;
         }
 
+
+        public CertificateModuleDto ConvertCertificateModule(Guid id)
+        {
+            var dto = new CertificateModuleDto();
+
+            var module = _db.CertificateModules.SingleOrDefault(x => x.Id == id);
+
+            dto.Id = module.Id;
+            dto.Name = module.Name;
+
+            foreach (var subject in module.Subjects)
+            {
+                // Ebene Modulbeschreibung
+                foreach (var accreditation in subject.ContentModules)
+                {
+                    dto.Subjects.Add(ConvertAccreditatedModule(accreditation.Id));
+                }
+            }
+
+            return dto;
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        public AccreditatedModuleDto Convert(Guid id)
+        public AccreditatedModuleDto ConvertAccreditatedModule(Guid id)
         {
             var dto = new AccreditatedModuleDto();
 
             var module = _db.Accreditations.SingleOrDefault(x => x.Id == id);
 
+            dto.Id = module.Id;
             dto.Number = module.Number;
             dto.isMandatory = module.IsMandatory;
+
+            // Ebene Subjects
+            dto.Ects = module.CertificateSubject.Ects;
+            dto.Term = module.CertificateSubject.Term;
+
 
             if (module.TeachingBuildingBlock != null)
             {

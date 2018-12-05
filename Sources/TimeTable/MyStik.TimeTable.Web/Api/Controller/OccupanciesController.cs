@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Http;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Services;
+using RazorEngine.Compilation.ImpromptuInterface;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
@@ -44,6 +45,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 var occDto = new OccupancyDto();
                 occDto.Room.Number = room.Number;
+                occDto.Room.Description = room.Description;
 
                 // nächste Belegung
                 var nextDate = room.Dates.OrderBy(x => x.Begin).FirstOrDefault(x => x.Begin > from);

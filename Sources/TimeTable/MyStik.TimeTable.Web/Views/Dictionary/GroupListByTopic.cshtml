@@ -24,63 +24,67 @@
                         <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
                         <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /
                         @Model.CapacityGroup.FullName
-                        @if (Request.IsAuthenticated)
-                        {
-                            <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                            <span class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-                                @if (Request.IsLocal)
-                                {
-                                    <a class="btn btn-default btn-sm" href="javascript:showListNew()"><i class="fa fa-list"></i> Liste (neu)</a>
-                                }
-                                <a class="btn btn-default btn-sm" href="javascript:showList()"><i class="fa fa-list"></i> Liste</a>
-                                <a class="btn btn-default btn-sm" href="javascript:showCalendar()"><i class="fa fa-calendar"></i> Tageskalender</a>
-                            </span>
-                        }
                     </h4>
                 </div>
-                <div id="calendar" class="list-group">
-                    @foreach (var course in Model.Courses)
-                    {
-                        @Html.Partial("_CourseSummaryListItem", course)
-                    }
-                </div>
+
+
+                @foreach (var topic in Model.Topics)
+                {
+                    <div class="list-group">
+                        @if (topic.Topic != null)
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">@topic.Topic.TopicName</h5>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">Ohne Fachzugehörigkeit</h5>
+                            </div>
+                        }
+
+
+                        @foreach (var course in topic.Courses)
+                        {
+                            @Html.Partial("_CourseSummaryListItem", course)
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
 
+
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
     <style>
 
-        .selectable {
-            cursor: pointer;
-        }
-
-        .discardable {
-            cursor: pointer;
-        }
-
+        .selectable
+        .discardable
         .lottery {
             cursor: pointer;
+        }
+
+        .unselectable {
+            position: absolute;
+            left: -24px;
+            top: 24px;
         }
     </style>
 }
 
 @section scripts
 {
-    <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
-    <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script>
         $(document).ready(function() {
 
             // Wählen bzw. Abwählen eines Projekte, diese bekommt dann ein Häkchen
             $('.selectable').click(function() {
-                if (!$(this).hasClass('disabled')) {
+                if ($(this).hasClass('disabled')) {
+                } else {
                     if ($(this).hasClass('discardable')) {
 
                         $(this).addClass('disabled');
@@ -154,76 +158,5 @@
 
         });
 
-        function showCalendar() {
-            var group = '@Model.SemesterGroup.Id';
-            $('#calendar').html('');
-            initCalendar(true, false);
-
-            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
-            $('#calendar').fullCalendar('addEventSource',
-                {
-                    url: '@Url.Action("CourseEventsByProgram", "Calendar")',
-                    type: 'POST',
-                    data: {
-                        semGroupId: group,
-                        topicId: null,
-                        showPersonalDates: true
-                    }
-                });
-
-        }
-
-        function showList() {
-            var group = '@Model.SemesterGroup.Id';
-
-            $('#calendar').html('');
-            $('#loading').show();
-
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: '@Url.Action("CourseListForGroup", "Dictionary")',
-                    data: {
-                        semGroupId: group,
-                    },
-                    success: function(data, success, xhr) {
-                        $('#calendar').html(data);
-                        $('#loading').hide();
-                    },
-                    error: function(data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
-                    }
-                });
-
-        }
-
-
-        function showListNew() {
-            var group = '@Model.SemesterGroup.Id';
-
-            $('#calendar').html('');
-            $('#loading').show();
-
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: '@Url.Action("CourseListForGroupNew", "Dictionary")',
-                    data: {
-                        semGroupId: group,
-                    },
-                    success: function(data, success, xhr) {
-                        $('#calendar').html(data);
-                        $('#loading').hide();
-                    },
-                    error: function(data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
-                    }
-                });
-
-        }
-
     </script>
-
 }

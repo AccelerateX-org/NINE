@@ -648,6 +648,103 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult PersonalPlanWeekly(string start, string end, Guid? semId, bool? showWaiting)
+        {
+            var startDate = GetDateTime(start);
+            var endDate = GetDateTime(end);
+
+            var events = new List<CalendarEventModel>();
+
+            // start und end sind "echte" Daten, d.h. eine Woche
+
+            // Am Schluss muss alles in "Wochentage" umgerechnet werden
+
+            // Alle Events abstrakt nah Wochentag
+            var semester = SemesterService.GetSemester(semId);
+            var user = GetCurrentUser();
+
+            var courses = new List<Course>();
+
+
+            // Alle Kurse, in denen ich in diesem Semester eingetragen bin
+            if (showWaiting.HasValue && showWaiting.Value)
+            {
+                var mylisten =
+                    Db.Activities.OfType<Course>()
+                        .Where(c =>
+                            c.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                            c.Occurrence.Subscriptions.Any(x => x.UserId == user.Id))
+                        .ToList();
+
+                courses.AddRange(mylisten);
+            }
+            else
+            {
+                var mylisten =
+                    Db.Activities.OfType<Course>()
+                        .Where(c =>
+                            c.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                            c.Occurrence.Subscriptions.Any(x => x.UserId == user.Id && !x.OnWaitingList))
+                        .ToList();
+
+                courses.AddRange(mylisten);
+            }
+
+            foreach (var course in courses)
+            {
+                var isWaiting = course.Occurrence.Subscriptions.Any(x => x.UserId == user.Id && x.OnWaitingList);
+
+
+                var days = (from occ in course.Dates
+                            select
+                                new
+                                {
+                                    Day = occ.Begin.DayOfWeek,
+                                    Begin = occ.Begin.TimeOfDay,
+                                    End = occ.End.TimeOfDay,
+                                }).Distinct().ToList();
+
+                var eventViewModel = new CalenderEventPrintViewModel();
+                eventViewModel.Course = course;
+                eventViewModel.Rooms = Db.Rooms.Where(x => x.Dates.Any(y => y.Activity.Id == course.Id)).Distinct().ToList();
+
+
+                foreach (var day in days)
+                {
+                    var calDay = startDate.AddDays((int)day.Day - (int)startDate.DayOfWeek);
+                    var calBegin = calDay.Add(day.Begin);
+                    var calEnd = calDay.Add(day.End);
+
+                    // Einfacher Eintrag
+                    events.Add(new CalendarEventModel
+                    {
+                        title = course.Name,
+                        allDay = false,
+                        start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        textColor = "#000",
+                        backgroundColor = isWaiting ? "#c89f23" : "#37918b",
+                        borderColor = "#000",
+                        //htmlToolbarInfo = this.RenderViewToString("_CalendarEventToolbarInfo", eventViewModel),
+                        //htmlToolbar = this.RenderViewToString("_CalendarEventToolbar", eventViewModel),
+                        htmlContent = this.RenderViewToString("_CalendarEventContentPrint", eventViewModel),
+                    });
+                }
+            }
+
+
+            return Json(events);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult ActivityPlanMobile(string start, string end)
@@ -1215,6 +1312,173 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return Json(events);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="semGroupId"></param>
+        /// <param name="topicId"></param>
+        /// <param name="showPersonalDates"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult GroupCalendar(Guid semGroupId, bool showWaiting, string start, string end)
+        {
+            var startDate = GetDateTime(start);
+            var endDate = GetDateTime(end);
+
+            var cal = new List<CalendarEventModel>();
+
+            var db = new TimeTableDbContext();
+
+            var dateMap = new Dictionary<Guid, ActivityDateSummary>();
+
+            var user = UserManager.FindByName(User.Identity.Name);
+
+            if (user != null)
+            {
+                // 2. die gebuchten
+                var myOcs = db.Occurrences.Where(o => o.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+
+                var ac = new ActivityService();
+
+                foreach (var occ in myOcs)
+                {
+                    var summary = ac.GetSummary(occ.Id);
+
+                    var dates = summary.GetDates(startDate, endDate);
+
+                    foreach (var date in dates)
+                    {
+                        if (!dateMap.ContainsKey(date.Id))
+                        {
+                            var sub = occ.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+                            dateMap[date.Id] = new ActivityDateSummary(date, sub);
+
+                        }
+                    }
+                }
+            }
+
+            // 3. das Suchergebnis
+            // das Semester suchen, dass zum Datum passt
+            // Grundannahme:  Vorlesungszeiten überlappen sich nicht
+            var semGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
+
+            if (semGroup != null && user != null)
+            {
+                // Daten anzeigen, wenn Booking Enabled
+                var lookUp = semGroup.IsAvailable;
+                if (!lookUp)
+                {
+                    // wenn noch nicht freigegeben, dann Staff und SysAdmin
+                    lookUp = (user.MemberState == MemberState.Staff) || User.IsInRole("SysAdmin");
+                }
+
+                if (lookUp)
+                {
+                    var courses = semGroup.Activities.ToList();
+                    foreach (var course in courses)
+                    {
+                        var dates = course.Dates.Where(c => c.Begin >= startDate && c.End <= endDate);
+
+                        foreach (var date in dates)
+                        {
+                            if (!dateMap.ContainsKey(date.Id))
+                            {
+                                dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.SearchResult);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            var events = new List<CalendarEventModel>();
+
+
+            foreach (var date in dateMap.Values.ToList())
+            {
+                if (date.Activity != null)
+                {
+                    // State
+                    // wenn Course => Activity
+                    // wenn Sprechstunde => Date oder Slot
+
+                    var eventViewModel = new CalenderEventViewModel
+                    {
+                        Summary = date,
+                        State = ActivityService.GetActivityState(date.Date.Activity.Occurrence, AppUser),
+                        Lottery = date.Activity.Occurrence != null
+                                    ? Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == date.Activity.Occurrence.Id))
+                                    : null
+                    };
+
+
+
+                    // Workaround für fullcalendar
+                    // wenn der Kalendereintrag ein zu geringe höhe hat,
+                    // dann wird statt des Endes der Titel angezeigt
+                    // Den Titel rendern wir selber, d.h. i.d.R. geben wir ihn nicht an!
+                    // file: fullcalendar.js line 3945
+                    /*
+                    var duration = date.Date.End - date.Date.Begin;
+                        if (duration.TotalMinutes <= 60)
+                            string title = null;
+                            title = date.Date.End.TimeOfDay.ToString(@"hh\:mm");
+                     */
+                    var sb = new StringBuilder();
+
+                    if (date.Slot != null)
+                    {
+                        events.Add(new CalendarEventModel
+                        {
+                            title = sb.ToString(),
+                            allDay = false,
+                            start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            textColor = date.TextColor,
+                            backgroundColor = date.BackgroundColor,
+                            borderColor = "#ff0000",
+                            htmlToolbarInfo = this.RenderViewToString("_CalendarEventToolbarInfo", eventViewModel),
+                            htmlToolbar = this.RenderViewToString("_CalendarEventToolbar", eventViewModel),
+                            htmlContent = this.RenderViewToString("_CalendarEventContent", eventViewModel),
+                        });
+                    }
+                    else
+                    {
+                        events.Add(new CalendarEventModel
+                        {
+                            id = date.Activity.Id.ToString(),
+                            courseId = date.Activity.Id.ToString(),
+                            title = sb.ToString(),
+                            allDay = false,
+                            start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            textColor = date.TextColor,
+                            backgroundColor = date.BackgroundColor,
+                            borderColor = "#000",
+                            htmlToolbarInfo = null,
+                            htmlToolbar = null,
+                            htmlContent = this.RenderViewToString("_CalendarEventContentPlaner", eventViewModel),
+                        });
+                    }
+                }
+                else
+                {
+                }
+            }
+
+
+
+            cal.AddRange(events);
+
+            return Json(cal);
         }
 
     }

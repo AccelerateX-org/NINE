@@ -37,12 +37,17 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="@Url.Action("InitTestUser", new {id = Model.Id})">
+                                    <a href="@Url.Action("AssignTeacher", new {id = Model.Id})">
+                                        <i class="fa fa-pencil"></i> Lehrenden
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("CreateTeachingUnit", new {id = Model.Id})">
                                         <i class="fa fa-microphone"></i> Lehreinheit
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("SubscribeTest", new {id = Model.Id})">
+                                    <a href="@Url.Action("CreateExam", new {id = Model.Id})">
                                         <i class="fa fa-pencil"></i> Prüfung
                                     </a>
                                 </li>
@@ -67,6 +72,28 @@
                 </div>
                 <div class="panel-body">
                     @Html.Raw(Model.Description)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-cube"></i> Lehrende
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var lecturer in Model.Lecturers)
+                    {
+                        <a href="@Url.Action("LecturersDetails", new {id=lecturer.Id})" class="list-group-item">
+                            <div class="list-group-item-heading">
+                                <h5>@lecturer.Member.FullName</h5>
+                            </div>
+                        </a>
+                    }
+
                 </div>
             </div>
         </div>
@@ -109,7 +136,7 @@
                 <div class="list-group">
                     @foreach (var module in Model.ExaminationUnits)
                     {
-                        <a href="@Url.Action("ExaminationDetails", new {id=module.Id})" class="list-group-item">
+                        <a href="@Url.Action("ExamDetails", new {id=module.Id})" class="list-group-item">
                             <div class="list-group-item-heading">
                                 <h5>@module.Form.Name</h5>
                             </div>

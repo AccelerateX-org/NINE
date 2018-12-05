@@ -196,6 +196,48 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="groups"></param>
+        /// <param name="showAvailability"></param>
+        /// <param name="showLink"></param>
+        /// <returns></returns>
+        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, Occurrence occ)
+        {
+            var sb = new StringBuilder();
+            foreach (var group in occ.Groups)
+            {
+                var firstGroup = group.SemesterGroups.FirstOrDefault();
+                if (firstGroup == null)
+                {
+                    sb.Append("N.N.");
+                }
+                else
+                {
+                    sb.AppendFormat("{0} (", firstGroup.CapacityGroup.CurriculumGroup.Curriculum.ShortName);
+
+                    foreach (var semesterGroup in group.SemesterGroups)
+                    {
+                        sb.Append(semesterGroup.GroupName);
+                        if (semesterGroup != group.SemesterGroups.Last())
+                        {
+                            sb.Append(htmlHelper.Raw(", "));
+                        }
+                    }
+                    sb.Append(")");
+                }
+                if (group != occ.Groups.Last())
+                {
+                    sb.Append(htmlHelper.Raw(", "));
+                }
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+
         public static MvcHtmlString TopicList(this HtmlHelper htmlHelper, ICollection<SemesterTopic> topics)
         {
             var sb = new StringBuilder();

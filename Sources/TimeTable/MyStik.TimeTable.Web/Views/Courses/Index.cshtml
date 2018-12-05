@@ -54,6 +54,18 @@
                     }
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-book"></i> Module
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("Index", "ModuleDictionary")" class="list-group-item">
+                        <h5 class="list-group-item-heading">Modulverzeichnis</h5>
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)

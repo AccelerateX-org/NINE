@@ -181,6 +181,64 @@ namespace MyStik.TimeTable.Web.Controllers
                 ViewBag.Groups = new SelectList("Text", "Value");
             }
 
+            // Hier reparieren wir die OccurrenceGroups
+            // Ziel: pro Studiengang exakt eine OccGroup, mit allen zugehörigen Semestergruppen
+            // wir mach uns eine Map und gehen die Dinger durch
+            var map = new Dictionary<Curriculum, List<OccurrenceGroup>>();
+
+            foreach (var occurrenceGroup in course.Occurrence.Groups)
+            {
+                foreach (var semesterGroup in occurrenceGroup.SemesterGroups)
+                {
+                    if (!map.ContainsKey(semesterGroup.CapacityGroup.CurriculumGroup.Curriculum))
+                    {
+                        map[semesterGroup.CapacityGroup.CurriculumGroup.Curriculum] = new List<OccurrenceGroup>();
+                    }
+
+                    if (!map[semesterGroup.CapacityGroup.CurriculumGroup.Curriculum].Contains(occurrenceGroup))
+                    {
+                        map[semesterGroup.CapacityGroup.CurriculumGroup.Curriculum].Add(occurrenceGroup);
+                    }
+
+                }
+            }
+
+            // jetzt darf es zu jedem Studiengang jeweils nur eine Gruppe geben, sonst muss repariert werden
+            var isDistributed = map.Values.Any(x => x.Count > 1);
+            if (isDistributed)
+            {
+                var listToDelete = new List<OccurrenceGroup>();
+                // pro Studiengang durchgehen
+                foreach (var list in map.Values)
+                {
+                    var firstGroup = list.First();
+                    foreach (var occGroup in list)
+                    {
+                        if (occGroup != firstGroup)
+                        {
+                            foreach (var semGroup in occGroup.SemesterGroups.ToList())
+                            {
+                                occGroup.SemesterGroups.Remove(semGroup);
+                                semGroup.OccurrenceGroups.Remove(occGroup);
+                                firstGroup.SemesterGroups.Add(semGroup);
+                                semGroup.OccurrenceGroups.Add(firstGroup);
+                            }
+                            listToDelete.Add(occGroup);
+                        }
+                    }
+                }
+
+                // Am Ende müssten alle zu löschenden Listen leer sein
+                foreach (var occurrenceGroup in listToDelete)
+                {
+                    course.Occurrence.Groups.Remove(occurrenceGroup);
+                    Db.OccurrenceGroups.Remove(occurrenceGroup);
+                }
+
+                Db.SaveChanges();
+
+            }
+
 
             return View(model);
         }
@@ -223,17 +281,25 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         course.SemesterGroups.Add(semGroup);
 
-                        // zugehörige Occurrencegroup anlegen
-                        var occGroup = new OccurrenceGroup
+                        // zugehörige Occurrencegroup zum Studiengang suchen
+                        var occGroup = course.Occurrence.Groups.SingleOrDefault(x => 
+                            x.SemesterGroups.Any(g => 
+                                g.CapacityGroup.CurriculumGroup.Curriculum.Id == semGroup.CapacityGroup.CurriculumGroup.Curriculum.Id));
+
+                        if (occGroup == null)
                         {
-                            Capacity = 0,
-                            FitToCurriculumOnly = true,
-                            Occurrence = course.Occurrence
-                        };
+                            occGroup = new OccurrenceGroup
+                            {
+                                Capacity = 0,
+                                FitToCurriculumOnly = true,
+                                Occurrence = course.Occurrence
+                            };
+                            semGroup.OccurrenceGroups.Add(occGroup);
+                            course.Occurrence.Groups.Add(occGroup);
+                            Db.OccurrenceGroups.Add(occGroup);
+                        }
+
                         occGroup.SemesterGroups.Add(semGroup);
-                        semGroup.OccurrenceGroups.Add(occGroup);
-                        course.Occurrence.Groups.Add(occGroup);
-                        Db.OccurrenceGroups.Add(occGroup);
                     }
                 }
             }
@@ -244,12 +310,17 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 course.SemesterGroups.Remove(semGroup);
 
-                // zugehörige OccurrenceGroup löschen
+                // zugehörige OccurrenceGroup löschen, wenn sie leer ist
                 var group = course.Occurrence.Groups.FirstOrDefault(g => g.SemesterGroups.Contains(semGroup));
                 if (group != null)
                 {
-                    course.Occurrence.Groups.Remove(group);
-                    Db.OccurrenceGroups.Remove(group);
+                    group.SemesterGroups.Remove(semGroup);
+
+                    if (!group.SemesterGroups.Any())
+                    {
+                        course.Occurrence.Groups.Remove(group);
+                        Db.OccurrenceGroups.Remove(group);
+                    }
                 }
             }
 

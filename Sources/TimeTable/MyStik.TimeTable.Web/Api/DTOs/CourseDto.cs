@@ -123,6 +123,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public string Campus { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Description { get; set; }
     }
 
     /// <summary>

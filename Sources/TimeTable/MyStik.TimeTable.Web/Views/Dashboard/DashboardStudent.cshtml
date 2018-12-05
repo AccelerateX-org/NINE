@@ -7,20 +7,17 @@
 <div class="container-fluid">
 
     <div class="row" style="margin-top: 20px">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Mein Studium <small>(<a href="@Url.Action("Curricula", "Subscription")">@Model.Student.Curriculum.ShortName @Model.Student.FirstSemester.Name</a>)</small></h4>
-                </div>
-                <div class="list-group">
-                    <a class="list-group-item" href="@Url.Action("Index", "Activity")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-calendar"></i> Kalender</h5>
-                        <div class="list-group-item-text">Meine Eintragungen und Buchungen</div>
-                    </a>
-                    <div class="list-group-item">
-                        <h5 class="list-group-item-heading"><i class="fa fa-pencil"></i> Stundenplanung (@Model.Semester.Name)</h5>
-                        <a class="list-group-item-text" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.Semester.Id })">Mein persönlicher Stundenplan</a>
-                        <div class="list-group-item-text">
+
+        @if (Model.Lotteries.Any())
+        {
+            <div class="col-md-4">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-clock-o"></i> Aktuelles</h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="" class="list-group-item">
+                            <h5 class="list-group-item-heading"><i class="fa fa-random"></i> Wahlverfahren</h5>
                             <ul class="fa-ul">
                                 @if (Model.Lotteries.Any())
                                 {
@@ -30,23 +27,23 @@
                                         {
                                             if (lottery.IsActiveFrom > DateTime.Today)
                                             {
-                                                <li><i class="fa fa-li fa-info-circle"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">Ab @lottery.IsActiveFrom.Value.ToShortDateString(): @lottery.Name</a></li>
+                                                <li><i class="fa fa-li fa-info-circle"></i>Ab @lottery.IsActiveFrom.Value.ToShortDateString(): @lottery.Name</li>
                                             }
                                             else
                                             {
                                                 if (lottery.IsActiveUntil <= DateTime.Today)
                                                 {
-                                                    <li><i class="fa fa-li fa-exclamation text-danger"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">Noch bis @lottery.IsActiveUntil.Value.ToShortDateString(): @lottery.Name</a></li>
+                                                    <li><i class="fa fa-li fa-exclamation text-danger"></i>Noch bis @lottery.IsActiveUntil.Value.ToShortDateString(): @lottery.Name</li>
                                                 }
                                                 else
                                                 {
-                                                    <li><i class="fa fa-li fa-exclamation text-danger"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">@lottery.Name</a></li>
+                                                    <li><i class="fa fa-li fa-exclamation text-danger"></i>@lottery.Name</li>
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            <li><i class="fa fa-li fa-info-circle"></i><a href="@Url.Action("Overview", "Lottery", new {id = lottery.Id})">@lottery.Name</a></li>
+                                            <li><i class="fa fa-li fa-info-circle"></i>@lottery.Name</li>
                                         }
                                     }
                                 }
@@ -55,8 +52,31 @@
                                     <li><i class="fa fa-li fa-info"></i><i>Aktuell keine aktiven Wahlverfahren</i></li>
                                 }
                             </ul>
-                        </div>
+                        </a>
                     </div>
+                </div>
+            </div>
+        }
+
+    
+
+
+
+
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Mein Studium <small>(<a href="@Url.Action("Curricula", "Subscription")">@Model.Student.Curriculum.ShortName @Model.Student.FirstSemester.Name</a>)</small></h4>
+                </div>
+                <div class="list-group">
+                    <a class="list-group-item" href="@Url.Action("Index", "Activity")">
+                        <h5 class="list-group-item-heading"><i class="fa fa-calendar"></i> Kalender</h5>
+                        <div class="list-group-item-text">Tageskalender mit allen Eintragungen</div>
+                    </a>
+                    <a class="list-group-item" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id = Model.Semester.Id})">
+                        <h5 class="list-group-item-heading"><i class="fa fa-pencil"></i> Stundenplan (@Model.Semester.Name)</h5>
+                        <div class="list-group-item-text">Wochenübersicht, Terminlisten und Planungswerkzeuge</div>
+                    </a>
                     <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item">
                         <h5 class="list-group-item-heading"><i class="fa fa-user-md"></i> Sprechstundenbuchung</h5>
                         <div class="list-group-item-text">Meine Sprechstundentermine, Sprechstundenangebote</div>
@@ -83,7 +103,7 @@
                     <h4>Meine Fakultät (@Model.Student.Curriculum.Organiser.ShortName)</h4>
                 </div>
                 <div class="list-group">
-                    <a href="@Url.Action("Organiser", "Event", new {semId = Model.Semester.Id, orgId=Model.Student.Curriculum.Organiser.Id})" class="list-group-item">
+                    <a href="@Url.Action("Organiser", "Event", new {semId = Model.Semester.Id, orgId = Model.Student.Curriculum.Organiser.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading"><i class="fa fa-microphone"></i> Veranstaltungen</h5>
                         <div class="list-group-item-text">Informationen, Vorträge und mehr</div>
                     </a>

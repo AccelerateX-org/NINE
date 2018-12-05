@@ -1,0 +1,81 @@
+﻿@model  MyStik.TimeTable.Web.Models.CourseSelectModel
+
+@if (Model.Summary.Lottery != null)
+{
+    <div class="list-group-item-text">
+        <p>Diese Lehrveranstaltung gehört zu Wahlverfahren "@Model.Summary.Lottery.Name".</p>
+        <p>Ein- / Austragen findet über das Wahlverfahren statt.</p>
+        @if (Model.Subscription != null)
+        {
+            if (Model.Subscription.OnWaitingList)
+            {
+                <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+            }
+            else
+            {
+                <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+            }
+        }
+        <a href="@Url.Action("Overview", "Lottery", new {id=Model.Summary.Lottery.Id})" class="btn btn-primary"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
+    </div>
+
+}
+else
+{
+    if (Model.Subscription != null)
+    {
+        <div class="list-group-item-text">
+            @if (Model.Subscription.OnWaitingList)
+            {
+                <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+            }
+            else
+            {
+                <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+            }
+            <a href="javascript:onSubscribe('@Model.Summary.Course.Id')" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+        </div>
+
+    }
+    else
+    {
+        if (Model.BookingState.IsAvailable)
+        {
+            var btnClass = "btn-success";
+            <div class="list-group-item-text">
+                @if (Model.BookingState.IsUnrestricted)
+                {
+                    <p>Keine Einschränkung. Eintragen auf Teilnehmerliste</p>
+                }
+                else
+                {
+                    if (Model.BookingState.AvailableSeats <= 0)
+                    {
+                        <p>Alle Plätze belegt. Eintragung nur auf Warteliste möglich</p>
+                        btnClass = "btn-warning";
+                    }
+                    else
+                    {
+                        <p>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar. Eintragung auf Teilnehmerliste</p>
+                    }
+                }
+                <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="fa fa-pencil"></i> Eintragen</a>
+            </div>
+
+        }
+        else
+        {
+            <div class="list-group-item-text">
+                <h5>Keine Eintragung möglich</h5>
+                <p>Gründe</p>
+                <ul>
+                    @foreach (var reason in Model.BookingState.Reasons)
+                    {
+                        <li>@reason</li>
+                    }
+                </ul>
+            </div>
+        }
+
+    }
+}
