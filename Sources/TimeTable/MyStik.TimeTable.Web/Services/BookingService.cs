@@ -59,6 +59,41 @@ namespace MyStik.TimeTable.Web.Services
             get { return Bookings.Where(x => x.Subscription.OnWaitingList).ToList(); }
         }
 
+        public void RemoveSubscription(OccurrenceSubscription subscription)
+        {
+            var booking = Bookings.FirstOrDefault(x => x.Subscription.Id == subscription.Id);
+            if (booking != null)
+            {
+                Bookings.Remove(booking);
+            }
+        }
+
+        public int GetPosition(OccurrenceSubscription subscription)
+        {
+            var wl = Waitinglist.OrderBy(x => x.Subscription.TimeStamp).ToList();
+            var booking = wl.FirstOrDefault(x => x.Subscription.Id == subscription.Id);
+
+            if (booking == null)
+                return -1;
+
+            return wl.IndexOf(booking) + 1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Booking GetSucceedingBooking()
+        {
+            // ist überhaupt ein Platz frei?
+            if (Participients.Count >= Capacity)
+                return null;
+
+            var wl = Waitinglist.OrderBy(x => x.Subscription.TimeStamp).ToList();
+            var booking = wl.FirstOrDefault();
+            return booking;
+        }
+
     }
 
     public class BookingState

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
@@ -398,6 +399,9 @@ namespace MyStik.TimeTable.Web.Controllers
                     a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
                     a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
 
+                courseSummary.ConflictingDates = courseService.GetConflictingDates(courseSummary.Course, activities);
+
+                /*
                 foreach (var date in courseSummary.Course.Dates)
                 {
                     var conflictingActivities = activities.Where(x => 
@@ -423,6 +427,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         courseSummary.ConflictingDates[date].AddRange(conflictingDates);
                     }
                 }
+                */
             }
 
             var bookingState = new BookingState
@@ -468,9 +473,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public PartialViewResult Subscribe(Guid id)
         {
+            var logger = LogManager.GetLogger("Booking");
+
             var user = GetCurrentUser();
             var student = StudentService.GetCurrentStudent(user);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+            OccurrenceSubscription succeedingSubscription = null;
 
             Occurrence occ = course.Occurrence;
             OccurrenceSubscription subscription = null;
@@ -478,6 +486,18 @@ namespace MyStik.TimeTable.Web.Controllers
             using (var transaction = Db.Database.BeginTransaction())
             {
                 subscription = occ.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+                var bookingService = new BookingService(Db, occ.Id);
+                var bookingLists = bookingService.GetBookingLists();
+                var bookingState = new BookingState
+                {
+                    Student = student,
+                    Occurrence = occ,
+                    BookingLists = bookingLists
+                };
+                bookingState.Init();
+
+                var bookingList = bookingState.MyBookingList;
 
                 if (subscription == null)
                 {
@@ -489,18 +509,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     // sonst Teilnehmer
                     // sonst
                     // Fehlermeldung an Benutzer mit Angabe des Grunds
-
-                    var bookingService = new BookingService(Db, occ.Id);
-                    var bookingLists = bookingService.GetBookingLists();
-                    var bookingState = new BookingState
-                    {
-                        Student = student,
-                        Occurrence = occ,
-                        BookingLists = bookingLists
-                    };
-                    bookingState.Init();
-
-                    var bookingList = bookingState.MyBookingList;
 
                     if (bookingList != null)
                     {
@@ -521,10 +529,34 @@ namespace MyStik.TimeTable.Web.Controllers
                     // austragen
                     var subscriptionService = new SubscriptionService(Db);
                     subscriptionService.DeleteSubscription(subscription);
+
+                    // Nachrücken
+                    if (bookingList != null)
+                    {
+                        bookingList.RemoveSubscription(subscription);
+                        var succBooking = bookingList.GetSucceedingBooking();
+                        if (succBooking != null)
+                        {
+                            succBooking.Subscription.OnWaitingList = false;
+                            succeedingSubscription = succBooking.Subscription;
+                        }
+                    }
                 }
 
                 Db.SaveChanges();
                 transaction.Commit();
+            }
+
+            // Mail an Nachrücker versenden
+            if (succeedingSubscription != null)
+            {
+                var mailService = new SubscriptionMailService();
+                mailService.SendSucceedingEMail(course, succeedingSubscription);
+
+                var subscriber = GetUser(succeedingSubscription.UserId);
+                logger.InfoFormat("{0} ({1}) for [{2}]: set on participient list",
+                    course.Name, course.ShortName, subscriber.UserName);
+
             }
 
             // jetzt neu abrufen und anzeigen

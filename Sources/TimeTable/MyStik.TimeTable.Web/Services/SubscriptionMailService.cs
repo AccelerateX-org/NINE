@@ -59,5 +59,29 @@ namespace MyStik.TimeTable.Web.Services
 
         }
 
+        public void SendSucceedingEMail(Course course, OccurrenceSubscription subscription)
+        {
+            var email = new SubscriptionEmail("Succeeding")
+            {
+                Subject = "[nine] Eintragung in " + course.Name,
+
+                Course = course,
+                Subscription = subscription,
+                Student = UserService.GetUser(subscription.UserId)
+            };
+
+            try
+            {
+                EmailService.Send(email);
+                Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.Student.Email);
+            }
+            catch (Exception exMail)
+            {
+                Logger.ErrorFormat("Fehler bei E-Mail Versand an: {0} - Ursache {1}", email.Student.Email,
+                    exMail.Message);
+            }
+
+        }
+
     }
 }

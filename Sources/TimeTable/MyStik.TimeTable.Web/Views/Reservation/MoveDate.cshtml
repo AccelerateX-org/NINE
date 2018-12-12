@@ -357,6 +357,7 @@
         var newEnd = $("#NewEnd").val();
         var dozList = new Array();
         var roomList = new Array();
+        var desc = $("#Description").val();
 
         var list = $("#DozTable > table > tbody > tr").get();
         var n = list.length;
@@ -386,7 +387,8 @@
                     NewBegin: newBegin,
                     NewEnd: newEnd,
                     RoomIds: roomList,
-                    DozIds: dozList
+                    DozIds: dozList,
+                    Description: desc
                 },
                 success: function (data, success, xhr) {
                     window.location = data.url;

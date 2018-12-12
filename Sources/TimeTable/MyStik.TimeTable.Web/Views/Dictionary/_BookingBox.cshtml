@@ -1,5 +1,7 @@
 ﻿@model  MyStik.TimeTable.Web.Models.CourseSelectModel
 
+<h5 class="list-group-item-heading">Aktueller Status</h5>
+
 @if (Model.Summary.Lottery != null)
 {
     <div class="list-group-item-text">
@@ -22,12 +24,35 @@
 }
 else
 {
+    <ul class="fa-ul">
+        @if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
+        {
+            if (Model.BookingState.IsUnrestricted)
+            {
+                <li><i class="fa fa-li fa-info-circle text-primary"></i>Keine Einschränkungen</li>
+            }
+            else
+            {
+                if (Model.Summary.Course.Occurrence.UseGroups)
+                {
+                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName verfügbar</li>
+                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.Waitinglist.Count Einträge auf der Warteliste für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName</li>
+                }
+                else
+                {
+                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
+                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.Waitinglist.Count Einträge auf der Warteliste</li>
+                }
+            }
+        }
+    </ul>
+
     if (Model.Subscription != null)
     {
         <div class="list-group-item-text">
             @if (Model.Subscription.OnWaitingList)
             {
-                <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong>.</p>
+            <p>Mein Eintrag vom @Model.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong> auf Platz @Model.BookingState.MyBookingList.GetPosition(Model.Subscription).</p>
             }
             else
             {
@@ -42,24 +67,23 @@ else
         if (Model.BookingState.IsAvailable)
         {
             var btnClass = "btn-success";
+            var txtList = "Teilnehmerliste";
             <div class="list-group-item-text">
                 @if (Model.BookingState.IsUnrestricted)
                 {
-                    <p>Keine Einschränkung. Eintragen auf Teilnehmerliste</p>
                 }
                 else
                 {
                     if (Model.BookingState.AvailableSeats <= 0)
                     {
-                        <p>Alle Plätze belegt. Eintragung nur auf Warteliste möglich</p>
                         btnClass = "btn-warning";
+                        txtList = "Warteliste";
                     }
                     else
                     {
-                        <p>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar. Eintragung auf Teilnehmerliste</p>
                     }
                 }
-                <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="fa fa-pencil"></i> Eintragen</a>
+                <a class="btn @btnClass" href="javascript:onSubscribe('@Model.Summary.Course.Id')"><i class="fa fa-pencil"></i> Eintragen auf @txtList</a>
             </div>
 
         }

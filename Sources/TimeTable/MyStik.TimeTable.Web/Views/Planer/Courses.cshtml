@@ -20,15 +20,15 @@
                 <div class="list-group">
                     <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId=Model.Student.Curriculum.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
-                            Nach Studienplan
+                            Nach Vorlesungsverzeichnis
                         </h5>
-                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen nach Studiengang und Semestergruppen und Themengebieten.</p>
+                        <p class="list-group-item-text">Suche von Lehrveranstaltungen nach Studiengang und Semestergruppen und Themengebieten.</p>
                     </a>
                     <a href="@Url.Action("Search", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             Nach Zeiträumen
                         </h5>
-                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen zu bestimmten Zeiten.</p>
+                        <p class="list-group-item-text">Suche von Lehrveranstaltungen zu bestimmten Zeiten.</p>
                     </a>
                     <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">

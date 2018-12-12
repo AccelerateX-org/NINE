@@ -58,7 +58,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        [Display(Name = "Name")]
+        [Display(Name = "Titel")]
 
         public string Name { get; set; }
 

@@ -60,16 +60,52 @@
         }
     </div>
     <div class="list-group-item">
-        <span class="badge badge-danger">14 Terminkollisionen</span>
+        @{
+            var nConflicts = Model.Summary.ConflictingDates.Count(x => x.Value.Any());
+        }
+        @if (@nConflicts > 0)
+        {
+            <span class="badge badge-danger">@nConflicts Terminkollisionen</span>
+        }
+        else
+        {
+            <span class="badge badge-success">Keine Terminkollisionen</span>
+        }
         <h5 class="list-group-item-heading">
             <a href="#@linkDates" data-toggle="collapse">Termine</a>
         </h5>
         <div class="list-group collapse" id="@linkDates">
-            @foreach (var date in Model.Summary.Course.Dates)
+            @foreach (var date in Model.Summary.ConflictingDates)
             {
-                <div class="list-group-item">
-                    @Html.TimeSpanWithDate(date)
-                </div>
+                if (date.Value.Any())
+                {
+                    <div class="list-group-item list-group-item-danger">
+                        @Html.TimeSpanWithDate(date.Key)
+                        <ul class="fa-ul">
+                            @if (!string.IsNullOrEmpty(date.Key.Title))
+                            {
+                                <li><i class="fa fa-li fa-info-circle"></i>@date.Key.Title</li>
+                            }
+                            @foreach (var cd in date.Value)
+                            {
+                                <li><i class="fa fa-li fa-flash"></i>@Html.TimeSpan(cd): @cd.Activity.Name (@cd.Activity.ShortName)</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group-item list-group-item-success">
+                        @Html.TimeSpanWithDate(date.Key)
+                        <ul class="fa-ul">
+                            @if (!string.IsNullOrEmpty(date.Key.Title))
+                            {
+                                <li><i class="fa fa-li fa-info-circle"></i>@date.Key.Title</li>
+                            }
+                        </ul>
+                    </div>
+
+                }
             }
         </div>
     </div>
@@ -101,7 +137,18 @@
             <ul class="fa-ul">
                 @if (Model.Summary.Course.Occurrence.Capacity < 0)
                 {
-                    <li><i class="fa-li fa fa-globe"></i>keine Platzbeschränkungen</li>
+                    if (Model.Summary.Course.Occurrence.UseGroups)
+                    {
+                        <li><i class="fa-li fa fa-book"></i> Platzkontingent getrennt nach Studiengängen</li>
+                        foreach (var ocg in Model.Summary.Course.Occurrence.Groups)
+                        {
+                            <li><i class="fa fa-li fa-bed"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</li>
+                        }
+                    }
+                    else
+                    {
+                        <li><i class="fa-li fa fa-globe"></i>keine Platzbeschränkungen</li>
+                    }
                     if (Model.Summary.Lottery != null)
                     {
                         <li><i class="fa fa-li fa-random"></i>Platzvergabe über das Wahlverfahren "@Model.Summary.Lottery.Name"</li>
@@ -111,22 +158,21 @@
                 {
                     if (Model.Summary.Course.Occurrence.UseGroups)
                     {
-                        <li><i class="fa-li fa fa-list"></i> Platzkontingent getrennt nach Studiengängen</li>
+                        <li><i class="fa-li fa fa-book"></i> Platzkontingent getrennt nach Studiengängen</li>
+                        foreach (var ocg in Model.Summary.Course.Occurrence.Groups)
+                        {
+                            <li><i class="fa fa-li fa-bed"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</li>
+                        }
                     }
                     else
                     {
                         <li><i class="fa-li fa fa-list"></i> Platzkontingent studiengangsübergreifend</li>
                         <li><i class="fa-li fa fa-bed"></i> Insgesamt @Model.Summary.Course.Occurrence.Capacity Plätze</li>
-                        if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
-                        {
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell hat es @Model.BookingState.MyBookingList.Waitinglist.Count Einträge auf der Warteliste</li>
-                        }
 
                     }
                     if (Model.Summary.Lottery != null)
                     {
-                        <li><i class="fa fa-li fa-random"></i>Lehrveranstaltung ist dem Wahlverfahren @Model.Summary.Lottery.Name zugeordnet</li>
+                        <li><i class="fa fa-li fa-random"></i>Platzvergabe über das Wahlverfahren @Model.Summary.Lottery.Name</li>
                     }
                     else
                     {

@@ -2931,7 +2931,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult SetOnWaitingList2(Guid id, string userId)
         {
-            var logger = LogManager.GetLogger("SubscribeActivity");
+            var logger = LogManager.GetLogger("Booking");
 
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);

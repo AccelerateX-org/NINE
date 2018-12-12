@@ -18,10 +18,12 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             var org = GetMyOrganisation();
+            var member = GetMyMembership();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && 
+                                                     (x.Owner.Id == member.Id || x.VisibleUntil >= DateTime.Today)).ToList();
 
-
+            ViewBag.Member = member;
             ViewBag.Organiser = org;
             ViewBag.UserRight = GetUserRight();
 
@@ -226,7 +228,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForThesis).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForThesis && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }
@@ -235,7 +237,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForInternship).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForInternship && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }
@@ -244,7 +246,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForStayAbroad).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForStayAbroad && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }
@@ -253,7 +255,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForAdvancement).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForAdvancement && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }
@@ -262,7 +264,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForTutor).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForTutor && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }
@@ -271,7 +273,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForCompetition).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForCompetition && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }
@@ -281,7 +283,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetMyOrganisation();
 
-            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForWorkingStudent).OrderByDescending(x => x.Created).ToList();
+            var model = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && x.ForWorkingStudent && x.VisibleUntil >= DateTime.Today).OrderByDescending(x => x.Created).ToList();
 
             return View(model);
         }

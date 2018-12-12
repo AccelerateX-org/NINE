@@ -498,6 +498,40 @@ namespace MyStik.TimeTable.Web.Services
                                              d.Activity.SemesterGroups.Any(s => s.Semester.Id == semester.Id));
         }
 
-        
+        public Dictionary<ActivityDate, List<ActivityDate>> GetConflictingDates(Course course, List<Course> activities)
+        {
+            var conflictingDates = new Dictionary<ActivityDate, List<ActivityDate>>();
+
+            foreach (var date in course.Dates)
+            {
+                var conflictingActivities = activities.Where(x =>
+                    x.Id != course.Id &&
+                    x.Dates.Any(d =>
+                            (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= date.Begin && d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= date.Begin &&
+                             d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                    )).ToList();
+
+                conflictingDates[date] = new List<ActivityDate>();
+
+                foreach (var conflictingActivity in conflictingActivities)
+                {
+                    var conflicts = conflictingActivity.Dates.Where(d =>
+                            (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                            (d.Begin >= date.Begin &&
+                             d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                            (d.Begin <= date.Begin &&
+                             d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                    ).ToList();
+                    conflictingDates[date].AddRange(conflicts);
+                }
+            }
+
+
+            return conflictingDates;
+        }
+
+
     }
 }

@@ -74,21 +74,40 @@
     <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
     @RenderSection("scripts", required: false)
 
-        <script type="text/javascript">
-            $(function() {
-                if (document.cookie.indexOf("cookieNotification") < 0) {
-                    $('#cookie-consent').slideDown('slow');
-                }
-                $('#consent').on('click',
-                    function() {
-                        document.cookie = "cookieNotification=yes; max-age=" + (5 * 365 * 24 * 60 * 60);
-                        $('#cookie-consent').slideUp('slow');
-                    });
-                $('#learn-more').on('click',
-                    function() {
-                        location.href = '@Url.Action("TermsOfUse", "Home")';
-                    });
+<script type="text/javascript">
+    $(function() {
+        if (document.cookie.indexOf("cookieNotification") < 0) {
+            $('#cookie-consent').slideDown('slow');
+        }
+        $('#consent').on('click',
+            function() {
+                document.cookie = "cookieNotification=yes; max-age=" + (5 * 365 * 24 * 60 * 60);
+                $('#cookie-consent').slideUp('slow');
             });
-        </script>
+        $('#learn-more').on('click',
+            function() {
+                location.href = '@Url.Action("TermsOfUse", "Home")';
+            });
+    });
+</script>
+@if (!Request.IsLocal)
+{
+    <!-- Matomo -->
+    <script type="text/javascript">
+        var _paq = _paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+            var u="//shortcut.wi.hm.edu/analytics/";
+            _paq.push(['setTrackerUrl', u+'piwik.php']);
+            _paq.push(['setSiteId', '2']);
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        })();
+    </script>
+    <!-- End Matomo Code -->
+}
+
 </body>
 </html>

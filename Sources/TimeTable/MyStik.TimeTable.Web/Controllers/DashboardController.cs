@@ -467,9 +467,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 // Alle Platzverlosungen
                 // letzte 90 Tage
-                var lastEnd = DateTime.Today.AddDays(-90);
+                var lastEnd = DateTime.Today;
                 var alLotteries = Db.Lotteries.Where(x =>
-                    x.LastDrawing >= lastEnd && x.IsAvailable &&
+                    x.IsActiveUntil >= lastEnd && x.IsAvailable &&
                     x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.FirstDrawing).ToList();
 
                 foreach (var lottery in alLotteries)

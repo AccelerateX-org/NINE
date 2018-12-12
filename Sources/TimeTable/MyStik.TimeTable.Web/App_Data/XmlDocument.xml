@@ -21232,6 +21232,12 @@
             Anzahl der Pläatze
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Services.BookingList.GetSucceedingBooking">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Services.BookingState.IsAvailable">
             <summary>
             Verfügbar für Eintragung oder nicht

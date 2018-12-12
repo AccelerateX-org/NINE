@@ -4032,6 +4032,8 @@
     <Content Include="Views\Shared\_CalendarEventToolbarPlaner.cshtml" />
     <Content Include="Views\Dictionary\_SelectCourse.cshtml" />
     <Content Include="Views\Dictionary\_BookingBox.cshtml" />
+    <Content Include="Views\Emails\Succeeding.cshtml" />
+    <Content Include="Views\Emails\Succeeding.Html.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

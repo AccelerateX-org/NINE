@@ -307,6 +307,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 NewEnd = date.End.TimeOfDay.ToString(),
                 OrganiserId2 = course.Organiser.Id,
                 OrganiserId3 = course.Organiser.Id,
+                Description = date.Description
             };
 
             ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem

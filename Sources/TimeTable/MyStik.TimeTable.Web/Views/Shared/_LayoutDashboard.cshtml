@@ -445,30 +445,26 @@
          }
 
     </script>
-@*
+
     @if (!Request.IsLocal)
     {
-        <!-- Piwik -->
+        <!-- Matomo -->
         <script type="text/javascript">
             var _paq = _paq || [];
-            _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
             _paq.push(['trackPageView']);
             _paq.push(['enableLinkTracking']);
-            (function () {
-                var u = "//vsl006.wi.private.hm.edu/Analytics/";
-                _paq.push(['setTrackerUrl', u + 'piwik.php']);
-                _paq.push(['setSiteId', 1]);
-                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-                g.type = 'text/javascript';
-                g.async = true;
-                g.defer = true;
-                g.src = u + 'piwik.js';
-                s.parentNode.insertBefore(g, s);
+            (function() {
+                var u="//shortcut.wi.hm.edu/analytics/";
+                _paq.push(['setTrackerUrl', u+'piwik.php']);
+                _paq.push(['setSiteId', '2']);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
             })();
         </script>
-        <!-- End Piwik Code -->
+        <!-- End Matomo Code -->
     }
-*@
+
 
 @if (!Request.IsLocal)
 {
