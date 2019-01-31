@@ -1,0 +1,81 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.CourseSummaryModel
+
+
+@if (ViewBag.ShowLinks != null && ViewBag.ShowLinks == true)
+{
+    <a class="list-group-item" href="@Url.Action("Details", "Course", new {id=Model.Course.Id})">
+        <h5 class="list-group-item-heading">
+            @Html.FacultyLabel(Model.Course.Organiser)
+            @Model.Course.Name (@Model.Course.ShortName)
+        </h5>
+        <ul class="fa-ul">
+            <li>
+                <i class="fa-li fa fa-user-md"></i>
+                @if (Model.Lecturers.Any())
+                {
+                    @Html.LecturerList(Model.Lecturers, showLinks: false)
+                }
+                else
+                {
+                    <i>Keine Angabe zu Lehrenden verfügbar</i>
+                }
+            </li>
+            <li>
+                @if (Model.Dates.Count == 1)
+                {
+                    <i class="fa-li fa fa-calendar"></i>
+                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: false)]</span>
+                }
+                else
+                {
+                    <i class="fa-li fa fa-calendar"></i>
+                    <span>insgesamt @Model.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+                }
+
+            </li>
+            <li>
+                <i class="fa-li fa fa-book"></i>@Html.GroupList(Model.Course.Occurrence)
+            </li>
+        </ul>
+    </a>
+}
+else
+{
+    <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+            @Html.FacultyLabel(Model.Course.Organiser)
+            @Model.Course.Name (@Model.Course.ShortName)
+        </h5>
+        <ul class="fa-ul">
+            <li>
+                <i class="fa-li fa fa-user-md"></i>
+                @if (Model.Lecturers.Any())
+                {
+                    @Html.LecturerList(Model.Lecturers, showLinks: false)
+                }
+                else
+                {
+                    <i>Keine Angabe zu Lehrenden verfügbar</i>
+                }
+            </li>
+            <li>
+                @if (Model.Dates.Count == 1)
+                {
+                    <i class="fa-li fa fa-calendar"></i>
+                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: false)]</span>
+                }
+                else
+                {
+                    <i class="fa-li fa fa-calendar"></i>
+                    <span>insgesamt @Model.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+                }
+
+            </li>
+            <li>
+                <i class="fa-li fa fa-book"></i>@Html.GroupList(Model.Course.Occurrence)
+            </li>
+        </ul>
+    </div>
+}

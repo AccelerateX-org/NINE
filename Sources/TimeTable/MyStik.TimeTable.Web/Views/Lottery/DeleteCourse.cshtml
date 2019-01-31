@@ -1,0 +1,49 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryDeleteCourseModel
+@{
+    ViewBag.Title = "Austragen";
+}
+
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Austragen aus Lehrveranstaltungen im Wahlverfahren: "@Model.Lottery.Name"</h4>
+            </div>
+            <div class="panel-body">
+                <div class="alert alert-danger">
+                    <strong>Hinweise:</strong>
+                    <ul>
+                        <li>Das Austragen kann nicht rückganängig gemacht werden</li>
+                        <li>Um sicherzugehen, dass Sie sich wirklich austragen möchten, müssen Sie einen Code eingeben</li>
+                    </ul>
+                </div>
+                <h5>Austragen aus der Lehrveranstaltung @Model.Course.Name (@Model.Course.ShortName)</h5>
+                <p>Bitte geben Sie den Code <strong>@Model.Course.ShortName</strong> ein.</p>
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                    ))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(false)
+                    @Html.HiddenFor(m => m.Lottery.Id)
+                    @Html.HiddenFor(m => m.Course.Id)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Code, new { @class = "col-md-4 control-label" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> Endgültig Austragen</button>
+                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">Abbrechen</a>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

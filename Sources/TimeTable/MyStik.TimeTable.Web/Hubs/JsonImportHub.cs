@@ -6,8 +6,8 @@ using System.Text;
 using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.Cie;
-using MyStik.TimeTable.DataServices.Json;
+using MyStik.TimeTable.DataServices.IO.Cie;
+using MyStik.TimeTable.DataServices.IO.Json;
 
 namespace MyStik.TimeTable.Web.Hubs
 {
@@ -146,7 +146,7 @@ namespace MyStik.TimeTable.Web.Hubs
                 return String.Empty;
             }
 
-            DataServices.Json.FileReader reader = new DataServices.Json.FileReader();
+            DataServices.IO.Json.FileReader reader = new DataServices.IO.Json.FileReader();
 
             try
             {
@@ -168,7 +168,7 @@ namespace MyStik.TimeTable.Web.Hubs
             // fehler hier ignorieren => muss noch an anderer Stelle besser gelöst werden
             // Annahme: Fehler sind dem Anwender bekannt, da vorher ein Check durchgeführt wurde
             // daher können die Checks oben auch entfallen
-            var importer = new DataServices.Json.SemesterImport(reader.Context, semId, orgId);
+            var importer = new DataServices.IO.Json.SemesterImport(reader.Context, semId, orgId);
             importer.CheckFaculty();
 
             var n = reader.Context.ValidCourses.Count;
@@ -302,7 +302,7 @@ namespace MyStik.TimeTable.Web.Hubs
                 return String.Empty;
             }
 
-            DataServices.Cie.FileReader reader = new DataServices.Cie.FileReader();
+            DataServices.IO.Cie.FileReader reader = new DataServices.IO.Cie.FileReader();
 
             try
             {
@@ -324,7 +324,7 @@ namespace MyStik.TimeTable.Web.Hubs
             // fehler hier ignorieren => muss noch an anderer Stelle besser gelöst werden
             // Annahme: Fehler sind dem Anwender bekannt, da vorher ein Check durchgeführt wurde
             // daher können die Checks oben auch entfallen
-            var importer = new DataServices.Cie.SemesterImport(reader.Context, semId);
+            var importer = new DataServices.IO.Cie.SemesterImport(reader.Context, semId);
             importer.CheckFaculty();
 
             var n = reader.Context.ValidCourses.Count;

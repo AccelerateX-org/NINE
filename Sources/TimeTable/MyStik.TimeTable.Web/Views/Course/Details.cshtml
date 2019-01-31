@@ -1,438 +1,141 @@
 ﻿@using System.Globalization
 @using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Models
-@model MyStik.TimeTable.Web.Models.CourseDetailViewModel
+@model MyStik.TimeTable.Web.Models.CourseSelectModel
 @{
-    ViewBag.Title = "Kursdetails";
+    ViewBag.Title = "Lehrveranstaltung";
 }
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <p>
-                        @Model.CourseType <i class="fa fa-calendar"></i> @Model.DefaultDay <i class="fa fa-clock-o"></i> @Model.DefaultTimespan <i class="fa fa-building"></i> @Model.DefaultRoom
-                    </p>
-                    <h4>
-                        @Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper()) [@Html.GroupList(Model.Course.SemesterGroups, showLink:false)]
-                    </h4>
-                    <p>
-                        @foreach (var lec in Model.Lecturers)
-                        {
-                            @Html.Raw(lec.Name.ToUpper())
-                            if (lec != Model.Lecturers.Last())
-                            {
-                                @Html.Raw(", ")
-                            }
-                        }
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="container-fluid">
-<div class="row">
-<div class="col-md-2">
-    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <ul class="nav">
-                        @if (Model.Course.IsInternal && ViewBag.UserRight.IsHost)
-                        {
-                            <li class="list-group-item disabled">
-                                <strong>Gesperrt</strong>
-                            </li>                        
-                        }
-                        else
-                        {
-                            <li>
-                                <a href="@Url.Action("Admin", new {id = Model.Course.Id})"><i class="fa fa-wrench"></i> Verwaltung</a>
-                            </li>
-                        }
-                        <li>
-                            <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-envelope-o"></i> E-Mail</a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("SubscriptionList", "Occurrence", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-download"></i> Teilnehmerliste</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <ul class="nav">
-                        @if (!string.IsNullOrEmpty(Model.Course.ExternalSource))
-                        {
-                            <li>
-                                Importiert aus: @Model.Course.ExternalSource (@Model.Course.ExternalId)
-                            </li>
-                        }
-                        @if (Model.Course.Owners.Any())
-                        {
-                            <li>
-                                Angelegt von @Model.Course.Owners.First().Member.ShortName
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </div>
-    }
-
-    <div class="row">
+    <div class="row" style="margin-top: 20px">
         <div class="col-md-12">
-
             <div class="panel panel-default">
-                <div class="panel-body">
-                    @if (Model.Lottery != null)
+                <div class="panel-heading">
+                    <h4>Lehrveranstaltung</h4>
+                </div>
+                <div class="list-group">
+                    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
                     {
-                        <a href="@Url.Action("Overview", "Lottery", new {id=Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
+                        @Html.Partial("_CourseSummarySubscription", Model.Summary)
+                        if (Model.Summary.Course.IsInternal)
+                        {
+                            <div class="list-group-item list-group-item-info">
+                                <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
+                            </div>
+
+                        }
+
+                        if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                        {
+                            <div class="list-group-item">
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})" class="btn btn-default">
+                                        <i class="fa fa-envelope-o"></i> Mail senden
+                                    </a>
+                                    <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Terminverwaltung</a>
+                                    <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmerverwaltung</a>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-cogs"></i> Einstellungen <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})"><i class="fa fa-edit"></i> Beschreibung</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})"><i class="fa fa-book"></i> Semestergruppen</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})"><i class="fa fa-tag"></i> Themengebiet ("Modul")</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})"><i class="fa fa-legal"></i> Zugangsbeschränkungen, Platzkontigente</a>
+                                            </li>
+                                            @if (Model.Summary.Lottery == null)
+                                            {
+                                                if (Model.Summary.Lottery == null)
+                                                 {
+                                                     <li>
+                                                         <a href="@Url.Action("AssignToLottery", new {id = Model.Summary.Course.Id})"><i class="fa fa-random"></i> In Wahlverfahren aufnehmen</a>
+                                                     </li>
+                                                 }
+                                                if (Model.Summary.Course.Occurrence.IsAvailable)
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})"><i class="fa fa-lock"></i> Eintragung für Studierende sperren</a>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})"><i class="fa fa-unlock"></i> Eintragung für Studierende ermöglichen</a>
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Details", "Lottery", new {id=Model.Summary.Lottery.Id})"><i class="fa fa-random"></i> Zeitplan ist in Wahlverfahren geregelt</a>
+                                                </li>
+                                            }
+                                            @if (ViewBag.UserRight.IsCourseAdmin)
+                                            {
+                                                if (Model.Summary.Course.IsInternal)
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})"><i class="fa fa-unlock"></i> Änderungen durch Lehrende erlauben</a>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})"><i class="fa fa-unlock"></i> Änderungen durch Lehrende sperren</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                    <a href="@Url.Action("Admin", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-trash"></i> Alte Adminseite</a>
+                                </div>
+                            </div>
+                        }
                     }
-                    else
-                    {
-                        @Html.Partial("_SubscriptionState", Model.State, new ViewDataDictionary {{"Style", "Large"}})
-                    }
+
+                    @Html.Partial("_CourseSummaryHead", Model.Summary)
+                    @Html.Partial("_CourseSummaryDescription", Model.Summary)
+                    @Html.Partial("_CourseSummaryDates", Model.Summary)
+                    @Html.Partial("_CourseSummaryCapacity", Model.Summary)
+                    @Html.Partial("_CourseSummaryBooking", Model)
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
-
-<div class="col-md-10">
-
-<div class="tabbable-line" role="tabpanel">
-
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Beschreibung</a></li>
-    <li role="presentation"><a href="#dates" aria-controls="dates" role="tab" data-toggle="tab">Termine</a></li>
-    <li role="presentation"><a href="#subscriber" aria-controls="subscriber" role="tab" data-toggle="tab">Teilnehmer</a></li>
-    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Platzvergabe</a></li>
-</ul>
-
-<!-- Tab panes -->
-<div class="tab-content">
-<div role="tabpanel" class="tab-pane active" id="home">
-    <div class="panel">
-        <div class="panel-body">
-            <div class="col-md-3">
-                <h4>@Model.Title</h4>
-                @foreach (var topic in Model.Course.SemesterTopics)
-                {
-                    <h5>@topic.TopicName</h5>
-                }
-                @if (string.IsNullOrEmpty(Model.Course.UrlMoodleCourse))
-                {
-                    <div>Kein Moodle-Kurs vorhanden</div>
-                }
-                else
-                {
-                    <div>
-                        <a href="@Model.Course.UrlMoodleCourse" target="_blank"><i class="fa fa-mortar-board"></i> Moodle</a> <i class="fa fa-external-link"></i> (<i class="fa fa-key"></i> <strong>@Model.Course.KeyMoodleCourse</strong>)
-                    </div>
-                }
-                @if (Model.Lottery != null)
-                {
-                    <div class="alert alert-info">
-                        <p>Diese Lehrveranstaltung gehört Zum Wahlverfahren "<strong>@Model.Lottery.Name</strong>"</p>
-                    </div>
-                }
-            </div>
-            <div class="col-md-9">
-                @if (string.IsNullOrEmpty(Model.Course.Description))
-                {
-                    @Html.Raw("Keine Beschreibung vorhanden.")
-                }
-                else
-                {
-                    @Html.Raw(Model.Course.Description)
-                }
-            </div>
-        </div>
-    </div>
-</div>
-<div role="tabpanel" class="tab-pane" id="dates">
-    <div class="panel">
-        <div class="panel-header">
-            <div class="btn-group" role="group">
-                <button id="toggleHistoryOn" type="button" class="btn btn-default" style="margin-right: 5px; margin-left: 14px;">Alle Termine anzeigen</button>
-                <button id="toggleHistoryOff" type="button" class="btn btn-default">Nur zukünftige Termine anzeigen</button>
-            </div>
-        </div>
-
-        <div class="panel-body">
-            @if (Model.NextDate == null)
-            {
-                <div class="note note-info">
-                    <h4>Die Veranstaltung hat keinen Termin in der Zukunft!</h4>
-                </div>
-            }
-            else
-            {
-                foreach (var date in Model.Course.Dates.OrderBy(d => d.Begin))
-                {
-                    var histAttr = "";
-                    if (date.End < DateTime.Now)
-                    {
-                        histAttr = "history";
-                    }
-                    <div class="row" @histAttr>
-                        <div class="col-md-2">
-                            @if (date.Id == Model.NextDate.Id)
-                            {
-                                <h4><span class="label label-primary">Nächster Termin</span></h4>
-                            }
-                            <address>
-                                <strong>@date.Begin.ToString("dd. MMMM yyyy", new CultureInfo("de-DE"))</strong><br>
-                                @Html.TimeSpan(date)<br>
-                                @Html.RoomList(date.Rooms)<br>
-                                @Html.LecturerList(date.Hosts)
-                            </address>
-                        </div>
-                        <div class="col-md-10">
-                            <h4>@date.Title</h4>
-                            <p>@date.Description</p>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-    </div>
-</div>
-<div role="tabpanel" class="tab-pane" id="subscriber">
-    <div class="panel">
-        <div class="panel-body">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading"><i class="fa fa-users"></i> Teilnehmer <span class="badge">@Model.ParticipantList.Count</span></div>
-                    <table class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Semestergruppe</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @{ var anonymousCount = 0;}
-                        @foreach (var paricipiant in Model.ParticipantList)
-                        {
-                            bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
-
-                            if (showItem)
-                            {
-                                <tr>
-                                    <td>@paricipiant.User.LastName</td>
-                                    <td>@paricipiant.User.FirstName</td>
-                                    @if (paricipiant.SemesterGroup != null)
-                                    {
-                                        <td>@paricipiant.SemesterGroup.FullName</td>
-                                    }
-                                    else
-                                    {
-                                        <td>keine Angabe</td>
-                                    }
-                                </tr>
-                            }
-                            else
-                            {
-                                anonymousCount++;
-                            }
-                        }
-                        </tbody>
-                    </table>
-                    <div class="panel-body">und @anonymousCount weitere</div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-heading"><i class="fa fa-users"></i> Reservierungen <span class="badge">@Model.ReservationList.Count</span>
-                        </div>
-                        <table class="table table-condensed">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Vorname</th>
-                                <th>Semestergruppe</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @{ var anonymousCountR = 0;}
-                            @foreach (var paricipiant in Model.ReservationList)
-                            {
-                                bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
-
-                                if (showItem)
-                                {
-                                    <tr>
-                                        <td>@paricipiant.User.LastName</td>
-                                        <td>@paricipiant.User.FirstName</td>
-                                        @if (paricipiant.SemesterGroup != null)
-                                        {
-                                            <td>@paricipiant.SemesterGroup.FullName</td>
-                                        }
-                                        else
-                                        {
-                                            <td>keine Angabe</td>
-                                        }
-                                    </tr>
-                                }
-                                else
-                                {
-                                    anonymousCountR++;
-                                }
-                            }
-                            </tbody>
-                        </table>
-                        <div class="panel-body">und @anonymousCountR weitere</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-heading"><i class="fa fa-user"></i> Warteliste <span class="badge">@Model.WaitingList.Count</span></div>
-                        <table class="table table-condensed">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Vorname</th>
-                                <th>Semestergruppe</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @{ var anonymousCountW = 0;}
-                            @foreach (var waiting in Model.WaitingList)
-                            {
-                                bool showItem = ViewBag.UserRight.IsOrgMember && ViewBag.UserRight.User.MemberState == MemberState.Staff;
-
-                                if (showItem)
-                                {
-                                    <tr>
-                                        <td>@waiting.User.LastName</td>
-                                        <td>@waiting.User.FirstName</td>
-                                        @if (waiting.SemesterGroup != null)
-                                        {
-                                            <td>@waiting.SemesterGroup.FullName</td>
-                                        }
-                                        else
-                                        {
-                                            <td>keine Angabe</td>
-                                        }
-                                    </tr>
-                                }
-                                else
-                                {
-                                    anonymousCountW++;
-                                }
-                            }
-                            </tbody>
-                        </table>
-                        <div class="panel-body">und @anonymousCountW weitere</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div role="tabpanel" class="tab-pane" id="settings">
-    <div class="panel">
-        <div class="panel-body">
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Zuordnung zu Semestergruppen</div>
-                    <div class="panel-body">
-                        <table class="table table-condensed">
-                            <thead>
-                            <tr>
-                                <th>Studiengang</th>
-                                <th>Studiengruppe</th>
-                                @if (Model.SelectedOption.Id > 2)
-                                {
-                                    <th>Anzahl Plätze</th>
-                                }
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var group in Model.Groups)
-                            {
-                                <tr>
-                                    <td>@group.Curriculum</td>
-                                    <td>@group.Group</td>
-                                    @if (Model.SelectedOption.Id > 2)
-                                    {
-                                        <td>@group.Capacity</td>
-                                    }
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Regeln der Platzvergabe</div>
-                    <div class="panel-body">
-                        @if (Model.SelectedOption.Id == 1)
-                        {
-                            <p>Der Kurs hat keine Platzbeschränkungen.</p>
-                        }
-                        else if (Model.SelectedOption.Id == 2)
-                        {
-                            <p>Für den Kurs stehen insgesamt @Model.Course.Occurrence.Capacity Plätze zur Verfügung.</p>
-                        }
-                        else if (Model.SelectedOption.Id == 3)
-                        {
-                            <p>Für den Kurs werden die Plätze je Studiengang vergeben (siehe Tabelle links).</p>
-                        }
-                        else if (Model.SelectedOption.Id == 4)
-                        {
-                            <p>Für den Kurs werden die Plätze je Studiengang und Studiengruppe vergeben (siehe Tabelle links).</p>
-                        }
-
-
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-
-
 
 @section scripts
 {
     <script>
+        function onSubscribe(e) {
+            //alert('#'+e);
+            $('#bookingBox').addClass('disabled');
+            $('#bookingBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
 
-        $(document).ready(function () {
-            $("#toggleHistoryOn").click(function () {
-                $("div[history]").show();
-            });
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Subscribe", "Dictionary")',
+                    data: {
+                        Id: e
+                    },
+                    success: function(data, success, xhr) {
+                        $('#bookingBox').html(data);
+                        $('#bookingBox').removeClass('disabled');
+                    }
+                });
 
-            $("#toggleHistoryOff").click(function () {
-                $("div[history]").hide();
-            });
-
-        });
-
+        }
     </script>
 }
+
+

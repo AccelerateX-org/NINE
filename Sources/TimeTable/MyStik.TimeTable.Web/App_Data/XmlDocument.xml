@@ -12136,6 +12136,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CourseSummaryModel.Subscription">
+            <summary>
+            Eine bestehende Einschreibung
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.CourseSummaryModel.SemesterGroup">
             <summary>
             

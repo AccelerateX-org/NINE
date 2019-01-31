@@ -6,7 +6,7 @@ using Hangfire;
 using log4net;
 using log4net.Core;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices.Drawing;
+using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Jobs

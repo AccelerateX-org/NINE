@@ -10,7 +10,7 @@ using log4net.Core;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.Drawing;
+using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
@@ -332,7 +332,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new DrawingService(Db, id);
 
             model.InitLotPots();
-            model.Analyse();
 
             var org = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(org);

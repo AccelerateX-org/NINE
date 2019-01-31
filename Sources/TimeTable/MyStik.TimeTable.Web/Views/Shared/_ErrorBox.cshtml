@@ -1,0 +1,13 @@
+﻿@model Exception
+
+<div class="panel panel-danger">
+    <div class="panel-heading"><h5>Fehler</h5></div>
+    <div class="list-group">
+        <div class="list-group-item">
+            @Model.Message
+        </div>
+        <div class="list-group-item">
+            @Model.StackTrace
+        </div>
+    </div>
+</div>

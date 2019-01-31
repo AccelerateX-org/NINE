@@ -1,0 +1,24 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.CourseSummaryModel
+
+@{
+    var linkDescription = string.Format("desc{0}", Model.Course.Id);
+    var linkDates = string.Format("dates{0}", Model.Course.Id);
+    var linkFit = string.Format("fit{0}", Model.Course.Id);
+    var linkNonFit = string.Format("nonfit{0}", Model.Course.Id);
+    var linkConflicts = string.Format("conflicts{0}", Model.Course.Id);
+
+}
+
+<div class="list-group-item">
+    @if (string.IsNullOrEmpty(Model.Course.Description))
+    {
+        <h5 class="list-group-item-heading"><i>Keine Beschreibung vorhanden</i></h5>
+    }
+    else
+    {
+        <h5 class="list-group-item-heading">Beschreibung</h5>
+        <div class="list-group-item-text">@Html.Raw(Model.Course.Description)</div>
+    }
+</div>

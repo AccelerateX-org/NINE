@@ -1,5 +1,6 @@
 ﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
 @{
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
@@ -14,7 +15,7 @@
 <div class="@containerType">
 
     <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
+        <div id="panelCalendar" class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>
@@ -24,139 +25,117 @@
                         <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
                         <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /
                         @Model.CapacityGroup.FullName
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </h4>
                 </div>
-
-
-                @foreach (var topic in Model.Topics)
-                {
-                    <div class="list-group">
-                        @if (topic.Topic != null)
-                        {
-                            <div class="list-group-item">
-                                <h5 class="list-group-item-heading">@topic.Topic.TopicName</h5>
+                <div class="list-group">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <div class="list-group-item">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-success active"><i class="fa fa-group"></i> Teilnehmer</a>
+                                <a class="btn btn-warning active"><i class="fa fa-hourglass-half"></i> Warteliste</a>
                             </div>
-                        }
-                        else
-                        {
-                            <div class="list-group-item">
-                                <h5 class="list-group-item-heading">Ohne Fachzugehörigkeit</h5>
-                            </div>
-                        }
+                        </div>
+                    }
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
 
-
-                        @foreach (var course in topic.Courses)
-                        {
-                            @Html.Partial("_CourseSummaryListItem", course)
-                        }
-                    </div>
-                }
+        <div id="panelDetails" class="col-md-4" hidden>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 
-@section styles
-{
-    <style>
-
-        .selectable
-        .discardable
-        .lottery {
-            cursor: pointer;
-        }
-
-        .unselectable {
-            position: absolute;
-            left: -24px;
-            top: 24px;
-        }
-    </style>
-}
-
 @section scripts
 {
-
     <script>
+
+        var myId;
+
         $(document).ready(function() {
 
-            // Wählen bzw. Abwählen eines Projekte, diese bekommt dann ein Häkchen
-            $('.selectable').click(function() {
-                if ($(this).hasClass('disabled')) {
-                } else {
-                    if ($(this).hasClass('discardable')) {
-
-                        $(this).addClass('disabled');
-
-                        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
-
-                        var ocId = $(this).data("occid");
-
-                        var saveElement = $(this);
-
-                        $.ajax(
-                            {
-                                type: "POST",
-                                url: '@Url.Action("DischargeActivity", "Activity")',
-                                data: {
-                                    Id: ocId
-                                },
-                                success: function(data, success, xhr) {
-
-                                    saveElement.html(
-                                        '<span class="fa-stack fa-lg"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-pencil fa-stack-1x"></i></span>');
-
-                                    saveElement.removeClass('discardable');
-                                    saveElement.removeClass('disabled');
-
-                                }
-                            });
-
-
-                    } else {
-
-
-                        $(this).addClass('disabled');
-
-                        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
-
-                        var ocId = $(this).data("occid");
-
-                        var saveElement = $(this);
-
-                        $.ajax(
-                            {
-                                type: "POST",
-                                url: '@Url.Action("SubscribeActivity", "Activity")',
-                                data: {
-                                    Id: ocId
-                                },
-                                success: function(data, success, xhr) {
-
-                                    saveElement.html(
-                                        '<span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-success"></i><i class="fa fa-check fa-stack-1x fa-inverse"></i></span>');
-
-                                    saveElement.addClass('discardable');
-                                    saveElement.removeClass('disabled');
-
-                                }
-                            });
-                    }
-                }
-            });
-
-            $('.lottery').click(function() {
-
-                var ocId = $(this).data("lotid");
-                var url = '@Url.Action("Overview", "Lottery")';
-                url += "/" + ocId;
-
-                window.location = url;
-            });
-
+            showList();
 
         });
 
+        function showList() {
+            $('#loading').show();
+            $.ajax(
+                {
+                    url: '@Url.Action("CourseListForTopicNew")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: '@Model.SemesterGroup.Id'
+                    },
+                    success: function (data, success, xhr) {
+                        $("#calendar").html(data);
+                        $('#loading').hide();
+                    },
+                    error: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+        }
+
+        function onShowEventInfo(id) {
+            $('#panelCalendar').removeClass('col-md-12');
+            $('#panelCalendar').addClass('col-md-8');
+            $("#panelDetails").html('<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>');
+            $('#panelDetails').show();
+            myId = id;
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("SelectCourse")',
+                    data: {
+                        Id: id
+                    },
+                    success: function(data, success, xhr) {
+                        $("#panelDetails").html(data);
+                    }
+                });
+
+        }
+
+        function onCloseDetails() {
+            $('#panelCalendar').removeClass('col-md-8');
+            $('#panelCalendar').addClass('col-md-12');
+            $('#panelDetails').html('');
+            $('#panelDetails').hide();
+        }
+
+        function onSubscribe(e) {
+            //alert('#'+e);
+            $('#selectBox').addClass('disabled');
+            $('#selectBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Subscribe")',
+                    data: {
+                        Id: e
+                    },
+                    success: function(data, success, xhr) {
+                        $('#selectBox').html(data);
+                        $('#selectBox').removeClass('disabled');
+                        showList();
+                    }
+                });
+
+        }
+
+
     </script>
 }
+

@@ -3234,7 +3234,6 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\nine.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\Error.cshtml" />
@@ -4034,6 +4033,13 @@
     <Content Include="Views\Dictionary\_BookingBox.cshtml" />
     <Content Include="Views\Emails\Succeeding.cshtml" />
     <Content Include="Views\Emails\Succeeding.Html.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryBooking.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryBookingBox.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryCapacity.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryDates.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryDescription.cshtml" />
+    <Content Include="Views\Shared\_CourseSummaryHead.cshtml" />
+    <Content Include="Views\Shared\_CourseSummarySubscription.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

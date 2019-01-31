@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices.Drawing.Data;
+using MyStik.TimeTable.DataServices.Lottery.Data;
 using Postal;
 
 namespace MyStik.TimeTable.Web.Models

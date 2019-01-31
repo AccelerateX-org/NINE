@@ -6,8 +6,8 @@ using System.Net;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.Cie;
-using MyStik.TimeTable.DataServices.Json;
+using MyStik.TimeTable.DataServices.IO.Cie;
+using MyStik.TimeTable.DataServices.IO.Json;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -158,9 +158,9 @@ namespace MyStik.TimeTable.Web.Controllers
             if (model.FormatId.Equals("CIE"))
             {
                 // Dateien prüfen
-                var reader = new DataServices.Cie.FileReader();
+                var reader = new DataServices.IO.Cie.FileReader();
                 reader.ReadFiles(tempDir);
-                var importer = new DataServices.Cie.SemesterImport(reader.Context, model.SemesterId);
+                var importer = new DataServices.IO.Cie.SemesterImport(reader.Context, model.SemesterId);
 
                 // Die Fakultät muss existieren
                 importer.CheckFaculty();
@@ -180,9 +180,9 @@ namespace MyStik.TimeTable.Web.Controllers
             else
             {
                 // Dateien prüfen
-                var reader = new DataServices.Json.FileReader();
+                var reader = new DataServices.IO.Json.FileReader();
                 reader.ReadFiles(tempDir);
-                var importer = new DataServices.Json.SemesterImport(reader.Context, model.SemesterId, model.OrganiserId);
+                var importer = new DataServices.IO.Json.SemesterImport(reader.Context, model.SemesterId, model.OrganiserId);
 
                 // Die Fakultät muss existieren
                 importer.CheckFaculty();

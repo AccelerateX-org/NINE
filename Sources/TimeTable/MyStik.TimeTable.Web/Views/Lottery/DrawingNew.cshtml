@@ -1,0 +1,88 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    ViewBag.Title = "Platzverlosung";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Platzverlosung für das Wahlverfahren: "@Model.Lottery.Name"</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Details", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
+                            <a href="@Url.Action("EditProcess", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-cog"></i> Einstellungen ändern</a>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-random"></i> Ausführung <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="@Url.Action("Run", new {id = Model.Lottery.Id})"><i class="fa fa-play"></i> Verlosung starten</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ClearLists", new {id = Model.Lottery.Id})"><i class="fa fa-check"></i> Wartelisten leeren</a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a href="@Url.Action("TestRun", new {id = Model.Lottery.Id})"><i class="fa fa-flask"></i> Testlauf</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Clearance", new {id = Model.Lottery.Id})"><i class="fa fa-fire-extinguisher"></i> Bereinigen</a>
+
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Reset", new {id = Model.Lottery.Id})"><i class="fa fa-bomb"></i> Zurücksetzen</a>
+
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Zeitplan und Einstellungen</h5>
+                        <div class="list-group-item-text">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-clock-o"></i>@Model.Lottery.IsActiveFrom.Value.ToString(): Beginn Eintragung für Studierende</li>
+                                        <li><i class="fa fa-li fa-clock-o"></i>@Model.Lottery.IsActiveUntil.Value.ToString(): Ende Eintragung für Studierende / Beginn Platzvergabe</li>
+                                        <li><i class="fa fa-li fa-clock-o"></i>@Model.Lottery.FirstDrawing.ToString(): Beginn Platzverlosung</li>
+                                        <li><i class="fa fa-li fa-clock-o"></i>@Model.Lottery.LastDrawing.ToString(): Ende Platzverlosung / Ende Platzvergabe</li>
+                                    </ul>
+                                    <hr/>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-pencil"></i>Studierende müssen zwischen @Model.Lottery.MinSubscription und @Model.Lottery.MaxSubscription Lehrveranstaltungen wählen bzw. priorisieren.</li>
+                                        <li><i class="fa fa-li fa-cubes"></i>Studierende können als Platzkontingent zwischen @Model.Lottery.MaxConfirm und @Model.Lottery.MaxExceptionConfirm wählen.</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="alert alert-info">
+                                        <ul>
+                                            <li>Während des gesamten Zeitraums der Platzvergabe können Studierende sich weder ein- noch austragen.</li>
+                                            <li>Der Zeitraum zwischen Beginn Platzvergabe und Beginn Platzverlosung kann für eine Voreinschreibung genutzt werden.</li>
+                                            <li>Im Zeitraum der Platzverlosung können Lehrende keine Eintragungen übernehmen.</li>
+                                            <li>Nach dem Ende der Platzvergabe können sich Studierende wieder ein- und austragen. Aller Eintragungen landen dann auf den Wartelisten.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Status</h5>
+                        <ul class="fa-ul">
+                            <li>@Model.DrawingService.OccupancyRate.ToString("0%") der Plätze sind belegt</li>
+                            <li>@Model.DrawingService.SuccessRate.ToString("0%") der Studierenden haben (mindestens) einen Platz erhalten</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

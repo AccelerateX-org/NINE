@@ -1,6 +1,6 @@
 ﻿@using System.Globalization
 @using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.DataServices.Drawing.DrawingService
+@model MyStik.TimeTable.DataServices.Lottery.DrawingService
 @{
     ViewBag.Title = "Status " + Model.Lottery.Name;
     var colhead = Model.Lottery.MaxSubscription + 1;
@@ -48,19 +48,22 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <ul>
-                                <li>Gesamttopf = Platzbeschränkung auf Ebene Lehrveranstaltung</li>
+                            <ul class="fa-ul">
+                                <li><i class="fa-li fa fa-unlock text-success"></i>Keine Zugangsbeschränkung nach Studiengang</li>
+                                <li><i class="fa-li fa fa-lock text-danger"></i>Zugang nur für Studierende der jeweiligen Studiengänge</li>
                             </ul>
                         </div>
                         <div class="col-md-3">
                             <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-cubes"></i>Anzahl der Plätze insgesamt (Kapazität)</li>
-                                <li><i class="fa-li fa fa-cubes text-success"></i>Anzahl der freien Plätze</li>
+                                <li><i class="fa-li fa fa-bed"></i>Anzahl der Plätze (Kapazität)</li>
+                                <li><i class="fa-li fa fa-group"></i>Anzahl Teilnehmer</li>
+                                <li><i class="fa-li fa fa-hourglass-half"></i>Anzahl Einträge auf Warteliste</li>
+                                <li><i class="fa-li fa fa-percent text-warning"></i>"Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
                             </ul>
                         </div>
                         <div class="col-md-3">
                             <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-percent text-danger"></i>"Überbuchung" - Verhältnis freie Plätze zu Prio 1</li>
+                                <li><i class="fa-li fa fa-percent text-danger"></i>"Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
                             </ul>
                         </div>
                         <div class="col-md-3">
@@ -74,23 +77,41 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Liste der Lostöpfe</h4>
+                    <h4>Liste der Buchungslisten (ggf. mehrere pro Lehrveranstaltung bei Platzvergabe nach Studiengängen)</h4>
                 </div>
                 <table class="table table-condensed">
                     <thead>
                         <tr>
-                            <th rowspan="2">Lehrveranstaltung</th>
-                            <th colspan="3">Status Lostopf</th>
-                            <th colspan="@colhead">Aufschlüsselung Warteliste</th>
+                            <th colspan="2">Lehrveranstaltung</th>
+                            <th colspan="5">Buchungsliste</th>
+                            @if (Model.Lottery.IsFixed)
+                            {
+                                <th colspan="@colhead + 1">Aufschlüsselung Teilnehmerliste</th>
+                                <th colspan="@colhead">Aufschlüsselung Warteliste</th>
+                            }
                         </tr>
                         <tr>
-                            <th>Lostopf</th>
-                            <th><i class="fa fa-cubes"></i></th>
-                            <th><i class="fa fa-cubes text-success"></i></th>
-                            <th><i class="fa fa-percent text-danger"></i> (Prio 1)</th>
-                            @for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                            <th></th>
+                            <th>Name</th>
+                            <th>Bezeichnung</th>
+                            <th><i class="fa fa-bed"></i></th>
+                            <th><i class="fa fa-group"></i></th>
+                            <th><i class="fa fa-hourglass-half"></i></th>
+                            <th><i class="fa fa-percent text-warning"></i></th>
+                            
+                            @if (Model.Lottery.IsFixed)
                             {
-                                <th>@i</th>
+                                <th><i class="fa fa-percent text-danger"></i></th>
+                                <th>Keine Prio</th>
+                                for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                                 {
+                                     <th>@i</th>
+                                 }
+                                <th>Keine Prio</th>
+                                for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                                 {
+                                     <th>@i</th>
+                                 }
                             }
                         </tr>
                     </thead>
@@ -99,18 +120,68 @@
                         {
                         <tr>
                             <td>
+                                @if (lotPot.Course.Occurrence.IsCoterie)
+                                {
+                                    <i class="fa fa-lock text-danger"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-unlock text-success"></i>
+
+                                }
+                            </td>
+                            <td>
                                 <a href="@Url.Action("Details", "Course", new {id = lotPot.Course.Id})">@lotPot.Course.Name (@lotPot.Course.ShortName)</a>
                             </td>
-                            <td>@lotPot.Name</td>
-                            <td>@lotPot.Capacity</td>
-                    <!--
-                    <td><a href="@Url.Action("AdminNewRules", "Course", new {id=lotPot.Course.Id})">@lotPot.Capacity</a></td>
-                    -->
-                            <td>@lotPot.SeatsAvailable</td>
-                            <td>@lotPot.BookingRank.ToString("0%")</td>
-                            @for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                            <td>
+                                @lotPot.Name
+                            </td>
+                            @if (lotPot.Capacity == int.MaxValue)
                             {
-                                <td>@lotPot.Lots.Count(x => x.Priority == i)</td>
+                                <td>n.b.</td>
+                            }
+                            else
+                            {
+                                <td>@lotPot.Capacity</td>
+                            }
+
+                            <td>@lotPot.BookingList.Participients.Count</td>
+                            <td>@lotPot.BookingList.Waitinglist.Count</td>
+
+                            @if (lotPot.Capacity == int.MaxValue)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@lotPot.OccupancyRate.ToString("0%")</td>
+                            }
+
+                            @if (Model.Lottery.IsFixed)
+                            {
+
+                                if (lotPot.Capacity == int.MaxValue)
+                                 {
+                                     <td></td>
+                                 }
+                                 else
+                                 {
+                                     <td>@lotPot.BookingRank.ToString("0%")</td>
+                                 }
+
+
+                                <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == null)</td>
+                                for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                                 {
+                                     <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == i)</td>
+                                 }
+
+
+                                <td>@lotPot.Lots.Count(x => x.Priority == 0)</td>
+                                for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                                 {
+                                     <td>@lotPot.Lots.Count(x => x.Priority == i)</td>
+                                 }
                             }
                         </tr>
                         }

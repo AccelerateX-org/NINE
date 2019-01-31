@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.Horst;
+using MyStik.TimeTable.DataServices.IO.Horst;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 

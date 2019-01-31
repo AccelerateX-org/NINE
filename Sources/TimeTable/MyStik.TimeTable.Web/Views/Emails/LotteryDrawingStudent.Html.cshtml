@@ -31,12 +31,12 @@ Content-Type: text/html; charset=utf-8
 
         <p>Sehr geehrte(r) @Model.User.FullName,</p>
 
-        <p>anbei das Ergebnis des Durchgangs im Wahlverfahren "@Model.Game.Game.Lottery.Name" vom @Model.Drawing.Start.ToShortDateString().</p>
+        <p>anbei das Ergebnis des Durchgangs im Wahlverfahren "@Model.Game.Lottery.Name" vom @Model.Drawing.Start.ToShortDateString().</p>
         <p>Ihre Einstellungen:</p>
         <ul>
-            <li>Datum der letzten Änderung: @Model.Game.Game.LastChange.ToShortDateString()</li>
-            <li>Anazhl der gewünschten Lehrveranstaltungen: @Model.Game.Game.CoursesWanted</li>
-            @if (Model.Game.Game.AcceptDefault)
+            <li>Datum der letzten Änderung: @Model.Game.LastChange.ToShortDateString()</li>
+            <li>Anazhl der gewünschten Lehrveranstaltungen: @Model.Game.CoursesWanted</li>
+            @if (Model.Game.AcceptDefault)
             {
                 <li>Zuteilung anderer Lehrveranstaltungen wird akzeptiert.</li>
             }
@@ -72,7 +72,7 @@ Content-Type: text/html; charset=utf-8
                 </ul>
             }
 
-            if (Model.Game.Game.AcceptDefault)
+            if (Model.Game.AcceptDefault)
             {
                 var nExtra = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority == 0);
                 if (nExtra > 0)
@@ -93,13 +93,13 @@ Content-Type: text/html; charset=utf-8
         @{
             var nTotalReceived = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count;
 
-            <h4>Sie haben in @nTotalReceived von @Model.Game.Game.CoursesWanted Lehrveranstaltungen einen Platz erhalten.</h4>
+            <h4>Sie haben in @nTotalReceived von @Model.Game.CoursesWanted Lehrveranstaltungen einen Platz erhalten.</h4>
 
-            if (Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count < Model.Game.Game.CoursesWanted)
+            if (Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count < Model.Game.CoursesWanted)
             {
                 <p>Sie haben damit insgesamt weniger Plätze erhalten, als gewünscht.</p>
 
-                if (Model.Game.Game.AcceptDefault)
+                if (Model.Game.AcceptDefault)
                 {
                     var nExtra = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority == 0);
                     if (nExtra == 0)

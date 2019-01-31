@@ -47,7 +47,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         return RedirectToAction("Change", "Subscription");
                     }
-                    return View("DashboardStudent", CreateDashboardModelStudent(userRight));
+                    return View("DashboardStudentNew", CreateDashboardModelStudentNew(userRight));
                 }
 
                 case MemberState.Staff:
@@ -496,11 +496,31 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="hmemail"></param>
-            /// <returns></returns>
+        private DashboardStudentViewModel CreateDashboardModelStudentNew(UserRight userRight)
+        {
+            var student = StudentService.GetCurrentStudent(userRight.User.Id);
+
+            var currentSemester = SemesterService.GetNewestSemester(student.Curriculum.Organiser);
+            var prevSemester = SemesterService.GetPreviousSemester(currentSemester);
+
+            var model = new DashboardStudentViewModel
+            {
+                User = userRight.User,
+                Semester = prevSemester,
+                NextSemester = currentSemester,
+                Student = student
+            };
+
+            return model;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hmemail"></param>
+        /// <returns></returns>
         [HttpPost]
         public PartialViewResult SendVerificationMail(string hmemail)
         {

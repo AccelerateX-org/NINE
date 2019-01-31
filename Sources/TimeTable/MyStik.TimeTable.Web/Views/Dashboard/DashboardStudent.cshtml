@@ -7,62 +7,51 @@
 <div class="container-fluid">
 
     <div class="row" style="margin-top: 20px">
-
-        @if (Model.Lotteries.Any())
-        {
-            <div class="col-md-4">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-clock-o"></i> Aktuelles</h4>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-clock-o"></i> Aktuelles</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Wahlverfahren</h5>
                     </div>
-                    <div class="list-group">
-                        <a href="" class="list-group-item">
-                            <h5 class="list-group-item-heading"><i class="fa fa-random"></i> Wahlverfahren</h5>
-                            <ul class="fa-ul">
-                                @if (Model.Lotteries.Any())
+                    @if (Model.Lotteries.Any())
+                    {
+                        foreach (var lottery in Model.Lotteries)
+                        {
+
+                            <a href="@Url.Action("Details", "Lottery", new {id=lottery.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    @lottery.Name
+                                </h5>
+                                @if (!lottery.IsFixed)
                                 {
-                                    foreach (var lottery in Model.Lotteries)
-                                    {
-                                        if (lottery.IsActiveFrom.HasValue && lottery.IsActiveUntil.HasValue)
-                                        {
-                                            if (lottery.IsActiveFrom > DateTime.Today)
-                                            {
-                                                <li><i class="fa fa-li fa-info-circle"></i>Ab @lottery.IsActiveFrom.Value.ToShortDateString(): @lottery.Name</li>
-                                            }
-                                            else
-                                            {
-                                                if (lottery.IsActiveUntil <= DateTime.Today)
-                                                {
-                                                    <li><i class="fa fa-li fa-exclamation text-danger"></i>Noch bis @lottery.IsActiveUntil.Value.ToShortDateString(): @lottery.Name</li>
-                                                }
-                                                else
-                                                {
-                                                    <li><i class="fa fa-li fa-exclamation text-danger"></i>@lottery.Name</li>
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <li><i class="fa fa-li fa-info-circle"></i>@lottery.Name</li>
-                                        }
-                                    }
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-info-circle"></i>Beginn des Eintragungszeitraums: @lottery.IsActiveFrom.Value</li>
+                                    </ul>
                                 }
                                 else
                                 {
-                                    <li><i class="fa fa-li fa-info"></i><i>Aktuell keine aktiven Wahlverfahren</i></li>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-info-circle"></i>Zeitraum für Eintragungen: @Html.TimeSpanWithDate(lottery.IsActiveFrom.Value, lottery.IsActiveUntil.Value)</li>
+                                    </ul>
                                 }
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <div class="list-group-item">
+                            <ul class="fa-ul">
+                                <li><i class="fa fa-li fa-info-circle"></i>Aktuell keine aktiven Wahlverfahren in meinem Studiengang @Model.Student.Curriculum.ShortName</li>
                             </ul>
-                        </a>
-                    </div>
+                        </div>
+                    }
+
                 </div>
             </div>
-        }
-
-    
-
-
-
-
+        </div>
         <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">

@@ -1,0 +1,207 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+
+@section styles
+{
+}
+
+<div class="list-group">
+    <div class="list-group-item">
+        <div class="btn-group" role="group">
+            <a href="@Url.Action("Details", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
+        </div>
+    </div>
+    <div class="list-group-item">
+        <p>
+            Sie haben aktuell <strong><span id="projektanzahl">@Model.CoursesSelected.Count</span> Lehrveranstaltungen</strong> ausgewählt.
+            <span id="maxProjekte">Sie können maximal <span id="maxProjektanzahl">@Model.Lottery.MaxSubscription</span> Lehrveranstaltungen auswählen!</span>
+        </p>
+    </div>
+    @foreach (var course in Model.Courses)
+    {
+        if (Model.CoursesSelected.Count >= Model.Lottery.MaxSubscription && course.Subscription == null)
+        {
+            course.IsSelectable = false;
+            course.Message = "Kontingent ausgeschöpft";
+        }
+        var color = "";
+        <div class="list-group-item @color">
+            <div class="list-group-item-heading">
+                <h5>@course.Course.Name (@course.Course.ShortName)</h5>
+            </div>
+            <div class="list-group-item-text">
+                <ul class="fa-ul">
+                    <li>
+                        <i class="fa-li fa fa-user-md"></i>
+                        @if (course.CourseSummary.Lecturers.Any())
+                        {
+                            @Html.LecturerList(course.CourseSummary.Lecturers, showLinks: false)
+                        }
+                        else
+                        {
+                            <i>Keine Angabe zu Lehrenden verfügbar</i>
+                        }
+                    </li>
+                    <li>
+                        @if (course.CourseSummary.Dates.Count == 1)
+                        {
+                            <i class="fa-li fa fa-calendar"></i>
+                            <span>immer @Html.Date(course.CourseSummary.Dates.First()) in [@Html.RoomList(course.CourseSummary.Rooms, showLinks: false)]</span>
+                        }
+                        else
+                        {
+                            <i class="fa-li fa fa-calendar"></i>
+                            <span>insgesamt @course.CourseSummary.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+                        }
+                        @if (course.CourseSummary.ConflictingDates.Any(x => x.Value.Any()))
+                        {
+                            <span class="badge badge-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
+                        }
+                    </li>
+                    <li><i class="fa-li fa fa-book"></i>@Html.GroupList(course.Course.Occurrence)</li>
+                    @if (course.CourseSummary.Course.Occurrence.Capacity < 0)
+                    {
+                        if (course.CourseSummary.Course.Occurrence.UseGroups)
+                        {
+                            <li><i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen</li>
+                            foreach (var ocg in course.CourseSummary.Course.Occurrence.Groups)
+                            {
+                                if (ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.Id == Model.Student.Curriculum.Id)
+                                {
+                            <li>
+                                <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze
+                                @if (course.BookingState.MyBookingList.FreeSeats > 0)
+                                {
+                                    <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span>
+                                }
+                                else
+                                {
+                                    if (course.BookingState.MyBookingList.Waitinglist.Count > 0)
+                                    {
+                                        <span class="badge badge-danger">@course.BookingState.MyBookingList.Waitinglist.Count Einträge auf Warteliste</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">ausgebucht</span>
+                                    }
+                                }
+                            </li>
+                                }
+                                else
+                                {
+                                    <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <li><i class="fa-li fa fa-bed"></i>keine Platzbeschränkungen: @course.BookingState.MyBookingList.Waitinglist.Count auf Warteliste</li>
+                        }
+                    }
+                    else
+                    {
+                        if (course.CourseSummary.Course.Occurrence.UseGroups)
+                        {
+                            <li><i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen</li>
+                            foreach (var ocg in course.CourseSummary.Course.Occurrence.Groups)
+                            {
+                                if (ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.Id == Model.Student.Curriculum.Id)
+                                {
+                            <li>
+                                <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze
+                                @if (course.BookingState.MyBookingList.FreeSeats > 0)
+                                {
+                                    <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span>
+                                }
+                                else
+                                {
+                                    if (course.BookingState.MyBookingList.Waitinglist.Count > 0)
+                                    {
+                                        <span class="badge badge-danger">@course.BookingState.MyBookingList.Waitinglist.Count Einträge auf Warteliste</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">ausgebucht</span>
+                                    }
+                                }
+                            </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze
+                                    </li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <li>
+                                <i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @course.CourseSummary.Course.Occurrence.Capacity Plätze - <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span>
+                            </li>
+                        }
+                    }
+                </ul>
+                @if (course.Subscription != null)
+                {
+                    <div class="list-group-item-text">
+                        @if (course.Subscription.OnWaitingList)
+                        {
+                            <p>Mein Eintrag vom @course.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Warteliste</strong> auf Platz @course.BookingState.MyBookingList.GetPosition(course.Subscription).</p>
+                        }
+                        else
+                        {
+                            <p>Mein Eintrag vom @course.Subscription.TimeStamp.ToString("dd.MM.yyyy") befindet sich auf der <strong>Teilnehmerliste</strong>.</p>
+                        }
+                        <a href="javascript:onSubscribe('@course.Course.Id')" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+                    </div>
+                }
+                else
+                {
+                    if (course.BookingState.IsAvailable)
+                    {
+                        var btnClass = "btn-success";
+                        var txtList = "Teilnehmerliste";
+                        <div class="list-group-item-text">
+                            @if (course.BookingState.IsUnrestricted)
+                            {
+                            }
+                            else
+                            {
+                                if (course.BookingState.AvailableSeats <= 0)
+                                {
+                                    btnClass = "btn-warning";
+                                    txtList = "Warteliste";
+                                }
+                                else
+                                {
+                                }
+                            }
+                            <a class="btn @btnClass" href="javascript:onSubscribe('@course.Course.Id')"><i class="fa fa-pencil"></i> Eintragen auf @txtList</a>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div class="list-group-item-text">
+                            <h5>Keine Eintragung möglich</h5>
+                            <p>Gründe</p>
+                            <ul>
+                                @foreach (var reason in course.BookingState.Reasons)
+                                {
+                                    <li>@reason</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+

@@ -90,6 +90,9 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public OccurrenceStateModel State { get; set; }
 
+        /// <summary>
+        /// Eine bestehende Einschreibung
+        /// </summary>
         public OccurrenceSubscription Subscription { get; set; }
 
         /// <summary>

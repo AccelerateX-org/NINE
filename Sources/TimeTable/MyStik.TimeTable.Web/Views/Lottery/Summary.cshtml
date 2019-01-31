@@ -1,0 +1,106 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    ViewBag.Title = "Wahlverfahren";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Wahlverfahren: @Model.Lottery.Name</h4>
+                    <p>Übersicht</p>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Beschreibung</h5>
+                        @if (string.IsNullOrEmpty(Model.Lottery.Description))
+                        {
+                            <div class="list-group-item-text"><i>Keine Beschreibung vorhanden</i></div>
+                        }
+                        else
+                        {
+                            <div class="list-group-item-text">@Html.Raw(Model.Lottery.Description)</div>
+                        }
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Zur Auswahl stehen</h5>
+                        <div class="list-group-item-text">
+                            <ul class="fa-ul">
+                                @foreach (var course in Model.Courses)
+                                {
+                                    <li><i class="fa fa-li fa-ticket"></i>@course.Course.Name (@course.Course.ShortName)</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default"><i class="fa fa-list"></i> Detailinformationen</button>
+                            <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i> Stundenplansicht</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Einschreibungszeitraum</h5>
+                        <div class="list-group-item-text">
+                            <ul class="fa-ul">
+                                <li><i class="fa fa-li fa-clock-o"></i>@Html.TimeSpanWithDate(Model.Lottery.IsActiveFrom.Value, Model.Lottery.IsActiveUntil.Value)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Verfahren der Platzvergabe</h5>
+                        <div class="list-group-item-text">
+                            <ul class="fa-ul">
+                                @if (!Model.Lottery.IsFixed)
+                                {
+                                    <li><i class="fa fa-li fa-pencil"></i>Nach zeitlichem Eingang der Eintragungen</li>
+                                    <li><i class="fa fa-li fa-pencil"></i>Keine Platzverlosung, direkte Eintragung auf Teilnehmerliste oder Warteliste</li>
+                                    <li><i class="fa fa-li fa-pencil"></i>Automatisches Nachrückverfahren, Benachrichtigung per E-Mail</li>
+                                    <li><i class="fa fa-li fa-pencil"></i>Es müssen <strong>mindestens</strong> @Model.Lottery.MinSubscription Lehrveranstaltungen gewählt werden</li>
+                                    <li><i class="fa fa-li fa-pencil"></i>Es können <strong>maximal</strong> @Model.Lottery.MinSubscription Lehrveranstaltungen gewählt werden</li>
+                                }
+                                else
+                                {
+                                    <li><i class="fa fa-li fa-pencil"></i>Alle Eintragungen landen zunächst auf den Wartelisten</li>
+                                    <li><i class="fa fa-li fa-random"></i>Vergabe der Plätze durch eine Platzverlosung</li>
+                                    <li><i class="fa fa-li fa-pencil"></i>HINWEIS: Lehrende können Eintragungen mit Priorität 1 vor der Durchführung der Verlosung übernehmen</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="list-group-item list-group-item-info">
+                        <h5 class="list-group-item-heading">Status meiner Eintragungen</h5>
+                        <div class="list-group-item-text">
+                            @if (Model.CoursesSelected.Any())
+                            {
+                                <ul class="fa-ul">
+                                    @foreach (var selected in Model.CoursesSelected)
+                                    {
+                                        if (selected.Subscription.OnWaitingList)
+                                        {
+                                            <li><i class="fa fa-li fa-hourglass-half"></i>@selected.Course.Name (@selected.Course.ShortName)</li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-group"></i>@selected.Course.Name (@selected.Course.ShortName)</li>
+                                        }
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <i>Keine Lehrveranstaltungen gewählt.</i>
+                            }
+                        </div>
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" class="btn btn-default">Auswahl starten</button>
+                            <button type="button" class="btn btn-default">Tauschen</button>
+                            <button type="button" class="btn btn-default">Bewerbungsschreiben</button>
+                            <button type="button" class="btn btn-default">Austragen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

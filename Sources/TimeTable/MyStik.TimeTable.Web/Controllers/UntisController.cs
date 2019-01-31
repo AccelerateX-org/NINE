@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices.GpUntis;
+using MyStik.TimeTable.DataServices.IO.GpUntis;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers

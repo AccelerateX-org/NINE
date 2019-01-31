@@ -89,12 +89,23 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var courseService = new CourseService(Db);
 
-            var model = courseService.GetCourseSummary(id);
+            CourseSelectModel model = null;
 
-            var userRights = GetUserRight(User.Identity.Name, model.Course);
+            if (!Request.IsAuthenticated)
+            {
+                model = courseService.GetCourseSelectModel(id, null);
+            }
+            else
+            {
+                var user = GetCurrentUser();
+                model = courseService.GetCourseSelectModel(id, user.Id);
+            }
+
+
+            var userRights = GetUserRight(User.Identity.Name, model.Summary.Course);
             ViewBag.UserRight = userRights;
 
-            return View("DetailsNew", model);
+            return View("Details", model);
         }
 
         /// <summary>

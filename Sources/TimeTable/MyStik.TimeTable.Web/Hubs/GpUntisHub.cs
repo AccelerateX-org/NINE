@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.GpUntis;
+using MyStik.TimeTable.DataServices.IO.GpUntis;
 
 namespace MyStik.TimeTable.Web.Hubs
 {

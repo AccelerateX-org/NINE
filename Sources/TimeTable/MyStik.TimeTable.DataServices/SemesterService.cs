@@ -346,6 +346,21 @@ namespace MyStik.TimeTable.DataServices
                 .OrderByDescending(x => x.StartCourses).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Das neueste Semester, das Semestergruppen hat
+        /// </summary>
+        /// <param name="org"></param>
+        /// <returns></returns>
+        public Semester GetNewestSemester(ActivityOrganiser org)
+        {
+            return
+                _db.Semesters
+                    .Where(x => x.Groups.Any(g =>
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                    .OrderByDescending(x => x.StartCourses).FirstOrDefault();
+        }
+
+
         public int GetSemesterIndex(Semester semester)
         {
             var current = GetSemester(DateTime.Today);

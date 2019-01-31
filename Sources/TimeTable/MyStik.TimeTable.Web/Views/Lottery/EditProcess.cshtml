@@ -1,0 +1,153 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryCreateModel
+@{
+    ViewBag.Title = "Wahlverfahren";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-cog"></i> Einstellungen für die Platzverlosung der Platzvergabe für das Wahlverfahren "@Model.Name"
+                </h4>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                        ))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        @Html.HiddenFor(m => m.LotteryId)
+                    <div class="col-md-6">
+                        <h5>Zeitplan</h5>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IsAvailableFrom, new { @class = "col-md-6 control-label" })
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.IsAvailableFrom, new { @class = "form-control datepicker" })
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.IsAvailableFromTime, new { @class = "form-control timepicker timepicker-24" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IsAvailableUntil, new { @class = "col-md-6 control-label" })
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.IsAvailableUntil, new { @class = "form-control datepicker" })
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.IsAvailableUntilTime, new { @class = "form-control timepicker timepicker-24" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.FirstDrawing, new { @class = "col-md-6 control-label" })
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.FirstDrawing, new { @class = "form-control datepicker" })
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.FirstDrawingTime, new { @class = "form-control timepicker timepicker-24" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LastDrawing, new { @class = "col-md-6 control-label" })
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.LastDrawing, new { @class = "form-control datepicker" })
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.TextBoxFor(model => model.LastDrawingTime, new { @class = "form-control timepicker timepicker-24" })
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>Hinweise:</strong>
+                            <ul>
+                                <li>Das Losverfahren kann nur manuell gestartet werden.</li>
+                                <li>Der Zeitraum zwischen Beginn der Platzvergabe und Beginn der Platzverlosung kann für Voreinschreibungen genutzt werden.</li>
+                                <li>Zischen Beginn Platzvergabe und Ende Platzverlosung können sich Studierende weder ein- noch austragen.</li>
+                                <li>Nach dem Ende der Platzverlosung beginnt können sich Studierende wieder ein- und austragen. Platzvergabe dann nur noch über Übernahme durch Lehrende</li>
+                                <li>Sollen mehrere "Runden" ermöglicht werden, einfach den gesamten Zeitplan verschieben.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Anzahl der von Studierenden benötigten Plätze</h5>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.MaxConfirm, new { @class = "col-md-6 control-label" })
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.MaxConfirm, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.MaxConfirmException, new { @class = "col-md-6 control-label" })
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(m => m.MaxConfirmException, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>Hinweise:</strong>
+                            <ul>
+                                <li>Spielraum für Studierende.</li>
+                                <li>Kann bei Bedarf individuell erhöht werden.</li>
+                            </ul>
+                        </div>
+                    </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
+                                    <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">Abbrechen</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
+                e.preventDefault();
+                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+            });
+
+        });
+
+    </script>
+}
+
+

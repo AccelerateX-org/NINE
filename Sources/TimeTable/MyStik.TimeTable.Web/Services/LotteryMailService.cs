@@ -7,7 +7,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using log4net;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices.Drawing;
+using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Models;
 using Postal;
 
@@ -27,7 +27,7 @@ namespace MyStik.TimeTable.Web.Services
         {
             foreach (var game in Drawing.Games)
             {
-                var nNeeded = game.Game.CoursesWanted - game.Seats.Count;
+                var nNeeded = game.CoursesWanted - game.Seats.Count;
 
                 // Versand nur an jene, die noch Plätze brauchen
                 if (nNeeded > 0)
@@ -86,7 +86,7 @@ namespace MyStik.TimeTable.Web.Services
         {
             foreach (var game in Drawing.Games)
             {
-                var nNeeded = game.Game.CoursesWanted - game.Seats.Count;
+                var nNeeded = game.CoursesWanted - game.Seats.Count;
 
                 // Versand nur an jene, die Plätze auf der Warteliste haben
                 if (nNeeded > 0)

@@ -1,0 +1,44 @@
+﻿@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+
+@{
+    ViewBag.Title = "Austragen";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Austragen aus Lehrveranstaltungen im Wahlverfahren: "@Model.Lottery.Name"</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-danger">
+                        <h5 class="list-group-item-heading"><i class="fa fa-exclamation"></i>ACHTUNG</h5>
+                        <div class="list-group-tem-text">
+                            Sie sind im Begriff, sich aus Lehrveranstaltungen des angegebenen Wahlverfahrens auszutrgen.
+                            Es erfolgt jeweils noch eine Sicherheitsabfrage.
+                            Die Aktion kann nicht rückgängig gemacht werden.
+                        </div>
+                    </div>
+                    @foreach (var course in Model.CoursesSelected)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">@course.Course.Name (@course.Course.ShortName)</h5>
+                            @if (course.Subscription.OnWaitingList)
+                            {
+                                <div class="list-group-item-text"><i class="fa fa-hourglass-half"></i> WARTELISTE</div>
+                            }
+                            else
+                            {
+                                <div class="list-group-item-text"><i class="fa fa-group"></i> TEILNEHMER</div>
+                            }
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("DeleteCourse", new {lotteryId = Model.Lottery.Id, courseId=course.Course.Id})" class="btn btn-danger"><i class="fa fa-times"></i> Aus dieser Lehrveranstaltung austragen</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

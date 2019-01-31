@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using log4net;
-using MyStik.TimeTable.DataServices.Drawing;
+using MyStik.TimeTable.DataServices.Lottery;
 using Postal;
 
 namespace MyStik.TimeTable.Web.Services

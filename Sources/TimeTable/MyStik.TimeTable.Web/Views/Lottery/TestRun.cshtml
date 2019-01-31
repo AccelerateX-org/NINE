@@ -1,5 +1,5 @@
 ﻿@using MyStik.TimeTable.Web.Services
-@model MyStik.TimeTable.DataServices.Drawing.DrawingService
+@model MyStik.TimeTable.DataServices.Lottery.DrawingService
 @{
     ViewBag.Title = "Testlauf";
     var iUser = 0;
@@ -28,7 +28,7 @@
                 <div class="col-md-12">
                     <div class="form-inline">
                         <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
+                            <a href="@Url.Action("Drawing", new {id=Model.Lottery.Id})" class="btn btn-default">
                                 <i class="fa fa-arrow-left"></i> Zurück
                             </a>
                         </div>
@@ -144,8 +144,22 @@
 
                                     }
                                 </td>
-                                <td>@lotPot.Capacity</td>
-                                <td>@lotPot.SeatsAvailable</td>
+                                @if (lotPot.Capacity == int.MaxValue)
+                                {
+                                    <td>n.b.</td>
+                                }
+                                else
+                                {
+                                    <td>@lotPot.Capacity</td>
+                                }
+                                @if (lotPot.SeatsAvailable == int.MaxValue)
+                                {
+                                    <td>n.b.</td>
+                                }
+                                else
+                                {
+                                    <td>@lotPot.SeatsAvailable</td>
+                                }
                                 <td>@lotPot.BookingRank.ToString("0%")</td>
                                 @for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
                                 {
@@ -190,12 +204,12 @@
                             @foreach (var student in Model.Games)
                             {
                                 var seats = student.Lots.Count(x => !x.Subscription.OnWaitingList);
-                                var user = userService.GetUser(student.Game.UserId);
+                                var user = userService.GetUser(student.UserId);
 
                                 <tr>
                                     @if (user == null)
                                     {
-                                        <td colspan="3">@student.Game.UserId</td>
+                                        <td colspan="3">@student.UserId</td>
                                     }
                                     else
                                     {
@@ -203,19 +217,19 @@
                                         <td>@student.Student.Curriculum.ShortName</td>
                                         <td>@student.Student.FirstSemester.Name</td>
                                     }
-                                    @if (seats < student.Game.CoursesWanted)
+                                    @if (seats < student.CoursesWanted)
                                     {
-                                        <td class="warning">@seats (@student.Game.CoursesWanted)</td>
+                                        <td class="warning">@seats (@student.CoursesWanted)</td>
                                     }
-                                    else if (seats > student.Game.CoursesWanted)
+                                    else if (seats > student.CoursesWanted)
                                     {
-                                        <td class="danger">@seats (@student.Game.CoursesWanted)</td>
+                                        <td class="danger">@seats (@student.CoursesWanted)</td>
                                     }
                                     else
                                     {
-                                        <td class="success">@seats (@student.Game.CoursesWanted)</td>
+                                        <td class="success">@seats (@student.CoursesWanted)</td>
                                     }
-                                    @if (student.Game.AcceptDefault)
+                                    @if (student.AcceptDefault)
                                     {
                                         <td><i class="fa fa-random"></i></td>
                                     }

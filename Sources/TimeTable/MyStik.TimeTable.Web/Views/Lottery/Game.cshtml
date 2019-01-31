@@ -110,7 +110,7 @@
                             </ul>
                         </div>
                     </div>
-                    @if (!Model.Lottery.IsFixed)
+                    @if (Model.Lottery.IsFixed)
                     {
                         <a class="list-group-item list-group-item-info" href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})">
                             <h5 class="list-group-item-heading"><i class="fa fa-shopping-cart"></i> Auswahl ändern</h5>

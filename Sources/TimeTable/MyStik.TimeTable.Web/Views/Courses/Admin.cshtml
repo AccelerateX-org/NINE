@@ -1,4 +1,4 @@
-﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+﻿@model MyStik.TimeTable.Web.Models.SemesterStatisticsModel
 @{
     ViewBag.Title = "Admin";
 }
@@ -44,6 +44,14 @@
                     <h4>Lehrveranstaltungen</h4>
                 </div>
                 <div class="list-group">
+                    <div class="list-group-item list-group-item-info">
+                        <h5 class="list-group-item-heading">Sperrung von Lehrveranstaltung für Lehrende</h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-lock"></i>@Model.FreezedCourses Lehrveranstaltungen sind gesperrt</li>
+                            <li><i class="fa fa-li fa-unlock"></i>@Model.UnFreezedCourses Lehrveranstaltungen sind freigegeben</li>
+                        </ul>
+                    </div>
+
                     <a href="@Url.Action("UnLockCourses", new {id = Model.Semester.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Änderungen freigeben</h5>
                         <div class="list-group-item-text">Änderungen durch Lehrende ermöglichen</div>
@@ -53,20 +61,24 @@
                         <div class="list-group-item-text">Änderungen durch Lehrende unterbinden</div>
                     </a>
                 </div>
-                <div class="list-group">
-                    <a href="@Url.Action("EnableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
-                        <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Eintragungen freigeben</h5>
-                        <div class="list-group-item-text">Eintragungen durch Studierende ermöglichen</div>
-                    </a>
-                    <a href="@Url.Action("DisableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
-                        <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> LVs für Eintragungen sperren</h5>
-                        <div class="list-group-item-text">Eintragungen durch Studierende unterbinden</div>
-                    </a>
+                <div class="list-group-item list-group-item-info">
+                    <h5 class="list-group-item-heading">Sperrung von Lehrveranstaltung für Studierende</h5>
+                    <ul class="fa-ul">
+                        <li><i class="fa fa-li fa-ban"></i>@Model.LockedCourses Lehrveranstaltungen sind gesperrt</li>
+                        <li><i class="fa fa-li fa-pencil"></i>@Model.UnLockedCourses Lehrveranstaltungen sind freigegeben</li>
+                    </ul>
                 </div>
+                <a href="@Url.Action("EnableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
+                    <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Eintragungen freigeben</h5>
+                    <div class="list-group-item-text">Eintragungen durch Studierende ermöglichen</div>
+                </a>
+                <a href="@Url.Action("DisableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
+                    <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> LVs für Eintragungen sperren</h5>
+                    <div class="list-group-item-text">Eintragungen durch Studierende unterbinden</div>
+                </a>
 
             </div>
         </div>
-
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
         </div>
     </div>

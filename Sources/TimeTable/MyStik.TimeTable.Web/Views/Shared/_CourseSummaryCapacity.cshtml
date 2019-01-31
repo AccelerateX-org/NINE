@@ -1,0 +1,78 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.CourseSummaryModel
+
+<div class="list-group-item">
+    <h5 class="list-group-item-heading">Zugangsbeschränkungen</h5>
+    <div class="list-group-item-text">
+        <ul class="fa-ul">
+            @if (Model.Course.Occurrence.HasHomeBias)
+            {
+                if (Model.Course.Occurrence.IsCoterie)
+                {
+                    <li><i class="fa-li fa fa-id-card"></i> Nur Studierende der angegebenen Studiengänge können sich eintragen</li>
+                }
+                else
+                {
+                    <li><i class="fa-li fa fa-id-card"></i> Studierende der angegebenen Studiengänge werden bevorzugt. Studierende anderer Studiengänge landen automatisch auf der Warteliste</li>
+                }
+            }
+            else
+            {
+                <li><i class="fa-li fa fa-id-card"></i> Jeder Studierende kann sich eintragen</li>
+            }
+        </ul>
+    </div>
+
+    <h5 class="list-group-item-heading">Platzbeschränkungen</h5>
+    <div class="list-group-item-text">
+        <ul class="fa-ul">
+            @if (Model.Course.Occurrence.Capacity < 0)
+            {
+                if (Model.Course.Occurrence.UseGroups)
+                {
+                    <li><i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen</li>
+                    foreach (var ocg in Model.Course.Occurrence.Groups)
+                    {
+                        <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</li>
+                    }
+                }
+                else
+                {
+                    <li><i class="fa-li fa fa-bed"></i>keine Platzbeschränkungen</li>
+                }
+                if (Model.Lottery != null)
+                {
+                    <li><i class="fa fa-li fa-random"></i>Platzvergabe über das Wahlverfahren "@Model.Lottery.Name"</li>
+                }
+            }
+            else
+            {
+                if (Model.Course.Occurrence.UseGroups)
+                {
+                    <li><i class="fa-li fa fa-bed"></i> Platzkontingent getrennt nach Studiengängen</li>
+                    foreach (var ocg in Model.Course.Occurrence.Groups)
+                    {
+                        <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze</li>
+                    }
+                }
+                else
+                {
+                    <li><i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @Model.Course.Occurrence.Capacity Plätze</li>
+                }
+                if (Model.Lottery != null)
+                {
+                    <li>
+                        <i class="fa fa-li fa-random"></i>Platzvergabe über das Wahlverfahren
+                        <a href="@Url.Action("Details", "Lottery", new {id=Model.Lottery.Id})">@Model.Lottery.Name</a>
+                    </li>
+                }
+                else
+                {
+                    <li><i class="fa fa-li fa-clock-o"></i>Platzvergabe nach zeitlicher Reihenfolge der Eintragungen</li>
+                }
+            }
+        </ul>
+    </div>
+
+</div>

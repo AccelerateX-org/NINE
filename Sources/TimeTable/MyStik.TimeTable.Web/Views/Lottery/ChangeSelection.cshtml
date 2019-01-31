@@ -1,0 +1,72 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryOverviewModel
+@{
+    ViewBag.Title = "Auswahl";
+}
+
+@section styles
+{
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-pencil"></i> Auswahl der Lehrveranstaltungen<span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+                </div>
+                <div id="bookingContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+
+    <script src="@Url.Content("~/Assets/global/plugins/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js")"></script>
+
+    <script>
+        $(function() {
+
+            $('#loading').show();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetBookingList")',
+                    data: {
+                        id: '@Model.Lottery.Id'
+                    },
+                    success: function(data, success, xhr) {
+                        $('#bookingContent').html(data);
+                        $('#loading').hide();
+                    }
+                });
+            });
+
+
+        function onSubscribe(e) {
+            //alert('#'+e);
+            $('#loading').show();
+            $('.btn').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Subscribe")',
+                    data: {
+                        lotteryId: '@Model.Lottery.Id',
+                        courseId: e
+                    },
+                    success: function(data, success, xhr) {
+                        $('#bookingContent').html(data);
+                        $('#loading').hide();
+                    }
+                });
+        }
+
+
+    </script>
+
+}

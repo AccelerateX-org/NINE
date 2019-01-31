@@ -532,6 +532,50 @@ namespace MyStik.TimeTable.Web.Services
             return conflictingDates;
         }
 
+        public CourseSelectModel GetCourseSelectModel(Guid id, string userId)
+        {
+            var model = new CourseSelectModel();
+
+            var summary = GetCourseSummary(id);
+
+            model.Summary = summary;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var studentService = new StudentService(Db);
+                var student = studentService.GetCurrentStudent(userId);
+
+                var subscriptionService = new SubscriptionService(Db);
+                var subscription = subscriptionService.GetSubscription(summary.Course.Occurrence.Id, userId);
+
+                var bookingService = new BookingService(Db, summary.Course.Occurrence.Id);
+                var bookingLists = bookingService.GetBookingLists();
+
+                var bookingState = new BookingState();
+                bookingState.Occurrence = summary.Course.Occurrence;
+                bookingState.Student = student;
+                bookingState.BookingLists = bookingLists;
+                bookingState.Init();
+
+
+                var firstDate = summary.Course.Dates.Min(x => x.Begin);
+                var lastDate = summary.Course.Dates.Max(x => x.End);
+                var activities = Db.Activities.OfType<Course>()
+                    .Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId)) &&
+                    x.Dates.Any(d => d.End >= firstDate && d.Begin <= lastDate)
+                    ).ToList();
+
+                model.Summary.ConflictingDates = GetConflictingDates(summary.Course, activities);
+
+                model.Student = student;
+                model.BookingState = bookingState;
+                model.Subscription = subscription;
+
+                summary.Subscription = subscription;
+            }
+
+            return model;
+        }
 
     }
 }
