@@ -1211,5 +1211,70 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult Schedule(Guid? id)
+        {
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+            var semester = SemesterService.GetSemester(id);
+
+            var model = new SemesterActivityModel();
+
+            model.Semester = semester;
+            model.MyCourses.AddRange(GetLecturerCourses(semester, user));
+            model.Organiser = org;
+
+            return View(model);
+        }
+
+        private List<ActivitySummary> GetLecturerCourses(Semester semester, ApplicationUser user)
+        {
+            List<ActivitySummary> model = new List<ActivitySummary>();
+
+            var lectureActivities =
+                Db.Activities.OfType<Course>().Where(a =>
+                    a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                    a.Dates.Any(d => d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)))).ToList();
+
+            foreach (var activity in lectureActivities)
+            {
+                var summary = new ActivitySummary { Activity = activity };
+
+                // nur die, bei denen es noch Termine in der Zukunft gibt
+                if (activity.Dates.Any(x => x.End >= DateTime.Now))
+                {
+                    var currentDate =
+                        activity.Dates.Where(d => d.Begin <= DateTime.Now && DateTime.Now <= d.End)
+                            .OrderBy(d => d.Begin)
+                            .FirstOrDefault();
+                    var nextDate =
+                        activity.Dates.Where(d => d.Begin >= DateTime.Now)
+                            .OrderBy(d => d.Begin)
+                            .FirstOrDefault();
+
+                    if (currentDate != null)
+                    {
+                        summary.CurrentDate = new CourseDateStateModel
+                        {
+                            Summary = new ActivityDateSummary { Date = currentDate },
+                            State = ActivityService.GetSubscriptionState(currentDate.Occurrence, currentDate.Begin, currentDate.End),
+                        };
+                    }
+
+                    if (nextDate != null)
+                    {
+                        summary.NextDate = new CourseDateStateModel
+                        {
+                            Summary = new ActivityDateSummary { Date = nextDate },
+                            State = ActivityService.GetSubscriptionState(nextDate.Occurrence, nextDate.Begin, nextDate.End),
+                        };
+                    }
+                }
+                model.Add(summary);
+            }
+
+            return model;
+        }
+
     }
 }

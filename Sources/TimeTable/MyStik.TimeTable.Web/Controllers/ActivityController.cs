@@ -88,13 +88,51 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult PersonalPlanDaily()
         {
+            var begin = DateTime.Today;
+            var end = DateTime.Today.AddDays(7);
+
+            var model = GetAgenda(begin, end);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PersonalPlanToday()
+        {
+            var begin = DateTime.Today;
+            var end = DateTime.Today.AddDays(1);
+
+            var model = GetAgenda(begin, end);
+
+            return View("DayCalendar", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PersonalPlanTomorrow()
+        {
+            var begin = DateTime.Today.AddDays(1);
+            var end = DateTime.Today.AddDays(2);
+
+            var model = GetAgenda(begin, end);
+
+            return View("DayCalendar", model);
+        }
+
+
+
+
+        private AgendaViewModel GetAgenda(DateTime begin, DateTime end)
+        { 
             var model = new AgendaViewModel();
 
             var user = UserManager.FindByName(User.Identity.Name);
 
-
-            var begin = DateTime.Today;
-            var end = DateTime.Today.AddDays(7);
 
             // Alle Dates bei denen der Benutzer als Dozent eingetragen ist
             var lectureDates =
@@ -154,8 +192,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 agendaDay.Activities.Add(agendaActivity);
             }
 
-
-            return View(model);
+            return model;
         }
 
 
@@ -893,8 +930,32 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             ViewBag.Organiser = org;
+            ViewBag.Date = beginOfDay;
 
             return View(nowPlaying);
         }
+
+        public ActionResult Tomorrow()
+        {
+            var org = GetMyOrganisation();
+
+            var beginOfDay = DateTime.Today.AddDays(1);
+            var endOfDay = beginOfDay.AddDays(1);
+
+            var nowPlaying = Db.ActivityDates.Where(d =>
+                    d.Activity is Course &&
+                    (d.Begin > beginOfDay && d.Begin < endOfDay) &&
+                    d.Activity.SemesterGroups.Any(g =>
+                        g.CapacityGroup != null &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+
+
+            ViewBag.Organiser = org;
+            ViewBag.Date = beginOfDay;
+
+            return View("Today", nowPlaying);
+        }
+
     }
 }

@@ -10,42 +10,61 @@
 
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-pencil"></i> Planung (<strong>@Model.Semester.Name</strong>)
-                    </h4>
-                </div>
-                <div class="list-group">
-                    <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId=Model.Student.Curriculum.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            Nach Vorlesungsverzeichnis
-                        </h5>
-                        <p class="list-group-item-text">Suche von Lehrveranstaltungen nach Studiengang und Semestergruppen und Themengebieten.</p>
-                    </a>
-                    <a href="@Url.Action("Search", "Planer", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            Nach Zeiträumen
-                        </h5>
-                        <p class="list-group-item-text">Suche von Lehrveranstaltungen zu bestimmten Zeiten.</p>
-                    </a>
-                    <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            Platzverlosungen
-                        </h5>
-                        <p class="list-group-item-text">Suche nach Lehrveranstaltungen über die Platzverlosungen.</p>
-                    </a>
-                    <a href="@Url.Action("Dictionary", "Planer")" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            Vorlesungsverzeichnis
-                        </h5>
-                        <p class="list-group-item-text">Suche im gesamten Vorlesungsverzeichnis aller Studiengänge.</p>
-                    </a>
-
-                </div>
+        <div class="col-md-12">
+            <h4>Mein Stundenplan @Model.Semester.Name</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-calendar-o"></i></h4>
+                    <h5>Wochenplan</h5>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Semester", "Planer")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-list"></i></h4>
+                    <h5>Liste</h5>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Planen, Eintragen, Einschreiben</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Index", "Dictionary")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-book"></i></h4>
+                    <h5>Vorlesungsverzeichnis</h5>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Index", "Lottery", new {id=Model.Semester.Id})" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-random"></i></h4>
+                    <h5>Wahlverfahren</h5>
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
 

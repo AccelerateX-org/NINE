@@ -51,7 +51,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 case MemberState.Staff:
-                    return View("DashboardOrgMember", CreateDashboardModelOrgMember(userRight));
+                    return View("DashboardOrgMemberNew", CreateDashboardModelOrgMemberNew(userRight));
                 default:
                     return View("DashboardDefault", CreateDashboardModelDefault(userRight));
             }
@@ -514,6 +514,24 @@ namespace MyStik.TimeTable.Web.Controllers
             return model;
         }
 
+
+        private DashboardStudentViewModel CreateDashboardModelOrgMemberNew(UserRight userRight)
+        {
+            var org = GetMyOrganisation();
+
+            var currentSemester = SemesterService.GetNewestSemester(org);
+            var prevSemester = SemesterService.GetPreviousSemester(currentSemester);
+
+            var model = new DashboardStudentViewModel
+            {
+                User = userRight.User,
+                Semester = prevSemester,
+                NextSemester = currentSemester,
+                Organiser = org
+            };
+
+            return model;
+        }
 
 
         /// <summary>

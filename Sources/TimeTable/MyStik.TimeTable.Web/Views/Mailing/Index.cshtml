@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="panel panel-default ">
                 <div class="panel-heading">
                     E-Mail Verteiler "Alle Studierenden"
@@ -43,12 +43,12 @@
                     </ul>
                     <p><strong>Wichtig:</strong> Es erhalten nur jene Benutzer eine E-Mail, die dies in ihrem Benutzerprofil aktiviert haben.</p>
 
-                    <a href="@Url.Action("AllStudents")" class="btn btn-lg btn-primary"><i class="fa fa-envelope fa-2x"></i> Alle Studierenden (@orgName)</a>
+                    <a href="@Url.Action("AllStudents")" class="btn btn-lg btn-primary btn-block"><i class="fa fa-envelope fa-2x"></i> Alle Studierenden (@orgName)</a>
 
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="panel panel-default ">
                 <div class="panel-heading">
                     E-Mail Verteiler "Semestergruppen"
@@ -62,7 +62,24 @@
                     </ul>
                     <p><strong>Wichtig:</strong> Es erhalten nur jene Benutzer eine E-Mail, die dies in ihrem Benutzerprofil aktiviert haben.</p>
 
-                    <a href="@Url.Action("StudentGroup")" class="btn btn-lg btn-primary"><i class="fa fa-envelope fa-2x"></i> Gruppe von Studierenden (@orgName)</a>
+                    <a href="@Url.Action("StudentGroup")" class="btn btn-lg btn-primary btn-block"><i class="fa fa-envelope fa-2x"></i> Gruppe von Studierenden (@orgName)</a>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default ">
+                <div class="panel-heading">
+                    Newsletter
+                </div>
+                <div class="panel-body">
+                    <h4>Hinweise</h4>
+                    <p>Die Mail geht an</p>
+                    <ul>
+                        <li>Benutzer, die sich selbst in den Angebote eingetragen haben.</li>
+                    </ul>
+                    
+                    <a href="@Url.Action("Index", "Newsletter")" class="btn btn-lg btn-primary btn-block"><i class="fa fa-newspaper-o fa-2x"></i> Newsletter (@orgName)</a>
 
                 </div>
             </div>

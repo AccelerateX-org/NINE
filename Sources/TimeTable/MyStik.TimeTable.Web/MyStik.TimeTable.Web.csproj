@@ -369,6 +369,7 @@
     <Compile Include="Areas\InfoScreen\Models\InfoscreenModels.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActivityController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminDashboardController.cs" />
     <Compile Include="Controllers\AdvertisementsController.cs" />
     <Compile Include="Controllers\AlumniController.cs" />
@@ -4040,6 +4041,11 @@
     <Content Include="Views\Shared\_CourseSummaryDescription.cshtml" />
     <Content Include="Views\Shared\_CourseSummaryHead.cshtml" />
     <Content Include="Views\Shared\_CourseSummarySubscription.cshtml" />
+    <Content Include="Views\Dashboard\DashboardOrgMemberNew.cshtml" />
+    <Content Include="Views\Activity\DayCalendar.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Planer\Schedule.cshtml" />
+    <Content Include="Views\Shared\_LayoutDashboardNew.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

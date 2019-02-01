@@ -1,0 +1,52 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.AgendaViewModel
+
+@foreach (var day in Model.Days)
+{
+    <h3 class="list-heading">@day.Title</h3>
+
+    if (day.Activities.Any())
+    {
+        <ul class="agenda list-items">
+            @foreach (var act in day.Activities)
+            {
+                <li class="note @act.AgendaStyle">
+                    <a href="#">
+                        <div class="col1">
+                            <div class="cont">
+                                <div class="cont-col1">
+                                    <div class="label label-sm">
+                                        @act.Begin.ToShortTimeString()<br>-<br>@act.End.ToShortTimeString()
+                                    </div>
+                                </div>
+                                <div class="cont-col2">
+                                    @if (act.Date.Activity is OfficeHour)
+                                    {
+                                        <div class="desc">
+                                            @act.Date.Activity.Name @act.Date.Activity.ShortName
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="desc">
+                                            @act.Date.Activity.Name
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col2">
+                            <div class="date">
+                                @if (act.Slot == null)
+                                {
+                                    @Html.RoomList(act.Date.Rooms)
+                                }
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+}

@@ -26,18 +26,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
                         <i class="fa fa-calendar"></i>
                         <span class="caption-subject bold uppercase"> Tagesplan</span>
-                    </div>
-                    <div class="actions">
-                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
-                        </a>
-                    </div>
+                    </h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     <div id="calendar" class="has-toolbar">
                     </div>
                 </div>
@@ -61,7 +57,7 @@
             $(document).ready(function() {
                 $('#loading').hide();
 
-                initAdminCalendar2();
+                initAdminCalendar();
 
                 $('#calendar').fullCalendar({
                     defaultView: 'agendaDay'

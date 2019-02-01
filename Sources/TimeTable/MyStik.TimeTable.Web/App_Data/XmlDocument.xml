@@ -4802,6 +4802,18 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.PersonalPlanToday">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.PersonalPlanTomorrow">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ActivityController.PersonalPlanWeekly(System.Guid)">
             <summary>
             

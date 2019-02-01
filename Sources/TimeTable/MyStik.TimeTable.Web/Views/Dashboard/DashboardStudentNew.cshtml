@@ -9,8 +9,8 @@
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default btn-block">
-                    <div><i class="fa fa-3x fa-calendar"></i></div>
-                    <h4>Mein Kalender</h4>
+                    <h4><i class="fa fa-3x fa-calendar"></i></h4>
+                    <h5>Mein Kalender</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
                     <a href="@Url.Action("PersonalPlanToday", "Activity")" class="btn btn-default">Heute</a>
@@ -21,8 +21,8 @@
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Semester", "Planer")" class="btn btn-default btn-block">
-                    <div><i class="fa fa-3x fa-map-o"></i></div>
-                    <h4>Mein Stundenplan</h4>
+                    <h4><i class="fa fa-3x fa-map-o"></i></h4>
+                    <h5>Mein Stundenplan</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
                     <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
@@ -33,8 +33,8 @@
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="" class="btn btn-default btn-block">
-                    <div><i class="fa fa-3x fa-graduation-cap"></i></div>
-                    <h4>Mein Studium</h4>
+                    <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
+                    <h5>Mein Studium</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
                     <a href="" class="btn btn-default">Praxissemester</a>
@@ -45,8 +45,8 @@
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="" class="btn btn-default btn-block">
-                    <div><i class="fa fa-3x fa-user-md"></i></div>
-                    <h4>Meine Ansprechpartner</h4>
+                    <h4><i class="fa fa-3x fa-user-md"></i></h4>
+                    <h5>Meine Ansprechpartner</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
                     <a href="" class="btn btn-default">Sprechstunden</a>
