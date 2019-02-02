@@ -98,7 +98,7 @@ namespace MyStik.TimeTable.Web.Models
     /// <summary>
     /// 
     /// </summary>
-    public class CalenderEventViewModel
+    public class CalenderDateEventViewModel
     {
         /// <summary>
         /// 
@@ -119,17 +119,12 @@ namespace MyStik.TimeTable.Web.Models
     /// <summary>
     /// 
     /// </summary>
-    public class CalenderEventPrintViewModel
+    public class CalenderCourseEventViewModel
     {
         /// <summary>
         /// 
         /// </summary>
-        public Course Course { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ICollection<Room> Rooms { get; set; }
+        public CourseSummaryModel CourseSummary { get; set; }
     }
 
 }

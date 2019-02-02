@@ -1,0 +1,12 @@
+﻿@model CalenderCourseEventViewModel
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+<div>
+    <strong>
+        @Model.CourseSummary.Course.Name (@Model.CourseSummary.Course.ShortName)
+    </strong>
+</div>
+<div>
+    @Html.LecturerList(Model.CourseSummary.Lecturers, false)
+</div>

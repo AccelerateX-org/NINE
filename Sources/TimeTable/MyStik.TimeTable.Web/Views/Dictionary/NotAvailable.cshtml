@@ -1,0 +1,19 @@
+﻿@model MyStik.TimeTable.Data.SemesterGroup
+@{
+    ViewBag.Title = "Vorlesungsverzeichnis";
+}
+
+<div class="container-fluid">
+
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h4><i class="fa fa-ban"></i> Das Vorlesungsverzeichnis für die Semestergruppe @Model.FullName steht noch nicht zur Verfügung.</h4>
+                <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.CapacityGroup.CurriculumGroup.Curriculum.Id})" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> zurück
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+

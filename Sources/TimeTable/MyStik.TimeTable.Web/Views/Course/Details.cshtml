@@ -106,7 +106,10 @@
                     @Html.Partial("_CourseSummaryDescription", Model.Summary)
                     @Html.Partial("_CourseSummaryDates", Model.Summary)
                     @Html.Partial("_CourseSummaryCapacity", Model.Summary)
-                    @Html.Partial("_CourseSummaryBooking", Model)
+                    @if (Request.IsAuthenticated && ViewBag.UserRight.User.MemberState == MemberState.Student)
+                    {
+                        @Html.Partial("_CourseSummaryBooking", Model.Summary)
+                    }
                 </div>
             </div>
         </div>

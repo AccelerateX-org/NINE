@@ -20,10 +20,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Alle Semester mit veröffentlichten Semestergruppen
-            var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any(g => g.IsAvailable)).OrderByDescending(s => s.EndCourses).Take(4).ToList();
+            var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any()).OrderByDescending(s => s.EndCourses).Take(4).ToList();
             foreach (var semester in allPublishedSemester)
             {
-                var activeOrgs = SemesterService.GetActiveOrganiser(semester, true);
+                var activeOrgs = SemesterService.GetActiveOrganiser(semester, false);
 
                 var semModel = new SemesterActiveViewModel
                 {
@@ -41,7 +41,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var semester = SemesterService.GetSemester(semId);
 
-            var curricula = SemesterService.GetActiveCurricula(semester, true).ToList();
+            var curricula = SemesterService.GetActiveCurricula(semester, false).ToList();
 
             var orgs = curricula.GroupBy(x => x.Organiser).Select(x => x.Key).OrderBy(x => x.ShortName).ToList();
 
@@ -89,6 +89,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Group(Guid semId, Guid groupId)
         {
+            var user = GetCurrentUser();
             var semester = SemesterService.GetSemester(semId);
             var capGroup = Db.CapacityGroups.SingleOrDefault(x => x.Id == groupId);
 
@@ -96,10 +97,16 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SemesterGroups.FirstOrDefault(x =>
                     x.CapacityGroup.Id == capGroup.Id && x.Semester.Id == semester.Id);
 
+            if (user.MemberState != MemberState.Staff && !semGroup.IsAvailable)
+            {
+                return View("NotAvailable", semGroup);
+            }
+
+
             var allTopics = Db.SemesterTopics
                 .Where(x => x.Activities.Any(s => s.SemesterGroups.Any(g => g.Id == semGroup.Id))).ToList();
 
-            return RedirectToAction(allTopics.Any() ? "GroupListByTopic" : "GroupCalendar",
+            return RedirectToAction(allTopics.Any() ? "GroupListByTopic" : "GroupList",
                 new {semId = semId, groupId = groupId});
         }
 
@@ -271,7 +278,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return View(model);
+            return View("GroupByTopic", model);
         }
 
 
@@ -292,43 +299,16 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SemesterGroups.FirstOrDefault(x =>
                     x.CapacityGroup.Id == capGroup.Id && x.Semester.Id == semester.Id);
 
-            if (semGroup == null)
-                return View("CourseList", model);
+
 
             model.SemesterGroup = semGroup;
 
-            return View(model);
+            return View("Group", model);
         }
-
-        public ActionResult GroupCalendar(Guid semId, Guid groupId)
-        {
-            var semester = SemesterService.GetSemester(semId);
-            var capGroup = Db.CapacityGroups.SingleOrDefault(x => x.Id == groupId);
-
-            var model = new SemesterActiveViewModel
-            {
-                Semester = semester,
-                Organiser = capGroup.CurriculumGroup.Curriculum.Organiser,
-                Curriculum = capGroup.CurriculumGroup.Curriculum,
-                CapacityGroup = capGroup,
-            };
-
-            var semGroup =
-                Db.SemesterGroups.FirstOrDefault(x =>
-                    x.CapacityGroup.Id == capGroup.Id && x.Semester.Id == semester.Id);
-
-            if (semGroup == null)
-                return View("CourseList", model);
-
-            model.SemesterGroup = semGroup;
-
-            return View(model);
-        }
-
 
 
         [HttpPost]
-        public PartialViewResult CourseListForGroupNew(Guid semGroupId)
+        public PartialViewResult CourseListForGroup(Guid semGroupId, bool showPersonalDates)
         {
             var semGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
 
@@ -368,7 +348,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Courses.Add(summary);
             }
 
-            return PartialView("_GroupListNew", model);
+            return PartialView("_GroupList", model);
         }
 
         private CourseSelectModel GetBookingStateModel(Guid id)
@@ -562,7 +542,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // jetzt neu abrufen und anzeigen
             var model = GetBookingStateModel(course.Id);
 
-            return PartialView("_BookingBox", model);
+            return PartialView("_CourseSummaryBookingBox", model);
         }
 
     }

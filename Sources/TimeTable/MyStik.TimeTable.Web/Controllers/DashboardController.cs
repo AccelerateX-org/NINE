@@ -508,7 +508,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 User = userRight.User,
                 Semester = prevSemester,
                 NextSemester = currentSemester,
-                Student = student
+                Student = student,
+                Organiser = student.Curriculum.Organiser
             };
 
             return model;

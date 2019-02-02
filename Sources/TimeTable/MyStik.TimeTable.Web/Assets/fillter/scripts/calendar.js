@@ -3,7 +3,7 @@
     if (idCal == null || idCal === "")
         idCal = "calendar";
 
-    var height = 630;
+    var height = 640;
 
     $('#' + idCal).fullCalendar('destroy'); // destroy the calendar
     $('#' + idCal).fullCalendar({

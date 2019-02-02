@@ -30,11 +30,17 @@
                 <div class="list-group">
                     <div class="list-group-item">
                         <div class="btn-group" role="group">
-                            <a class="btn btn-success active"><i class="fa fa-group"></i> Teilnehmer</a>
-                            <a class="btn btn-warning active"><i class="fa fa-hourglass-half"></i> Warteliste</a>
+                            <a id="btnWeek" href="javascript:showWeekCalendar()" class="btn btn-default active"><i class="fa fa-calendar-o"></i> Wochenkalender</a>
+                            <a id="btnDay" href="javascript:showDayCalendar()" class="btn btn-default"><i class="fa fa-calendar"></i> Tageskalender</a>
+                            <a id="btnList" href="javascript:showList()" class="btn btn-default"><i class="fa fa-list"></i> Liste</a>
                         </div>
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("GroupList", "Dictionary", new {semId = Model.Semester.Id, groupId = Model.SemesterGroup.CapacityGroup.Id})" class="btn btn-default"><i class="fa fa-list"></i> Listendarstellung</a>
+                        <div id="btnShowPersonalDates" class="btn-group" role="group">
+                            <a href="javascript:showPersonalDates()"  class="btn btn-default"><i class="fa fa-pencil"></i> Persönliche Termine einblenden</a>
+                        </div>
+                        <div id="btnHidePersonalDates" class="btn-group" role="group" hidden="">
+                            <a href="javascript:hidePersonalDates()" class="btn btn-default"><i class="fa fa-pencil"></i> Persönliche Termine ausblenden</a>
+                            <div class="btn btn-success"><i class="fa fa-group"></i> Teilnehmer</div>
+                            <div class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Warteliste</div>
                         </div>
                     </div>
                     <div class="list-group-item">
@@ -70,27 +76,46 @@
     <script>
 
         var myId;
+        var showPDs = false;
 
         $(document).ready(function() {
-
-            showCalendar();
+            hidePersonalDates();
+            showWeekCalendar();
 
         });
 
-        function showCalendar() {
+        function showPersonalDates() {
+            $("#btnShowPersonalDates").hide();
+            $("#btnHidePersonalDates").show();
+            showPDs = true;
+            refreshCalendar();
+        }
+
+        function hidePersonalDates() {
+            $("#btnShowPersonalDates").show();
+            $("#btnHidePersonalDates").hide();
+            showPDs = false;
+            refreshCalendar();
+        }
+
+        function showWeekCalendar() {
+            $("#btnWeek").addClass("active");
+            $("#btnDay").removeClass("active");
+            $("#btnList").removeClass("active");
+
             $('#loading').show();
             var group = '@Model.SemesterGroup.Id';
             $('#calendar').html('');
-            initCalendar(true, false);
+            initWeekCalendar("calendar");
 
-            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupCalendar", "Calendar")');
+            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupWeekPlan", "Calendar")');
             $('#calendar').fullCalendar('addEventSource',
                 {
-                    url: '@Url.Action("GroupCalendar", "Calendar")',
+                    url: '@Url.Action("GroupWeekPlan", "Calendar")',
                     type: 'POST',
                     data: {
                         semGroupId: group,
-                        showWaiting: true
+                        showPersonalDates: showPDs
                     },
                     success: function (data, success, xhr) {
                         $('#loading').hide();
@@ -102,6 +127,67 @@
                 });
 
         }
+
+        function showDayCalendar() {
+            $("#btnWeek").removeClass("active");
+            $("#btnDay").addClass("active");
+            $("#btnList").removeClass("active");
+
+
+            $('#loading').show();
+            var group = '@Model.SemesterGroup.Id';
+            $('#calendar').html('');
+            initDayCalendar("calendar");
+
+            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupDayPlan", "Calendar")');
+            $('#calendar').fullCalendar('addEventSource',
+                {
+                    url: '@Url.Action("GroupDayPlan", "Calendar")',
+                    type: 'POST',
+                    data: {
+                        semGroupId: group,
+                        topicId: null,
+                        showPersonalDates: showPDs
+                    },
+                    success: function (data, success, xhr) {
+                        $('#loading').hide();
+                    },
+                    error: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+        }
+
+
+        function showList() {
+            $("#btnWeek").removeClass("active");
+            $("#btnDay").removeClass("active");
+            $("#btnList").addClass("active");
+
+
+            $('#loading').show();
+            var group = '@Model.SemesterGroup.Id';
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CourseListForGroup", "Dictionary")',
+                    data: {
+                        semGroupId: group,
+                        showPersonalDates: showPDs
+                    },
+                    success: function(data, success, xhr) {
+                        $('#calendar').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+
+        }
+
 
         function onShowEventInfo(id) {
             $('#panelCalendar').removeClass('col-md-12');
@@ -148,8 +234,8 @@
 
         function onSubscribe(e) {
             //alert('#'+e);
-            $('#selectBox').addClass('disabled');
-            $('#selectBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+            $('#bookingBox').addClass('disabled');
+            $('#bookingBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
 
             $.ajax(
                 {
@@ -159,12 +245,24 @@
                         Id: e
                     },
                     success: function(data, success, xhr) {
-                        $('#selectBox').html(data);
-                        $('#selectBox').removeClass('disabled');
-                        showCalendar();
+                        $('#bookingBox').html(data);
+                        $('#bookingBox').removeClass('disabled');
+                        refreshCalendar();
                     }
                 });
 
+        }
+
+        function refreshCalendar() {
+            if ($("#btnDay").hasClass("active")) {
+                showDayCalendar();
+            }
+            if ($("#btnWeek").hasClass("active")) {
+                showWeekCalendar();
+            }
+            if ($("#btnList").hasClass("active")) {
+                showList();
+            }
         }
 
 

@@ -507,10 +507,14 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
 
-            var model = new OrganiserViewModel
+            var model = new SemesterStatisticsModel
             {
                 Semester = semester,
-                Organiser = org
+                Organiser = org,
+                FreezedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && x.IsInternal),
+                UnFreezedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && !x.IsInternal),
+                LockedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && !x.Occurrence.IsAvailable),
+                UnLockedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && x.Occurrence.IsAvailable)
             };
 
             return View(model);

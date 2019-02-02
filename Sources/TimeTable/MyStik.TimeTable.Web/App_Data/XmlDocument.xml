@@ -6612,7 +6612,7 @@
             <param name="time"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.CourseEventsByProgram(System.Guid,System.Nullable{System.Guid},System.Boolean,System.String,System.String)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.GroupDayPlan(System.Guid,System.Nullable{System.Guid},System.Boolean,System.String,System.String)">
             <summary>
             
             </summary>
@@ -6669,14 +6669,6 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.ActivityPlanMobile(System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="start"></param>
-            <param name="end"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.DailyRota(System.String,System.String)">
             <summary>
             
@@ -6726,7 +6718,7 @@
             <param name="token"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.GroupPrintPlan(System.String,System.String,System.Nullable{System.Guid})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.GroupWeekPlan(System.String,System.String,System.Nullable{System.Guid},System.Boolean)">
             <summary>
             
             </summary>
@@ -11738,37 +11730,32 @@
             Inhalt
             </summary>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Models.CalenderEventViewModel">
+        <member name="T:MyStik.TimeTable.Web.Models.CalenderDateEventViewModel">
             <summary>
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalenderEventViewModel.Summary">
+        <member name="P:MyStik.TimeTable.Web.Models.CalenderDateEventViewModel.Summary">
             <summary>
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalenderEventViewModel.State">
+        <member name="P:MyStik.TimeTable.Web.Models.CalenderDateEventViewModel.State">
             <summary>
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalenderEventViewModel.Lottery">
+        <member name="P:MyStik.TimeTable.Web.Models.CalenderDateEventViewModel.Lottery">
             <summary>
             Zugehörige Platzverlosung (falls vorhanden)
             </summary>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Models.CalenderEventPrintViewModel">
+        <member name="T:MyStik.TimeTable.Web.Models.CalenderCourseEventViewModel">
             <summary>
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalenderEventPrintViewModel.Course">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalenderEventPrintViewModel.Rooms">
+        <member name="P:MyStik.TimeTable.Web.Models.CalenderCourseEventViewModel.CourseSummary">
             <summary>
             
             </summary>

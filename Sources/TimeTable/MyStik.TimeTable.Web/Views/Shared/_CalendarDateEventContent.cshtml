@@ -1,0 +1,18 @@
+﻿@model CalenderDateEventViewModel
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+<div>
+    <strong>@Model.Summary.Activity.Name (@Model.Summary.Activity.ShortName)</strong>
+</div>
+<div>
+    @Html.LecturerList(Model.Summary.Date.Hosts, false)
+</div>
+<div>
+    @Html.RoomList(Model.Summary.Date.Rooms, false)
+</div>
+
+@if (Model.Summary.Slot != null)
+{
+    <div><strong>@Model.Summary.Slot.Begin.ToString("HH:mm")</strong></div>
+}

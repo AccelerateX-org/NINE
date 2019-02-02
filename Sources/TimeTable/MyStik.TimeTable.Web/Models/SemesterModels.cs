@@ -276,4 +276,21 @@ namespace MyStik.TimeTable.Web.Models
         public OrganiserMember Lecturer { get; set; }
 
     }
+
+
+    public class SemesterStatisticsModel
+    {
+        public Semester Semester { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public int LockedCourses { get; set; }
+
+        public int UnLockedCourses { get; set; }
+
+        public int FreezedCourses { get; set; }
+
+        public int UnFreezedCourses { get; set; }
+    }
+
 }

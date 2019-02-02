@@ -3311,8 +3311,7 @@
     <Content Include="Views\OfficeHour\CancelDate.cshtml" />
     <Content Include="Views\OfficeHour\_RemoveSubscription.cshtml" />
     <Content Include="Views\OfficeHour\CreateDate.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventToolbar.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventContent.cshtml" />
+    <Content Include="Views\Shared\_CalendarDateEventContent.cshtml" />
     <Content Include="Views\Mail\ResetPassword.html.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -3539,7 +3538,6 @@
     <Content Include="Views\Reservation\_CreateReservationSuccess.cshtml" />
     <Content Include="Views\Reservation\_DateList.cshtml" />
     <Content Include="Views\SysAdmin\RepairSubscriptions.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventToolbarInfo.cshtml" />
     <Content Include="Views\Mailing\StudentGroup.cshtml" />
     <Content Include="Views\Mailing\_GroupSelectionConfirm.cshtml" />
     <Content Include="Views\Mailing\_GroupSelectionError.cshtml" />
@@ -3565,7 +3563,6 @@
     <Content Include="Views\Room\IndexMobil.cshtml" />
     <Content Include="Views\Lecturer\IndexMobile.cshtml" />
     <Content Include="Views\User\TestAccounts.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventContentMobile.cshtml" />
     <Content Include="Views\UserProfile\_UserDevices.cshtml" />
     <Content Include="Views\Curricula\Index.cshtml" />
     <Content Include="Views\Curricula\Details.cshtml" />
@@ -3599,7 +3596,6 @@
     <Content Include="Views\Lottery\List.cshtml" />
     <Content Include="Views\Lottery\Subscribers.cshtml" />
     <Content Include="Views\Lottery\Edit.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventContentPrint.cshtml" />
     <Content Include="Views\Dashboard\_PortletRooms.cshtml" />
     <Content Include="Views\OfficeHour\DateListHost2.cshtml" />
     <Content Include="Views\OfficeHour\_SingleDateViewHost.cshtml" />
@@ -3988,7 +3984,6 @@
     <Content Include="Views\Union\NoOrg.cshtml" />
     <Content Include="Views\Union\NoUnion.cshtml" />
     <Content Include="Views\Lecturer\DateListAgreement.cshtml" />
-    <Content Include="Views\Dictionary\_GroupList.cshtml" />
     <Content Include="Views\Lottery\Delete.cshtml" />
     <Content Include="Views\Lottery\Reset.cshtml" />
     <Content Include="Views\Lottery\Clearance.cshtml" />
@@ -4020,18 +4015,16 @@
     <Content Include="Views\Teaching\Index.cshtml" />
     <Content Include="Views\Teaching\CreateModule.cshtml" />
     <Content Include="Views\Teaching\ModuleDetails.cshtml" />
-    <Content Include="Views\Dictionary\_GroupListNew.cshtml" />
+    <Content Include="Views\Dictionary\_GroupList.cshtml" />
     <Content Include="Views\Curriculum\ModuleDetails.cshtml" />
     <Content Include="Views\Curriculum\CreateSubject.cshtml" />
     <Content Include="Views\Curriculum\AdminContentModule.cshtml" />
     <Content Include="Views\Curriculum\AssignModule.cshtml" />
     <Content Include="Views\Activity\PersonalPlanList.cshtml" />
-    <Content Include="Views\Dictionary\GroupCalendar.cshtml" />
-    <Content Include="Views\Dictionary\GroupListByTopic.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventContentPlaner.cshtml" />
-    <Content Include="Views\Shared\_CalendarEventToolbarPlaner.cshtml" />
+    <Content Include="Views\Dictionary\Group.cshtml" />
+    <Content Include="Views\Dictionary\GroupByTopic.cshtml" />
+    <Content Include="Views\Shared\_CalendarCourseEventContent.cshtml" />
     <Content Include="Views\Dictionary\_SelectCourse.cshtml" />
-    <Content Include="Views\Dictionary\_BookingBox.cshtml" />
     <Content Include="Views\Emails\Succeeding.cshtml" />
     <Content Include="Views\Emails\Succeeding.Html.cshtml" />
     <Content Include="Views\Shared\_CourseSummaryBooking.cshtml" />
@@ -4046,6 +4039,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Planer\Schedule.cshtml" />
     <Content Include="Views\Shared\_LayoutDashboardNew.cshtml" />
+    <Content Include="Views\Dictionary\NotAvailable.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
