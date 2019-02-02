@@ -25,35 +25,40 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-default">
+                                    <i class="fa fa-arrow-left"></i> zurück
+                                </a>
+                            </div>
                             @if (ViewBag.UserRight.IsCourseAdmin)
-    {
-                        <div class="form-group">
-                            <a href="@Url.Action("Create", new {id = ViewBag.Semester.Id})" class="btn btn-default">
-                                <i class="fa fa-plus-circle"></i> Wahlverfahren anlegen
-                            </a>
-                        </div>
-        if (Request.IsLocal)
-         {
-             <div class="form-group">
-                 <a href="@Url.Action("Check", new {id = ViewBag.Semester.Id})" class="btn btn-default">
-                     <i class="fa fa-trash-o"></i> Konsitenzcheck (Local)
-                 </a>
-             </div>
-             <div class="form-group">
-                 <a href="@Url.Action("DeleteAll", new {id = ViewBag.Semester.Id})" class="btn btn-danger">
-                     <i class="fa fa-trash-o"></i> Alle löschen (Local)
-                 </a>
-             </div>
-         }
-    }
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("Create", new {id = ViewBag.Semester.Id})" class="btn btn-default">
+                                        <i class="fa fa-plus-circle"></i> Wahlverfahren anlegen
+                                    </a>
+                                </div>
+                                if (Request.IsLocal)
+                                {
+                                    <div class="form-group">
+                                        <a href="@Url.Action("Check", new {id = ViewBag.Semester.Id})" class="btn btn-default">
+                                            <i class="fa fa-trash-o"></i> Konsitenzcheck (Local)
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <a href="@Url.Action("DeleteAll", new {id = ViewBag.Semester.Id})" class="btn btn-danger">
+                                            <i class="fa fa-trash-o"></i> Alle löschen (Local)
+                                        </a>
+                                    </div>
+                                }
+                            }
                             @if (ViewBag.NextSemester != null)
-    {
-                        <div class="form-group">
-                            <a href="@Url.Action("Index", new {id=ViewBag.NextSemester.Id})" class="btn btn-info">
-                                <i class="fa fa-chevron-right"></i> @ViewBag.NextSemester.Name
-                            </a>
-                        </div>
-}
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("Index", new {id=ViewBag.NextSemester.Id})" class="btn btn-info">
+                                        <i class="fa fa-chevron-right"></i> @ViewBag.NextSemester.Name
+                                    </a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

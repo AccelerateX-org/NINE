@@ -624,13 +624,12 @@ namespace MyStik.TimeTable.Web.Models
                     return "#F00";
                 }
 
+                // wenn der Termin ausfällt, immer roter Hintergrund
+                if (Date.Occurrence.IsCanceled)
+                    return "#FFB5C5";
 
                 if (Subscription == null)
                 {
-                    // wenn der Termin ausfällt, immer roter Hintergrund
-                    if (Date.Occurrence.IsCanceled)
-                        return "#FFB5C5";
-
                     switch (DateType)
                     {
 

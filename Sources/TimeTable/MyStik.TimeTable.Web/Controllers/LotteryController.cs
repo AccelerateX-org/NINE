@@ -10,6 +10,7 @@ using log4net.Core;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.Booking;
 using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
@@ -155,9 +156,6 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Create(LotteryCreateModel model)
         {
-            var firstDate = DateTime.Today;
-            var lastDate = DateTime.Today;
-            var time = TimeSpan.Zero;
 
             var me = GetMyMembership();
 
@@ -169,11 +167,16 @@ namespace MyStik.TimeTable.Web.Controllers
                 Description = model.Description,
                 DrawingFrequency = DrawingFrequency.Daily,
                 IsScheduled = false,
-                FirstDrawing = firstDate,
-                LastDrawing = lastDate,
-                DrawingTime = time,
-                MaxConfirm = 1,
+                IsFixed = false,
+                IsActiveFrom = DateTime.MaxValue,
+                IsActiveUntil = DateTime.MaxValue,
+                FirstDrawing = DateTime.MaxValue,
+                LastDrawing = DateTime.MaxValue,
+                DrawingTime = TimeSpan.Zero,
+                MinSubscription = 1,
                 MaxSubscription = 1,
+                MaxConfirm = 1,
+                MaxExceptionConfirm = 1,
                 IsActive = false,
                 Owner = me,
                 Organiser = me.Organiser,
@@ -194,33 +197,17 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Edit(Guid id)
+        public ActionResult EditGeneral(Guid id)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
 
 
             var model = new LotteryCreateModel
             {
+                Lottery = lottery,
                 LotteryId = lottery.Id,
                 Name = lottery.Name,
-                JobId = lottery.Id.ToString(),
                 Description = lottery.Description,
-                FirstDrawing = lottery.FirstDrawing.ToShortDateString(),
-                LastDrawing = lottery.LastDrawing.ToShortDateString(),
-                DrawingTime = lottery.DrawingTime.ToString(),
-                MaxConfirm = lottery.MaxConfirm,
-                MaxConfirmException = lottery.MaxExceptionConfirm,
-                MaxSubscription = lottery.MaxSubscription,
-                MinSubscription = lottery.MinSubscription,
-                IsActive = lottery.IsActive,
-                IsAvailable = lottery.IsAvailable,
-                IsAvailableFrom = lottery.IsActiveFrom.HasValue ? lottery.IsActiveFrom.Value.ToShortDateString() : "",
-                IsAvailableUntil =
-                    lottery.IsActiveUntil.HasValue ? lottery.IsActiveUntil.Value.ToShortDateString() : "",
-                IsFlexible = false, // aktuell noch nicht möglich, weil kein Konzept dafür !lottery.IsFixed,
-                AllowManualSubscription = lottery.AllowManualSubscription,
-                LoIneeded = lottery.LoINeeded,
-                IsScheduled = lottery.IsScheduled
             };
 
             return View(model);
@@ -232,21 +219,20 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Edit(LotteryCreateModel model)
+        public ActionResult EditGeneral(LotteryCreateModel model)
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == model.LotteryId);
 
 
-            var firstDate = DateTime.Parse(model.FirstDrawing);
-            var lastDate = DateTime.Parse(model.LastDrawing);
-            var time = TimeSpan.Parse(model.DrawingTime);
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                lottery.Name = model.Name;
+            }
 
-            var isAvailableFrom = DateTime.Parse(model.IsAvailableFrom);
-            var isAvailableUntil = DateTime.Parse(model.IsAvailableUntil);
-
-            var me = GetMyMembership();
+            lottery.Description = model.Description;
 
 
+            /*
             lottery.Name = model.Name;
             //    JobId = model.JobId
             lottery.Description = model.Description;
@@ -267,30 +253,123 @@ namespace MyStik.TimeTable.Web.Controllers
             lottery.AllowManualSubscription = model.AllowManualSubscription;
             lottery.LoINeeded = model.LoIneeded;
             lottery.IsScheduled = model.IsScheduled;
-
+            */
             
             Db.SaveChanges();
             logger.InfoFormat("Einstellungen zu Lotterie {0} verändert", lottery.Name);
 
-            if (lottery.IsScheduled)
-            {
-                // jetzt den BackgroundJob anlegen bzw. aktualisieren
-                RecurringJob.AddOrUpdate<LotteryJob>(
-                    lottery.Id.ToString(),
-                    x => x.RunLottery(lottery.Id), Cron.Daily(lottery.DrawingTime.Hours,
-                        lottery.DrawingTime.Minutes), TimeZoneInfo.Local);
-
-                logger.InfoFormat("Automatische Ausführung für Lotterie {0} angelegt", lottery.Name);
-            }
-            else
-            {
-                RecurringJob.RemoveIfExists(lottery.Id.ToString());
-
-                logger.InfoFormat("Automatische Ausführung für Lotterie {0} gelöscht", lottery.Name);
-            }
 
             return RedirectToAction("Details", new {id = lottery.Id});
         }
+
+
+        public ActionResult EditProcess(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+
+            var model = new LotteryCreateModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+                Name = lottery.Name,
+                IsAvailableFrom = lottery.IsActiveFrom.Value.ToShortDateString(),
+                IsAvailableUntil = lottery.IsActiveUntil.Value.ToShortDateString(),
+                IsAvailableFromTime = lottery.IsActiveFrom.Value.TimeOfDay.ToString(),
+                IsAvailableUntilTime = lottery.IsActiveUntil.Value.TimeOfDay.ToString(),
+                FirstDrawing = lottery.FirstDrawing.ToShortDateString(),
+                LastDrawing = lottery.LastDrawing.ToShortDateString(),
+                FirstDrawingTime = lottery.FirstDrawing.TimeOfDay.ToString(),
+                LastDrawingTime = lottery.LastDrawing.TimeOfDay.ToString(),
+                MaxConfirm = lottery.MaxConfirm,
+                MaxConfirmException = lottery.MaxExceptionConfirm
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditProcess(LotteryCreateModel model)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == model.LotteryId);
+
+            DateTime time = DateTime.Parse(model.FirstDrawing);
+            DateTime time2 = DateTime.Parse(model.LastDrawing);
+            DateTime time3 = DateTime.Parse(model.IsAvailableFrom);
+            DateTime time4 = DateTime.Parse(model.IsAvailableUntil);
+            lottery.IsActiveFrom = new DateTime?(time3.Add(TimeSpan.Parse(model.IsAvailableFromTime)));
+            lottery.IsActiveUntil = new DateTime?(time4.Add(TimeSpan.Parse(model.IsAvailableUntilTime)));
+            lottery.FirstDrawing = time.Add(TimeSpan.Parse(model.FirstDrawingTime));
+            lottery.LastDrawing = time2.Add(TimeSpan.Parse(model.LastDrawingTime));
+            lottery.MaxConfirm = model.MaxConfirm;
+            lottery.MaxExceptionConfirm = model.MaxConfirmException;
+
+            Db.SaveChanges();
+            logger.InfoFormat("Einstellungen zu Lotterie {0} verändert", lottery.Name);
+
+            return RedirectToAction("Details", new { id = lottery.Id });
+        }
+
+
+        public ActionResult EditSubscriptionPeriod(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+
+            var model = new LotteryCreateModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+                Name = lottery.Name
+            };
+
+            model.Description = lottery.Description;
+            model.IsAvailableFrom = lottery.IsActiveFrom.Value.ToShortDateString();
+            model.IsAvailableUntil = lottery.IsActiveUntil.Value.ToShortDateString();
+            model.IsAvailableFromTime = lottery.IsActiveFrom.Value.TimeOfDay.ToString();
+            model.IsAvailableUntilTime = lottery.IsActiveUntil.Value.TimeOfDay.ToString();
+            model.MinSubscription = lottery.MinSubscription;
+            model.MaxSubscription = lottery.MaxSubscription;
+            model.ProcessType = lottery.IsFixed ? 2 : 1;
+            model.AllowManualSubscription = lottery.AllowManualSubscription;
+            model.LoIneeded = lottery.LoINeeded;
+
+
+            return View(model);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditSubscriptionPeriod(LotteryCreateModel model)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == model.LotteryId);
+
+            DateTime time = DateTime.Parse(model.IsAvailableFrom);
+            lottery.IsActiveFrom = new DateTime?(time.Add(TimeSpan.Parse(model.IsAvailableFromTime)));
+            lottery.MaxSubscription = model.MaxSubscription;
+            lottery.MinSubscription = model.MinSubscription;
+            lottery.IsFixed = model.ProcessType != 1;
+            lottery.AllowManualSubscription = model.AllowManualSubscription;
+            lottery.LoINeeded = model.LoIneeded;
+
+            Db.SaveChanges();
+            logger.InfoFormat("Einstellungen zu Lotterie {0} verändert", lottery.Name);
+
+
+            return RedirectToAction("Details", new { id = lottery.Id });
+        }
+
 
         /// <summary>
         /// 
@@ -300,19 +379,63 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Details(Guid id)
         {
             var org = GetMyOrganisation();
-            var model = new DrawingService(Db, id);
 
-            if (model.Lottery.LastDrawing < new DateTime(2018, 6, 30))
+            CourseService service = new CourseService(base.Db);
+            StudentService service2 = new StudentService(base.Db);
+            LotteryService service1 = new LotteryService(base.Db, id);
+            Lottery lottery = service1.GetLottery();
+            if (lottery.IsActiveFrom == null)
             {
-                return RedirectToAction("DetailsOld", new {id = id});
+                lottery.IsActiveFrom = new DateTime?(DateTime.MaxValue);
+                base.Db.SaveChanges();
+            }
+            if (lottery.IsActiveUntil == null)
+            {
+                lottery.IsActiveUntil = new DateTime?(DateTime.MaxValue);
+                base.Db.SaveChanges();
+            }
+            LotteryOverviewModel model1 = new LotteryOverviewModel();
+            model1.Lottery = lottery;
+            LotteryOverviewModel model = model1;
+            ApplicationUser user = GetCurrentUser();
+
+            if (user.MemberState == MemberState.Student)
+            {
+                Student currentStudent = service2.GetCurrentStudent(user);
+                if (currentStudent != null)
+                {
+                    model.Student = currentStudent;
+                    model.Game = lottery.Games.FirstOrDefault<LotteryGame>(x => x.UserId.Equals(user.Id));
+                }
+            }
+            var lotteryCourseList = service1.GetLotteryCourseList();
+
+            foreach (Course course in lotteryCourseList)
+            {
+                var item = new LotteryOverviewCourseModel();
+                item.CourseSummary = service.GetCourseSummary(course);
+                model.Courses.Add(item);
+            }
+            foreach (var course2 in lotteryCourseList)
+            {
+                var subscription = course2.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+                if (subscription != null)
+                {
+                    var model4 = new LotteryOverviewCourseModel();
+                    model4.CourseSummary = service.GetCourseSummary(course2);
+                    model4.Subscription = subscription;
+                    model.CoursesSelected.Add(model4);
+                }
             }
 
-            model.InitLotPots();
 
             ViewBag.UserRight = GetUserRight(org);
 
-            return View(model);
+            return View("DetailsNew", model);
         }
+
+
+
 
 
         public ActionResult DrawingPots(Guid id)
@@ -1810,6 +1933,18 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var course in courses)
             {
                 var summary = courseService.GetCourseSummary(course);
+
+                var bookingLists = new BookingService(Db).GetBookingLists(course.Occurrence.Id);
+                var bookingState = new BookingState
+                {
+                    Student = student,
+                    Occurrence = course.Occurrence,
+                    BookingLists = bookingLists
+                };
+                bookingState.Init();
+
+
+
                 var isSelectable = true;
                 var msg = new StringBuilder();
 
@@ -1836,7 +1971,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     CourseSummary = summary,
                     IsSelectable = isSelectable,
-                    Message = msg.ToString()
+                    Message = msg.ToString(),
+                    BookingState = bookingState
                 });
 
             }

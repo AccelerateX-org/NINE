@@ -2,10 +2,32 @@
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CourseSummaryModel
 
+@{
+    var listGroupItemClass = "";
+}
+
+
+@if (ViewBag.ShowSubscription != null && ViewBag.ShowSubscription == true)
+{
+
+    if (Model.Subscription != null)
+    {
+        if (Model.Subscription.OnWaitingList)
+        {
+            listGroupItemClass = "list-group-item-warning";
+        }
+        else
+        {
+            listGroupItemClass = "list-group-item-success";
+        }
+    }
+
+}
+
 
 @if (ViewBag.ShowLinks != null && ViewBag.ShowLinks == true)
 {
-    <a class="list-group-item" href="@Url.Action("Details", "Course", new {id=Model.Course.Id})">
+    <a class="list-group-item @listGroupItemClass" href="@Url.Action("Details", "Course", new {id=Model.Course.Id})">
         <h5 class="list-group-item-heading">
             @Html.FacultyLabel(Model.Course.Organiser)
             @Model.Course.Name (@Model.Course.ShortName)
@@ -43,7 +65,7 @@
 }
 else
 {
-    <div class="list-group-item">
+    <div class="list-group-item @listGroupItemClass">
         <h5 class="list-group-item-heading">
             @Html.FacultyLabel(Model.Course.Organiser)
             @Model.Course.Name (@Model.Course.ShortName)

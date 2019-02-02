@@ -22,65 +22,6 @@ namespace MyStik.TimeTable.Web.Controllers
     public class CourseController : BaseController
     {
         /// <summary>
-        /// Administration einer Lehrveranstaltung
-        /// </summary>
-        /// <param name="id">CourseId</param>
-        /// <returns></returns>
-        public ActionResult Admin(Guid id)
-        {
-            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
-            if (course == null)
-                return RedirectToAction("MissingCourse", "Error");
-
-            // nur Hosts und Admin dürfen die Seite aufrufen
-            var userRights = GetUserRight(User.Identity.Name, course);
-            if (!(userRights.IsHost || userRights.IsCourseAdmin || userRights.IsOwner))
-            {
-                return RedirectToAction("Details", new {id = id});
-            }
-
-            if (course.IsInternal && !userRights.IsCourseAdmin)
-            {
-                return RedirectToAction("Details", new { id = id });
-            }
-
-
-            ViewBag.UserRight = userRights;
-
-            if (string.IsNullOrEmpty(course.Name))
-            {
-                course.Name = "N.N.";
-                Db.SaveChanges();
-            }
-
-            if (string.IsNullOrEmpty(course.ShortName))
-            {
-                course.ShortName = "N.N.";
-                Db.SaveChanges();
-            }
-
-
-            // Alle Services, die benötigt werden
-            var courseService = new CourseService(Db);
-
-            // Termin diese Woche
-            // Termine nächste Woche
-            // nächster Termin
-
-            var model = new CourseDetailViewModel()
-            {
-                Course = course,
-                Summary = courseService.GetCourseSummary(id),
-                NextDate = courseService.GetNextDate(course),
-                DatesThisWeek = courseService.GetDatesThisWeek(course),
-                DatesNextWeek = courseService.GetDatesNextWeek(course),
-            };
-
-
-            return View("AdminNew", model);
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
@@ -264,7 +205,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
             if (model.GroupIds == null)
-                return RedirectToAction("Admin", new { id = course.Id });
+                return RedirectToAction("Details", new { id = course.Id });
 
 
             // die aktuell vorhandenen Gruppen
@@ -338,7 +279,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new { id = course.Id });
+            return RedirectToAction("Details", new { id = course.Id });
         }
 
         /// <summary>
@@ -426,7 +367,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.CourseId);
             if (model.GroupIds == null)
-                return RedirectToAction("Admin", new {id=course.Id});
+                return RedirectToAction("Details", new {id=course.Id});
 
 
             // die aktuell vorhandenen Gruppen
@@ -463,7 +404,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new { id = course.Id });
+            return RedirectToAction("Details", new { id = course.Id });
         }
 
 
@@ -2647,7 +2588,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
 
-            return RedirectToAction("Admin", new {id = course.Id});
+            return RedirectToAction("Details", new {id = course.Id});
         }
 
         /// <summary>
@@ -2663,7 +2604,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == id);
 
-            return RedirectToAction("Admin", new {id = course.Id});
+            return RedirectToAction("Details", new {id = course.Id});
         }
 
         /// <summary>
@@ -3298,7 +3239,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Admin", new {id = course.Id});
+            return RedirectToAction("Details", new {id = course.Id});
         }
 
         /// <summary>
@@ -3438,9 +3379,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return Json(new { result = "Redirect", url = Url.Action("Admin", new { id = course.Id }) });
-
-            //return RedirectToAction("Admin", new { id = course.Id });
+            return Json(new { result = "Redirect", url = Url.Action("Details", new { id = course.Id }) });
         }
 
         /// <summary>

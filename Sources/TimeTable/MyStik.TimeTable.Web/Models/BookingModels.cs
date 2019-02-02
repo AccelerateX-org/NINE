@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices.Booking;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Models

@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices.Booking;
+using MyStik.TimeTable.DataServices.Lottery;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -12,6 +14,11 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class LotteryCreateModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Lottery Lottery { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -99,9 +106,21 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
+        [Display(Name = "Auswahl möglich von")]
+        public string IsAvailableFromTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Auswahl möglich bis")]
         public string IsAvailableUntil { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Auswahl möglich bis")]
+        public string IsAvailableUntilTime { get; set; }
 
         /// <summary>
         /// 
@@ -112,14 +131,29 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
+        [Display(Name = "Datum der ersten Verteilung")]
+        public string FirstDrawingTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Datum der letzten Verteilung")]
         public string LastDrawing { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [Display(Name = "Datum der letzten Verteilung")]
+        public string LastDrawingTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Zeitpunkt der täglichen Verteilung")]
         public string DrawingTime { get; set; }
+
+
+        public int ProcessType { get; set; }
 
     }
 
@@ -671,6 +705,8 @@ namespace MyStik.TimeTable.Web.Models
         public int ConfirmCount { get; set; }
 
         public bool AcceptAny { get; set; }
+
+        public DrawingService DrawingService { get; set; }
     }
 
     public class LotteryOverviewCourseModel
@@ -696,6 +732,8 @@ namespace MyStik.TimeTable.Web.Models
         public bool IsSelectable { get; set; }
 
         public string Message { get; set; }
+
+        public BookingState BookingState { get; set; }
     }
 
     public class CourseReferenceModel

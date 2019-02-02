@@ -5767,14 +5767,28 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.Edit(System.Guid)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.EditGeneral(System.Guid)">
             <summary>
             
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.Edit(MyStik.TimeTable.Web.Models.LotteryCreateModel)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.EditGeneral(MyStik.TimeTable.Web.Models.LotteryCreateModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.EditProcess(MyStik.TimeTable.Web.Models.LotteryCreateModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.LotteryController.EditSubscriptionPeriod(MyStik.TimeTable.Web.Models.LotteryCreateModel)">
             <summary>
             
             </summary>
@@ -7802,13 +7816,6 @@
             <summary>
             
             </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.Admin(System.Guid)">
-            <summary>
-            Administration einer Lehrveranstaltung
-            </summary>
-            <param name="id">CourseId</param>
-            <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.Details(System.Guid)">
             <summary>
@@ -15010,6 +15017,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.Lottery">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.LotteryId">
             <summary>
             
@@ -15060,7 +15072,17 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.IsAvailableFromTime">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.IsAvailableUntil">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.IsAvailableUntilTime">
             <summary>
             
             </summary>
@@ -15070,7 +15092,17 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.FirstDrawingTime">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.LastDrawing">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.LotteryCreateModel.LastDrawingTime">
             <summary>
             
             </summary>
@@ -21230,43 +21262,6 @@
             </summary>
             <param name="date"></param>
             <returns></returns>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Services.BookingList.Capacity">
-            <summary>
-            Anzahl der Pläatze
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.BookingList.GetSucceedingBooking">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Services.BookingState.IsAvailable">
-            <summary>
-            Verfügbar für Eintragung oder nicht
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Services.BookingState.IsUnrestricted">
-            <summary>
-            Keine Einschränkung hinsichtlich Platzangebots
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.BookingService.CreateMiscList">
-            <summary>
-            Auf dieser Liste sind alle Einträge aus Studiengängen
-            die nicht zugeordnet sind
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.BookingService.CreateJoinedList">
-            <summary>
-            Ein Liste mit allen Studiengängen
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.BookingService.CreateListByCurriculum">
-            <summary>
-            Eine Liste pro Studiengang
-            </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Services.ChangeService">
             <summary>

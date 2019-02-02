@@ -765,6 +765,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Semester = semester;
             model.User = user;
             model.Student = StudentService.GetCurrentStudent(user);
+            model.Organiser = model.Student.Curriculum.Organiser;
 
             var courses = Db.Activities.OfType<Course>().Where(a => 
                 a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&

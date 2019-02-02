@@ -24,7 +24,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class CalendarController : BaseController
     {
-        private IEnumerable<CalendarEventModel> GetCalendarEvents(IEnumerable<ActivityDateSummary> dates, bool printHosts, bool printRooms, bool useStates=true)
+        private IEnumerable<CalendarEventModel> GetCalendarEvents(IEnumerable<ActivityDateSummary> dates, bool showPersonalDates)
         {
             var events = new List<CalendarEventModel>();
 
@@ -42,7 +42,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         Summary = date,
                         State =
-                            date.Date.Activity is Course && useStates
+                            date.Date.Activity is Course
                                 ? ActivityService.GetActivityState(date.Date.Activity.Occurrence, AppUser)
                                 : null,
                         Lottery = date.Activity.Occurrence != null 
@@ -50,6 +50,10 @@ namespace MyStik.TimeTable.Web.Controllers
                                     : null
                     };
 
+                    if (showPersonalDates && eventViewModel.State != null)
+                    {
+                        date.Subscription = eventViewModel.State.Subscription;
+                    }
 
 
                     // Workaround für fullcalendar
@@ -220,7 +224,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
-            cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), true, true));
+            cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), showPersonalDates));
 
             return Json(cal);
         }
@@ -345,7 +349,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
              * */
 
-            cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), false, true));
+            cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), showPersonalDates));
 
             return Json(cal);
         }
@@ -431,7 +435,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
 
-                cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), true, false));
+                cal.AddRange(GetCalendarEvents(dateMap.Values.ToList(), showPersonalDates));
 
                 return Json(cal);
 
@@ -456,7 +460,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(
                 GetCalendarEvents(
                     GetActivityPlan(User.Identity.Name, startDate, endDate),
-                    true, true));
+                    false));
         }
 
         /// <summary>
@@ -727,7 +731,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(
                 GetCalendarEvents(
                     eventDates,
-                    true, true, false));
+                    false));
         }
 
         /// <summary>
@@ -1144,7 +1148,8 @@ namespace MyStik.TimeTable.Web.Controllers
             // Am Schluss muss alles in "Wochentage" umgerechnet werden
 
             // Alle Events abstrakt nah Wochentag
-            var semester = SemesterService.GetSemester(semGroupId);
+            var semesterGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
+            var semester = semesterGroup.Semester;
             var member = GetMyMembership();
             var user = GetCurrentUser();
 
@@ -1161,17 +1166,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (user != null && showPersonalDates)
             {
-                // 2. die gebuchten
-                var myOcs = Db.Occurrences.Where(o => o.Subscriptions.Any(s => s.UserId.Equals(user.Id))).ToList();
+                var activities = Db.Activities.OfType<Course>().Where(a =>
+                    a.SemesterGroups.Any(s => s.Semester.Id == semester.Id) &&
+                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
 
-                var ac = new ActivityService();
-
-                foreach (var occ in myOcs)
+                foreach (var course in activities)
                 {
-                    var summary = ac.GetSummary(occ.Id);
-                    var course = summary.Activity as Course;
-
-                    if (course != null && !courses.Contains(course))
+                    if (!courses.Contains(course))
                     {
                         courses.Add(course);
                     }
@@ -1194,16 +1195,30 @@ namespace MyStik.TimeTable.Web.Controllers
                 var eventViewModel = new CalenderCourseEventViewModel();
                 eventViewModel.CourseSummary = courseService.GetCourseSummary(course);
 
-
-                if (days.Count == 1)
+                var bckColor = "#fff";
+                if (showPersonalDates)
                 {
-                    var day = days.First();
+                    var state = ActivityService.GetActivityState(course.Occurrence, user);
+                    if (state.Subscription != null)
+                    {
+                        if (state.Subscription.OnWaitingList)
+                        {
+                            bckColor = "#c89f23";
+                        }
+                        else
+                        {
+                            bckColor = "#37918b";
+                        }
+                    }
+                }
 
+
+                foreach (var day in days)
+                {
                     var calDay = startDate.AddDays((int)day.Day - (int)startDate.DayOfWeek);
                     var calBegin = calDay.Add(day.Begin);
                     var calEnd = calDay.Add(day.End);
 
-                    // Einfacher Eintrag
                     events.Add(new CalendarEventModel
                     {
                         id = course.Id.ToString(),
@@ -1213,35 +1228,10 @@ namespace MyStik.TimeTable.Web.Controllers
                         start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                         end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                         textColor = "#000",
-                        backgroundColor = "#fff",
+                        backgroundColor = bckColor,
                         borderColor = "#000",
                         htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel),
                     });
-
-                }
-                else
-                {
-                    foreach (var day in days)
-                    {
-                        var calDay = startDate.AddDays((int)day.Day - (int)startDate.DayOfWeek);
-                        var calBegin = calDay.Add(day.Begin);
-                        var calEnd = calDay.Add(day.End);
-
-                        // Einfacher Eintrag
-                        events.Add(new CalendarEventModel
-                        {
-                            id = course.Id.ToString(),
-                            courseId = course.Id.ToString(),
-                            title = string.Empty,
-                            allDay = false,
-                            start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            textColor = "#000",
-                            backgroundColor = "#fff",
-                            borderColor = "#000",
-                            htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel),
-                        });
-                    }
                 }
             }
 

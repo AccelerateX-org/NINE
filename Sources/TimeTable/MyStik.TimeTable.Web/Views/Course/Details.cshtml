@@ -108,7 +108,7 @@
                     @Html.Partial("_CourseSummaryCapacity", Model.Summary)
                     @if (Request.IsAuthenticated && ViewBag.UserRight.User.MemberState == MemberState.Student)
                     {
-                        @Html.Partial("_CourseSummaryBooking", Model.Summary)
+                        @Html.Partial("_CourseSummaryBooking", Model)
                     }
                 </div>
             </div>

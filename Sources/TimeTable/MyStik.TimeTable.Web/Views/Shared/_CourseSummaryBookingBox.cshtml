@@ -27,28 +27,35 @@
         }
         else
         {
-            <ul class="fa-ul">
-                @if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
-                {
-                    if (Model.BookingState.IsUnrestricted)
+            if (Model.BookingState != null && Model.BookingState.MyBookingList != null)
+            {
+                <ul class="fa-ul">
+                    @if (Model.BookingState.MyBookingList.IsMisc)
                     {
-                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Keine Einschränkungen</li>
+                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der globalen Warteliste</li>
                     }
                     else
                     {
-                        if (Model.Summary.Course.Occurrence.UseGroups)
+                        if (Model.BookingState.IsUnrestricted)
                         {
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName verfügbar</li>
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.Waitinglist.Count Einträge auf der Warteliste für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName</li>
+                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Keine Einschränkungen</li>
                         }
                         else
                         {
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
-                            <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.Waitinglist.Count Einträge auf der Warteliste</li>
+                            if (Model.Summary.Course.Occurrence.UseGroups)
+                            {
+                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName verfügbar</li>
+                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste für Studiengang @Model.BookingState.MyBookingList.Curricula.First().ShortName</li>
+                            }
+                            else
+                            {
+                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
+                                <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste</li>
+                            }
                         }
                     }
-                }
-            </ul>
+                </ul>
+            }
 
             if (Model.Subscription != null)
             {

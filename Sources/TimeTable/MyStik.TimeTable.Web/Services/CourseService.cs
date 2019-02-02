@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.DataServices.Booking;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
@@ -548,8 +549,8 @@ namespace MyStik.TimeTable.Web.Services
                 var subscriptionService = new SubscriptionService(Db);
                 var subscription = subscriptionService.GetSubscription(summary.Course.Occurrence.Id, userId);
 
-                var bookingService = new BookingService(Db, summary.Course.Occurrence.Id);
-                var bookingLists = bookingService.GetBookingLists();
+                var bookingService = new BookingService(Db);
+                var bookingLists = bookingService.GetBookingLists(summary.Course.Occurrence.Id);
 
                 var bookingState = new BookingState();
                 bookingState.Occurrence = summary.Course.Occurrence;

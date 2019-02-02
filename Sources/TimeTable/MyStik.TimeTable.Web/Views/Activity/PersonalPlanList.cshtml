@@ -4,6 +4,8 @@
 
 @{
     ViewBag.Title = "Stundenplan";
+    ViewBag.ShowLinks = true;
+    ViewBag.ShowSubscription = true;
 }
 
 
@@ -19,77 +21,21 @@
                 <div class="list-group">
                     <div class="list-group-item">
                         <div class="btn-group" role="group">
+                            <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> Zurück</a>
+                        </div>
+                        <div class="btn-group" role="group">
                             <a class="btn btn-success active"><i class="fa fa-group"></i> Teilnehmer</a>
                             <a class="btn btn-warning active"><i class="fa fa-hourglass-half"></i> Warteliste</a>
                         </div>
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.Semester.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Wochenkalender</a>
-                            <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-primary"><i class="fa fa-pencil"></i> Planer</a>
-                        </div>
                     </div>
-                    <div class="list-group-item">
-                        @foreach (var course in Model.Courses)
-                        {
-                            var linkDescription = string.Format("desc{0}", course.Course.Id);
-                            var linkDates = string.Format("dates{0}", course.Course.Id);
-                            var linkFit = string.Format("fit{0}", course.Course.Id);
-                            var linkNonFit = string.Format("nonfit{0}", course.Course.Id);
-                            var linkConflicts = string.Format("conflicts{0}", course.Course.Id);
-
-                            <a href="@Url.Action("SelectCourse", "Booking", new {id = course.Course.Id })" class="list-group-item">
-                                @if (course.User != null && course.User.MemberState != MemberState.Guest)
-                                {
-                                    if (course.ConflictingDates.Any())
-                                    {
-                                        <span class="badge badge-warning"><i class="fa fa-calendar-times-o"></i> @course.ConflictingDates.Count Terminkollisionen</span>
-                                    }
-
-                                    if (course.Subscription != null)
-                                    {
-                                        if (course.Subscription.OnWaitingList)
-                                        {
-                                            <span class="badge badge-warning"><i class="fa fa-hourglass-half"></i> Eingetragen auf Warteliste</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-success"><i class="fa fa-user"></i> Eingetragen auf Teilnehmerliste</span>
-                                        }
-                                    }
-                                }
-                                <h5 class="list-group-item-heading">
-                                    @course.Course.Name (@course.Course.ShortName)
-                                </h5>
-                                <ul class="fa-ul">
-                                    <li>
-                                        <i class="fa-li fa fa-user-md"></i>
-                                        @if (course.Lecturers.Any())
-                                        {
-                                            @Html.LecturerList(course.Lecturers, showLinks: false)
-                                        }
-                                        else
-                                        {
-                                            <i>Keine Angabe zu Lehrenden verfügbar</i>
-                                        }
-                                    </li>
-                                    <li>
-                                        @if (course.Dates.Count == 1)
-                                        {
-                                            <i class="fa-li fa fa-calendar"></i>
-                                            <span>immer @Html.Date(course.Dates.First()) in [@Html.RoomList(course.Rooms, showLinks: false)]</span>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa-li fa fa-calendar"></i>
-                                            <span>insgesamt @course.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
-                                        }
-
-                                    </li>
-                                </ul>
-                            </a>
-                        }
-                    </div>
+                    @foreach (var course in Model.Courses)
+                    {
+                        @Html.Partial("_CourseSummaryHead", course)
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 

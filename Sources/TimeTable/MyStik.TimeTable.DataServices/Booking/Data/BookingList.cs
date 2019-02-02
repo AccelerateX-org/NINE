@@ -33,6 +33,9 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
         {
             get
             {
+                if (IsMisc)
+                    return 0;
+
                 if (Group == null)
                 {
                     return Occurrence.Capacity < 0 ? int.MaxValue : Occurrence.Capacity;
@@ -44,7 +47,13 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
 
         public int FreeSeats
         {
-            get { return Capacity != int.MaxValue ? Capacity - Participients.Count : int.MaxValue; }
+            get
+            {
+                if (IsMisc)
+                    return 0;
+
+                return Capacity != int.MaxValue ? Capacity - Participients.Count : int.MaxValue;
+            }
         }
 
 
@@ -73,6 +82,9 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
 
         public Booking GetSucceedingBooking()
         {
+            if (IsMisc)
+                return null;
+
             return WaitingList.OrderBy(x => x.Subscription.TimeStamp).FirstOrDefault();
 
         }

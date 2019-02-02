@@ -544,7 +544,6 @@
     <Compile Include="Services\ActivityService.cs" />
     <Compile Include="Services\BaseMailService.cs" />
     <Compile Include="Services\BaseService.cs" />
-    <Compile Include="Services\BookingService.cs" />
     <Compile Include="Services\ChangeService.cs" />
     <Compile Include="Services\CourseService.cs" />
     <Compile Include="Services\CurriculumService.cs" />
@@ -3438,7 +3437,6 @@
     <Content Include="Views\UserProfile\Index.cshtml" />
     <Content Include="Views\Course\Details.cshtml" />
     <Content Include="Views\WPM\MySelection.cshtml" />
-    <Content Include="Views\Course\Admin.cshtml" />
     <Content Include="Views\Shared\_SaveSuccess.cshtml" />
     <Content Include="Views\Course\ChangeGeneralSettings.cshtml" />
     <Content Include="Views\UserProfile\_GroupList.cshtml" />
@@ -3766,7 +3764,6 @@
     <Content Include="Views\Courses\Schedule.cshtml" />
     <Content Include="Views\Courses\Semester.cshtml" />
     <Content Include="Views\Courses\_PanelSemester.cshtml" />
-    <Content Include="Views\Course\AdminNew.cshtml" />
     <Content Include="Views\Course\AdminNewDates.cshtml" />
     <Content Include="Views\Course\AdminNewInfos.cshtml" />
     <Content Include="Views\Course\AdminNewModule.cshtml" />
@@ -4040,6 +4037,10 @@
     <Content Include="Views\Planer\Schedule.cshtml" />
     <Content Include="Views\Shared\_LayoutDashboardNew.cshtml" />
     <Content Include="Views\Dictionary\NotAvailable.cshtml" />
+    <Content Include="Views\Lottery\EditGeneral.cshtml" />
+    <Content Include="Views\Lottery\EditProcess.cshtml" />
+    <Content Include="Views\Lottery\EditSubscriptionPeriod.cshtml" />
+    <Content Include="Views\Lottery\DetailsNew.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

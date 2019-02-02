@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.Booking;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
@@ -310,6 +311,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult CourseListForGroup(Guid semGroupId, bool showPersonalDates)
         {
+            var user = GetCurrentUser();
             var semGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
 
             var model = new SemesterActiveViewModel
@@ -321,19 +323,32 @@ namespace MyStik.TimeTable.Web.Controllers
                 SemesterGroup = semGroup
             };
 
-            List<Course> activities = null;
-
             var courseService = new CourseService(Db);
 
             var courses = semGroup.Activities.OfType<Course>().ToList();
+
+            if (user != null && showPersonalDates)
+            {
+                var activities = Db.Activities.OfType<Course>().Where(a =>
+                    a.SemesterGroups.Any(s => s.Semester.Id == semGroup.Semester.Id) &&
+                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+
+                foreach (var course in activities)
+                {
+                    if (!courses.Contains(course))
+                    {
+                        courses.Add(course);
+                    }
+                }
+            }
+
 
             foreach (var course in courses)
             {
                 var summary = courseService.GetCourseSummary(course);
 
-                if (Request.IsAuthenticated)
+                if (Request.IsAuthenticated && showPersonalDates)
                 {
-                    var user = GetCurrentUser();
 
                     var state = ActivityService.GetActivityState(course.Occurrence, user);
 
@@ -361,9 +376,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courseSummary = courseService.GetCourseSummary(id);
 
-            var bookingService = new BookingService(Db, courseSummary.Course.Occurrence.Id);
+            var bookingService = new BookingService(Db);
 
-            var bookingLists = bookingService.GetBookingLists();
+            var bookingLists = bookingService.GetBookingLists(courseSummary.Course.Occurrence.Id);
 
             var subscriptionService = new SubscriptionService(Db);
 
@@ -467,8 +482,8 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 subscription = occ.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
 
-                var bookingService = new BookingService(Db, occ.Id);
-                var bookingLists = bookingService.GetBookingLists();
+                var bookingService = new BookingService(Db);
+                var bookingLists = bookingService.GetBookingLists(occ.Id);
                 var bookingState = new BookingState
                 {
                     Student = student,
@@ -513,7 +528,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     // Nachrücken
                     if (bookingList != null)
                     {
-                        bookingList.RemoveSubscription(subscription);
                         var succBooking = bookingList.GetSucceedingBooking();
                         if (succBooking != null)
                         {
