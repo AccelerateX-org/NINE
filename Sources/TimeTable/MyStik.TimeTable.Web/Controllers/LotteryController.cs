@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 using Hangfire;
 using log4net;
 using log4net.Core;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.Booking;
+using MyStik.TimeTable.DataServices.Booking.Data;
 using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
@@ -1911,6 +1915,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var courseService = new CourseService(Db);
             var lotteryService = new LotteryService(Db, id);
             var studentService = new StudentService(Db);
+            var service2 = new SubscriptionService(Db);
 
             var user = GetCurrentUser();
             var student = studentService.GetCurrentStudent(user);
@@ -1932,7 +1937,18 @@ namespace MyStik.TimeTable.Web.Controllers
             // Die Liste der Kurse
             foreach (var course in courses)
             {
-                var summary = courseService.GetCourseSummary(course);
+                var courseSummary = courseService.GetCourseSummary(course);
+
+
+                var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
+                var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
+
+                var activities = Db.Activities.OfType<Course>().Where(a =>
+                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
+                    a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
+                courseSummary.ConflictingDates = courseService.GetConflictingDates(course, activities);
+                courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
+
 
                 var bookingLists = new BookingService(Db).GetBookingLists(course.Occurrence.Id);
                 var bookingState = new BookingState
@@ -1948,7 +1964,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var isSelectable = true;
                 var msg = new StringBuilder();
 
-                if (student?.Curriculum == null || course.Occurrence.IsCoterie && !summary.Curricula.Contains(student.Curriculum))
+                if (student?.Curriculum == null || course.Occurrence.IsCoterie && !courseSummary.Curricula.Contains(student.Curriculum))
                 {
                     isSelectable = false;
                     msg.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht für Ihren Studiengang nicht zur Verfügung</li>");
@@ -1969,7 +1985,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 model.Courses.Add(new LotteryOverviewCourseModel
                 {
-                    CourseSummary = summary,
+                    CourseSummary = courseSummary,
                     IsSelectable = isSelectable,
                     Message = msg.ToString(),
                     BookingState = bookingState
@@ -2734,5 +2750,209 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Students", new { id = lottery.Id });
         }
 
+        public ActionResult ChangeSelection(Guid id)
+        {
+            Lottery lottery = new LotteryService(base.Db, id).GetLottery();
+            LotteryOverviewModel model1 = new LotteryOverviewModel();
+            model1.Lottery = lottery;
+            LotteryOverviewModel model = model1;
+            return base.View(model);
+        }
+
+        public ActionResult ClearGames(Guid id)
+        {
+            CourseService service1 = new CourseService(base.Db);
+            StudentService service2 = new StudentService(base.Db);
+            SubscriptionService service = new SubscriptionService(base.Db);
+            LotteryService service3 = new LotteryService(base.Db, id);
+            ICollection<Course> lotteryCourseList = service3.GetLotteryCourseList();
+            foreach (LotteryGame game in service3.GetLottery().Games.ToList<LotteryGame>())
+            {
+                base.Db.LotteryGames.Remove(game);
+            }
+            using (IEnumerator<Course> enumerator2 = lotteryCourseList.GetEnumerator())
+            {
+                while (enumerator2.MoveNext())
+                {
+                    foreach (OccurrenceSubscription subscription in enumerator2.Current.Occurrence.Subscriptions.ToList<OccurrenceSubscription>())
+                    {
+                        service.DeleteSubscription(subscription);
+                    }
+                }
+            }
+            base.Db.SaveChanges();
+            return base.RedirectToAction("Details", new { id = id });
+        }
+
+
+        public ActionResult DeleteCourses(Guid id)
+        {
+            ActivityOrganiser myOrganisation = base.GetMyOrganisation();
+            ViewBag.UserRight = GetUserRight(myOrganisation);
+
+            CourseService service = new CourseService(base.Db);
+            StudentService service2 = new StudentService(base.Db);
+            LotteryService service1 = new LotteryService(base.Db, id);
+            Lottery lottery = service1.GetLottery();
+            LotteryOverviewModel model1 = new LotteryOverviewModel();
+            model1.Lottery = lottery;
+            LotteryOverviewModel model = model1;
+            ApplicationUser user = base.GetCurrentUser();
+            if (user.MemberState == MemberState.Student)
+            {
+                Student currentStudent = service2.GetCurrentStudent(user);
+                if (currentStudent != null)
+                {
+                    model.Student = currentStudent;
+                    model.Game = lottery.Games.FirstOrDefault<LotteryGame>(x => x.UserId.Equals(user.Id));
+                }
+            }
+            ICollection<Course> lotteryCourseList = service1.GetLotteryCourseList();
+            foreach (Course course in lotteryCourseList)
+            {
+                LotteryOverviewCourseModel item = new LotteryOverviewCourseModel();
+                item.CourseSummary = service.GetCourseSummary(course);
+                model.Courses.Add(item);
+            }
+            foreach (Course course2 in lotteryCourseList)
+            {
+                OccurrenceSubscription subscription = course2.Occurrence.Subscriptions.FirstOrDefault<OccurrenceSubscription>(x => x.UserId.Equals(user.Id));
+                if (subscription != null)
+                {
+                    LotteryOverviewCourseModel model4 = new LotteryOverviewCourseModel();
+                    model4.CourseSummary = service.GetCourseSummary(course2);
+                    model4.Subscription = subscription;
+                    LotteryOverviewCourseModel item = model4;
+                    model.CoursesSelected.Add(item);
+                }
+            }
+            return base.View(model);
+        }
+
+
+        public ActionResult DeleteCourse(Guid lotteryId, Guid courseId)
+        {
+            Lottery lottery = new LotteryService(base.Db, lotteryId).GetLottery();
+            Course course = new CourseService(base.Db).GetCourse(courseId);
+            LotteryDeleteCourseModel model1 = new LotteryDeleteCourseModel();
+            model1.Lottery = lottery;
+            model1.Course = course;
+            LotteryDeleteCourseModel model = model1;
+            return base.View(model);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteCourse(LotteryDeleteCourseModel model)
+        {
+            ApplicationUser user = base.GetCurrentUser();
+            Lottery lottery = new LotteryService(base.Db, model.Lottery.Id).GetLottery();
+            Course course = new CourseService(base.Db).GetCourse(model.Course.Id);
+            if (course.ShortName.Equals(model.Code))
+            {
+                OccurrenceSubscription subscription = course.Occurrence.Subscriptions.FirstOrDefault<OccurrenceSubscription>(x => x.UserId.Equals(user.Id));
+                if (subscription != null)
+                {
+                    new SubscriptionService(base.Db).DeleteSubscription(subscription);
+                    return base.RedirectToAction("Details", new { id = lottery.Id });
+                }
+            }
+            base.ModelState.AddModelError("Code", "Der angegebene Code ist falsch");
+            LotteryDeleteCourseModel model1 = new LotteryDeleteCourseModel();
+            model1.Lottery = lottery;
+            model1.Course = course;
+            LotteryDeleteCourseModel model2 = model1;
+            return base.View(model2);
+        }
+
+        public PartialViewResult GetBookingList(Guid id)
+        {
+            LotteryOverviewModel bookingModel = this.GetBookingModel(id);
+            return this.PartialView("_BookingList", bookingModel);
+        }
+
+
+        private LotteryOverviewModel GetBookingModel(Guid id)
+        {
+            CourseService service = new CourseService(base.Db);
+            SubscriptionService service2 = new SubscriptionService(base.Db);
+            ApplicationUser user = base.GetCurrentUser();
+            Student currentStudent = new StudentService(base.Db).GetCurrentStudent(user);
+            LotteryService service1 = new LotteryService(base.Db, id);
+            Lottery lottery = service1.GetLottery();
+            LotteryGame game = lottery.Games.FirstOrDefault<LotteryGame>(x => x.UserId.Equals(user.Id));
+            LotteryOverviewModel model1 = new LotteryOverviewModel();
+            model1.Lottery = lottery;
+            model1.Student = currentStudent;
+            model1.Game = game;
+            LotteryOverviewModel model = model1;
+            foreach (Course course in service1.GetLotteryCourseList())
+            {
+                CourseSummaryModel courseSummary = service.GetCourseSummary(course);
+                var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
+                var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
+
+                var activities = Db.Activities.OfType<Course>().Where(a =>
+                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
+                    a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
+                courseSummary.ConflictingDates = service.GetConflictingDates(course, activities);
+                courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
+                List<BookingList> bookingLists = new BookingService(base.Db).GetBookingLists(course.Occurrence.Id);
+                BookingState state1 = new BookingState();
+                state1.Student = currentStudent;
+                state1.Occurrence = course.Occurrence;
+                state1.BookingLists = bookingLists;
+                BookingState state = state1;
+                state.Init();
+                bool flag = true;
+                StringBuilder builder = new StringBuilder();
+                if ((currentStudent?.Curriculum == null) || (course.Occurrence.IsCoterie && !courseSummary.Curricula.Contains(currentStudent.Curriculum)))
+                {
+                    flag = false;
+                    builder.AppendLine("<li><i class=\"fa fa-li fa-ban\"></i> Lehrveranstaltung steht f\x00fcr Ihren Studiengang nicht zur Verf\x00fcgung</li>");
+                }
+                if (!course.Occurrence.IsAvailable)
+                {
+                    flag = false;
+                    builder.AppendLine("<li><i class=\"fa fa-li fa-lock\"></i>Lehrveranstaltung ist f\x00fcr Eintragungen gesperrt</li>");
+                }
+                if (state.MyBookingList.FreeSeats < 1)
+                {
+                    flag = false;
+                    builder.AppendLine("<li><i class=\"fa fa-li fa-times\"></i>Keine freien Pl\x00e4tze verf\x00fcgbar</li>");
+                }
+                LotteryOverviewCourseModel model4 = new LotteryOverviewCourseModel();
+                model4.CourseSummary = courseSummary;
+                model4.IsSelectable = flag;
+                model4.Message = builder.ToString();
+                model4.BookingState = state;
+                model4.Subscription = courseSummary.Subscription;
+                LotteryOverviewCourseModel item = model4;
+                model.Courses.Add(item);
+                if (courseSummary.Subscription != null)
+                {
+                    model.CoursesSelected.Add(item);
+                }
+            }
+        return model;
     }
+
+
+        public PartialViewResult Subscribe(Guid lotteryId, Guid courseId)
+        {
+            ILog logger = LogManager.GetLogger("Booking");
+            ApplicationUser currentUser = base.GetCurrentUser();
+            BookingTicket ticket = new BookingService(base.Db).Subscribe(currentUser.Id, courseId);
+            if (ticket.SucceedingSubscription != null)
+            {
+                new SubscriptionMailService().SendSucceedingEMail(ticket.Course, ticket.SucceedingSubscription);
+                ApplicationUser user = base.GetUser(ticket.SucceedingSubscription.UserId);
+                logger.InfoFormat("{0} ({1}) for [{2}]: set on participient list", ticket.Course.Name, ticket.Course.ShortName, user.UserName);
+            }
+            LotteryOverviewModel bookingModel = this.GetBookingModel(lotteryId);
+            return this.PartialView("_BookingList", bookingModel);
+        }
+
+
+    }
+
 }

@@ -758,4 +758,16 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Geschlossene Gesellschaft (rot)")]
         public bool IsCoterie { get; set; }
     }
+
+
+    public class LotteryDeleteCourseModel
+    {
+        public MyStik.TimeTable.Data.Lottery Lottery { get; set; }
+
+        public MyStik.TimeTable.Data.Course Course { get; set; }
+
+        [Display(Name = "Code")]
+        public string Code { get; set; }
+    }
+
 }

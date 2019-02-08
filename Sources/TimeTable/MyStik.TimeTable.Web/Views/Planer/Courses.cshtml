@@ -10,12 +10,12 @@
 
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
+        <div class="col-lg-offset-2 col-md-12">
             <h4>Mein Stundenplan @Model.Semester.Name</h4>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.Semester.Id})" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-calendar-o"></i></h4>
@@ -49,12 +49,12 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-lg-offset-2 col-md-12">
             <h4>Planen, Eintragen, Einschreiben</h4>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Organiser", "Dictionary", new {orgId=Model.Organiser.Id, semId=Model.Semester.Id})" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-book"></i></h4>

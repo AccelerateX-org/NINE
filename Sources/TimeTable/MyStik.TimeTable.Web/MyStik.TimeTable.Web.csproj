@@ -395,6 +395,7 @@
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\PrintController.cs" />
     <Compile Include="Controllers\RoomReportController.cs" />
+    <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\SupervisionController.cs" />
@@ -4041,6 +4042,14 @@
     <Content Include="Views\Lottery\EditProcess.cshtml" />
     <Content Include="Views\Lottery\EditSubscriptionPeriod.cshtml" />
     <Content Include="Views\Lottery\DetailsNew.cshtml" />
+    <Content Include="Views\Rooms\Index.cshtml" />
+    <Content Include="Views\Rooms\Organiser.cshtml" />
+    <Content Include="Views\Room\DateListAll.cshtml" />
+    <Content Include="Views\Lottery\DeleteCourses.cshtml" />
+    <Content Include="Views\Lottery\ChangeSelection.cshtml" />
+    <Content Include="Views\Lottery\DeleteCourse.cshtml" />
+    <Content Include="Views\Lottery\DrawingNew.cshtml" />
+    <Content Include="Views\Lottery\_BookingList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

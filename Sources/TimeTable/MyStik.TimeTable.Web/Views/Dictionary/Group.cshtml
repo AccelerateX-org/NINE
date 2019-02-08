@@ -19,7 +19,7 @@
                 <div class="panel-heading">
                     <h4>
                         <i class="fa fa-book"></i>
-                        <a href="@Url.Action("Index", "Dictionary")">Start</a> /
+                        <a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a> /
                         <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
                         <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
                         <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /

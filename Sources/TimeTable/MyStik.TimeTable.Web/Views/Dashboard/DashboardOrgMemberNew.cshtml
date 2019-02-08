@@ -5,44 +5,43 @@
 }
 
 <div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-calendar"></i></h4>
-                    <h5>Mein Kalender</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("PersonalPlanToday", "Activity")" class="btn btn-default">Heute</a>
-                    <a href="@Url.Action("PersonalPlanTomorrow", "Activity")" class="btn btn-default">Morgen</a>
-                </div>
+<div class="row" style="margin-top: 20px">
+    <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+        <div class="panel panel-default text-center">
+            <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default btn-block">
+                <h4><i class="fa fa-3x fa-calendar"></i></h4>
+                <h5>Mein Kalender</h5>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="@Url.Action("PersonalPlanToday", "Activity")" class="btn btn-default">Heute</a>
+                <a href="@Url.Action("PersonalPlanTomorrow", "Activity")" class="btn btn-default">Morgen</a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Schedule", "Planer")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-map-o"></i></h4>
-                    <h5>Mein Stundenplan</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Schedule", "Planer", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Schedule", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
-                </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="panel panel-default text-center">
+            <a href="@Url.Action("Schedule", "Planer")" class="btn btn-default btn-block">
+                <h4><i class="fa fa-3x fa-map-o"></i></h4>
+                <h5>Mein Stundenplan</h5>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="@Url.Action("Schedule", "Planer", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                <a href="@Url.Action("Schedule", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("OfficeHour", "Lecturer")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-user-md"></i></h4>
-                    <h5>Meine Sprechstunden</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
-                </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="panel panel-default text-center">
+            <a href="@Url.Action("OfficeHour", "Lecturer")" class="btn btn-default btn-block">
+                <h4><i class="fa fa-3x fa-user-md"></i></h4>
+                <h5>Meine Sprechstunden</h5>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
             </div>
         </div>
-        @*
+    </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="" class="btn btn-default btn-block">
@@ -55,171 +54,207 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-bookmark"></i></h4>
-                    <h5>Meine Module</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
+            <!-- Indicators -->
+            <!--
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+            </ol>
+            -->
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Dictionary")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-book"></i></h4>
+                                    <h5>Vorlesungsverzeichnis</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-university"></i></h4>
+                                    <h5>Räume</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="@Url.Action("Index", "Reservation")" class="btn btn-default">Reservierungen</a>
+                                    <a href="@Url.Action("DailyRota", "Activity")" class="btn btn-default">Belegungen</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
+                                    <h5>Lehrende</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="@Url.Action("Active", "OrganiserMembers", new {id = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                                    <a href="@Url.Action("Active", "OrganiserMembers", new {id = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-trophy"></i></h4>
+                                    <h5>Studiengänge</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="" class="btn btn-default">Modulkatalog</a>
+                                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs & Studienpläne</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Today", "Activity")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-film"></i></h4>
+                                    <h5>Tagesprogramm</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="@Url.Action("Today", "Activity")" class="btn btn-default">Heute</a>
+                                    <a href="@Url.Action("Tomorrow", "Activity")" class="btn btn-default">Morgen</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Mailing")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-envelope-o"></i></h4>
+                                    <h5>Mailverteiler</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">@Model.Semester.Name</a>
+                                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">@Model.NextSemester.Name</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Students")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-group"></i></h4>
+                                    <h5>Studierende</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="" class="btn btn-default">Studiengänge</a>
+                                    <a href="" class="btn btn-default">Semester</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="item">
+                        <div class="row">
+                            <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="@Url.Action("Index", "Lottery")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-random"></i></h4>
+                                        <h5>Wahlverfahren</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                                        <a href="@Url.Action("Index", "Lottery", new {id = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="@Url.Action("Index", "Events")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-bullhorn"></i></h4>
+                                        <h5>Veranstaltungen</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="" class="btn btn-default">Heute</a>
+                                        <a href="" class="btn btn-default">Morgen</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="@Url.Action("Index", "Advertisements")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-window-maximize"></i></h4>
+                                        <h5>Schaukasten</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="" class="btn btn-default">XXX</a>
+                                        <a href="" class="btn btn-default">XXX</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-bookmark"></i></h4>
+                                        <h5>Meine Module</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="" class="btn btn-default">XXX</a>
+                                        <a href="" class="btn btn-default">XXX</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Contacts")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-industry"></i></h4>
+                                    <h5>Kontakte</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="" class="btn btn-default">XXX</a>
+                                    <a href="" class="btn btn-default">XXX</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Admin")" class="btn btn-default btn-block">
+                                    <h4><i class="fa fa-3x fa-cogs"></i></h4>
+                                    <h5>Administration</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="@Url.Action("Admins", "Organiser")" class="btn btn-default">Rechte & Rollen</a>
+                                    <a href="@Url.Action("Index", "Courses")" class="btn btn-default">Semester</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-            *@
-    </div>
-    <div class="row">
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Today", "Activity")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-film"></i></h4>
-                    <h5>Tagesprogramm</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Today", "Activity")" class="btn btn-default">Heute</a>
-                    <a href="@Url.Action("Tomorrow", "Activity")" class="btn btn-default">Morgen</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("RoomList", "Organiser")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-university"></i></h4>
-                    <h5>Räume</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Index", "Reservation")" class="btn btn-default">Reservierungen</a>
-                    <a href="@Url.Action("DailyRota", "Activity")" class="btn btn-default">Belegungen</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
-                    <h5>Lehrende</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Active", "OrganiserMembers", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Active", "OrganiserMembers", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
-                    <h5>Studiengänge</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Modulkatalog</a>
-                    <a href="" class="btn btn-default">SPOs</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Dictionary")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-book"></i></h4>
-                    <h5>Vorlesungsverzeichnis</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId=Model.Organiser.Id, semId=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId=Model.Organiser.Id, semId=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Mailing")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-envelope-o"></i></h4>
-                    <h5>Mailverteiler</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">@Model.NextSemester.Name</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Advertisements")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-window-maximize"></i></h4>
-                    <h5>Schaukasten</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Events")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-bullhorn"></i></h4>
-                    <h5>Veranstaltungen</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Heute</a>
-                    <a href="" class="btn btn-default">Morgen</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Lottery")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-random"></i></h4>
-                    <h5>Wahlverfahren</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Index", "Lottery", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Index", "Lottery", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Students")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-group"></i></h4>
-                    <h5>Studierende</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Studiengänge</a>
-                    <a href="" class="btn btn-default">Semester</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Contacts")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-industry"></i></h4>
-                    <h5>Kontakte</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Admin")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-cogs"></i></h4>
-                    <h5>Administration</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Admins", "Organiser")" class="btn btn-default">Rechte & Rollen</a>
-                    <a href="@Url.Action("Index", "Courses")" class="btn btn-default">Semester</a>
-                </div>
-            </div>
+
+            <!-- Controls -->
+            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" style="background-image: unset">
+                <span class="glyphicon glyphicon-chevron-left text-danger" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" style="background-image: unset">
+                <span class="glyphicon glyphicon-chevron-right text-danger" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
     </div>
 </div>
+</div>
+
 
 
 

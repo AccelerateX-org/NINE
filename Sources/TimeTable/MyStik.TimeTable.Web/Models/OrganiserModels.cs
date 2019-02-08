@@ -23,6 +23,7 @@ namespace MyStik.TimeTable.Web.Models
             SemesterGroups = new List<SemesterGroupViewModel>();
             ActiveSemesters = new List<Semester>();
             ActiveLotteries = new List<Lottery>();
+            Rooms = new List<Room>();
         }
 
         /// <summary>
@@ -97,6 +98,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<IGrouping<Curriculum, SemesterGroup>> Groups { get; set; }
 
+
+        public List<Room> Rooms { get; set; }
 
     }
 

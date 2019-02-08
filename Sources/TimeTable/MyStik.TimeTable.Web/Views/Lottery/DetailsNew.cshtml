@@ -15,11 +15,12 @@
                     <h4>Wahlverfahren: "@Model.Lottery.Name"</h4>
                 </div>
                 <div class="list-group">
-                    @if (IsAdmin)
-                    {
                         <div class="list-group-item">
                             <div class="btn-group" role="group">
                                 <a href="@Url.Action("Index", new {id = Model.Lottery.Semester.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
+                            @if (IsAdmin)
+                            {
+
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-cog"></i> Einstellungen <span class="caret"></span>
@@ -29,7 +30,7 @@
                                             <a href="@Url.Action("EditGeneral", new {id = Model.Lottery.Id})"><i class="fa fa-edit"></i> Beschreibung</a>
                                         </li>
                                         <li>
-                                            <a href="@Url.Action("Select", new {id=Model.Lottery.Id})"><i class="fa fa-edit"></i> Zusammensetzung</a>
+                                            <a href="@Url.Action("Select", new {id = Model.Lottery.Id})"><i class="fa fa-edit"></i> Zusammensetzung</a>
                                         </li>
                                         <li>
                                             <a href="@Url.Action("EditSubscriptionPeriod", new {id = Model.Lottery.Id})"><i class="fa fa-edit"></i> Platzvergabe (Methode)</a>
@@ -56,30 +57,33 @@
                                     </ul>
                                 </div>
 
-                                @if (Model.Lottery.IsFixed)
-                                {
-                                    <a href="@Url.Action("Drawing", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Platzverlosung</a>
-                                }
-                                @if (Request.IsLocal)
-                                {
-                                    <a href="@Url.Action("ClearGames", new {id = Model.Lottery.Id})" class="btn btn-warning"><i class="fa fa-trash"></i> Alle Eintragungen löschen</a>
-                                }
+                                if (Model.Lottery.IsFixed)
+                                 {
+                                     <a href="@Url.Action("Drawing", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Platzverlosung</a>
+                                 }
+                                if (Request.IsLocal)
+                                 {
+                                     <a href="@Url.Action("ClearGames", new {id = Model.Lottery.Id})" class="btn btn-warning"><i class="fa fa-trash"></i> Alle Eintragungen löschen</a>
+                                 }
                                 <a href="@Url.Action("Delete", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="fa fa-trash"></i> Wahlverfahren löschen</a>
+                            }
                             </div>
                         </div>
-                    }
+                    
 
-                    <div class="list-group-item">
-                        <h5 class="list-group-item-heading">Beschreibung</h5>
-                        @if (string.IsNullOrEmpty(Model.Lottery.Description))
-                        {
-                            <div class="list-group-item-text"><i>Keine Beschreibung vorhanden</i></div>
-                        }
-                        else
-                        {
-                            <div class="list-group-item-text">@Html.Raw(Model.Lottery.Description)</div>
-                        }
-                    </div>
+                <div class="list-group-item">
+                    <h5 class="list-group-item-heading">Beschreibung</h5>
+                    @if (string.IsNullOrEmpty(Model.Lottery.Description))
+                    {
+                        <div class="list-group-item-text"><i>Keine Beschreibung vorhanden</i></div>
+                    }
+                    else
+                    {
+                        <div class="list-group-item-text">@Html.Raw(Model.Lottery.Description)</div>
+                    }
+                </div>
+                @if (Model.Lottery.IsFixed)
+                {
                     <div class="list-group-item">
                         <h5 class="list-group-item-heading">Zur Auswahl stehen</h5>
                         <div class="list-group-item-text">
@@ -87,18 +91,19 @@
                                 @foreach (var course in Model.Courses)
                                 {
                                     <li><i class="fa fa-li fa-thermometer"></i>
-                                        <a href="@Url.Action("Details", "Course", new {id=course.Course.Id})">@course.Course.Name (@course.Course.ShortName)</a>    
+                                        <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">@course.Course.Name (@course.Course.ShortName)</a>
                                     </li>
                                 }
                             </ul>
                         </div>
-                    @*
+                        @*
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-default"><i class="fa fa-list"></i> Detailinformationen</button>
                             <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i> Stundenplansicht</button>
                         </div>
                         *@
                     </div>
+                }
                     <div class="list-group-item">
                         <h5 class="list-group-item-heading">Verfahren der Platzvergabe</h5>
                         <div class="list-group-item-text">
@@ -134,56 +139,65 @@
                     {
                         if (!Model.Lottery.IsFixed)
                         {
-                    <div class="list-group-item">
-                        <h5 class="list-group-item-heading">Status meiner bisher getroffenen Wahl</h5>
-                        @if (Model.CoursesSelected.Any())
-                        {
-                            var seats = Model.CoursesSelected.Where(x => !x.Subscription.OnWaitingList).ToList();
-                            var waiting = Model.CoursesSelected.Where(x => x.Subscription.OnWaitingList).ToList();
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">Status meiner bisher getroffenen Wahl</h5>
+                                @if (Model.CoursesSelected.Any())
+                                {
+                                    var seats = Model.CoursesSelected.Where(x => !x.Subscription.OnWaitingList).ToList();
+                                    var waiting = Model.CoursesSelected.Where(x => x.Subscription.OnWaitingList).ToList();
 
-                            if (seats.Any())
-                            {
-                                <h5 class="list-group-item-heading">Erhaltene Plätze</h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        @foreach (var seat in seats)
-                                        {
-                                            <li><i class="fa fa-li fa-group"></i>@seat.Course.Name (@seat.Course.ShortName)</li>
-                                        }
-                                    </ul>
-                                </div>
-                            }
-                            else
-                            {
-                                <h5 class="list-group-item-heading">Habe bisher keinen Platz erhalten.</h5>
-                            }
+                                    if (seats.Any())
+                                    {
+                                        <h5 class="list-group-item-heading">Erhaltene Plätze</h5>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                @foreach (var seat in seats)
+                                                {
+                                                    <li><i class="fa fa-li fa-group"></i>@seat.Course.Name (@seat.Course.ShortName)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <h5 class="list-group-item-heading">Habe bisher keinen Platz erhalten.</h5>
+                                    }
 
-                            if (waiting.Any())
-                            {
-                                <h5 class="list-group-item-heading">Meine Einträge auf Wartelisten</h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        @foreach (var seat in waiting)
-                                        {
-                                            <li><i class="fa fa-li fa-hourglass-half"></i>@seat.Course.Name (@seat.Course.ShortName)</li>
-                                        }
-                                    </ul>
-                                </div>
-                            }
-                            else
-                            {
-                                <h5 class="list-group-item-heading">Stehe auf keiner Warteliste.</h5>
-                            }
-                        }
-                        else
-                        {
-                            <h5 class="list-group-item-heading">Habe bisher keine Plätze ausgewählt.</h5>
-                        }
-
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("ChangeSelection", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-pencil"></i> Meine Auswahl ändern</a>
-                        </div>
-                    </div>
+                                    if (waiting.Any())
+                                    {
+                                        <h5 class="list-group-item-heading">Meine Einträge auf Wartelisten</h5>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                @foreach (var seat in waiting)
+                                                {
+                                                    <li><i class="fa fa-li fa-hourglass-half"></i>@seat.Course.Name (@seat.Course.ShortName)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <h5 class="list-group-item-heading">Stehe auf keiner Warteliste.</h5>
+                                    }
+                                }
+                                else
+                                {
+                                    <h5 class="list-group-item-heading">Habe bisher keine Lehrveranstaltung ausgewählt.</h5>
+                                }
+                                
+                                @if (Model.Lottery.IsActiveFrom.Value <= DateTime.Now)
+                                {
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("ChangeSelection", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-pencil"></i> Meine Auswahl ändern</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="list-group-item list-group-item-warning">
+                                        <h5 class="list-group-item-heading">Zeitraum für Eintragungen hat noch nicht begonnen</h5>
+                                    </div>
+                                }
+                            </div>
                         }
                         else
                         {

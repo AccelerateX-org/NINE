@@ -1,0 +1,40 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+@{
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Raumverzeichnis";
+}
+
+
+<div class="@containerType">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-university"></i> 
+                        <a href="@Url.Action("Index")">Raumverzeichnis</a> /
+                        @Model.Organiser.ShortName
+                    </h4> 
+                </div>
+                <div class="list-group">
+                    <div class="list-group">
+                        @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
+                        {
+                            <a href="@Url.Action("Details", "Room", new {id = room.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">@room.FullName</h5>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

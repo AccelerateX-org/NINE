@@ -1092,6 +1092,15 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult DateListAll(Guid id)
+        {
+            var model = Db.ActivityDates.Where(x => x.Rooms.Any(r => r.Id == id)).OrderBy(d => d.Begin).ToList();
+
+            return View(model);
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>

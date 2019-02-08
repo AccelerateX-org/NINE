@@ -178,6 +178,7 @@ function initCalendar(isInteractive, isMoFr, isSmall, idCal) {
 
 function initPrintCalendar(height, isMoSa, defaultDate) {
 
+
     $('#loading').hide();
 
     $('#calendar').fullCalendar('destroy'); // destroy the calendar

@@ -1,0 +1,23 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.ActivityDate>
+@{
+    ViewBag.Title = "Alle Termine";
+}
+
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="list-group">
+                @foreach (var date in Model)
+                {
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">@Html.TimeSpanWithDate(date): @date.Activity.Name (@date.Activity.ShortName)</h5>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

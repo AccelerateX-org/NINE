@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Data.Room
 @{
     ViewBag.Title = "Raumdetails";
@@ -40,21 +41,28 @@
                 <div class="col-md-12">
                     <div class="form-inline">
                         <div class="form-group">
-                            <a href="@Url.Action("RoomList", "Organiser")" class="btn btn-default active">
-                                <i class="fa fa-arrow-left"></i> zurück zur Liste
+                            <a href="@Url.Action("Organiser", "Rooms", new {id=ViewBag.Organiser.Id})" class="btn btn-default active">
+                                <i class="fa fa-arrow-left"></i> zurück
                             </a>
                         </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("DateList", new {id=Model.Id})" class="btn btn-default">
-                                <i class="fa fa-list"></i> Terminliste
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Labels", "Room")" class="btn btn-default">
-                                <i class="fa fa-print"></i> Türschilder
-                            </a>
-                        </div>
-
+                        @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+                        {
+                            <div class="form-group">
+                                <a href="@Url.Action("DateList", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-list"></i> Terminliste (aktuelles Semester)
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("DateListAll", new {id = Model.Id})" class="btn btn-default">
+                                    <i class="fa fa-list"></i> Terminliste (alle)
+                                </a>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("Labels", "Room")" class="btn btn-default">
+                                    <i class="fa fa-print"></i> Türschilder
+                                </a>
+                            </div>
+                        }
 
 
                         @if (ViewBag.UserRight.IsRoomAdmin)
@@ -81,19 +89,15 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
                         <i class="fa fa-calendar"></i> Belegung
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </div>
-                    <div class="actions">
-                        <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
-                        </a>
-                    </div>
+                    </h4>
                 </div>
-                <div class="portlet-body">
-                    <div id="calendar" class="has-toolbar">
+                <div class="panel-body">
+                    <div id="calendar">
 
                     </div>
                 </div>
@@ -114,7 +118,7 @@
         $(document).ready(function () {
             $('#loading').hide();
 
-            initCalendar(false);
+            initDayCalendar("calendar");
 
             $('#calendar').fullCalendar('removeEvents');
 

@@ -6,7 +6,7 @@
 
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-calendar"></i></h4>
@@ -32,6 +32,18 @@
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
+                <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-user-md"></i></h4>
+                    <h5>Meine Sprechstunden</h5>
+                </a>
+                <div class="btn-group btn-group-justified">
+                    <a href="" class="btn btn-default">XXX</a>
+                    <a href="" class="btn btn-default">XXX</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
                 <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
                     <h5>Mein Studium</h5>
@@ -42,22 +54,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-user-md"></i></h4>
-                    <h5>Meine Ansprechpartner</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-default">Sprechstunden</a>
-                    <a href="" class="btn btn-default">XXX</a>
-                </div>
-            </div>
-        </div>
 
     </div>
     <div class="row">
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Index", "Dictionary")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-book"></i></h4>
@@ -70,6 +70,44 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Organiser.Id})" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-university"></i></h4>
+                    <h5>Räume</h5>
+                </a>
+                <div class="btn-group btn-group-justified">
+                    <a href="@Url.Action("Free", "Room")" class="btn btn-default">Freie Räume</a>
+                    <a href="@Url.Action("DailyRota", "Activity")" class="btn btn-default">Belegungen</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
+                    <h5>Lehrende</h5>
+                </a>
+                <div class="btn-group btn-group-justified">
+                    <a href="" class="btn btn-default">XXX</a>
+                    <a href="" class="btn btn-default">XXX</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-trophy"></i></h4>
+                    <h5>Studiengänge</h5>
+                </a>
+                <div class="btn-group btn-group-justified">
+                    <a href="" class="btn btn-default">Modulkatalog</a>
+                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs & Studienpläne</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Index", "Event")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-bullhorn"></i></h4>
@@ -88,30 +126,15 @@
                     <h5>Schaukasten</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
+                    <a href="@Url.Action("Index", "Newsletter")" class="btn btn-default">Newsletter</a>
                     <a href="https://jobs.hm.edu" target="_blank" class="btn btn-default">Jobbörse HM</a>
-                    <a href="" class="btn btn-default">XXX</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Newsletter")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-envelope-o"></i></h4>
-                    <h5>Newsletter</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <div class="row">
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Index", "Union")" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-handshake-o"></i></h4>
+                    <h4><i class="fa fa-3x fa-handshake-o"></i></h4>
                     <h5>Meine Fachschaft</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
@@ -123,12 +146,12 @@
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="https://hm.edu/studierende/index.de.html" target="_blank" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-legal"></i></h4>
+                    <h4><i class="fa fa-3x fa-legal"></i></h4>
                     <h5>Meine Hochschule</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
                     <a href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank" class="btn btn-default">Fristen & Termine</a>
-                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs & Studienpläne</a>
+                    <a href="" class="btn btn-default">XXX</a>
                 </div>
             </div>
         </div>
