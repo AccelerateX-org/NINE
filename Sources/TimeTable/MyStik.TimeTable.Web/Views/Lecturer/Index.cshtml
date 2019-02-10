@@ -1,78 +1,39 @@
-﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
+
 @{
-    ViewBag.Title = Resources.SubMenuLecturer;
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Lehrende";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>@Resources.SubMenuLecturer @ViewBag.Organiser <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span></h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-    <div class="panel panel-default panel-menu">
-        <div class="panel-body">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            @Html.DropDownListFor(model => model.Organiser, (IEnumerable<SelectListItem>)ViewBag.FacultyList, new { @class = "form-control", onchange = "onFacultyChanged()" })
-                        </div>
+<div class="@containerType">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-user-md"></i> Lehrende</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group">
+                        @foreach (var org in Model.OrderBy(x => x.ShortName))
+                        {
+                            <a href="@Url.Action("Organiser", new { id=org.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">@Html.FacultyLabel(org) @org.Name</h5>
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div id="profileList"></div>
-        </div>
-    </div>
 </div>
-
-@section scripts
-{
-    <script>
-
-        $(document).ready(function() {
-            $('#loading').hide();
-            onFacultyChanged();
-        });
-
-
-        function onFacultyChanged() {
-            var facultyId = $('#Organiser option:selected').val();
-
-            $('#profileList').html('');
-            $('#loading').show();
-            $.ajax(
-            {
-                type: 'POST',
-                url: '@Url.Action("Faculty", "Lecturer")',
-                data: {
-                    facultyId: facultyId,
-                },
-                success: function(data, success, xhr) {
-                    $('#profileList').html(data);
-                    $('#loading').hide();
-                },
-                error: function(data, type, ex) {
-                    alert("Fehler beim laden der Daten." + ex);
-                    $('#loading').hide();
-                }
-            });
-        }
-
-
-    </script>
-}
 
 
 

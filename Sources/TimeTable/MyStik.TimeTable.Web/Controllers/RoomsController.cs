@@ -12,19 +12,27 @@ namespace MyStik.TimeTable.Web.Controllers
         // GET: Rooms
         public ActionResult Index()
         {
+            var org = GetMyOrganisation();
+
             var model = Db.Organisers.Where(o => o.RoomAssignments.Any()).OrderBy(s => s.Name).ToList();
+
+            ViewBag.UserRights = GetUserRight(org);
 
             return View(model);
         }
 
         public ActionResult Organiser(Guid id)
         {
+            var org = GetOrganiser(id);
+
             var model = new OrganiserViewModel
             {
-                Organiser = GetOrganiser(id)
+                Organiser = org
             };
 
              model.Rooms = Db.Rooms.Where(x => x.Assignments.Any(a => a.Organiser.Id == id)).ToList();
+
+            ViewBag.UserRights = GetUserRight(org);
 
             return View(model);
         }

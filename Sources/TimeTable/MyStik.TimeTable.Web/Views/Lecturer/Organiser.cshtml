@@ -1,0 +1,50 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+
+@{
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Lehrende";
+}
+
+
+<div class="@containerType">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-user-md"></i>
+                        <a href="@Url.Action("Index")">Lehrende</a> /
+                        @Model.Organiser.ShortName
+                    </h4>
+                </div>
+                <div class="list-group">
+                    @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsMemberAdmin)
+                    {
+                        <div class="list-group-item">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Today", "OrganiserMembers")" class="btn btn-default"><i class="fa fa-coffee"></i> Heute da</a>
+                                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default"><i class="fa fa-cogs"></i> Verwaltung</a>
+                                <a href="@Url.Action("Index", "OrganiserMembers")" class="btn btn-default"><i class="fa fa-cogs"></i> Alte Adminseite</a>
+                            </div>
+                        </div>
+                    }
+                    @foreach (var member in Model.Organiser.Members.OrderBy(x => x.Name))
+                    {
+                        <a href="@Url.Action("Member", "Organiser", new {id = member.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">@member.FullName</h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

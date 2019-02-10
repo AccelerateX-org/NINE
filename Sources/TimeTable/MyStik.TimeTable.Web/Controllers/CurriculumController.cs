@@ -32,8 +32,18 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Curriculum = curr;
             model.Semester = SemesterService.GetSemester(DateTime.Today);
 
-            model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
-                s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)));
+            var user = GetCurrentUser();
+
+            if (user.MemberState == MemberState.Staff)
+            {
+                model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
+                    s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)));
+            }
+            else
+            {
+                model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
+                    s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && g.IsAvailable)));
+            }
 
 
             // hier muss überprüft werden, ob der aktuelle Benutzer

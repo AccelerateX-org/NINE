@@ -68,7 +68,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     {
                         var subscription = booking.Subscription;
                         var game =
-                            Games.FirstOrDefault(x => x.LotteryGame.UserId.Equals(subscription.UserId));
+                            Games.FirstOrDefault(x => x.UserId.Equals(subscription.UserId));
 
                         if (game == null)
                         {
@@ -96,6 +96,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             game = new DrawingGame();
                             game.Student = student;
                             game.LotteryGame = lotteryGame;
+                            game.UserId = subscription.UserId;
 
                             Games.Add(game);
                         }
@@ -348,9 +349,17 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             subscription.OnWaitingList = false;
                             subscription.Priority = 0;
                             subscription.Occurrence = availableCourse.Course.Occurrence;
+
+                            // Die Subscription hinzufügen
                             availableCourse.Course.Occurrence.Subscriptions.Add(subscription);
 
-                            // TODO: Save!!!
+                            // Die Bookinglist aktualisieren
+                            availableCourse.BookingList.Bookings.Add(new Booking.Data.Booking
+                            {
+                                Student = game.Student,
+                                Subscription = subscription
+                            });
+
 
                             var lot = new DrawingLot();
                             lot.IsTouched = true;

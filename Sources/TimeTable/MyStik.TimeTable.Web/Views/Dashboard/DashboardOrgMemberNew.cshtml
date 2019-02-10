@@ -90,13 +90,13 @@
                                 </a>
                                 <div class="btn-group btn-group-justified">
                                     <a href="@Url.Action("Index", "Reservation")" class="btn btn-default">Reservierungen</a>
-                                    <a href="@Url.Action("DailyRota", "Activity")" class="btn btn-default">Belegungen</a>
+                                    <a href="@Url.Action("Search", "Room")" class="btn btn-default">Raumsuche</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3 col-lg-2">
                             <div class="panel panel-default text-center">
-                                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default btn-block">
+                                <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
                                     <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
                                     <h5>Lehrende</h5>
                                 </a>
@@ -108,13 +108,13 @@
                         </div>
                         <div class="col-sm-6 col-md-3 col-lg-2">
                             <div class="panel panel-default text-center">
-                                <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
+                                <a href="@Url.Action("Organiser", "Curricula", new {id=Model.Organiser.Id})" class="btn btn-default btn-block">
                                     <h4><i class="fa fa-3x fa-trophy"></i></h4>
                                     <h5>Studiengänge</h5>
                                 </a>
                                 <div class="btn-group btn-group-justified">
-                                    <a href="" class="btn btn-default">Modulkatalog</a>
-                                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs & Studienpläne</a>
+                                    <a href="@Url.Action("Index", "Module")" class="btn btn-default">Modulkatalog</a>
+                                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs</a>
                                 </div>
                             </div>
                         </div>
@@ -127,8 +127,8 @@
                                     <h5>Tagesprogramm</h5>
                                 </a>
                                 <div class="btn-group btn-group-justified">
-                                    <a href="@Url.Action("Today", "Activity")" class="btn btn-default">Heute</a>
-                                    <a href="@Url.Action("Tomorrow", "Activity")" class="btn btn-default">Morgen</a>
+                                    <a href="@Url.Action("DailyRota", "Activity")" class="btn btn-default">Belegungen</a>
+                                    <a href="@Url.Action("Today", "OrganiserMembers")" class="btn btn-default">Heute da</a>
                                 </div>
                             </div>
                         </div>
@@ -139,8 +139,8 @@
                                     <h5>Mailverteiler</h5>
                                 </a>
                                 <div class="btn-group btn-group-justified">
-                                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">@Model.Semester.Name</a>
-                                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">@Model.NextSemester.Name</a>
+                                    <a href="@Url.Action("AllStudents", "Mailing")" class="btn btn-default">Alle @Model.Organiser.ShortName</a>
+                                    <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-default">Gruppen</a>
                                 </div>
                             </div>
                         </div>
@@ -151,8 +151,8 @@
                                     <h5>Studierende</h5>
                                 </a>
                                 <div class="btn-group btn-group-justified">
-                                    <a href="" class="btn btn-default">Studiengänge</a>
-                                    <a href="" class="btn btn-default">Semester</a>
+                                    <a href="@Url.Action("Groups", "Courses", new {id=Model.Semester.Id})" class="btn btn-default">Gruppen @Model.Semester.Name</a>
+                                    <a href="@Url.Action("Groups", "Courses", new {id=Model.NextSemester.Id})" class="btn btn-default">Gruppen @Model.NextSemester.Name</a>
                                 </div>
                             </div>
                         </div>

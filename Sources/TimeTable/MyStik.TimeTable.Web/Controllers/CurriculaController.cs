@@ -26,9 +26,25 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var model = Db.Curricula.GroupBy(x => x.Organiser).OrderBy(g => g.Key.ShortName).ToList();
+            var model = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(g => g.ShortName).ToList();
             return View(model);
         }
+
+        public ActionResult Organiser(Guid id)
+        {
+            var org = GetOrganiser(id);
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = org
+            };
+
+            ViewBag.UserRights = GetUserRight(org);
+
+            return View(model);
+        }
+
+
 
         /// <summary>
         /// 

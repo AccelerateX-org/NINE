@@ -14,66 +14,32 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class LecturerController : BaseController
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        // GET: Rooms
         public ActionResult Index()
         {
-            var model = new OrganiserViewModel();
+            var org = GetMyOrganisation();
 
-            ViewBag.FacultyList = Db.Organisers.Where(o => !o.IsStudent && o.Members.Any())
-                .OrderBy(s => s.Name).Select(f => new SelectListItem
-                {
-                    Text = f.Name,
-                    Value = f.Id.ToString(),
-                });
+            var model = Db.Organisers.Where(o => o.Members.Any()).OrderBy(s => s.Name).ToList();
 
-            ViewBag.UserRight = GetUserRight();
-
-            model.Organiser = GetMyOrganisation();
-
-            ViewBag.MenuId = "menu-lecturers";
+            ViewBag.UserRights = GetUserRight(org);
 
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="facultyId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult Faculty(Guid facultyId)
+        public ActionResult Organiser(Guid id)
         {
-            var sem = SemesterService.GetSemester(DateTime.Today);
+            var org = GetOrganiser(id);
 
-            var model = new List<LecturerViewModel>();
-
-            var orgService = new OrganizerService(Db);
-            var faculty = orgService.GetOrganiser(facultyId);
-
-            // alle die einen termin haben, der zu einer aktuellen Semestergruppe gehört
-            var activeLecturers = orgService.GetLecturers(faculty, sem);
-
-            foreach (var lecturer in activeLecturers)
+            var model = new OrganiserViewModel
             {
-                var viewModel = new LecturerViewModel
-                {
-                    Lecturer = lecturer,
-                    OfficeHour = null, //myOfficeHour,
-                    IsActive = true //myOfficeHour != null || hasDates
-                };
+                Organiser = org
+            };
 
-                model.Add(viewModel);
-            }
+            ViewBag.UserRights = GetUserRight(org);
 
-            ViewBag.UserRight = GetUserRight();
-            ViewBag.Semester = sem;
-
-
-            return PartialView("_ProfileList", model);
+            return View(model);
         }
+
 
         /// <summary>
         /// 

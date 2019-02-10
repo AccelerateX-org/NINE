@@ -4050,6 +4050,8 @@
     <Content Include="Views\Lottery\DeleteCourse.cshtml" />
     <Content Include="Views\Lottery\DrawingNew.cshtml" />
     <Content Include="Views\Lottery\_BookingList.cshtml" />
+    <Content Include="Views\Lecturer\Organiser.cshtml" />
+    <Content Include="Views\Curricula\Organiser.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

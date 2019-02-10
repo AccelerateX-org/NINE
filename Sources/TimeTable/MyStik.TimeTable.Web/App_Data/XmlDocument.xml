@@ -6901,19 +6901,6 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.LecturerController.Index">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.LecturerController.Faculty(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="facultyId"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.LecturerController.Calendar(System.Guid)">
             <summary>
             

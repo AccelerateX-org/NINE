@@ -1,56 +1,35 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
-@model List<IGrouping <MyStik.TimeTable.Data.ActivityOrganiser, MyStik.TimeTable.Data.Curriculum>>
+@model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
+
 @{
-    ViewBag.Title = Resources.SubMenuStudiesCurricula;
-    var i = 0;
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        containerType = "container";
+    }
+
+    ViewBag.Title = "Studiengänge";
 }
 
 
-
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>@Resources.AllCurriculas</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
+<div class="@containerType">
+    <div class="row" style="margin-top: 20px">
         <div class="col-md-12">
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">            
-            @foreach (var org in Model.Where(x => x.Key.IsVisible))
-            {
-                i++;
-                var collapseName = "collapse" + i;
-                var isIn = i == 1 ? "in" : "";
-                    
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="@org.Key.Id">
-                        <h5>
-                            @Html.FacultyLabel(org.Key)
-                                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#@collapseName">
-                                                    @org.Key.ShortName
-                                                </a>
-                                            </h5>
-                    </div>
-                    <div id="@collapseName" class="panel-collapse collapse @isIn" role="tabpanel">
-                        <div class="list-group">
-                            @foreach (var curr in org)
-                            {
-                                <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
-                                    <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
-                                </a>
-                            }
-
-                        </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-trophy"></i> Studiengänge</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group">
+                        @foreach (var org in Model.OrderBy(x => x.ShortName))
+                        {
+                            <a href="@Url.Action("Organiser", new { id=org.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">@Html.FacultyLabel(org) @org.Name</h5>
+                            </a>
+                        }
                     </div>
                 </div>
-            }
             </div>
         </div>
     </div>
