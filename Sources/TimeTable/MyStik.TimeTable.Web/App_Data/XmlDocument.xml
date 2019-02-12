@@ -18571,6 +18571,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisStateModel.Thesis">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.UserViewModel">
             <summary>
             

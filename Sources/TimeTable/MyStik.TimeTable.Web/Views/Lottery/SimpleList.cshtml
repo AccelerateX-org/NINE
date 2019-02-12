@@ -1,0 +1,26 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Data.Lottery>
+@{
+    ViewBag.Title = "Wahlverfahren";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Wahlverfahren @ViewBag.Organiser.ShortName im @ViewBag.Semester.Name</h4>
+                </div>
+                <div class="list-group">
+                    @foreach (var lottery in Model)
+                    {
+                        <a href="@Url.Action("Details", new {id=lottery.Id})" class="list-group-item">
+                            <h5>@lottery.Name</h5>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,124 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisDetailModel
+@{
+    ViewBag.Title = "Abschlussarbeit";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Meine Abschlussarbeit im Studiengang @Model.Student.Curriculum.ShortName</h4>
+                </div>
+                <div class="list-group">
+                    @if (Model.Thesis == null)
+                    {
+                        <a href="@Url.Action("Request")" class="list-group-item list-group-item-info">
+                            <h5 class="list-group-item-heading">1. Antrag auf Anmeldung stellen</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-question-circle"></i>Habe ich die Voraussetzungen bereits erfüllt?</li>
+                                    <li><i class="fa fa-li fa-envelope-o"></i>Werde per E-Mail benachtrichtigt, sobald das Ergebnis vorliegt.</li>
+                                </ul>
+                            </div>
+                        </a>
+                        <div class="list-group-item disabled">
+                            <h5 class="list-group-item-heading">2. Betreuer suchen</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-question-circle"></i>Es wird eine E-Mail ans Prüfungsam gesendet.</li>
+                                    <li><i class="fa fa-li fa-check"></i>Im Prüfungsamt wird überprüft, ob die Voraussetzungen erfüllt sind.</li>
+                                    <li><i class="fa fa-li fa-envelope-o"></i>Werde benachtrichtigt, sobald Ergebnis vorliegt.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="list-group-item disabled">
+                            <h5 class="list-group-item-heading">3. Arbeit anmelden</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-question-circle"></i>Thema angeben.</li>
+                                    <li><i class="fa fa-li fa-check"></i>Betreuer angeben.</li>
+                                    <li><i class="fa fa-li fa-envelope-o"></i>Ansprechpartner im Unternehmen angeben.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="list-group-item disabled">
+                            <h5 class="list-group-item-heading">4. Arbeit abgeben</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-question-circle"></i>Im Sekretariat.</li>
+                                    <li><i class="fa fa-li fa-check"></i>Abgabe wird bestätigt.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="list-group-item disabled">
+                            <h5 class="list-group-item-heading">4. Arbeit bewerten</h5>
+                            <div class="list-group-item-text">
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-question-circle"></i>Macht Betreuer.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        if (Model.Thesis.RequestDate.HasValue)
+                        {
+                            if (!Model.Thesis.ResponseDate.HasValue)
+                            {
+                                <div class="list-group-item list-group-item-warning">
+                                    <h5 class="list-group-item-heading">Antrag auf Anmeldung gestellt</h5>
+                                    <div class="list-group-item-text">
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-clock-o"></i>@Model.Thesis.RequestDate.ToString()</li>
+                                            <li><i class="fa fa-li fa-envelope-o"></i>Noch keine Antwort erhalten.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                if (Model.Thesis.IsPassed.Value)
+                                {
+                                    <div class="list-group-item list-group-item-success">
+                                        <h5 class="list-group-item-heading">1. Voraussetzungen erfüllt</h5>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-li fa-question-circle"></i>Habe die Voraussetzungen erfüllt!</li>
+                                                <li><i class="fa fa-li fa-envelope-o"></i>Mein Antrag wurde am @Model.Thesis.ResponseDate.ToString() von @Model.Thesis.RequestAuthority.FullName genehmigt.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item list-group-item-info">
+                                        <h5 class="list-group-item-heading">2. Betreuende suchen</h5>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-li fa-question-circle"></i>Anfragen an Betreuuende stellen (auch mehrere).</li>
+                                                <li><i class="fa fa-li fa-check"></i>Die Betreuenden sehen, wer alles angefragt wurde. First come - first serve</li>
+                                                <li><i class="fa fa-li fa-envelope-o"></i>Werde benachtrichtigt, sobald Ergebnis vorliegt.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Request")" class="list-group-item list-group-item-danger">
+                                        <h5 class="list-group-item-heading">1. Neuen Antrag auf Anmeldung stellen</h5>
+                                        <div class="list-group-item-text">
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-li fa-question-circle"></i>Habe ich die Voraussetzungen bereits erfüllt?</li>
+                                                <li><i class="fa fa-li fa-envelope-o"></i>Mein letzter Antrag wurde am @Model.Thesis.ResponseDate.ToString() von @Model.Thesis.RequestAuthority.FullName abgelehnt</li>
+                                                <li><i class="fa fa-li fa-pencil"></i>Grund: @Model.Thesis.RequestMessage</li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                    
+                                }
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

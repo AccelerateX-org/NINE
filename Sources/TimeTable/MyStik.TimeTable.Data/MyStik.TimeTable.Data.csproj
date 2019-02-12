@@ -97,6 +97,7 @@
     <Compile Include="Advertisement.cs" />
     <Compile Include="AdvertisementInfo.cs" />
     <Compile Include="AdvertisementRole.cs" />
+    <Compile Include="Advisor.cs" />
     <Compile Include="Alumnus.cs" />
     <Compile Include="BinaryStorage.cs" />
     <Compile Include="BookingConfirmation.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="CapacityGroup.cs" />
     <Compile Include="CertificateModule.cs" />
     <Compile Include="CertificateSubject.cs" />
+    <Compile Include="Contact.cs" />
     <Compile Include="CorporateContact.cs" />
     <Compile Include="CourseModuleNexus.cs" />
     <Compile Include="CriteriaSample.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="CurriculumTopic.cs" />
     <Compile Include="CurriculumVariation.cs" />
     <Compile Include="Degree.cs" />
+    <Compile Include="Department.cs" />
     <Compile Include="Exam.cs" />
     <Compile Include="ExaminationAid.cs" />
     <Compile Include="ExaminationForm.cs" />
@@ -345,6 +348,10 @@
     <Compile Include="Migrations\201811221848527_Curiclum_v9.Designer.cs">
       <DependentUpon>201811221848527_Curiclum_v9.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902111618292_ThesisV3.cs" />
+    <Compile Include="Migrations\201902111618292_ThesisV3.Designer.cs">
+      <DependentUpon>201902111618292_ThesisV3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -359,6 +366,7 @@
     <Compile Include="OccurrenceGroup.cs" />
     <Compile Include="OccurrenceSubscription.cs" />
     <Compile Include="OfficeHour.cs" />
+    <Compile Include="Organisation.cs" />
     <Compile Include="OrganiserMember.cs" />
     <Compile Include="PackageOption.cs" />
     <Compile Include="PersonalContact.cs" />
@@ -384,6 +392,7 @@
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionDrawing.cs" />
     <Compile Include="Supervision.cs" />
+    <Compile Include="Supervisor.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="TeachingBuildingBlock.cs" />
     <Compile Include="TeachingForm.cs" />
@@ -546,6 +555,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811221848527_Curiclum_v9.resx">
       <DependentUpon>201811221848527_Curiclum_v9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902111618292_ThesisV3.resx">
+      <DependentUpon>201902111618292_ThesisV3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

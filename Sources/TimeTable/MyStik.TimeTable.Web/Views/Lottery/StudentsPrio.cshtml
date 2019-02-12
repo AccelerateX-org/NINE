@@ -122,9 +122,9 @@
                                 {
 
                                     <div>@seat.Course.ShortName
-                                        <ul>
-                                            <li>@seat.Subscription.TimeStamp</li>
-                                            <li>Priorität: @seat.Priority</li>
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-clock-o"></i>@seat.Subscription.TimeStamp</li>
+                                            <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
                                         </ul>
                                     </div>
                                 }
@@ -150,12 +150,11 @@
                                         }
                                          <td class="@txtClass">
                                              <div>@lot.Course.ShortName
-                                                 <ul>
-                                                     <li>@lot.Subscription.TimeStamp</li>
-                                                     <li>Priorität: @lot.Priority</li>
+                                                 <ul class="fa-ul">
+                                                     <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
                                                      @if (!string.IsNullOrEmpty(lot.Message))
                                                      {
-                                                         <li>@lot.Message</li>
+                                                         <li><i class="fa fa-li fa-file-text"></i>@lot.Subscription.PositionRemark</li>
                                                      }
                                                  </ul>
                                              </div>

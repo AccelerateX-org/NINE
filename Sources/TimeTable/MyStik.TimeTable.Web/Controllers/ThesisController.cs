@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Linq;
@@ -18,17 +19,107 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
+            var userService = new UserInfoService();
             // der aktuelle Benutzer
-            var user = GetCurrentUser();
             var org = GetMyOrganisation();
 
             var theses = Db.Theses.Where(x => 
-                x.Supervision.Owners.Any(o => o.Member.Organiser.Id == org.Id)).ToList();
+                x.Student.Curriculum.Organiser.Id == org.Id).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
 
             ViewBag.UserRight = GetUserRight();
 
-            return View(theses);
+            return View(model);
         }
+
+
+        public ActionResult MyWork()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+
+            var model = new ThesisDetailModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis
+            };
+
+            return View(model);
+        }
+
+        public ActionResult Request()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+            // Eine evtl. vorhandene alte Anfrage löschen
+            if (thesis.RequestAuthority != null)
+            {
+                thesis.ResponseDate = null;
+                thesis.IsPassed = null;
+                thesis.RequestAuthority = null;
+
+                Db.SaveChanges();
+            }
+
+
+            var model = new ThesisDetailModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Request(ThesisDetailModel model)
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+
+            if (student != null && !string.IsNullOrEmpty(model.Student.Number))
+            {
+                student.Number = model.Student.Number;
+            }
+
+            if (thesis == null)
+            {
+                thesis = new Thesis
+                {
+                    Student = student,
+                    RequestDate = DateTime.Now,
+                };
+
+                Db.Theses.Add(thesis);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("MyWork");
+        }
+
 
 
         /// <summary>
@@ -285,17 +376,80 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Details(Guid id)
         {
+            var userService = new UserInfoService();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+
+            var model = new ThesisStateModel
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            ViewBag.UserRight = GetUserRight();
+
+            switch (model.Stage)
+            {
+                case ThesisStage.InRequest:
+                    return View("Approval", model);
+            }
+
+
+            return View(model);
+        }
+
+
+        public ActionResult Deny(Guid id)
+        {
+            var userService = new UserInfoService();
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             var model = new ThesisDetailModel
             {
                 Thesis = thesis,
-                Lecturer = thesis.Supervision.Owners.First().Member
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
             };
 
             ViewBag.UserRight = GetUserRight();
 
             return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Deny(ThesisDetailModel model)
+        {
+            var member = GetMyMembership();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+            thesis.RequestMessage = model.Thesis.RequestMessage;
+            thesis.ResponseDate = DateTime.Now;
+            thesis.IsPassed = false;
+            thesis.RequestAuthority = member;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new {id = thesis.Id});
+        }
+
+
+        [HttpPost]
+        public ActionResult Approve(ThesisDetailModel model)
+        {
+            var member = GetMyMembership();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+            thesis.ResponseDate = DateTime.Now;
+            thesis.IsPassed = true;
+            thesis.RequestAuthority = member;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = thesis.Id });
         }
 
 
@@ -512,7 +666,7 @@ namespace MyStik.TimeTable.Web.Controllers
             thesis.TitleDe = model.Title;
             thesis.Supervision = supervision;
             thesis.IssueDate = DateTime.Today;
-            thesis.ExpirationDate = thesis.IssueDate.AddMonths(period);
+            thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period);
             thesis.Student = student;
 
             Db.Theses.Add(thesis);
@@ -535,27 +689,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Delete(Guid id)
         {
-            var exam = Db.StudentExams.SingleOrDefault(x => x.Id == id);
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
-            var thesis = exam.Exam;
-
-            // alle paper löschen
-            var papers = exam.ExamPapers.ToList();
-
-            foreach (var paper in papers)
+            foreach (var advisor in thesis.Advisors.ToList())
             {
-                // TODO Dokumemnt löschen
-                //paper.Document
-                exam.ExamPapers.Remove(paper);
-
-                Db.ExamPapers.Remove(paper);
+                Db.Advisors.Remove(advisor);
             }
-            Db.StudentExams.Remove(exam);
+
+            foreach (var supervisor in thesis.Supervisors.ToList())
+            {
+                Db.Supervisors.Remove(supervisor);
+            }
+
+            Db.Theses.Remove(thesis);
             Db.SaveChanges();
 
-
-
-            return RedirectToAction("Admin", new { id = thesis.Id });
+            return RedirectToAction("Index");
         }
     }
     }

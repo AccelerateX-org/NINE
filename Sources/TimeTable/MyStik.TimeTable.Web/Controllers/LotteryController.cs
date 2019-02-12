@@ -37,6 +37,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index(Guid? id)
         {
+            var user = GetCurrentUser();
             var org = GetMyOrganisation();
 
             var semester = SemesterService.GetSemester(id);
@@ -67,6 +68,11 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(org);
             ViewBag.Semester = semester;
             ViewBag.Organiser = org;
+
+
+            if (user.MemberState != MemberState.Staff)
+                return View("SimpleList", alLotteries.OrderBy(x => x.Name).ToList());
+
 
             var nextSemester = new SemesterService().GetNextSemester(semester);
             if (nextSemester != null && nextSemester.Groups.Any())
@@ -102,16 +108,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
                 var realUserIds = userIds.Distinct();
-
-                /*
-                foreach (var userId in realUserIds)
-                {
-                    var subCount = lottery.Occurrences.Count(x => x.Subscriptions.Any(s => s.UserId.Equals(userId)));
-                    totalSubscriptionPerUser += subCount;
-                }
-                var avgSubscriptionCount = totalSubscriptionPerUser / (double)lottery.Occurrences.Count;
-                */
-
 
                 var lm = new LotterySummaryModel
                 {
@@ -464,7 +460,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(org);
 
 
-            return View(model);
+            return !model.Lottery.IsFixed ? View(model) : View("StudentsPrio", model);
         }
 
         /// <summary>

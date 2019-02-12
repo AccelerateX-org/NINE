@@ -4052,6 +4052,12 @@
     <Content Include="Views\Lottery\_BookingList.cshtml" />
     <Content Include="Views\Lecturer\Organiser.cshtml" />
     <Content Include="Views\Curricula\Organiser.cshtml" />
+    <Content Include="Views\Lottery\StudentsPrio.cshtml" />
+    <Content Include="Views\Thesis\MyWork.cshtml" />
+    <Content Include="Views\Thesis\Request.cshtml" />
+    <Content Include="Views\Thesis\Approval.cshtml" />
+    <Content Include="Views\Thesis\Deny.cshtml" />
+    <Content Include="Views\Lottery\SimpleList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

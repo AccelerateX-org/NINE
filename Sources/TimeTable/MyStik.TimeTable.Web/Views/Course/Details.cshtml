@@ -55,11 +55,11 @@
                                             @if (Model.Summary.Lottery == null)
                                             {
                                                 if (Model.Summary.Lottery == null)
-                                                 {
-                                                     <li>
-                                                         <a href="@Url.Action("AssignToLottery", new {id = Model.Summary.Course.Id})"><i class="fa fa-random"></i> In Wahlverfahren aufnehmen</a>
-                                                     </li>
-                                                 }
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("AssignToLottery", new {id = Model.Summary.Course.Id})"><i class="fa fa-random"></i> In Wahlverfahren aufnehmen</a>
+                                                    </li>
+                                                }
                                                 if (Model.Summary.Course.Occurrence.IsAvailable)
                                                 {
                                                     <li>

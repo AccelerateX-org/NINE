@@ -1,8 +1,7 @@
 ﻿@using MyStik.TimeTable.Web.Services
-@model ICollection<MyStik.TimeTable.Data.Thesis>
+@model ICollection<MyStik.TimeTable.Web.Models.ThesisStateModel>
 @{
     ViewBag.Title = "Abschlussarbeiten";
-    var userInfoServicee = new UserInfoService();
 }
 
 <div class="panel panel-default">
@@ -30,18 +29,24 @@
                         <tr>
                             <th>Studierende(r)</th>
                             <th>Studiengang</th>
-                            <th>Thema</th>
-                            <th>Betreuende(r)</th>
+                            <th>Aktueller Stand</th>
+                            <th>Status</th>
+                            <th>Letzte Aktion</th>
+                            <th>Ausgeführt von</th>
+                            <th>Abgabedatum</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach (var thesis in Model)
                         {
                             <tr>
-                                <td>@userInfoServicee.GetUserName(thesis.Student.UserId)</td>
+                                <td><a href="@Url.Action("Details", new {id=thesis.Thesis.Id})">@thesis.User.FullName</a></td>
                                 <td>@thesis.Student.Curriculum.ShortName</td>
-                                <td><a href="@Url.Action("Details", new {id=thesis.Id})">@thesis.TitleDe</a></td>
-                                <td>@thesis.Supervision.Owners.First().Member.FullName</td>
+                                <td>@thesis.StageText</td>
+                                <td>@thesis.StateText</td>
+                                <td>@thesis.LastActionDate.ToString()</td>
+                                <td>@thesis.LastActionUser</td>
+                                <td>@thesis.Thesis.ExpirationDate</td>
                             </tr>
                         }
                         </tbody>

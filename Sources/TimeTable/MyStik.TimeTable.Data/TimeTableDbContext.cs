@@ -170,6 +170,14 @@ namespace MyStik.TimeTable.Data
         public DbSet<ExaminationAid> ExaminationAids { get; set; }
         public DbSet<Lecturer> Lecturers { get; set; }
 
+        public DbSet<Organisation> Organisations { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Advisor> Advisors { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Supervisor> Supervisors { get; set; }
+
+
+
 
 
         public TimeTableDbContext() : base()

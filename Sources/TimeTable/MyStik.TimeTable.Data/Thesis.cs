@@ -10,6 +10,13 @@ namespace MyStik.TimeTable.Data
 {
     public class Thesis
     {
+        public Thesis()
+        {
+            Advisors = new HashSet<Advisor>();
+            Supervisors = new HashSet<Supervisor>();
+        }
+
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -25,6 +32,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Aktivität des Betreuers
+        /// Veraltet - wird gelöscht
         /// </summary>
         public virtual Supervision Supervision { get; set; }
 
@@ -35,13 +43,14 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Datum der Ausgabe
+        /// Wird vom Studierenden am Tag der Anmeldung gesetzt
         /// </summary>
-        public DateTime IssueDate { get; set; }
+        public DateTime? IssueDate { get; set; }
 
         /// <summary>
-        /// Abgabedatum
+        /// Abgabedatum wird am Tag der Anmeldung gesetzt
         /// </summary>
-        public DateTime ExpirationDate { get; set; }
+        public DateTime? ExpirationDate { get; set; }
 
         /// <summary>
         /// Verlängerungsdatum
@@ -66,5 +75,39 @@ namespace MyStik.TimeTable.Data
         /// benötigt Admin-Rechte
         /// </summary>
         public bool? IsCleared { get; set; }
+
+
+        /// <summary>
+        /// Datum des Antrags
+        /// </summary>
+        public DateTime? RequestDate { get; set; }
+
+        /// <summary>
+        /// Datum des Ergebnisses des Antrags
+        /// </summary>
+        public DateTime? ResponseDate { get; set; }
+
+        public virtual OrganiserMember RequestAuthority { get; set; }
+
+        public string RequestMessage { get; set; }
+
+        /// <summary>
+        /// Das Ergebnis des Antrags
+        /// </summary>
+        public bool? IsPassed { get; set; }
+
+        /// <summary>
+        /// Das Datum, wenn der Prof die Arbeit annimmt
+        /// </summary>
+        public DateTime? AcceptanceDate { get; set; }
+
+        /// <summary>
+        /// Betreuung akzeptiert
+        /// </summary>
+        public bool? IsAccepted { get; set; }
+
+        public ICollection<Advisor> Advisors { get; set; }
+
+        public ICollection<Supervisor> Supervisors { get; set; }
     }
 }

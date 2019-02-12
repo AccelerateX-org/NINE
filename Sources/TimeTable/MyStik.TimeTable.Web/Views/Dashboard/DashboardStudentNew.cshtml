@@ -37,8 +37,8 @@
                     <h5>Meine Sprechstunden</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
+                    <a href="" class="btn btn-default disabled">...</a>
+                    <a href="" class="btn btn-default disabled">...</a>
                 </div>
             </div>
         </div>
@@ -49,8 +49,8 @@
                     <h5>Mein Studium</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Praxissemester</a>
-                    <a href="" class="btn btn-default">Abschlussarbeit</a>
+                    <a href="#" class="btn btn-default disabled">...</a>
+                    <a href="@Url.Action("MyWork", "Thesis")" class="btn btn-default">Abschlussarbeit</a>
                 </div>
             </div>
         </div>
@@ -71,37 +71,37 @@
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Organiser.Id})" class="btn btn-default btn-block">
+                <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-university"></i></h4>
                     <h5>Räume</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Free", "Room")" class="btn btn-default">Freie Räume</a>
-                    <a href="@Url.Action("DailyRota", "Activity")" class="btn btn-default">Belegungen</a>
+                    <a href=#" class="btn btn-default disabled">...</a>
+                    <a href="@Url.Action("Search", "Room")" class="btn btn-default">Raumsuche</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default btn-block">
+                <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
                     <h5>Lehrende</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
+                    <a href="#" class="btn btn-default disabled">...</a>
+                    <a href="#" class="btn btn-default disabled">...</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
+                <a href="@Url.Action("Organiser", "Curricula", new {id=Model.Organiser.Id})" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-trophy"></i></h4>
                     <h5>Studiengänge</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Modulkatalog</a>
-                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs & Studienpläne</a>
+                    <a href="#" class="btn btn-default disabled">...</a>
+                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs</a>
                 </div>
             </div>
         </div>
@@ -114,8 +114,8 @@
                     <h5>Veranstaltungen</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Heute</a>
-                    <a href="" class="btn btn-default">Morgen</a>
+                    <a href="" class="btn btn-default disabled">...</a>
+                    <a href="" class="btn btn-default disabled">...</a>
                 </div>
             </div>
         </div>
@@ -138,20 +138,20 @@
                     <h5>Meine Fachschaft</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">XXX</a>
-                    <a href="" class="btn btn-default">XXX</a>
+                    <a href="" class="btn btn-default disabled">...</a>
+                    <a href="" class="btn btn-default disabled">...</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="https://hm.edu/studierende/index.de.html" target="_blank" class="btn btn-default btn-block">
+                <a href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank" class="btn btn-default btn-block">
                     <h4><i class="fa fa-3x fa-legal"></i></h4>
-                    <h5>Meine Hochschule</h5>
+                    <h5>Fristen & Termine</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank" class="btn btn-default">Fristen & Termine</a>
-                    <a href="" class="btn btn-default">XXX</a>
+                    <a href="#" class="btn btn-default disabled">...</a>
+                    <a href="#" class="btn btn-default disabled">...</a>
                 </div>
             </div>
         </div>

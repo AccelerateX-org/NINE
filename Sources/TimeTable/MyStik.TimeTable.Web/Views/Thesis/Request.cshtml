@@ -1,0 +1,56 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisDetailModel
+@{
+    ViewBag.Title = "Antrag auf Anmeldung";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-file-o"></i> Antrag auf Anmeldung für meine Abschlussarbeit
+                </h4>
+                <div class="panel-body">
+                    <div class="alert alert-info">
+                        <h5>Hinweise</h5>
+                        <ul>
+                            <li>Vor der Anmeldung muss überprüft werden, ob die Voraussetzungen nach SPO erfüllt sind.</li>
+                            <li>Durch den Antrag auf Anmeldung wird <strong>kein Anmelde- bzw. kein Abgabedatum</strong> festgelegt.</li>
+                            <li>Die Angabe der Matrikelnummer ist im Einzelfall erforderlich, z.B. bei Rückfragen ans Prüfungsamt.</li>
+                        </ul>
+                    </div>
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                        ))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Name</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.User.FullName</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">EMail</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.User.Email</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Student.Number, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.Student.Number, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-question-circle-o"></i> Antrag stellen</button>
+                                <a href="@Url.Action("MyWork")" class="btn btn-default">Abbrechen</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

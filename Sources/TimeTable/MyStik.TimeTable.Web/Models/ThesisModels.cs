@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Models
@@ -74,6 +75,10 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class ThesisDetailModel
     {
+        public ApplicationUser User { get; set; }
+
+        public Student Student { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -221,6 +226,127 @@ namespace MyStik.TimeTable.Web.Models
         public string TitleEng { get; set; }
 
         public string IssueDate { get; set; }
+    }
+
+
+    public enum ThesisStage
+    {
+        Unknown,
+        InRequest,
+        InSearch,
+        InProgress,
+        InExamination
+    }
+
+    public class ThesisStateModel
+    {
+        public ApplicationUser User { get; set; }
+
+        public Student Student { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Thesis Thesis { get; set; }
+
+
+        public ThesisStage Stage
+        {
+            get
+            {
+                // Antrag gestellt ODERR
+                // Antrag wurde abgelehnt
+                if (!Thesis.ResponseDate.HasValue || 
+                    (Thesis.IsPassed.HasValue && !Thesis.IsPassed.Value) ||
+                    (Thesis.IsPassed.HasValue && Thesis.IsPassed.Value && !Thesis.Supervisors.Any()))
+                    return ThesisStage.InRequest;
+
+                if (!Thesis.IsAccepted.HasValue)
+                    return ThesisStage.InSearch;
+
+                return ThesisStage.Unknown;
+            }
+
+        }
+
+        public string StageText
+        {
+            get
+            {
+                switch (Stage)
+                {
+                    case ThesisStage.InRequest:
+                        return "Prüfung der Voraussetzungen";
+
+                    case ThesisStage.InSearch:
+                        return "Suche nach Betreunden";
+                }
+
+                return "Unbekannt";
+            }
+        }
+
+        public string StateText
+        {
+            get
+            {
+                switch (Stage)
+                {
+                    case ThesisStage.InRequest:
+                        if (Thesis.ResponseDate.HasValue)
+                            return Thesis.IsPassed.Value ? "Voraussetzungen erfüllt" : "Voraussetzungen nicht erfüllt";
+                        return "angefragt";
+
+                    case ThesisStage.InSearch:
+                        return "angefragt";
+                }
+
+                return "unbekannt";
+            }
+        }
+
+
+        public DateTime? LastActionDate
+        {
+            get
+            {
+                switch (Stage)
+                {
+                    case ThesisStage.InRequest:
+                        if (Thesis.ResponseDate.HasValue)
+                            return Thesis.ResponseDate;
+                        return Thesis.RequestDate;
+
+                    case ThesisStage.InSearch:
+                        return Thesis.ResponseDate;
+                }
+
+                return null;
+            }
+        }
+
+        public string LastActionUser
+        {
+            get
+            {
+                switch (Stage)
+                {
+                    case ThesisStage.InRequest:
+                        if (Thesis.ResponseDate.HasValue)
+                            return Thesis.RequestAuthority.FullName;
+                        return "Studierende(r)";
+
+                    case ThesisStage.InSearch:
+                        return "Studierende(r)";
+                }
+
+                return "unbekannt";
+            }
+        }
+
+
+
+
     }
 
 }

@@ -94,9 +94,10 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             }
 
                             game = new DrawingGame();
+                            game.UserId = subscription.UserId;
                             game.Student = student;
                             game.LotteryGame = lotteryGame;
-                            game.UserId = subscription.UserId;
+                            game.Lottery = Lottery;
 
                             Games.Add(game);
                         }
@@ -104,11 +105,11 @@ namespace MyStik.TimeTable.DataServices.Lottery
                         // Trennung von bereits erhaltenen Plätzen und Losen
                         if (subscription.OnWaitingList == false)
                         {
-                            var drawingLot = new DrawingSeat();
-                            drawingLot.Course = course;
-                            drawingLot.Subscription = subscription;
+                            var seat = new DrawingSeat();
+                            seat.Course = course;
+                            seat.Subscription = subscription;
 
-                            game.Seats.Add(drawingLot);
+                            game.Seats.Add(seat);
                         }
                         else
                         {
@@ -360,7 +361,6 @@ namespace MyStik.TimeTable.DataServices.Lottery
                                 Subscription = subscription
                             });
 
-
                             var lot = new DrawingLot();
                             lot.IsTouched = true;
                             lot.IsValid = true;
@@ -415,9 +415,16 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             subscription.OnWaitingList = false;
                             subscription.Priority = 0;
                             subscription.Occurrence = availableCourse.Course.Occurrence;
+
+                            // Die Subscription hinzufügen
                             availableCourse.Course.Occurrence.Subscriptions.Add(subscription);
 
-                            // TODO: Save!!!
+                            // Die Bookinglist aktualisieren
+                            availableCourse.BookingList.Bookings.Add(new Booking.Data.Booking
+                            {
+                                Student = game.Student,
+                                Subscription = subscription
+                            });
 
                             var lot = new DrawingLot();
                             lot.IsTouched = true;

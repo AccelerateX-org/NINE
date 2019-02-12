@@ -44,13 +44,13 @@
     </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="" class="btn btn-default btn-block">
+                <a href="" class="btn btn-default btn-block disabled">
                     <h4><i class="fa fa-3x fa-file-o"></i></h4>
                     <h5>Meine Abschlussarbeiten</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default">Anfragen</a>
-                    <a href="" class="btn btn-default">Abgaben</a>
+                    <a href="" class="btn btn-default disabled">Anfragen</a>
+                    <a href="" class="btn btn-default disabled">Abgaben</a>
                 </div>
             </div>
         </div>
@@ -58,13 +58,6 @@
 <div class="row">
     <div class="col-lg-12">
         <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
-            <!-- Indicators -->
-            <!--
-            <ol class="carousel-indicators">
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-            </ol>
-            -->
 
             <!-- Wrapper for slides -->
             <div class="carousel-inner" role="listbox">
@@ -151,8 +144,20 @@
                                     <h5>Studierende</h5>
                                 </a>
                                 <div class="btn-group btn-group-justified">
-                                    <a href="@Url.Action("Groups", "Courses", new {id=Model.Semester.Id})" class="btn btn-default">Gruppen @Model.Semester.Name</a>
-                                    <a href="@Url.Action("Groups", "Courses", new {id=Model.NextSemester.Id})" class="btn btn-default">Gruppen @Model.NextSemester.Name</a>
+                                    <a href="@Url.Action("Groups", "Courses", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                                    <a href="@Url.Action("Groups", "Courses", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-2">
+                            <div class="panel panel-default text-center">
+                                <a href="@Url.Action("Index", "Contacts")" class="btn btn-default btn-block disabled">
+                                    <h4><i class="fa fa-3x fa-industry"></i></h4>
+                                    <h5>Kontakte</h5>
+                                </a>
+                                <div class="btn-group btn-group-justified">
+                                    <a href="" class="btn btn-default disabled">...</a>
+                                    <a href="" class="btn btn-default disabled">...</a>
                                 </div>
                             </div>
                         </div>
@@ -160,6 +165,46 @@
                 </div>
 
                     <div class="item">
+                        <div class="row">
+                            <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="@Url.Action("Index", "Events")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-bullhorn"></i></h4>
+                                        <h5>Veranstaltungen</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="" class="btn btn-default disabled">...</a>
+                                        <a href="" class="btn btn-default disabled">...</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="@Url.Action("Index", "Advertisements")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-window-maximize"></i></h4>
+                                        <h5>Schaukasten</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="" class="btn btn-default disabled">...</a>
+                                        <a href="" class="btn btn-default disabled">...</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-2">
+                                <div class="panel panel-default text-center">
+                                    <a href="" class="btn btn-default btn-block disabled">
+                                        <h4><i class="fa fa-3x fa-bookmark"></i></h4>
+                                        <h5>Meine Module</h5>
+                                    </a>
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="" class="btn btn-default disabled">...</a>
+                                        <a href="" class="btn btn-default disabled">...</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div class="row">
                             <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
                                 <div class="panel panel-default text-center">
@@ -175,79 +220,39 @@
                             </div>
                             <div class="col-sm-6 col-md-3 col-lg-2">
                                 <div class="panel panel-default text-center">
-                                    <a href="@Url.Action("Index", "Events")" class="btn btn-default btn-block">
-                                        <h4><i class="fa fa-3x fa-bullhorn"></i></h4>
-                                        <h5>Veranstaltungen</h5>
+                                    <a href="@Url.Action("Index", "Thesis")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-files-o"></i></h4>
+                                        <h5>Abschlussarbeiten</h5>
                                     </a>
                                     <div class="btn-group btn-group-justified">
-                                        <a href="" class="btn btn-default">Heute</a>
-                                        <a href="" class="btn btn-default">Morgen</a>
+                                        <a href="@Url.Action("Delivery", "Thesis", new {id = Model.Semester.Id})" class="btn btn-default disabled">Abgaben</a>
+                                        <a href="@Url.Action("Archive", "Thesis", new {id = Model.NextSemester.Id})" class="btn btn-default disabled">Archiv</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-3 col-lg-2">
                                 <div class="panel panel-default text-center">
-                                    <a href="@Url.Action("Index", "Advertisements")" class="btn btn-default btn-block">
-                                        <h4><i class="fa fa-3x fa-window-maximize"></i></h4>
-                                        <h5>Schaukasten</h5>
+                                    <a href="@Url.Action("Index", "Admin")" class="btn btn-default btn-block">
+                                        <h4><i class="fa fa-3x fa-cogs"></i></h4>
+                                        <h5>Administration</h5>
                                     </a>
                                     <div class="btn-group btn-group-justified">
-                                        <a href="" class="btn btn-default">XXX</a>
-                                        <a href="" class="btn btn-default">XXX</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-3 col-lg-2">
-                                <div class="panel panel-default text-center">
-                                    <a href="" class="btn btn-default btn-block">
-                                        <h4><i class="fa fa-3x fa-bookmark"></i></h4>
-                                        <h5>Meine Module</h5>
-                                    </a>
-                                    <div class="btn-group btn-group-justified">
-                                        <a href="" class="btn btn-default">XXX</a>
-                                        <a href="" class="btn btn-default">XXX</a>
+                                        <a href="@Url.Action("Admins", "Organiser")" class="btn btn-default">Rechte & Rollen</a>
+                                        <a href="@Url.Action("Index", "Courses")" class="btn btn-default">Semester</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
-                    <div class="row">
-                        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
-                            <div class="panel panel-default text-center">
-                                <a href="@Url.Action("Index", "Contacts")" class="btn btn-default btn-block">
-                                    <h4><i class="fa fa-3x fa-industry"></i></h4>
-                                    <h5>Kontakte</h5>
-                                </a>
-                                <div class="btn-group btn-group-justified">
-                                    <a href="" class="btn btn-default">XXX</a>
-                                    <a href="" class="btn btn-default">XXX</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-3 col-lg-2">
-                            <div class="panel panel-default text-center">
-                                <a href="@Url.Action("Index", "Admin")" class="btn btn-default btn-block">
-                                    <h4><i class="fa fa-3x fa-cogs"></i></h4>
-                                    <h5>Administration</h5>
-                                </a>
-                                <div class="btn-group btn-group-justified">
-                                    <a href="@Url.Action("Admins", "Organiser")" class="btn btn-default">Rechte & Rollen</a>
-                                    <a href="@Url.Action("Index", "Courses")" class="btn btn-default">Semester</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
             <!-- Controls -->
             <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev" style="background-image: unset">
-                <span class="glyphicon glyphicon-chevron-left text-danger" aria-hidden="true"></span>
+                <span class="fa fa-3x fa-chevron-left text-danger" aria-hidden="true"></span>
                 <span class="sr-only">Previous</span>
             </a>
             <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next" style="background-image: unset">
-                <span class="glyphicon glyphicon-chevron-right text-danger" aria-hidden="true"></span>
+                <span class="fa fa-3x fa-chevron-right text-danger" aria-hidden="true"></span>
                 <span class="sr-only">Next</span>
             </a>
         </div>
