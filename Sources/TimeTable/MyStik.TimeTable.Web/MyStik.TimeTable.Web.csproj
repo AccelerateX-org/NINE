@@ -3220,6 +3220,7 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\angular.min.js.map" />
+    <None Include="Properties\PublishProfiles\XCopy.pubxml" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
@@ -4058,6 +4059,7 @@
     <Content Include="Views\Thesis\Approval.cshtml" />
     <Content Include="Views\Thesis\Deny.cshtml" />
     <Content Include="Views\Lottery\SimpleList.cshtml" />
+    <Content Include="Views\Dictionary\_GroupListByTopicNew.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

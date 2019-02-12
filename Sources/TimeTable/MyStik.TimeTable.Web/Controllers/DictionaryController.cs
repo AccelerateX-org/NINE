@@ -98,17 +98,20 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SemesterGroups.FirstOrDefault(x =>
                     x.CapacityGroup.Id == capGroup.Id && x.Semester.Id == semester.Id);
 
-            if (user.MemberState != MemberState.Staff && !semGroup.IsAvailable)
-            {
-                return View("NotAvailable", semGroup);
-            }
-
 
             var allTopics = Db.SemesterTopics
                 .Where(x => x.Activities.Any(s => s.SemesterGroups.Any(g => g.Id == semGroup.Id))).ToList();
 
-            return RedirectToAction(allTopics.Any() ? "GroupListByTopic" : "GroupList",
-                new {semId = semId, groupId = groupId});
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Organiser = capGroup.CurriculumGroup.Curriculum.Organiser,
+                Curriculum = capGroup.CurriculumGroup.Curriculum,
+                CapacityGroup = capGroup,
+                SemesterGroup = semGroup
+            };
+
+            return View(allTopics.Any() ? "GroupByTopic" : "Group", model);
         }
 
         public ActionResult GroupListByTopic(Guid semId, Guid groupId)
@@ -365,6 +368,176 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_GroupList", model);
         }
+
+
+        [HttpPost]
+        public PartialViewResult CourseListForTopic(Guid semGroupId, bool showPersonalDates)
+        {
+            var semGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
+            var semester = semGroup.Semester;
+            var capGroup = semGroup.CapacityGroup;
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Organiser = capGroup.CurriculumGroup.Curriculum.Organiser,
+                Curriculum = capGroup.CurriculumGroup.Curriculum,
+                CapacityGroup = capGroup,
+            };
+
+
+            model.SemesterGroup = semGroup;
+
+            var allTopics = Db.SemesterTopics.Where(x => x.Activities.Any(s => s.SemesterGroups.Any(g => g.Id == semGroup.Id))).ToList();
+
+
+            List<Course> activities = null;
+
+            if (Request.IsAuthenticated)
+            {
+                var user = GetCurrentUser();
+                activities = Db.Activities.OfType<Course>().Where(a =>
+                    a.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+            }
+
+            var courseService = new CourseService(Db);
+
+            foreach (var topic in allTopics)
+            {
+                var courses = topic.Activities.OfType<Course>().ToList();
+
+                var model2 = new List<CourseSummaryModel>();
+
+
+                foreach (var course in courses)
+                {
+                    var summary = courseService.GetCourseSummary(course);
+
+                    if (Request.IsAuthenticated)
+                    {
+                        var user = GetCurrentUser();
+
+                        var state = ActivityService.GetActivityState(course.Occurrence, user);
+
+                        summary.User = user;
+                        summary.Subscription = state.Subscription;
+
+                        summary.Lottery =
+                            Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+                        // Konflikte suchen
+                        foreach (var date in course.Dates)
+                        {
+                            var conflictingActivities = activities.Where(x => x.Dates.Any(d =>
+                                    (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                    (d.Begin >= date.Begin && d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                    (d.Begin <= date.Begin && d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                            )).ToList();
+
+                            if (conflictingActivities.Any())
+                            {
+                                foreach (var conflictingActivity in conflictingActivities.Where(x => x.Id != course.Id))        // nicht mit dem Vergleichen, wo selbst eingetragen
+                                {
+                                    summary.ConflictingDates[date] = new List<ActivityDate>();
+
+                                    var conflictingDates = conflictingActivity.Dates.Where(d =>
+                                            (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                            (d.Begin >= date.Begin &&
+                                             d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                            (d.Begin <= date.Begin &&
+                                             d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                                    ).ToList();
+
+                                    summary.ConflictingDates[date].AddRange(conflictingDates);
+                                }
+                            }
+
+                        }
+
+                    }
+
+
+                    model2.Add(summary);
+                }
+
+                model.Topics.Add(new TopicSummaryModel
+                {
+                    Topic = topic,
+                    Courses = model2
+                });
+
+            }
+
+            // jetzt noch die ohne Topics
+            var withoutTopic = semGroup.Activities.OfType<Course>().Where(x => !x.SemesterTopics.Any()).ToList();
+
+            if (withoutTopic.Any())
+            {
+                var model2 = new List<CourseSummaryModel>();
+
+                foreach (var course in withoutTopic)
+                {
+                    var summary = courseService.GetCourseSummary(course.Id);
+
+                    if (Request.IsAuthenticated)
+                    {
+                        var user = GetCurrentUser();
+
+                        var state = ActivityService.GetActivityState(course.Occurrence, user);
+
+                        summary.User = user;
+                        summary.Subscription = state.Subscription;
+
+                        summary.Lottery =
+                            Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
+
+                        // Konflikte suchen
+                        foreach (var date in course.Dates)
+                        {
+                            var conflictingActivities = activities.Where(x => x.Dates.Any(d =>
+                                    (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                    (d.Begin >= date.Begin && d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                    (d.Begin <= date.Begin && d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                            )).ToList();
+
+                            if (conflictingActivities.Any())
+                            {
+                                foreach (var conflictingActivity in conflictingActivities.Where(x => x.Id != course.Id))        // nicht mit dem Vergleichen, wo selbst eingetragen
+                                {
+                                    summary.ConflictingDates[date] = new List<ActivityDate>();
+
+                                    var conflictingDates = conflictingActivity.Dates.Where(d =>
+                                            (d.End > date.Begin && d.End <= date.End) || // Veranstaltung endet im Zeitraum
+                                            (d.Begin >= date.Begin &&
+                                             d.Begin < date.End) || // Veranstaltung beginnt im Zeitraum
+                                            (d.Begin <= date.Begin &&
+                                             d.End >= date.End) // Veranstaltung zieht sich über gesamten Zeitraum
+                                    ).ToList();
+
+                                    summary.ConflictingDates[date].AddRange(conflictingDates);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    model2.Add(summary);
+                }
+
+                model.Topics.Add(new TopicSummaryModel
+                {
+                    Topic = null,
+                    Courses = model2
+                });
+            }
+
+            return PartialView("_GroupListByTopicNew", model);
+        }
+
+
+
 
         private CourseSelectModel GetBookingStateModel(Guid id)
         {

@@ -70,10 +70,11 @@
             $('#loading').show();
             $.ajax(
                 {
-                    url: '@Url.Action("CourseListForTopicNew")',
+                    url: '@Url.Action("CourseListForTopic")',
                     type: 'POST',
                     data: {
-                        semGroupId: '@Model.SemesterGroup.Id'
+                        semGroupId: '@Model.SemesterGroup.Id',
+                        showPersonalDates: false
                     },
                     success: function (data, success, xhr) {
                         $("#calendar").html(data);
