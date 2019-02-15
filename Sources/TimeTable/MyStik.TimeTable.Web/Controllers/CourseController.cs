@@ -1450,6 +1450,19 @@ namespace MyStik.TimeTable.Web.Controllers
             return View();
         }
 
+        public ActionResult Create()
+        {
+            ViewBag.UserRight = GetUserRight();
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = GetMyOrganisation()
+            };
+
+            return View(model);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -2606,6 +2619,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new {id = course.Id});
         }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Freeze(Guid id)
+        {
+            var occurrence = Db.Activities.OfType<Course>().SingleOrDefault(oc => oc.Id == id);
+            occurrence.IsInternal = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult UnFreeze(Guid id)
+        {
+            var occurrence = Db.Activities.OfType<Course>().SingleOrDefault(oc => oc.Id == id);
+            occurrence.IsInternal = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+
 
         /// <summary>
         /// 

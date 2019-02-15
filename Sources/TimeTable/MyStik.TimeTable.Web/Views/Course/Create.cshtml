@@ -1,0 +1,72 @@
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Lehrveranstaltung anlegen";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h4>Neue Lehrveranstaltung anlegen</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("CreateCourseWizard", "Course")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-magic"></i></h4>
+                    <h5>Schnelleinstieg</h5>
+                    <p>Nur Basisangaben erforderlich</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("CreateCourse", "Course")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-hand-spock-o"></i></h4>
+                    <h5>Generischer Dialog</h5>
+                    <p>Größte Flexibilität, viele Einstellungen, komplexe Bedienung</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-calendar"></i>
+                        Zuletzt von mir angelegte Lehrveranstaltungen
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div id="CourseTable">
+                        <div>
+                            <i class="fa fa-spinner fa-spin text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function() {
+            $("#loading").hide();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetMyCourseList")',
+                    success: function(data, success, xhr) {
+                        $("#CourseTable").html(data);
+                    }
+                });
+
+        });
+
+    </script>
+
+}

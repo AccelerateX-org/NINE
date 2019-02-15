@@ -3,11 +3,11 @@
 <tr>
     @if (string.IsNullOrEmpty(Model.Name))
     {
-        <td><a href="@Url.Action("Admin", new {id = Model.Id})">Keine Bezeichnung</a></td>
+        <td><a href="@Url.Action("Details", new {id = Model.Id})">Keine Bezeichnung</a></td>
     }
     else
     {
-        <td><a href="@Url.Action("Admin", new {id = Model.Id})">@Model.Name</a></td>
+        <td><a href="@Url.Action("Details", new {id = Model.Id})">@Model.Name</a></td>
     }
     <td>@Model.Dates.Count</td>
     @if (Model.Dates.Count > 0)

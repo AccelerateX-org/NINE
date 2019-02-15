@@ -1,4 +1,5 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.HomeViewModel
 
 @{
@@ -21,6 +22,15 @@
                     <h4><i class="fa fa-book"></i> Vorlesungsverzeichnis nach Semestern</h4>
                 </div>
                 <div class="list-group">
+                    @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+                    {
+                        <div class="list-group-item">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Create", "Course")" class="btn btn-default"><i class="fa fa-plus"></i> LV anlegen</a>
+                            </div>
+                        </div>
+                    }
+
                     @foreach (var sem in Model.ActiveSemester)
                     {
                         <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item">

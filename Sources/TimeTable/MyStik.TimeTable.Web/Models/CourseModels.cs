@@ -491,6 +491,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ICollection<Guid> RoomIds { get; set; }
 
+        [Display(Name = "Beschreibung")]
         [AllowHtml]
         public string Description { get; set; }
     }

@@ -67,6 +67,11 @@ namespace MyStik.TimeTable.DataServices.Booking.Data
             get { return Bookings.Where(x => x.Subscription.OnWaitingList).ToList(); }
         }
 
+        public List<Booking> WaitingListWithPrio(int p)
+        {
+            return WaitingList.Where(x => x.Subscription.Priority == p).ToList();
+        }
+
         public int GetPosition(OccurrenceSubscription subscription)
         {
             var orderedWaiting = WaitingList.OrderBy(x => x.Subscription.TimeStamp).ToList();

@@ -31,6 +31,10 @@
                     <h4>Raumreservierungen (@Model.Organiser.ShortName)</h4>
                 </div>
                 <div class="panel-body">
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
+                    </div>
+
                     @if (ViewBag.UserRight.IsRoomAdmin)
                     {
                         <div class="btn-group" role="group">
@@ -39,49 +43,51 @@
                     }
                     <table id="tabReservation" class="table table-condensed">
                         <thead>
-                            <tr>
-                                <th>Bezeichnung</th>
-                                <th>Angelegt von</th>
-                                <th>Angelegt für</th>
-                                <th>Erster Termin</th>
-                                <th>Letzter Termin</th>
-                                <th>Räume</th>
-                            </tr>
+                        <tr>
+                            <th>Titel</th>
+                            <th>Beschreibung</th>
+                            <th>Angelegt von</th>
+                            <th>Angelegt für</th>
+                            <th>Erster Termin</th>
+                            <th>Letzter Termin</th>
+                            <th>Räume</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach (var res in Model.Reservations)
-                            {
-                                var rName = string.IsNullOrEmpty(res.Reservation.Name) ? "(ohne Bezeichnung)" : res.Reservation.Name;
-                                <tr>
-                                    <td><a href="@Url.Action("Details", new {id = res.Reservation.Id})">@rName</a></td>
-                                    @if (res.Owner != null)
-                                    {
-                                        <td>@res.Owner.FirstName @res.Owner.LastName</td>
-                                    }
-                                    else
-                                    {
-                                        <td>unbekannt</td>
-                                    }
-                                    <td>@Html.LecturerList(res.Hosts)</td>
-                                    @if (res.FirstDate != null)
-                                    {
-                                        <td>@Html.TimeSpanWithDate(res.FirstDate)</td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                    @if (res.LastDate != null)
-                                    {
-                                        <td>@Html.TimeSpanWithDate(res.LastDate)</td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                    <td>@Html.RoomList(res.Rooms)</td>
-                                </tr>
-                            }
+                        @foreach (var res in Model.Reservations)
+                        {
+                            var rName = string.IsNullOrEmpty(res.Reservation.Name) ? "(ohne Bezeichnung)" : res.Reservation.Name;
+                            <tr>
+                                <td><a href="@Url.Action("Details", new {id = res.Reservation.Id})">@rName</a></td>
+                                <td>@Html.Raw(res.Reservation.Description)</td>
+                                @if (res.Owner != null)
+                                {
+                                    <td>@res.Owner.FirstName @res.Owner.LastName</td>
+                                }
+                                else
+                                {
+                                    <td>unbekannt</td>
+                                }
+                                <td>@Html.LecturerList(res.Hosts)</td>
+                                @if (res.FirstDate != null)
+                                {
+                                    <td>@Html.TimeSpanWithDate(res.FirstDate)</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                @if (res.LastDate != null)
+                                {
+                                    <td>@Html.TimeSpanWithDate(res.LastDate)</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@Html.RoomList(res.Rooms)</td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
                 </div>

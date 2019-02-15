@@ -12,19 +12,20 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
-    [AllowAnonymous]
     public class DictionaryController : BaseController
     {
         public ActionResult Index()
         {
-            var model = new HomeViewModel();
+            var user = GetCurrentUser();
 
+            var model = new HomeViewModel();
 
             // Alle Semester mit veröffentlichten Semestergruppen
             var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any()).OrderByDescending(s => s.EndCourses).Take(4).ToList();
             foreach (var semester in allPublishedSemester)
             {
-                var activeOrgs = SemesterService.GetActiveOrganiser(semester, false);
+                var isStaff = user.MemberState == MemberState.Staff;
+                var activeOrgs = SemesterService.GetActiveOrganiser(semester, !isStaff);
 
                 var semModel = new SemesterActiveViewModel
                 {
@@ -35,6 +36,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveSemester.Add(semModel);
             }
 
+            ViewBag.UserRight = GetUserRight();
+
             return View(model);
         }
 
@@ -42,7 +45,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var semester = SemesterService.GetSemester(semId);
 
-            var curricula = SemesterService.GetActiveCurricula(semester, false).ToList();
+            var user = GetCurrentUser();
+            var isStaff = user.MemberState == MemberState.Staff;
+
+            var curricula = SemesterService.GetActiveCurricula(semester, !isStaff).ToList();
 
             var orgs = curricula.GroupBy(x => x.Organiser).Select(x => x.Key).OrderBy(x => x.ShortName).ToList();
 
@@ -98,6 +104,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SemesterGroups.FirstOrDefault(x =>
                     x.CapacityGroup.Id == capGroup.Id && x.Semester.Id == semester.Id);
 
+            if (user.MemberState != MemberState.Staff && !semGroup.IsAvailable)
+            {
+                return View("NotAvailable", semGroup);
+            }
 
             var allTopics = Db.SemesterTopics
                 .Where(x => x.Activities.Any(s => s.SemesterGroups.Any(g => g.Id == semGroup.Id))).ToList();

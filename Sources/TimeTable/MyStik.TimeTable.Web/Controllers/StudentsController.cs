@@ -676,7 +676,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var user = UserManager.FindById(student.UserId);
 
-            return RedirectToAction("CoursePlan", new {id=user.Id});
+            return RedirectToAction("Index");
         }
 
         public ActionResult Logs(Guid id)

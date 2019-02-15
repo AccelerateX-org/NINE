@@ -4060,6 +4060,8 @@
     <Content Include="Views\Thesis\Deny.cshtml" />
     <Content Include="Views\Lottery\SimpleList.cshtml" />
     <Content Include="Views\Dictionary\_GroupListByTopicNew.cshtml" />
+    <Content Include="Views\Course\Create.cshtml" />
+    <Content Include="Views\Mailing\InvalidModel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

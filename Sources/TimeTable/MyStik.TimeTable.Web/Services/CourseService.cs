@@ -558,15 +558,17 @@ namespace MyStik.TimeTable.Web.Services
                 bookingState.BookingLists = bookingLists;
                 bookingState.Init();
 
+                if (summary.Course.Dates.Any())
+                {
+                    var firstDate = summary.Course.Dates.Min(x => x.Begin);
+                    var lastDate = summary.Course.Dates.Max(x => x.End);
+                    var activities = Db.Activities.OfType<Course>()
+                        .Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId)) &&
+                                    x.Dates.Any(d => d.End >= firstDate && d.Begin <= lastDate)
+                        ).ToList();
 
-                var firstDate = summary.Course.Dates.Min(x => x.Begin);
-                var lastDate = summary.Course.Dates.Max(x => x.End);
-                var activities = Db.Activities.OfType<Course>()
-                    .Where(x => x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId)) &&
-                    x.Dates.Any(d => d.End >= firstDate && d.Begin <= lastDate)
-                    ).ToList();
-
-                model.Summary.ConflictingDates = GetConflictingDates(summary.Course, activities);
+                    model.Summary.ConflictingDates = GetConflictingDates(summary.Course, activities);
+                }
 
                 model.Student = student;
                 model.BookingState = bookingState;

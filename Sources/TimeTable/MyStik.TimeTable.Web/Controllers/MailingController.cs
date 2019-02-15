@@ -116,7 +116,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             else
             {
-                return View();
+                return View("InvalidModel");
             }
 
         }
