@@ -43,30 +43,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var courseList = new CourseService(Db).SearchCourses(semester.Name, searchText);
             foreach (var course in courseList)
             {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-
-                course.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-                course.Rooms.AddRange(rooms);
-
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
             }
 
             var nextCoursesList = new CourseService(Db).SearchCourses(nextSemester.Name, searchText);
             foreach (var course in nextCoursesList)
             {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-
-                course.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-                course.Rooms.AddRange(rooms);
-
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
             }
 

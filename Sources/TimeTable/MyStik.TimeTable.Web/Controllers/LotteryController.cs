@@ -1949,14 +1949,18 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var courseSummary = courseService.GetCourseSummary(course);
 
+                if (courseSummary.Course.Dates.Any())
+                {
+                    var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
+                    var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
 
-                var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
-                var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
+                    var activities = Db.Activities.OfType<Course>().Where(a =>
+                        a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
+                        a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
+                    courseSummary.ConflictingDates = courseService.GetConflictingDates(course, activities);
+                }
 
-                var activities = Db.Activities.OfType<Course>().Where(a =>
-                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
-                    a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
-                courseSummary.ConflictingDates = courseService.GetConflictingDates(course, activities);
+
                 courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
 
 
@@ -2898,13 +2902,18 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var course in service1.GetLotteryCourseList())
             {
                 var courseSummary = service.GetCourseSummary(course);
-                var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
-                var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
 
-                var activities = Db.Activities.OfType<Course>().Where(a =>
-                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
-                    a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
-                courseSummary.ConflictingDates = service.GetConflictingDates(course, activities);
+                if (courseSummary.Course.Dates.Any())
+                {
+                    var firstDate = courseSummary.Course.Dates.Min(x => x.Begin);
+                    var lastDate = courseSummary.Course.Dates.Max(x => x.Begin);
+
+                    var activities = Db.Activities.OfType<Course>().Where(a =>
+                        a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id)) &&
+                        a.Dates.Any(d => d.Begin >= firstDate && d.End <= lastDate)).ToList();
+                    courseSummary.ConflictingDates = service.GetConflictingDates(course, activities);
+                }
+
                 courseSummary.Subscription = service2.GetSubscription(course.Occurrence.Id, user.Id);
                 var bookingLists = new BookingService(Db).GetBookingLists(course.Occurrence.Id);
                 var state1 = new BookingState();
@@ -2925,7 +2934,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     flag = false;
                     builder.AppendLine("<li><i class=\"fa fa-li fa-lock\"></i>Lehrveranstaltung ist f\x00fcr Eintragungen gesperrt</li>");
                 }
-                if (state.MyBookingList.FreeSeats < 1)
+                if (state.MyBookingList != null && state.MyBookingList.FreeSeats < 1)
                 {
                     flag = false;
                     builder.AppendLine("<li><i class=\"fa fa-li fa-times\"></i>Keine freien Pl\x00e4tze verf\x00fcgbar</li>");

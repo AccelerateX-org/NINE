@@ -22,7 +22,7 @@
         <a href="#@linkDates" data-toggle="collapse">Termine</a>
     </h5>
     <div class="list-group collapse" id="@linkDates">
-        @foreach (var date in Model.ConflictingDates)
+        @foreach (var date in Model.ConflictingDates.OrderBy(x => x.Key.Begin))
         {
             if (date.Value.Any())
             {

@@ -22,3 +22,29 @@
         <div class="list-group-item-text">@Html.Raw(Model.Course.Description)</div>
     }
 </div>
+<div class="list-group-item">
+    @if (string.IsNullOrEmpty(Model.Course.UrlMoodleCourse) && string.IsNullOrEmpty(Model.Course.KeyMoodleCourse))
+    {
+        <h5 class="list-group-item-heading"><i>Keine Informationen zu Moodle vorhanden</i></h5>
+    }
+    else
+    {
+        <h5 class="list-group-item-heading">Moodle</h5>
+        <div class="list-group-item-text">
+            <ul class="fa-ul">
+                @if (!string.IsNullOrEmpty(Model.Course.UrlMoodleCourse))
+                {
+                    <li>
+                        <i class="fa fa-li fa-globe"></i>
+                        <a href="@Model.Course.UrlMoodleCourse" target="_blank">direkt zum Moodle Kurs <i class="fa fa-external-link"></i></a>
+                    </li>
+                }
+                @if (!string.IsNullOrEmpty(Model.Course.KeyMoodleCourse))
+                {
+                    <li><i class="fa fa-li fa-key"></i>Zugangsschlüssel <strong>@Model.Course.KeyMoodleCourse</strong></li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+

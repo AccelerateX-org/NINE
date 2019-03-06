@@ -214,7 +214,7 @@
                         GroupIds: groupList
                     },
                     success: function(data, success, xhr) {
-                        window.location.replace("@Url.Action("Admin", new {id = Model.Course.Id})");
+                        window.location.replace("@Url.Action("Details", new {id = Model.Course.Id})");
                     }
                 });
         }

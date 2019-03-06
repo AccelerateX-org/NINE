@@ -1396,7 +1396,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 SubscriptionLimit = 0,
                 DateOption = 0,
                 Text = string.Empty,
-                Semester = semester
+                Semester = semester,
+                NewDateEnd = semester.EndCourses.ToShortDateString()
             };
 
             SetTimeSelections();
@@ -1426,6 +1427,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var start = TimeSpan.Parse(model.StartTime);
             var end = TimeSpan.Parse(model.EndTime);
 
+            var lastDate = DateTime.Parse(model.NewDateEnd);
+
             var ohService = new OfficeHourService(Db);
 
             var request = new OfficeHourCreateRequest
@@ -1442,7 +1445,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 OrgId = org.Id,
                 SemesterId = semester.Id,
                 CreateDates = true,
-                Text = model.Description
+                Text = model.Description,
+                LastDate = lastDate
             };
 
             var officeHour = ohService.CreateOfficeHour(request);
@@ -1493,7 +1497,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = "Terminvereinbarung per E-Mail",
                 SlotsPerDate = 1,
                 MaxFutureSlots = 1,
-                Semester = semester
+                Semester = semester,
+                NewDateEnd = semester.EndCourses.ToShortDateString()
             };
 
             SetTimeSelections();
@@ -1522,6 +1527,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var start = TimeSpan.Parse(model.StartTime);
             var end = TimeSpan.Parse(model.EndTime);
 
+            var lastDate = DateTime.Parse(model.NewDateEnd);
+
             var ohService = new OfficeHourService(Db);
 
             var request = new OfficeHourCreateRequest
@@ -1540,7 +1547,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 CreateDates = true,
                 Text = model.Description,
                 SlotsPerDate = 1,
-                FutureSlots = model.MaxFutureSlots
+                FutureSlots = model.MaxFutureSlots,
+                LastDate = lastDate
             };
 
 

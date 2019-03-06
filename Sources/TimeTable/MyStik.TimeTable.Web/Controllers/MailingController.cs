@@ -116,6 +116,8 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             else
             {
+
+                ViewBag.ErrorMessage = "Fehler im Formular: " + ModelState.ToString();
                 return View("InvalidModel");
             }
 
@@ -501,7 +503,16 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             else
             {
-                return View();
+                if (groupList == null)
+                {
+                    ViewBag.ErrorMessage = "keine Gruppeninformationen mehr vorhanden.";
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.ErrorMessage = "Fehler im Formular: " + ModelState.ToString();
+                }
+                return View("InvalidModel");
             }
         }
 

@@ -135,9 +135,21 @@
                         }
                         else
                         {
-                            <li>
-                                <i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @course.CourseSummary.Course.Occurrence.Capacity Plätze - <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span>
-                            </li>
+                            if (@course.BookingState.MyBookingList != null)
+                            {
+                                if (@course.BookingState.MyBookingList.IsMisc)
+                                {
+                                    <li>
+                                        <i class="fa-li fa fa-ban"></i> In dieser Lehrveranstaltung werden die Plätze vorrangig an Studierende der angegebenen Studiengänge vergeben. Ihr Eintrag landet auf der Warteliste. Eine Vergabe von Plätzen erfolgt nach Absprache mit den jeweiligen Dozenten. 
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @course.CourseSummary.Course.Occurrence.Capacity Plätze - <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge badge-warning">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
+                                    </li>
+                                }
+                            }
                         }
                     }
                 </ul>

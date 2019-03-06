@@ -104,17 +104,21 @@ namespace MyStik.TimeTable.DataServices
             var semester = _db.Semesters.SingleOrDefault(s => s.Id == semId);
 
             if (semester != null)
-                return GetDays(semId, dayOfWeek, semester.StartCourses);
+                return GetDays(semId, dayOfWeek, semester.StartCourses, semester.EndCourses);
             return new List<DateTime>();
         }
 
         public ICollection<DateTime> GetDays(Guid semId, DateTime firstDate)
         {
-            return GetDays(semId, firstDate.DayOfWeek, firstDate);
+            var semester = _db.Semesters.SingleOrDefault(s => s.Id == semId);
+
+            if (semester != null)
+                return GetDays(semId, firstDate.DayOfWeek, firstDate, semester.EndCourses);
+            return new List<DateTime>();
         }
 
 
-        public ICollection<DateTime> GetDays(Guid semId, DayOfWeek dayOfWeek, DateTime start)
+        public ICollection<DateTime> GetDays(Guid semId, DayOfWeek dayOfWeek, DateTime start, DateTime end)
         {
             var semester = _db.Semesters.SingleOrDefault(s => s.Id == semId);
             if (semester == null)
@@ -129,7 +133,8 @@ namespace MyStik.TimeTable.DataServices
                 return dates;
 
             DateTime firstDate = start > semester.StartCourses ? start : semester.StartCourses;
-            
+            DateTime lastDate = end < semester.EndCourses ? end : semester.EndCourses;
+
             var semesterStartTag = (int)((DateTime)firstDate).DayOfWeek;
 
             var nDays = (int)dayOfWeek - semesterStartTag;
@@ -139,7 +144,7 @@ namespace MyStik.TimeTable.DataServices
             var occDate = firstDate.AddDays(nDays);
 
             //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
-            while (occDate <= semester.EndCourses)
+            while (occDate <= lastDate)
             {
                 var isVorlesung = true;
                 foreach (SemesterDate sd in semester.Dates)

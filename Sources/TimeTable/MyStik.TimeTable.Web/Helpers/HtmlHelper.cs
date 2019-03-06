@@ -91,11 +91,11 @@ namespace MyStik.TimeTable.Web.Helpers
                 {
                     if (string.IsNullOrEmpty(room.Number))
                     {
-                        sb.Append(htmlHelper.ActionLink("N.N.", "Calendar", "Room", new { id = room.Id }, null));
+                        sb.Append(htmlHelper.ActionLink("N.N.", "Details", "Room", new { id = room.Id }, null));
                     }
                     else
                     {
-                        sb.Append(htmlHelper.ActionLink(room.FullName, "Calendar", "Room", new { id = room.Id }, null));
+                        sb.Append(htmlHelper.ActionLink(room.FullName, "Details", "Room", new { id = room.Id }, null));
                     }
                 }
                 else

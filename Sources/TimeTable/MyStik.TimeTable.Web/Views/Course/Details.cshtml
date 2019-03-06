@@ -96,7 +96,19 @@
                                             }
                                         </ul>
                                     </div>
-                                </div>
+
+                                    @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                                    {
+                                        <a href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})" class="btn btn-default">
+                                            <i class="fa fa-user-circle-o"></i> Besitzer
+                                        </a>
+                                        <a href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})" class="btn btn-danger">
+                                            <i class="fa fa-trash-o"></i> Löschen
+                                        </a>
+                                    }
+
+                                
+                                    </div>
                             </div>
                         }
                     }
