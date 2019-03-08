@@ -204,11 +204,11 @@
                                 InsertionMode = InsertionMode.Replace,
                                 UpdateTargetId = "tabNewsletterAdmin"
                             },
-                            new {@class = "form form-inline", role = "form"}))
+                            new { @class = "form form-inline", role = "form" }))
                         {
                             <div class="form-group">
                                 <label for="newsletterAdminName">Suche nach:</label>
-                                <input type="text" name="newsletterAdminName" id="newsletterAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                                <input type="text" name="newsletterAdminName" id="newsletterAdminName" placeholder="Kurzname eingeben" class="form-control" />
                             </div>
                             <button type="submit" class="btn btn-primary">Hinzufügen</button>
                         }
@@ -254,7 +254,39 @@
                     @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsStudentAdmin).ToList())
                 </div>
             </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-group"></i> Prüfungen
+                    </div>
+                    <div class="actions">
 
+                        @using (Ajax.BeginForm("AddExamAdminRight", null, null,
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "tabExamAdmin"
+                            },
+                            new { @class = "form form-inline", role = "form" }))
+                        {
+                            <div class="form-group">
+                                <label for="roomAdminName">Suche nach:</label>
+                                <input type="text" name="examAdminName" id="examAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                        }
+
+
+                    </div>
+                </div>
+                <div id="tabExamAdmin" class="portlet-body">
+                    @{ ViewBag.AdminRight = "Exam"; }
+                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsExamAdmin).ToList())
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -472,6 +504,36 @@
             },
             select: function (event, ui) { }
         });
+
+        $('#examAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
 
 
     });

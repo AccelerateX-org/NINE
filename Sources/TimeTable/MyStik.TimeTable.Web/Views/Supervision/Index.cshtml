@@ -1,14 +1,65 @@
-﻿@model MyStik.TimeTable.Web.Models.SupervisionOverviewModel
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.SupervisionOverviewModel
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Meine Abschlussarbeiten";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Betreuungsangebote für Abschlussarbeiten - @Model.Organiser.ShortName</h1>
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Meine Abschlussarbeiten</h4>
+                </div>
+                <table id="tabThesis" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Matr.-Nummer</th>
+                            <th>Studiengang</th>
+                            <th>Status</th>
+                            <th>geplante Abgabe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var thesis in Model.Thesis)
+                        {
+                            <tr id="@thesis.Thesis.Id">
+                                <td>@thesis.User.FullName</td>
+                                <td>@thesis.Student.Number</td>
+                                <td>@thesis.Student.Curriculum.ShortName</td>
+                                <td>@thesis.GetStateMessage(Model.Member)</td>
+                                @if (thesis.Thesis.ExpirationDate.HasValue)
+                                {
+                                    <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Details</h4>
+                </div>
+                <div class="panel-body">
+                    <div id="subDetail">
+                        <h5>Keine Eintragung selektiert</h5>
+                    </div>
                 </div>
             </div>
         </div>
@@ -16,43 +67,44 @@
 </div>
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            @if (Model.Supervisions.Any())
-            {
-                foreach (var member in Model.Supervisions)
-                 {
-                     <div class="panel panel-default">
-                         <div class="panel-heading">
-                             <h4>@member.Key.Name</h4>
-                         </div>
-                         <div class="list-group">
-                             @foreach (var supervision in member.Value)
-                             {
-                                 <a href="@Url.Action("CreateRequest", new {id = supervision.Id})" class="list-group-item">
-                                     <div class="list-group-item-heading">
-                                         <h5>@supervision.Name</h5>
-                                     </div>
-                                     <div class="list-group-item-text">
-                                         @Html.Raw(supervision.Description)
-                                     </div>
-                                 </a>
-
-                             }
-                         </div>
-                     </div>
-                 }
-            }
-            else
-            {
-                <div class="alert alert-info">
-                    <h4>(Noch) Keine Betreuungsangebote vorhanden</h4>
-                </div>
-            }
-        </div>
-    </div>
-</div>
 
 
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
 
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabThesis').DataTable({
+                pageLength: 100
+            });
+
+            t.on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    t.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+
+                    var id = $(this).attr('id');
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("SupervisionState")',
+                            data: {
+                                id: id
+                            },
+                            success: function (data, success, xhr) {
+                                $("#subDetail").html(data);
+                            }
+                        });
+                }
+            } );
+
+        });
+    </script>
+}

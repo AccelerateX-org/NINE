@@ -1,0 +1,32 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.ThesisStateModel
+@{
+    ViewBag.Title = "Abschlussarbeit";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Antrag unvollständig</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Etwas hat gefehlt</h5>
+                        <div class="list-group-item-text">
+                            <ul class="fa-ul">
+                                <li><i class="fa fa-li fa-question"></i>Titel angegeben?</li>
+                                <li><i class="fa fa-li fa-question"></i>Geplanter Beginn angegeben?</li>
+                                <li><i class="fa fa-li fa-question"></i>Betreuer angegeben?</li>
+                            </ul>
+                        </div>
+                        <a href="@Url.Action("MyWork")" class="btn btn-primary">Zurück zur Startseite meiner Abschlussarbeit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

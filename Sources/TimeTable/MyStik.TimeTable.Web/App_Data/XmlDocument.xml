@@ -6270,7 +6270,7 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.Details(System.Guid)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.Approval(System.Guid)">
             <summary>
             Die Sicht des Studierenden
             </summary>
@@ -9348,6 +9348,13 @@
             
             </summary>
             <param name="studentAdminName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.OrganiserController.AddExamAdminRight(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="examAdminName"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.OrganiserController.DeleteAdminRight(System.Guid,System.String)">

@@ -22,14 +22,24 @@ namespace MyStik.TimeTable.Web.Models
     {
         public SupervisionOverviewModel()
         {
-            Supervisions = new Dictionary<OrganiserMember, List<Supervision>>();
+            Thesis = new List<ThesisStateModel>();
         }
 
         public ActivityOrganiser Organiser { get; set; }
 
-        public Dictionary<OrganiserMember, List<Supervision>> Supervisions { get; }
+        public OrganiserMember Member { get; set; }
 
+        public ICollection<ThesisStateModel> Thesis { get; set; }
     }
+
+    public class SupervisionDetailModel
+    {
+        public OrganiserMember Supervisor { get; set; }
+
+        public ThesisStateModel Thesis { get; set; }
+    }
+
+
 
     public class SupervisionRequestModel
     {

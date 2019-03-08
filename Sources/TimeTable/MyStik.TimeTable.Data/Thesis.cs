@@ -24,6 +24,10 @@ namespace MyStik.TimeTable.Data
 
         public string TitleEn { get; set; }
 
+        public string AbstractDe { get; set; }
+
+        public string AbstractEn { get; set; }
+
         /// <summary>
         /// Sperrvermerk - kann nur Studierende setzen
         /// </summary>
@@ -92,22 +96,23 @@ namespace MyStik.TimeTable.Data
         public string RequestMessage { get; set; }
 
         /// <summary>
-        /// Das Ergebnis des Antrags
+        /// Das Ergebnis des Antrags auf Annmeldung
         /// </summary>
         public bool? IsPassed { get; set; }
 
         /// <summary>
-        /// Das Datum, wenn der Prof die Arbeit annimmt
+        /// Das Datum des Antrags auf Betreuung
         /// </summary>
         public DateTime? AcceptanceDate { get; set; }
 
         /// <summary>
         /// Betreuung akzeptiert
+        /// Unnötig - in der Liste der Supervisors
         /// </summary>
         public bool? IsAccepted { get; set; }
 
-        public ICollection<Advisor> Advisors { get; set; }
+        virtual public ICollection<Advisor> Advisors { get; set; }
 
-        public ICollection<Supervisor> Supervisors { get; set; }
+        virtual public ICollection<Supervisor> Supervisors { get; set; }
     }
 }

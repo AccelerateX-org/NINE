@@ -293,41 +293,46 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                     }
 
                     // NEU: Chapter und Topics
-                    var chapter = curr.Chapters.FirstOrDefault(x => x.Name.Equals(scheduleGroup.ChapterName));
-                    if (chapter == null)
+                    if (!string.IsNullOrEmpty(scheduleGroup.ChapterName) &&
+                        !string.IsNullOrEmpty(scheduleGroup.TopicName))
                     {
-                        chapter = new CurriculumChapter
+                        var chapter = curr.Chapters.FirstOrDefault(x => x.Name.Equals(scheduleGroup.ChapterName));
+                        if (chapter == null)
                         {
-                            Curriculum = curr,
-                            Name = scheduleGroup.ChapterName
-                        };
-                        db.CurriculumChapters.Add(chapter);
-                    }
+                            chapter = new CurriculumChapter
+                            {
+                                Curriculum = curr,
+                                Name = scheduleGroup.ChapterName
+                            };
+                            db.CurriculumChapters.Add(chapter);
+                        }
 
-                    var topic = chapter.Topics.FirstOrDefault(x => x.Name.Equals(scheduleGroup.TopicName));
-                    if (topic == null)
-                    {
-                        topic = new CurriculumTopic
+                        var topic = chapter.Topics.FirstOrDefault(x => x.Name.Equals(scheduleGroup.TopicName));
+                        if (topic == null)
                         {
-                            Chapter = chapter,
-                            Name = scheduleGroup.TopicName
-                        };
-                        db.CurriculumTopics.Add(topic);
-                    }
+                            topic = new CurriculumTopic
+                            {
+                                Chapter = chapter,
+                                Name = scheduleGroup.TopicName
+                            };
+                            db.CurriculumTopics.Add(topic);
+                        }
 
-                    var semTopic = db.SemesterTopics.FirstOrDefault(x =>
-                        x.Semester.Id == sem.Id && x.Topic.Id == topic.Id);
+                        var semTopic = db.SemesterTopics.FirstOrDefault(x =>
+                            x.Semester.Id == sem.Id && x.Topic.Id == topic.Id);
 
-                    if (semTopic == null)
-                    {
-                        semTopic = new SemesterTopic
+                        if (semTopic == null)
                         {
-                            Semester = sem,
-                            Topic = topic,
-                        };
-                        db.SemesterTopics.Add(semTopic);
+                            semTopic = new SemesterTopic
+                            {
+                                Semester = sem,
+                                Topic = topic,
+                            };
+                            db.SemesterTopics.Add(semTopic);
+                        }
+
+                        semTopic.Activities.Add(course);
                     }
-                    semTopic.Activities.Add(course);
                 }
                 // else => Semestergruppe wird nicht angelegt
             }

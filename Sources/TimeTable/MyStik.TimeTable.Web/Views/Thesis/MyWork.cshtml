@@ -1,4 +1,6 @@
-﻿@model MyStik.TimeTable.Web.Models.ThesisDetailModel
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.ThesisStateModel
 @{
     ViewBag.Title = "Abschlussarbeit";
 }
@@ -11,110 +13,119 @@
                     <h4>Meine Abschlussarbeit im Studiengang @Model.Student.Curriculum.ShortName</h4>
                 </div>
                 <div class="list-group">
-                    @if (Model.Thesis == null)
+                    @if (Model.ConditionRequest == RequestState.None)
                     {
-                        <a href="@Url.Action("Request")" class="list-group-item list-group-item-info">
-                            <h5 class="list-group-item-heading">1. Antrag auf Anmeldung stellen</h5>
+                        <a href="@Url.Action("Request")" class="list-group-item">
+                            <h5 class="list-group-item-heading">Antrag auf Anmeldung</h5>
                             <div class="list-group-item-text">
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Habe ich die Voraussetzungen bereits erfüllt?</li>
-                                    <li><i class="fa fa-li fa-envelope-o"></i>Werde per E-Mail benachtrichtigt, sobald das Ergebnis vorliegt.</li>
+                                    <li><i class="fa fa-li fa-question-circle"></i>Es wird überprüft, ob ich alle Voraussetzungen für die Anmeldung/Ausgabe einer Abschlussarbeit nach der für mich gültigen SPO erfüllt habe.</li>
+                                    <li><i class="fa fa-li fa-clock-o"></i>Die Prüfung erfolgt manuell. Es ist mit einer Bearbeitungszeit von mehren Tagen ggf. Wochen zu rechnen.</li>
+                                    <li><i class="fa fa-li fa-envelope-o"></i>Sobald das Ergebnis vorliegt, werde ich per E-Mail benachtrichtigt.</li>
                                 </ul>
                             </div>
                         </a>
-                        <div class="list-group-item disabled">
-                            <h5 class="list-group-item-heading">2. Betreuer suchen</h5>
+                    }
+                    else if (Model.ConditionRequest == RequestState.InProgress)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">Antrag auf Anmeldung <i class="fa fa-cog fa-spin text-primary"></i></h5>
                             <div class="list-group-item-text">
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Es wird eine E-Mail ans Prüfungsam gesendet.</li>
-                                    <li><i class="fa fa-li fa-check"></i>Im Prüfungsamt wird überprüft, ob die Voraussetzungen erfüllt sind.</li>
-                                    <li><i class="fa fa-li fa-envelope-o"></i>Werde benachtrichtigt, sobald Ergebnis vorliegt.</li>
+                                    <li><i class="fa fa-li fa-info-circle"></i>Mein Antrag vom @Model.Thesis.RequestDate wird noch bearbeitet.</li>
+                                    <li><i class="fa fa-li fa-envelope-o"></i>Sobald das Ergebnis vorliegt, werde ich per E-Mail benachtrichtigt.</li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="list-group-item disabled">
-                            <h5 class="list-group-item-heading">3. Arbeit anmelden</h5>
+
+                    }
+                    else if (Model.ConditionRequest == RequestState.Accepted)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="list-group-item-heading">Antrag auf Anmeldung <i class="fa fa-check text-success"></i></h5>
                             <div class="list-group-item-text">
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Thema angeben.</li>
-                                    <li><i class="fa fa-li fa-check"></i>Betreuer angeben.</li>
-                                    <li><i class="fa fa-li fa-envelope-o"></i>Ansprechpartner im Unternehmen angeben.</li>
+                                    <li><i class="fa fa-li fa-info-circle"></i>Der Antrag wurde am @Model.Thesis.RequestDate.Value von @Model.Thesis.RequestAuthority.FullName genehmigt.</li>
                                 </ul>
                             </div>
                         </div>
+                    }
+
+                    @if (Model.ConditionRequest == RequestState.None)
+                    {
+
                         <div class="list-group-item disabled">
-                            <h5 class="list-group-item-heading">4. Arbeit abgeben</h5>
+                            <h5 class="list-group-item-heading">Antrag auf Betreuung</h5>
                             <div class="list-group-item-text">
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Im Sekretariat.</li>
-                                    <li><i class="fa fa-li fa-check"></i>Abgabe wird bestätigt.</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="list-group-item disabled">
-                            <h5 class="list-group-item-heading">4. Arbeit bewerten</h5>
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Macht Betreuer.</li>
+                                    <li><i class="fa fa-li fa-exclamation"></i>Es muss zuerst der Antrag auf Anmeldung gestellt werden.</li>
                                 </ul>
                             </div>
                         </div>
                     }
                     else
                     {
-                        if (Model.Thesis.RequestDate.HasValue)
+                        if (Model.SupervisionRequest == RequestState.None || Model.SupervisionRequest == RequestState.Rejected)
                         {
-                            if (!Model.Thesis.ResponseDate.HasValue)
-                            {
-                                <div class="list-group-item list-group-item-warning">
-                                    <h5 class="list-group-item-heading">Antrag auf Anmeldung gestellt</h5>
-                                    <div class="list-group-item-text">
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-clock-o"></i>@Model.Thesis.RequestDate.ToString()</li>
-                                            <li><i class="fa fa-li fa-envelope-o"></i>Noch keine Antwort erhalten.</li>
-                                        </ul>
-                                    </div>
+                            <a href="@Url.Action("Supervision", new {id = Model.Thesis.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">Antrag auf Betreuung</h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-question-circle"></i>Im Antrag gebe ich den geplanten Titel und den Beginn der Bearbeitung an.</li>
+                                        <li><i class="fa fa-li fa-envelope-o"></i>Sobald das Ergebnis vorliegt, werde ich per E-Mail benachtrichtigt.</li>
+                                    </ul>
                                 </div>
-                            }
-                            else
-                            {
-                                if (Model.Thesis.IsPassed.Value)
-                                {
-                                    <div class="list-group-item list-group-item-success">
-                                        <h5 class="list-group-item-heading">1. Voraussetzungen erfüllt</h5>
-                                        <div class="list-group-item-text">
-                                            <ul class="fa-ul">
-                                                <li><i class="fa fa-li fa-question-circle"></i>Habe die Voraussetzungen erfüllt!</li>
-                                                <li><i class="fa fa-li fa-envelope-o"></i>Mein Antrag wurde am @Model.Thesis.ResponseDate.ToString() von @Model.Thesis.RequestAuthority.FullName genehmigt.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="list-group-item list-group-item-info">
-                                        <h5 class="list-group-item-heading">2. Betreuende suchen</h5>
-                                        <div class="list-group-item-text">
-                                            <ul class="fa-ul">
-                                                <li><i class="fa fa-li fa-question-circle"></i>Anfragen an Betreuuende stellen (auch mehrere).</li>
-                                                <li><i class="fa fa-li fa-check"></i>Die Betreuenden sehen, wer alles angefragt wurde. First come - first serve</li>
-                                                <li><i class="fa fa-li fa-envelope-o"></i>Werde benachtrichtigt, sobald Ergebnis vorliegt.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("Request")" class="list-group-item list-group-item-danger">
-                                        <h5 class="list-group-item-heading">1. Neuen Antrag auf Anmeldung stellen</h5>
-                                        <div class="list-group-item-text">
-                                            <ul class="fa-ul">
-                                                <li><i class="fa fa-li fa-question-circle"></i>Habe ich die Voraussetzungen bereits erfüllt?</li>
-                                                <li><i class="fa fa-li fa-envelope-o"></i>Mein letzter Antrag wurde am @Model.Thesis.ResponseDate.ToString() von @Model.Thesis.RequestAuthority.FullName abgelehnt</li>
-                                                <li><i class="fa fa-li fa-pencil"></i>Grund: @Model.Thesis.RequestMessage</li>
-                                            </ul>
-                                        </div>
-                                    </a>
-                                    
-                                }
-                            }
+                            </a>
+                        }
+                        else if (Model.SupervisionRequest == RequestState.InProgress)
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">Antrag auf Anmeldung <i class="fa fa-cog fa-spin text-primary"></i></h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-info-circle"></i>Bisher noch keine Antwort</li>
+                                    </ul>
+                                    <p>Angefragt wurden</p>
+                                    <ul class="fa-ul">
+                                        @foreach (var supervisor in Model.Thesis.Supervisors)
+                                        {
+                                            if (supervisor.AcceptanceDate.HasValue)
+                                            {
+                                                <li><i class="fa fa-check text-success"></i>@supervisor.Member.FullName am @supervisor.AcceptanceDate.Value.ToShortDateString()</li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa fa-question text-danger"></i>@supervisor.Member.FullName keine Antwort</li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                        else // Accepted
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">Antrag auf Betreuung <i class="fa fa-check text-success"></i></h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-info-circle"></i>Der Antrag auf Betreuung wurde angenommen.</li>
+                                    </ul>
+                                    <p>Meine Betreuer sind</p>
+                                    <ul class="fa-ul">
+                                        @foreach (var supervisor in Model.Thesis.Supervisors)
+                                        {
+                                            if (supervisor.AcceptanceDate.HasValue)
+                                            {
+                                                <li><i class="fa fa-check text-success"></i>@supervisor.Member.FullName am @supervisor.AcceptanceDate.Value.ToShortDateString()</li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa fa-question text-danger"></i>@supervisor.Member.FullName keine Antwort</li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
                         }
                     }
                 </div>

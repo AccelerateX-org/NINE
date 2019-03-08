@@ -238,6 +238,14 @@ namespace MyStik.TimeTable.Web.Models
         InExamination
     }
 
+    public enum RequestState
+    {
+        None,
+        InProgress,
+        Accepted,
+        Rejected
+    }
+
     public class ThesisStateModel
     {
         public ApplicationUser User { get; set; }
@@ -249,104 +257,93 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public Thesis Thesis { get; set; }
 
-
-        public ThesisStage Stage
+        public RequestState ConditionRequest
         {
             get
             {
-                // Antrag gestellt ODERR
-                // Antrag wurde abgelehnt
-                if (!Thesis.ResponseDate.HasValue || 
-                    (Thesis.IsPassed.HasValue && !Thesis.IsPassed.Value) ||
-                    (Thesis.IsPassed.HasValue && Thesis.IsPassed.Value && !Thesis.Supervisors.Any()))
-                    return ThesisStage.InRequest;
+                // noch keine Arbeit oder noch kein Antrag gestellt
+                if (Thesis?.RequestDate == null)
+                    return RequestState.None;
 
-                if (!Thesis.IsAccepted.HasValue)
-                    return ThesisStage.InSearch;
+                // Antrag gestellt, noch keine Antwort
+                if (!Thesis.ResponseDate.HasValue)
+                    return RequestState.InProgress;
 
-                return ThesisStage.Unknown;
+                // Antrag angenommen
+                if (Thesis.IsPassed.HasValue && Thesis.IsPassed.Value)
+                    return RequestState.Accepted;
+
+                // Antrag abgelehnt
+                return RequestState.Rejected;
             }
-
         }
 
-        public string StageText
+        public RequestState SupervisionRequest
         {
             get
             {
-                switch (Stage)
+                // keine Betreuer
+                if (!Thesis.Supervisors.Any())
                 {
-                    case ThesisStage.InRequest:
-                        return "Prüfung der Voraussetzungen";
-
-                    case ThesisStage.InSearch:
-                        return "Suche nach Betreunden";
+                    // alle haben abgelehnt => dann gab es schon eine Anfrage
+                    if (Thesis.AcceptanceDate.HasValue)
+                        return RequestState.Rejected;
+                    // noch keinen Antrag gestellt
+                    return RequestState.None;
                 }
 
-                return "Unbekannt";
+                // Es muss mindestens einer angenommen haben
+                if (Thesis.Supervisors.Any(x => x.AcceptanceDate.HasValue))
+                    return RequestState.Accepted;
+
+                return RequestState.InProgress;
             }
         }
 
-        public string StateText
+        public string GetStateMessage(OrganiserMember member)
         {
-            get
-            {
-                switch (Stage)
-                {
-                    case ThesisStage.InRequest:
-                        if (Thesis.ResponseDate.HasValue)
-                            return Thesis.IsPassed.Value ? "Voraussetzungen erfüllt" : "Voraussetzungen nicht erfüllt";
-                        return "angefragt";
+            var nSupervisors = Thesis.Supervisors.Count;
+            var didIAccepted = Thesis.Supervisors.Any(x => x.Member.Id == member.Id && x.AcceptanceDate.HasValue);
 
-                    case ThesisStage.InSearch:
-                        return "angefragt";
+            if (nSupervisors == 1)
+            {
+                if (didIAccepted)
+                    return "Arbeit angenommen";
+
+                return "Betreuungsanfrage";
+            }
+
+            var nAccepted = Thesis.Supervisors.Count(x => x.AcceptanceDate.HasValue);
+
+            if (nAccepted == 0)
+                return $"Betreuungsanfrage bei {nSupervisors} Lehrenden.";
+
+            if (didIAccepted)
+            {
+                if (nAccepted == 1)
+                {
+                    return
+                        $"Arbeit wurde von mir angenommen. Von {nSupervisors - 1} Lehrenden steht die Antwort noch aus.";
                 }
 
-                return "unbekannt";
+                return $"Arbeit wurde von mir und {nAccepted - 1} Lehrenden angenommen.";
             }
-        }
 
+            if (nAccepted > 0)
+                return $"Arbeit wurde bereits von {nAccepted} Lehrenden angenommen.";
 
-        public DateTime? LastActionDate
-        {
-            get
-            {
-                switch (Stage)
-                {
-                    case ThesisStage.InRequest:
-                        if (Thesis.ResponseDate.HasValue)
-                            return Thesis.ResponseDate;
-                        return Thesis.RequestDate;
-
-                    case ThesisStage.InSearch:
-                        return Thesis.ResponseDate;
-                }
-
-                return null;
-            }
-        }
-
-        public string LastActionUser
-        {
-            get
-            {
-                switch (Stage)
-                {
-                    case ThesisStage.InRequest:
-                        if (Thesis.ResponseDate.HasValue)
-                            return Thesis.RequestAuthority.FullName;
-                        return "Studierende(r)";
-
-                    case ThesisStage.InSearch:
-                        return "Studierende(r)";
-                }
-
-                return "unbekannt";
-            }
+            return "Betreuungsanfrage";
         }
 
 
 
+    }
 
+    public class ThesisSupervisionModel
+    {
+        public Thesis Thesis { get; set; }
+
+        public Guid OrganiserId { get; set; }
     }
 
 }

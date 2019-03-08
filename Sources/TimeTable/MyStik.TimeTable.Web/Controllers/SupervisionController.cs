@@ -16,26 +16,29 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
+            var member = GetMyMembership();
 
-            var supervisions = Db.Activities.OfType<Supervision>().Where(x =>
-                x.Owners.Any(m => m.Member.Organiser.Id == org.Id)).ToList();
+            var userService = new UserInfoService();
 
+            var theses = Db.Theses.Where(x => x.Supervisors.Any(m => m.Member.Id == member.Id)).ToList();
 
             var model = new SupervisionOverviewModel();
             model.Organiser = org;
+            model.Member = member;
 
-            foreach (var supervision in supervisions)
+
+            foreach (var thesis in theses)
             {
-                foreach (var owner in supervision.Owners)
+                var tm = new ThesisStateModel
                 {
-                    if (!model.Supervisions.ContainsKey(owner.Member))
-                    {
-                        model.Supervisions[owner.Member] = new List<Supervision>();
-                    }
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
 
-                    model.Supervisions[owner.Member].Add(supervision);
-                }
+                model.Thesis.Add(tm);
             }
+
 
             return View(model);
         }
@@ -240,39 +243,96 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult AcceptRequest(Guid id)
         {
-            var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>()
-                .SingleOrDefault(x => x.Id == id);
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+            var member = GetMyMembership();
+            var user = GetCurrentUser();
 
-            var supervision = Db.Activities.OfType<Supervision>()
-                .SingleOrDefault(x => x.Occurrence.Id == subscription.Occurrence.Id);
+            var supervision = thesis.Supervisors.FirstOrDefault(x => x.Member.Id == member.Id);
+            supervision.AcceptanceDate = DateTime.Now;
+            Db.SaveChanges();
 
-            var subInfoService = new SemesterSubscriptionService();
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            // TODO: E-Mail versenden
+            var userService = new UserInfoService();
 
-            var model = new SupervisionAcceptModel();
-            model.User = GetUser(subscription.UserId);
-            model.Curriculum = subInfoService.GetBestCurriculum(subscription.UserId, semester);
-            model.Request.Subscription = subscription;
-            model.Request.Supervision = supervision;
-            model.Request.Lecturer = supervision.Owners.First().Member;
-
-            // alle anderen
-            var list = Db.Activities.OfType<Supervision>().Where(x =>
-                x.Occurrence.Id != subscription.Occurrence.Id &&
-                x.Occurrence.Subscriptions.Any(u => u.UserId.Equals(subscription.UserId))).ToList();
-
-            foreach (var item in list)
+            var tm = new ThesisStateModel
             {
-                var request = new SupervisionRequestModel();
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
 
-                request.Lecturer = item.Owners.First().Member;
-                request.Supervision = item;
-                request.Subscription = item.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(subscription.UserId));
+            var mailService = new ThesisMailService();
+            mailService.SendSupervisionRequestAccept(tm, member, user);
 
-                model.AlternativeRequests.Add(request);
+            return RedirectToAction("Index");
+        }
+
+
+        public ActionResult RejectRequest(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+            var member = GetMyMembership();
+            var user = GetCurrentUser();
+
+            var supervision = thesis.Supervisors.FirstOrDefault(x => x.Member.Id == member.Id);
+
+            if (supervision != null)
+            {
+                thesis.Supervisors.Remove(supervision);
+                Db.Supervisors.Remove(supervision);
+
+                Db.SaveChanges();
             }
 
-            return View(model);
+            // TODO: E-Mail versenden
+            var userService = new UserInfoService();
+
+            var tm = new ThesisStateModel
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            var mailService = new ThesisMailService();
+            mailService.SendSupervisionRequestDeny(tm, member, user);
+
+            return RedirectToAction("Index");
+        }
+
+
+
+        [HttpPost]
+        public PartialViewResult SupervisionState(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            var tm = new ThesisStateModel
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            var member = GetMyMembership();
+
+            var model = new SupervisionDetailModel
+            {
+                Thesis = tm,
+                Supervisor = member
+            };
+
+            var didIAccepted = thesis.Supervisors.Any(x => x.Member.Id == member.Id && x.AcceptanceDate.HasValue);
+
+            // Habe noch nicht reagiert
+            if (!didIAccepted)
+                return PartialView("_StateRequest", model);
+
+            // ich habe angenommen (sonst taucht es eh nicht auf)
+            // aktuell noch unklar
+            return PartialView("_StateUnknown", model);
         }
     }
 }

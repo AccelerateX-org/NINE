@@ -65,23 +65,23 @@
                                     }
                                 </td>
                             </tr>
-                        <tr>
-                            <td><strong>Personen</strong></td>
-                            <td>Anlegen, Ändern, Löschen von Personen innerhalb eines Veranstalters (z.B. Fakultät)</td>
-                            <td>
-                                @foreach (var member in Model.Members.Where(m => m.Member.IsMemberAdmin))
-                                {
-                                    if (member.User != null)
+                            <tr>
+                                <td><strong>Personen</strong></td>
+                                <td>Anlegen, Ändern, Löschen von Personen innerhalb eines Veranstalters (z.B. Fakultät)</td>
+                                <td>
+                                    @foreach (var member in Model.Members.Where(m => m.Member.IsMemberAdmin))
                                     {
-                                        <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        if (member.User != null)
+                                        {
+                                            <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@member.Member.ShortName (@member.Member.Name)</div>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <div>@member.Member.ShortName (@member.Member.Name)</div>
-                                    }
-                                }
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                             <tr>
                                 <td><strong>Lehrveranstaltungen</strong></td>
                                 <td>Anlegen, Ändern, Löschen von Lehrveranstaltungen für Dritte, z.B. Import von Stundenplandaten</td>
@@ -136,23 +136,23 @@
                                     }
                                 </td>
                             </tr>
-                        <tr>
-                            <td><strong>Studiengänge</strong></td>
-                            <td>Anlegen, Ändern, Löschen von Studiengängen und Modulkatalogen</td>
-                            <td>
-                                @foreach (var member in Model.Members.Where(m => m.Member.IsCurriculumAdmin))
-                                {
-                                    if (member.User != null)
+                            <tr>
+                                <td><strong>Studiengänge</strong></td>
+                                <td>Anlegen, Ändern, Löschen von Studiengängen und Modulkatalogen</td>
+                                <td>
+                                    @foreach (var member in Model.Members.Where(m => m.Member.IsCurriculumAdmin))
                                     {
-                                        <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        if (member.User != null)
+                                        {
+                                            <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@member.Member.ShortName (@member.Member.Name)</div>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <div>@member.Member.ShortName (@member.Member.Name)</div>
-                                    }
-                                }
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                             <tr>
                                 <td><strong>Newsletter</strong></td>
                                 <td>Anlegen, Ändern, Löschen von Newslettern</td>
@@ -170,23 +170,40 @@
                                     }
                                 </td>
                             </tr>
-                        <tr>
-                            <td><strong>Students</strong></td>
-                            <td>Einladen von Studierenden, Verwaltung von Angaben zum Studium</td>
-                            <td>
-                                @foreach (var member in Model.Members.Where(m => m.Member.IsStudentAdmin))
-                                {
-                                    if (member.User != null)
+                            <tr>
+                                <td><strong>Students</strong></td>
+                                <td>Einladen von Studierenden, Verwaltung von Angaben zum Studium</td>
+                                <td>
+                                    @foreach (var member in Model.Members.Where(m => m.Member.IsStudentAdmin))
                                     {
-                                        <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        if (member.User != null)
+                                        {
+                                            <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@member.Member.ShortName (@member.Member.Name)</div>
+                                        }
                                     }
-                                    else
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Prüfungen</strong></td>
+                                <td>Aktuell nur Abschlussarbeiten</td>
+                                <td>
+                                    @foreach (var member in Model.Members.Where(m => m.Member.IsExamAdmin))
                                     {
-                                        <div>@member.Member.ShortName (@member.Member.Name)</div>
+                                        if (member.User != null)
+                                        {
+                                            <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@member.Member.ShortName (@member.Member.Name)</div>
+                                        }
                                     }
-                                }
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

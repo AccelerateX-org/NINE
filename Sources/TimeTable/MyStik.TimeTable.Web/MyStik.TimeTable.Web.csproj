@@ -563,6 +563,7 @@
     <Compile Include="Services\StudentService.cs" />
     <Compile Include="Services\SubscriptionMailService.cs" />
     <Compile Include="Services\SubscriptionService.cs" />
+    <Compile Include="Services\ThesisMailService.cs" />
     <Compile Include="Services\UserInfoService.cs" />
     <Compile Include="Services\WpmService.cs" />
     <Compile Include="Startup.cs" />
@@ -4062,6 +4063,19 @@
     <Content Include="Views\Dictionary\_GroupListByTopicNew.cshtml" />
     <Content Include="Views\Course\Create.cshtml" />
     <Content Include="Views\Mailing\InvalidModel.cshtml" />
+    <Content Include="Views\Thesis\NoAccess.cshtml" />
+    <Content Include="Views\Thesis\_StateThesisDetails.cshtml" />
+    <Content Include="Views\Thesis\_StateConditionRequest.cshtml" />
+    <Content Include="Views\Thesis\_StateUnknown.cshtml" />
+    <Content Include="Views\Thesis\Supervision.cshtml" />
+    <Content Include="Views\Thesis\RequestIncomplete.cshtml" />
+    <Content Include="Views\Emails\ThesisMailTemplate.cshtml" />
+    <Content Include="Views\Emails\ThesisMailTemplate.Html.cshtml" />
+    <Content Include="Views\Supervision\_StateUnknown.cshtml" />
+    <Content Include="Views\Supervision\_ThesisDetailView.cshtml" />
+    <Content Include="Views\Supervision\_StateRequest.cshtml" />
+    <Content Include="Views\Emails\ThesisSupervisionRequest.cshtml" />
+    <Content Include="Views\Emails\ThesisSupervisionRequest.Html.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

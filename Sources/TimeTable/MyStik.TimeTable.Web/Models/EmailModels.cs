@@ -196,5 +196,19 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+    public class ThesisEmail : BaseEmail
+    {
+        public ThesisEmail(string registration) : base(registration)
+        {
+        }
+
+        public ThesisStateModel Thesis { get; set; }
+
+        public OrganiserMember Member { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public string Body { get; set; }
+    }
 
 }

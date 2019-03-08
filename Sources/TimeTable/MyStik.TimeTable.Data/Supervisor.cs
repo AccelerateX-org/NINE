@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
+    /// <summary>
+    /// Nur Betreuer
+    /// Ablehnungen werden nicht gespeichert - Dokumentation nur über die E-Mails
+    /// </summary>
     public class Supervisor
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,5 +19,15 @@ namespace MyStik.TimeTable.Data
         public virtual OrganiserMember Member { get; set; }
 
         public virtual Thesis Thesis { get; set; }
+
+        /// <summary>
+        /// Das Datum, wenn der Prof die Arbeit annimmt
+        /// </summary>
+        public DateTime? AcceptanceDate { get; set; }
+
+        /// <summary>
+        /// Eine bemerkung, auch Erstkorrektor, Zweitkorrektor
+        /// </summary>
+        public string Remark { get; set; }
     }
 }

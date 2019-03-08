@@ -1218,6 +1218,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_MemberRow", list);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="examAdminName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddExamAdminRight(string examAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(examAdminName));
+
+            if (member != null && !member.IsExamAdmin)
+            {
+                member.IsExamAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsExamAdmin).ToList();
+            ViewBag.AdminRight = "Exam";
+
+            return PartialView("_MemberRow", list);
+        }
+
 
         /// <summary>
         /// 
@@ -1257,13 +1280,17 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     member.IsEventAdmin = false;
                 }
-                if (right.Equals("Newsletter") && member.IsEventAdmin)
+                if (right.Equals("Newsletter") && member.IsNewsAdmin)
                 {
                     member.IsNewsAdmin = false;
                 }
-                if (right.Equals("Student") && member.IsEventAdmin)
+                if (right.Equals("Student") && member.IsStudentAdmin)
                 {
-                    member.IsNewsAdmin = false;
+                    member.IsStudentAdmin = false;
+                }
+                if (right.Equals("Exam") && member.IsExamAdmin)
+                {
+                    member.IsExamAdmin = false;
                 }
 
                 Db.SaveChanges();

@@ -1,0 +1,40 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.SupervisionDetailModel
+
+<div class="list-group-item">
+    <h5 class="list-group-item-heading">@Model.Thesis.User.FullName (@Model.Thesis.Student.Number)</h5>
+    <div class="list-group-item-text">
+        <ul class="fa-ul">
+            <li><i class="fa fa-li fa-book"></i> @Model.Thesis.Student.Curriculum.ShortName (@Model.Thesis.Student.FirstSemester.Name)</li>
+            <li><i class="fa fa-li fa-file-o"></i>Thema: @Model.Thesis.Thesis.TitleDe</li>
+            <li><i class="fa fa-li fa-calendar-o"></i>Anfrage gestellt am: @Model.Thesis.Thesis.AcceptanceDate.Value.ToShortDateString()</li>
+            @if (Model.Thesis.Thesis.Supervisors.Count > 1)
+            {
+                <li>
+                    <i class="fa fa-li fa-user-md"></i>Ebenfalls angefragt wurden:
+                    <ul>
+                        @foreach (var s in Model.Thesis.Thesis.Supervisors)
+                        {
+                            <li>@s.Member.FullName</li>
+                        }
+                    </ul>
+                </li>
+            }
+            @if (Model.Thesis.ConditionRequest == RequestState.InProgress)
+            {
+                <li><i class="fa fa-li fa-spin fa-cog"></i>Prüfung der Voraussetzungen in Bearbeitung</li>
+            }
+            @if (Model.Thesis.ConditionRequest == RequestState.Accepted)
+            {
+                <li><i class="fa fa-li fa-check"></i>Voraussetzungen erfüllt</li>
+            }
+            @if (Model.Thesis.ConditionRequest == RequestState.Rejected)
+            {
+                <li><i class="fa fa-li fa-times"></i>Voraussetzungen NICHT erfüllt</li>
+            }
+        </ul>
+
+    </div>
+</div>
+
+

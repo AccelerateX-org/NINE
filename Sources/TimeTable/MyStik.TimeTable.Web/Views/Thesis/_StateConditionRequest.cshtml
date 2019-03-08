@@ -1,0 +1,4 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisStateModel
+
+<a href="@Url.Action("Approval", new {id=Model.Thesis.Id})" class="btn btn-primary">Antrag auf Anmeldung bearbeiten</a>
+<a href="@Url.Action("Delete", new {id=Model.Thesis.Id})" class="btn btn-danger">Arbeit löschen</a>

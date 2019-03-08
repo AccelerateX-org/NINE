@@ -1,0 +1,10 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.SupervisionDetailModel
+
+<div class="list-group">
+    @Html.Partial("_ThesisDetailView", Model)
+    <div class="list-group-item">
+        <a href="@Url.Action("AcceptRequest", new {id = Model.Thesis.Thesis.Id})" class="btn btn-primary"><i class="fa fa-check"></i>Betreuung annehmen</a>
+        <a href="@Url.Action("RejectRequest", new {id = Model.Thesis.Thesis.Id})" class="btn btn-danger"><i class="fa fa-times"></i>Betreuung ablehnen</a>
+    </div>
+</div>

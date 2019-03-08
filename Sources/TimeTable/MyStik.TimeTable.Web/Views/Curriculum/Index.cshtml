@@ -148,6 +148,15 @@
                     </h5>
                     <p class="list-group-item-text">Löscht, aber nur wenn es keine Semestergruppen gibt.</p>
                 </a>
+                @if (Request.IsLocal)
+                {
+                    <a href="@Url.Action("Repair", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-fw fa-trash-o"></i> Reparieren
+                        </h5>
+                        <p class="list-group-item-text">Löscht Chapter und Topics</p>
+                    </a>
+                }
             </div>
         </div>
 }

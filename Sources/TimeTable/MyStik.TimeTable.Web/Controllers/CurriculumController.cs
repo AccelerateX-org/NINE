@@ -1332,5 +1332,30 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("AdminContentModule", new {id = accreditation.Id});
         }
+
+        public ActionResult Repair(Guid id)
+        {
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            foreach (var chapter in curriculum.Chapters.ToList())
+            {
+                foreach (var topic in chapter.Topics.ToList())
+                {
+                    foreach (var semesterTopic in topic.SemesterTopics.ToList())
+                    {
+                        Db.SemesterTopics.Remove(semesterTopic);
+                    }
+
+                    Db.CurriculumTopics.Remove(topic);
+                }
+
+                Db.CurriculumChapters.Remove(chapter);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", new {id = id});
+        }
+
     }
 }

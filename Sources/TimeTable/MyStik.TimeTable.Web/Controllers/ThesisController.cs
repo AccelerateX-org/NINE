@@ -23,8 +23,16 @@ namespace MyStik.TimeTable.Web.Controllers
             // der aktuelle Benutzer
             var org = GetMyOrganisation();
 
+            var userRight = GetUserRight(org);
+
             var theses = Db.Theses.Where(x => 
                 x.Student.Curriculum.Organiser.Id == org.Id).ToList();
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("NoAccess");
+            }
+
 
             var model = new List<ThesisStateModel>();
 
@@ -41,7 +49,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = userRight;
 
             return View(model);
         }
@@ -54,7 +62,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
 
-            var model = new ThesisDetailModel
+            var model = new ThesisStateModel
             {
                 User = user,
                 Student = student,
@@ -64,6 +72,25 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult RequestIncomplete()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+
+            var model = new ThesisStateModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis
+            };
+
+            return View(model);
+        }
+
+
+
         public ActionResult Request()
         {
             var user = GetCurrentUser();
@@ -71,7 +98,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
             // Eine evtl. vorhandene alte Anfrage löschen
-            if (thesis.RequestAuthority != null)
+            if (thesis?.RequestAuthority != null)
             {
                 thesis.ResponseDate = null;
                 thesis.IsPassed = null;
@@ -374,11 +401,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Details(Guid id)
+        public ActionResult Approval(Guid id)
         {
             var userService = new UserInfoService();
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
 
             var model = new ThesisStateModel
             {
@@ -388,13 +414,6 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.UserRight = GetUserRight();
-
-            switch (model.Stage)
-            {
-                case ThesisStage.InRequest:
-                    return View("Approval", model);
-            }
-
 
             return View(model);
         }
@@ -417,11 +436,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-
         [HttpPost]
         public ActionResult Deny(ThesisDetailModel model)
         {
             var member = GetMyMembership();
+            var user = GetCurrentUser();
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
@@ -432,7 +451,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new {id = thesis.Id});
+            // TODO: E-Mail versenden
+            var userService = new UserInfoService();
+
+            var tm = new ThesisStateModel
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            var mailService = new ThesisMailService();
+            mailService.SendConditionRequestDeny(tm, member, user);
+
+
+            return RedirectToAction("Index");
         }
 
 
@@ -440,6 +473,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Approve(ThesisDetailModel model)
         {
             var member = GetMyMembership();
+            var user = GetCurrentUser();
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
@@ -449,9 +483,120 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+            // TODO: E-Mail versenden
+            var userService = new UserInfoService();
+
+            var tm = new ThesisStateModel
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            var mailService = new ThesisMailService();
+            mailService.SendConditionRequestAccept(tm, member, user);
+
+
+
+            return RedirectToAction("Index");
         }
 
+
+        public ActionResult Supervision(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+
+            var model = new ThesisSupervisionModel
+            {
+                Thesis = thesis,
+                OrganiserId = thesis.Student.Curriculum.Organiser.Id
+            };
+
+
+            // Liste aller Fakultäten
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult RequestSupervision(Guid id, string Name, string ShortName, string Date, Guid[] DozIds)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            if (thesis == null || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Date) || DozIds == null || !DozIds.Any())
+            {
+                return Json(new {result = "Redirect", url = Url.Action("RequestIncomplete")});
+            }
+
+
+
+            thesis.TitleDe = Name;
+            thesis.AbstractDe = ShortName;
+            thesis.AcceptanceDate = DateTime.Now;
+
+            var issueDate = DateTime.Today;
+
+            if (!string.IsNullOrEmpty(Date))
+            {
+                issueDate = DateTime.Parse(Date);
+            }
+            if (issueDate < DateTime.Today)
+                issueDate = DateTime.Today;
+
+            thesis.IssueDate = issueDate;
+            thesis.ExpirationDate = issueDate.AddMonths(6).AddDays(-1);
+
+            foreach (var dozId in DozIds)
+            {
+                var member = Db.Members.SingleOrDefault(x => x.Id == dozId);
+
+                if (member != null && thesis.Supervisors.All(x => x.Member.Id != member.Id))
+                {
+                    var supervisor = new Supervisor
+                    {
+                        Thesis = thesis,
+                        Member = member
+                    };
+                    thesis.Supervisors.Add(supervisor);
+                    Db.Supervisors.Add(supervisor);
+                }
+            }
+
+            Db.SaveChanges();
+
+            var mailService = new ThesisMailService();
+            var userService = new UserInfoService();
+
+            foreach (var supervisor in thesis.Supervisors)
+            {
+
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                var user = userService.GetUser(supervisor.Member.UserId);
+
+                if (user != null)
+                {
+                    mailService.SendSupervisionRequest(tm, supervisor.Member, user);
+                }
+
+            }
+
+
+            return Json(new { result = "Redirect", url = Url.Action("MyWork") });
+        }
 
 
 
@@ -705,6 +850,39 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public PartialViewResult ThesisState(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            var tm = new ThesisStateModel
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            // Welches Detail anzeigen?
+            // Antrag auf Anmeldung
+            if (tm.ConditionRequest == RequestState.InProgress)
+            {
+                return PartialView("_StateConditionRequest", tm);
+            }
+
+            // Antrag auf Betreuung => nur theoretisch :-)
+
+            // Antrag auf Verlängerung
+
+            // Abgae
+
+            // Notenmeldung => nur theoretisch :-)
+
+            // Default
+            return PartialView("_StateUnknown", tm);
         }
     }
     }
