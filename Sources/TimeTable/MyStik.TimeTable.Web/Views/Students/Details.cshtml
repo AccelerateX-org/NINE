@@ -38,17 +38,45 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Studiensemester</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Studiengänge</h4>
+                        </div>
+                        <div class="list-group">
+                            @foreach (var student in Model.Students.OrderByDescending(x => x.FirstSemester.StartCourses))
+                            {
+                                <a class="list-group-item" href="@Url.Action("Curriculum", new {id=student.Id})">
+                                    @if (student.LastSemester != null)
+                                    {
+                                        <h5 class="list-group-item-heading">@student.Curriculum.ShortName (@student.FirstSemester.Name - @student.LastSemester.Name)</h5>
+                                    }
+                                    else
+                                    {
+                                        <h5 class="list-group-item-heading">@student.Curriculum.ShortName (seit @student.FirstSemester.Name)</h5>
+                                    }
+                                </a>
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div class="list-group">
-                    @foreach (var semesterViewModel in Model.Semester.OrderByDescending(x => x.Semester.StartCourses))
-                    {
-                        <a class="list-group-item" href="@Url.Action("CoursePlan", new {id=Model.User.Id, semid=semesterViewModel.Semester.Id})">
-                            <span class="badge badge-info">@semesterViewModel.Courses.Count LVs</span><h5 class="list-group-item-heading">@semesterViewModel.Semester.Name</h5>
-                        </a>
-                    }
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Studiensemester</h4>
+                        </div>
+                        <div class="list-group">
+                            @foreach (var semesterViewModel in Model.Semester.OrderByDescending(x => x.Semester.StartCourses))
+                            {
+                                <a class="list-group-item" href="@Url.Action("CoursePlan", new {id = Model.User.Id, semid = semesterViewModel.Semester.Id})">
+                                    <span class="badge badge-info">@semesterViewModel.Courses.Count LVs</span><h5 class="list-group-item-heading">@semesterViewModel.Semester.Name</h5>
+                                </a>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,12 +99,26 @@
                     <div class="list-group">
                         <a class="list-group-item" href="@Url.Action("ChangeCurriculum", new {id = Model.Student.Id})">
                             <div class="list-group-item-heading">
-                                <h5>Studiengang ändern</h5>
+                                <h5>Studiengang korrigieren</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                <p>Verändert den aktuellen Studiengang</p>
                             </div>
                         </a>
                         <a class="list-group-item" href="@Url.Action("ChangeNumber", new {id = Model.Student.Id})">
                             <div class="list-group-item-heading">
                                 <h5>Matrikelnummer erfassen</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                <p>Verändert den aktuellen Studiengang</p>
+                            </div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("SwitchCurriculum", new {id = Model.Student.Id})">
+                            <div class="list-group-item-heading">
+                                <h5>Studiengang wechseln</h5>
+                            </div>
+                            <div class="list-group-item-text">
+                                <p>Beendet den aktuellen Studiengang und beginnt einen neuen</p>
                             </div>
                         </a>
                         <a class="list-group-item" href="@Url.Action("Logs", new {id = Model.Student.Id})">
@@ -108,4 +150,5 @@
         </div>
     </div>
 </div>
+
 

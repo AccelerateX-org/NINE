@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
@@ -308,5 +309,34 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+
+        public ActionResult ChangeNumber(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = UserManager.FindById(student.UserId);
+
+            var model = new CurriculumSubscriptionViewModel();
+            model.User = user;
+            model.Student = student;
+            model.Number = student.Number;
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult ChangeNumber(CurriculumSubscriptionViewModel model)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
+            var user = UserManager.FindById(student.UserId);
+
+            student.Number = model.Number;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Curricula");
+        }
+
     }
 }

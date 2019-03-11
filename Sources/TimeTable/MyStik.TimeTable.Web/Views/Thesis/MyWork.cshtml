@@ -50,20 +50,20 @@
                             </div>
                         </div>
                     }
-
-                    @if (Model.ConditionRequest == RequestState.None)
+                    else
                     {
-
-                        <div class="list-group-item disabled">
-                            <h5 class="list-group-item-heading">Antrag auf Betreuung</h5>
+                        <a href="@Url.Action("Request")" class="list-group-item list-group-item-danger">
+                            <h5 class="list-group-item-heading">Antrag auf Anmeldung - wurde am @Model.Thesis.ResponseDate von @Model.Thesis.RequestAuthority.FullName abgelehnt</h5>
                             <div class="list-group-item-text">
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-exclamation"></i>Es muss zuerst der Antrag auf Anmeldung gestellt werden.</li>
+                                    <li><i class="fa fa-li fa-question-circle"></i>Begründung: @Model.Thesis.RequestMessage</li>
+                                    <li><i class="fa fa-li fa-exclamation"></i>Neuen Antrag stellen.</li>
                                 </ul>
                             </div>
-                        </div>
+                        </a>
                     }
-                    else
+
+                    @if (Model.ConditionRequest == RequestState.Accepted)
                     {
                         if (Model.SupervisionRequest == RequestState.None || Model.SupervisionRequest == RequestState.Rejected)
                         {

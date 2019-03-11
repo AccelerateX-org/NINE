@@ -253,6 +253,7 @@ namespace MyStik.TimeTable.Web.Models
         public StudentDetailViewModel()
         {
             Semester = new List<StudentSemesterViewModel>();
+            Students = new List<Student>();
         }
 
         public Student Student { get; set; }
@@ -260,6 +261,8 @@ namespace MyStik.TimeTable.Web.Models
         public ApplicationUser User { get; set; }
 
         public List<StudentSemesterViewModel> Semester { get; set; }
+
+        public List<Student> Students { get; set; }
 
     }
 

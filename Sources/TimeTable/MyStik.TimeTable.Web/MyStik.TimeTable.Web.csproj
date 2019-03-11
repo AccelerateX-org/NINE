@@ -4076,6 +4076,9 @@
     <Content Include="Views\Supervision\_StateRequest.cshtml" />
     <Content Include="Views\Emails\ThesisSupervisionRequest.cshtml" />
     <Content Include="Views\Emails\ThesisSupervisionRequest.Html.cshtml" />
+    <Content Include="Views\Students\Curriculum.cshtml" />
+    <Content Include="Views\Students\SwitchCurriculum.cshtml" />
+    <Content Include="Views\Subscription\ChangeNumber.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

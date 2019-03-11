@@ -37,174 +37,121 @@
 </div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>Belegte Kurse im Semester @Model.Semester.Name</h4>
                 </div>
                 <table class="table table-bordered table-striped table-condensed">
                     <thead>
-                        <tr>
-                            <th></th>
-                            <th>Bezeichnung</th>
-                            <th>Gruppe(n)</th>
-                            <th>Dozent(en)</th>
-                            <th>Eingeschrieben am</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th></th>
+                        <th>Bezeichnung</th>
+                        <th>Gruppe(n)</th>
+                        <th>Dozent(en)</th>
+                        <th>Eingeschrieben am</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.CourseSubscriptions)
-                        {
-                            var linkText = item.CourseSummary.Course.Name + " (" + item.CourseSummary.Course.ShortName + ")";
+                    @foreach (var item in Model.CourseSubscriptions)
+                    {
+                        var linkText = item.CourseSummary.Course.Name + " (" + item.CourseSummary.Course.ShortName + ")";
 
-                            var myLapCount = item.Subscription.LapCount;
-                            var myLotPotSize = item.Subscription.Occurrence.Subscriptions.Count(x => x.OnWaitingList && x.LapCount >= myLapCount);
-                            var nCap = item.Subscription.Occurrence.Capacity;
-                            var nConfirmed = item.Subscription.Occurrence.Subscriptions.Count(x => x.IsConfirmed);
-                            var nReserved = item.Subscription.Occurrence.Subscriptions.Count(x => !x.IsConfirmed && !x.OnWaitingList);
-                            var nWaiting = item.Subscription.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
+                        var myLapCount = item.Subscription.LapCount;
+                        var myLotPotSize = item.Subscription.Occurrence.Subscriptions.Count(x => x.OnWaitingList && x.LapCount >= myLapCount);
+                        var nCap = item.Subscription.Occurrence.Capacity;
+                        var nConfirmed = item.Subscription.Occurrence.Subscriptions.Count(x => x.IsConfirmed);
+                        var nReserved = item.Subscription.Occurrence.Subscriptions.Count(x => !x.IsConfirmed && !x.OnWaitingList);
+                        var nWaiting = item.Subscription.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
 
 
-                            <tr>
-                                @if (item.CourseSummary.Lottery != null)
-                                {
-                                    <td><i class="fa fa-random"></i></td>
+                        <tr>
+                            @if (item.CourseSummary.Lottery != null)
+                            {
+                                <td><i class="fa fa-random"></i></td>
 
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
 
-                                <td>
-                                    @Html.ActionLink(linkText, "Index", "Course", new { id = item.CourseSummary.Course.Id }, null)
-                                </td>
-                                <td>
-                                    @Html.GroupList(item.CourseSummary.Course.SemesterGroups)
-                                </td>
-                                <td>
-                                    @Html.LecturerList(item.CourseSummary.Lecturers)
-                                </td>
-                                <td>@item.Subscription.TimeStamp</td>
+                            <td>
+                                @Html.ActionLink(linkText, "Index", "Course", new { id = item.CourseSummary.Course.Id }, null)
+                            </td>
+                            <td>
+                                @Html.GroupList(item.CourseSummary.Course.SemesterGroups)
+                            </td>
+                            <td>
+                                @Html.LecturerList(item.CourseSummary.Lecturers)
+                            </td>
+                            <td>@item.Subscription.TimeStamp</td>
 
-                                @if (item.Subscription.OnWaitingList)
-                                    {
-                                        <td><i class="fa fa-hourglass-half"></i></td>
-                                    }
-                                    else
-                                    {
-                                        <td><i class="fa fa-group"></i></td>
-                                    }
+                            @if (item.Subscription.OnWaitingList)
+                            {
+                                <td><i class="fa fa-hourglass-half"></i></td>
+                            }
+                            else
+                            {
+                                <td><i class="fa fa-group"></i></td>
+                            }
                                 
 
-                            </tr>
-                        }
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="list-group">
-                    <a class="list-group-item" href="mailto:@Model.User.Email">
-                        <div class="list-group-item-heading">
-                            <h5><i class="fa fa-envelope-o"></i> E-Mail senden</h5>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        @if (ViewBag.UserRight.IsStudentAdmin && Model.Student != null)
-        {
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
-                </div>
-                <div class="list-group">
-                    <a class="list-group-item" href="@Url.Action("ChangeCurriculum", new {id = Model.Student.Id})">
-                        <div class="list-group-item-heading">
-                            <h5>Studiengang ändern</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="@Url.Action("ChangeNumber", new {id = Model.Student.Id})">
-                        <div class="list-group-item-heading">
-                            <h5>Matrikelnummer erfassen</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="@Url.Action("Logs", new {id = Model.Student.Id})">
-                        <div class="list-group-item-heading">
-                            <h5>Logdaten ansehen</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="@Url.Action("Subscribe", new {id = Model.Student.Id})">
-                        <div class="list-group-item-heading">
-                            <h5>Eintragen</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="@Url.Action("Unsubscribe", new {id = Model.Student.Id})">
-                        <div class="list-group-item-heading">
-                            <h5>Austragen</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item list-group-item-danger" href="@Url.Action("DeleteStudent", new {id = Model.Student.Id})">
-                        <div class="list-group-item-heading">
-                            <h5>Student löschen</h5>
-                        </div>
-                        <div class="list-group-item-text">
-                            Löscht lediglich die Zuordnung zum Studiengang. Studierende muss sich neu festlegen.
-                        </div>
-                    </a>
-                </div>
-            </div>
-        }
-        </div>
     </div>
     <div class="row">
-    <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Tagesplan (nur Termine mit Status "Teilnehmer")</h4>
-            </div>
-            <table class="table table-condensed">
-                <thead>
-                <tr>
-                    <th>Datum</th>
-                    <th>Von</th>
-                    <th>Bis</th>
-                    <th>Lehrveranstaltung</th>
-                </tr>
-                <tbody>
-                @foreach (var courseDate in Model.CourseDates.OrderBy(x => x.Day))
-                {
-                    var n = courseDate.Dates.Count;
-                    var ordered = courseDate.Dates.OrderBy(x => x.Begin).ToList();
-
-                    foreach (var activityDate in ordered)
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Tagesplan (nur Termine mit Status "Teilnehmer")</h4>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Von</th>
+                        <th>Bis</th>
+                        <th>Lehrveranstaltung</th>
+                    </tr>
+                    <tbody>
+                    @foreach (var courseDate in Model.CourseDates.OrderBy(x => x.Day))
                     {
-                        if (activityDate.Equals(ordered.First()))
+                        var n = courseDate.Dates.Count;
+                        var ordered = courseDate.Dates.OrderBy(x => x.Begin).ToList();
+
+                        foreach (var activityDate in ordered)
                         {
-                            <tr>
-                                <td rowspan="@n">@courseDate.Day.ToShortDateString()</td>
-                                <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
-                                <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
-                                <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
-                                <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
-                                <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
-                            </tr>
+                            if (activityDate.Equals(ordered.First()))
+                            {
+                                <tr>
+                                    <td rowspan="@n">@courseDate.Day.ToShortDateString()</td>
+                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@activityDate.Begin.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.End.TimeOfDay.ToString("hh\\:mm")</td>
+                                    <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                                </tr>
+                            }
                         }
                     }
-                }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
 
+            </div>
         </div>
     </div>
 </div>
-</div>
+

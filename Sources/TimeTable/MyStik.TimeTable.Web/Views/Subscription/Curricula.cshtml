@@ -21,7 +21,7 @@
                             <p>Es können beliebig viele Studiengänge angegeben werden. Aktuell wird nur der zuletzt angelegte Studiengang für Wahlverfahren etc. verwendet.</p>
                         </div>
                     </div>
-                    @foreach (var student in Model)
+                    @foreach (var student in Model.OrderByDescending(x => x.FirstSemester.StartCourses))
                     {
                         <div class="list-group-item">
                             <h5 class="list-group-item-heading">
@@ -41,6 +41,9 @@
                                     }
                                     <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Created</li>
                                 </ul>
+                            </div>
+                            <div class="btn btn-group">
+                                <a href="@Url.Action("ChangeNumber", new {id = student.Id})" class="btn btn-primary">Matrikelnummer eingeben / ändern</a>
                             </div>
                         </div>
                     }

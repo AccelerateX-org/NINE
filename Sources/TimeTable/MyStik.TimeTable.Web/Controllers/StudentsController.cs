@@ -463,8 +463,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = UserManager.FindById(id);
 
             model.User = user;
-            model.Student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
-                .FirstOrDefault();
+            model.Students = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created).ToList();
+            model.Student = model.Students.FirstOrDefault();
 
             var semester = SemesterService.GetSemester(DateTime.Today);
             var org = GetMyOrganisation();
@@ -567,6 +567,15 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+
+        public ActionResult Curriculum(Guid id)
+        {
+            var model = Db.Students.SingleOrDefault(x => x.Id == id);
+
+            return View(model);
+        }
+
+
         public ActionResult Remove(Guid id)
         {
             var member = Db.Members.SingleOrDefault(x => x.Id == id);
@@ -628,6 +637,74 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new {id = user.Id});
         }
+
+
+        public ActionResult SwitchCurriculum(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = UserManager.FindById(student.UserId);
+            var org = GetMyOrganisation();
+
+            var model = new CurriculumSubscriptionViewModel();
+            model.User = user;
+            model.Student = student;
+            model.CurrId = student.Curriculum.Id;
+            model.SemId = student.FirstSemester.Id;
+            model.IsDual = student.IsDual;
+            model.IsPartTime = student.IsPartTime;
+
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+            var futureDate = DateTime.Today.AddDays(180);
+
+            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= futureDate).OrderBy(x => x.StartCourses)
+                .Select(f => new SelectListItem
+                    {
+                        Text = f.Name,
+                        Value = f.Id.ToString(),
+                    }
+                );
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult SwitchCurriculum(CurriculumSubscriptionViewModel model)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
+            var user = UserManager.FindById(student.UserId);
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+
+            // Das ist jetzt ein neuer Studiengang
+
+            // Zuerst den alten Studiengang beenden
+            var lastSemester = SemesterService.GetPreviousSemester(semester);
+            student.LastSemester = lastSemester;
+
+
+            var studentNew = new Student();
+
+            studentNew.UserId = user.Id;
+            studentNew.Created = DateTime.Now;
+            studentNew.Curriculum = curr;
+            studentNew.FirstSemester = semester;
+            studentNew.IsDual = model.IsDual;
+            studentNew.IsPartTime = model.IsPartTime;
+
+            Db.Students.Add(studentNew);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = user.Id });
+        }
+
+
 
         public ActionResult ChangeNumber(Guid id)
         {
