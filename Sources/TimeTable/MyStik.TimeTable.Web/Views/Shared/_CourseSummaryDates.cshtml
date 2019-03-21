@@ -49,7 +49,14 @@
                         <li><i class="fa fa-li fa-user-md"></i>@Html.LecturerList(date.Key.Hosts, false)</li>
                         @if (!string.IsNullOrEmpty(date.Key.Title))
                         {
-                            <li><i class="fa fa-li fa-info-circle"></i>@date.Key.Title</li>
+                            <li>
+                                <i class="fa fa-li fa-info-circle"></i><strong>@date.Key.Title</strong>
+                                @if (!string.IsNullOrEmpty(date.Key.Description))
+                                {
+                                    <br/>
+                                    @date.Key.Description
+                                }
+                            </li>
                         }
                     </ul>
                 </div>

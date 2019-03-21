@@ -33,8 +33,9 @@
                                     <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})" class="btn btn-default">
                                         <i class="fa fa-envelope-o"></i> Mail senden
                                     </a>
-                                    <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Terminverwaltung</a>
-                                    <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmerverwaltung</a>
+                                    <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-download"></i> Listen</a>
+                                    <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Termine</a>
+                                    <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmende</a>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-cogs"></i> Einstellungen <span class="caret"></span>
@@ -107,8 +108,8 @@
                                         </a>
                                     }
 
-                                
-                                    </div>
+
+                                </div>
                             </div>
                         }
                     }

@@ -743,10 +743,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
 
             var courses = Db.Activities.OfType<Course>().Where(a =>
-                    ((a.Organiser != null && a.Organiser.Id == org.Id) ||
-                     a.Owners.Any(m => m.Member.Organiser.Id == org.Id)) &&
                     (a.Name.Contains(searchText) || a.ShortName.Contains(searchText)) &&
-                    a.SemesterGroups.Any(s => s.Semester.Id == sem.Id))
+                    a.SemesterGroups.Any(s => s.Semester.Id == sem.Id && s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                 .ToList();
 
             return PartialView("_CourseTable", courses);

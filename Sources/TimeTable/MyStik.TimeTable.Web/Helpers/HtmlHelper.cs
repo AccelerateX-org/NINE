@@ -336,7 +336,10 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <returns></returns>
         public static MvcHtmlString TimeSpanWithDate(this HtmlHelper htmlHelper, DateTime from, DateTime until)
         {
-            return new MvcHtmlString(string.Format("{0:d} {1:t} - {2:t}", @from, @from, until));
+            if (from.Date == until.Date)
+                return new MvcHtmlString(string.Format("{0:d} {1:t} - {2:t}", @from, @from, until));
+
+            return new MvcHtmlString(string.Format("{0:d} {1:t} - {2:d} {3:t}", @from, @from, until, until));
         }
 
         /// <summary>

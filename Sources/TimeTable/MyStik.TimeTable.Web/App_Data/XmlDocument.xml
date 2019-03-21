@@ -21122,6 +21122,11 @@
               Looks up a localized string similar to Teilnehmerliste.
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.TermsOfUse">
+            <summary>
+              Looks up a localized string similar to Nutzungsbedingungen.
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Resources.TimesString">
             <summary>
               Looks up a localized string similar to Zeit(en).

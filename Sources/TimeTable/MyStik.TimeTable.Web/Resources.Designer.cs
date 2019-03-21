@@ -3200,6 +3200,15 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nutzungsbedingungen.
+        /// </summary>
+        public static string TermsOfUse {
+            get {
+                return ResourceManager.GetString("TermsOfUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zeit(en).
         /// </summary>
         public static string TimesString {

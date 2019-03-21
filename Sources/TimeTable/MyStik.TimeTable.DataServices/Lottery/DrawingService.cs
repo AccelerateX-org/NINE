@@ -370,8 +370,12 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
                             game.Lots.Add(lot);
 
+                            availableCourse.Lots.Add(lot);
+
+                            /*
                             var lotPot = LotPots.SingleOrDefault(x => x.Course.Id == availableCourse.Course.Id);
                             lotPot.Lots.Add(lot);
+                            */
                         }
                         else
                         {
@@ -435,8 +439,12 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
                             game.Lots.Add(lot);
 
+                            availableCourse.Lots.Add(lot);
+
+                            /*
                             var lotPot = LotPots.SingleOrDefault(x => x.Course.Id == availableCourse.Course.Id);
                             lotPot.Lots.Add(lot);
+                            */
 
                             nSuccess++;
                         }

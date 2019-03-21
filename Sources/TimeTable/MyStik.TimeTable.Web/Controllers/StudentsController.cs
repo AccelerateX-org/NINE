@@ -36,7 +36,9 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.MyOrganisation = org;
             ViewBag.Unions = Db.Organisers.Where(o => o.IsStudent).ToList();
 
+
             var model = new List<StudentStatisticsModel>();
+            /*
             var list = Db.Students.GroupBy(x => new {x.Curriculum, x.FirstSemester});
 
             foreach (var ding in list)
@@ -48,6 +50,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     Count = ding.Count()
                 });
             }
+            */
 
             return View(model);
         }

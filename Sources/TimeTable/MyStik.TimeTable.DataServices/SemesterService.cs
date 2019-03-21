@@ -344,11 +344,13 @@ namespace MyStik.TimeTable.DataServices
         /// <returns></returns>
         public Semester GetLatestSemester(ActivityOrganiser org)
         {
-            return 
+            var sem =
             _db.Semesters
                 .Where(x => x.Groups.Any(g =>
                     g.IsAvailable && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                 .OrderByDescending(x => x.StartCourses).FirstOrDefault();
+
+            return sem ?? GetSemester(DateTime.Today);
         }
 
         /// <summary>
@@ -358,11 +360,13 @@ namespace MyStik.TimeTable.DataServices
         /// <returns></returns>
         public Semester GetNewestSemester(ActivityOrganiser org)
         {
-            return
+            var sem =
                 _db.Semesters
                     .Where(x => x.Groups.Any(g =>
                         g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                     .OrderByDescending(x => x.StartCourses).FirstOrDefault();
+
+            return sem ?? GetSemester(DateTime.Today);
         }
 
 

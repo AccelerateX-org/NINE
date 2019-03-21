@@ -105,7 +105,6 @@ namespace MyStik.TimeTable.Web.Controllers
                         subscription.TimeStamp = DateTime.Now;
                         subscription.UserId = user.Id;
                         subscription.OnWaitingList = invitation.OnWaitinglist;
-                        subscription.Priority = 0;
                         subscription.Occurrence = invitation.Course.Occurrence;
                         subscription.HostRemark = invitation.Remark;
                         invitation.Course.Occurrence.Subscriptions.Add(subscription);
@@ -145,134 +144,53 @@ namespace MyStik.TimeTable.Web.Controllers
                 var i = 0;
                 foreach (var line in lines)
                 {
-                    if (i > 0)
-                    {
-                        string newline = line.Trim();
+                    if (i <= 0) continue;
+                    var newline = line.Trim();
 
-                        if (!string.IsNullOrEmpty(newline))
+                    if (!string.IsNullOrEmpty(newline))
+                    {
+                        var words = newline.Split(';');
+
+                        if (!string.IsNullOrEmpty(words[0]))
                         {
-                            var words = newline.Split(';');
 
                             var invitation = new CieInvitationModel
                             {
                                 LastName = words[0].Trim(),
                                 FirstName = words[1].Trim(),
                                 Email = words[2].Trim(),
-                                Invite = true
+                                Invite = true,
+                                Curriculum = GetCieCurriculum(words[3].Trim()),
+                                Semester = SemesterService.GetSemester(words[5].Trim())
                             };
 
-                            invitation.Semester = SemesterService.GetSemester(words[6].Trim());
-                            invitation.Curriculum = GetCieCurriculum(words[3].Trim());
+                            invitation.Course = GetCieCourse(invitation.Semester, words[4].Trim());
 
-                            var org = GetOrganiser(words[5].Trim());
-
-                            invitation.Course = GetCieCourse(org, invitation.Semester,
-                                words[4].Trim());
-
-                            if (invitation.Course != null)
+                            if (invitation.Curriculum != null && invitation.Course != null)
                             {
-                                // TODO: Ermittlung des Status
-                                var code = words[7].Trim();
-                                var state = words[8].Trim();
+                                // Es werden die Daten aus primuss so übernommen
+                                // keine Überprüfung des Ampesystems
+                                var state = words[6].Trim();
 
-                                // zuerst die roten
-                                if (code.Equals("red"))
+                                if (state.Equals("TN"))
                                 {
-                                    // gehört der Incomer zu einem der Studiengänge der CIE-LV
-                                    var hasFit = invitation.Course.SemesterGroups.Any(x =>
-                                        x.CapacityGroup.CurriculumGroup.Curriculum.Id == invitation.Curriculum.Id);
-
-                                    if (hasFit)
-                                    {
-                                        if (state.Equals("TN"))
-                                        {
-                                            invitation.OnWaitinglist = false;
-                                            invitation.Remark = "Studiengang passt. Ist Teilnehmer";
-                                        }
-                                        else
-                                        {
-                                            invitation.OnWaitinglist = true;
-                                            invitation.Remark =
-                                                "Studiengang passt. Wurde in der Platzverlosung von primuss / FK 13 auf Warteliste gesetzt. Offenbar alle Plätze belegt.";
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (state.Equals("TN"))
-                                        {
-                                            invitation.OnWaitinglist = true;
-                                            invitation.Remark =
-                                                "Studiengang passt nicht. Wurde in der Platzverlosung von primuss / FK 13 auf Teilnehmerliste gesetzt. Muss manuel! überprüft werden";
-                                        }
-                                        else
-                                        {
-                                            invitation.OnWaitinglist = true;
-                                            invitation.Remark =
-                                                "Studiengang passt nicht. Wurde in der Platzverlosung von primuss / FK 13 auf Warteliste gesetzt. OK!";
-                                        }
-                                    }
-                                }
-                                else if (code.Equals("yellow"))
-                                {
-                                    // yellow
-                                    // gehört der Studi zur Fakultät
-                                    var hasFit = invitation.Curriculum.Organiser.Id == org.Id;
-
-                                    if (hasFit)
-                                    {
-                                        if (state.Equals("TN"))
-                                        {
-                                            invitation.OnWaitinglist = false;
-                                            invitation.Remark = "Student gehört zur Fakultät. Ist Teilnehmer";
-                                        }
-                                        else
-                                        {
-                                            invitation.OnWaitinglist = true;
-                                            invitation.Remark =
-                                                "Student gehört zur Fakultät. Wurde von in der Platzverlosung von primuss / FK 13 auf Warteliste gesetzt. Offenbar alle Plätze belegt.";
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (state.Equals("TN"))
-                                        {
-                                            invitation.OnWaitinglist = true;
-                                            invitation.Remark =
-                                                "Student gehört zu einer anderen Fakultät. Wurde in der Platzverlosung von primuss / FK 13 auf Teilnehmerliste gesetzt. Muss manuell überprüft werden!";
-                                        }
-                                        else
-                                        {
-                                            invitation.OnWaitinglist = true;
-                                            invitation.Remark =
-                                                "Student gehört zu einer anderen Fakultät. Wurde in der Platzverlosung von primuss / FK 13 auf Warteliste gesetzt. Offenbar alle Plätze belegt.";
-                                        }
-                                    }
-
+                                    invitation.OnWaitinglist = false;
                                 }
                                 else
                                 {
-                                    if (state.Equals("TN"))
-                                    {
-                                        invitation.OnWaitinglist = false;
-                                        invitation.Remark = "Wurde in der Platzverlosung von primuss / FK 13 auf Teilnehmerliste gesetzt.";
-                                    }
-                                    else
-                                    {
-                                        invitation.OnWaitinglist = true;
-                                        invitation.Remark = "Wurde in der Platzverlosung von primuss / FK 13 auf Warteliste gesetzt.";
-                                    }
-
+                                    invitation.OnWaitinglist = true;
                                 }
                             }
                             else
                             {
-                                invitation.Remark = "LV nicht gefunden";
+                                invitation.Remark = "Studiengang oder LV nicht gefunden";
                                 invitationList.Error = "Fehlehafte Daten";
                             }
 
                             invitationList.Invitations.Add(invitation);
                         }
                     }
+
                     i++;
                 }
             }
@@ -286,12 +204,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        private Course GetCieCourse(ActivityOrganiser org, Semester semester, string code)
+        private Course GetCieCourse(Semester semester, string code)
         {
             return 
             Db.Activities.OfType<Course>().FirstOrDefault(x =>
-                x.SemesterGroups.Any(g =>
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id && g.Semester.Id == semester.Id) &&
+                x.SemesterGroups.Any(g =>g.Semester.Id == semester.Id) &&
                 x.ShortName.Contains(code));
         }
 
@@ -299,7 +216,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = GetCieOrganiser(code);
 
-            var curr = code.EndsWith("B") ? "CIE-B" : "CIE-M";
+            var curr = code.EndsWith("-B") ? "CIE-B" : "CIE-M";
 
             return org.Curricula.FirstOrDefault(x => x.ShortName.Equals(curr));
         }

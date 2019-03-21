@@ -866,23 +866,39 @@ namespace MyStik.TimeTable.Web.Controllers
                 User = userService.GetUser(thesis.Student.UserId)
             };
 
+            // ----- Prüfung der Voraussetzungen ---
             // Welches Detail anzeigen?
-            // Antrag auf Anmeldung
-            if (tm.ConditionRequest == RequestState.InProgress)
+            // Antrag auf Anmeldung noch nicht abgeschlossen
+            if (tm.ConditionRequest == RequestState.InProgress ||
+                tm.ConditionRequest == RequestState.Rejected)
             {
                 return PartialView("_StateConditionRequest", tm);
             }
 
-            // Antrag auf Betreuung => nur theoretisch :-)
+            // ---- Suche nach Betreuern ---
+            // Keinen Betreuer angefragt / vorhanden
+            // noch keine Zusage von Betreuer
+            if (tm.SupervisionRequest == RequestState.InProgress ||
+                tm.SupervisionRequest == RequestState.Rejected)
+            {
+                return PartialView("_StateSupervisionRequest", tm);
+            }
 
-            // Antrag auf Verlängerung
 
-            // Abgae
+            // ---- Arbeit läuft -----
+            // --- Antrag auf Verlängerung gestellt ---
+            if (tm.ExtensionRequested)  // nur wenn der Antrag läuft
+            {
+                return PartialView("_StateExtensionRequest", tm);
+            }
 
-            // Notenmeldung => nur theoretisch :-)
-
-            // Default
-            return PartialView("_StateUnknown", tm);
+            // ---- Erfassung der Abgabe ---
+            if (!tm.HasDelivered)
+            {
+                return PartialView("_StateInProgress", tm);
+            }
+            // --- Abgegeben
+            return PartialView("_StateDelivered", tm);
         }
     }
     }

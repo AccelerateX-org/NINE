@@ -1211,4 +1211,7 @@
   <data name="WPMLottery" xml:space="preserve">
     <value>WPM selection</value>
   </data>
+  <data name="TermsOfUse" xml:space="preserve">
+    <value>Terms of use</value>
+  </data>
 </root>

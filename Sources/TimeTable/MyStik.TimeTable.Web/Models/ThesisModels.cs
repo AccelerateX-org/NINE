@@ -300,6 +300,31 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        public bool ExtensionRequested
+        {
+            get
+            {
+                if (Thesis.RenewalDate == null)
+                    return false;
+
+                return true;
+            }
+        }
+
+
+        public bool HasDelivered
+        {
+            get
+            {
+                if (Thesis.DeliveryDate == null)
+                    return false;
+
+                return true;
+
+            }
+        }
+
+
         public string GetStateMessage(OrganiserMember member)
         {
             var nSupervisors = Thesis.Supervisors.Count;

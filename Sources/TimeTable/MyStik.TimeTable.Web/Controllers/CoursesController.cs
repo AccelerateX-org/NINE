@@ -623,7 +623,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courseService = new CourseService(Db);
 
-            var courses = Db.Activities.OfType<Course>().Where(x => x.Owners.Any(y => y.Member.Organiser.Id == org.Id)).ToList();
+            var courses = Db.Activities.OfType<Course>().Where(x => x.Owners.Any(y => y.Member.Organiser.Id == org.Id) && 
+                                                                    (!x.Dates.Any() || x.Dates.Any(d => d.End >= DateTime.Today))).ToList();
 
             foreach (var course in courses)
             {

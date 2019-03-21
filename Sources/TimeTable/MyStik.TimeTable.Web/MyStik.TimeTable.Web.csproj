@@ -4079,6 +4079,10 @@
     <Content Include="Views\Students\Curriculum.cshtml" />
     <Content Include="Views\Students\SwitchCurriculum.cshtml" />
     <Content Include="Views\Subscription\ChangeNumber.cshtml" />
+    <Content Include="Views\Thesis\_StateSupervisionRequest.cshtml" />
+    <Content Include="Views\Thesis\_StateExtensionRequest.cshtml" />
+    <Content Include="Views\Thesis\_StateInProgress.cshtml" />
+    <Content Include="Views\Thesis\_StateDelivered.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

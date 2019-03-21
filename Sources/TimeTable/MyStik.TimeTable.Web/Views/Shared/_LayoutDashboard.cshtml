@@ -47,7 +47,7 @@
             <div class="top-menu">
                 <form class="navbar-form navbar-left" role="search" action="@Url.Action("Index", "Search")">
                     <div class="form-group">
-                        <input name="searchText" type="text" class="form-control" placeholder="Suchen...">
+                        <input name="searchText" type="text" class="form-control" placeholder="@Resources.SearchString...">
                     </div>
                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                 </form>
@@ -100,16 +100,6 @@
                         </ul>
                     </li>
                     <!-- END USER LOGIN DROPDOWN -->
-                    <!-- BEGIN QUICK SIDEBAR TOGGLER -->
-                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
-                    <!--
-                    <li class="dropdown dropdown-quick-sidebar-toggler">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <i class="icon-calendar"></i>
-                        </a>
-                    </li>
-                        -->
-                    <!-- END QUICK SIDEBAR TOGGLER -->
                 </ul>
             </div>
             <!-- END TOP NAVIGATION MENU -->
@@ -122,147 +112,6 @@
 
     <!-- BEGIN CONTAINER -->
 <div class="page-container">
-@*
-    <!-- BEGIN SIDEBAR -->
-    <div class="page-sidebar-wrapper">
-        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-        <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-        <div class="page-sidebar navbar-collapse collapse">
-            <!-- BEGIN SIDEBAR MENU -->
-            <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
-            <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
-            <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
-            <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-            <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
-            <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-            <ul class="page-sidebar-menu page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
-                <li class="sidebar-toggler-wrapper">
-                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-                    <div class="sidebar-toggler">
-                    </div>
-                    <!-- END SIDEBAR TOGGLER BUTTON -->
-                </li>
-                <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
-                <li class="sidebar-search-wrapper">
-                    <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
-                    <!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
-                    <!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered & solid search box -->
-                    <form class="sidebar-search " action="@Url.Action("Index", "Search")">
-                        <a href="javascript:;" class="remove">
-                            <i class="icon-close"></i>
-                        </a>
-                        <div class="input-group">
-                            <input name="searchText" type="text" class="form-control" placeholder="Suchen...">
-                            <span class="input-group-btn">
-                                <a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
-                            </span>
-                        </div>
-                    </form>
-                    <!-- END RESPONSIVE QUICK SEARCH FORM -->
-                </li>
-                <li id="menu-dashboard" class="start">
-                    <a href="@Url.Action("Index", "Dashboard")">
-                        <i class="icon icon-menu icon-dashboard"></i>
-                        <span class="title">@Resources.MenuDashboard</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-                <li id="menu-study">
-                    <a href="javascript:;">
-                        <i class="icon icon-menu icon-studium"></i>
-                        <span class="title">@Resources.MenuStudies</span>
-                        <span class="arrow open"></span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li id="menu-study-plan">
-                            <a href="@Url.Action("Index", "Dictionary")">
-                                @Resources.SubMenuStudiesPlaner
-                            </a>
-                        </li>
-                        <li id="menu-study-curriculum">
-                            <a href="@Url.Action("Index", "Curricula")">
-                                @Resources.SubMenuStudiesCurricula
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li id="menu-current">
-                    <a href="javascript:;">
-                        <i class="icon icon-menu icon-mensa"></i>
-                        <span class="title">@Resources.MenuCurrent</span>
-                        <span class="arrow open"></span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li id="menu-current-events">
-                            <a href="@Url.Action("Index", "Event")">
-                                @Resources.SubMenuCurrentEvents
-                            </a>
-                        </li>
-                        <li id="menu-current-newsletter">
-                            <a href="@Url.Action("Index", "Newsletter")">
-                                @Resources.SubMenuCurrentNewsletter
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li id="menu-cantine">
-                    <a href="javascript:;">
-                        <i class="icon icon-menu icon-aktuelles"></i>
-                        <span class="title">@Resources.MenuCantine</span>
-                        <span class="arrow open"></span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li id="menu-current-cantine_141">
-                            <a href="@Url.Action("Index", "Cantine", new {id = 141})">
-                                @Resources.SubMenuCantine (Lothstr.)
-                            </a>
-                        </li>
-                        <li id="menu-current-cantine_142">
-                            <a href="@Url.Action("Index", "Cantine", new {id = 142})">
-                                @Resources.SubMenuCantine (Pasing)
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li id="menu-rooms">
-                    <a href="javascript:;">
-                        <i class="icon icon-menu icon-raeume"></i>
-                        <span class="title">@Resources.MenuRooms</span>
-                        <span class="arrow open"></span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li id="menu-room-search">
-                            <a href="@Url.Action("Index", "Room")">
-                                @Resources.SubMenuRoomsOccupancy
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li id="menu-persons">
-                    <a href="javascript:;">
-                        <i class="icon icon-menu icon-dozenten"></i>
-                        <span class="title">@Resources.MenuPersons</span>
-                        <span class="arrow open"></span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li id="menu-persons-lecturers">
-                            <a href="@Url.Action("Index", "Lecturer")">
-                                @Resources.SubMenuLecturer
-                            </a>
-                        </li>
-                        <li id="menu-persons-contacts">
-                            <a href="@Url.Action("Index", "Contacts")">
-                                Ansprechpartner
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <!-- END SIDEBAR MENU -->
-        </div>
-    </div>
-    <!-- END SIDEBAR -->
-    *@
     <!-- BEGIN CONTENT -->
     <div class="page-content-wrapper">
         <div class="page-content" style="margin-left: 0px">
@@ -287,7 +136,7 @@
             <div class="pull-left">
                 <ul class="list-inline">
                     <li><a href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a></li>
-                    <li><a href="@Url.Action("TermsOfUse", "Home")">Nutzungsbedingungen</a></li>
+                    <li><a href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a></li>
                     <li><a href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a></li>
                 </ul>
             </div>

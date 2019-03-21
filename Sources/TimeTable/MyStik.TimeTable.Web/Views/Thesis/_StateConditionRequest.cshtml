@@ -1,4 +1,29 @@
-﻿@model MyStik.TimeTable.Web.Models.ThesisStateModel
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.ThesisStateModel
 
-<a href="@Url.Action("Approval", new {id=Model.Thesis.Id})" class="btn btn-primary">Antrag auf Anmeldung bearbeiten</a>
-<a href="@Url.Action("Delete", new {id=Model.Thesis.Id})" class="btn btn-danger">Arbeit löschen</a>
+
+<div class="list-group">
+    <div class="list-group-item">
+        <h5 class="list-group-item-heading">Aktueller Status: Prüfung der Voraussetzungen</h5>
+    </div>
+
+    @if (Model.ConditionRequest == RequestState.InProgress)
+    {
+        <div class="list-group-item">
+            <a href="@Url.Action("Approval", new {id = Model.Thesis.Id})" class="btn btn-primary">Antrag auf Anmeldung bearbeiten</a>
+            <a href="@Url.Action("Delete", new {id = Model.Thesis.Id})" class="btn btn-danger">Arbeit löschen</a>
+        </div>
+    }
+    else if (Model.ConditionRequest == RequestState.Rejected)
+    {
+        <div class="list-group-item list-group-item-danger">
+            <h5 class="list-group-item-heading">Voraussetzungen nicht erfüllt</h5>
+            <div class="list-group-tem-text">
+                <ul class="fa-ul">
+                    <li><i class="fa fa-li fa-user-md"></i>Bearbeitet von: @Model.Thesis.RequestAuthority.FullName (@Model.Thesis.ResponseDate.Value.ToShortDateString())</li>
+                    <li><i class="fa fa-li fa-info-circle"></i>Grund: @Model.Thesis.RequestMessage</li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>
