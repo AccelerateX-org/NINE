@@ -17,8 +17,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="searchText"></param>
         /// <returns></returns>
-        public ActionResult Index(string searchText)
+        public ActionResult Index(string searchText, bool? isGlobal)
         {
+            var org = GetMyOrganisation();
+            if (isGlobal.HasValue && isGlobal.Value)
+                org = null;
+
             var semester = SemesterService.GetSemester(DateTime.Today);
             var nextSemester = SemesterService.GetNextSemester(semester);
 
@@ -40,22 +44,28 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View(defaultModel);
             }
 
-            var courseList = new CourseService(Db).SearchCourses(semester.Name, searchText);
+            var courseList = new CourseService(Db).SearchCourses(semester.Id, searchText, org);
             foreach (var course in courseList)
             {
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
             }
 
-            var nextCoursesList = new CourseService(Db).SearchCourses(nextSemester.Name, searchText);
+            var nextCoursesList = new CourseService(Db).SearchCourses(nextSemester.Id, searchText, org);
             foreach (var course in nextCoursesList)
             {
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
             }
 
             // alle Mitglieder
-            var activeLecturers =
+            var activeLecturers = org != null ?
             Db.Members.Where(m => 
-                (m.Name.Contains(searchText) || m.ShortName.Contains(searchText)) && !m.Organiser.IsStudent)
+                 m.Organiser.Id == org.Id &&
+                 ((m.Name.Contains(searchText) || m.ShortName.Contains(searchText)) && !m.Organiser.IsStudent))
+                .OrderBy(m => m.Name)
+                .ToList()
+            :
+            Db.Members.Where(m =>
+                    (m.Name.Contains(searchText) || m.ShortName.Contains(searchText)) && !m.Organiser.IsStudent)
                 .OrderBy(m => m.Name)
                 .ToList();
 
@@ -67,14 +77,20 @@ namespace MyStik.TimeTable.Web.Controllers
                 lecturerList.Add(viewModel);
             }
 
+            // Räume
+            var rooms = Db.Rooms.Where(x => x.Number.Contains(searchText) || 
+                                            (string.IsNullOrEmpty(x.Name) && x.Name.Contains(searchText))).ToList();
+
             var model = new SearchViewModel
             {
+                Organiser = org,
                 SearchText = searchText,
                 Semester = semester,
                 NextSemester = nextSemester,
                 Courses = courseList,
                 NextCourses = nextCoursesList,
-                Lecturers = lecturerList
+                Lecturers = lecturerList,
+                Rooms = rooms
             };
 
             ViewBag.UserRight = GetUserRight();

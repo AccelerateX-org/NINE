@@ -46,26 +46,17 @@
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Anzahl Studierende</th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach (var group in groupList.Where(g => g.Group.CapacityGroup != null).OrderBy(g => g.Group.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.Group.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Group.Name))
                             {
-                            nStud += group.UserIds.Count;
 
                             <tr>
                                 <td>@group.Group.FullName</td>
-                                <td>
-                                    @group.UserIds.Count
-                                </td>
                             </tr>
                             }
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td><strong>@nStud</strong></td>
-                            </tr>
                             </tbody>
                         </table>
                     }

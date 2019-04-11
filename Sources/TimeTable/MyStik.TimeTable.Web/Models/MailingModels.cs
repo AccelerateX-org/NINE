@@ -93,6 +93,13 @@ namespace MyStik.TimeTable.Web.Models
         /// true: wenn es ein Gruppenverteiler ist
         /// </summary>
         public bool IsDistributionList { get; set; }
+
+
+        public ICollection<SemesterGroupViewModel> GroupList { get; set; }
+
+        public string GroupIds { get; set; }
+
+        public ICollection<string> GroupIdList { get; set; }
     }
 
     /// <summary>

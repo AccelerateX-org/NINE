@@ -8,17 +8,32 @@
     <div class="panel-body bg-fillter-events">
         <div class="row">
             <div class="col-md-12">
-                <h1>Mailing - alle Studierende</h1>
+                <h1>Mailversand</h1>
             </div>
         </div>
     </div>
 </div>
 
-<h2>Mailversand erfolgreich</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-default">
+                <div class="panel-heading">
+                    <h4>Mailversand erfolgreich</h4>
+                </div>
+                <div class="panel-body">
+                    <p>Es wurden Mails an @Model.Count Empfänger versendet.</p>
+                    <div class="btn btn-primary"><a href="@Url.Action("Index", "Messaging")">Zurück zur Startseite Mailversand</a></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
 
 
-<p>@Html.ActionLink("Zurück", "Index", "Mailing")</p>
+
 

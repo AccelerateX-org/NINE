@@ -5,6 +5,15 @@
 }
 
 
+@section styles
+{
+    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+
+}
+
+
+
+
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-events">
         <div class="row">
@@ -44,6 +53,7 @@
 
 
 @section Scripts {
+    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
@@ -82,6 +92,15 @@
             // dann erst kann ich die DOM Eigenschaft über attr ändern
             // damit sie später auch wieder über jQuery ausgewertet werden kann
             $("#" + elem.id).attr("checked", elem.checked);
+
+            var list = $("#groupTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+            var n = list.length;
+
+            if (n === 0) {
+                $("#btnNext").addClass("disabled");
+            } else {
+                $("#btnNext").removeClass('disabled')
+            }
         }
 
 

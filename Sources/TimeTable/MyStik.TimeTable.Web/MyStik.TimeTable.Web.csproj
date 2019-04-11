@@ -389,6 +389,7 @@
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
+    <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Controllers\PackageOptionController.cs" />
@@ -3773,7 +3774,6 @@
     <Content Include="Views\Course\AdminNewParticipients.cshtml" />
     <Content Include="Views\Course\AdminNewRules.cshtml" />
     <Content Include="Views\Course\ChangeTopics.cshtml" />
-    <Content Include="Views\Course\DetailsNew.cshtml" />
     <Content Include="Views\Course\Download.cshtml" />
     <Content Include="Views\Course\Owners.cshtml" />
     <Content Include="Views\Course\SubscriptionList.cshtml" />
@@ -4083,6 +4083,8 @@
     <Content Include="Views\Thesis\_StateExtensionRequest.cshtml" />
     <Content Include="Views\Thesis\_StateInProgress.cshtml" />
     <Content Include="Views\Thesis\_StateDelivered.cshtml" />
+    <Content Include="Views\Messaging\Index.cshtml" />
+    <Content Include="Views\Mailing\_StudentGroupMail.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

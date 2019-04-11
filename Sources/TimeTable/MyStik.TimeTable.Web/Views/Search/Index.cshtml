@@ -5,53 +5,70 @@
     ViewBag.ShowFaculty = true;
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-hm">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Suchergebnisse für "@Model.SearchText"</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" style="margin-top: 20px">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Lehrende</h4>
-                </div>
+                    @if (Model.Organiser != null)
+                    {
+                        <h4><i class="fa fa-search"></i> Suchergebnisse für "@Model.SearchText" in @Model.Organiser.ShortName</h4>
+                        <a class="btn btn-primary" href="@Url.Action("Index", "Search", new {searchText=Model.SearchText, isGlobal=true})">global suchen</a>
 
-                @Html.Partial("_LecturerListSummary", Model.Lecturers)
+                    }
+                    else
+                    {
+                        <h4><i class="fa fa-search"></i> Suchergebnisse für "@Model.SearchText" - global</h4>
+                    }
+                </div>
             </div>
-        </div>
-    </div>
-    
-    @if (Model.NextCourses.Any())
-    {
-        <div class="row">
-            <div class="col-md-12">
+            @if (Model.Lecturers.Any())
+            {
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>Lehrveranstaltungen (@Model.NextSemester.Name)</h4>
+                    <div class="panel-heading"><h4>Lehrende</h4></div>
+                    <div class="list-group">
+                        @Html.Partial("_LecturerListSummary", Model.Lecturers)
                     </div>
-                    @Html.Partial("_CourseListFit", Model.NextCourses)
                 </div>
-            </div>
-        </div>
-    }
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Lehrveranstaltungen (@Model.Semester.Name)</h4>
+            }
+            @if (Model.Rooms.Any())
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>Räume</h4></div>
+                    <div class="list-group">
+                        @foreach (var r in Model.Rooms)
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <a href="@Url.Action("Details", "Room", new {id = r.Id})">@r.FullName</a>
+                                </h5>
+                            </div>
+                        }
+                    </div>
                 </div>
-                @Html.Partial("_CourseListFit", Model.Courses)
-            </div>
+            }
+            @if (Model.NextCourses.Any())
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>Lehrveranstaltungen (@Model.NextSemester.Name)</h4></div>
+                    <div class="list-group">
+                        @Html.Partial("_CourseListFit", Model.NextCourses)
+                    </div>
+                </div>
+            }
+            @if (Model.Courses.Any())
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>Lehrveranstaltungen (@Model.Semester.Name)</h4></div>
+                    <div class="list-group">
+                        @Html.Partial("_CourseListFit", Model.Courses)
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+
+
+

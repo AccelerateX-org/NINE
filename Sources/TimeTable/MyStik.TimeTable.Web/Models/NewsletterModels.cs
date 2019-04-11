@@ -69,4 +69,12 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public List<CourseMemberModel> Member { get; set; }
     }
+
+    public class MessagingOverviewModel
+    {
+        public ActivityOrganiser Organiser { get; set; }
+
+        public ICollection<Newsletter> Newsletter { get; set; }
+       
+    }
 }

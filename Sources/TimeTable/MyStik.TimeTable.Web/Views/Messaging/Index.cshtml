@@ -1,0 +1,48 @@
+﻿@model MyStik.TimeTable.Web.Models.MessagingOverviewModel
+
+@{
+    ViewBag.Title = "Nachrichten";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-enveloper"></i> Mailverteiler und Newsletter</h4>
+                </div>
+                <div class="list-group">
+                    <a href="@Url.Action("AllStudents", "Mailing")" class="list-group-item">
+                        <h5 class="list-group-item-heading">Alle Studierende der @Model.Organiser.ShortName</h5>
+                        <div class="list-group-tem-text">
+                            Alle Studierenden, die im aktuellen Semester in einem Studiengang der Fakultät eintgetragen sind.
+                        </div>
+                    </a>
+                <!--
+                <a href="@Url.Action("Curriculum", "Mailing")" class="list-group-item">
+                    <h5 class="list-group-item-heading">Auswahl von Studierenden nach Studiengang und Studiensemester</h5>
+                    <div class="list-group-tem-text">
+                        Studiensemester = Senester nach Studienbeginn seit wann als jemand immatrikuliert ist
+                    </div>
+                </a>
+                    -->
+                    <a href="@Url.Action("StudentGroup", "Mailing")" class="list-group-item">
+                        <h5 class="list-group-item-heading">Auswahl von Studierenden nach Studiengang und <i>Fachsemester</i></h5>
+                        <div class="list-group-tem-text">
+                            Das <i>Fachsemester</i> ergibt sich daraus in welchen Lehrveranstaltung einer Semestergruppe jemand eingetragen ist. 
+                            Ist jemand in einer Veranstaltung des 1. Semester eingetragenn, dann wird das als "Erstsemester" angenommen.
+                        </div>
+                    </a>
+                    @foreach (var n in Model.Newsletter)
+                    {
+                        <a href="@Url.Action("SendNews", "Newsletter", new {id = n.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">Newsletter "@n.Name"</h5>
+                            <div class="list-group-tem-text">@n.Description</div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

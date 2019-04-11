@@ -8,6 +8,8 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class SearchViewModel
     {
+        public ActivityOrganiser Organiser { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -38,5 +40,6 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public ICollection<CourseSummaryModel> NextCourses { get; set; }
 
+        public ICollection<Room> Rooms { get; set; }
     }
 }

@@ -9829,7 +9829,7 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.SearchController.Index(System.String)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.SearchController.Index(System.String,System.Nullable{System.Boolean})">
             <summary>
             
             </summary>
@@ -21336,7 +21336,7 @@
             <param name="lecturer"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Services.CourseService.SearchCourses(System.String,System.String)">
+        <member name="M:MyStik.TimeTable.Web.Services.CourseService.SearchCourses(System.Guid,System.String,MyStik.TimeTable.Data.ActivityOrganiser)">
             <summary>
             
             </summary>

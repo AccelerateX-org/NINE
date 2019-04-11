@@ -3,145 +3,17 @@
 @using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Web.Models.CourseSummaryModel>
 
+@{
+    ViewBag.ShowLinks = true;
+}
+
 @if (Model.Any())
 {
 <div class="list-group">
     @foreach (var course in Model)
     {
-        var linkDescription = string.Format("desc{0}", course.Course.Id);
-        var linkDates = string.Format("dates{0}", course.Course.Id);
-        var linkFit = string.Format("fit{0}", course.Course.Id);
-        var linkNonFit = string.Format("nonfit{0}", course.Course.Id);
-        var linkConflicts = string.Format("conflicts{0}", course.Course.Id);
-
-        var groupRemark = "";
-        if (course.Course.Occurrence.IsCoterie)
-        {
-            groupRemark = "Nur für Studierende der angegebenen Studiengänge wählbar";
-        }
-        else
-        {
-            if (course.Course.Occurrence.HasHomeBias)
-            {
-                groupRemark = "Studierende der angegeben Studiengänge werden bevorzugt";
-            }
-        }
-
-
-        ActivityOrganiser org = course.Course.Organiser;
-
-        <div class="list-group-item">
-            <h5 class="list-group-item-heading">
-                @if (ViewBag.ShowFaculty != null && ViewBag.ShowFaculty)
-                {
-                    if (org != null)
-                    {
-                        @Html.FacultyLabel(org)
-                    }
-                }
-                <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">@course.Course.Name (@course.Course.ShortName)</a>
-            </h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <ul class="fa-ul">
-                        @if (course.Course.SemesterTopics.Any())
-                        {
-                            <li><i class="fa-li fa fa-book"></i>Themengebiet(e): @Html.TopicList(course.Course.SemesterTopics)</li>
-                        }
-                        <li>
-                            <i class="fa-li fa fa-info-circle"></i>Beschreibung: <a href="#@linkDescription" data-toggle="collapse">einblenden</a>
-                            <div class="collapse" id="@linkDescription">
-                                <div class="panel panel-default">
-                                    @Html.Raw(course.Course.Description)
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-li fa fa-group"></i>Semestergruppe(n): @Html.GroupList(course.Course.SemesterGroups)
-                            @if (!string.IsNullOrEmpty(groupRemark))
-                            {
-                                <i>@groupRemark</i>
-                            }
-                        </li>
-                        <li><i class="fa-li fa fa-graduation-cap"></i>Dozent(en): @Html.LecturerList(course.Lecturers)</li>
-                        @if (course.Dates.Count > 2)
-                        {
-                            <li>
-                                <i class="fa-li fa fa-calendar"></i>Termin(e): <a href="#@linkDates" data-toggle="collapse">unregelmäßig</a>
-                                <div class="collapse" id="@linkDates">
-                                    @Html.DateList(course.Course.Dates)
-                                </div>
-                            </li>
-                        }
-                        else
-                        {
-                            <li>
-                                <i class="fa-li fa fa-calendar"></i>Termin(e): <a href="#@linkDates" data-toggle="collapse">regelmäßig</a>
-                                <div class="collapse" id="@linkDates">
-                                    @Html.DateList(course.Course.Dates)
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <ul class="fa-ul">
-                        @if (course.FittingDates != null)
-                        {
-                            <li>
-                                <i class="fa-li fa fa-search text-success"></i>
-                                <a href="#@linkFit" data-toggle="collapse">@course.FittingDates.Count</a> von @course.Course.Dates.Count Terminen im gesuchten Zeitraum
-                                <div class="collapse" id="@linkFit">
-                                    @Html.DateList(course.FittingDates)
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fa-li fa fa-search text-danger"></i>
-                                <a href="#@linkNonFit" data-toggle="collapse">@course.NonFittingDates.Count</a> von @course.Course.Dates.Count Terminen außerhalb des gesuchten Zeitraums
-                                <div class="collapse" id="@linkNonFit">
-                                    @Html.DateList(course.NonFittingDates)
-                                </div>
-                            </li>
-                        }
-                        @if (course.ConflictingDates != null)
-                        {
-                            <li>
-                                <i class="fa-li fa fa-flash text-danger"></i><a href="#@linkConflicts" data-toggle="collapse">@course.ConflictingDates.Count</a> von @course.Course.Dates.Count Terminen überschneiden sich mit meinem Stundenplan
-                                <div class="collapse" id="@linkConflicts">
-                                    @foreach (var conflictingDate in course.ConflictingDates)
-                                    {
-                                        <div>
-                                            @Html.Date(conflictingDate.Key)
-                                            <ul>
-
-                                                @foreach (var date in conflictingDate.Value)
-                                                {
-                                                    <li>@date.Activity.Name (@date.Activity.ShortName)</li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    }
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-            @if (ViewBag.ShowState != null && ViewBag.ShowState)
-            {
-                if (course.Lottery != null)
-                {
-            <a href="@Url.Action("Overview", "Lottery", new {id = course.Lottery.Id})" class="btn btn-default btn-block"><i class="fa fa-random"></i> Zum Wahlverfahren</a>
-                }
-                else
-                {
-                    @Html.Partial("_SubscriptionState", course.State)
-                }
-            }
-        </div>
+        @Html.Partial("_CourseSummaryHead", course)
     }
-
-
 </div>
 
 

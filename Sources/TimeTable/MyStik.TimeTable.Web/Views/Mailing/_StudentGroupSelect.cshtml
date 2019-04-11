@@ -16,29 +16,19 @@
                         <tr>
                             <th></th>
                             <th>Name</th>
-                            <th>Anzahl Studierende</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach (var group in Model.SemesterGroups)
                         {
-                            nStud += group.UserIds.Count;
-
                             <tr>
                                 <td><input id="@group.Group.Id" type="checkbox" onclick="toggleDateCheck(this)" value=""></td>
                                 <td>@group.Group.FullName</td>
-                                <td>
-                                    @group.UserIds.Count
-                                </td>
                             </tr>
                         }
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td><strong>@nStud</strong></td>
-                        </tr>
                         </tbody>
                     </table>
-                    <a class="btn btn-default" id="send" href="javascript:onSend()"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
+                    <a id="btnNext" class="btn btn-default disabled" id="send" href="javascript:onSend()"><i class="fa fa-save"></i> Auswahl speichern und weiter</a>
                 </div>
             </div>
         </div>

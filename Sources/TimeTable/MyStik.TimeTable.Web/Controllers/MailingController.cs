@@ -332,18 +332,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             if (GroupIds != null)
             {
-                var groupList = new List<SemesterGroup>();
-                foreach (var groupId in GroupIds)
-                {
-                    groupList.Add(Db.SemesterGroups.SingleOrDefault(g => g.Id == groupId));
-                }
+                
+                var groupList = new List<SemesterGroupViewModel>();
 
-                Session["GroupList"] = groupList;
-
-
-                var model = new List<SemesterGroupViewModel>();
-
-                var studentService = new StudentService(Db);
+                //var studentService = new StudentService(Db);
 
                 foreach (var groupId in GroupIds)
                 {
@@ -352,16 +344,25 @@ namespace MyStik.TimeTable.Web.Controllers
                     var groupModel = new SemesterGroupViewModel
                     {
                         Group = group,
-                        UserIds = studentService.GetStudents(group)
+                        //UserIds = studentService.GetStudents(group)
                     };
 
-                    model.Add(groupModel);
+                    groupList.Add(groupModel);
                 }
 
-                return PartialView("_GroupSelectionConfirm", model);
+                
+                var model = new OccurrenceMailingModel();
+                model.GroupList = groupList;
+                model.GroupIdList = new List<string>();
+                foreach (var groupId in GroupIds)
+                {
+                    model.GroupIdList.Add(groupId.ToString());
+                }
+
+                return PartialView("_StudentGroupMail", model);
             }
 
-            
+
             return PartialView("_GroupSelectionError");
         }
 
@@ -417,7 +418,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Semester = semester;
 
             // hier jetzt das ganze zu Fuss
-            var studentService = new StudentService(Db);
+            // var studentService = new StudentService(Db);
 
             var groups = semester.Groups
                 .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
@@ -429,7 +430,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var groupModel = new SemesterGroupViewModel
                 {
                     Group = group,
-                    UserIds = studentService.GetStudents(group)
+                    //UserIds = studentService.GetStudents(group)
                 };
 
                 model.SemesterGroups.Add(groupModel);
@@ -449,23 +450,29 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var logger = LogManager.GetLogger("StudentGroup");
 
-            var groupList = Session["GroupList"] as ICollection<SemesterGroup>;
+            var ids = model.GroupIdList.First().Split(',');
 
-            if (ModelState.IsValid && groupList != null)
+
+            //if (ModelState.IsValid)
             {
+                var groupList = new List<SemesterGroup>();
+
                 var userList =  new List<ApplicationUser>();
 
                 // nur noch alle, die in LVs der Gruppen eingetrangen sind
                 var studentService = new StudentService(Db);
                 var sb = new StringBuilder();
                 List<string> userIds = new List<string>();
-                foreach (var group in groupList)
+                foreach (var semGroupId in ids)
                 {
+                    var id = Guid.Parse(semGroupId);
+                    var group = Db.SemesterGroups.SingleOrDefault(x => x.Id == id);
+                    groupList.Add(group);
+
                     var groupIds = studentService.GetStudents(group);
                     userIds.AddRange(groupIds);
 
                     logger.InfoFormat("Students in group {0}: {1}", group.FullName, groupIds.Count);
-
                 }
 
                 logger.InfoFormat("Total entries {0}", userIds.Count);
@@ -501,19 +508,16 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
                 return View("ReceiverList", userList);
             }
+            /*
             else
             {
-                if (groupList == null)
-                {
-                    ViewBag.ErrorMessage = "keine Gruppeninformationen mehr vorhanden.";
-                }
-
                 if (!ModelState.IsValid)
                 {
                     ViewBag.ErrorMessage = "Fehler im Formular: " + ModelState.ToString();
                 }
                 return View("InvalidModel");
             }
+            */
         }
 
 
@@ -748,22 +752,35 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (summary != null)
                 {
-                    ViewBag.ActionName = summary.Action;
-                    ViewBag.ControllerName = summary.Controller;
-                    ViewBag.Id = summary.Id;
+                    if (summary.Activity is Newsletter)
+                    {
+                        ViewBag.ActionName = "Index";
+                        ViewBag.ControllerName = "Messaging";
+                        ViewBag.Id = "";
+                        ViewBag.Text = "zur Startseite Mailverteiler";
+                    }
+                    else
+                    {
+                        ViewBag.ActionName = summary.Action;
+                        ViewBag.ControllerName = summary.Controller;
+                        ViewBag.Id = summary.Id;
+                        ViewBag.Text = "zur Startseite von " + summary.Activity.Name;
+                    }
                 }
                 else
                 {
                     ViewBag.ActionName = "Index";
                     ViewBag.ControllerName = "Activity";
                     ViewBag.Id = "";
+                    ViewBag.Text = "zur Startseite Mailverteiler";
                 }
             }
             else
             {
                 ViewBag.ActionName = "Index";
-                ViewBag.ControllerName = "Mailing";
+                ViewBag.ControllerName = "Messaging";
                 ViewBag.Id = "";
+                ViewBag.Text = "zur Startseite Mailverteiler";
             }
 
             return View();

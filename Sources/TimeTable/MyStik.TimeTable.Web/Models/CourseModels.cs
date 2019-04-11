@@ -194,6 +194,17 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        private ActivityDate _currentDate;
+
+        public ActivityDate CurrentDate
+        {
+            get
+            {
+                return _currentDate ?? (_currentDate = Course.Dates.Where(x => x.End >= DateTime.Now)
+                           .OrderBy(x => x.Begin).FirstOrDefault());
+            }
+        }
+
     }
 
     /// <summary>
