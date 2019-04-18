@@ -4085,20 +4085,7 @@
     <Content Include="Views\Thesis\_StateDelivered.cshtml" />
     <Content Include="Views\Messaging\Index.cshtml" />
     <Content Include="Views\Mailing\_StudentGroupMail.cshtml" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web.Deploy.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Lab.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web.SystemTest.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
