@@ -3,6 +3,14 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+
+# Config files
+Web.Debug.config
+Web.Deploy.config
+Web.Lab.config
+Web.Release.config
+Web.SystemTest.config
+
 # User-specific files
 *.suo
 *.user
