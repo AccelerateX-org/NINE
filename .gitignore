@@ -4,9 +4,6 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 
-# Config files
-Web.?*.config
-
 # User-specific files
 *.suo
 *.user
