@@ -1,0 +1,42 @@
+﻿@if (ViewBag.UserRight.IsOrgMember)
+{
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-default">
+                                    <i class="fa fa-arrow-left"></i> zurück
+                                </a>
+                            </div>
+                            @if (ViewBag.UserRight.IsExamAdmin)
+                            {
+                                <div class="form-group">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-list"></i> Listen <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="@Url.Action("Checking")"><i class="fa fa-legal"></i> Prüfung der Voraussetzungen</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Running")"><i class="fa fa-flask"></i> Angemeldete Arbeiten</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Delivered")"><i class="fa fa-trophy"></i> Abgebene Arbeiten</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

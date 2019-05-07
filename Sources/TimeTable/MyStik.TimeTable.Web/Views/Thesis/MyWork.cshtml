@@ -13,123 +13,213 @@
                     <h4>Meine Abschlussarbeit im Studiengang @Model.Student.Curriculum.ShortName</h4>
                 </div>
                 <div class="list-group">
-                    @if (Model.ConditionRequest == RequestState.None)
-                    {
-                        <a href="@Url.Action("Request")" class="list-group-item">
-                            <h5 class="list-group-item-heading">Antrag auf Anmeldung</h5>
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Es wird überprüft, ob ich alle Voraussetzungen für die Anmeldung/Ausgabe einer Abschlussarbeit nach der für mich gültigen SPO erfüllt habe.</li>
-                                    <li><i class="fa fa-li fa-clock-o"></i>Die Prüfung erfolgt manuell. Es ist mit einer Bearbeitungszeit von mehren Tagen ggf. Wochen zu rechnen.</li>
-                                    <li><i class="fa fa-li fa-envelope-o"></i>Sobald das Ergebnis vorliegt, werde ich per E-Mail benachtrichtigt.</li>
-                                </ul>
-                            </div>
-                        </a>
+                    <div class="list-group-item list-group-item-info">
+                        <h5>Wichtiger Hinweis:</h5>
+                        <p>Diese Seite dient zu meiner Information. Sie ist als Checkliste gedacht.</p>
+                    </div>
+                    @{
+                        var isNameOk = !string.IsNullOrEmpty(Model.User.FirstName) && !string.IsNullOrEmpty(Model.User.LastName);
+                        var isStudOk = !string.IsNullOrEmpty(Model.Student.Number);
+
+                        var isOk = isNameOk && isStudOk;
+
+                        var mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
                     }
-                    else if (Model.ConditionRequest == RequestState.InProgress)
-                    {
-                        <div class="list-group-item">
-                            <h5 class="list-group-item-heading">Antrag auf Anmeldung <i class="fa fa-cog fa-spin text-primary"></i></h5>
-                            <div class="list-group-item-text">
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Allgemeine Angaben</h4>
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-info-circle"></i>Mein Antrag vom @Model.Thesis.RequestDate wird noch bearbeitet.</li>
-                                    <li><i class="fa fa-li fa-envelope-o"></i>Sobald das Ergebnis vorliegt, werde ich per E-Mail benachtrichtigt.</li>
+                                    @if (isNameOk)
+                                    {
+                                        <li><i class="fa fa-user fa-li"></i>@Model.User.FullName <a href="@Url.Action("Index", "UserProfile")" class="btn btn-default btn-xs">ändern</a></li>
+
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-user fa-li"></i><a href="@Url.Action("Index", "UserProfile")" class="btn btn-danger btn-xs">ergänzen</a></li>
+                                    }
+                                    @if (isStudOk)
+                                    {
+                                        <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer: @Model.Student.Number <a href="@Url.Action("ChangeNumber", "Subscription", new {id=Model.Student.Id})" class="btn btn-default btn-xs">ändern</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer fehlt <a href="@Url.Action("ChangeNumber", "Subscription", new {id=Model.Student.Id})" class="btn btn-danger btn-xs">ergänzen</a></li>
+                                    }
                                 </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    @{
+                        isOk = Model.ConditionRequest == RequestState.Accepted;
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Prüfung der Voraussetzungen</h4>
+                                @if (Model.ConditionRequest == RequestState.None)
+                                {
+                                    <p>Durch einen Blick in primuss kann ich erkennen, ob ich die Voraussetzungen erfüllt habe.</p>
+                                    <a href="@Url.Action("Request")" class="btn btn-primary">Voraussetzungen prüfen lassen</a>
+                                    <a href="@Url.Action("Check")" class="btn btn-primary">Voraussetzungen selber prüfen</a>
+                                }
+                                else if (Model.ConditionRequest == RequestState.InProgress)
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate.Value.ToShortDateString() den Antrag auf Prüfung der Voraussetzungen gestellt. Der Antrag wird noch bearbeitet.</li>
+                                    </ul>
+                                    <a href="@Url.Action("Check")" class="btn btn-primary">Voraussetzungen selber prüfen</a>
+                                }
+                                else if (Model.ConditionRequest == RequestState.Accepted)
+                                {
+                                    if (Model.Thesis.RequestAuthority != null)
+                                    {
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate den Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                            <li><i class="fa fa-li fa-calendar-check-o"></i>Ich habe die Voraussetzungen erfüllt (bestätigt am @Model.Thesis.RequestDate.Value.ToShortDateString() von @Model.Thesis.RequestAuthority.FullName)</li>
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <p>Habe die Prüfung der Voraussetzungen selbst durchgeführt.</p>
+                                    }
+
+                                }
+                                else if (Model.ConditionRequest == RequestState.Rejected)
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate den Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                        <li><i class="fa fa-li fa-calendar-times-o"></i>Der Antrag wurde abgelehnt (am @Model.Thesis.RequestDate.Value.ToShortDateString() von @Model.Thesis.RequestAuthority.FullName)</li>
+                                        <li><i class="fa fa-li fa-ban text-danger"></i>Es fehlt die folgende(n) Voraussetzung(en): @Model.Thesis.RequestMessage</li>
+                                    </ul>
+                                    <a href="@Url.Action("Request")" class="btn btn-primary">Voraussetzungen nochmals prüfen lassen</a>
+                                    <a href="@Url.Action("Check")" class="btn btn-primary">Voraussetzungen selber prüfen</a>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if (Model.Thesis != null)
+                    {
+
+                        isOk = !string.IsNullOrEmpty(Model.Thesis.TitleDe) && !string.IsNullOrEmpty(Model.Thesis.TitleEn);
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+
+                        <div class="list-group-item">
+                            <div class="media">
+                                <div class="media-left">
+                                    <i class="fa fa-5x @mediaStyle"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Festlegung des Themas</h4>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-calendar fa-li"></i>de: "@Model.Thesis.TitleDe" </li>
+                                        <li><i class="fa fa-barcode fa-li"></i>en: "@Model.Thesis.TitleEn" </li>
+                                    </ul>
+                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Thema festlegen / ändern</a>
+                                </div>
                             </div>
                         </div>
 
-                    }
-                    else if (Model.ConditionRequest == RequestState.Accepted)
-                    {
+
+                        isOk = Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null);
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+
+
                         <div class="list-group-item">
-                            <h5 class="list-group-item-heading">Antrag auf Anmeldung <i class="fa fa-check text-success"></i></h5>
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-info-circle"></i>Der Antrag wurde am @Model.Thesis.RequestDate.Value von @Model.Thesis.RequestAuthority.FullName genehmigt.</li>
-                                </ul>
+                            <div class="media">
+                                <div class="media-left">
+                                    <i class="fa fa-5x @mediaStyle"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Auswahl der BetreuerInnen</h4>
+                                    <ul class="fa-ul">
+                                        @foreach (var s in Model.Thesis.Supervisors)
+                                        {
+                                            if (s.AcceptanceDate != null)
+                                            {
+                                                <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString()) <a href="#" class="btn btn-default btn-xs">absagen</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (keine Antwort) <a href="#" class="btn btn-default btn-xs">absagen</a></li>
+                                            }
+
+                                        }
+                                    </ul>
+                                    @if (!isOk)
+                                    {
+                                        <a href="@Url.Action("Supervision", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn anfragen</a>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("Request")" class="list-group-item list-group-item-danger">
-                            <h5 class="list-group-item-heading">Antrag auf Anmeldung - wurde am @Model.Thesis.ResponseDate von @Model.Thesis.RequestAuthority.FullName abgelehnt</h5>
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-question-circle"></i>Begründung: @Model.Thesis.RequestMessage</li>
-                                    <li><i class="fa fa-li fa-exclamation"></i>Neuen Antrag stellen.</li>
-                                </ul>
-                            </div>
-                        </a>
-                    }
 
-                    @if (Model.ConditionRequest == RequestState.Accepted)
-                    {
-                        if (Model.SupervisionRequest == RequestState.None || Model.SupervisionRequest == RequestState.Rejected)
+                        // Ausgegeben
+                        var isIssued = Model.Thesis.IssueDate != null;
+                        var daysToExpiry = 0;
+
+                        if (isIssued)
                         {
-                            <a href="@Url.Action("Supervision", new {id = Model.Thesis.Id})" class="list-group-item">
-                                <h5 class="list-group-item-heading">Antrag auf Betreuung</h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-question-circle"></i>Im Antrag gebe ich den geplanten Titel und den Beginn der Bearbeitung an.</li>
-                                        <li><i class="fa fa-li fa-envelope-o"></i>Sobald das Ergebnis vorliegt, werde ich per E-Mail benachtrichtigt.</li>
-                                    </ul>
-                                </div>
-                            </a>
+                            var diff = Model.Thesis.ExpirationDate.Value.Date - DateTime.Today;
+                            daysToExpiry = diff.Days;
+                            if (daysToExpiry <= 14)
+                            {
+                                mediaStyle = "fa-exclamation-triangle text-danger";
+                            }
+                            else
+                            {
+                                mediaStyle = "fa-cog";
+                            }
                         }
-                        else if (Model.SupervisionRequest == RequestState.InProgress)
+                        else
                         {
-                            <div class="list-group-item">
-                                <h5 class="list-group-item-heading">Antrag auf Anmeldung <i class="fa fa-cog fa-spin text-primary"></i></h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-info-circle"></i>Bisher noch keine Antwort</li>
-                                    </ul>
-                                    <p>Angefragt wurden</p>
-                                    <ul class="fa-ul">
-                                        @foreach (var supervisor in Model.Thesis.Supervisors)
-                                        {
-                                            if (supervisor.AcceptanceDate.HasValue)
-                                            {
-                                                <li><i class="fa fa-check text-success"></i>@supervisor.Member.FullName am @supervisor.AcceptanceDate.Value.ToShortDateString()</li>
-                                            }
-                                            else
-                                            {
-                                                <li><i class="fa fa-question text-danger"></i>@supervisor.Member.FullName keine Antwort</li>
-                                            }
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
+                            mediaStyle = "fa-exclamation-triangle text-danger";
                         }
-                        else // Accepted
-                        {
-                            <div class="list-group-item">
-                                <h5 class="list-group-item-heading">Antrag auf Betreuung <i class="fa fa-check text-success"></i></h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-info-circle"></i>Der Antrag auf Betreuung wurde angenommen.</li>
-                                    </ul>
-                                    <p>Meine Betreuer sind</p>
-                                    <ul class="fa-ul">
-                                        @foreach (var supervisor in Model.Thesis.Supervisors)
-                                        {
-                                            if (supervisor.AcceptanceDate.HasValue)
-                                            {
-                                                <li><i class="fa fa-check text-success"></i>@supervisor.Member.FullName am @supervisor.AcceptanceDate.Value.ToShortDateString()</li>
-                                            }
-                                            else
-                                            {
-                                                <li><i class="fa fa-question text-danger"></i>@supervisor.Member.FullName keine Antwort</li>
-                                            }
-                                        }
-                                    </ul>
+
+
+                        <div class="list-group-item">
+                            <div class="media">
+                                <div class="media-left">
+                                    <i class="fa fa-5x @mediaStyle"></i>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Anmeldung / Abgabe</h4>
+                                    @if (isIssued)
+                                    {
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                                            <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                            <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="btn btn-primary">Anmelden</a>
+                                    }
                                 </div>
                             </div>
-                        }
+                        </div>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+

@@ -1,0 +1,37 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisDetailModel
+@{
+    ViewBag.Title = "Antrag auf Anmeldung";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-file-o"></i> Prüfung der Voraussetzungen
+                </h4>
+                <div class="panel-body">
+                    <div class="alert alert-info">
+                        <h5>Hinweise</h5>
+                        <ul>
+                            <li>Hiermit bestätige ich, dass ich die Voraussetzungen für die Anmledung meine Abschlussarbeit erfüllt habe.</li>
+                            <li>Ich habe die Prüfung an Hand eigener Unterlagen und/oder Verwendung von primuss durchgeführt.</li>
+                        </ul>
+                    </div>
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                        ))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Die Voraussetzungen sind erfüllt</button>
+                                <a href="@Url.Action("MyWork")" class="btn btn-default">Abbrechen</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

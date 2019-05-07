@@ -51,6 +51,7 @@
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Voraussetzungen erfüllt</button>
                                 <a href="@Url.Action("Deny", new {id=Model.Thesis.Id})" class="btn btn-danger"><i class="fa fa-ban"></i> Antrag ablehnen</a>
+                                <a href="@Url.Action("Details", new {id=Model.Thesis.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> Abbrechen und zurück</a>
                             </div>
                         </div>
                     }

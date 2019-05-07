@@ -17,42 +17,12 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <h4 class="panel-heading">
-                    <i class="fa fa-file-o"></i> Antrag auf Betreuung für meine Abschlussarbeit
+                    <i class="fa fa-file-o"></i> Anfrage zur Betreuung meiner Abschlussarbeit
                 </h4>
                 <div class="panel-body">
-                    <div class="alert alert-info">
-                        <h5>Hinweise</h5>
-                        <ul>
-                            <li>Der geplante Beginn ist das Anmeldedatum und muss der aktuelle Tag sein oder in der Zukunft liegen.</li>
-                            <li><strong>Das Anmeldedatum kann nachträglich nicht verändert werden.</strong></li>
-                            <li>Über das Ergebnis der Antragsprüfung werde ich automtaisch per E-Mail informiert.</li>
-                            <li>Weitere Angaben, wie englischer Titel etc. können später ergänzt werden</li>
-                            <li>Die Änderung des Titels ist bis zur Abgabe möglich.</li>
-                        </ul>
-                    </div>
-
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="Name">Thema</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control  input-sm" id="Name" name="name" placeholder="Thema" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="ShortName">Beschreibung / Kurzfassung</label>
-                            <div class="col-sm-9">
-                                <input type="text" rows="10" class="form-control  input-sm" id="ShortName" name="shortName" placeholder="Beschreibung" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="StartDate">Geplanter Beginn (heute oder Zukunft)</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control  input-sm datepicker" id="StartDate" name="StartDate" placeholder="Datum" />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DozTable">Betreuer*innen</label>
+                            <label class="col-sm-3 control-label" for="DozTable">Betreuende(r) / Lehrende(r)</label>
                             <div class="col-sm-9">
                                 <div id="DozTable">
                                     <table class="table table-condensed">
@@ -81,7 +51,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-12">
-                                <button class="btn btn-primary" onclick="createSupervision()"><i class="fa fa-question-circle-o"></i> Antrag stellen</button>
+                                <button class="btn btn-primary" onclick="createSupervision()"><i class="fa fa-question-circle-o"></i> Anfragen versenden</button>
                                 <a href="@Url.Action("MyWork")" class="btn btn-default">Abbrechen</a>
                             </div>
                         </div>
@@ -178,9 +148,6 @@
 
             $("#loading").show();
 
-            var courseName = $("#Name").val();
-            var courseShortName = $("#ShortName").val();
-            var date = $("#StartDate").val();
             var dozList = new Array();
 
 
@@ -198,9 +165,6 @@
                 url: '@Url.Action("RequestSupervision")',
                     data: {
                         id: '@Model.Thesis.Id',
-                    Name: courseName,
-                    ShortName: courseShortName,
-                    Date: date,
                     DozIds: dozList
                 },
                     success: function (data, success, xhr) {

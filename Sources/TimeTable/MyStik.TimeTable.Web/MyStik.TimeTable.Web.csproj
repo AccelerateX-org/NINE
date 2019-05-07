@@ -4085,6 +4085,12 @@
     <Content Include="Views\Thesis\_StateDelivered.cshtml" />
     <Content Include="Views\Messaging\Index.cshtml" />
     <Content Include="Views\Mailing\_StudentGroupMail.cshtml" />
+    <Content Include="Views\Thesis\ChangeTitle.cshtml" />
+    <Content Include="Views\Thesis\IndexNew.cshtml" />
+    <Content Include="Views\Thesis\Running.cshtml" />
+    <Content Include="Views\Thesis\_MenuBar.cshtml" />
+    <Content Include="Views\Thesis\CorrectTitle.cshtml" />
+    <Content Include="Views\Thesis\Check.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

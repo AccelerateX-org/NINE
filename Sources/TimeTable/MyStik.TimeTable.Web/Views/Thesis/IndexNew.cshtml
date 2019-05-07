@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "Abschlussarbeiten";
+}
+
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h4>Abschlussarbeiten @ViewBag.Organiser.ShortName</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Running")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-cog"></i></h4>
+                    <h5>Laufende Arbeiten</h5>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Archive")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-3x fa-archive"></i></h4>
+                    <h5>Abgeschlossene Arbeiten</h5>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

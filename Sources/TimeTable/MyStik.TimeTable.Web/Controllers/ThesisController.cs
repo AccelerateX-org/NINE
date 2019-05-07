@@ -19,20 +19,63 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var userService = new UserInfoService();
             // der aktuelle Benutzer
             var org = GetMyOrganisation();
 
             var userRight = GetUserRight(org);
 
-            var theses = Db.Theses.Where(x => 
-                x.Student.Curriculum.Organiser.Id == org.Id).ToList();
 
             if (!userRight.IsExamAdmin)
             {
                 return View("NoAccess");
             }
 
+            /*
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x => 
+                x.Student.Curriculum.Organiser.Id == org.Id).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+            */
+
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+            return View("IndexNew");
+        }
+
+        public ActionResult Running()
+        {
+            var org = GetMyOrganisation();
+
+            var userRight = GetUserRight(org);
+
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                x.Student.Curriculum.Organiser.Id == org.Id &&      // Student zur Fakultät gehörend
+                x.DeliveryDate == null                              // noch nicht abgegeben
+                ).ToList();
 
             var model = new List<ThesisStateModel>();
 
@@ -48,11 +91,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Add(tm);
             }
 
-
             ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
 
             return View(model);
         }
+
+
+
 
 
         public ActionResult MyWork()
@@ -146,6 +193,65 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("MyWork");
         }
+
+
+        public ActionResult Check()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+            // Eine evtl. vorhandene alte Anfrage löschen
+            if (thesis?.RequestAuthority != null)
+            {
+                thesis.ResponseDate = null;
+                thesis.IsPassed = null;
+                thesis.RequestAuthority = null;
+
+                Db.SaveChanges();
+            }
+
+
+            var model = new ThesisDetailModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Check(ThesisDetailModel model)
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+
+            if (thesis == null)
+            {
+                thesis = new Thesis
+                {
+                    Student = student,
+                    RequestDate = DateTime.Now,
+                };
+
+                Db.Theses.Add(thesis);
+            }
+
+            // die eigene Bestätigung
+            thesis.ResponseDate = DateTime.Now;
+            thesis.IsPassed = true;
+            thesis.RequestAuthority = null;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("MyWork");
+        }
+
+
 
 
 
@@ -465,7 +571,7 @@ namespace MyStik.TimeTable.Web.Controllers
             mailService.SendConditionRequestDeny(tm, member, user);
 
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Running");
         }
 
 
@@ -498,7 +604,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Running");
         }
 
 
@@ -527,32 +633,17 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult RequestSupervision(Guid id, string Name, string ShortName, string Date, Guid[] DozIds)
+        public ActionResult RequestSupervision(Guid id, Guid[] DozIds)
         {
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
-            if (thesis == null || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Date) || DozIds == null || !DozIds.Any())
+            if (thesis == null)
             {
                 return Json(new {result = "Redirect", url = Url.Action("RequestIncomplete")});
             }
 
 
-
-            thesis.TitleDe = Name;
-            thesis.AbstractDe = ShortName;
-            thesis.AcceptanceDate = DateTime.Now;
-
-            var issueDate = DateTime.Today;
-
-            if (!string.IsNullOrEmpty(Date))
-            {
-                issueDate = DateTime.Parse(Date);
-            }
-            if (issueDate < DateTime.Today)
-                issueDate = DateTime.Today;
-
-            thesis.IssueDate = issueDate;
-            thesis.ExpirationDate = issueDate.AddMonths(6).AddDays(-1);
+            var supervisors = new List<Supervisor>();
 
             foreach (var dozId in DozIds)
             {
@@ -567,6 +658,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     };
                     thesis.Supervisors.Add(supervisor);
                     Db.Supervisors.Add(supervisor);
+
+                    supervisors.Add(supervisor);
                 }
             }
 
@@ -575,7 +668,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var mailService = new ThesisMailService();
             var userService = new UserInfoService();
 
-            foreach (var supervisor in thesis.Supervisors)
+            foreach (var supervisor in supervisors)
             {
 
                 var tm = new ThesisStateModel
@@ -591,11 +684,35 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     mailService.SendSupervisionRequest(tm, supervisor.Member, user);
                 }
-
             }
 
 
             return Json(new { result = "Redirect", url = Url.Action("MyWork") });
+        }
+
+
+        public ActionResult Details(Guid id)
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            var user = GetUser(thesis.Student.UserId);
+            var student = thesis.Student;
+
+            var model = new ThesisStateModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis
+            };
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
         }
 
 
@@ -851,6 +968,66 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public ActionResult ChangeTitle(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            return View(thesis);
+        }
+
+
+        [HttpPost]
+        public ActionResult ChangeTitle(Thesis model)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Id);
+
+            if (thesis != null)
+            {
+                if (!string.IsNullOrEmpty(model.TitleDe))
+                    thesis.TitleDe = model.TitleDe;
+
+                if (!string.IsNullOrEmpty(model.TitleEn))
+                    thesis.TitleEn = model.TitleEn;
+
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("MyWork");
+        }
+
+
+        public ActionResult CorrectTitle(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            return View(thesis);
+        }
+
+
+        [HttpPost]
+        public ActionResult CorrectTitle(Thesis model)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Id);
+
+            if (thesis != null)
+            {
+                if (!string.IsNullOrEmpty(model.TitleDe))
+                    thesis.TitleDe = model.TitleDe;
+
+                if (!string.IsNullOrEmpty(model.TitleEn))
+                    thesis.TitleEn = model.TitleEn;
+
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("Details", new {id=thesis.Id});
+        }
+
+
+
 
         [HttpPost]
         public PartialViewResult ThesisState(Guid id)

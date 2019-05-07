@@ -51,7 +51,6 @@ namespace MyStik.TimeTable.Web.Services
             email.Thesis = model;
             email.Member = member;
             email.User = user;
-            email.Body = "<p><strong>Betreuung wurde angenommen.</strong></p>";
 
             SendThesisMail(email);
         }
@@ -64,7 +63,7 @@ namespace MyStik.TimeTable.Web.Services
             email.Thesis = model;
             email.Member = member;
             email.User = user;
-            email.Body = "<p><strong>Betreuung wurde angenommen.</strong></p>";
+            email.Body = "<p><strong>Die Betreuung Ihrer Abschlussarbeit wurde angenommen.</strong></p>";
 
             SendThesisMail(email);
 
@@ -78,7 +77,7 @@ namespace MyStik.TimeTable.Web.Services
             email.Thesis = model;
             email.Member = member;
             email.User = user;
-            email.Body = "<p><strong>Betreuung wurde abgelehnt.</strong></p>";
+            email.Body = "<p><strong>Die Betreuung Ihrer Abschlussarbeit wurde abgelehnt.</strong></p>";
 
             SendThesisMail(email);
 
