@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net.Configuration;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -19,8 +21,14 @@ namespace MyStik.TimeTable.Web.Services
 
         protected Postal.EmailService EmailService { get; }
 
+
         protected BaseMailService()
         {
+            /*
+            var smtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
+            FromEMailAdress = $"{topic} <{smtpSection.From}>";
+            */
+
             Logger = LogManager.GetLogger("Mail");
 
             UserService = new UserInfoService();

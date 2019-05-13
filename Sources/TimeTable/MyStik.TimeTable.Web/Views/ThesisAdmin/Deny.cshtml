@@ -1,0 +1,49 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisDetailModel
+@{
+    ViewBag.Title = "Antrag auf Anmeldung";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-file-text-o"></i> Prüfung der Voraussetzungen</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                        ))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        @Html.HiddenFor(m => m.Thesis.Id)
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Studierende(r)</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.User.FullName</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">EMail</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">@Model.User.Email</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Fehlende Voraussetzungen</label>
+                            <div class="col-md-8">
+                                @Html.TextAreaFor(m => m.Thesis.RequestMessage, new { @class = "form-control", rows = 10 })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-danger"><i class="fa fa-ban"></i> Antrag ablehnen</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

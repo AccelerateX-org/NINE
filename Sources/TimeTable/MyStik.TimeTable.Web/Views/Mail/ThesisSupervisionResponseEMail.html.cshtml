@@ -1,0 +1,15 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+@if (Model.Supervisor != null)
+{
+    <p>Die Betreuung Ihrer Abschlussarbeit wurde von @Model.ActionUser.FirstName @Model.ActionUser.LastName angenommen.</p>
+}
+else
+{
+    <p>Die Betreuung Ihrer Abschlussarbeit wurde von @Model.ActionUser.FirstName @Model.ActionUser.LastName <strong>abgelehnt</strong>.</p>
+}

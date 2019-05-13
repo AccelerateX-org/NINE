@@ -1,0 +1,9 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Die Abgabe Ihrer Abschlussarbeit wurde von @Model.ActionUser.FirstName @Model.ActionUser.LastName am @Model.Thesis.IssueDate.Value.ToShortDateString() bestätigt.</p>
+

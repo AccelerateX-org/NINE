@@ -154,18 +154,18 @@
                                         {
                                             if (s.AcceptanceDate != null)
                                             {
-                                                <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString()) <a href="#" class="btn btn-default btn-xs">absagen</a></li>
+                                                <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString())</li>
                                             }
                                             else
                                             {
-                                                <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (keine Antwort) <a href="#" class="btn btn-default btn-xs">absagen</a></li>
+                                                <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (keine Antwort) <a href="@Url.Action("RemoveSupervisor", new {id=s.Id})" class="btn btn-default btn-xs">absagen</a></li>
                                             }
 
                                         }
                                     </ul>
                                     @if (!isOk)
                                     {
-                                        <a href="@Url.Action("Supervision", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn anfragen</a>
+                                        <a href="@Url.Action("RequestSupervision", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn anfragen</a>
                                     }
                                 </div>
                             </div>
@@ -211,7 +211,7 @@
                                     }
                                     else
                                     {
-                                        <a href="#" class="btn btn-primary">Anmelden</a>
+                                        <a href="@Url.Action("Issue")" class="btn btn-primary">Anmelden</a>
                                     }
                                 </div>
                             </div>

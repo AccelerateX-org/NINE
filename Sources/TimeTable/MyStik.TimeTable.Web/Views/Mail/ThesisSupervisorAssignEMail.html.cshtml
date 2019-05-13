@@ -1,0 +1,9 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Sie wurden von @Model.ActionUser.FirstName @Model.ActionUser.LastName als BetreuerIn
+    für die Abschlussarbeit von @Model.StudentUser.FirstName @Model.StudentUser.LastName zugeordnet.</p>

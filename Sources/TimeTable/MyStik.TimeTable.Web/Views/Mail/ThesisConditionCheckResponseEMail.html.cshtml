@@ -1,0 +1,24 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+@if (Model.Thesis.IsPassed.HasValue)
+{
+    if (Model.Thesis.IsPassed.Value)
+    {
+        <p>Die Voraussetzungen zur Anmeldung einer Abschlussarbeit sind erfüllt.</p>
+    }
+    else
+    {
+        <p>Die folgenden Voraussetzungen zur Anmeldung einer Abschlussarbeit fehlen: 
+            <strong>@Model.Thesis.RequestMessage</strong>
+        </p>
+    }
+}
+else
+{
+    <h2>Fehlerhafte Mail - bitte an Support melden</h2>
+}

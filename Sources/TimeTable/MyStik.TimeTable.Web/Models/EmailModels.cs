@@ -30,6 +30,11 @@ namespace MyStik.TimeTable.Web.Models
         public string To { get; set; }
 
         /// <summary>
+        /// Adresse der Kopie
+        /// </summary>
+        public string Cc { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public string Subject { get; set; }
@@ -207,6 +212,10 @@ namespace MyStik.TimeTable.Web.Models
         public OrganiserMember Member { get; set; }
 
         public ApplicationUser User { get; set; }
+
+        public ApplicationUser Sender { get; set; }
+
+        public ApplicationUser Receiver { get; set; }
 
         public string Body { get; set; }
     }

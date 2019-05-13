@@ -255,10 +255,6 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult SubscribeActivity(Guid Id)
         {
-            //Db.Database.BeginTransaction()
-
-
-
             var activity = Db.Occurrences.SingleOrDefault(ac => ac.Id == Id);
 
             var model = new OccurrenceStateModel();

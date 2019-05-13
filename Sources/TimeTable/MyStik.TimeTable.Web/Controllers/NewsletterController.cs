@@ -93,6 +93,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     Subject = "",
                 };
 
+                ViewBag.UserRight = GetUserRight();
+
                 return View(model);
             }
 

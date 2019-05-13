@@ -58,6 +58,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ReceiverCount = subscribers.Count;
             }
 
+            ViewBag.UserRight = GetUserRight();
+            ViewBag.SystemMail = MailController.InitSystemFrom();
+
             return View(model);
         }
 
@@ -359,6 +362,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     model.GroupIdList.Add(groupId.ToString());
                 }
 
+                ViewBag.UserRight = GetUserRight();
+
                 return PartialView("_StudentGroupMail", model);
             }
 
@@ -366,42 +371,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_GroupSelectionError");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult StudentGroupMail()
-        {
-            if (Session["GroupList"] == null)
-            {
-                return RedirectToAction("StudentGroup");
-            }
-
-            var model = new OccurrenceMailingModel();
-
-            var groups = Session["GroupList"] as ICollection<SemesterGroup>;
-
-            var viewBagModel = new List<SemesterGroupViewModel>();
-
-            var studentService = new StudentService(Db);
-
-            foreach (var group in groups)
-            {
-
-                var groupModel = new SemesterGroupViewModel
-                {
-                    Group = group,
-                    UserIds = studentService.GetStudents(group)
-                };
-
-                viewBagModel.Add(groupModel);
-            }
-
-            ViewBag.GroupList = viewBagModel;
-
-
-            return View(model);
-        }
 
         /// <summary>
         /// 
@@ -565,17 +534,14 @@ namespace MyStik.TimeTable.Web.Controllers
             
 
             // Das Mail-Model aufbauen
-            var mailModel = new GenericMailDeliveryModel
+            var mailModel = new UserMailModel
             {
-                Subject = model.Subject,
-                Sender = UserManager.FindByName(User.Identity.Name),
-                TemplateContent = new UserMailModel
-                {
-                    CustomBody = model.Body,
-                    IsImportant = model.IsImportant,
-                    ListName = model.ListName,
-                    IsDistributionList = model.IsDistributionList
-                }
+                CustomSubject = model.Subject,
+                SenderUser = UserManager.FindByName(User.Identity.Name),
+                CustomBody = model.Body,
+                IsImportant = model.IsImportant,
+                ListName = model.ListName,
+                IsDistributionList = model.IsDistributionList
             };
 
             var size = 0;
@@ -640,12 +606,12 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                     else
                     {
-                        mailModel.Receiver = user;
+                        mailModel.User = user;
 
                         // Versand versuchen
                         try
                         {
-                            new MailController().GenericMail(mailModel).Deliver();
+                            new MailController().GenericMessageMail(mailModel).Deliver();
 
                             deliveryModel.Deliveries.Add(new MailDeliveryReportModel
                             {
@@ -678,10 +644,10 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // Kopie an Absender
-            mailModel.Receiver= mailModel.Sender;
+            mailModel.User= mailModel.SenderUser;
 
             // Versandbericht nur an Staff
-            if (mailModel.Sender.MemberState == MemberState.Staff)
+            if (mailModel.SenderUser.MemberState == MemberState.Staff)
             {
                 var ms = new MemoryStream();
                 var writer = new StreamWriter(ms, Encoding.Default);
@@ -726,7 +692,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             try
             {
-                new MailController().GenericMail(mailModel).Deliver();
+                new MailController().GenericMessageMail(mailModel).Deliver();
             }
             catch (Exception ex)
             {

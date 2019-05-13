@@ -399,14 +399,11 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var deliveryMailModel = new GenericMailDeliveryModel
+            var deliveryMailModel = new UserMailModel
             {
-                Subject = model.Subject,
-                Receiver = host,
-                TemplateContent = new UserMailModel
-                {
-                    CustomBody = model.Body,
-                }
+                CustomSubject = model.Subject,
+                User = host,
+                CustomBody = model.Body,
             };
 
 
@@ -444,7 +441,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             try
             {
-                new MailController().GenericMail(deliveryMailModel).Deliver();
+                new MailController().GenericMessageMail(deliveryMailModel).Deliver();
             }
             catch (Exception ex)
             {

@@ -5,115 +5,133 @@
 
 
 
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-group"></i>Die Mail soll an folgende Gruppen gesendet werden
+                    <h4>E-Mail an Auswahl von Studierendengruppen</h4>
                 </div>
                 <div class="panel-body">
-                        @if (Model.GroupList != null)
-                        {
-                            <table class="table table-condensed">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                @foreach (var group in Model.GroupList.Where(g => g.Group.CapacityGroup != null).OrderBy(g => g.Group.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.Group.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Group.Name))
-                                {
-
-                                    <tr>
-                                        <td>@group.Group.FullName</td>
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        }
-                        else
-                        {
-                            <div class="alert alert-danger">
-                                <h4>Es sind keine Gruppen ausgewählt. Die Mail hat keine Empfänger!</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="alert alert-warning">
+                                <h5>Wichtige Information zum Mailversand:</h5>
+                                <p>
+                                    Bisher erfolgte der Versand von E-Mails unter Verwendung der HM-Mailserver.
+                                    Damit konnte der aktuelle Benutzer als Absender der Mail eingetragen werden.
+                                </p>
+                                <p>
+                                    Derzeit wird das Benachrichtigungssystem unter Berücksichtigung von
+                                    Daten- und Urheberschutz grundlegend neu aufgebaut, z.B. um Push-Benachrichtigungen zu realisieren.
+                                    Als erste Änderung werden ab sofort alle E-Mails als „Systemnachricht“ versendet. Absender ist folgende E-Mail Adresse: @ViewBag.SystemMail
+                                </p>
+                                <p>
+                                    Es wird pro Empfänger eine separate E-Mail in folgender Form versendet:<br />
+                                    <i>
+                                        Sehr geehrte(r) [Vorname] [Nachname],<br />
+                                        <a href="mailto:@ViewBag.UserRight.User.Email">@ViewBag.UserRight.User.FirstName @ViewBag.UserRight.User.LastName</a> hat Ihnen folgende Nachricht gesendet:<br />
+                                        [Betreff]<br />
+                                        [Nachricht]
+                                    </i>
+                                </p>
                             </div>
-                        }
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <h5>Wichtige Hinweise zur Liste der Empfänger:</h5>
+                                <p>Die Mail soll an folgende Gruppen gesendet werden</p>
+                                @if (Model.GroupList != null)
+                                {
+                                    <ul>
+
+                                        @foreach (var group in Model.GroupList.Where(g => g.Group.CapacityGroup != null).OrderBy(g => g.Group.CapacityGroup.CurriculumGroup.Curriculum.Name).ThenBy(g => g.Group.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.Group.Name))
+                                        {
+                                            <li>@group.Group.FullName</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-danger">
+                                        <h4>Es sind keine Gruppen ausgewählt. Die Mail hat keine Empfänger!</h4>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @using (Html.BeginForm("StudentGroup", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                            {
+                                @Html.ValidationSummary(true)
+                                <fieldset>
+                                    @Html.ValidationSummary()
+                                    <input type="hidden" name="GroupIdList" value="@(string.Join(",", Model.GroupIdList))" />
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Subject, new { @class = "col-md-4 control-label" })
+                                        <div class="col-md-8">
+                                            @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Body, new { @class = "col-md-4 control-label" })
+                                        <div class="col-md-8">
+                                            @Html.TextAreaFor(m => m.Body, new { @class = "form-control", rows = "10" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-offset-4 col-md-8">
+                                            <div class="checkbox">
+                                                <label>
+                                                    @Html.CheckBoxFor(m => m.IsImportant)
+                                                    Diese Nachricht als <strong>"WICHTIG FÜR DAS STUDIUM"</strong> an alle Studierenden senden. <br />
+                                                    Die individuellen Einstellungen im Benutzerprofil der Studierenden zur Steuerung der Benachrichtungen werden nicht berücksichtigt.
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">Anhänge</label>
+                                        <div class="col-md-8">
+                                            <div>
+                                                <input type="file" name="Attachments" id="Attachment1" />
+                                            </div>
+                                            <div>
+                                                <input type="file" name="Attachments" id="Attachment2" />
+                                            </div>
+                                            <div>
+                                                <input type="file" name="Attachments" id="Attachment3" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-offset-4 col-md-8">
+                                            <input type="submit" value="Senden" class="btn btn-default" />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <div class="row">
-        <div class="col-md-12">
-            @using (Html.BeginForm("StudentGroup", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
-            {
-                @Html.ValidationSummary(true)
-                <fieldset>
-                    @Html.ValidationSummary()
-                    <input type="hidden" name="GroupIdList" value="@(string.Join(",", Model.GroupIdList))" />
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Subject, new { @class = "col-md-4 control-label" })
-                        <div class="col-md-8">
-                            @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Body, new { @class = "col-md-4 control-label" })
-                        <div class="col-md-8">
-                            @Html.TextAreaFor(m => m.Body, new { @class = "form-control", rows = "10" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-4 col-md-8">
-                            <div class="checkbox">
-                                <label>
-                                    @Html.CheckBoxFor(m => m.IsImportant)
-                                    Diese Nachricht als <strong>"WICHTIG FÜR DAS STUDIUM"</strong> an alle Studierenden senden. <br />
-                                    Die individuellen Einstellungen im Benutzerprofil der Studierenden zur Steuerung der Benachrichtungen werden nicht berücksichtigt.
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">Anhänge</label>
-                        <div class="col-md-8">
-                            <div>
-                                <input type="file" name="Attachments" id="Attachment1" />
-                            </div>
-                            <div>
-                                <input type="file" name="Attachments" id="Attachment2" />
-                            </div>
-                            <div>
-                                <input type="file" name="Attachments" id="Attachment3" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-4 col-md-8">
-                            <input type="submit" value="Senden" class="btn btn-default" />
-                        </div>
-                    </div>
-                </fieldset>
-            }
-        </div>
-    </div>
-
 </div>
 
 
-    @section scripts
-{
-        <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
 
-        <script>
-            jQuery(document).ready(function () {
-                $("#Body").cleditor();
-            });
-        </script>
-    }
+
+                            @section scripts
+{
+                                <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+                                <script>
+                                    jQuery(document).ready(function () {
+                                        $("#Body").cleditor();
+                                    });
+                                </script>
+                            }
 
 

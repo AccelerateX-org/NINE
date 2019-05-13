@@ -44,7 +44,7 @@
     </div>
     <div class="col-sm-6 col-md-3 col-lg-2">
         <div class="panel panel-default text-center">
-            <a href="@Url.Action("Index", "Supervision")" class="btn btn-default btn-block">
+            <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-default btn-block">
                 <h4><i class="fa fa-3x fa-file-o"></i></h4>
                 <h5>Meine Abschlussarbeiten</h5>
             </a>
@@ -233,13 +233,13 @@
             </div>
             <div class="col-sm-6 col-md-3 col-lg-2">
                 <div class="panel panel-default text-center">
-                    <a href="@Url.Action("Index", "Thesis")" class="btn btn-default btn-block">
+                    <a href="@Url.Action("Index", "ThesisAdmin")" class="btn btn-default btn-block">
                         <h4><i class="fa fa-3x fa-files-o"></i></h4>
                         <h5>Abschlussarbeiten</h5>
                     </a>
                     <div class="btn-group btn-group-justified">
-                        <a href="@Url.Action("Delivery", "Thesis", new {id = Model.Semester.Id})" class="btn btn-default disabled">Abgaben</a>
-                        <a href="@Url.Action("Archive", "Thesis", new {id = Model.NextSemester.Id})" class="btn btn-default disabled">Archiv</a>
+                        <a href="@Url.Action("Running", "ThesisAdmin")" class="btn btn-default">Laufende</a>
+                        <a href="@Url.Action("Archived", "ThesisAdmin")" class="btn btn-default">Archiv</a>
                     </div>
                 </div>
             </div>

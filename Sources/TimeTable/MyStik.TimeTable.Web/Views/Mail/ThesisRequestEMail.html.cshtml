@@ -1,9 +1,0 @@
-﻿@model MyStik.TimeTable.Web.Models.ThesisRequestMailModel
-
-@{
-    Layout = "~/Views/Mail/_UserTemplate.cshtml";
-}
-
-
-<p>Es liegt eine neue Anfrage zur Betreuung einer Abschlussarbeit vor.</p>
-<a href="@Url.Action("Thesis", "Lecturer", null, Request.Url.Scheme)">Zur Verwaltungsseite</a>

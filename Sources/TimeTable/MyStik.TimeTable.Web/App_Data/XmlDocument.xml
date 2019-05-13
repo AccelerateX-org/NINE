@@ -4998,19 +4998,6 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.AlumniController.SendInvitations">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.AlumniController.SendInvitations(MyStik.TimeTable.Web.Models.OccurrenceMailingModel)">
-            <summary>
-            
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.AlumniController.Delete">
             <summary>
             
@@ -5946,6 +5933,144 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Controllers.MailController">
+            <summary>
+            Hier werden Mails direkt versendet 
+            </summary>
+            <summary>
+            Hier werden Mails direkt versendet 
+            </summary>
+            <summary>
+            Hier werden Mails direkt versendet 
+            </summary>
+            <summary>
+            Hier werden Mails direkt versendet 
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Subscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Bestätigung einer Eintragung
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Discharge(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Bestätigung einer Austragung
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.RemoveSubscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Austragen durch anderen Benutzer
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CancelOccurrence(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Wird nur als Dummy zum Erzeugen des Standardtexts verwendet
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CancelAllOccurrences(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ReactivateOccurrence(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
+            <summary>
+            Wird nur als Dummy zum Erzeugen des Standardtexts verwendet
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.RegisterUnionEMail(MyStik.TimeTable.Web.Models.OrgMemberMailModel)">
+            <summary>
+            Fachshcaft
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorRemoveEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Web.Models.ApplicationUser)">
+            <summary>
+            Entfernung durch Dritten
+            </summary>
+            <param name="thesisState"></param>
+            <param name="supervisorUser"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorAssignEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Web.Models.ApplicationUser)">
+            <summary>
+            Annahme durch Dritten
+            </summary>
+            <param name="thesisState"></param>
+            <param name="supervisorUser"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisionRequestEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser)">
+            <summary>
+            Anfrage an Betreuer
+            </summary>
+            <param name="thesisState"></param>
+            <param name="supervisorUser"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisionRequestEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Web.Models.ApplicationUser)">
+            <summary>
+            Anfrage an Betreuer
+            </summary>
+            <param name="thesisState"></param>
+            <param name="supervisorUser"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisConditionCheckResponseEMail(MyStik.TimeTable.Web.Models.ThesisStateModel)">
+            <summary>
+            Antwort auf die Prüfung der Voraussetzungen
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.VerfiyEMail(MyStik.TimeTable.Web.Models.ConfirmEmailMailModel)">
+            <summary>
+            Validierung einer E-Mail Adresse
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.DeleteUserMail(MyStik.TimeTable.Web.Models.DeleteUserMailModel)">
+            <summary>
+            Der Benutzer löscht sein eigenes Konto
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.InvitationMail(MyStik.TimeTable.Web.Models.ForgotPasswordMailModel,MyStik.TimeTable.Web.Models.ApplicationUser,System.String)">
+            <summary>
+            Versand von Einladungen als Benutzer
+            </summary>
+            <param name="model"></param>
+            <param name="sender"></param>
+            <param name="language"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.OnMailSent(System.Net.Mail.MailMessage)">
+            <summary>
+            
+            </summary>
+            <param name="mail"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.GenericMessageMail(MyStik.TimeTable.Web.Models.UserMailModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.ModuleController">
             <summary>
             
@@ -6175,6 +6300,52 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Controllers.ThesisAdminController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Index">
+            <summary>
+            Der Status meiner Abschlussarbeit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Approval(System.Guid)">
+            <summary>
+            Die Sicht des Studierenden
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Issue(System.Guid)">
+            <summary>
+            Anmeldung durch den Betreuer
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Delivered(System.Guid)">
+            <summary>
+            Anmeldung durch den Betreuer
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisSupervisionController.Issue(System.Guid)">
+            <summary>
+            Anmeldung durch den Betreuer
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisSupervisionController.Delivered(System.Guid)">
+            <summary>
+            Anmeldung durch den Betreuer
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.ThesisAnnouncementsController">
             <summary>
             
@@ -6244,38 +6415,6 @@
             <summary>
             
             </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.Index">
-            <summary>
-            Der Status meiner Abschlussarbeit
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.List">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.CreateThesis(System.Nullable{System.Guid})">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.CreateThesis(MyStik.TimeTable.Web.Models.CourseCreateModelExtended)">
-            <summary>
-            
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisController.Approval(System.Guid)">
-            <summary>
-            Die Sicht des Studierenden
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.ThesisWorkflowController">
             <summary>
@@ -6362,20 +6501,6 @@
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers._AlumniController.CreateMulti(MyStik.TimeTable.Web.Models.AlumniCreateFromFileModel)">
-            <summary>
-            
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers._AlumniController.Invite(MyStik.TimeTable.Web.Models.AlumniMailModel)">
-            <summary>
-            
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers._AlumniController.InviteSend(MyStik.TimeTable.Web.Models.AlumniMailModel)">
             <summary>
             
             </summary>
@@ -6914,80 +7039,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Controllers.MailController">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.OnMailSent(System.Net.Mail.MailMessage)">
-            <summary>
-            
-            </summary>
-            <param name="mail"></param>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Subscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
-            <summary>
-            Bestätigung einer Eintragung
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Discharge(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
-            <summary>
-            Bestätigung einer Austragung
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.VerfiyEMail(MyStik.TimeTable.Web.Models.ConfirmEmailMailModel)">
-            <summary>
-            Validierung einer E-Mail Adresse
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.RemoveSubscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
-            <summary>
-            Austragen durch anderen Benutzer
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CancelOccurrence(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
-            <summary>
-            Wird nur als Dummy zum Erzeugen des Standardtexts verwendet
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CancelAllOccurrences(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
-            <summary>
-            
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ReactivateOccurrence(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
-            <summary>
-            Wird nur als Dummy zum Erzeugen des Standardtexts verwendet
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.CustomTextEmail(MyStik.TimeTable.Web.Models.CustomMailModel)">
-            <summary>
-            E-Mail durch Benutzereingabe
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.GenericMail(MyStik.TimeTable.Web.Models.GenericMailDeliveryModel)">
-            <summary>
-            
-            </summary>
-            <param name="model"></param>
-            <returns></returns>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.MailingController">
             <summary>
             
@@ -7050,12 +7101,6 @@
             
             </summary>
             <param name="GroupIds"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailingController.StudentGroupMail">
-            <summary>
-            
-            </summary>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.MailingController.GroupList(System.String)">
@@ -13626,6 +13671,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.BaseEmail.Cc">
+            <summary>
+            Adresse der Kopie
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.BaseEmail.Subject">
             <summary>
             
@@ -15500,14 +15550,34 @@
             
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Models.CustomMailAttachtmentModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CustomMailAttachtmentModel.FileName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CustomMailAttachtmentModel.Bytes">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.UserMailModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.UserMailModel.SenderUser">
             <summary>
             
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.UserMailModel.User">
             <summary>
-            
+            Der Empfänger
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.UserMailModel.CustomBody">
@@ -15585,11 +15655,6 @@
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.ActivityMailModel.SenderUser">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Models.SubscriptionMailModel">
             <summary>
             
@@ -15600,112 +15665,7 @@
             
             </summary>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Models.CustomMailModel">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Models.CustomMailModel.#ctor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.Attachments">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.Subject">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.Body">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.SenderUser">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.ReceiverUsers">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.ReceiverCount">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.IsImportant">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailModel.ListName">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Models.CustomMailAttachtmentModel">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailAttachtmentModel.FileName">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CustomMailAttachtmentModel.Bytes">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Models.DeleteUserMailModel">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.#ctor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.Sender">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.Receiver">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.Subject">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.Attachments">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.TemplateName">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.GenericMailDeliveryModel.TemplateContent">
             <summary>
             
             </summary>
@@ -15740,19 +15700,19 @@
             
             </summary>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Models.ThesisRejectMailModel">
+        <member name="T:MyStik.TimeTable.Web.Models.ThesisMailModel">
             <summary>
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.ThesisRejectMailModel.Thesis">
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.Thesis">
             <summary>
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.ThesisRejectMailModel.Lecturer">
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.ActionUser">
             <summary>
-            
+            Der user, der die Aktion ausgeführt hat
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Models.IndexViewModel">
@@ -18592,9 +18552,29 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisStateModel.User">
+            <summary>
+            User des Studenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisStateModel.Student">
+            <summary>
+            Student (Verfasser)
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.ThesisStateModel.Thesis">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisStateModel.Mark">
+            <summary>
+            Die vergebene Note
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisStateModel.Supervisor">
+            <summary>
+            Der aktuelle betreuer
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Models.UserViewModel">
@@ -22198,6 +22178,12 @@
             
             </summary>
             <param name="section"></param>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Utils.FakeViewExtensions.RenderPartialToString(System.Web.Mvc.HtmlHelper,System.String,System.Object)">
+            <summary>Renders a view to string.</summary> 
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Utils.FakeViewExtensions.RenderViewToString(System.Web.Mvc.Controller,System.String,System.Object)">
+            <summary>Renders a view to string.</summary> 
         </member>
         <member name="T:MyStik.TimeTable.Web.Utils.Helper.IconHelper">
             <summary>

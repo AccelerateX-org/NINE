@@ -1,15 +1,12 @@
 ﻿@using System.Activities.Statements
 @model MyStik.TimeTable.Data.Thesis
 @{
-    ViewBag.Title = "Antrag auf Betreuung";
+    ViewBag.Title = "Abschlussarbeit";
 }
 
 
 @section styles
 {
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 
@@ -18,15 +15,15 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <h4 class="panel-heading">
-                    <i class="fa fa-file-o"></i>Titel meiner Abschlussarbeit
+                    <i class="fa fa-file-o"></i> Titel meiner Abschlussarbeit
                 </h4>
                 <div class="panel-body">
                     @if (Model.IssueDate != null)
                     {
-                        <div class="alert alert-warning">
-                            <h5>Wichtiger Hinweis:</h5>
-                            <p>Die Arbeit wurde bereits angemeldet. Die BetreuerInnen werden per E-Mail über die Änderung / Ergänzung des Titels informiert.</p>
-                        </div>
+                    <div class="alert alert-warning">
+                        <h5>Wichtiger Hinweis:</h5>
+                        <p>Die Arbeit wurde bereits angemeldet. Die BetreuerInnen werden per E-Mail über die Änderung / Ergänzung des Titels informiert.</p>
+                    </div>
                     }
 
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))

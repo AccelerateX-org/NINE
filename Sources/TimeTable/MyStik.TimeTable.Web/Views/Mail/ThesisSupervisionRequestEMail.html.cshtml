@@ -1,0 +1,16 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+@if (Model.ActionUser == null)
+{
+    <p>Der/die Studierende @Model.StudentUser.FirstName @Model.StudentUser.LastName hat sich bei Ihnen für eine Abschlussarbeit angemeldet.</p>
+}
+else
+{
+    <p>Sie wurden von @Model.ActionUser.FirstName @Model.ActionUser.LastName als BetreuerIn
+        für die Abschlussarbeit des/der Studierenden @Model.StudentUser.FirstName @Model.StudentUser.LastName benannt.</p>
+}
+<a href="@Url.Action("Details", "ThesisSupervision", new {id = Model.Thesis.Id}, Request.Url.Scheme)">Zur Detailseite der Abschlussarbeit</a>

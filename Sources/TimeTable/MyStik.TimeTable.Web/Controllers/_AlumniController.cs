@@ -144,6 +144,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_AlumniFeedbackiFrame", ret);
         }
 
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -191,6 +192,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_AlumniMailSent", model);
         }
+        */
 
         /// <summary>
         /// 

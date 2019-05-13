@@ -1,0 +1,189 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model ICollection<MyStik.TimeTable.Web.Models.ThesisStateModel>
+
+@{
+    ViewBag.Title = "Abschlussarbeiten";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Laufende Abschlussarbeiten</h4>
+                </div>
+                <table id="tabThesis" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th colspan="6">Studierende(r)</th>
+                            <th colspan="1">BetreuerInnen</th>
+                            <th colspan="3">Bearbeitungszeitraum</th>
+                            <th colspan="2">Abgabe</th>
+                            <th colspan="1">Bemerkung</th>
+                        </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>Matr.-Nr.</th>
+                            <th>SG</th>
+                            <th>SPO</th>
+                            <th>Name(n)</th>
+                            <th>Beginn</th>
+                            <th>Ende</th>
+                            <th>Tage</th>
+                            <th>erfolgt</th>
+                            <th>bewertet</th>
+                            <th>Nachricht</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var thesis in Model)
+                    {
+                        <tr id="@thesis.Thesis.Id">
+                            <td></td>
+                            <td>@thesis.User.LastName</td>
+                            <td>@thesis.User.FirstName</td>
+                            <td>@thesis.Student.Number</td>
+                            <td>@thesis.Student.Curriculum.ShortName</td>
+                            @if (thesis.Thesis.RequestDate.HasValue)
+                            {
+                                if (thesis.Thesis.IsPassed.HasValue)
+                                {
+                                    if (thesis.Thesis.IsPassed.Value)
+                                    {
+                                        <td><i class="fa fa-check text-success"></i><span hidden>1</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><i class="fa fa-times text-danger"></i><span hidden>-1</span></td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-cog fa-spin"></i><span hidden>0</span></td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td>
+                                @foreach (var supervisor in thesis.Thesis.Supervisors)
+                                {
+                                    <div>@supervisor.Member.Name</div>
+                                }
+                            </td>
+                            @if (thesis.Thesis.IssueDate != null)
+                            {
+                                <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
+                                <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                <td>0</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            }
+                            @if (thesis.Thesis.DeliveryDate != null)
+                            {
+                                <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            @if (thesis.Thesis.GradeDate != null)
+                            {
+                                <td>@thesis.Thesis.GradeDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td>
+                                @if (thesis.ConditionRequest != RequestState.Accepted)
+                                {
+                                    if (thesis.ConditionRequest == RequestState.Rejected)
+                                    {
+                                        <div>Voraussetzungen nicht erfüllt</div>
+                                    }
+                                    else
+                                    {
+                                        <div>Prüfung der Voraussetzungen nicht abgeschlossen</div>
+                                    }
+                                }
+                                @if (thesis.Thesis.Supervisors.All(s => s.AcceptanceDate == null))
+                                {
+                                    <div>Bestätigung der Betreuer steht noch aus</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+            var t = $('#tabThesis').DataTable({
+                "paging": false,
+                "columnDefs": [{
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "type": "de_date",
+                        "targets": [7, 8, 10, 11]
+                    }],
+                "order": [[1, 'asc']]
+            });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
+            t.on('click',
+                'tr',
+                function() {
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                    } else {
+                        t.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+
+                        var id = $(this).attr('id');
+                        if (id != null) {
+                            window.location.href = "@Url.Action("Details", "ThesisAdmin")/" + id;
+                        }
+                    }
+                });
+
+        });
+    </script>
+}

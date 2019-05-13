@@ -27,12 +27,21 @@
 
             @RenderBody()
 
-            <p>Mit freundlichen Grüßen</p>
-            <p>Ihr NINE Team</p>
-
             <hr />
         </div>
-        <div class="mail-stationary-style">Diese ist eine automatisch generierte E-Mail. Bitte antworten Sie nicht auf diese Nachricht.</div>
-        <div class="mail-stationary-style">Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:itsupport@wi.hm.edu">IT-Support der FK09</a>.</div>
+        <div class="mail-stationary-style">Dies ist eine systemseitig erstellte E-Mail. Bitte antworten Sie nicht auf diese Nachricht.</div>
+        @if (Model.IsImportant && Model.IsDistributionList)
+        {
+            <div class="mail-stationary-style">
+                Diese E-Mail wurde vom Absender als <strong><i>"wichtig für Ihr Studium"</i></strong> gekennzeichnet.
+                Sie erhalten diese Art von Benachrichtungen unabhängig von den Einstellungen in Ihrem Benutzerprofil.
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.ListName))
+        {
+            <div class="mail-stationary-style">Diese E-Mail wurde an den Verteiler "@Model.ListName" gesendet.</div>
+        }
+
+        <div class="mail-stationary-style">Missbrauch melden: Sollten Sie diese E-Mail fälschlicherweise erhalten haben, melden Sie dies bitte an den <a href="mailto:support-nine@hm.edu ">NINE Support</a>.</div>
     </body>
 </html>

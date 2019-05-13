@@ -8,12 +8,33 @@ namespace MyStik.TimeTable.Web.Models
     /// <summary>
     /// 
     /// </summary>
+    public class CustomMailAttachtmentModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public byte[] Bytes { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class UserMailModel
     {
         private List<CustomMailAttachtmentModel> _attachtments;
 
         /// <summary>
         /// 
+        /// </summary>
+        public ApplicationUser SenderUser { get; set; }
+
+        /// <summary>
+        /// Der Empfänger
         /// </summary>
         public ApplicationUser User { get; set; }
 
@@ -106,10 +127,6 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public IActivitySummary Summary { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public ApplicationUser SenderUser { get; set; }
     }
 
     /// <summary>
@@ -123,6 +140,7 @@ namespace MyStik.TimeTable.Web.Models
         public OccurrenceSubscription Subscription { get; set; }
     }
 
+    /*
     /// <summary>
     /// 
     /// </summary>
@@ -176,23 +194,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public string ListName { get; set; }
-    }
+    }*/
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public class CustomMailAttachtmentModel
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public string FileName { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public byte[] Bytes { get; set; }
-    }
 
     /// <summary>
     /// 
@@ -202,6 +205,7 @@ namespace MyStik.TimeTable.Web.Models
         
     }
 
+    /*
     /// <summary>
     /// 
     /// </summary>
@@ -238,13 +242,9 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public string TemplateName { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public UserMailModel TemplateContent { get; set; }
     }
+    */
 
     /// <summary>
     /// 
@@ -284,17 +284,21 @@ namespace MyStik.TimeTable.Web.Models
     /// <summary>
     /// 
     /// </summary>
-    public class ThesisRejectMailModel : UserMailModel
+    public class ThesisMailModel : UserMailModel
     {
         /// <summary>
         /// 
         /// </summary>
-        public Exam Thesis { get; set; }
+        public Thesis Thesis { get; set; }
+
+        public Supervisor Supervisor { get; set; }
 
         /// <summary>
-        /// 
+        /// Der user, der die Aktion ausgeführt hat
         /// </summary>
-        public ApplicationUser Lecturer { get; set; }
+        public ApplicationUser ActionUser { get; set; }
+
+        public ApplicationUser StudentUser { get; set; }
     }
 
     public class MemberMoveDateMailModel : UserMailModel

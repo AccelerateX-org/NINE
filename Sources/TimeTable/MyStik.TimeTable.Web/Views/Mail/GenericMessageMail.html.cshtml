@@ -1,0 +1,14 @@
+﻿@model MyStik.TimeTable.Web.Models.UserMailModel
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+<p>
+    <a href="mailto:@Model.SenderUser.Email">@Model.SenderUser.FirstName @Model.SenderUser.LastName</a> hat Ihnen folgende Nachricht gesendet:
+</p>
+
+<hr />
+<strong>@Model.CustomSubject</strong>
+<p></p>
+<p>@Html.Raw(Model.CustomBody)</p>
+<hr/>

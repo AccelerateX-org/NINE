@@ -142,6 +142,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View("InvitationList", invitationList);
         }
+
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -328,6 +330,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View("SendInvitationsSuccess", invitationList);
         }
+        */
+
 
         /// <summary>
         /// 

@@ -14,63 +14,100 @@
     <div class="panel-body bg-fillter-events">
         <div class="row">
             <div class="col-md-12">
-                <h2>E-Mail an alle Teilnehmer <span class="badge">@Model.ReceiverCount</span></h2>
+                <h2>Benachrichtigung</h2>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-
-
-        <div class="alert alert-info">
-            <h2>Wichtige Hinweise:</h2>
-            <ul>
-                <li>Die E-mail wird an alle eingetragenen Teilnehmer sowie auch an alle Eintragungen auf der Warteliste gesendet.</li>
-                <li>Zur Kontrolle des Versand wird eine Kopie an den Absender versendet. Diese enthält ein detailliertes Versandprotokoll.</li>
-                <li>Bei ungültigen E-Mail Adressen oder Zustellungsproblemen erhält der Absender entsprechende Fehlermeldungen als E-Mails.</li>
-            </ul>
+<div class="container">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>E-Mail an alle Teilnehmer <span class="badge">@Model.ReceiverCount</span></h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="alert alert-warning">
+                                <h5>Wichtige Information zum Mailversand:</h5>
+                                <p>
+                                    Bisher erfolgte der Versand von E-Mails unter Verwendung der HM-Mailserver. 
+                                    Damit konnte der aktuelle Benutzer als Absender der Mail eingetragen werden.
+                                </p>
+                                <p>
+                                    Derzeit wird das Benachrichtigungssystem unter Berücksichtigung von 
+                                    Daten- und Urheberschutz grundlegend neu aufgebaut, z.B. um Push-Benachrichtigungen zu realisieren. 
+                                    Als erste Änderung werden ab sofort alle E-Mails als „Systemnachricht“ versendet. Absender ist folgende E-Mail Adresse: @ViewBag.SystemMail
+                                </p>
+                                <p>
+                                    Es wird pro Empfänger eine separate E-Mail in folgender Form versendet:<br/>
+                                   <i>
+                                       Sehr geehrte(r) [Vorname] [Nachname],<br />
+                                       <a href="mailto:@ViewBag.UserRight.User.Email">@ViewBag.UserRight.User.FirstName @ViewBag.UserRight.User.LastName</a> hat Ihnen folgende Nachricht gesendet:<br />
+                                       [Betreff]<br />
+                                       [Nachricht]
+                                   </i>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <h5>Wichtige Hinweise zur Liste der Empfänger:</h5>
+                                <ul>
+                                    <li>Die E-mail wird an alle eingetragenen Teilnehmer bzw. Warteliste gesendet, unabhängig von den persönlichen Einstellungen. Grund: Teilnehmer hat sich aktiv selbst eingetragen.</li>
+                                    <li>Zur Kontrolle des Versands wird eine Kopie an den Absender versendet. Diese enthält ein detailliertes Versandprotokoll.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
+                            {
+                                @Html.ValidationSummary(true)
+                                <fieldset>
+                                    @Html.ValidationSummary()
+                                    @Html.HiddenFor(m => m.OccurrenceId)
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Subject, new {@class = "col-md-2 control-label"})
+                                        <div class="col-md-10">
+                                            @Html.TextBoxFor(m => m.Subject, new {@class = "form-control"})
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Body, new {@class = "col-md-2 control-label"})
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(m => m.Body, new {@class = "form-control", rows = "10"})
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Anhänge</label>
+                                        <div class="col-md-10">
+                                            <div><input type="file" name="Attachments" id="Attachment1"/>
+                                            </div>
+                                            <div><input type="file" name="Attachments" id="Attachment2"/>
+                                            </div>
+                                            <div><input type="file" name="Attachments" id="Attachment3"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-offset-2 col-md-10">
+                                            <input type="submit" value="Senden" class="btn btn-default"/>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        @using (Html.BeginForm(null, null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
-        {
-            @Html.ValidationSummary(true)
-            <fieldset>
-                @Html.ValidationSummary()
-                @Html.HiddenFor(m => m.OccurrenceId)
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Subject, new {@class = "col-md-2 control-label"})
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Subject, new {@class = "form-control"})
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Body, new {@class = "col-md-2 control-label"})
-                    <div class="col-md-10">
-                        @Html.TextAreaFor(m => m.Body, new {@class = "form-control", rows = "10"})
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Anhänge</label>
-                    <div class="col-md-10">
-                        <div><input type="file" name="Attachments" id="Attachment1"/>
-                        </div>
-                        <div><input type="file" name="Attachments" id="Attachment2"/>
-                        </div>
-                        <div><input type="file" name="Attachments" id="Attachment3"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Senden" class="btn btn-default"/>
-                    </div>
-                </div>
-            </fieldset>
-        }
     </div>
 </div>
+
 
 @section scripts
 {

@@ -87,6 +87,12 @@
     <Reference Include="HtmlAgilityPack, Version=1.6.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\HtmlAgilityPack.1.6.2\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlRenderer, Version=1.5.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlRenderer.Core.1.5.0.5\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlRenderer.PdfSharp.1.5.0.6\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Ical.Net">
       <HintPath>..\..\packages\Ical.Net.4.1.8\lib\net46\Ical.Net.dll</HintPath>
     </Reference>
@@ -169,10 +175,10 @@
       <HintPath>..\..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.dll</HintPath>
+      <HintPath>..\..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\PDFsharp-MigraDoc-GDI.1.32.4334.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+      <HintPath>..\..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
     </Reference>
     <Reference Include="Pitchfork.QRGenerator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Pitchfork.QRGenerator.1.0.0\lib\Pitchfork.QRGenerator.dll</HintPath>
@@ -250,6 +256,7 @@
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml.Linq" />
@@ -389,6 +396,9 @@
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
+    <Compile Include="Controllers\MailControllerMisc.cs" />
+    <Compile Include="Controllers\MailControllerThesis.cs" />
+    <Compile Include="Controllers\MailControllerAccount.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
@@ -399,7 +409,8 @@
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
-    <Compile Include="Controllers\SupervisionController.cs" />
+    <Compile Include="Controllers\ThesisAdminController.cs" />
+    <Compile Include="Controllers\ThesisSupervisionController.cs" />
     <Compile Include="Controllers\TagController.cs" />
     <Compile Include="Controllers\TeachingController.cs" />
     <Compile Include="Controllers\ThesisAnnouncementsController.cs" />
@@ -569,6 +580,7 @@
     <Compile Include="Services\WpmService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="SystemConfig.cs" />
+    <Compile Include="Utils\FakeView.cs" />
     <Compile Include="Utils\Helper\IconHelper.cs" />
     <Compile Include="Utils\Helper\StringHelper.cs" />
   </ItemGroup>
@@ -3289,7 +3301,7 @@
     <Content Include="Views\Mail\RemoveSubscription.html.cshtml" />
     <Content Include="Views\Mailing\CustomOccurrenceMail.cshtml" />
     <Content Include="Views\Mail\_CustomTextTemplate.cshtml" />
-    <Content Include="Views\Mail\CustomTextMail2.html.cshtml" />
+    <Content Include="Views\Mail\CustomTextMail.html.cshtml" />
     <Content Include="Views\Mailing\MailSentSuccess.cshtml" />
     <Content Include="Views\Course\CancelDate.cshtml" />
     <Content Include="Views\Mail\CancelOccurrence.txt.cshtml" />
@@ -3389,7 +3401,6 @@
     <Content Include="Views\Mailing\HostByDate.cshtml" />
     <Content Include="Views\Mailing\HostByRoom.cshtml" />
     <Content Include="Views\Mailing\ReceiverList.cshtml" />
-    <Content Include="Views\Mailing\StudentGroupMail.cshtml" />
     <Content Include="Views\Account\ByeBye.cshtml" />
     <Content Include="Views\Account\DeleteAccount.cshtml" />
     <Content Include="Views\Course\UploadDocument.cshtml" />
@@ -3629,7 +3640,6 @@
     <Content Include="Views\RoomReport\Index.cshtml" />
     <Content Include="Views\RoomReport\TimeLine.cshtml" />
     <Content Include="Views\Thesis\Index.cshtml" />
-    <Content Include="Views\Thesis\Create.cshtml" />
     <Content Include="Views\Module\Index.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumSelectList.cshtml" />
     <Content Include="Views\Building\Index.cshtml" />
@@ -3881,8 +3891,8 @@
     <Content Include="Views\Mail\LotterySelectionEMail.html.cshtml" />
     <Content Include="Views\Mail\MemberMoveDateEMail.html.cshtml" />
     <Content Include="Views\Mail\RegisterUnionEMail.html.cshtml" />
-    <Content Include="Views\Mail\ThesisRejectEMail.html.cshtml" />
-    <Content Include="Views\Mail\ThesisRequestEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisConditionCheckResponseEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisionRequestEMail.html.cshtml" />
     <Content Include="Views\Mail\_AnonymousTemplate.cshtml" />
     <Content Include="Views\ModuleAccreditation\Create.cshtml" />
     <Content Include="Views\ModuleAccreditation\Delete.cshtml" />
@@ -3956,25 +3966,15 @@
     <Content Include="Views\Subscription\Change.cshtml" />
     <Content Include="Views\Subscription\ChangeConfirm.cshtml" />
     <Content Include="Views\Subscription\Curricula.cshtml" />
-    <Content Include="Views\Supervision\AcceptRequest.cshtml" />
-    <Content Include="Views\Supervision\Create.cshtml" />
-    <Content Include="Views\Supervision\Details.cshtml" />
-    <Content Include="Views\Supervision\Edit.cshtml" />
-    <Content Include="Views\Supervision\EditRequest.cshtml" />
-    <Content Include="Views\Supervision\Index.cshtml" />
-    <Content Include="Views\Supervision\CreateRequest.cshtml" />
-    <Content Include="Views\Supervision\RequestDetails.cshtml" />
+    <Content Include="Views\ThesisSupervision\Details.cshtml" />
+    <Content Include="Views\ThesisSupervision\Index.cshtml" />
     <Content Include="Views\ThesisWorkflow\Issue.cshtml" />
     <Content Include="Views\Thesis\Admin.cshtml" />
     <Content Include="Views\Thesis\Announce.cshtml" />
-    <Content Include="Views\Thesis\CreateThesis.cshtml" />
-    <Content Include="Views\Thesis\Details.cshtml" />
-    <Content Include="Views\Thesis\Edit.cshtml" />
-    <Content Include="Views\Thesis\EditPaper.cshtml" />
+    <Content Include="Views\ThesisAdmin\Details.cshtml" />
     <Content Include="Views\Thesis\Issue.cshtml" />
     <Content Include="Views\Thesis\List.cshtml" />
     <Content Include="Views\Thesis\Reject.cshtml" />
-    <Content Include="Views\Thesis\_CreateThesisSuccess.cshtml" />
     <Content Include="Views\Union\ConfirmMember.cshtml" />
     <Content Include="Views\Union\Index.cshtml" />
     <Content Include="Views\Union\Member.cshtml" />
@@ -4057,40 +4057,41 @@
     <Content Include="Views\Lottery\StudentsPrio.cshtml" />
     <Content Include="Views\Thesis\MyWork.cshtml" />
     <Content Include="Views\Thesis\Request.cshtml" />
-    <Content Include="Views\Thesis\Approval.cshtml" />
-    <Content Include="Views\Thesis\Deny.cshtml" />
+    <Content Include="Views\ThesisAdmin\Approval.cshtml" />
+    <Content Include="Views\ThesisAdmin\Deny.cshtml" />
     <Content Include="Views\Lottery\SimpleList.cshtml" />
     <Content Include="Views\Dictionary\_GroupListByTopicNew.cshtml" />
     <Content Include="Views\Course\Create.cshtml" />
     <Content Include="Views\Mailing\InvalidModel.cshtml" />
-    <Content Include="Views\Thesis\NoAccess.cshtml" />
-    <Content Include="Views\Thesis\_StateThesisDetails.cshtml" />
-    <Content Include="Views\Thesis\_StateConditionRequest.cshtml" />
-    <Content Include="Views\Thesis\_StateUnknown.cshtml" />
-    <Content Include="Views\Thesis\Supervision.cshtml" />
-    <Content Include="Views\Thesis\RequestIncomplete.cshtml" />
-    <Content Include="Views\Emails\ThesisMailTemplate.cshtml" />
-    <Content Include="Views\Emails\ThesisMailTemplate.Html.cshtml" />
-    <Content Include="Views\Supervision\_StateUnknown.cshtml" />
-    <Content Include="Views\Supervision\_ThesisDetailView.cshtml" />
-    <Content Include="Views\Supervision\_StateRequest.cshtml" />
-    <Content Include="Views\Emails\ThesisSupervisionRequest.cshtml" />
-    <Content Include="Views\Emails\ThesisSupervisionRequest.Html.cshtml" />
+    <Content Include="Views\ThesisAdmin\NoAccess.cshtml" />
+    <Content Include="Views\Thesis\RequestSupervision.cshtml" />
     <Content Include="Views\Students\Curriculum.cshtml" />
     <Content Include="Views\Students\SwitchCurriculum.cshtml" />
     <Content Include="Views\Subscription\ChangeNumber.cshtml" />
-    <Content Include="Views\Thesis\_StateSupervisionRequest.cshtml" />
-    <Content Include="Views\Thesis\_StateExtensionRequest.cshtml" />
-    <Content Include="Views\Thesis\_StateInProgress.cshtml" />
-    <Content Include="Views\Thesis\_StateDelivered.cshtml" />
     <Content Include="Views\Messaging\Index.cshtml" />
     <Content Include="Views\Mailing\_StudentGroupMail.cshtml" />
     <Content Include="Views\Thesis\ChangeTitle.cshtml" />
-    <Content Include="Views\Thesis\IndexNew.cshtml" />
-    <Content Include="Views\Thesis\Running.cshtml" />
-    <Content Include="Views\Thesis\_MenuBar.cshtml" />
-    <Content Include="Views\Thesis\CorrectTitle.cshtml" />
+    <Content Include="Views\ThesisAdmin\Index.cshtml" />
+    <Content Include="Views\ThesisAdmin\Running.cshtml" />
     <Content Include="Views\Thesis\Check.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisionResponseEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisorRemoveEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisorAssignEMail.html.cshtml" />
+    <Content Include="Views\Thesis\AddSupervisors.cshtml" />
+    <Content Include="Views\ThesisSupervision\ChangeTitle.cshtml" />
+    <Content Include="Views\ThesisSupervision\Marking.cshtml" />
+    <Content Include="Views\Emails\ThesisMarked.cshtml" />
+    <Content Include="Views\Emails\ThesisMarked.Html.cshtml" />
+    <Content Include="Views\ThesisSupervision\_PrintOut.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisorIssuedEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisorTitleChangedEMail.html.cshtml" />
+    <Content Include="Views\ThesisAdmin\Archived.cshtml" />
+    <Content Include="Views\ThesisAdmin\ChangeTitle.cshtml" />
+    <Content Include="Views\ThesisAdmin\AddSupervisors.cshtml" />
+    <Content Include="Views\ThesisAdmin\RequestIncomplete.cshtml" />
+    <Content Include="Views\ThesisAdmin\_PrintOut.cshtml" />
+    <Content Include="Views\Mail\ThesisDeliveredEMail.html.cshtml" />
+    <Content Include="Views\Mail\GenericMessageMail.html.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

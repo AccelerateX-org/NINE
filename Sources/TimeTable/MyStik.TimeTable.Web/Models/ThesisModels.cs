@@ -248,14 +248,33 @@ namespace MyStik.TimeTable.Web.Models
 
     public class ThesisStateModel
     {
+        /// <summary>
+        /// User des Studenten
+        /// </summary>
         public ApplicationUser User { get; set; }
 
+        /// <summary>
+        /// Student (Verfasser)
+        /// </summary>
         public Student Student { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public Thesis Thesis { get; set; }
+
+        /// <summary>
+        /// Die vergebene Note
+        /// </summary>
+        public string Mark { get; set; }
+
+
+        /// <summary>
+        /// Der aktuelle betreuer
+        /// </summary>
+        public Supervisor Supervisor { get; set; }
+
+        public string IssueDate { get; set; }
 
         public RequestState ConditionRequest
         {
@@ -371,4 +390,12 @@ namespace MyStik.TimeTable.Web.Models
         public Guid OrganiserId { get; set; }
     }
 
+
+    public class ThesisMarkingModel
+    {
+        public Thesis Thesis { get; set; }
+
+        [Display(Name = "Note")]
+        public string Mark { get; set; }
+    }
 }
