@@ -133,5 +133,13 @@
                 });
         });
 
+        function onShowEventInfo(id) {
+            if (id != null) {
+                window.location.href = "@Url.Action("Details", "Course")/" + id;
+            }
+
+        }
+
+
     </script>
 }

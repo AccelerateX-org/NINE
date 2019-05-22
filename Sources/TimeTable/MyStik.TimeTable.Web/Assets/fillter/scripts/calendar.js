@@ -11,7 +11,7 @@
         header: {
             left: 'title',
             center: '',
-            right: 'prev,next,today,agendaWeek,agendaDay'
+            right: 'prev,next,today,month,agendaWeek,agendaDay'
         },
         defaultView: 'agendaWeek',
         allDaySlot: false,

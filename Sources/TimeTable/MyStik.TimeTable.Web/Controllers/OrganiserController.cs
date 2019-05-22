@@ -188,15 +188,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var course in model.Courses)
             {
-                var lectures =
-                    Db.Members.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-
-                course.Lecturers.AddRange(lectures);
-
-                var rooms =
-                    Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Course.Id)).ToList();
-                course.Rooms.AddRange(rooms);
-
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);
             }
 

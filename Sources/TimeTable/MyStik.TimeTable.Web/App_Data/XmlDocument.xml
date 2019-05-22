@@ -10608,7 +10608,7 @@
             <param name="groups"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.Occurrence)">
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.GroupList(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Data.Occurrence,System.Boolean)">
             <summary>
             
             </summary>

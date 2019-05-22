@@ -58,7 +58,7 @@
 
             </li>
             <li>
-                <i class="fa-li fa fa-book"></i>@Html.GroupList(Model.Course.Occurrence)
+                <i class="fa-li fa fa-book"></i>@Html.GroupList(Model.Course.Occurrence, showLinks: false)
             </li>
         </ul>
     </a>
@@ -75,7 +75,7 @@ else
                 <i class="fa-li fa fa-user-md"></i>
                 @if (Model.Lecturers.Any())
                 {
-                    @Html.LecturerList(Model.Lecturers, showLinks: false)
+                    @Html.LecturerList(Model.Lecturers, showLinks: true)
                 }
                 else
                 {
@@ -86,7 +86,7 @@ else
                 @if (Model.Dates.Count == 1)
                 {
                     <i class="fa-li fa fa-calendar"></i>
-                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: false)]</span>
+                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: true)]</span>
                 }
                 else
                 {

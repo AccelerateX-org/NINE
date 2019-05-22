@@ -12,7 +12,7 @@
 
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
+        <div id="panelCalendar" class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>
@@ -21,9 +21,17 @@
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </h4>
                 </div>
-                <div class="panel-body">
-                    <div id="calendar">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div id="calendar"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div id="panelDetails" class="col-md-4" hidden>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
                 </div>
             </div>
         </div>
@@ -40,18 +48,100 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
-            $('#loading').hide();
+            showDayCalendar();
+
+        });
+
+        function showDayCalendar() {
+            $('#loading').show();
 
             initDayCalendar("calendar");
 
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
-            {
-                url: '@Url.Action("ActivityPlan", "Calendar")',
-                type: 'POST'
-            });
-        });
+                {
+                    url: '@Url.Action("ActivityPlan", "Calendar")',
+                    type: 'POST',
+                    success: function (data, success, xhr) {
+                        $('#loading').hide();
+                    },
+                    error: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+        }
+
+
+        function onShowEventInfo(id) {
+            $('#panelCalendar').removeClass('col-md-12');
+            $('#panelCalendar').addClass('col-md-8');
+            $("#panelDetails").html('<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>');
+            $('#panelDetails').show();
+            myId = id;
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("SelectCourse", "Dictionary")',
+                    data: {
+                        Id: id
+                    },
+                    success: function(data, success, xhr) {
+                        $("#panelDetails").html(data);
+                    }
+                });
+
+        }
+
+        function onCloseDetails() {
+            $('#panelCalendar').removeClass('col-md-8');
+            $('#panelCalendar').addClass('col-md-12');
+            $('#panelDetails').html('');
+            $('#panelDetails').hide();
+
+            // update nur, wenn auch gebucht wurde
+            //showCalendar();
+
+            /* wäre schön, gehtaber nicht
+             am Ende ist es das UpdateEvent, das die Anzeige nicht ändert
+            //alert(myId);
+            var event = $("#calendar").fullCalendar('clientEvents', myId)[0];
+            alert(event.title);
+
+            //event._borderColor = "#000";
+            event.title = "Hallo";
+
+            $("#calendar").fullcalendar('updateEvent', event);
+            */
+        }
+
+        function onSubscribe(e) {
+            //alert('#'+e);
+            $('#bookingBox').addClass('disabled');
+            $('#bookingBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Subscribe", "Dictionary")',
+                    data: {
+                        Id: e
+                    },
+                    success: function(data, success, xhr) {
+                        $('#bookingBox').html(data);
+                        $('#bookingBox').removeClass('disabled');
+                        refreshCalendar();
+                    }
+                });
+
+        }
+
+        function refreshCalendar() {
+            showDayCalendar();
+        }
+
 
     </script>
 }

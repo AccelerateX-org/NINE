@@ -167,8 +167,8 @@
                                 </ul>
                                 @if (!isSupervisor)
                                 {
-                                    <a href="@Url.Action("Accept", new {id=Model.Supervisor.Id})" class="btn btn-success">Betreuerung annehmen</a>
-                                    <a href="@Url.Action("Reject", new {id=Model.Supervisor.Id})" class="btn btn-danger">Betreuerung ablehnen</a>
+                                    <a href="@Url.Action("Accept", new {id=Model.Supervisor.Id})" class="btn btn-success">Betreuung annehmen</a>
+                                    <a href="@Url.Action("Reject", new {id=Model.Supervisor.Id})" class="btn btn-danger">Betreuung ablehnen</a>
                                 }
                             </div>
                         </div>
@@ -261,7 +261,7 @@
                             else
                             {
                                 <p>Noch nicht bewertet</p>
-                                <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmelödung ausfüllen</a>
+                                <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
                             }
                         </div>
                     </div>

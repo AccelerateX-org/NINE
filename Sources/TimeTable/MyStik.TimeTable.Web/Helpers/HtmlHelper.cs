@@ -204,7 +204,7 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <param name="showAvailability"></param>
         /// <param name="showLink"></param>
         /// <returns></returns>
-        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, Occurrence occ)
+        public static MvcHtmlString GroupList(this HtmlHelper htmlHelper, Occurrence occ, bool showLinks=true)
         {
             var sb = new StringBuilder();
             foreach (var group in occ.Groups)
@@ -220,7 +220,19 @@ namespace MyStik.TimeTable.Web.Helpers
 
                     foreach (var semesterGroup in group.SemesterGroups)
                     {
-                        sb.Append(semesterGroup.GroupName);
+                        if (showLinks)
+                        {
+                            var linkName = semesterGroup.GroupName;
+
+                            sb.Append(htmlHelper.ActionLink(linkName, "Group", "Dictionary",
+                                new {semId = semesterGroup.Semester.Id, groupId = semesterGroup.CapacityGroup.Id},
+                                null));
+                        }
+                        else
+                        {
+                            sb.Append(semesterGroup.GroupName);
+                        }
+
                         if (semesterGroup != group.SemesterGroups.Last())
                         {
                             sb.Append(htmlHelper.Raw(", "));

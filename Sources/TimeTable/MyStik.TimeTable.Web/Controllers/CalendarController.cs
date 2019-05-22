@@ -659,6 +659,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     // Einfacher Eintrag
                     events.Add(new CalendarEventModel
                     {
+                        id = course.Id.ToString(),
+                        courseId = course.Id.ToString(),
                         title = string.Empty,
                         allDay = false,
                         start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
