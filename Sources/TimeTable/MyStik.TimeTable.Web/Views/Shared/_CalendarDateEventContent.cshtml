@@ -11,9 +11,12 @@
 <div>
     @Html.RoomList(Model.Summary.Date.Rooms, false)
 </div>
-@if (!string.IsNullOrEmpty(Model.Summary.Date.Occurrence.Information))
+@if (Model.Summary.Date.Occurrence != null)
 {
-    <div><i>@Model.Summary.Date.Occurrence.Information</i></div>
+    if (!string.IsNullOrEmpty(Model.Summary.Date.Occurrence.Information))
+    {
+         <div><i>@Model.Summary.Date.Occurrence.Information</i></div>
+    }
 }
 
 @if (Model.Summary.Slot != null)
