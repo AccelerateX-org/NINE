@@ -14,7 +14,7 @@ namespace MyStik.TimeTable.Web.Areas.HelpPage.Controllers
         private const string ErrorViewName = "Error";
 
         public HelpController()
-            : this(Startup.HttpConfiguration)
+            : this(GlobalConfiguration.Configuration)
         {
         }
 

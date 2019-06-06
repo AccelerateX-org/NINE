@@ -5,6 +5,7 @@ using MyStik.TimeTable.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
@@ -635,6 +636,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public FileResult RoomBook()
         {
+
             var doc = new PdfDocument();
 
             foreach (var room in Db.Rooms.OrderBy(r => r.Number))
@@ -654,9 +656,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 gfx.DrawString(sb.ToString(), fontTitle, XBrushes.Black, 
                             new XRect(0, 50, page.Width, page.Height), 
-                            XStringFormats.TopCenter); 
+                            XStringFormats.TopCenter);
 
-                gfx.DrawImage(img, new PointF(
+                var streamImg = new System.IO.MemoryStream();
+                img.Save(streamImg, ImageFormat.Png);
+                streamImg.Position = 0;
+
+                var ximg = XImage.FromStream(streamImg);
+               
+
+                gfx.DrawImage(ximg, new XPoint(
                     200F,
                     250F));
 
@@ -665,14 +674,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 float footerY = 700;
                 float lineSpace = 12;
 
-                gfx.DrawString("Powered by", fontFooter, XBrushes.Black, new PointF(marginLeft, footerY));
-                gfx.DrawString("NINE http://nine.wi.hm.edu", fontFooter, XBrushes.Black, new PointF(marginLeft, footerY+=lineSpace));
-                gfx.DrawString("PDFsharp http://www.pdfsharp.net/", fontFooter, XBrushes.Black, new PointF(marginLeft, footerY += lineSpace));
-                gfx.DrawString("Pitchfork.QRGenerator https://github.com/GrabYourPitchforks/Pitchfork.QRGenerator", fontFooter, XBrushes.Black, new PointF(marginLeft, footerY += lineSpace));
+                gfx.DrawString("Powered by", fontFooter, XBrushes.Black, new XPoint(marginLeft, footerY));
+                gfx.DrawString("NINE http://nine.wi.hm.edu", fontFooter, XBrushes.Black, new XPoint(marginLeft, footerY+=lineSpace));
+                gfx.DrawString("PDFsharp http://www.pdfsharp.net/", fontFooter, XBrushes.Black, new XPoint(marginLeft, footerY += lineSpace));
+                gfx.DrawString("Pitchfork.QRGenerator https://github.com/GrabYourPitchforks/Pitchfork.QRGenerator", fontFooter, XBrushes.Black, new XPoint(marginLeft, footerY += lineSpace));
 
             }
 
-
+        
             var stream = new MemoryStream();
 
             doc.Save(stream, false);

@@ -3726,11 +3726,6 @@
             </summary>
             <param name="context"></param>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Areas.HelpPage.ApiDescriptionExtensions">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Areas.HelpPage.ApiDescriptionExtensions.GetFriendlyId(System.Web.Http.Description.ApiDescription)">
             <summary>
             Generates an URI-friendly ID for the <see cref="T:System.Web.Http.Description.ApiDescription"/>. E.g. "Get-Values-id_name" instead of "GetValues/{id}?name={name}"

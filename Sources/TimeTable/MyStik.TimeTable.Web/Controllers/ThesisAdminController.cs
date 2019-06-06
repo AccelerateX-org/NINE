@@ -567,16 +567,17 @@ namespace MyStik.TimeTable.Web.Controllers
             email.Thesis = tm;
             email.Receiver = user;
 
+            
             var html = this.RenderViewToString("_PrintOut", email);
             PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
             //pdf.Save("document.pdf");
             pdf.Save(stream, false);
 
-
             // Stream zurücksetzen
             stream.Position = 0;
             email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
             email.Send();
+            
 
             return RedirectToAction("Details", new { id = thesis.Id });
 
