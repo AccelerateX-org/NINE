@@ -255,7 +255,11 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        WinPhone = 3
+        WinPhone = 3,
+        /// <summary>
+        /// 
+        /// </summary>
+        PWA = 4
     }
 
     /// <summary>

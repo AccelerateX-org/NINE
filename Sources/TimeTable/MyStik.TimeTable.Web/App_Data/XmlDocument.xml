@@ -14722,6 +14722,11 @@
             
             </summary>
         </member>
+        <member name="F:MyStik.TimeTable.Web.Models.DevicePlatform.PWA">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.UserDevice">
             <summary>
             

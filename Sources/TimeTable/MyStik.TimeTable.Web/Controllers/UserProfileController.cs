@@ -104,6 +104,9 @@ namespace MyStik.TimeTable.Web.Controllers
                     case DevicePlatform.WinPhone:
                         userDevice.DeviceName = "Windows Phone";
                         break;
+                    case DevicePlatform.PWA:
+                        userDevice.DeviceName = "PWA";
+                        break;
                 }
 
                 model.UserDevices.Add(userDevice);
