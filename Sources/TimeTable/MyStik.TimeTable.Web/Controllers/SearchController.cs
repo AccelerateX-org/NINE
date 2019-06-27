@@ -19,6 +19,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index(string searchText, bool? isGlobal)
         {
+            var user = GetCurrentUser();
             var org = GetMyOrganisation();
             if (isGlobal.HasValue && isGlobal.Value)
                 org = null;
@@ -50,11 +51,27 @@ namespace MyStik.TimeTable.Web.Controllers
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
             }
 
-            var nextCoursesList = new CourseService(Db).SearchCourses(nextSemester.Id, searchText, org);
-            foreach (var course in nextCoursesList)
+            // Veranstaltungen des nächsten Semesters 
+            // user = student => nur wenn freigegeben
+            var nextCoursesList = new List<CourseSummaryModel>();
+            var bSearchForCourses = true;
+            if (user.MemberState != MemberState.Staff)
             {
-                course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
+                // nur wenn alle Gruppen freigegeben sind
+                var isAvailable = nextSemester.Groups.All(x => x.IsAvailable);
+                bSearchForCourses = isAvailable;
             }
+
+            if (bSearchForCourses)
+            {
+                nextCoursesList.AddRange(new CourseService(Db).SearchCourses(nextSemester.Id, searchText, org));
+                foreach (var course in nextCoursesList)
+                {
+                    course.State = ActivityService.GetActivityState(course.Course.Occurrence, AppUser);
+                }
+            }
+
+
 
             // alle Mitglieder
             var activeLecturers = org != null ?

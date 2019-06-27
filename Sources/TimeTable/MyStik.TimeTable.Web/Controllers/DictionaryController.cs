@@ -70,7 +70,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new SemesterActiveViewModel
             {
                 Semester = semester,
-                Curricula = organiser.Curricula.OrderBy(x => x.Name).ToList(),
+                Curricula = organiser.Curricula.Where(x => !x.IsDeprecated).OrderBy(x => x.Name).ToList(),
                 Organiser = organiser
             };
 

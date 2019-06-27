@@ -33,16 +33,19 @@
 
                     @foreach (var sem in Model.ActiveSemester)
                     {
-                        <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
-                            <p class="list-group-item-text">
-                                @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
-                                {
-                                    @Html.FacultyLabel(organiser)
-                                }
+                        if (sem.Organisers.Any())
+                        {
+                            <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
+                                <p class="list-group-item-text">
+                                    @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
+                                    {
+                                        @Html.FacultyLabel(organiser)
+                                    }
 
-                            </p>
-                        </a>
+                                </p>
+                            </a>
+                        }
                     }
                 </div>
             </div>

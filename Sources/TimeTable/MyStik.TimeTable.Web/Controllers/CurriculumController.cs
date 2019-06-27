@@ -948,13 +948,9 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
-            /*
-            ViewBag.Degrees = Db.Degrees.Select(c => new SelectListItem
-            {
-                Text = c.ShortName + " (" + c.Name + ")",
-                Value = c.Id.ToString(),
-            });
-            */
+            // Achtung: vertauschen der Anzeige für "IsDeprecated"
+
+            model.IsDeprecated = !model.IsDeprecated;
 
             return View(model);
         }
@@ -972,9 +968,12 @@ namespace MyStik.TimeTable.Web.Controllers
             cur.Name = model.Name;
             cur.ShortName = model.ShortName;
             cur.Version = model.Version;
+
+            cur.IsDeprecated = !model.IsDeprecated;
+
             Db.SaveChanges();
 
-            return RedirectToAction("Structure", new {id = cur.Id});
+            return RedirectToAction("Index", new {id = cur.Id});
         }
 
         public ActionResult Import(Guid id)

@@ -1432,6 +1432,11 @@
             
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.TrialsController.GetTrials(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.AccountDto">
             <summary>
             

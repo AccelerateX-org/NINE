@@ -29,7 +29,7 @@
                     <div class="col-md-6">
                         <h5>Zeitplan</h5>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.IsAvailableFrom, new { @class = "col-md-6 control-label" })
+                            <label for="IsAvailableFrom" class="col-md-6 control-label">Datum, ab dem Studierende sich eintragen können</label>
                             <div class="col-sm-3">
                                 @Html.TextBoxFor(model => model.IsAvailableFrom, new { @class = "form-control datepicker" })
                             </div>
@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.IsAvailableUntil, new { @class = "col-md-6 control-label" })
+                            <label for="IsAvailableUntil" class="col-md-6 control-label">Datum, ab dem Studierende nichts mehr ändern können und Beginn, dass Lehrende Änderungen vornehmen können</label>
                             <div class="col-sm-3">
                                 @Html.TextBoxFor(model => model.IsAvailableUntil, new { @class = "form-control datepicker" })
                             </div>
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.FirstDrawing, new { @class = "col-md-6 control-label" })
+                            <label for="FirstDrawing" class="col-md-6 control-label">Datum, ab dem Lehrende nichts mehr ändern können. Ab hier kann die Verlosung durchgeführt werden</label>
                             <div class="col-sm-3">
                                 @Html.TextBoxFor(model => model.FirstDrawing, new { @class = "form-control datepicker" })
                             </div>
@@ -56,12 +56,12 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            @Html.LabelFor(model => model.LastDrawing, new { @class = "col-md-6 control-label" })
+                            <label for="LastDrawing" class="col-md-6 control-label">Datum, ab dem Studierende ihre Wahl ändern / ergänzen können</label>
                             <div class="col-sm-3">
-                                @Html.TextBoxFor(model => model.LastDrawing, new { @class = "form-control datepicker" })
+                                @Html.TextBoxFor(model => model.LastDrawing, new {@class = "form-control datepicker"})
                             </div>
                             <div class="col-sm-3">
-                                @Html.TextBoxFor(model => model.LastDrawingTime, new { @class = "form-control timepicker timepicker-24" })
+                                @Html.TextBoxFor(model => model.LastDrawingTime, new {@class = "form-control timepicker timepicker-24"})
                             </div>
                         </div>
                         <div class="alert alert-info">

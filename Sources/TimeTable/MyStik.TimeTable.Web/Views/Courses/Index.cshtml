@@ -46,14 +46,25 @@
                     </h4>
                 </div>
                 <div class="list-group">
-                    @foreach (var curr in Model.Organiser.Curricula.OrderBy(x => x.Name))
+                    @foreach (var curr in Model.Organiser.Curricula.OrderBy(x => x.IsDeprecated).ThenBy(x => x.Name))
                     {
-                        <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
-                        </a>
+                        if (curr.IsDeprecated)
+                        {
+                            <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item list-group-item-danger">
+                                <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName) - wird nicht mehr angeboten</h5>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
+                            </a>
+                           
+                        }
                     }
                 </div>
             </div>
+            
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>
@@ -61,9 +72,14 @@
                     </h4>
                 </div>
                 <div class="list-group">
+                    <div class="list-group-item">
+                        <h5>Modulverzeichnis soll mal hier hin</h5>
+                    </div>
+                    @*
                     <a href="@Url.Action("Index", "ModuleDictionary")" class="list-group-item">
                         <h5 class="list-group-item-heading">Modulverzeichnis</h5>
                     </a>
+                    *@
                 </div>
             </div>
         </div>

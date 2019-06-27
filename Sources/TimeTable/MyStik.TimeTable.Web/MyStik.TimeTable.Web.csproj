@@ -306,6 +306,7 @@
     <Compile Include="Api\Controller\CalendarController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
     <Compile Include="Api\Controller\StudiesController.cs" />
+    <Compile Include="Api\Controller\TrialsController.cs" />
     <Compile Include="Api\DTOs\AccountDto.cs" />
     <Compile Include="Api\DTOs\ActionDto.cs" />
     <Compile Include="Api\DTOs\BaseDto.cs" />
@@ -318,6 +319,7 @@
     <Compile Include="Api\DTOs\RoomDto.cs" />
     <Compile Include="Api\DTOs\SemesterDto.cs" />
     <Compile Include="Api\DTOs\SubscriptionDto.cs" />
+    <Compile Include="Api\DTOs\TrialDto.cs" />
     <Compile Include="Api\Responses\AccountResponses.cs" />
     <Compile Include="Api\Responses\ActivityResponses.cs" />
     <Compile Include="Api\Responses\CurriculumResponse.cs" />

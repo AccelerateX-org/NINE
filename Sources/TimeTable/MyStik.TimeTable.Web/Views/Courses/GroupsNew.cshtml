@@ -37,22 +37,25 @@
                 <div class="list-group">
                     @foreach (var group in Model.Groups)
                     {
-                    <div class="list-group-item">
-                        <h5 class="list-group-item-heading"><a href="#@group.Key.Id" data-toggle="collapse">@group.Key.ShortName</a></h5>
-                        <div class="collapse" id="@group.Key.Id">
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
-                                    @foreach (var semGroup in group)
-                                    {
-                                        var iconName = semGroup.IsAvailable ? "fa-check text-success" : "fa-ban text-danger";
+                        if (!group.Key.IsDeprecated)
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading"><a href="#@group.Key.Id" data-toggle="collapse">@group.Key.ShortName</a></h5>
+                                <div class="collapse" id="@group.Key.Id">
+                                    <div class="list-group-item-text">
+                                        <ul class="fa-ul">
+                                            @foreach (var semGroup in group)
+                                            {
+                                                var iconName = semGroup.IsAvailable ? "fa-check text-success" : "fa-ban text-danger";
 
-                                        <li><i class="fa fa-li @iconName"></i> <a href="javascript:onShowGroup('@semGroup.Id')">@semGroup.FullName</a></li>
-                                    }
-                                </ul>
+                                                <li><i class="fa fa-li @iconName"></i> <a href="javascript:onShowGroup('@semGroup.Id')">@semGroup.FullName</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                            </div>
-                        </div>
                         }
+                    }
                     </div>
             </div>
         </div>
@@ -122,10 +125,10 @@
             $('#dayCal').show();
             $('#weekCal').show();
 
-            $('#dayCal').fullCalendar('removeEventSource', '@Url.Action("CourseEventsByProgram", "Calendar")');
+            $('#dayCal').fullCalendar('removeEventSource', '@Url.Action("GroupDayPlan", "Calendar")');
             $('#dayCal').fullCalendar('addEventSource',
                 {
-                    url: '@Url.Action("CourseEventsByProgram", "Calendar")',
+                    url: '@Url.Action("GroupDayPlan", "Calendar")',
                     type: 'POST',
                     data: {
                         semGroupId: id,
@@ -134,13 +137,14 @@
                     }
                 });
 
-            $('#weekCal').fullCalendar('removeEventSource', '@Url.Action("GroupPrintPlan", "Calendar")');
+            $('#weekCal').fullCalendar('removeEventSource', '@Url.Action("GroupWeekPlan", "Calendar")');
             $('#weekCal').fullCalendar('addEventSource',
                 {
-                    url: '@Url.Action("GroupPrintPlan", "Calendar")',
+                    url: '@Url.Action("GroupWeekPlan", "Calendar")',
                     type: 'POST',
                     data: {
-                        id: id
+                        semGroupId: id,
+                        showPersonalDates: false
                     }
                 });
 
