@@ -257,11 +257,13 @@
                             {
                                 <p>Arbeit wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() bewertet.</p>
                                 <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Neue Notenmeldung ausfüllen</a>
+                                <a href="@Url.Action("MarkingEmpty", new {id=Model.Thesis.Id})" class="btn btn-primary">Leere Notenmeldung anfordern</a>
                             }
                             else
                             {
                                 <p>Noch nicht bewertet</p>
                                 <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
+                                <a href="@Url.Action("MarkingEmpty", new {id=Model.Thesis.Id})" class="btn btn-primary">Leere Notenmeldung anfordern</a>
                             }
                         </div>
                     </div>

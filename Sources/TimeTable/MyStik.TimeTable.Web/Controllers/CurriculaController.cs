@@ -868,8 +868,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private void SetEditRights()
         {
-            ViewBag.HasEditRights = User.IsInRole("SysAdmin");
-            ViewBag.UserRight = GetUserRight();
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+            ViewBag.HasEditRights = User.IsInRole("SysAdmin") || userRight.IsCurriculumAdmin;
+            ViewBag.UserRight = userRight;
         }
 
         /// <summary>

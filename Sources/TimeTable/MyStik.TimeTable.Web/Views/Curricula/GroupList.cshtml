@@ -47,12 +47,12 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Teilgruppe(n)</th>
+                                        <th>Kapazitätsgruppe(n)</th>
                                         <th>WS</th>
                                         <th>SS</th>
                                         <th>GruppenID (extern)</th>
-                                        <th></th>
-                                        <th></th>
+                                        <th>Kap-Gruppe</th>
+                                        <th>Stud-Gruppe</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -68,14 +68,17 @@
                                                 {
                                                     <tr>
                                                         <td rowspan="@n">
-                                                            <a href="@Url.Action("GroupDetails", new {id = group.Id})">@group.Name</a>
-                                                            @if (!group.IsSubscribable)
-                                                            {
-                                                                <div>(Studierende können diese Gruppe nicht als Semestergruppe auswählen)</div>
-                                                            }
+                                                            @group.Name
                                                         </td>
                                                         <td>
-                                                            @capacityGroup.Name
+                                                            @if (string.IsNullOrEmpty(capacityGroup.Name))
+                                                            {
+                                                                <div>[@group.Name]</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                @capacityGroup.Name
+                                                            }
                                                         </td>
                                                         <td>
                                                             @if (capacityGroup.InWS)
@@ -153,7 +156,7 @@
                                         {
                                             <tr>
                                                 <td>@group.IsSubscribable</td>
-                                                <td><a href="@Url.Action("GroupDetails", new {id = group.Id})">@group.Name</a></td>
+                                                <td>@group.Name</td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
