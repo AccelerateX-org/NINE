@@ -17,7 +17,7 @@
                 number++;
                 <li id="@course.Course.Id" class="ui-state-default">
                     <h5>Priorität @number</h5>
-                    <h6>@course.Course.Name</h6>
+                    <h6>@course.Course.Name (@course.Course.ShortName)</h6>
                     <p>@Html.LecturerList(course.CourseSummary.Lecturers, false)</p>
                 </li>
             }

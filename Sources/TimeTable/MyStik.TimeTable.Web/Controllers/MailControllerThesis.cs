@@ -203,7 +203,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // cc an Betreuer bzw.Admin, der erfasst hat
             CC.Add(user.Email);
 
-            Subject = $"Anmeldung der Abschlussarbeit";
+            Subject = $"Abgabe der Abschlussarbeit";
 
             var mailModel = new ThesisMailModel()
             {
@@ -215,6 +215,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return Email("ThesisDeliveredEMail", mailModel);
         }
+
+        public EmailResult ThesisSupervisorDeliveryStornoEMail(ThesisStateModel thesisState, ApplicationUser user)
+        {
+            InitSenderTopic(MAIL_SECTION_THESIS);
+
+            // geht nur an den Studierenden
+            To.Add(thesisState.User.Email);
+
+            // cc an Betreuer bzw.Admin, der erfasst hat
+            CC.Add(user.Email);
+
+            Subject = $"Abgabe der Abschlussarbeit";
+
+            var mailModel = new ThesisMailModel()
+            {
+                Thesis = thesisState.Thesis,
+                User = thesisState.User,
+                ActionUser = user,
+            };
+
+
+            return Email("ThesisDeliveryStornoEMail", mailModel);
+        }
+
+
 
         public EmailResult ThesisSupervisorIssuedEMail(ThesisStateModel thesisState, ApplicationUser user)
         {

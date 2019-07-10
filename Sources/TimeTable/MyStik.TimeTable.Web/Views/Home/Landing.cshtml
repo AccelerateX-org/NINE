@@ -6,99 +6,55 @@
 }
 
 <div class="container" style="margin-top: 20px">
+
     <div class="row">
         <div class="col-md-12">
-            <h3>Willkommen bei nine</h3>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4><i class="fa fa-book"></i> Vorlesungsverzeichnisse</h4>
-                        </div>
-                        <div class="list-group">
-                            @foreach (var sem in Model.ActiveSemester)
-                            {
-                                <a href="@Url.Action("Semester", new {id=sem.Semester.Id})" class="list-group-item">
-                                    <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
-                                    <p class="list-group-item-text">
-                                        @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
-                                        {
-                                            @Html.FacultyLabel(organiser)
-                                        }
-
-                                    </p>
-                                </a>
-                            }
-                        </div>
-                    </div>
+            <h2>Willkommen bei nine@shortcut</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Was ist NINE?</h4>
                 </div>
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4><i class="fa fa-link"></i> Ein paar wichtige Links (HM)</h4>
-                        </div>
-                        <div class="list-group">
-                            <a class="list-group-item" href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank">Fristen und Termine</a>
-                            <a class="list-group-item" href="https://moodle.hm.edu/" target="_blank">Moodle</a>
-                            <a class="list-group-item" href="https://mahara.hm.edu/" target="_blank">Mahara</a>
-                            <a class="list-group-item" href="https://bib.hm.edu/" target="_blank">Bibliothek</a>
-                            <a class="list-group-item" href="http://jobs.hm.edu/" target="_blank">
-                                <div class="list-group-item-heading">Hochschul-Jobbörse</div>
-                            </a>
-                            <a class="list-group-item" href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank">
-                                <div class="list-group-item-heading">Studien- & Prüfungsordnungen</div>
-                                <div class="list-group-item-text">Die Studienpläne finden sich auf den Webseiten der einzelnen Fakultäten / Studiengänge</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4><i class="fa fa-info"></i> Ein paar Infos zum System</h4>
-                        </div>
-                        <div class="panel-body">
-                            <ul class="fa-ul">
-                                <li><i class="fa fa-li fa-user-o"></i>@Model.Students Studierende</li>
-                                <li><i class="fa fa-li fa-user-md"></i>@Model.Lecturers Lehrende</li>
-                                <li><i class="fa fa-li fa-book"></i>@Model.Curricula Studiengänge</li>
-                                <li><i class="fa fa-li fa-building-o"></i>@Model.Rooms Räume</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-
-
-            </div>
-            <div class="row">
-                <hr/>
-                <div class="col-md-12">
-                    <ul class="list-inline">
-                        <li>
-                            <img src="@Url.Content("~/Assets/fillter/img/logo_fillter.svg")" style="background-color: #080808; width: 40px; padding-bottom: 5px">
-                        </li>
-                        <li>
-                            <a href='https://play.google.com/store/apps/details?id=de.fillter2&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                                <img alt='Get it on Google Play'
-                                     src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'
-                                     style="height: 65px"/>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://itunes.apple.com/us/app/fillter/id1203686910">
-                                <img alt="Get it on AppStore"
-                                     src="@Url.Content("~/Assets/fillter/img/Download_on_the_App_Store_Badge_US-UK_135x40.svg")"
-                                     style="height: 45px"/>
-                            </a>
-                        </li>
-                    </ul>
+                <div class="panel-body">
+                    <p class="text-danger">NINE ist KEIN hochschulweites System. Anfragen an die zentrale IT sind daher zwecklos.</p>
+                    <p>Alle Anfragen bitte direkt an <a href="https://www.wi.hm.edu/02_fakultaet/personen/professorinnen/hinz.de.html" target="_blank">Prof. Dr.-Ing.Olav Hinz</a> stellen.</p>
+                    <p>NINE ist ein Softwaresystem für die Organisation des Lehrbetriebs einer Bildungseinrichtung.</p>
+                    <p>NINE ist open source. <a href="https://github.com/AccelerateX-org/NINE" target="_blank"><i class="fa fa-github"></i></a>.</p>
                 </div>
             </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Was ist shortcut?</h4>
+                </div>
+                <div class="panel-body">
+                    <p>shortcut ist ein langfristig angelegtes Lehrprojekt.</p>
+                    <p>Im Rahmen von shortcut werden open source Lösungen für digitales Lehren und Lernen erdacht, entwickelt und erprobt, z.B. das hier gerade sichtbare "NINE-System".</p>
+                    <p>Andere Projekte sind wiQuiz, eine LernApp für unterwegs, JoroL, eine virtuelle JobMesse auf Basis der Unreal Game Engine.</p>
+                    <p>Weitere Infos zu shortcut gibt es <a href="https://shortcut.wi.hm.edu/portal/" target="_blank">hier</a>.</p>
                 </div>
             </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Was ist fillter?</h4>
+                </div>
+                <div class="panel-body">
+                    <img src="@Url.Content("~/Assets/fillter/img/logo_fillter.svg")" style="background-color: #080808; width: 40px; padding-bottom: 7px">
+                    <p>fillter ist die App zu NINE.</p>
+                    <p>fillter ist eine "Progressive Web App", kommt also ohne App-Stores aus und ist trotzdem "native".</p>
+                    <p>Die App gibt es <a href="https://shortcut.wi.hm.edu/apps/fillter/" target="_blank">hier</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 
 @section login
@@ -106,13 +62,13 @@
     <form class="navbar-form navbar-right" role="search" action="@Url.Action("Login", "Account")" method="post">
         @Html.AntiForgeryToken()
         <div class="form-group">
-            <input name="Email" type="text" class="form-control" placeholder = "@Resources.EmailPlaceholder">
+            <input name="Email" type="text" class="form-control" placeholder="@Resources.EmailPlaceholder">
         </div>
         <div class="form-group">
             <input name="Password" type="password" class="form-control" placeholder="@Resources.PasswordPlaceholder">
         </div>
         <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> @Resources.LoginButton</button>
         <a href="@Url.Action("Register", "Account")" class="btn btn-info"><i class="fa fa-pencil"></i> @Resources.RegisterLink</a>
-    </form>            
-    
+    </form>
+
 }

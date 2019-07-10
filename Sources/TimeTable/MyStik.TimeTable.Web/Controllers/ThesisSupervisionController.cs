@@ -288,6 +288,38 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        /// <summary>
+        /// Abgabe storniertz
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Storno(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var user = GetCurrentUser();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            thesis.DeliveryDate = null;
+            Db.SaveChanges();
+
+            // Mail an Studierenden
+            var model = new ThesisStateModel()
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            new MailController().ThesisSupervisorDeliveryStornoEMail(model, user).Deliver();
+
+
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+
+
         public ActionResult Marking(Guid id)
         {
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);

@@ -9,7 +9,7 @@
 <ol>
     @foreach (var course in Model.Courses)
     {
-        <li>@course.Course.Name</li>
+        <li>@course.Course.Name (@course.Course.ShortName)</li>
     }
 </ol>
 <p>Sie können maximal @Model.ConfirmCount Plätze erhalten.</p>

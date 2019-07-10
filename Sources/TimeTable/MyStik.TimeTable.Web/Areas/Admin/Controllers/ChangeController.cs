@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Models;
@@ -21,8 +22,11 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             var model = new ChangeSummaryModel();
 
             model.Count = Db.DateChanges.Count();
-            model.First = Db.DateChanges.OrderBy(x => x.TimeStamp).First().TimeStamp;
-            model.Last = Db.DateChanges.OrderByDescending(x => x.TimeStamp).First().TimeStamp;
+            if (model.Count > 0)
+            {
+                model.First = Db.DateChanges.OrderBy(x => x.TimeStamp).First().TimeStamp;
+                model.Last = Db.DateChanges.OrderByDescending(x => x.TimeStamp).First().TimeStamp;
+            }
 
             return View(model);
         }
@@ -67,7 +71,13 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         /// <returns></returns>
         public ActionResult DeleteAll()
         {
-            var changes = Db.DateChanges.OrderBy(x => x.TimeStamp).Take(100).ToList();
+            var today = DateTime.Today;
+            var semesterService = new SemesterService();
+            var thisSemester = semesterService.GetSemester(today);
+
+            var lastDate = thisSemester.StartCourses.AddDays(-1);
+
+            var changes = Db.DateChanges.Where(x => x.TimeStamp <= lastDate).ToList();
 
             foreach (var change in changes)
             {

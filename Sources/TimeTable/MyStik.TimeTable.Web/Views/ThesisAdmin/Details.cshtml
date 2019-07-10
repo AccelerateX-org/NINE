@@ -229,7 +229,9 @@
                                     else
                                     {
                                         <p>Arbeit wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() abgegeben.</p>
-                                    }                                }
+                                        <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                                    }
+                                }
                                 else
                                 {
                                     <p>Noch nicht angemeldet</p>

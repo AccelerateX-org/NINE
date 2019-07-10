@@ -463,6 +463,67 @@ namespace MyStik.TimeTable.Web.Controllers
             return !model.Lottery.IsFixed ? View(model) : View("StudentsPrio", model);
         }
 
+
+        public FileResult RawData(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+
+            // SG; Semester;Bedarf;Flexibel;Prio
+            writer.Write("Studiengang;Semester;Bedarf;Flexibel");
+            for (var i = 1; i <= model.Lottery.MaxSubscription; i++)
+            {
+                writer.Write(";{0}", i);
+            }
+            writer.Write(Environment.NewLine);
+
+            foreach (var student in model.Games)
+            {
+                writer.Write("{0};{1};{2};{3}",
+                    student.Student.Curriculum.ShortName,
+                    student.Student.FirstSemester.Name,
+                    student.CoursesWanted,
+                    student.AcceptDefault
+                );
+
+                // egal ob schon ein Platz oder noch Warteliste
+                // entscheidend ist die Prio
+                for (var i = 1; i <= model.Lottery.MaxSubscription; i++)
+                {
+                    var seat = student.Seats.FirstOrDefault(x => x.Priority == i);
+                    var lot = student.Lots.FirstOrDefault(x => x.Priority == i);
+
+                    var cName = "";
+                    if (seat != null)
+                        cName = seat.Course.ShortName;
+                    if (lot != null)
+                        cName = lot.Course.ShortName;
+
+                    writer.Write(";{0}", cName);
+                }
+                writer.Write(Environment.NewLine);
+            }
+
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Wahl_");
+            sb.Append(model.Lottery.Name);
+            sb.Append("_");
+            sb.Append(DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

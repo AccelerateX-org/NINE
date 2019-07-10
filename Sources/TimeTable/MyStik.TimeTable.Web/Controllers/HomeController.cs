@@ -36,7 +36,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Curricula = Db.Curricula.Count();
             model.Rooms = Db.Rooms.Count();
 
-            return View("LandingNew", model);
+            return View("Landing", model);
         }
 
 

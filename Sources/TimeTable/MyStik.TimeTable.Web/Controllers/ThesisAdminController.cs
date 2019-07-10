@@ -54,7 +54,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    x.IsCleared == null  // noch nicht archiviert
+                    x.DeliveryDate == null &&   // noch nich abgegeben
+                    x.IsCleared == null         // noch nicht archiviert
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -77,6 +78,51 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        /// <summary>
+        /// Absolventen, sind alle mit abegebener Arbeit
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Graduates()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    x.IsCleared == null  &&     // noch nicht archiviert
+                    x.DeliveryDate != null      // abgegeben haben
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+
 
         public ActionResult Archived()
         {
@@ -92,7 +138,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    x.IsCleared != null  && x.IsCleared == true // archiviert
+                    x.IsCleared != null && x.IsCleared == true // archiviert
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -115,6 +161,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
 
 
 
@@ -204,7 +251,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         /// <summary>
-        /// Die Sicht des Studierenden
+        /// Anzeige des Annahme / Ablehnungsdialog
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -305,6 +352,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Running");
         }
 
+        /// <summary>
+        /// Annahme der Betreuung durch den Admin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult AssignSupervisor(Guid id)
         {
             var userService = new UserInfoService();
@@ -336,7 +388,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = thesis.Id });
         }
 
-
+        /// <summary>
+        /// Betreuer entfernen
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult RemoveSupervisor(Guid id)
         {
             var userService = new UserInfoService();
@@ -536,6 +592,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { id = thesis.Id });
         }
+
+        /// <summary>
+        /// Stornierung der Abgabe
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Storno(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var user = GetCurrentUser();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            thesis.DeliveryDate = null;
+            Db.SaveChanges();
+
+            // Mail an Studierenden
+            var model = new ThesisStateModel()
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId)
+            };
+
+            new MailController().ThesisSupervisorDeliveryStornoEMail(model, user).Deliver();
+
+
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+
+
 
         public ActionResult Marking(Guid id)
         {

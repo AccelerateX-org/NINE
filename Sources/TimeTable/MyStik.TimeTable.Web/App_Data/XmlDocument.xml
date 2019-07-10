@@ -6311,9 +6311,29 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Graduates">
+            <summary>
+            Absolventen, sind alle mit abegebener Arbeit
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Approval(System.Guid)">
             <summary>
-            Die Sicht des Studierenden
+            Anzeige des Annahme / Ablehnungsdialog
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.AssignSupervisor(System.Guid)">
+            <summary>
+            Annahme der Betreuung durch den Admin
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.RemoveSupervisor(System.Guid)">
+            <summary>
+            Betreuer entfernen
             </summary>
             <param name="id"></param>
             <returns></returns>
@@ -6332,6 +6352,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Storno(System.Guid)">
+            <summary>
+            Stornierung der Abgabe
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisSupervisionController.Issue(System.Guid)">
             <summary>
             Anmeldung durch den Betreuer
@@ -6342,6 +6369,13 @@
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisSupervisionController.Delivered(System.Guid)">
             <summary>
             Anmeldung durch den Betreuer
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisSupervisionController.Storno(System.Guid)">
+            <summary>
+            Abgabe storniertz
             </summary>
             <param name="id"></param>
             <returns></returns>

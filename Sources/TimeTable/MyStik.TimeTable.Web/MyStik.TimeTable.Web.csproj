@@ -393,6 +393,8 @@
     <Compile Include="Areas\InfoScreen\Controllers\HomeController.cs" />
     <Compile Include="Areas\InfoScreen\InfoScreenAreaRegistration.cs" />
     <Compile Include="Areas\InfoScreen\Models\InfoscreenModels.cs" />
+    <Compile Include="Areas\Lab\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Lab\LabAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActivityController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -3246,6 +3248,8 @@
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
     <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
+    <Content Include="Areas\Lab\Views\web.config" />
+    <Content Include="Areas\Lab\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -3864,7 +3868,6 @@
     <Content Include="Views\Home\Dictionary.cshtml" />
     <Content Include="Views\Home\Fillter.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
-    <Content Include="Views\Home\LandingNew.cshtml" />
     <Content Include="Views\Home\Semester.cshtml" />
     <Content Include="Views\Home\TermsOfUse.cshtml" />
     <Content Include="Views\Home\UniversityCalendar.cshtml" />
@@ -4106,8 +4109,10 @@
     <Content Include="Views\ThesisAdmin\_PrintOut.cshtml" />
     <Content Include="Views\Mail\ThesisDeliveredEMail.html.cshtml" />
     <Content Include="Views\Mail\GenericMessageMail.html.cshtml" />
-    <Content Include="Views\Shared\_LayoutPublicLab.cshtml" />
-    <Content Include="Views\Home\LandingLab.cshtml" />
+    <Content Include="Areas\Lab\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Lab\Views\Home\Index.cshtml" />
+    <Content Include="Views\ThesisAdmin\Graduates.cshtml" />
+    <Content Include="Views\Mail\ThesisDeliveryStornoEMail.html.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4118,6 +4123,7 @@
     <Folder Include="Areas\Admin\Views\Curriculum\" />
     <Folder Include="Areas\Admin\Views\Notification\" />
     <Folder Include="Areas\Fillter\Models\" />
+    <Folder Include="Areas\Lab\Models\" />
     <Folder Include="Assets\global\plugins\angularjs\plugins\angular-file-upload\uploads\" />
     <Folder Include="Content\pages\" />
     <Folder Include="NavigationRoutes\" />
