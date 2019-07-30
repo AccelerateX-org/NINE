@@ -511,10 +511,14 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Semester = semester,
                 Organiser = org,
-                FreezedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && x.IsInternal),
-                UnFreezedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && !x.IsInternal),
-                LockedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && !x.Occurrence.IsAvailable),
-                UnLockedCourses = Db.Activities.OfType<Course>().Count(x => x.SemesterGroups.Any(g => g.Semester.Id == semester.Id) && x.Occurrence.IsAvailable)
+                FreezedCourses = Db.Activities.OfType<Course>().Count(x => 
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.IsInternal),
+                UnFreezedCourses = Db.Activities.OfType<Course>().Count(x => 
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.IsInternal),
+                LockedCourses = Db.Activities.OfType<Course>().Count(x => 
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.Occurrence.IsAvailable),
+                UnLockedCourses = Db.Activities.OfType<Course>().Count(x => 
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.Occurrence.IsAvailable)
             };
 
             return View(model);

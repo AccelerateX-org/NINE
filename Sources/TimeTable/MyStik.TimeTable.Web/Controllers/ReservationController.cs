@@ -249,12 +249,27 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_DateList", model);
         }
 
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public ActionResult DeleteReservation(Guid id)
+        {
+            var reservation = Db.Activities.OfType<Reservation>().SingleOrDefault(r => r.Id == id);
+
+            return View(reservation);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DeleteReservationConfirmed(Guid id)
         {
             var reservation = Db.Activities.OfType<Reservation>().SingleOrDefault(r => r.Id == id);
 

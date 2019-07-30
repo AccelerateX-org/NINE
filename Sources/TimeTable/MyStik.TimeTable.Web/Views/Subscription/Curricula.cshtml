@@ -1,4 +1,4 @@
-﻿@model ICollection<MyStik.TimeTable.Data.Student>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
 @{
     ViewBag.Title = "Studiengänge";
 }
@@ -21,29 +21,56 @@
                             <p>Es können beliebig viele Studiengänge angegeben werden. Aktuell wird nur der zuletzt angelegte Studiengang für Wahlverfahren etc. verwendet.</p>
                         </div>
                     </div>
-                    @foreach (var student in Model.OrderByDescending(x => x.FirstSemester.StartCourses))
+                    @foreach (var student in Model.OrderByDescending(x => x.Student.FirstSemester.StartCourses))
                     {
                         <div class="list-group-item">
                             <h5 class="list-group-item-heading">
-                                @student.Curriculum.Name (@student.Curriculum.ShortName)
+                                @student.Student.Curriculum.Name (@student.Student.Curriculum.ShortName)
                             </h5>
                             <div class="list-group-item-text">
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-university"></i>@student.Curriculum.Organiser.Name (@student.Curriculum.Organiser.ShortName)</li>
-                                    <li><i class="fa fa-li fa-calendar"></i>Studienbeginn: @student.FirstSemester.Name</li>
-                                    @if (student.IsPartTime)
+                                    <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
+                                    <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
+                                    <li><i class="fa fa-li fa-calendar"></i>Studienbeginn: @student.Student.FirstSemester.Name</li>
+                                    @if (!string.IsNullOrEmpty(student.Student.Number))
+                                    {
+                                        <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                                    }
+                                    @if (student.Student.IsPartTime)
                                     {
                                         <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
                                     }
-                                    @if (student.IsDual)
+                                    @if (student.Student.IsDual)
                                     {
                                         <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
                                     }
-                                    <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Created</li>
+                                    @if (student.Student.LastSemester != null)
+                                    {
+                                        <li><i class="fa fa-li fa-calendar"></i>Studienende: @student.Student.LastSemester.Name</li>
+                                    }
+                                    @if (student.Alumni != null)
+                                    {
+                                        <li><i class="fa fa-li fa-graduation-cap"></i>Bin Alumni</li>
+                                    }
                                 </ul>
                             </div>
-                            <div class="btn btn-group">
-                                <a href="@Url.Action("ChangeNumber", new {id = student.Id})" class="btn btn-primary">Matrikelnummer eingeben / ändern</a>
+                            <div>
+                                <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-primary">Matrikelnummer eingeben / ändern / löschen</a>
+                                @if (student.Student.LastSemester != null)
+                                {
+                                    if (student.Alumni == null)
+                                    {
+                                        <a href="@Url.Action("Accept", "Alumni", new {id = student.Student.Id})" class="btn btn-primary">Alumni werden</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Deny", "Alumni", new {id = student.Alumni.Id})" class="btn btn-primary">Alumni löschen</a>
+                                    }
+                                }
                             </div>
                         </div>
                     }

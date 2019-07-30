@@ -1,0 +1,18 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>
+    Die Note Ihrer Abschlussarbeit wurde von @Model.ActionUser.FirstName @Model.ActionUser.LastName am
+    @Model.Thesis.GradeDate.Value.ToShortDateString() ans Prüfungsamt gemeldet.<br />
+    Bitte berücksichtigen Sie, dass mit dieser Meldung die Note noch nicht eingetragen ist und damit noch nicht im Notenblatt enthalten ist.
+</p>
+<h5>Alum-NINE</h5>
+<p>Wollen Sie auch nach dem Abschluss Ihres Studiums mit Ihrer Hochschule und Fakultät in Kontakt bleiben, z.B. für die Einladung zur Absolventenverabschiedung?</p>
+
+
+<a href="@Url.Action("Accept", "Alumni", new {id = Model.Thesis.Student.Id}, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
+

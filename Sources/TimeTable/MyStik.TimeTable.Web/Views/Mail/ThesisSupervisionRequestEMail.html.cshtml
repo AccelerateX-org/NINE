@@ -4,7 +4,7 @@
     Layout = "~/Views/Mail/_UserTemplate.cshtml";
 }
 
-@if (Model.ActionUser == null)
+@if (!Model.AsSubstitute)
 {
     <p>Der/die Studierende @Model.StudentUser.FirstName @Model.StudentUser.LastName hat sich bei Ihnen für eine Abschlussarbeit angemeldet.</p>
 }

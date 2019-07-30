@@ -22,24 +22,15 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="thesisState"></param>
         /// <param name="supervisorUser"></param>
         /// <returns></returns>
-        internal EmailResult ThesisSupervisorRemoveEMail(ThesisStateModel thesisState, ApplicationUser supervisorUser, ApplicationUser actionUser)
+        internal EmailResult ThesisSupervisorRemoveEMail(ThesisMailModel mailModel, ApplicationUser supervisorUser)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht an Lehrenden
             To.Add(supervisorUser.Email);
-
+            mailModel.User = supervisorUser;
 
             Subject = $"Betreuung Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = supervisorUser,
-                ActionUser = actionUser,
-                StudentUser = thesisState.User
-            };
-
 
             return Email("ThesisSupervisorRemoveEMail", mailModel);
         }
@@ -50,23 +41,15 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="thesisState"></param>
         /// <param name="supervisorUser"></param>
         /// <returns></returns>
-        internal EmailResult ThesisSupervisorAssignEMail(ThesisStateModel thesisState, ApplicationUser supervisorUser, ApplicationUser actionUser)
+        internal EmailResult ThesisSupervisorAssignEMail(ThesisMailModel mailModel, ApplicationUser supervisorUser)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht an Lehrenden
             To.Add(supervisorUser.Email);
-
+            mailModel.User = supervisorUser;
 
             Subject = $"Betreuung Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = supervisorUser,
-                ActionUser = actionUser,
-                StudentUser = thesisState.User
-            };
 
 
             return Email("ThesisSupervisorAssignEMail", mailModel);
@@ -79,61 +62,22 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="thesisState"></param>
         /// <param name="supervisorUser"></param>
         /// <returns></returns>
-        internal EmailResult ThesisSupervisionRequestEMail(ThesisStateModel thesisState, ApplicationUser supervisorUser)
+        internal EmailResult ThesisSupervisionRequestEMail(ThesisMailModel mailModel, ApplicationUser supervisorUser)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht an Lehrenden
             To.Add(supervisorUser.Email);
+            mailModel.User = supervisorUser;
 
             // Kopie an Studierenden
-            CC.Add(thesisState.User.Email);
-
+            CC.Add(mailModel.StudentUser.Email);
 
             Subject = $"Neue Anmeldung für eine Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = supervisorUser,
-                StudentUser = thesisState.User
-            };
 
 
             return Email("ThesisSupervisionRequestEMail", mailModel);
         }
-
-        /// <summary>
-        /// Anfrage an Betreuer
-        /// </summary>
-        /// <param name="thesisState"></param>
-        /// <param name="supervisorUser"></param>
-        /// <returns></returns>
-        internal EmailResult ThesisSupervisionRequestEMail(ThesisStateModel thesisState, ApplicationUser supervisorUser, ApplicationUser actionUser)
-        {
-            InitSenderTopic(MAIL_SECTION_THESIS);
-
-            // geht an Lehrenden
-            To.Add(supervisorUser.Email);
-
-            // Kopie an Studierenden
-            CC.Add(thesisState.User.Email);
-
-
-            Subject = $"Neue Anmeldung für eine Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = supervisorUser,
-                StudentUser = thesisState.User,
-                ActionUser = actionUser
-            };
-
-
-            return Email("ThesisSupervisionRequestEMail", mailModel);
-        }
-
 
 
         /// <summary>
@@ -141,174 +85,135 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        internal EmailResult ThesisConditionCheckResponseEMail(ThesisStateModel thesisState)
+        internal EmailResult ThesisConditionCheckResponseEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht nur an den Studierenden
-            To.Add(thesisState.User.Email);
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
             Subject = $"Prüfung der Voraussetzungen";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = thesisState.User
-            };
 
 
             return Email("ThesisConditionCheckResponseEMail", mailModel);
         }
 
 
-        internal EmailResult MemberMoveDateEMail(MemberMoveDateMailModel model)
-        {
-            if (model.SourceUser != null)
-            {
-                To.Add(model.SourceUser.Email);
-            }
-            if (model.TargetUser != null)
-            {
-                To.Add(model.TargetUser.Email);
-            }
-            CC.Add(model.User.Email);
-            Subject = $"Übertragung von Terminen";
 
-            return Email("MemberMoveDateEMail", model);
-        }
-
-        internal EmailResult LotterySelectionEMail(LotterySelectionMailModel model)
-        {
-            To.Add(model.User.Email);
-            Subject = $"Wahlverfahren {model.Lottery.Name}: Ihre Auswahl";
-
-            return Email("LotterySelectionEMail", model);
-        }
-
-
-
-        private string GetTemplate(string templateName, string language)
-        {
-            return String.Format("{0}_{1}", language, templateName);
-        }
-
-
-        public EmailResult ThesisSupervisorDeliveredEMail(ThesisStateModel thesisState, ApplicationUser user)
+        public EmailResult ThesisSupervisorDeliveredEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht nur an den Studierenden
-            To.Add(thesisState.User.Email);
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
             // cc an Betreuer bzw.Admin, der erfasst hat
-            CC.Add(user.Email);
+            CC.Add(mailModel.ActionUser.Email);
 
             Subject = $"Abgabe der Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = thesisState.User,
-                ActionUser = user,
-            };
 
 
             return Email("ThesisDeliveredEMail", mailModel);
         }
 
-        public EmailResult ThesisSupervisorDeliveryStornoEMail(ThesisStateModel thesisState, ApplicationUser user)
+        public EmailResult ThesisSupervisorDeliveryStornoEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht nur an den Studierenden
-            To.Add(thesisState.User.Email);
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
             // cc an Betreuer bzw.Admin, der erfasst hat
-            CC.Add(user.Email);
+            CC.Add(mailModel.ActionUser.Email);
 
             Subject = $"Abgabe der Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = thesisState.User,
-                ActionUser = user,
-            };
-
 
             return Email("ThesisDeliveryStornoEMail", mailModel);
         }
 
 
 
-        public EmailResult ThesisSupervisorIssuedEMail(ThesisStateModel thesisState, ApplicationUser user)
+        public EmailResult ThesisSupervisorIssuedEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht nur an den Studierenden
-            To.Add(thesisState.User.Email);
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
             // cc an Betreuer
-            CC.Add(user.Email);
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
 
             Subject = $"Anmeldung der Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = thesisState.User,
-                ActionUser = user,
-            };
-
 
             return Email("ThesisSupervisorIssuedEMail", mailModel);
         }
 
-        public EmailResult ThesisSupervisionResponseEMail(ThesisStateModel thesisState, Supervisor supervisor, ApplicationUser user)
+        public EmailResult ThesisSupervisionResponseEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht nur an den Studierenden
-            To.Add(thesisState.User.Email);
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
             // cc an Betreuer
-            CC.Add(user.Email);
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
 
             Subject = $"Betreuung der Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = thesisState.User,
-                ActionUser = user,
-                Supervisor = supervisor
-            };
 
 
             return Email("ThesisSupervisionResponseEMail", mailModel);
         }
 
-        public EmailResult ThesisSupervisorTitleChangedEMail(ThesisStateModel thesisState, ApplicationUser user)
+        public EmailResult ThesisSupervisorTitleChangedEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
             // geht nur an den Studierenden
-            To.Add(thesisState.User.Email);
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
             // cc an Betreuer
-            CC.Add(user.Email);
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
 
             Subject = $"Änderung Titel der Abschlussarbeit";
-
-            var mailModel = new ThesisMailModel()
-            {
-                Thesis = thesisState.Thesis,
-                User = thesisState.User,
-                ActionUser = user,
-            };
 
 
             return Email("ThesisSupervisorTitleChangedEMail", mailModel);
         }
+
+        public EmailResult ThesisMarkedEMail(ThesisMailModel mailModel)
+        {
+            InitSenderTopic(MAIL_SECTION_THESIS);
+
+            // geht nur an den Studierenden
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
+
+            // cc an Betreuer
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
+
+            Subject = $"Notenmeldung Ihrer Abschlussarbeit";
+
+
+            return Email("ThesisMarkedEMail", mailModel);
+        }
+
     }
 }

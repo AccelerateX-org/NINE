@@ -5,7 +5,7 @@
 }
 
 
-@if (Model.Supervisor != null)
+@if (Model.IsAccepted)
 {
     <p>Die Betreuung Ihrer Abschlussarbeit wurde von @Model.ActionUser.FirstName @Model.ActionUser.LastName angenommen.</p>
 }

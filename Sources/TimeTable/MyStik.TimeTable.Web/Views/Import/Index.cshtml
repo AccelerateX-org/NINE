@@ -53,7 +53,7 @@
                             <h4>JSON</h4>
                             <p>Hochladen einer einzigen Datei</p>
                             <form class="form-inline" action="@Url.Action("Select")">
-                                <input type="text" name="format" value="JSON" hidden/>
+                                <input type="text" name="format" value="JSON" hidden />
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!
@@ -81,6 +81,33 @@
                             <p>Hochladen einer einzigen Datei</p>
                             <form class="form-inline" action="@Url.Action("Select")">
                                 <input type="text" name="format" value="CIE" hidden />
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-default"><i class="fa fa-upload"></i> Import starten</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="media">
+                        <div class="media-left media-middle">
+                            <i class="fa fa-user-md fa-5x text-info"></i>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="media-heading">Änderung der Dozentenkürzel</h3>
+                            <h4>JSON</h4>
+                            <p>Hochladen einer einzigen Datei mit dem Shema "alt/neu"</p>
+                            <form class="form-inline" action="@Url.Action("ChangeDozIds")">
+                                <input type="text" name="format" value="DOZ" hidden />
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" required=""> Mir ist bewusst, dass das eine wichtige Aufgabe ist!

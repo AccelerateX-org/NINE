@@ -1,70 +1,39 @@
-﻿@model ICollection<MyStik.TimeTable.Web.Models.AlumniStatisticModel>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
 @{
     ViewBag.Title = "Alumni";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Alumni</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2">
-            @if (ViewBag.UserRight.IsOrgMember || ViewBag.UserRight.IsOrgAdmin)
-            {
-                <div class="row">
-                    <div class="panel panel-default">
-                        <ul class="nav">
-                            <li>
-                                <a href="@Url.Action("Invitation")"><i class="icon-present"></i> Einladen</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            }
-            @if (User.IsInRole("SysAdmin"))
-            {
-                <div class="row">
-                    <div class="panel panel-default">
-                        <ul class="nav">
-                            <li>
-                                <a href="@Url.Action("Delete")"><i class="fa fa-trash-o"></i> Löschen</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Statistik</h4>
+                    <h4>Alumni</h4>
                 </div>
                 <div class="panel-body">
                     <table class="table table-condensed">
                         <thead>
                         <tr>
                             <th>Studiengang</th>
-                            <th>Aktuell Studentenzahl</th>
-                            <th>Anzahl Alumni</th>
+                            <th>Semester</th>
+                            <th>Name</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var curr in @Model)
+                        @foreach (var item in @Model)
                         {
                             <tr>
-                                <td>@curr.Curriculum.ShortName</td>
-                                <td>@curr.CurrentStudentCount</td>
-                                <td>@curr.AlumniCount</td>
+                                <td>@item.Alumni.Curriculum.Name</td>
+                                <td>@item.Alumni.Semester.Name</td>
+                                @if (item.User != null)
+                                {
+                                    <td>@item.User.FullName</td>
+                                }
+                                else
+                                {
+                                    <td>Kein Benutzerkonto vorhanden</td>
+                                }
                             </tr>
                         }
                         </tbody>

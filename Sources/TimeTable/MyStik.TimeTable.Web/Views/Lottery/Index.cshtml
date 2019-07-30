@@ -127,6 +127,9 @@
                                         <th style="text-align: right"><i class="fa fa-hourglass-half"></i></th>
                                         <th style="text-align: right"><i class="fa fa-percent"></i></th>
                                         <th>Eintragung ab</th>
+                                        <th>Eintragung bis</th>
+                                        <th>Verlosung ab</th>
+                                        <th>Verlosung bis</th>
                                         <th>Platzvergabe</th>
                                         <th>Ansprechpartner</th>
                                     </tr>
@@ -186,10 +189,16 @@
                                         }
                                         @if (!lottery.Lottery.IsFixed)
                                         {
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                             <td>Windhundverfahren</td>
                                         }
                                         else
                                         {
+                                            <td>@lottery.Lottery.IsActiveUntil.Value.ToShortDateString()</td>
+                                            <td>@lottery.Lottery.FirstDrawing.ToShortDateString()</td>
+                                            <td>@lottery.Lottery.LastDrawing.ToShortDateString()</td>
                                             <td>Platzverlosung</td>
                                         }
                                         <td>@lottery.Lottery.Owner.FullName</td>

@@ -607,43 +607,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (user != null)
             {
-                // Alle Eintragungen löschen
-                // Das darf nur der Admin, der weiss, was er tut. Daher hier auch keine E-Mail oder ähnliches
-                var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)).ToList();
-
-                foreach (var subscription in subscriptions)
-                {
-                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var drawing in allDrawings)
-                    {
-                        Db.SubscriptionDrawings.Remove(drawing);
-                    }
-
-                    var bets = subscription.Bets.ToList();
-                    foreach (var bet in bets)
-                    {
-                        Db.LotteriyBets.Remove(bet);
-                    }
-
-                    Db.Subscriptions.Remove(subscription);
-                }
-
-                var games = Db.LotteryGames.Where(x => x.UserId.Equals(user.Id)).ToList();
-                foreach (var lotteryGame in games)
-                {
-                    Db.LotteryGames.Remove(lotteryGame);
-                }
-
-
-                var semSubscriptions = Db.Subscriptions.OfType<SemesterSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)).ToList();
-
-                foreach (var subscription in semSubscriptions)
-                {
-                    Db.Subscriptions.Remove(subscription);
-                }
-                Db.SaveChanges();
-
-
                 // Devices löschen!
                 var _db = new ApplicationDbContext();
                 var devices = _db.Devices.Where(d => d.User.Id.Equals(user.Id)).ToList();

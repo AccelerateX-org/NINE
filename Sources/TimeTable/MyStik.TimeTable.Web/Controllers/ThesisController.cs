@@ -171,6 +171,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult RequestSupervision(Guid id, Guid[] DozIds)
         {
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+            var user = GetCurrentUser();
 
             var supervisors = new List<Supervisor>();
 
@@ -199,19 +200,14 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var supervisor in supervisors)
             {
 
-                var tm = new ThesisStateModel
-                {
-                    Thesis = thesis,
-                    Student = thesis.Student,
-                    User = userService.GetUser(thesis.Student.UserId)
-                };
-
                 // der user des angefragten Lehrenden
-                var user = userService.GetUser(supervisor.Member.UserId);
+                var supervisorUser = userService.GetUser(supervisor.Member.UserId);
 
-                if (user != null)
+                if (supervisorUser != null)
                 {
-                    new MailController().ThesisSupervisionRequestEMail(tm, user).Deliver();
+                    var tm = InitMailModel(thesis, user);
+
+                    new MailController().ThesisSupervisionRequestEMail(tm, supervisorUser).Deliver();
                 }
             }
 
@@ -269,14 +265,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Mail an Betreuer mit Kopie an Studierenden
-            var model = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var model = InitMailModel(thesis, user);
 
-            new MailController().ThesisSupervisorRemoveEMail(model, supervisorUser, user).Deliver();
+            new MailController().ThesisSupervisorRemoveEMail(model, supervisorUser).Deliver();
 
 
 
@@ -346,6 +337,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("MyWork");
         }
 
+        private ThesisMailModel InitMailModel(Thesis t, ApplicationUser senderUser)
+        {
+            var model = new ThesisMailModel();
+
+            var userService = new UserInfoService();
+
+            model.Thesis = t;
+            model.StudentUser = userService.GetUser(t.Student.UserId);
+
+            foreach (var supervisor in t.Supervisors)
+            {
+                var user = userService.GetUser(supervisor.Member.UserId);
+
+                if (user != null)
+                {
+                    model.SupervisorUsers.Add(user);
+                }
+            }
+
+            model.ActionUser = senderUser;
+
+            return model;
+        }
 
     }
 }

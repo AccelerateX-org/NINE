@@ -4080,7 +4080,7 @@
     <Content Include="Views\Dictionary\_GroupListByTopicNew.cshtml" />
     <Content Include="Views\Course\Create.cshtml" />
     <Content Include="Views\Mailing\InvalidModel.cshtml" />
-    <Content Include="Views\ThesisAdmin\NoAccess.cshtml" />
+    <Content Include="Views\Shared\_NoAccess.cshtml" />
     <Content Include="Views\Thesis\RequestSupervision.cshtml" />
     <Content Include="Views\Students\Curriculum.cshtml" />
     <Content Include="Views\Students\SwitchCurriculum.cshtml" />
@@ -4113,6 +4113,13 @@
     <Content Include="Areas\Lab\Views\Home\Index.cshtml" />
     <Content Include="Views\ThesisAdmin\Graduates.cshtml" />
     <Content Include="Views\Mail\ThesisDeliveryStornoEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisMarkedEMail.html.cshtml" />
+    <Content Include="Views\Alumni\Accept.cshtml" />
+    <Content Include="Views\ThesisAdmin\Done.cshtml" />
+    <Content Include="Views\Alumni\ThankYou.cshtml" />
+    <Content Include="Views\Reservation\DeleteReservation.cshtml" />
+    <Content Include="Views\Import\ChangeDozIds.cshtml" />
+    <Content Include="Views\Import\DozIdReport.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

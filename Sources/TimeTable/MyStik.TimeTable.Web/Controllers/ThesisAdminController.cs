@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (!userRight.IsExamAdmin)
             {
-                return View("NoAccess");
+                return View("_NoAccess");
             }
 
             ViewBag.UserRight = userRight;
@@ -47,7 +47,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (!userRight.IsExamAdmin)
             {
-                return View("NoAccess");
+                return View("_NoAccess");
             }
 
             var userService = new UserInfoService();
@@ -79,8 +79,56 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+
+
+
         /// <summary>
         /// Absolventen, sind alle mit abegebener Arbeit
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Done()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    x.IsCleared == null  &&     // noch nicht archiviert
+                    x.GradeDate == null &&      // noch keine Note gemeldet
+                    x.DeliveryDate != null      // abgegeben haben
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// Absolventen, sind alle mit gemeldeter Note
         /// </summary>
         /// <returns></returns>
         public ActionResult Graduates()
@@ -90,15 +138,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (!userRight.IsExamAdmin)
             {
-                return View("NoAccess");
+                return View("_NoAccess");
             }
 
             var userService = new UserInfoService();
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    x.IsCleared == null  &&     // noch nicht archiviert
-                    x.DeliveryDate != null      // abgegeben haben
+                    x.IsCleared == null &&      // noch nicht archiviert
+                    x.GradeDate != null         // abgegeben haben
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -217,7 +265,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Graduates");
         }
 
 
@@ -307,14 +355,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            var userService = new UserInfoService();
-
-            var tm = new ThesisStateModel
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var tm = InitMailModel(thesis, user);
 
             new MailController().ThesisConditionCheckResponseEMail(tm).Deliver();
 
@@ -337,14 +378,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            var userService = new UserInfoService();
-
-            var tm = new ThesisStateModel
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var tm = InitMailModel(thesis, user);
 
             new MailController().ThesisConditionCheckResponseEMail(tm).Deliver();
 
@@ -374,14 +408,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Mail an Lehrenden
-            var model = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var model = InitMailModel(thesis, user);
+            model.AsSubstitute = true;
 
-            new MailController().ThesisSupervisorAssignEMail(model, supervisorUser, user).Deliver();
+            new MailController().ThesisSupervisorAssignEMail(model, supervisorUser).Deliver();
 
 
 
@@ -408,14 +438,9 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Mail an Lehrenden
-            var model = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var model = InitMailModel(thesis, user);
 
-            new MailController().ThesisSupervisorRemoveEMail(model, supervisorUser, user).Deliver();
+            new MailController().ThesisSupervisorRemoveEMail(model, supervisorUser).Deliver();
 
 
             return RedirectToAction("Details", new { id = thesis.Id });
@@ -485,20 +510,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var supervisor in supervisors)
             {
-                var tm = new ThesisStateModel
-                {
-                    Thesis = thesis,
-                    Student = thesis.Student,
-                    User = userService.GetUser(thesis.Student.UserId)
-                };
-
                 // der user des angefragten Lehrenden
                 var supervisorUser = userService.GetUser(supervisor.Member.UserId);
 
                 if (supervisorUser != null)
                 {
-                    new MailController().ThesisSupervisionRequestEMail(tm, supervisorUser, user).Deliver();
+                    var tm = InitMailModel(thesis, user);
+                    tm.AsSubstitute = true;
+
+                    new MailController().ThesisSupervisionRequestEMail(tm, supervisorUser).Deliver();
                 }
+
             }
 
 
@@ -548,17 +570,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
+            
             // Mail an Studierenden
-            var model = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var tm = InitMailModel(thesis, user);
+            tm.AsSubstitute = true;
 
-            new MailController().ThesisSupervisorIssuedEMail(model, user).Deliver();
-
-
+            new MailController().ThesisSupervisorIssuedEMail(tm).Deliver();
 
             return RedirectToAction("Details", new { id = thesis.Id });
         }
@@ -579,16 +596,9 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Mail an Studierenden
-            var model = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var model = InitMailModel(thesis, user);
 
-            new MailController().ThesisSupervisorDeliveredEMail(model, user).Deliver();
-
-
+            new MailController().ThesisSupervisorDeliveredEMail(model).Deliver();
 
             return RedirectToAction("Details", new { id = thesis.Id });
         }
@@ -609,18 +619,47 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Mail an Studierenden
-            var model = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId)
-            };
+            var model = InitMailModel(thesis, user);
 
-            new MailController().ThesisSupervisorDeliveryStornoEMail(model, user).Deliver();
+            new MailController().ThesisSupervisorDeliveryStornoEMail(model).Deliver();
 
 
 
             return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+
+        /// <summary>
+        /// Notenmeldung erfolgt
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Marked(Guid id)
+        {
+            // an den Stduierenden eine E-Mail mit Kopien an
+            // Betreuer
+            // Aktuellen Benutzer
+            var userService = new UserInfoService();
+            var user = GetCurrentUser();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+            thesis.GradeDate = DateTime.Today;
+
+
+            // Annahme: Damit ist auch das Studium beendet
+            var sem = SemesterService.GetSemester(DateTime.Today);
+            thesis.Student.LastSemester = sem;
+
+            Db.SaveChanges();
+
+
+            // Mail an Studierenden
+            var model = InitMailModel(thesis, user);
+
+            new MailController().ThesisMarkedEMail(model).Deliver();
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+
         }
 
 
@@ -672,5 +711,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+        private ThesisMailModel InitMailModel(Thesis t, ApplicationUser senderUser)
+        {
+            var model = new ThesisMailModel();
+
+            var userService = new UserInfoService();
+
+            model.Thesis = t;
+            model.StudentUser = userService.GetUser(t.Student.UserId);
+
+            foreach (var supervisor in t.Supervisors)
+            {
+                var user = userService.GetUser(supervisor.Member.UserId);
+
+                if (user != null)
+                {
+                    model.SupervisorUsers.Add(user);
+                }
+            }
+
+            model.ActionUser = senderUser;
+
+            return model;
+        }
+
+
     }
+
 }

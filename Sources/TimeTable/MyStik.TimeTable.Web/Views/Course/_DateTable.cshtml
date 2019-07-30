@@ -39,38 +39,41 @@
             <td>
                 @if (date.End >= DateTime.Now)
                 {
-                    <div class="btn-group pull-right" role="group">
-                        @Ajax.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate2", "Course",
-                            new {dateId = date.Id},
-                            new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
-                            new {@class = "btn btn-default btn-xs"}
-                            )
+                    if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                    {
+                        <div class="btn-group pull-right" role="group">
+                            @Ajax.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate2", "Course",
+                                new {dateId = date.Id},
+                                new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
+                                new {@class = "btn btn-default btn-xs"}
+                                )
 
-                        @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
-                            new {dateId = date.Id},
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "modalDelete",
-                                OnSuccess = "showEditDateInformation()"
-                            },
-                            new {@class = "btn btn-default btn-xs"}
-                            )
+                            @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                new {dateId = date.Id},
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "modalDelete",
+                                    OnSuccess = "showEditDateInformation()"
+                                },
+                                new {@class = "btn btn-default btn-xs"}
+                                )
 
 
-                        @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
-                            new {dateId = date.Id},
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "modalDelete",
-                                OnSuccess = "showConfirmDeleteDate()"
-                            },
-                            new {@class = "btn btn-danger btn-xs"}
-                            )
-                    </div>
+                            @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                new {dateId = date.Id},
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "modalDelete",
+                                    OnSuccess = "showConfirmDeleteDate()"
+                                },
+                                new {@class = "btn btn-danger btn-xs"}
+                                )
+                        </div>
+                    }
                 }
                 else
                 {
@@ -128,43 +131,46 @@
                     <td>
                         @if (date.End >= DateTime.Now)
                         {
+                            if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                <div class="btn-group pull-right" role="group">
+                                    @Ajax.ActionButton("fa-times text-warning", "absagen", "CancelDate2", "Course",
+                                        new {dateId = date.Id},
+                                        new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
+                                        new {@class = "btn btn-default btn-xs"}
+                                        )
 
-                            <div class="btn-group pull-right" role="group">
-                                @Ajax.ActionButton("fa-times text-warning", "absagen", "CancelDate2", "Course",
-                                    new {dateId = date.Id},
-                                    new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
-                                    new {@class = "btn btn-default btn-xs"}
-                                    )
-
-                                @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new {id = date.Occurrence.Id}, new {@class = "btn btn-default btn-xs"})
-
-
-                                @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
-                                    new {dateId = date.Id},
-                                    new AjaxOptions()
-                                    {
-                                        HttpMethod = "Post",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = "modalDelete",
-                                        OnSuccess = "showEditDateInformation()"
-                                    },
-                                    new {@class = "btn btn-default btn-xs"}
-                                    )
+                                    @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new {id = date.Occurrence.Id}, new {@class = "btn btn-default btn-xs"})
 
 
-                                @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
-                                    new {dateId = date.Id},
-                                    new AjaxOptions()
-                                    {
-                                        HttpMethod = "Post",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = "modalDelete",
-                                        OnSuccess = "showConfirmDeleteDate()"
-                                    },
-                                    new {@class = "btn btn-danger btn-xs"}
-                                    )
+                                    @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                        new {dateId = date.Id},
+                                        new AjaxOptions()
+                                        {
+                                            HttpMethod = "Post",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = "modalDelete",
+                                            OnSuccess = "showEditDateInformation()"
+                                        },
+                                        new {@class = "btn btn-default btn-xs"}
+                                        )
 
-                            </div>
+
+                                    @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                        new {dateId = date.Id},
+                                        new AjaxOptions()
+                                        {
+                                            HttpMethod = "Post",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = "modalDelete",
+                                            OnSuccess = "showConfirmDeleteDate()"
+                                        },
+                                        new {@class = "btn btn-danger btn-xs"}
+                                        )
+
+                                </div>
+                             
+                            }
                         }
                         else
                         {

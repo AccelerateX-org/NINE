@@ -20,29 +20,32 @@
                                 <i class="fa fa-arrow-left"></i> Zurück
                             </a>
                         </div>
+                        @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                        {
 
-                        <div class="form-group dropdown">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-check"></i> ausgewählte Termine <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li id="cancelAll"><a href="#"><i class="fa fa-times"></i> absagen</a></li>
-                                <li id="refreshAll"><a href="#"><i class="fa fa-refresh"></i> reaktivieren</a></li>
-                                <li id="moveAll"><a href="#"><i class="fa fa-calendar"></i> verschieben</a></li>
-                                <li id="deleteAll"><a href="#"><i class="fa fa-trash-o"></i> löschen</a></li>
-                                <li class="divider"></li>
-                                <li id="addRoom"><a href="#"><i class="fa fa-building"></i> Raum hinzufügen</a></li>
-                                <li id="removeRooms"><a href="#"><i class="fa fa-building-o"></i> Räume löschen</a></li>
-                                <li class="divider"></li>
-                                <li id="addHost"><a href="#"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a></li>
-                                <li id="removeHosts"><a href="#"><i class="fa fa-user-times"></i> Dozenten löschen</a></li>
-                            </ul>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("CreateDate2", new {courseId=Model.Course.Id})" class="btn btn-default">
-                                <i class="fa fa-plus-circle"></i> Termin anlegen
-                            </a>
-                        </div>
+                            <div class="form-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-check"></i> ausgewählte Termine <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li id="cancelAll"><a href="#"><i class="fa fa-times"></i> absagen</a></li>
+                                    <li id="refreshAll"><a href="#"><i class="fa fa-refresh"></i> reaktivieren</a></li>
+                                    <li id="moveAll"><a href="#"><i class="fa fa-calendar"></i> verschieben</a></li>
+                                    <li id="deleteAll"><a href="#"><i class="fa fa-trash-o"></i> löschen</a></li>
+                                    <li class="divider"></li>
+                                    <li id="addRoom"><a href="#"><i class="fa fa-building"></i> Raum hinzufügen</a></li>
+                                    <li id="removeRooms"><a href="#"><i class="fa fa-building-o"></i> Räume löschen</a></li>
+                                    <li class="divider"></li>
+                                    <li id="addHost"><a href="#"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a></li>
+                                    <li id="removeHosts"><a href="#"><i class="fa fa-user-times"></i> Dozenten löschen</a></li>
+                                </ul>
+                            </div>
+                            <div class="form-group">
+                                <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-default">
+                                    <i class="fa fa-plus-circle"></i> Termin anlegen
+                                </a>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -53,6 +56,18 @@
 
 
 <div class="container-fluid">
+    @if (Model.Course.IsInternal)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
+                </div>
+            </div>
+        </div>
+
+    }
+
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
@@ -66,6 +81,7 @@
         </div>
     </div>
 </div>
+
 
 
 <div id="modalDelete"></div>

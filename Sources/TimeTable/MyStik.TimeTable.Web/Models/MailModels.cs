@@ -205,46 +205,6 @@ namespace MyStik.TimeTable.Web.Models
         
     }
 
-    /*
-    /// <summary>
-    /// 
-    /// </summary>
-    public class GenericMailDeliveryModel
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public GenericMailDeliveryModel()
-        {
-            Attachments = new Collection<CustomMailAttachtmentModel>();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ApplicationUser Sender { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ApplicationUser Receiver { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Subject { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ICollection<CustomMailAttachtmentModel> Attachments { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public UserMailModel TemplateContent { get; set; }
-    }
-    */
 
     /// <summary>
     /// 
@@ -286,19 +246,40 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class ThesisMailModel : UserMailModel
     {
+        public ThesisMailModel()
+        {
+            SupervisorUsers = new List<ApplicationUser>();
+        }
+
         /// <summary>
-        /// 
+        /// Abschlussarbeit
         /// </summary>
         public Thesis Thesis { get; set; }
-
-        public Supervisor Supervisor { get; set; }
 
         /// <summary>
         /// Der user, der die Aktion ausgeführt hat
         /// </summary>
         public ApplicationUser ActionUser { get; set; }
 
+        /// <summary>
+        /// Name, Adresse des Studenten
+        /// </summary>
         public ApplicationUser StudentUser { get; set; }
+
+        /// <summary>
+        /// Name, Adresse des Betreuers
+        /// </summary>
+        public List<ApplicationUser> SupervisorUsers { get; set; }
+
+        /// <summary>
+        /// IM Fall von....
+        /// </summary>
+        public bool IsAccepted { get; set; }
+
+        /// <summary>
+        /// Als Stellvertreter (für Betreuer)
+        /// </summary>
+        public bool AsSubstitute { get; set; }
     }
 
     public class MemberMoveDateMailModel : UserMailModel

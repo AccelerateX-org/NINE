@@ -24,23 +24,28 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.UserRight = GetUserRight();
-            ViewBag.MyOrganisation = GetMyOrganisation();
+            var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
 
-            // für alle Studiengänge die Anzahl der Studierenden und Alumni ermitteln
-            var model = new List<AlumniStatisticModel>();
-            var sem = SemesterService.GetSemester(DateTime.Today);
-            foreach (var curr in Db.Curricula.ToList())
+            var alumni = Db.Alumnae.Where(x => x.Curriculum.Organiser.Id == member.Organiser.Id);
+
+            var model = new List<AlumniViewModel>();
+
+            foreach (var alumnus in alumni)
             {
-                model.Add(new AlumniStatisticModel
+                var user = UserManager.FindById(alumnus.UserId);
+
+                var m = new AlumniViewModel
                 {
-                    Curriculum = curr,
-                    CurrentStudentCount = Db.Subscriptions.OfType<SemesterSubscription>().Count(s => s.SemesterGroup.Semester.Id == sem.Id &&
-                                                                           s.SemesterGroup.CapacityGroup.CurriculumGroup.Curriculum.Id ==
-                                                                           curr.Id),
-                    AlumniCount = Db.Alumnae.Count(a => a.Curriculum.Id == curr.Id)
-                });
+                    Alumni = alumnus,
+                    Student = null,
+                    User = user
+                };
+
+                model.Add(m);
             }
+
 
             return View(model);
         }
@@ -351,6 +356,108 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
             
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Bestätigung als Almuni eines Studiengangs
+        /// </summary>
+        /// <param name="id">Student</param>
+        /// <returns></returns>
+        public ActionResult Accept(Guid id)
+        {
+            // Das kann nur der aktuelle user für sich
+            var user = GetCurrentUser();
+
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+            if (!user.Id.Equals(student.UserId))
+            {
+                return View("_NoAccess");
+            }
+
+
+
+            // Check gibt es dazu schon einen Alumni
+            // Link über die user id
+            var alumni = Db.Alumnae.SingleOrDefault(x =>
+                x.UserId.Equals(student.UserId) && x.Curriculum.Id == student.Curriculum.Id);
+
+            // Standard: es gibt den alumni noch nicht
+            if (alumni == null)
+            {
+                // anlegen, aber nicht speichern
+                alumni = new Alumnus
+                {
+                    Curriculum = student.Curriculum,
+                    Semester = student.LastSemester
+                };
+            }
+
+
+            var model = new AlumniViewModel
+            {
+                Student = student,
+                Alumni = alumni
+            };
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Accept(AlumniViewModel model)
+        {
+            // den Alumni anlegen, falls es ihn noch nicht gibt
+            var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
+
+            var alumni = Db.Alumnae.SingleOrDefault(x =>
+                x.UserId.Equals(student.UserId) && x.Curriculum.Id == student.Curriculum.Id);
+
+            // Standard: es gibt den alumni noch nicht
+            if (alumni == null)
+            {
+                // anlegen, aber nicht speichern
+                alumni = new Alumnus
+                {
+                    Curriculum = student.Curriculum,
+                    Semester = student.LastSemester,
+                    UserId = student.UserId
+                };
+
+                Db.Alumnae.Add(alumni);
+                Db.SaveChanges();
+
+                return RedirectToAction("ThankYou", new { id = alumni.Id });
+            }
+
+            return RedirectToAction("Curricula", "Subscription");
+        }
+
+        public ActionResult ThankYou(Guid id)
+        {
+            var alumni = Db.Alumnae.SingleOrDefault(x => x.Id == id);
+            var user = UserManager.FindById(alumni.UserId);
+
+            var model = new AlumniViewModel
+            {
+                Alumni = alumni,
+                User = user
+            };
+
+            return View(model);
+        }
+
+        public ActionResult Deny(Guid id)
+        {
+            var alumni = Db.Alumnae.SingleOrDefault(x => x.Id == id);
+
+            if (alumni != null)
+            {
+                Db.Alumnae.Remove(alumni);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Curricula", "Subscription");
         }
 
     }

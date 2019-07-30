@@ -6,6 +6,15 @@ using System.Web;
 
 namespace MyStik.TimeTable.Web.Models
 {
+    public class AlumniViewModel
+    {
+        public Alumnus Alumni { get; set; }
+
+        public Student Student { get; set; }
+
+        public ApplicationUser User { get; set; }
+    }
+
     /// <summary>
     /// 
     /// </summary>

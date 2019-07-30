@@ -15,9 +15,28 @@
                 <div class="list-group">
                     <div class="list-group-item">
                         <a href="@Url.Action("Running")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
-                        <a href="#" class="btn btn-default">E-Mail senden</a>
-                        <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default">Notenmeldung anfordern</a>
-                        <a href="@Url.Action("Archive", new {id = Model.Thesis.Id})" class="btn btn-success">Arbeit abrechnen und archivieren</a>
+                        <a href="mailto:@Model.User.Email" class="btn btn-default">E-Mail senden</a>
+                        @if (Model.Thesis.DeliveryDate != null)
+                        {
+                            if (Model.Thesis.GradeDate != null)
+                             {
+                                 <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default disabled">Notenmeldung anfordern</a>
+                                 <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success disabled">Note melden</a>
+                                 <a href="@Url.Action("Archive", new {id = Model.Thesis.Id})" class="btn btn-success">Arbeit abgerechnet</a>
+                             }
+                            else
+                            {
+                                <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default">Notenmeldung anfordern</a>
+                                <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success">Note melden</a>
+                                <a href="#" class="btn btn-success disabled">Arbeit abgerechnet</a>
+                            }
+                        }
+                        else
+                        {
+                            <a href="#" class="btn btn-default disabled">Notenmeldung anfordern</a>
+                            <a href="#" class="btn btn-success disabled">Note melden</a>
+                            <a href="#" class="btn btn-success disabled">Arbeit abgerechnet</a>
+                        }
                         <a href="@Url.Action("Delete", new {id = Model.Thesis.Id})" class="btn btn-danger">Arbeit löschen</a>
                     </div>
                     @{
@@ -128,7 +147,10 @@
                                     <li><i class="fa fa-calendar fa-li"></i>de: "@Model.Thesis.TitleDe"</li>
                                     <li><i class="fa fa-barcode fa-li"></i>en: "@Model.Thesis.TitleEn"</li>
                                 </ul>
-                                <a href="@Url.Action("ChangeTitle", new {id=Model.Thesis.Id})" class="btn btn-primary">Titel korrigieren</a>
+                                @if (Model.Thesis.GradeDate == null)
+                                {
+                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Titel korrigieren</a>
+                                }
                             </div>
                         </div>
                     </div>
@@ -229,7 +251,11 @@
                                     else
                                     {
                                         <p>Arbeit wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() abgegeben.</p>
-                                        <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                                        if (Model.Thesis.GradeDate == null)
+                                        {
+
+                                            <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                                        }
                                     }
                                 }
                                 else

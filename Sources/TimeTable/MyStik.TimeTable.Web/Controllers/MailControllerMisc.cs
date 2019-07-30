@@ -166,6 +166,37 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+        internal EmailResult MemberMoveDateEMail(MemberMoveDateMailModel model)
+        {
+            if (model.SourceUser != null)
+            {
+                To.Add(model.SourceUser.Email);
+            }
+            if (model.TargetUser != null)
+            {
+                To.Add(model.TargetUser.Email);
+            }
+            CC.Add(model.User.Email);
+            Subject = $"Übertragung von Terminen";
+
+            return Email("MemberMoveDateEMail", model);
+        }
+
+        internal EmailResult LotterySelectionEMail(LotterySelectionMailModel model)
+        {
+            To.Add(model.User.Email);
+            Subject = $"Wahlverfahren {model.Lottery.Name}: Ihre Auswahl";
+
+            return Email("LotterySelectionEMail", model);
+        }
+
+
+
+        private string GetTemplate(string templateName, string language)
+        {
+            return String.Format("{0}_{1}", language, templateName);
+        }
+
 
 
 

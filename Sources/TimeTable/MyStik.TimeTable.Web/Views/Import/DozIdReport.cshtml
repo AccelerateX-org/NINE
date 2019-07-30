@@ -1,0 +1,36 @@
+﻿@model MyStik.TimeTable.Web.Models.SemesterImportModel
+@{
+    ViewBag.Title = "DozIdReport";
+}
+
+<h2>Meldungen</h2>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Datei</th>
+        <th>Meldungen</th>
+    </tr>
+    </thead>
+    <tbody id="tabMsg">
+    @foreach (var fileName in Model.Context.ErrorMessages)
+    {
+        <tr>
+            <td>@fileName.Key</td>
+            <td>
+                @foreach (var msg in fileName.Value)
+                {
+                    if (msg.IsError)
+                    {
+                        <div class="text-danger"><i class="fa fa-exclamation"></i> @msg.Message</div>
+                    }
+                    else
+                    {
+                        <div>@msg.Message</div>
+                    }
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

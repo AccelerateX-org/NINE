@@ -18,68 +18,108 @@
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Semestergruppen</h4>
+                    <h4>Freigabe Semestergruppen für Vorlesungsverzeichnis</h4>
                 </div>
                 <div class="list-group">
-                    <a href="@Url.Action("InitGroups", new {id = Model.Semester.Id})" class="list-group-item">
-                        <i class="fa fa-plus"></i> Semestergruppen anlegen / ergänzen
-                    </a>
-                    @if (Model.Semester.Groups.Any(x =>
-                        x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id &&
-                        x.Semester.Id == Model.Semester.Id))
-                    {
-                        <a href="@Url.Action("Enable", new {id = Model.Semester.Id})" class="list-group-item">
-                            <i class="fa fa-check"></i> Semestergruppen freigeben
+                    <div class="list-group-item list-group-item-info">
+                        <h5 class="list-group-item-heading">Hinweise</h5>
+                        <div class="list-group-item-text">
+                            <ul>
+                                <li>Die Liste der Semestergruppen wird immer angezeigt</li>
+                                <li>Studierende können nur LVs der freigegebene Gruppen sehen</li>
+                                <li>Lehrende können immer die LVs der Gruppen sehen (unabhängig vom Status der Freigabe)</li>
+                            </ul>
+                        </div>
+                        <h5 class="list-group-item-heading">Status</h5>
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-lock"></i>@Model.Semester.Groups.Count(x => !x.IsAvailable && x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id &&
+                                                                                                  x.Semester.Id == Model.Semester.Id) Semestergruppen sind gesperrt</li>
+                            <li><i class="fa fa-li fa-unlock"></i>@Model.Semester.Groups.Count(x => x.IsAvailable && x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id &&
+                                                                                                    x.Semester.Id == Model.Semester.Id) Semestergruppen sind freigegeben</li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <a href="@Url.Action("InitGroups", new {id = Model.Semester.Id})" class="btn btn-default">
+                            <i class="fa fa-plus"></i> Semestergruppen anlegen / ergänzen
                         </a>
-                        <a href="@Url.Action("Disable", new {id = Model.Semester.Id})" class="list-group-item">
-                            <i class="fa fa-ban"></i> Semestergruppen zurückziehen
-                        </a>
-                    }
+
+                        @if (Model.Semester.Groups.Any(x =>
+                            x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id &&
+                            x.Semester.Id == Model.Semester.Id))
+                        {
+                            <a href="@Url.Action("Enable", new {id = Model.Semester.Id})" class="btn btn-default">
+                                <i class="fa fa-check"></i> Semestergruppen freigeben
+                            </a>
+                            <a href="@Url.Action("Disable", new {id = Model.Semester.Id})" class="btn btn-default">
+                                <i class="fa fa-ban"></i> Semestergruppen sperren
+                            </a>
+                        }
+
+                    </div>
+
+
                 </div>
             </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Lehrveranstaltungen</h4>
+                    <h4>Lehrveranstaltungen für Lehrende sperren</h4>
                 </div>
                 <div class="list-group">
                     <div class="list-group-item list-group-item-info">
-                        <h5 class="list-group-item-heading">Sperrung von Lehrveranstaltung für Lehrende</h5>
+                        <h5 class="list-group-item-heading">Hinweise</h5>
+                        <div class="list-group-tem-text">
+                            <ul>
+                                <li>Bei gesperrten LVs können Lehrende keinerlei Änderungen an Terminen und Teilnehmerlisten vornehmen</li>
+                            </ul>
+                        </div>
+                        <h5 class="list-group-item-heading">Status</h5>
                         <ul class="fa-ul">
                             <li><i class="fa fa-li fa-lock"></i>@Model.FreezedCourses Lehrveranstaltungen sind gesperrt</li>
                             <li><i class="fa fa-li fa-unlock"></i>@Model.UnFreezedCourses Lehrveranstaltungen sind freigegeben</li>
                         </ul>
                     </div>
-
-                    <a href="@Url.Action("UnLockCourses", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Änderungen freigeben</h5>
-                        <div class="list-group-item-text">Änderungen durch Lehrende ermöglichen</div>
-                    </a>
-                    <a href="@Url.Action("LockCourses", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> LVs für Änderungen sperren</h5>
-                        <div class="list-group-item-text">Änderungen durch Lehrende unterbinden</div>
-                    </a>
+                    <div class="list-group-item">
+                        <a href="@Url.Action("UnLockCourses", new {id = Model.Semester.Id})" class="btn btn-default">
+                            <i class="fa fa-unlock"></i> Lehrveranstaltungen freigeben
+                        </a>
+                        <a href="@Url.Action("LockCourses", new {id = Model.Semester.Id})" class="btn btn-default">
+                            <i class="fa fa-lock"></i> Lehrveranstaltungen sperren
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Eintragungen sperren</h4>
                 </div>
                 <div class="list-group-item list-group-item-info">
-                    <h5 class="list-group-item-heading">Sperrung von Lehrveranstaltung für Studierende</h5>
+                    <h5 class="list-group-item-heading">Hinweise</h5>
+                    <div class="list-group-tem-text">
+                        <ul>
+                            <li>Bei gesperrten Eintragungen können sich Studierende nicht eintragen</li>
+                            <li>Das gilt auich für LVs die zu Wahlverfahren gehören</li>
+                        </ul>
+                    </div>
+                    <h5 class="list-group-item-heading">Status</h5>
                     <ul class="fa-ul">
                         <li><i class="fa fa-li fa-ban"></i>@Model.LockedCourses Lehrveranstaltungen sind gesperrt</li>
                         <li><i class="fa fa-li fa-pencil"></i>@Model.UnLockedCourses Lehrveranstaltungen sind freigegeben</li>
                     </ul>
                 </div>
-                <a href="@Url.Action("EnableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
-                    <h5 class="list-group-item-heading"><i class="fa fa-unlock"></i> LVs für Eintragungen freigeben</h5>
-                    <div class="list-group-item-text">Eintragungen durch Studierende ermöglichen</div>
-                </a>
-                <a href="@Url.Action("DisableCourses", new {id = Model.Semester.Id})" class="list-group-item list-group-item-warning">
-                    <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> LVs für Eintragungen sperren</h5>
-                    <div class="list-group-item-text">Eintragungen durch Studierende unterbinden</div>
-                </a>
+                <div class="list-group-item">
+                    <a href="@Url.Action("EnableCourses", new {id = Model.Semester.Id})" class="btn btn-default">
+                        <i class="fa fa-unlock"></i> Eintragungen freigeben
+                    </a>
+                    <a href="@Url.Action("DisableCourses", new {id = Model.Semester.Id})" class="btn btn-default">
+                        <i class="fa fa-lock"></i> Eintragungen sperren
+                    </a>
+                </div>
 
             </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
         </div>
     </div>
 </div>

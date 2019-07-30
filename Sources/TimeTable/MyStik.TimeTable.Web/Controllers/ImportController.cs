@@ -6,6 +6,7 @@ using System.Net;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.IO;
 using MyStik.TimeTable.DataServices.IO.Cie;
 using MyStik.TimeTable.DataServices.IO.Json;
 using MyStik.TimeTable.Web.Models;
@@ -235,5 +236,50 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return File(file, "text/html");
         }
+
+        public ActionResult ChangeDozIds()
+        {
+
+            var org = GetMyOrganisation();
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var model = new SemesterImportModel
+            {
+                Semester = semester,
+                Organiser = org,
+                SemesterId = semester.Id,
+                OrganiserId = org.Id,
+                Existing = 0,
+                FormatId = "dozId"
+            };
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangeDozIds(SemesterImportModel model)
+        {
+            // den IMport mit Check durchführen
+            string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
+
+            // Speichern der Config-Dateien
+            if (model.AttachmentDays != null)
+            {
+                model.AttachmentDays.SaveAs(Path.Combine(tempDir, "dozId.csv"));
+            }
+
+            var org = GetOrganiser(model.OrganiserId);
+
+            var importService = new MemberUpdateService(org.ShortName);
+
+            importService.ReadFile(tempDir, "dozId.csv");
+
+            model.Context = importService.Context;
+
+
+            return View("DozIdReport", model); 
+        }
+
     }
 }

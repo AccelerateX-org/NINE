@@ -17,17 +17,10 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Laufende Abschlussarbeiten</h4>
+                    <h4>Abgegebene Abschlussarbeiten ( = "Absolventen")</h4>
                 </div>
                 <table id="tabThesis" class="table table-condensed">
                     <thead>
-                        <tr>
-                            <th colspan="6">Studierende(r)</th>
-                            <th colspan="1">BetreuerInnen</th>
-                            <th colspan="3">Bearbeitungszeitraum</th>
-                            <th colspan="1">Abgabe</th>
-                            <th colspan="1">Bemerkung</th>
-                        </tr>
                         <tr>
                             <th>#</th>
                             <th>Name</th>
@@ -35,12 +28,8 @@
                             <th>Matr.-Nr.</th>
                             <th>SG</th>
                             <th>SPO</th>
-                            <th>Name(n)</th>
-                            <th>Beginn</th>
-                            <th>Ende</th>
-                            <th>Tage</th>
-                            <th>erfolgt</th>
-                            <th>Nachricht</th>
+                            <th>Betreuende</th>
+                            <th>Abgabe</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,20 +69,6 @@
                                     <div>@supervisor.Member.Name</div>
                                 }
                             </td>
-                            @if (thesis.Thesis.IssueDate != null)
-                            {
-                                var diff = thesis.Thesis.ExpirationDate.Value.Date - DateTime.Today;
-
-                                <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
-                                <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
-                                <td>@diff.Days</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            }
                             @if (thesis.Thesis.DeliveryDate != null)
                             {
                                 <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
@@ -102,23 +77,6 @@
                             {
                                 <td></td>
                             }
-                            <td>
-                                @if (thesis.ConditionRequest != RequestState.Accepted)
-                                {
-                                    if (thesis.ConditionRequest == RequestState.Rejected)
-                                    {
-                                        <div>Voraussetzungen nicht erfüllt</div>
-                                    }
-                                    else
-                                    {
-                                        <div>Prüfung der Voraussetzungen nicht abgeschlossen</div>
-                                    }
-                                }
-                                @if (thesis.Thesis.Supervisors.All(s => s.AcceptanceDate == null))
-                                {
-                                    <div>Bestätigung der Betreuer steht noch aus</div>
-                                }
-                            </td>
                         </tr>
                     }
                     </tbody>
@@ -150,7 +108,7 @@
                     },
                     {
                         "type": "de_date",
-                        "targets": [7, 8, 10]
+                        "targets": [7]
                     }],
                 "order": [[1, 'asc']]
             });

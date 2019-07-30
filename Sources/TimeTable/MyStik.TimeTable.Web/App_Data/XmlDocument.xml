@@ -5004,6 +5004,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.AlumniController.Accept(System.Guid)">
+            <summary>
+            Bestätigung als Almuni eines Studiengangs
+            </summary>
+            <param name="id">Student</param>
+            <returns></returns>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.BuildingController">
             <summary>
             
@@ -5996,7 +6003,7 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorRemoveEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Web.Models.ApplicationUser)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorRemoveEMail(MyStik.TimeTable.Web.Models.ThesisMailModel,MyStik.TimeTable.Web.Models.ApplicationUser)">
             <summary>
             Entfernung durch Dritten
             </summary>
@@ -6004,7 +6011,7 @@
             <param name="supervisorUser"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorAssignEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Web.Models.ApplicationUser)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorAssignEMail(MyStik.TimeTable.Web.Models.ThesisMailModel,MyStik.TimeTable.Web.Models.ApplicationUser)">
             <summary>
             Annahme durch Dritten
             </summary>
@@ -6012,7 +6019,7 @@
             <param name="supervisorUser"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisionRequestEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisionRequestEMail(MyStik.TimeTable.Web.Models.ThesisMailModel,MyStik.TimeTable.Web.Models.ApplicationUser)">
             <summary>
             Anfrage an Betreuer
             </summary>
@@ -6020,15 +6027,7 @@
             <param name="supervisorUser"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisionRequestEMail(MyStik.TimeTable.Web.Models.ThesisStateModel,MyStik.TimeTable.Web.Models.ApplicationUser,MyStik.TimeTable.Web.Models.ApplicationUser)">
-            <summary>
-            Anfrage an Betreuer
-            </summary>
-            <param name="thesisState"></param>
-            <param name="supervisorUser"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisConditionCheckResponseEMail(MyStik.TimeTable.Web.Models.ThesisStateModel)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisConditionCheckResponseEMail(MyStik.TimeTable.Web.Models.ThesisMailModel)">
             <summary>
             Antwort auf die Prüfung der Voraussetzungen
             </summary>
@@ -6311,9 +6310,15 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Graduates">
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Done">
             <summary>
             Absolventen, sind alle mit abegebener Arbeit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Graduates">
+            <summary>
+            Absolventen, sind alle mit gemeldeter Note
             </summary>
             <returns></returns>
         </member>
@@ -6355,6 +6360,13 @@
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Storno(System.Guid)">
             <summary>
             Stornierung der Abgabe
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Marked(System.Guid)">
+            <summary>
+            Notenmeldung erfolgt
             </summary>
             <param name="id"></param>
             <returns></returns>
@@ -9618,6 +9630,13 @@
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ReservationController.DeleteReservation(System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ReservationController.DeleteReservationConfirmed(System.Guid)">
             <summary>
             
             </summary>
@@ -15746,12 +15765,32 @@
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.Thesis">
             <summary>
-            
+            Abschlussarbeit
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.ActionUser">
             <summary>
             Der user, der die Aktion ausgeführt hat
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.StudentUser">
+            <summary>
+            Name, Adresse des Studenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.SupervisorUsers">
+            <summary>
+            Name, Adresse des Betreuers
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.IsAccepted">
+            <summary>
+            IM Fall von....
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.AsSubstitute">
+            <summary>
+            Als Stellvertreter (für Betreuer)
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Models.IndexViewModel">

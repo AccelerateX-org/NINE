@@ -286,41 +286,6 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             // Das darf nur der Admin, der weiss, was er tut. Daher hier auch keine E-Mail oder ähnliches
             try
             {
-                var subscriptions = Db.Subscriptions.OfType<OccurrenceSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
-
-                foreach (var subscription in subscriptions)
-                {
-                    var allDrawings = Db.SubscriptionDrawings.Where(x => x.Subscription.Id == subscription.Id).ToList();
-                    foreach (var drawing in allDrawings)
-                    {
-                        Db.SubscriptionDrawings.Remove(drawing);
-                    }
-
-                    var bets = subscription.Bets.ToList();
-                    foreach (var bet in bets)
-                    {
-                        Db.LotteriyBets.Remove(bet);
-                    }
-
-                    Db.Subscriptions.Remove(subscription);
-                }
-
-                var games = Db.LotteryGames.Where(x => x.UserId.Equals(id)).ToList();
-                foreach (var lotteryGame in games)
-                {
-                    Db.LotteryGames.Remove(lotteryGame);
-                }
-
-
-                var semSubscriptions = Db.Subscriptions.OfType<SemesterSubscription>().Where(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(id)).ToList();
-
-                foreach (var subscription in semSubscriptions)
-                {
-                    Db.Subscriptions.Remove(subscription);
-                }
-
-                Db.SaveChanges();
-
                 var user = UserManager.FindById(id);
                 // Devices löschen!
                 var devices = _db.Devices.Where(d => d.User.Id.Equals(user.Id)).ToList();
@@ -330,6 +295,10 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 }
                 _db.SaveChanges();
                 UserManager.Delete(user);
+
+                var mailModel = new DeleteUserMailModel { User = user };
+                new MailController().DeleteUserMail(mailModel).Deliver();
+
 
                 return PartialView("_EmptyRow");
             }
@@ -348,7 +317,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                     }
                 }
 
-                return PartialView("_ErrorRow", msg);
+                return PartialView("_EmptyRow", msg);
             }
         }
 

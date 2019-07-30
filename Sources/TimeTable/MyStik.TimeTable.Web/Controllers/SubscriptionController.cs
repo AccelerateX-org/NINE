@@ -305,7 +305,27 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
 
-            var model = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderBy(x => x.Created).ToList();
+            var myStudents = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderBy(x => x.Created).ToList();
+
+            var model = new List<AlumniViewModel>();
+
+            foreach (var student in myStudents)
+            {
+                // nach Alumni suche
+                var alumni = Db.Alumnae.SingleOrDefault(x =>
+                    x.UserId.Equals(user.Id) && x.Curriculum.Id == student.Curriculum.Id);
+
+
+                var m = new AlumniViewModel
+                {
+                    Student = student,
+                    Alumni = alumni
+                };
+
+                model.Add(m);
+            }
+
+
 
             return View(model);
         }

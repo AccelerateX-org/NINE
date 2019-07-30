@@ -16,6 +16,8 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
         private readonly ILog _Logger = LogManager.GetLogger("FileReader");
 
+        private readonly char seperator = ';';
+
 
         public ImportContext Context 
         {
@@ -83,7 +85,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             foreach (var line in lines)
             {
                 // Zeile aufspalten
-                var words = line.Split(',');
+                var words = line.Split(seperator);
 
                 var fachID = words[0].Replace("\"", "");
                 var fachName = words[1].Replace("\"", "");
@@ -113,7 +115,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
             foreach (var line in lines)
             {
-                var words = line.Split(',');
+                var words = line.Split(seperator);
                 var GPU005RaumID = words[0].Replace("\"", "");
                 var GPU005RaumName = words[1].Replace("\"", "");
                 var capacity = int.TryParse(words[7], out var result) ? result : 0;
@@ -149,7 +151,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
             foreach (var line in lines)
             {
-                var words = line.Split(',');
+                var words = line.Split(seperator);
                 var GPU004DozID = words[0].Replace("\"", "");
                 var GPU004DozName = words[1].Replace("\"", "");
                 var GPU004DozTyp = words[22].Replace("\"", "");
@@ -179,7 +181,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             foreach (var line in lines)
             {
                 // Zeile aufspalten
-                var words = line.Split(',');
+                var words = line.Split(seperator);
 
                 var groupID = words[0].Replace("\"", "");
                 var desc = words[1].Replace("\"", "");
@@ -213,7 +215,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             foreach (var line in lines)
             {
                 // Unterricht einlesen
-                var words = line.Split(',');
+                var words = line.Split(seperator);
 
                 // Unterrichts-objekt anlegen und befüllen
                 var u = new Unterricht

@@ -1,0 +1,32 @@
+﻿@model MyStik.TimeTable.Web.Models.AlumniViewModel
+@{
+    ViewBag.Title = "Alumni";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Vielen Dank - Sie sind jetzt Alumni der @Model.Alumni.Curriculum.Organiser.Name</h4>
+                </div>
+                <div class="panel-body">
+                    <p>Als Kontaktadresse verwenden wir weiterhin folgende Daten</p>
+                    <ul class="fa-ul">
+                        <li><i class="fa fa-li fa-user-circle-o"></i>Name: @Model.User.FullName</li>
+                        <li><i class="fa fa-li fa-envelope-o"></i>E-Mail: @Model.User.Email</li>
+                    </ul>
+                    
+                    <div class="alert alert-info">
+                        <strong>Wichtiger Hinweis</strong>
+                        <p>Nach der Exmatrikaltion deaktiviert die Hochschule Hochschul Accounts. Sie sind dann u.U. nicht mehr von uns erreichbar.</p>
+                        <p>Sie können Ihre E-Mail Adresse / Benutzernamen jederzeit ändern</p>
+
+                        <a href="@Url.Action("Index", "Manage")" class="btn btn-default">Mein Benutzerkonto</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

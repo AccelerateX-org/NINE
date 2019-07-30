@@ -1,0 +1,42 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Reservation
+@{
+    ViewBag.Title = "Löschen";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-rooms">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Raumreservierung löschen</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h5>Löschen der Raumreservierung @Model.Name</h5>
+                <p>Die Raumreservierung hat folgende Termine</p>
+                <ul>
+                    @foreach (var date in Model.Dates)
+                    {
+                        <li>@Html.TimeSpanWithDate(date): @date.Title, @Html.LecturerList(date.Hosts), @Html.RoomList(date.Rooms)</li>
+                    }
+                </ul>
+                <hr/>
+                <a href="@Url.Action("DeleteReservationConfirmed", new {id=Model.Id})" class="btn btn-danger"><i class="fa fa-trash-o"></i> ja, ich will diese reservierung löschen</a>
+                <a href="@Url.Action("Details", new {id=Model.Id})" class="btn btn-default"><i class="fa fa-times"></i> Abbrechen</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+

@@ -23,11 +23,8 @@
                             <div class="list-group-item list-group-item-info">
                                 <h5 class="list-group-item-heading"><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
                             </div>
-
                         }
 
-                        if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
-                        {
                             <div class="list-group-item">
                                 <div class="btn-group" role="group">
                                     <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})" class="btn btn-default">
@@ -36,67 +33,71 @@
                                     <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-download"></i> Listen</a>
                                     <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Termine</a>
                                     <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmende</a>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-cogs"></i> Einstellungen <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})"><i class="fa fa-edit"></i> Beschreibung</a>
-                                            </li>
-                                            <li>
-                                                <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})"><i class="fa fa-book"></i> Semestergruppen</a>
-                                            </li>
-                                            <li>
-                                                <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})"><i class="fa fa-tag"></i> Themengebiet ("Modul")</a>
-                                            </li>
-                                            <li>
-                                                <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})"><i class="fa fa-legal"></i> Zugangsbeschränkungen, Platzkontigente</a>
-                                            </li>
-                                            @if (Model.Summary.Lottery == null)
-                                            {
-                                                if (Model.Summary.Lottery == null)
-                                                {
-                                                    <li>
-                                                        <a href="@Url.Action("AssignToLottery", new {id = Model.Summary.Course.Id})"><i class="fa fa-random"></i> In Wahlverfahren aufnehmen</a>
-                                                    </li>
-                                                }
-                                                if (Model.Summary.Course.Occurrence.IsAvailable)
-                                                {
-                                                    <li>
-                                                        <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})"><i class="fa fa-lock"></i> Eintragung für Studierende sperren</a>
-                                                    </li>
-                                                }
-                                                else
-                                                {
-                                                    <li>
-                                                        <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})"><i class="fa fa-unlock"></i> Eintragung für Studierende ermöglichen</a>
-                                                    </li>
-                                                }
-                                            }
-                                            else
-                                            {
+                                    
+                                    @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                                    {
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-cogs"></i> Einstellungen <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
                                                 <li>
-                                                    <a href="@Url.Action("Details", "Lottery", new {id=Model.Summary.Lottery.Id})"><i class="fa fa-random"></i> Zeitplan ist in Wahlverfahren geregelt</a>
+                                                    <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})"><i class="fa fa-edit"></i> Beschreibung</a>
                                                 </li>
-                                            }
-                                            @if (ViewBag.UserRight.IsCourseAdmin)
-                                            {
-                                                if (Model.Summary.Course.IsInternal)
+                                                <li>
+                                                    <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})"><i class="fa fa-book"></i> Semestergruppen</a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})"><i class="fa fa-tag"></i> Themengebiet ("Modul")</a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})"><i class="fa fa-legal"></i> Zugangsbeschränkungen, Platzkontigente</a>
+                                                </li>
+                                                @if (Model.Summary.Lottery == null)
                                                 {
-                                                    <li>
-                                                        <a href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})"><i class="fa fa-unlock"></i> Änderungen durch Lehrende erlauben</a>
-                                                    </li>
+                                                    if (Model.Summary.Lottery == null)
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("AssignToLottery", new {id = Model.Summary.Course.Id})"><i class="fa fa-random"></i> In Wahlverfahren aufnehmen</a>
+                                                        </li>
+                                                    }
+                                                    if (Model.Summary.Course.Occurrence.IsAvailable)
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})"><i class="fa fa-lock"></i> Eintragung für Studierende sperren</a>
+                                                        </li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})"><i class="fa fa-unlock"></i> Eintragung für Studierende ermöglichen</a>
+                                                        </li>
+                                                    }
                                                 }
                                                 else
                                                 {
                                                     <li>
-                                                        <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})"><i class="fa fa-unlock"></i> Änderungen durch Lehrende sperren</a>
+                                                        <a href="@Url.Action("Details", "Lottery", new {id = Model.Summary.Lottery.Id})"><i class="fa fa-random"></i> Zeitplan ist in Wahlverfahren geregelt</a>
                                                     </li>
                                                 }
-                                            }
-                                        </ul>
-                                    </div>
+                                                @if (ViewBag.UserRight.IsCourseAdmin)
+                                                {
+                                                    if (Model.Summary.Course.IsInternal)
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})"><i class="fa fa-unlock"></i> Änderungen durch Lehrende erlauben</a>
+                                                        </li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})"><i class="fa fa-unlock"></i> Änderungen durch Lehrende sperren</a>
+                                                        </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
 
                                     @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
                                     {
@@ -111,7 +112,6 @@
 
                                 </div>
                             </div>
-                        }
                     }
 
                     @Html.Partial("_CourseSummaryHead", Model.Summary)

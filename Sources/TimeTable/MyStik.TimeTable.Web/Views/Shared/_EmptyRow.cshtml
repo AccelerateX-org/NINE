@@ -1,3 +1,15 @@
-﻿<tr></tr>
+﻿@model string
+
+@if (string.IsNullOrEmpty(Model))
+{
+    <tr></tr>
+}
+else
+{
+    <tr>
+        <td>@Model</td>
+    </tr>
+}
+
 
 
