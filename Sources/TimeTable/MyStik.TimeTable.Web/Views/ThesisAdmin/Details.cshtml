@@ -16,24 +16,22 @@
                     <div class="list-group-item">
                         <a href="@Url.Action("Running")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
                         <a href="mailto:@Model.User.Email" class="btn btn-default">E-Mail senden</a>
+                        <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default">Notenmeldung anfordern</a>
                         @if (Model.Thesis.DeliveryDate != null)
                         {
                             if (Model.Thesis.GradeDate != null)
                              {
-                                 <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default disabled">Notenmeldung anfordern</a>
                                  <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success disabled">Note melden</a>
                                  <a href="@Url.Action("Archive", new {id = Model.Thesis.Id})" class="btn btn-success">Arbeit abgerechnet</a>
                              }
                             else
                             {
-                                <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default">Notenmeldung anfordern</a>
                                 <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success">Note melden</a>
                                 <a href="#" class="btn btn-success disabled">Arbeit abgerechnet</a>
                             }
                         }
                         else
                         {
-                            <a href="#" class="btn btn-default disabled">Notenmeldung anfordern</a>
                             <a href="#" class="btn btn-success disabled">Note melden</a>
                             <a href="#" class="btn btn-success disabled">Arbeit abgerechnet</a>
                         }

@@ -25,7 +25,6 @@
                             <th colspan="6">Studierende(r)</th>
                             <th colspan="1">BetreuerInnen</th>
                             <th colspan="3">Bearbeitungszeitraum</th>
-                            <th colspan="1">Abgabe</th>
                             <th colspan="1">Bemerkung</th>
                         </tr>
                         <tr>
@@ -39,7 +38,6 @@
                             <th>Beginn</th>
                             <th>Ende</th>
                             <th>Tage</th>
-                            <th>erfolgt</th>
                             <th>Nachricht</th>
                         </tr>
                     </thead>
@@ -94,14 +92,6 @@
                                 <td></td>
                                 <td></td>
                             }
-                            @if (thesis.Thesis.DeliveryDate != null)
-                            {
-                                <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
                             <td>
                                 @if (thesis.ConditionRequest != RequestState.Accepted)
                                 {
@@ -150,7 +140,7 @@
                     },
                     {
                         "type": "de_date",
-                        "targets": [7, 8, 10]
+                        "targets": [7, 8]
                     }],
                 "order": [[1, 'asc']]
             });

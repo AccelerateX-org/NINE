@@ -1,0 +1,24 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+    @{
+        ViewBag.Title = "Note melden";
+    }
+
+    <div class="container-fluid">
+        <div class="row" style="margin-top: 20px">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Note melden</h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Studierende(r) wird per E-Mail benachrichtigt, dass die Notenmeldung vorliegt und ans Prüfungsamt gesendet wurde.</p>
+                        
+                        <a href="@Url.Action("SendMark", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ist erfolgt</a>
+                        <a href="@Url.Action("Details", new {id=Model.Thesis.Id})" class="btn btn-default">Abbrechen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

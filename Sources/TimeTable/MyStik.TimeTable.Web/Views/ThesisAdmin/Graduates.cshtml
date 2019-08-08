@@ -17,15 +17,14 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Abgegebene Abschlussarbeiten ( = "Absolventen")</h4>
+                    <h4>Absolventen - gemeldete Noten</h4>
                 </div>
                 <table id="tabThesis" class="table table-condensed">
                     <thead>
                         <tr>
                             <th colspan="6">Studierende(r)</th>
                             <th colspan="1">BetreuerInnen</th>
-                            <th colspan="1">Abgabe</th>
-                            <th colspan="1">Bemerkung</th>
+                            <th colspan="2">Status</th>
                         </tr>
                         <tr>
                             <th>#</th>
@@ -35,8 +34,8 @@
                             <th>SG</th>
                             <th>SPO</th>
                             <th>Name(n)</th>
-                            <th>erfolgt</th>
-                            <th>Nachricht</th>
+                            <th>Abgabe</th>
+                            <th>Notenmeldung</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,8 +83,14 @@
                             {
                                 <td></td>
                             }
-                            <td>@thesis.User.Email
-                            </td>
+                            @if (thesis.Thesis.GradeDate != null)
+                            {
+                                <td>@thesis.Thesis.GradeDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                         </tr>
                     }
                     </tbody>
@@ -117,7 +122,7 @@
                     },
                     {
                         "type": "de_date",
-                        "targets": [7]
+                        "targets": [7, 8]
                     }],
                 "order": [[1, 'asc']]
             });

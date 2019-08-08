@@ -250,8 +250,8 @@
                         <h5>Lehrangebot</h5>
                     </a>
                     <div class="btn-group btn-group-justified">
-                        <a href="@Url.Action("Groups", "Courses", new {id = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                        <a href="@Url.Action("Groups", "Courses", new {id = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                        <a href="@Url.Action("Semester", "Courses", new {id = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                        <a href="@Url.Action("Semester", "Courses", new {id = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
                     </div>
                 </div>
             </div>

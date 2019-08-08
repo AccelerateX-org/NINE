@@ -6371,6 +6371,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.SendMark(System.Guid)">
+            <summary>
+            Notenmeldung erfolgt
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisSupervisionController.Issue(System.Guid)">
             <summary>
             Anmeldung durch den Betreuer

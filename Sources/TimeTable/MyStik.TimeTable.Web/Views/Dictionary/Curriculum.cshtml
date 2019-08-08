@@ -28,9 +28,12 @@
                     {
                         foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
                         {
-                            <a href="@Url.Action("Group", new {semId = Model.Semester.Id, groupId = capGroup.Id})" class="list-group-item">
-                                <h5 class="list-group-item-heading">@capGroup.FullName</h5>
-                            </a>
+                            if (capGroup.SemesterGroups.Any(x => x.Semester.Id == Model.Semester.Id))
+                            {
+                                <a href="@Url.Action("Group", new {semId = Model.Semester.Id, groupId = capGroup.Id})" class="list-group-item">
+                                    <h5 class="list-group-item-heading">@capGroup.FullName</h5>
+                                </a>
+                            }
                         }
                     }
                 </div>

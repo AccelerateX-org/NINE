@@ -1,0 +1,73 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    ViewBag.Title = "Lehrveranstaltungen " + Model.Organiser.ShortName;
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Semestergruppen von @Model.Organiser.ShortName im @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var group in Model.Groups)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-group"></i> Semestergruppen für @group.Key.Name (@group.Key.ShortName)
+                        </h4>
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Name</th>
+                            <th>Anzahl LVs</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var semGroup in group)
+                            {
+                                var iconName = semGroup.IsAvailable ? "fa-check text-success" : "fa-ban text-danger";
+                                <tr id="@semGroup.Id">
+                                    <td><i class="fa @iconName"></i> </td>
+                                    <td>@semGroup.FullName</td>
+                                    <td>@semGroup.Activities.Count</td>
+                                    <td>
+                                        @Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteGroup", "Courses",
+                                            new {id = semGroup.Id},
+                                            new AjaxOptions
+                                            {
+                                                HttpMethod = "Post",
+                                                InsertionMode = InsertionMode.Replace,
+                                                UpdateTargetId = semGroup.Id.ToString()
+                                            },
+                                            null)
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+

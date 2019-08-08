@@ -639,5 +639,57 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult AdminGroups(Guid id)
+        {
+            var organiser = GetMyOrganisation();
+            if (organiser == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var semester = SemesterService.GetSemester(id);
+
+            var model = new OrganiserViewModel
+            {
+                Organiser = organiser,
+                Semester = semester
+            };
+
+            // hier jetzt das ganze zu Fuss
+            var studentService = new StudentService(Db);
+
+            var groups = semester.Groups
+                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == organiser.Id)
+                .OrderBy(g => g.CapacityGroup.CurriculumGroup.Curriculum.Name)
+                .ThenBy(g => g.CapacityGroup.CurriculumGroup.Name).ThenBy(g => g.CapacityGroup.Name).ToList();
+            foreach (var group in groups)
+            {
+                var groupModel = new SemesterGroupViewModel
+                {
+                    Group = group,
+                    UserIds = studentService.GetStudents(group)
+                };
+
+                model.SemesterGroups.Add(groupModel);
+            }
+
+            model.Groups = groups.GroupBy(x => x.CapacityGroup.CurriculumGroup.Curriculum).ToList();
+
+            ViewBag.UserRight = GetUserRight();
+
+            return View(model);
+        }
+
+
+        public PartialViewResult DeleteGroup(Guid id)
+        {
+            var group = Db.SemesterGroups.SingleOrDefault(x => x.Id == id);
+            if (group != null)
+            {
+                Db.SemesterGroups.Remove(group);
+                Db.SaveChanges();
+            }
+
+            return PartialView("_EmptyRow");
+        }
     }
 }

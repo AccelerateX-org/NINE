@@ -366,6 +366,95 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
             // Annahme, die Semestergruppen existieren!
             var semGroupList = new List<SemesterGroup>();
+
+            // suche alle aktuellen Zuordnungen zu dieser gruppenID
+                var zuordnungen = _import.GruppenZuordnungen.Where(x => x.Alias.Equals(gruppenId));
+
+                foreach (var zuordnung in zuordnungen)
+                {
+                    // Studiengang finden
+                    var curr = db.Curricula.SingleOrDefault(x =>
+                        x.ShortName.Equals(zuordnung.Studiengang) &&
+                        x.Organiser.Id == org.Id);
+                    if (curr == null)
+                    {
+                        curr = new TimeTable.Data.Curriculum
+                        {
+                            Organiser = org,
+                            ShortName = zuordnung.Studiengang,
+                            Name = zuordnung.Studiengang
+                        };
+                        db.Curricula.Add(curr);
+                    }
+
+                    var sg = curr.CurriculumGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Studiengruppe));
+                    if (sg == null)
+                    {
+                        sg = new CurriculumGroup
+                        {
+                            Name = zuordnung.Studiengruppe,
+                            IsSubscribable = true,
+                            Curriculum = curr
+                        };
+                        db.CurriculumGroups.Add(sg);
+                        curr.CurriculumGroups.Add(sg);
+                    }
+
+                    var cg = string.IsNullOrEmpty(zuordnung.Kapazitätsgruppe) ?
+                        sg.CapacityGroups.SingleOrDefault(x => string.IsNullOrEmpty(x.Name)) :
+                        sg.CapacityGroups.SingleOrDefault(x => x.Name.Equals(zuordnung.Kapazitätsgruppe));
+                    if (cg == null)
+                    {
+                        cg = new CapacityGroup
+                        {
+                            InSS = true,
+                            InWS = true,
+                            Name = zuordnung.Kapazitätsgruppe,
+                            CurriculumGroup = sg
+                        };
+                        db.CapacityGroups.Add(cg);
+                        sg.CapacityGroups.Add(cg);
+                    }
+
+                    // bis hierher habe ich ohne Semesterbezug gearbeitet
+                    // jetzt noch die Semestergruppe
+
+                    var semGroup = cg.SemesterGroups.SingleOrDefault(x => x.Semester.Id == semester.Id);
+                    if (semGroup == null)
+                    {
+                        // semestergruppe gibt es nicht => auf jeden Fall anlegen
+                        semGroup = new SemesterGroup
+                        {
+                            CapacityGroup = cg,
+                            Semester = semester,
+                        };
+
+                        _Logger.InfoFormat("Semestergruppe {0} angelegt {1}", semGroup.FullName, gruppenId);
+
+                        cg.SemesterGroups.Add(semGroup);
+                        db.SemesterGroups.Add(semGroup);
+                    }
+
+                    semGroupList.Add(semGroup);
+                }
+
+                db.SaveChanges();
+
+
+              return semGroupList;
+        }
+
+
+
+
+        /*
+        private List<SemesterGroup> InitSemesterGroups(TimeTableDbContext db, string gruppenId)
+        {
+            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            var org = db.Organisers.SingleOrDefault(x => x.Id == _orgId);
+
+            // Annahme, die Semestergruppen existieren!
+            var semGroupList = new List<SemesterGroup>();
             
             // Annahme, die Semestergruppen existieren nicht alle und müssen ggf. angelegt werden
 
@@ -472,6 +561,9 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
             return semGroupList;
         }
+        */
+
+
 
         public void CheckRooms()
         {
@@ -535,10 +627,71 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
         }
 
         /// <summary>
-        /// Überprüfung der externen Gruppen
-        /// Zu jeder gruppe muss es in der Datenbank einen Alias geben.
-        /// 
+        /// es werden alle Zuordnungen durchsucht
+        /// ob der Studiengang existiert,
+        /// ob Studiengruppe und Kapazitätsgruppe existieren
+        /// Fehlendes würde später automatisch angelegt werden
         /// </summary>
+        public void CheckGroups()
+        {
+            var db = new TimeTableDbContext();
+
+            foreach (var zuordnung in _import.GruppenZuordnungen)
+            {
+                // muss es überhaupt berücksichtigt werden
+                var klasse = _import.Gruppen.SingleOrDefault(x => x.GruppenID.ToUpper().Equals(zuordnung.Alias.ToUpper()));
+                if (klasse == null)
+                {
+                    _import.AddErrorMessage("Import", string.Format(
+                        "Klasse [{0}]: Zuordnung vorhanden, aber keine zugehörige Klasse in GPU003",
+                        zuordnung.Alias), true);
+                }
+                else
+                {
+                    if (klasse.IsTouched)
+                    {
+
+                        // Nach dem Studiengang suchen
+                        var curr = db.Curricula.SingleOrDefault(x =>
+                            x.ShortName.ToUpper().Equals(zuordnung.Studiengang.ToUpper()) && x.Organiser.Id == _orgId);
+
+                        if (curr == null)
+                        {
+                            _import.AddErrorMessage("Import", string.Format(
+                                "Klasse [{0}]: Studiengang [{1}] existiert nicht. Wird angelegt",
+                                zuordnung.Alias, zuordnung.Studiengang), true);
+                        }
+                        else
+                        {
+                            var group = curr.CurriculumGroups.SingleOrDefault(x =>
+                                x.Name.ToUpper().Equals(zuordnung.Studiengruppe.ToUpper()));
+
+                            if (group == null)
+                            {
+                                _import.AddErrorMessage("Import", string.Format(
+                                    "Klasse [{0}]: Studiengruppe [{1}] in Studienfgang [{2}] existiert nicht. Wird angelegt",
+                                    zuordnung.Alias, zuordnung.Studiengruppe, zuordnung.Studiengang), true);
+                            }
+                            else
+                            {
+                                var capGroup = group.CapacityGroups.SingleOrDefault(x =>
+                                    x.Name.ToUpper().Equals(zuordnung.Kapazitätsgruppe.ToUpper()));
+
+                                if (capGroup == null)
+                                {
+                                    _import.AddErrorMessage("Import", string.Format(
+                                        "Klasse [{0}]: Kapzitätsgruppe [{1}] der Studiengruppe [{2}] in Studienfgang [{3}] existiert nicht. Wird angelegt",
+                                        zuordnung.Alias, zuordnung.Kapazitätsgruppe, zuordnung.Studiengruppe,
+                                        zuordnung.Studiengang), true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /* alte variante
         public void CheckGroups()
         {
             var db = new TimeTableDbContext();
@@ -569,54 +722,45 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                     }
 
                 }
-                else
-                {
-                    // es ist egal, ob die Semestergruppe vorhanden ist
-                    // sie wird später beim import angelegt
-                    /*
-                    var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
-
-                    var isSS = semester.Name.StartsWith("SS");
-                    var isWS = semester.Name.StartsWith("WS");
-
-                    foreach (var groupAlias in aliasList)
-                    {
-                        if (!semester.Groups.Any(
-                            g => g.CapacityGroup.Id == groupAlias.CapacityGroup.Id))
-                        {
-                            // Semestergruppe existiert nicht
-                            // muss sie existieren?
-                            if (isSS && groupAlias.CapacityGroup.InSS ||
-                                isWS && groupAlias.CapacityGroup.InWS)
-                            {
-                                // Semestergruppe existiert nicht - muss angelegt werden
-                                _import.AddErrorMessage("Import", 
-                                    string.Format(
-                                        "Semestergruppe [{0}] für Gruppenalias [{1}] existiert nicht! Semestergruppe wird automatisch angelegt.",
-                                        groupAlias.CapacityGroup.FullName, gruppe.GruppenID));
-                            }
-                        }
-                    }
-                     * */
-                   
-                }
             }
         }
+        */
 
-        public void CheckCourses()
+        /// <summary>
+        /// Zu jedem Kurs gibt es Klassen
+        /// zu jeder Klasse muss mindestens eine Zuordnung existieren
+        /// </summary>
+            public void CheckCourses()
         {
-            //var db = new TimeTableDbContext();
 
             foreach (var kurs in _import.Kurse)
             {
-                // es genügt, wenn ein Kurs mindestens eine gültige Gruppe hat
-                if (!kurs.Gruppen.Any(x => x.IsValid))
+                var isValid = false;
+                foreach (var gruppe in kurs.Gruppen)
                 {
-                    _import.AddErrorMessage("Import", string.Format("Kurs [{0}] hat keine gültigen Gruppen. wird nicht importiert", kurs.ToString()), true);
-                    kurs.IsValid = false;
+                    // suche alle Zuordnungen
+                    var n = _import.GruppenZuordnungen.Count(x => x.Alias.ToUpper().Equals(gruppe.GruppenID.ToUpper()));
+
+                    if (n == 0)
+                    {
+                        _import.AddErrorMessage("Import", string.Format("Kurs [{0}] die Klasse [{1}] hat keine Zuordnung. Diese Beziehnung wird nicht importiert", kurs.Id, gruppe.GruppenID), false);
+                    }
+                    else
+                    {
+                        isValid = true;
+                    }
                 }
+
+                if (!isValid)
+                {
+                    _import.AddErrorMessage("Import", string.Format("Kurs [{0}] hat keinerlei Zuordnungen und wird nicht importiert", kurs.Id), true);
+                }
+
+                kurs.IsValid = isValid;
             }
+
         }
+
 
         /// <summary>
         /// Verschiebt alle Kurse von einem Datum zum anderen

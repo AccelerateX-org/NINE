@@ -108,6 +108,12 @@
                             </h5>
                             <p class="list-group-item-text">Freischalten, Zurückziehen der Semestergruppen</p>
                         </a>
+                        <a href="@Url.Action("AdminGroups", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-wrench"></i> Semestergruppen
+                            </h5>
+                            <p class="list-group-item-text">Anlegen und Löschen</p>
+                        </a>
                     </div>
                 </div>
             }

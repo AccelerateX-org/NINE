@@ -4120,6 +4120,9 @@
     <Content Include="Views\Reservation\DeleteReservation.cshtml" />
     <Content Include="Views\Import\ChangeDozIds.cshtml" />
     <Content Include="Views\Import\DozIdReport.cshtml" />
+    <Content Include="Views\ThesisAdmin\Marked.cshtml" />
+    <Content Include="Views\ThesisAdmin\Delete.cshtml" />
+    <Content Include="Views\Courses\AdminGroups.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

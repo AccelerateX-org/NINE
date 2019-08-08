@@ -241,6 +241,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
+            return View(thesis);
+        }
+
+
+        public ActionResult DeleteConfirmed(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
             foreach (var advisor in thesis.Advisors.ToList())
             {
                 Db.Advisors.Remove(advisor);
@@ -600,7 +608,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             new MailController().ThesisSupervisorDeliveredEMail(model).Deliver();
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+            return RedirectToAction("Running");
         }
 
         /// <summary>
@@ -643,6 +651,29 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+
+            // Mail an Studierenden vorbereiten
+            var model = InitMailModel(thesis, user);
+
+            return View(model);
+        }
+
+
+        /// <summary>
+        /// Notenmeldung erfolgt
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult SendMark(Guid id)
+        {
+            // an den Stduierenden eine E-Mail mit Kopien an
+            // Betreuer
+            // Aktuellen Benutzer
+            var userService = new UserInfoService();
+            var user = GetCurrentUser();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
             thesis.GradeDate = DateTime.Today;
 
 
@@ -658,10 +689,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             new MailController().ThesisMarkedEMail(model).Deliver();
 
-            return RedirectToAction("Details", new { id = thesis.Id });
-
+            return RedirectToAction("Done");
         }
-
 
 
 
@@ -671,9 +700,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
-            thesis.GradeDate = DateTime.Now;
-            Db.SaveChanges();
 
             // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
             var tm = new ThesisStateModel()
@@ -734,8 +760,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return model;
         }
-
-
     }
 
 }

@@ -310,9 +310,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
-            thesis.GradeDate = DateTime.Now;
-            Db.SaveChanges();
-
             // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
             var tm = new ThesisStateModel()
             {
@@ -352,9 +349,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
-            thesis.GradeDate = DateTime.Now;
-            Db.SaveChanges();
 
             // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
             var tm = new ThesisStateModel()

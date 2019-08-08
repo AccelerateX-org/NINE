@@ -109,6 +109,12 @@ namespace MyStik.TimeTable.Web.Controllers
             To.Add(mailModel.StudentUser.Email);
             mailModel.User = mailModel.StudentUser;
 
+            // cc an Betreuer
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
+
             // cc an Betreuer bzw.Admin, der erfasst hat
             CC.Add(mailModel.ActionUser.Email);
 
@@ -208,6 +214,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 CC.Add(user.Email);
             }
+
+            // cc an Betreuer bzw.Admin, der erfasst hat
+            CC.Add(mailModel.ActionUser.Email);
 
             Subject = $"Notenmeldung Ihrer Abschlussarbeit";
 
