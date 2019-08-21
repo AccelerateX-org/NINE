@@ -200,10 +200,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Alle Studierenden in Studiengängen des Veranstalters
                 ICollection<ApplicationUser> userList = new List<ApplicationUser>();
 
-                var allStudents = Db.Students.Where(x => x.Curriculum.Organiser.Id == org.Id);
+                // nur die aktiven
+                var allStudents = Db.Students.Where(x => x.Curriculum.Organiser.Id == org.Id && x.LastSemester == null).ToList();
+                // ggf. doppelt vorhandene rauswerfen
                 var allUserIds = allStudents.Select(s => s.UserId).Distinct().ToList();
 
 
+                // als Empfänger kommen nur existierende User in Frage
                 foreach (var userId in allUserIds)
                 {
                     ApplicationUser user = UserManager.FindById(userId);
@@ -217,7 +220,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ListName = "Alle Studierende";
                 model.IsDistributionList = true;
 
-                logger.InfoFormat("UserList with {0} entires", userList.Count);
+                logger.InfoFormat("Active Students [{0}] - UserIds [{1}] - Available Users [{2}]", 
+                    allStudents, allUserIds.Count, userList.Count);
 
                 // Der SysAdmin kann nicht versenden - es wird nur geloggt!
                 if (!User.IsInRole("SysAdmin"))
@@ -227,7 +231,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 //ICollection<ApplicationUser> userList = new List<ApplicationUser>();
                 return View("ReceiverList", userList);
-
             }
             else
             {

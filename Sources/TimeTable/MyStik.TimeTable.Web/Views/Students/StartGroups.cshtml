@@ -1,7 +1,7 @@
-﻿@model ICollection<MyStik.TimeTable.Web.Models.StudentStatisticsModel>
+﻿@model MyStik.TimeTable.Web.Models.StudentsOrgViewModel
 
 @{
-    ViewBag.Title = "Gruppen";
+    ViewBag.Title = "Studengangslisten";
     var i = 0;
 }
 
@@ -10,7 +10,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Studierende</h1>
+                    <h1>Studierende nach Studiengängen (@Model.Organiser.ShortName)</h1>
                 </div>
             </div>
         </div>
@@ -39,43 +39,47 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Statistik</h4>
+                    <h4>Auswertung nach Studiengängen</h4>
                 </div>
                 <div class="panel-body">
                     <table class="table table-condensed">
                         <thead>
                             <tr>
-                                <th>Fakultät</th>
-                                <th>Studiengang</th>
-                                <th>Studienbeginn</th>
-                                <th>Anzahl</th>
+                                <th colspan="2">Studiengang</th>
+                                <th colspan="3">Studierende</th>
+                                <th colspan="1">Alumnae</th>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Aktiv</th>
+                                <th>Gesamt</th>
+                                <th>Aktiv</th>
+                                <th>Abgeschlossen</th>
+                                <th>Gesamt</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var statisticsModel in Model.Where(x => x.Curriculum != null).OrderBy(x => x.Curriculum.Organiser.ShortName).ThenBy(x => x.Curriculum.ShortName).ThenBy(x => x.Semester.StartCourses))
-                            {
-                                i += statisticsModel.Count;
-                                <tr>
-                                    <td>@statisticsModel.Curriculum.Organiser.ShortName</td>
-                                    @if (string.IsNullOrEmpty(statisticsModel.Curriculum.ShortName))
-                                    {
-                                        <td>@statisticsModel.Curriculum.Name</td>
-                                    }
-                                    else
-                                    {
-                                        <td>@statisticsModel.Curriculum.ShortName</td>
-                                    }
-                                    <td>@statisticsModel.Semester.Name</td>
-                                    <td>@statisticsModel.Count</td>
-                                </tr>
-                            }
+                        @foreach (var curr in Model.StudentsByCurriculum)
+                        {
                             <tr>
-                                <td colspan="3">Summe</td>
-                                <td>@i</td>
+                                <td>@curr.Curriculum.ShortName</td>
+                                @if (curr.Curriculum.IsDeprecated)
+                                {
+                                    <td><i class="fa fa-ban text-danger"></i></td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@curr.Students.Count</td>
+                                <td>@curr.Students.Count(x => x.LastSemester == null)</td>
+                                <td>@curr.Students.Count(x => x.LastSemester != null)</td>
+                                <td>@curr.Alumnae.Count</td>
                             </tr>
+                        }
                         </tbody>
                     </table>
                 </div>

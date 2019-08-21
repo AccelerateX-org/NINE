@@ -45,15 +45,14 @@
 
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>
-                        <span class="caption-subject bold uppercase"> Angaben zu Termin</span>
-                    </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-calendar"></i> Angaben zu Termin
+                    </h4>
                 </div>
-                <div class="portlet-body">
+                <div class="panel-body">
                     @Html.HiddenFor(m => m.ActivityDateId)
                     <div class="form form-horizontal">
                         <div class="form-group">
@@ -162,6 +161,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="ConflictTable"></div>
 
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
@@ -175,27 +175,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div id="AvailableTable">
-                <div class="portlet light bordered">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-calendar"></i>
-                            <span class="caption-subject bold uppercase"> Freie Räume</span>
-                        </div>
-                        <div class="tools">
-                            <a href="" class="collapse"> </a>
-                            <a id="btnReload" href="" class="reload" onclick="reloadFreeRooms()"> </a>
-                        </div>
-
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-check"></i> Verfügbare Räume
+                            <a id="btnReload" href="" class="btn btn-default" onclick="reloadFreeRooms()"><i class="fa fa-refresh"></i> </a>
+                        </h4>
                     </div>
-                    <div class="portlet-body">
+                    <div class="panel-body">
                         <div id="roomTable">
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="ConflictTable"></div>
         </div>
     </div>
 </div>

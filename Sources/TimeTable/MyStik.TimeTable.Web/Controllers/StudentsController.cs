@@ -60,22 +60,31 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             ViewBag.UserRight = GetUserRight();
 
-            // Liste aller Fachschaften
             var org = GetMyOrganisation();
 
-            ViewBag.MyOrganisation = org;
 
-            var model = new List<StudentStatisticsModel>();
-            var list = Db.Students.GroupBy(x => new { x.Curriculum, x.FirstSemester });
+            // Liste aller Studiengänge
+            var currs = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList(); 
 
-            foreach (var ding in list)
+            
+
+            var model = new StudentsOrgViewModel
             {
-                model.Add(new StudentStatisticsModel
+                Organiser = org
+            };
+
+
+
+            foreach (var curr in currs)
+            {
+                var cModel = new StudentsByCurriculumViewModel()
                 {
-                    Curriculum = ding.Key.Curriculum,
-                    Semester = ding.Key.FirstSemester,
-                    Count = ding.Count()
-                });
+                    Curriculum = curr,
+                    Students = Db.Students.Where(x => x.Curriculum.Id == curr.Id).ToList(),
+                    Alumnae = Db.Alumnae.Where(x => x.Curriculum.Id == curr.Id).ToList()
+                };
+
+                model.StudentsByCurriculum.Add(cModel);
             }
 
             return View(model);

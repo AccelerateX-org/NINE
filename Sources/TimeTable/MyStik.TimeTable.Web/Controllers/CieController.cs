@@ -14,6 +14,48 @@ namespace MyStik.TimeTable.Web.Controllers
 {
     public class CieController : BaseController
     {
+        public ActionResult Index(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+
+            var ciebGroups = Db.SemesterGroups.Where(x => x.Semester.Id == semester.Id && x.CapacityGroup.CurriculumGroup.Curriculum.ShortName.Equals("CIE-B")).ToList();
+            var ciemGroups = Db.SemesterGroups.Where(x => x.Semester.Id == semester.Id && x.CapacityGroup.CurriculumGroup.Curriculum.ShortName.Equals("CIE-M")).ToList();
+
+            var allCieGroups = new List<SemesterGroup>();
+            allCieGroups.AddRange(ciebGroups);
+            allCieGroups.AddRange(ciemGroups);
+
+
+            var model = new CieSemesterModel
+            {
+                Semester = semester,
+            };
+
+            var courseSummaryService = new CourseService(Db);
+
+            foreach (var cieGroup in allCieGroups)
+            {
+                foreach (var course in cieGroup.Activities.OfType<Course>())
+                {
+                    var cie = model.Courses.SingleOrDefault(x => x.Course.Course.Id == course.Id);
+
+                    if (cie == null)
+                    {
+                        cie = new CieCourseModel
+                        {
+                            Course = courseSummaryService.GetCourseSummary(course),
+                        };
+                        model.Courses.Add(cie);
+                    }
+
+                    cie.CieGroups.Add(cieGroup);
+                }
+            }
+
+            return View(model);
+        }
+
+
         // GET: Cie
         public ActionResult Invitation()
         {

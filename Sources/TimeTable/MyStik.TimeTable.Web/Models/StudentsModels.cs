@@ -278,4 +278,26 @@ namespace MyStik.TimeTable.Web.Models
         public List<Course> Courses { get; set; }
     }
 
+    public class StudentsByCurriculumViewModel
+    {
+        public Curriculum Curriculum { get; set; }
+
+        public List<Student> Students { get; set; }
+
+        public List<Alumnus> Alumnae { get; set; }
+    }
+
+    public class StudentsOrgViewModel
+    {
+        public StudentsOrgViewModel()
+        {
+            StudentsByCurriculum = new List<StudentsByCurriculumViewModel>();
+        }
+
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public List<StudentsByCurriculumViewModel> StudentsByCurriculum { get; private set; }
+    }
+
 }

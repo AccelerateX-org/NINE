@@ -48,28 +48,41 @@
 
         </div>
         <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-group"></i> Gruppen</h4>
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-list"></i> Listen</h4>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item" href="@Url.Action("StartGroups")">
+                            <div class="list-group-item-heading">
+                                <h5><i class="fa fa-graduation-cap"></i> Studiengangslisten</h5>
+                            </div>
+                            <div class="list-group-item-text">Listen getrennt nach Studiengängen</div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("SemesterGroups")">
+                            <div class="list-group-item-heading">
+                                <h5><i class="fa fa-pencil"></i> Lehrveranstaltungslisten</h5>
+                            </div>
+                            <div class="list-group-item-text">Listen nach Belegung von Lehrveranstaltungen in einem Semester</div>
+                        </a>
+                        <a class="list-group-item" href="@Url.Action("Index", "Union")">
+                            <div class="list-group-item-heading">
+                                <h5>Fachschaft</h5>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-                <div class="list-group">
-                    <a class="list-group-item" href="@Url.Action("StartGroups")">
-                        <div class="list-group-item-heading">
-                            <h5><i class="fa fa-graduation-cap"></i> Nach Studiengang und Studienbeginn</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="@Url.Action("SemesterGroups")">
-                        <div class="list-group-item-heading">
-                            <h5><i class="fa fa-pencil"></i> Nach Kursbelegung in Semestergruppen</h5>
-                        </div>
-                    </a>
-                    <a class="list-group-item" href="@Url.Action("Index", "Union")">
-                        <div class="list-group-item-heading">
-                            <h5>Fachschaft</h5>
-                        </div>
-                    </a>
-                    @if (ViewBag.UserRight.IsStudentAdmin)
-                    {
+            </div>
+        @if (ViewBag.UserRight.IsStudentAdmin)
+        {
+
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
+                    </div>
+                    <div class="list-group">
                         <a class="list-group-item" href="@Url.Action("Invitation")">
                             <div class="list-group-item-heading">
                                 <h5><i class="fa fa-user-plus"></i> Einladungen</h5>
@@ -86,9 +99,10 @@
                                 Einlesen der Kurswahl von primuss / FK 13
                             </div>
                         </a>
-                    }
+                    </div>
                 </div>
             </div>
+        }
         </div>
     </div>
 </div>

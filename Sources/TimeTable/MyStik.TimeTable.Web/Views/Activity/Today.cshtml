@@ -4,8 +4,12 @@
 
 @{
     ViewBag.Title = "Tagesprogramm";
-    var now = DateTime.Now;
 }
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+}
+
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-study">
@@ -13,7 +17,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1>
-                        Tagesprogramm @ViewBag.Organiser.ShortName (@ViewBag.Date.ToShortDateString()))
+                        Tagesprogramm @ViewBag.Organiser.ShortName
+                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </h1>
                 </div>
             </div>
@@ -21,86 +26,107 @@
     </div>
 </div>
 
-<div class="container-fluid">
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>
-                <i class="fa fa-film"></i> Was läuft wann und wo?
-                <span class="btn-group pull-right">
-                    <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-default">
-                        <i class="fa fa-calendar"></i>
-                    </a>
-                </span>
-            </h4>
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="myDate">Datum</label>
+                            <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("AdminPlan", "Activity")" class="btn btn-default">
+                                <i class="fa fa-calendar"></i> Als Kalender
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        @if (Model.Any())
-        {
-            <div class="infoscreen">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>Zeitraum</th>
-                        <th>Raum</th>
-                        <th>Name</th>
-                        <th>Dozent</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var date in Model)
-                    {
-                        var iconName = "fa fa-check text-warning";
-                        if (date.Begin > now)
-                        {
-                            iconName = "fa fa-clock-o text-info";
-                        }
-                        if (date.Occurrence.IsCanceled)
-                        {
-                            <tr class="danger">
-                                <td><i class="@iconName"></i></td>
-                                <td>@Html.TimeSpan(date)</td>
-                                <td>abgesagt</td>
-                                @if (date.Activity is Course)
-                                {
-                                    <td><a href="@Url.Action("Details", "Course", new {id =date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
-                                }
-                                else
-                                {
-                                    <td>@date.Activity.Name</td>
-                                }
-                                <td>@Html.LecturerList(date.Hosts, true)</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <td><i class="@iconName"></i></td>
-                                <td>@Html.TimeSpan(date)</td>
-                                <td>@Html.RoomList(date.Rooms, true, false)</td>
-                                @if (date.Activity is Course)
-                                {
-                                    <td><a href="@Url.Action("Details", "Course", new {id =date.Activity.Id})">@date.Activity.Name (@date.Activity.ShortName)</a></td>
-                                }
-                                else
-                                {
-                                    <td>@date.Activity.Name</td>
-                                }
-                                <td>@Html.LecturerList(date.Hosts, true)</td>
-                            </tr>
-                        }
-                    }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="panel-body">
-
-                <h1 class="text-success">keine Veranstaltungen</h1>
-            </div>
-        }
     </div>
 </div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Aktivitäten</h4>
+                </div>
+                <div id="roomPlan"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+
+    <script>
+
+        $(function() {
+
+            loadPlan4Today();
+
+
+            $('.datepicker').datepicker({
+                orientation: "right",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+            $('.datepicker').datepicker()
+                .on('changeDate',
+                    function(e) {
+
+                        $("#loading").show();
+
+                        var x = $('#myDate').val();
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("Programm")',
+                                data: {
+                                    date: x
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#roomPlan").html(data);
+                                    $("#loading").hide();
+                                }
+                            });
+
+                    });
+        });
+
+        function loadPlan4Today() {
+            $("#loading").show();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("Programm")',
+                    data: {
+                        date: null
+                    },
+                    success: function(data, success, xhr) {
+                        $("#roomPlan").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+
+    </script>
+}

@@ -914,6 +914,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
 
             var beginOfDay = DateTime.Today;
+
+            /*
             var endOfDay = beginOfDay.AddDays(1);
 
             var nowPlaying = Db.ActivityDates.Where(d =>
@@ -923,12 +925,13 @@ namespace MyStik.TimeTable.Web.Controllers
                         g.CapacityGroup != null &&
                         g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                 .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+                */
 
 
             ViewBag.Organiser = org;
             ViewBag.Date = beginOfDay;
 
-            return View(nowPlaying);
+            return View();
         }
 
         public ActionResult Tomorrow()
@@ -951,6 +954,27 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Date = beginOfDay;
 
             return View("Today", nowPlaying);
+        }
+
+        public PartialViewResult Programm(string date)
+        {
+            var beginOfDay = string.IsNullOrEmpty(date) ? DateTime.Today : DateTime.ParseExact(date, "dd.MM.yyyy", null);
+            var endOfDay = beginOfDay.AddDays(1);
+
+            var org = GetMyOrganisation();
+
+            var nowPlaying = Db.ActivityDates.Where(d =>
+                    (d.Begin > beginOfDay && d.Begin < endOfDay) &&                             // alles an diesem Tag
+                    (d.Activity.SemesterGroups.Any(g =>                                         // alles was Zugehörigkeit zu einer Semestergruppe hat
+                        g.CapacityGroup != null &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) ||
+                        (d.Activity.Organiser.Id == org.Id)                                     // alle Raumreservierungen, Sprechstunden
+                    ))
+                .OrderBy(d => d.Begin).ThenBy(d => d.End).ToList();
+
+
+
+            return PartialView("_Programm", nowPlaying);
         }
 
     }

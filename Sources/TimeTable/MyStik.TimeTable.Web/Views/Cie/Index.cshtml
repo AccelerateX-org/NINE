@@ -1,0 +1,71 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.CieSemesterModel
+
+
+@{
+    ViewBag.Title = "Lehrangebot";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Lehrangebot "Courses in Englisch (CIE) im Semester @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Lehrveranstaltungen</h4>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Bachelor</th>
+                        <th>Master</th>
+                        <th>Fakultät</th>
+                        <th>Zugang</th>
+                        <th>Titel</th>
+                        <th>Lehrende</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cie in Model.Courses)
+                        {
+                        <tr>
+                            <td>@cie.IsBachelor</td>
+                            <td>@cie.IsMaster</td>
+                            <td>
+                                @foreach (var org in cie.Faculties)
+                                {
+                                    @Html.FacultyLabel(org)
+                                }
+                            </td>
+                            <td>
+                                @cie.AmpelState
+                            </td>
+                            <td>@cie.Course.Course.Name</td>
+                            <td>@Html.LecturerList(cie.Course.Lecturers)</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

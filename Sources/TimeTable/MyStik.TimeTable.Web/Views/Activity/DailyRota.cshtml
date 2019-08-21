@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Tagesplan @ViewBag.Organiser.ShortName 
+                    <h1>Raumbelegungen @ViewBag.Organiser.ShortName 
                         <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </h1>
                 </div>
@@ -30,7 +30,7 @@
                 <div class="col-md-12">
                     <div class="form-inline">
                         <div class="form-group">
-                            <label for="myDate">Belegung am</label>
+                            <label for="myDate">Datum</label>
                             <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
                         </div>
                         @if (ViewBag.UserRight.IsRoomAdmin)
@@ -54,13 +54,10 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        Raumbelegungen
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Alle Räume @ViewBag.Organiser.ShortName</h4>
                 </div>
-                <div class="portlet-body"></div>
                 <div id="roomPlan"></div>
             </div>
         </div>

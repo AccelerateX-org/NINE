@@ -281,9 +281,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         [HttpPost]
         public PartialViewResult DeleteUser(string id)
         {
-
-            // Alle Eintragungen löschen
-            // Das darf nur der Admin, der weiss, was er tut. Daher hier auch keine E-Mail oder ähnliches
+            // es wird nur noch der User gelöscht, alle Infos bleiben erhalten
             try
             {
                 var user = UserManager.FindById(id);
