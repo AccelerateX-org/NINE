@@ -10736,7 +10736,7 @@
             <param name="until"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.Date(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Web.Models.CourseDateModel)">
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.Date(System.Web.Mvc.HtmlHelper,MyStik.TimeTable.Web.Models.CourseDateModel,System.Boolean)">
             <summary>
             
             </summary>

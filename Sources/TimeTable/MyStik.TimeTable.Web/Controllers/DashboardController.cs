@@ -41,12 +41,6 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 case MemberState.Student:
                 {
-                    var student = Db.Students.Where(x => x.UserId.Equals(userRight.User.Id))
-                        .OrderByDescending(x => x.Created).FirstOrDefault();
-                    if (student?.FirstSemester == null || student.Curriculum == null || student.HasCompleted)
-                    {
-                        return RedirectToAction("Change", "Subscription");
-                    }
                     return View("DashboardStudentNew", CreateDashboardModelStudentNew(userRight));
                 }
 
@@ -500,7 +494,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var student = StudentService.GetCurrentStudent(userRight.User.Id);
 
-            var currentSemester = SemesterService.GetNewestSemester(student.Curriculum.Organiser);
+            var currentSemester = student != null ? SemesterService.GetNewestSemester(student.Curriculum.Organiser) : SemesterService.GetSemester(DateTime.Today);
             var prevSemester = SemesterService.GetPreviousSemester(currentSemester);
 
             var model = new DashboardStudentViewModel
@@ -509,7 +503,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = prevSemester,
                 NextSemester = currentSemester,
                 Student = student,
-                Organiser = student.Curriculum.Organiser
+                Organiser = student?.Curriculum.Organiser
             };
 
             return model;

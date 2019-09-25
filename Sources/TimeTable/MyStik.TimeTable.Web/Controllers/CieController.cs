@@ -186,7 +186,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 var i = 0;
                 foreach (var line in lines)
                 {
-                    if (i <= 0) continue;
+                    i++;
+                    if (i <= 1) continue;
                     var newline = line.Trim();
 
                     if (!string.IsNullOrEmpty(newline))
@@ -232,8 +233,6 @@ namespace MyStik.TimeTable.Web.Controllers
                             invitationList.Invitations.Add(invitation);
                         }
                     }
-
-                    i++;
                 }
             }
             catch (Exception ex)

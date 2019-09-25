@@ -429,6 +429,7 @@
     <Compile Include="Controllers\PrintController.cs" />
     <Compile Include="Controllers\RoomReportController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
+    <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\ThesisAdminController.cs" />
@@ -4126,6 +4127,13 @@
     <Content Include="Views\Courses\AdminGroups.cshtml" />
     <Content Include="Views\Cie\Index.cshtml" />
     <Content Include="Views\Activity\_Programm.cshtml" />
+    <Content Include="Views\Schedule\Index.cshtml" />
+    <Content Include="Views\Schedule\Curriculum.cshtml" />
+    <Content Include="Views\Shared\_LayoutPublicFluid.cshtml" />
+    <Content Include="Views\Schedule\_DlgDescription.cshtml" />
+    <Content Include="Views\Schedule\_DlgDateList.cshtml" />
+    <Content Include="Views\Shared\_Error.cshtml" />
+    <Content Include="Views\Subscription\ChangeCurriculum.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

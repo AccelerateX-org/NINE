@@ -9,14 +9,14 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4><i class="fa fa-graduation-cap"></i> Studiengang beginnen</h4>
+                    <h4><i class="fa fa-graduation-cap"></i> Studiengang ändern</h4>
                 </div>
                 <div class="panel-body">
-                    @using (Html.BeginForm("StartCurriculumConfirm", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+                    @using (Html.BeginForm("ChangeCurriculum", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
                     {
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-
                     <fieldset>
+                        @Html.HiddenFor(model => model.Student.Id)
                         <div class="form-group">
                             @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 control-label" })
                             <div class="col-sm-8">
@@ -48,15 +48,10 @@
                                 @Html.LabelFor(item => item.IsDual, new { @class = "control-label" })
                             </div>
                         </div>
-
-
                         <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
                         <a href="@Url.Action("Curricula")" class="btn btn-default">Abbrechen</a>
                     </fieldset>
                     }
-
-
-
                 </div>
             </div>
         </div>
@@ -70,7 +65,6 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            onFacultyChanged();
         });
 
 

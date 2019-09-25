@@ -12,7 +12,7 @@
                     <h4>Bestätigung Studiengang</h4>
                 </div>
                 <div class="panel-body">
-                    @using (Html.BeginForm("Change", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+                    @using (Html.BeginForm("StartCurriculum", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
                     {
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
                         @Html.HiddenFor(model => model.CurrId)
@@ -48,6 +48,7 @@
                             </div>
 
                             <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Bestätigen</button>
+                            <a href="@Url.Action("Curricula")" class="btn btn-default">Abbrechen</a>
                         </fieldset>
                     }
 

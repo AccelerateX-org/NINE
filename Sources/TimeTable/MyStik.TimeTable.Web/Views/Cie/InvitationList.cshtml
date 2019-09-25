@@ -53,7 +53,14 @@
                                 <td>@invitation.LastName</td>
                                 <td>@invitation.FirstName</td>
                                 <td>@invitation.Email</td>
-                                <td>@invitation.Curriculum.ShortName (@invitation.Curriculum.Organiser.ShortName)</td>
+                                @if (@invitation.Curriculum == null)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td>@invitation.Curriculum.ShortName (@invitation.Curriculum.Organiser.ShortName)</td>
+                                }
                                 <td>@invitation.Semester.Name</td>
                                 @if (invitation.Course != null)
                                 {

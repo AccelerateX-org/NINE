@@ -1,0 +1,152 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutPublicFluid.cshtml";
+    ViewBag.Title = "Vorlesungsverzeichnis";
+}
+
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-book"></i> Vorlesungsverzeichnis "@Model.Curriculum.Name" im @Model.Semester.Name</h4>
+                    </div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Index", new {id = Model.Semester.Id})" class="btn btn-default"><i class="fa fa-chevron-circle-left"></i> zurück</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <table id="tabCourses" class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th><i class="fa fa-file-text"></i></th>
+                                    <th>Titel</th>
+                                    <th>Kurzname</th>
+                                    <th>Lehrende(r)</th>
+                                    <th>Wochentag</th>
+                                    <th>Beginn</th>
+                                    <th>Ende</th>
+                                    <th>Raum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Courses)
+                                {
+                                    <tr>
+                                        @if (string.IsNullOrEmpty(c.Course.Description))
+                                        {
+                                            <td><span hidden>0</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                @Ajax.ActionButton("fa-file-text", "", "DialogCourseDescription", "Schedule",
+                                                    new {id = c.Course.Id},
+                                                    new AjaxOptions()
+                                                    {
+                                                        HttpMethod = "Post",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        UpdateTargetId = "modalDialog",
+                                                        OnSuccess = "showDialog()"
+                                                    },
+                                                    null
+                                                    )
+
+                                                <span hidden>1</span>
+                                            </td>
+                                        }
+                                        <td>@c.Course.Name</td>
+                                        <td>@c.Course.ShortName</td>
+                                        <td>@Html.LecturerList(c.Lecturers, false)</td>
+                                        @if (c.Dates.Count == 1)
+                                        {
+                                            var d = c.Dates.First();
+                                            var dayString = d.DefaultDate.ToString("dddd", new CultureInfo("de-DE"));
+                                            <td>
+                                                @Ajax.ActionButton(null, dayString, "DialogDateList", "Schedule",
+                                                    new {id = c.Course.Id},
+                                                    new AjaxOptions()
+                                                    {
+                                                        HttpMethod = "Post",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        UpdateTargetId = "modalDialog",
+                                                        OnSuccess = "showDialog()"
+                                                    },
+                                                    null
+                                                    )
+
+
+                                            </td>
+                                            <td>@d.StartTime.ToString("hh\\:mm")</td>
+                                            <td>@d.EndTime.ToString("hh\\:mm")</td>
+                                            <td>@Html.RoomList(c.Rooms, false)</td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                @Ajax.ActionButton(null, "Terminliste", "DialogDateList", "Schedule",
+                                                    new {id = c.Course.Id},
+                                                    new AjaxOptions()
+                                                    {
+                                                        HttpMethod = "Post",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        UpdateTargetId = "modalDialog",
+                                                        OnSuccess = "showDialog()"
+                                                    },
+                                                    null
+                                                    )
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalDialog"></div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabCourses').DataTable({
+                "paging": false
+            });
+
+        });
+
+        function showDialog() {
+            $('#dlgModal').modal("show");
+        }
+
+    </script>
+}
+

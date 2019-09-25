@@ -216,7 +216,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Change()
+        public ActionResult StartCurriculum()
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
             var user = GetCurrentUser();
@@ -258,11 +258,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 );
 
 
-            return View(model);
+            return View("Change", model);
         }
 
         [HttpPost]
-        public ActionResult ChangeConfirm(CurriculumSubscriptionViewModel model)
+        public ActionResult StartCurriculumConfirm(CurriculumSubscriptionViewModel model)
         {
             model.Semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
             model.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
@@ -273,22 +273,34 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public ActionResult Change(CurriculumSubscriptionViewModel model)
+        public ActionResult StartCurriculum(CurriculumSubscriptionViewModel model)
         {
             var user = GetCurrentUser();
-            var student = Db.Students.SingleOrDefault(x => x.UserId.Equals(user.Id));
-            if (student == null)
-            {
-                student = new Student
-                {
-                    UserId = user.Id
-                };
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
 
-                Db.Students.Add(student);
+            // gibt es ein aktuelles Studium
+            var student = StudentService.GetCurrentStudent(user);
+            if (student != null)
+            {
+                // dieses Studium abschliessen
+                if (student.LastSemester == null)
+                {
+                    student.LastSemester = SemesterService.GetPreviousSemester(semester);
+                    student.HasCompleted = true;
+                }
             }
 
+
+            // neuen Studiengang beginnen
+            student = new Student
+            {
+                UserId = user.Id
+            };
+
+            Db.Students.Add(student);
+
             student.Created = DateTime.Now;
-            student.FirstSemester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            student.FirstSemester = semester;
             student.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
             student.IsDual = model.IsDual;
             student.IsPartTime = model.IsPartTime;
@@ -296,14 +308,15 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Curricula");
         }
 
 
         public ActionResult Curricula()
         {
             var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
 
             var myStudents = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderBy(x => x.Created).ToList();
 
@@ -325,6 +338,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Add(m);
             }
 
+            ViewBag.Semester = semester;
+            ViewBag.NextSemester = nextSemester;
 
 
             return View(model);
@@ -357,6 +372,74 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Curricula");
         }
+
+
+        public ActionResult ChangeCurriculum(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var user = GetCurrentUser();
+
+
+            var model = new CurriculumSubscriptionViewModel
+            {
+                OrgId = student.Curriculum.Organiser.Id,
+                CurrId = student.Curriculum.Id,
+                SemId = student.FirstSemester.Id,
+                Student = student
+            };
+
+            var orgs = Db.Organisers.Where(x => x.IsFaculty && x.Curricula.Any()).OrderBy(f => f.ShortName).ToList();
+            var org = student.Curriculum.Organiser;
+
+            ViewBag.Faculties = orgs.Select(f => new SelectListItem
+            {
+                Text = f.ShortName,
+                Value = f.Id.ToString(),
+            });
+
+
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+            var nextDate = DateTime.Today.AddDays(70);
+
+            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= nextDate).OrderByDescending(x => x.EndCourses)
+                .Select(f => new SelectListItem
+                {
+                    Text = f.Name,
+                    Value = f.Id.ToString(),
+                }
+                );
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult ChangeCurriculum(CurriculumSubscriptionViewModel model)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == model.Student.Id);
+
+            student.FirstSemester = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            student.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            student.IsDual = model.IsDual;
+            student.IsPartTime = model.IsPartTime;
+            student.HasCompleted = false;
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Curricula");
+        }
+
+
 
     }
 }

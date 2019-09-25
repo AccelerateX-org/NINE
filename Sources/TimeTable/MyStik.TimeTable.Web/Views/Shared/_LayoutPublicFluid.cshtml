@@ -14,31 +14,32 @@
 </head>
 <body>
     <div id="cookie-consent" class="bg-warning" hidden="">
-        <div class="container">
+        <div class="container-fluid">
             <div style="margin-top: 10px; margin-bottom: 10px">
                 <span>Wir verwenden Cookies, um Inhalte und Anzeigen zu personalisieren.</span>
                 <button class="btn btn-xs btn-default" id="consent">Hinweis nicht mehr anzeigen</button> <button class="btn btn-xs btn-default" id="learn-more">Weitere Informationen</button>
             </div>
         </div>
     </div>
-<nav class="navbar navbar-default" style="margin-bottom: 0px; border: 0px; background-color: #595f64">
-    <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <a class="navbar-brand" style="color: white" href="@Url.Action("Index", "Home")">
-                nine
-            </a>
-        </div>
-        @RenderSection("login", required: false)
-    </div><!-- /.container-fluid -->
-</nav>
+    <nav class="navbar navbar-default" style="margin-bottom: 0px; border: 0px; background-color: #595f64">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" style="color: white" href="@Url.Action("Index", "Home")">
+                    nine
+                </a>
+            </div>
+            @RenderSection("login", required: false)
+        </div><!-- /.container-fluid -->
+    </nav>
     @RenderBody()
-    <div class="container">
+    <div class="container-fluid">
         <div class="page-footer">
             <div class="page-footer-inner">
                 <div class="pull-left">
                     <ul class="list-inline">
                         <li><a href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a></li>
+                        <li><a href="@Url.Action("Index", "Home", new {@area="Lab"})">Lab</a></li>
                         <li><a href="@Url.Action("TermsOfUse", "Home")">Nutzungsbedingungen</a></li>
                         <li><a href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a></li>
                     </ul>
@@ -71,10 +72,12 @@
         </div>
     </div>
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
     <script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
     @RenderSection("scripts", required: false)
 
-<script type="text/javascript">
+    <script type="text/javascript">
     $(function() {
         if (document.cookie.indexOf("cookieNotification") < 0) {
             $('#cookie-consent').slideDown('slow');
@@ -89,25 +92,25 @@
                 location.href = '@Url.Action("TermsOfUse", "Home")';
             });
     });
-</script>
-@if (!Request.IsLocal)
-{
-    <!-- Matomo -->
-    <script type="text/javascript">
-        var _paq = _paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function() {
-            var u="//shortcut.wi.hm.edu/analytics/";
-            _paq.push(['setTrackerUrl', u+'piwik.php']);
-            _paq.push(['setSiteId', '2']);
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-        })();
     </script>
-    <!-- End Matomo Code -->
-}
+    @if (!Request.IsLocal)
+    {
+        <!-- Matomo -->
+        <script type="text/javascript">
+            var _paq = _paq || [];
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                var u = "//shortcut.wi.hm.edu/analytics/";
+                _paq.push(['setTrackerUrl', u + 'piwik.php']);
+                _paq.push(['setSiteId', '2']);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript'; g.async = true; g.defer = true; g.src = u + 'piwik.js'; s.parentNode.insertBefore(g, s);
+            })();
+        </script>
+        <!-- End Matomo Code -->
+    }
 
 </body>
 </html>

@@ -256,7 +256,8 @@ namespace MyStik.TimeTable.DataServices
             {
                 return
                     _db.Curricula.Where(
-                        x => x.CurriculumGroups.Any(g => g.CapacityGroups.Any(a =>
+                        x => !x.IsDeprecated &&
+                            x.CurriculumGroups.Any(g => g.CapacityGroups.Any(a =>
                             a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable)))).ToList();
             }
             return

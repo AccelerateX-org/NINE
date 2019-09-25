@@ -43,16 +43,32 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
-                    <h5>Mein Studium</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-default disabled">...</a>
-                    <a href="@Url.Action("MyWork", "Thesis")" class="btn btn-default">Abschlussarbeit</a>
+            @if (Model.Student != null)
+            {
+                <div class="panel panel-default text-center">
+                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
+                        <h5>Mein Studium (@Model.Student.Curriculum.ShortName)</h5>
+                    </a>
+                    <div class="btn-group btn-group-justified">
+                        <a href="#" class="btn btn-default disabled">...</a>
+                        <a href="@Url.Action("MyWork", "Thesis")" class="btn btn-default">Abschlussarbeit</a>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="panel panel-danger text-center">
+                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-danger btn-block">
+                        <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
+                        <h5>Studiengang wählen</h5>
+                    </a>
+                    <div class="btn-group btn-group-justified">
+                        <a href="#" class="btn btn-default disabled">...</a>
+                        <a href="#" class="btn btn-default disabled">...</a>
+                    </div>
+                </div>
+            }
         </div>
 
     </div>
@@ -64,17 +80,37 @@
                     <h5>Vorlesungsverzeichnis</h5>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId=Model.Organiser.Id, semId=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId=Model.Organiser.Id, semId=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                    @if (Model.Organiser != null)
+                    {
+                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
+                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                    }
+                    else
+                    {
+                        <a href="#" class="btn btn-default disabled">...</a>
+                        <a href="#" class="btn btn-default disabled">...</a>
+                    }
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-university"></i></h4>
-                    <h5>Räume</h5>
-                </a>
+                @if (Model.Organiser != null)
+                {
+
+                    <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-university"></i></h4>
+                        <h5>Räume</h5>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", "Rooms")" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-university"></i></h4>
+                        <h5>Räume</h5>
+                    </a>
+
+                }
                 <div class="btn-group btn-group-justified">
                     <a href=#" class="btn btn-default disabled">...</a>
                     <a href="@Url.Action("Search", "Room")" class="btn btn-default disabled">Raumsuche</a>
@@ -83,10 +119,20 @@
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
-                    <h5>Lehrende</h5>
-                </a>
+                @if (Model.Organiser != null)
+                {
+                    <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
+                        <h5>Lehrende (@Model.Organiser.ShortName)</h5>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", "Lecturer")" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
+                        <h5>Lehrende</h5>
+                    </a>
+                }
                 <div class="btn-group btn-group-justified">
                     <a href="#" class="btn btn-default disabled">...</a>
                     <a href="#" class="btn btn-default disabled">...</a>
@@ -95,10 +141,20 @@
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             <div class="panel panel-default text-center">
-                <a href="@Url.Action("Organiser", "Curricula", new {id=Model.Organiser.Id})" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-trophy"></i></h4>
-                    <h5>Studiengänge</h5>
-                </a>
+                @if (Model.Organiser != null)
+                {
+                    <a href="@Url.Action("Organiser", "Curricula", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-trophy"></i></h4>
+                        <h5>Studiengänge</h5>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
+                        <h4><i class="fa fa-3x fa-trophy"></i></h4>
+                        <h5>Studiengänge</h5>
+                    </a>
+                }
                 <div class="btn-group btn-group-justified">
                     <a href="#" class="btn btn-default disabled">...</a>
                     <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs</a>

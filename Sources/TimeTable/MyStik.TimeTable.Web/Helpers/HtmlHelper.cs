@@ -360,13 +360,20 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <param name="htmlHelper"></param>
         /// <param name="dates"></param>
         /// <returns></returns>
-        public static MvcHtmlString Date(this HtmlHelper htmlHelper, CourseDateModel date)
+        public static MvcHtmlString Date(this HtmlHelper htmlHelper, CourseDateModel date, bool withTime=true)
         {
             var sb = new StringBuilder();
 
-
-            sb.AppendFormat("{0} [{1:hh\\:mm} - {2:hh\\:mm}]",
-                date.DefaultDate.ToString("dddd", new CultureInfo("de-DE")), date.StartTime, date.EndTime);
+            if (withTime)
+            {
+                sb.AppendFormat("{0} [{1:hh\\:mm} - {2:hh\\:mm}]",
+                    date.DefaultDate.ToString("dddd", new CultureInfo("de-DE")), date.StartTime, date.EndTime);
+            }
+            else
+            {
+                sb.AppendFormat("{0}",
+                    date.DefaultDate.ToString("dddd", new CultureInfo("de-DE")));
+            }
 
 
             return new MvcHtmlString(sb.ToString());

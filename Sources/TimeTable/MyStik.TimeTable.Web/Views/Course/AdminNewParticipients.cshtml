@@ -107,8 +107,16 @@
 
                         <tr id="@sub.Id">
                             <td></td>
-                            <td>@user.LastName</td>
-                            <td>@user.FirstName</td>
+                            @if (user != null)
+                            {
+                                <td>@user.LastName</td>
+                                <td>@user.FirstName</td>
+                            }
+                            else
+                            {
+                                <td>unbekannt</td>
+                                <td>kein Benutzerkonto vorhanden</td>
+                            }
                             @if (student != null)
                             {
                                 <td>@student.Curriculum.ShortName</td>

@@ -1,0 +1,108 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutPublicFluid.cshtml";
+    ViewBag.Title = "Vorlesungsverzeichnis";
+}
+
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid" style="margin-top: 20px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-book"></i> Vorlesungsverzeichnis</h4>
+                    </div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @Model.Semester.Name <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var s in ViewBag.AllSemester)
+                                    {
+                                        <li><a href="@Url.Action("Index", new {semId = s.Id})">@s.Name</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <table id="tabCurricula" class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Fakultät</th>
+                                    <th>Studiengang / Studiengrogramm</th>
+                                    <th>Abschluss / Typ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Curricula)
+                                {
+                                    <tr id="@c.Id">
+                                        <td>@Html.FacultyLabel(c.Organiser)</td>
+                                        <td>@c.Name</td>
+                                        <td></td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t =$('#tabCurricula').DataTable({
+                "paging": false
+            });
+
+            t.on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    t.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+
+                    var id = $(this).attr('id');
+
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: '@Url.Action("CurriculumSelected")',
+                            data: {
+                                curId: id,
+                                semId: '@Model.Semester.Id'
+                            },
+                            success: function (response) {
+                                window.location.href = response.Url;
+                            }
+                        });
+                }
+            } );
+
+        });
+    </script>
+}

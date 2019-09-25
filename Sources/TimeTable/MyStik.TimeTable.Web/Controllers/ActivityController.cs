@@ -28,6 +28,30 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("PersonalPlan");
         }
 
+
+
+        public ActionResult Details(Guid id)
+        {
+            var activity = Db.Activities.SingleOrDefault(x => x.Id == id);
+
+            if (activity == null)
+                return View("Error");
+
+            if (activity is Course)
+                return RedirectToAction("Details", "Course", new {id = id});
+
+            if (activity is Event)
+                return RedirectToAction("Details", "Event", new { id = id });
+
+
+            if (activity is Reservation)
+                return RedirectToAction("Details", "Reservation", new {id = id});
+
+            return View("Error");
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>

@@ -27,13 +27,26 @@ namespace MyStik.TimeTable.Web.Helpers
             var repId = Guid.NewGuid().ToString();
             var lnk = ajaxHelper.ActionLink(repId, actionName, controllerName, routeValues, ajaxOptions, htmlAttributes);
 
-            var linkBuilder = new TagBuilder("i");
-            linkBuilder.AddCssClass(linkIcon);
-            linkBuilder.AddCssClass("fa");
 
             var sb = new StringBuilder();
-            sb.Append(linkBuilder.ToString());
-            sb.Append(" " + linkText);
+
+            if (!string.IsNullOrEmpty(linkIcon))
+            {
+                var linkBuilder = new TagBuilder("i");
+                linkBuilder.AddCssClass(linkIcon);
+                linkBuilder.AddCssClass("fa");
+                sb.Append(linkBuilder.ToString());
+            }
+
+            if (!string.IsNullOrEmpty(linkText))
+            {
+                sb.Append(" " + linkText);
+            }
+
+            if (string.IsNullOrEmpty(linkIcon) && string.IsNullOrEmpty(linkText))
+            {
+                sb.Append("???");
+            }
 
             return MvcHtmlString.Create(lnk.ToString().Replace(repId, sb.ToString()));
         }

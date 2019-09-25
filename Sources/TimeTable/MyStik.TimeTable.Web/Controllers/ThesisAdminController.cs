@@ -223,6 +223,14 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetUser(thesis.Student.UserId);
             var student = thesis.Student;
 
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    FirstName = "Kein Benutzerkonto"
+                };
+            }
+
             var model = new ThesisStateModel
             {
                 User = user,

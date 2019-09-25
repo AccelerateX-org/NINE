@@ -12,67 +12,96 @@
                     <h4><i class="fa fa-graduation-cap"></i> Meine Studiengänge</h4>
                 </div>
                 <div class="list-group">
-                    <div class="list-group-item list-group-item-info">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-info-circle"></i> Information
-                        </h5>
-                        <div class="list-group-item-text">
-                            <p>Die Angabe des Studiengangs ist für einige Funktionen, z.B. Teilnahme an Wahlverfahren, erforderlich.</p>
-                            <p>Es können beliebig viele Studiengänge angegeben werden. Aktuell wird nur der zuletzt angelegte Studiengang für Wahlverfahren etc. verwendet.</p>
-                        </div>
+                    <div class="list-group-item">
+                        <a href="@Url.Action("StartCurriculum")" class="btn btn-danger">Neuen Studiengang beginnen</a>
                     </div>
                     @foreach (var student in Model.OrderByDescending(x => x.Student.FirstSemester.StartCourses))
                     {
-                        <div class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                @student.Student.Curriculum.Name (@student.Student.Curriculum.ShortName)
-                            </h5>
-                            <div class="list-group-item-text">
-                                <ul class="fa-ul">
-                                    <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
-                                    <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
-                                    <li><i class="fa fa-li fa-calendar"></i>Studienbeginn: @student.Student.FirstSemester.Name</li>
-                                    @if (!string.IsNullOrEmpty(student.Student.Number))
-                                    {
-                                        <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
-                                    }
-                                    else
-                                    {
-                                        <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
-                                    }
-                                    @if (student.Student.IsPartTime)
-                                    {
-                                        <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
-                                    }
-                                    @if (student.Student.IsDual)
-                                    {
-                                        <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
-                                    }
+                        if (student.Student.LastSemester == null)
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    seit @student.Student.FirstSemester.Name: @student.Student.Curriculum.Name
+                                </h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
+                                        <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
+                                        @if (!string.IsNullOrEmpty(student.Student.Number))
+                                        {
+                                            <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                                        }
+                                        @if (student.Student.IsPartTime)
+                                        {
+                                            <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                                        }
+                                        @if (student.Student.IsDual)
+                                        {
+                                            <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-default">Matrikelnummer ändern</a>
+                                    <a href="@Url.Action("ChangeCurriculum", new {id = student.Student.Id})" class="btn btn-default">Studiengang ändern</a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    @student.Student.FirstSemester.Name bis @student.Student.LastSemester.Name: @student.Student.Curriculum.Name
+                                </h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
+                                        <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
+                                        @if (!string.IsNullOrEmpty(student.Student.Number))
+                                        {
+                                            <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                                        }
+                                        @if (student.Student.IsPartTime)
+                                        {
+                                            <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                                        }
+                                        @if (student.Student.IsDual)
+                                        {
+                                            <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                                        }
+                                        @if (student.Alumni != null)
+                                        {
+                                            <li><i class="fa fa-li fa-graduation-cap"></i>Bin Alumni dieses Studiengangs</li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-graduation-cap"></i>Bin kein Alumni dieses Studiengangs</li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div>
                                     @if (student.Student.LastSemester != null)
                                     {
-                                        <li><i class="fa fa-li fa-calendar"></i>Studienende: @student.Student.LastSemester.Name</li>
+                                        if (student.Alumni == null)
+                                        {
+                                            <a href="@Url.Action("Accept", "Alumni", new {id = student.Student.Id})" class="btn btn-default">Alumni werden</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("Deny", "Alumni", new {id = student.Alumni.Id})" class="btn btn-default">Alumni löschen</a>
+                                        }
                                     }
-                                    @if (student.Alumni != null)
-                                    {
-                                        <li><i class="fa fa-li fa-graduation-cap"></i>Bin Alumni</li>
-                                    }
-                                </ul>
+                                </div>
                             </div>
-                            <div>
-                                <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-primary">Matrikelnummer eingeben / ändern / löschen</a>
-                                @if (student.Student.LastSemester != null)
-                                {
-                                    if (student.Alumni == null)
-                                    {
-                                        <a href="@Url.Action("Accept", "Alumni", new {id = student.Student.Id})" class="btn btn-primary">Alumni werden</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Deny", "Alumni", new {id = student.Alumni.Id})" class="btn btn-primary">Alumni löschen</a>
-                                    }
-                                }
-                            </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>

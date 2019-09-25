@@ -2939,8 +2939,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public PartialViewResult GetBookingList(Guid id)
         {
-            var bookingModel = this.GetBookingModel(id);
-            return this.PartialView("_BookingList", bookingModel);
+            try
+            {
+                var bookingModel = this.GetBookingModel(id);
+                return this.PartialView("_BookingList", bookingModel);
+            }
+            catch (Exception ex)
+            {
+                var model = new HandleErrorInfo(ex, "Lottery", "GetBookingList");
+                return PartialView("_Error", model);
+            }
+
         }
 
 

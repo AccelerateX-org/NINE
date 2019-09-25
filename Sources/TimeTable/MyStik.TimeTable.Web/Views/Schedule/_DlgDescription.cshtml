@@ -1,0 +1,21 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.Course
+           
+<div class="modal fade" id="dlgModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Beschreibung für Lehrveranstaltung "@Model.Name"</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Raw(Model.Description)
+            </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                    </div>
+        </div>
+    </div>
+</div>
+

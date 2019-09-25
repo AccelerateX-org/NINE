@@ -136,6 +136,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            // Version 0.4.29; Gäste gibt es nicht mehr
+            if (user.MemberState == MemberState.Guest)
+            {
+                user.MemberState = MemberState.Student;
+                await UserManager.UpdateAsync(user);
+            }
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
@@ -236,7 +243,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Registered = now,
-                    MemberState = model.Email.ToLower().EndsWith("@hm.edu") ? MemberState.Student : MemberState.Guest,
+                    // bis Version 0.4.28 MemberState = model.Email.ToLower().EndsWith("@hm.edu") ? MemberState.Student : MemberState.Guest,
+                    MemberState = MemberState.Student,  // ab version 0.4.29
                     Remark = "Abschluss Registrierung steht aus",
                     ExpiryDate = DateTime.Today.AddDays(14),
                     Submitted = now
