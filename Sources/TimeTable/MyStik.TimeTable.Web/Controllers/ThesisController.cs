@@ -156,7 +156,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Liste aller Fakultäten
-            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            // nur die eigene
+            ViewBag.Organiser = Db.Organisers.Where(x => x.Id == thesis.Student.Curriculum.Organiser.Id).OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),

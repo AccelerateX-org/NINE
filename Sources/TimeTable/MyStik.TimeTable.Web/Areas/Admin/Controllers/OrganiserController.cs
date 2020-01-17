@@ -197,6 +197,11 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             var orgId = member.Organiser.Id;
 
             // Membership löschen
+            foreach (var ownership in member.Ownerships.ToList())
+            {
+                Db.ActivityOwners.Remove(ownership);
+            }
+
 
             org.Members.Remove(member);
             Db.Members.Remove(member);

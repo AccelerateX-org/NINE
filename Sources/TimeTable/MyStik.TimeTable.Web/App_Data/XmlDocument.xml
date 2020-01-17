@@ -18662,6 +18662,11 @@
             Der aktuelle betreuer
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Models.ThesisStatisticsModel">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.UserViewModel">
             <summary>
             

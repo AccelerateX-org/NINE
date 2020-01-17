@@ -69,21 +69,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var vorSemester = new SemesterService().GetSemester(semester, 1);
 
-            var courseService = new CourseService(Db);
+            var userService = new UserInfoService();
 
             foreach (var member in memberPage)
             {
-                var itsMe = false;
-                if (member.UserId != null && myUser != null)
-                    itsMe = member.UserId.Equals(myUser.Id);
-
                 model.Members.Add(new MemberViewModel
                 {
                     Member = member,
-                    //User = member.UserId != null ? UserManager.FindById(member.UserId) : null,
-                    ItsMe = itsMe,
-                    //IsActive = courseService.IsActive(member, semester),
-                    //WasActiveLastSemester = courseService.IsActive(member, vorSemester),
+                    User = member.UserId != null ? userService.GetUser(member.UserId) : null,
                 });
             }
 

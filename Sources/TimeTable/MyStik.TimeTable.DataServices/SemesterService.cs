@@ -378,5 +378,11 @@ namespace MyStik.TimeTable.DataServices
             return _db.Semesters
                 .Count(x => x.StartCourses >= semester.StartCourses && x.StartCourses <= current.StartCourses);
         }
+
+        public bool IsActive(Semester semester)
+        {
+            return _db.SemesterGroups.Any(x => x.Semester.Id == semester.Id);
+        }
+
     }
 }

@@ -84,7 +84,14 @@
                             }
                             else
                             {
-                                <td>@user.FullName</td>
+                                if (user == null)
+                                {
+                                    <td>Kein Benutzerkonto</td>
+                                }
+                                else
+                                {
+                                    <td>@user.FullName</td>
+                                }
                                 <td>@student.Student.Curriculum.ShortName</td>
                                 <td>@student.Student.FirstSemester.Name</td>
                             }

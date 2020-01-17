@@ -68,11 +68,19 @@
 </div>
 
 <div class="col-md-12">
-    <div class="btn-group-vertical btn-block">
-        <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default btn-block">Vorauswahl ändern</a>
-        <a class="btn btn-primary btn-block" id="hauptbutton3">Auswahl bestätigen und Wahl verbindlich abschließen</a>
+    <div id="btnBox3">
+        <div class="btn-group-vertical btn-block">
+            <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default btn-block">Vorauswahl ändern</a>
+            <a class="btn btn-primary btn-block" id="hauptbutton3">Auswahl bestätigen und Wahl verbindlich abschließen</a>
+        </div>
+    </div>
+    <div id="loading3" hidden>
+        <h4>
+            <i class="fa fa-spinner fa-spin text-muted"></i>
+        </h4>
     </div>
 </div>
+
 
 
 

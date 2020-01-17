@@ -343,11 +343,46 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        public int DaysToExpire
+        {
+            get
+            {
+                if (Thesis.RenewalDate != null)
+                    return (Thesis.RenewalDate.Value.Date - DateTime.Today).Days;
+
+                return Thesis.ExpirationDate != null ? (Thesis.ExpirationDate.Value.Date - DateTime.Today).Days : int.MaxValue;
+            }
+        }
+
+
+        public bool IsExpired => DaysToExpire < 0;
+
 
         public string GetStateMessage(OrganiserMember member)
         {
             var nSupervisors = Thesis.Supervisors.Count;
             var didIAccepted = Thesis.Supervisors.Any(x => x.Member.Id == member.Id && x.AcceptanceDate.HasValue);
+
+            if (Thesis.IsCleared != null)
+            {
+                if (Thesis.IsCleared == true)
+                {
+                    return "abgerechnet";
+                }
+                else
+                {
+                    return "nicht abgerechnet";
+                }
+            }
+
+            if (Thesis.DeliveryDate != null)
+            {
+                if (Thesis.GradeDate != null)
+                    return "Bereits bewertet";
+
+                return "Abgegeben, noch nicht bewertet";
+            }
+
 
             if (nSupervisors == 1)
             {
@@ -379,7 +414,44 @@ namespace MyStik.TimeTable.Web.Models
             return "Betreuungsanfrage";
         }
 
+        public int Position
+        {
+            get
+            {
+                var list = Thesis.Supervisors.Where(x => x.AcceptanceDate != null).OrderBy(x => x.AcceptanceDate.Value).ToList();
+                for (var i = 0; i < list.Count; i++)
+                {
+                    if (list[i].Id == Supervisor.Id)
+                    {
+                        return i + 1;
+                    }
+                }
 
+                return 0;
+            }
+        }
+
+        public Supervisor PrimarySupervisor
+        {
+            get
+            {
+                var list = Thesis.Supervisors.Where(x => x.AcceptanceDate != null).OrderBy(x => x.AcceptanceDate.Value).ToList();
+                return list.FirstOrDefault();
+            }
+        }
+
+        public Supervisor SecondarySupervisor
+        {
+            get
+            {
+                var list = Thesis.Supervisors.Where(x => x.AcceptanceDate != null).OrderBy(x => x.AcceptanceDate.Value).ToList();
+                if (list.Count > 1)
+                {
+                    return list.Take(2).Last();
+                }
+                return null;
+            }
+        }
 
     }
 
@@ -398,4 +470,29 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Note")]
         public string Mark { get; set; }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ThesisStatisticsModel
+    {
+        public ActivityOrganiser Organiser { get; set; }
+
+        public ICollection<Semester> Semester { get; set; }
+
+        public ICollection<Curriculum> Curricula { get; set; }
+
+        public Dictionary<Semester, Dictionary<Curriculum, int>> Matrix { get; set; }
+    }
+
+    public class ThesisExtendViewModel
+    {
+        public Thesis Thesis { get; set; }
+
+        public ApplicationUser StudentUser { get; set; }
+
+        [Display(Name = "Neues Abgabedatum")]
+        public string NewDateEnd { get; set; }
+    }
+
 }

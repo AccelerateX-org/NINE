@@ -40,7 +40,14 @@
                             </ul>
                         </div>
                     }
-
+                    @if (ViewBag.UserRight.IsCourseAdmin)
+                    {
+                        <div class="form-group">
+                            <a href="@Url.Action("RawAdmin", new {id = Model.Course.Id})" class="btn btn-default">
+                                <i class="fa fa-cogs"></i> Low Level Admin
+                            </a>
+                        </div>
+                    }
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -114,13 +115,41 @@ namespace MyStik.TimeTable.Web.Controllers
                         Remark = "CIE",
                         ExpiryDate = null, // Einladung bleibt dauerhaft bestehen - Deprovisionierung automatisch
                         Submitted = now,
-                        EmailConfirmed = true, // damit ist auch ein "ForgotPassword" möglich, auch wenn er die Einladung nicht angenommen hat.
+                        EmailConfirmed =
+                            true, // damit ist auch ein "ForgotPassword" möglich, auch wenn er die Einladung nicht angenommen hat.
                         IsApproved = true, // Damit bekommt der Nutzer von Anfang an E-Mails
                         Faculty = host.Id // Benutzer der eingeladen hat
                     };
 
                     // Benutzer anlegen, mit Dummy Passwort
                     var result = UserManager.Create(user, "Cie98#lcl?");
+
+                    if (result.Succeeded)
+                    {
+
+                        // analog Forget E-Mail Versand
+                        string code = UserManager.GeneratePasswordResetToken(user.Id);
+
+                        var mailModel = new ForgotPasswordMailModel
+                        {
+                            User = user,
+                            Token = code,
+                            CustomSubject = "Your NINE Account",
+                            CustomBody = "",
+                            Attachments = null,
+                            IsNewAccount = true,
+                        };
+
+
+                        try
+                        {
+                            new MailController().InvitationMail(mailModel, host, "en").Deliver();
+                        }
+                        catch (SmtpFailedRecipientException ex)
+                        {
+                            invitation.Remark = ex.Message;
+                        }
+                    }
                 }
 
                 var student = studentService.GetCurrentStudent(user);

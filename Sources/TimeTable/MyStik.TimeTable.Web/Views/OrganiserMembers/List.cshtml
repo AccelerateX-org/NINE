@@ -2,8 +2,7 @@
 @using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Mitglieder " + Model.Organiser.ShortName;
-    var userService = new UserInfoService();
+    ViewBag.Title = "Lehrende " + Model.Organiser.ShortName;
 }
 
 @section styles
@@ -60,106 +59,60 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> Alle Personen
-                    </div>
-                    <div class="actions">
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        <i class="fa fa-group"></i> Alle Lehrenden
+                    </h4>
                 </div>
-                <div class="portlet-body">
-                    <table id="tabMembers" class="table table-condensed table-striped">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Titel</th>
-                            <th>Kurzname</th>
-                            <th>Rolle</th>
-                            <th>HM</th>
-                            @if (ViewBag.UserRight.IsOrgMember)
-                            {
-                                <th>Beschreibung</th>
-                                <th class="text-center"><i class="fa fa-user"></i></th>
-                                <th>Export</th>
-                                <th>Import</th>
-                            }
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Members)
-                            {
-                                <tr>
-                                    @if (string.IsNullOrEmpty(item.Member.Name))
-                                    {
-                                        <td>
-                                            @Html.ActionLink("N.N.", "MemberAdmin", "Organiser", new {id = item.Member.Id}, null)
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td>
-                                            <a href="@Url.Action("MemberAdmin", "Organiser", new {id = item.Member.Id})">@item.Member.Name</a>
-                                        </td>
-                                    }
-                                    <td>@item.Member.FirstName</td>
-                                    <td>@item.Member.Title</td>
-                                    <td>@item.Member.ShortName</td>
-                                    <td>@item.Member.Role</td>
-                                    @if (string.IsNullOrEmpty(item.Member.UrlProfile))
-                                    {
-                                        <td></td>
-                                    }
-                                    else
-                                    {
-                                        <td><a href="@item.Member.UrlProfile" target="_blank"><i class="fa fa-globe"></i></a></td>
-                                    }
-                                    @if (ViewBag.UserRight.IsOrgMember)
-                                    {
-                                        <td>@Html.Raw(item.Member.Description)</td>
-                                        <td class="text-center">
-                                            @if (!string.IsNullOrEmpty(item.Member.UserId))
-                                            {
-                                                if (ViewBag.UserRight.IsMemberAdmin)
-                                                {
-                                                    var user = userService.GetUser(item.Member.UserId);
-                                                    if (user != null)
-                                                    {
-                                                        <span>@user.Email</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <i class="fa fa-exclamation-triangle text-danger"></i>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <i class="fa fa-check text-success"></i>
-                                                }
+                <table id="tabMembers" class="table table-condensed table-striped">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th><i class="fa fa-user"></i></th>
+                        <th>Titel</th>
+                        <th>Vorname</th>
+                        <th>Name</th>
+                        <th>Rolle</th>
+                        <th>ID</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.Members)
+                    {
+                        if (item.User != null)
+                        {
+                            <tr>
+                                <td></td>
+                                <td><i class="fa fa-check text-success"></i><span hidden="">1</span></td>
+                                <td>@item.Member.Title</td>
+                                <td>@item.User.FirstName</td>
+                                <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.User.LastName</a></td>
+                                <td>@item.Member.Role</td>
+                                <td>@item.Member.ShortName</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td></td>
+                                <td><i class="fa fa-times text-danger"></i><span hidden="">0</span></td>
+                                <td>@item.Member.Title</td>
+                                <td><i>@item.Member.FirstName</i></td>
+                                <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.Member.Name</a></td>
+                                <td>@item.Member.Role</td>
+                                <td>@item.Member.ShortName</td>
 
-                                            }
-                                        </td>
-                                        <td>
-                                            @foreach (var memberExport in item.Member.Exports)
-                                            {
-                                                <div>@Html.FacultyLabel(memberExport.Organiser) (@memberExport.ShortName)</div>
-                                            }
-                                        </td>
-                                        <td>
-                                            
-                                        </td>
-                                    }
-                                </tr>
-                            }
-
-                        </tbody>
-                    </table>
-                </div>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
 
 
 @section scripts
@@ -169,10 +122,20 @@
     <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
 
     <script>
-        $(document).ready(function () {
-            $('#tabMembers').DataTable({
-                pageLength: 25
-            });
+        var t = $('#tabMembers').DataTable({
+            "paging": false,
+            "columnDefs": [{
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                }],
+            "order": [[4, 'asc']]
         });
+
+        t.on('order.dt search.dt', function () {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
     </script>
 }

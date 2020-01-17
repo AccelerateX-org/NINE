@@ -245,6 +245,25 @@ namespace MyStik.TimeTable.Web.Models
         public Room    Raum {get; set; }
     }
 
+    public class LecturerOverviewModel
+    {
+        public LecturerOverviewModel()
+        {
+            Courses = new List<CourseOverviewModel>();
+        }
+
+        public OrganiserMember Lecturer { get; set; }
+
+        public List<CourseOverviewModel> Courses { get; private set; }
+    }
+
+    public class CourseOverviewModel
+    {
+        public Course Course { get; set; }
+
+        public Semester Semester { get; set; }
+    }
+
 }
 
 

@@ -4,55 +4,54 @@
     ViewBag.Title = Resources.MenuDashboard;
 }
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-calendar"></i></h4>
-                    <h5>Mein Kalender</h5>
+    <div class="row justify-content-md-center" style="margin-bottom: 20px" style="margin-top: 20px">
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="card text-center">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-calendar"></i></h5>
+                    <h6>Mein Kalender</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("PersonalPlanToday", "Activity")" class="btn btn-default">Heute</a>
-                    <a href="@Url.Action("PersonalPlanTomorrow", "Activity")" class="btn btn-default">Morgen</a>
+                    <a href="@Url.Action("PersonalPlanToday", "Activity")" class="btn btn-outline-dark">Heute</a>
+                    <a href="@Url.Action("PersonalPlanTomorrow", "Activity")" class="btn btn-outline-dark">Morgen</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Semester", "Planer")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-map-o"></i></h4>
-                    <h5>Mein Stundenplan</h5>
+            <div class="card text-center">
+                <a href="@Url.Action("Semester", "Planer")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-map"></i></h5>
+                    <h6>Mein Stundenplan</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Courses", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                    <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
+                    <a href="@Url.Action("Courses", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-user-md"></i></h4>
-                    <h5>Meine Sprechstunden</h5>
+            <div class="card text-center">
+                <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-user-md"></i></h5>
+                    <h6>Meine Sprechstunden</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default disabled">...</a>
-                    <a href="" class="btn btn-default disabled">...</a>
+                    <a href="" class="btn btn-outline-dark disabled">...</a>
+                    <a href="" class="btn btn-outline-dark disabled">...</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
             @if (Model.Student != null)
             {
-                <div class="panel panel-default text-center">
-                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
-                        <h5>Mein Studium (@Model.Student.Curriculum.ShortName)</h5>
+                <div class="card text-center">
+                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-graduation-cap"></i></h5>
+                        <h6>Mein Studium (@Model.Student.Curriculum.ShortName)</h6>
                     </a>
                     <div class="btn-group btn-group-justified">
-                        <a href="#" class="btn btn-default disabled">...</a>
-                        <a href="@Url.Action("MyWork", "Thesis")" class="btn btn-default">Abschlussarbeit</a>
+                        <a href="#" class="btn btn-outline-dark disabled">...</a>
+                        <a href="@Url.Action("MyWork", "Thesis")" class="btn btn-outline-dark">Abschlussarbeit</a>
                     </div>
                 </div>
             }
@@ -60,159 +59,159 @@
             {
                 <div class="panel panel-danger text-center">
                     <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-danger btn-block">
-                        <h4><i class="fa fa-3x fa-graduation-cap"></i></h4>
-                        <h5>Studiengang wählen</h5>
+                        <h5><i class="fa fa-2x fa-graduation-cap"></i></h5>
+                        <h6>Studiengang wählen</h6>
                     </a>
                     <div class="btn-group btn-group-justified">
-                        <a href="#" class="btn btn-default disabled">...</a>
-                        <a href="#" class="btn btn-default disabled">...</a>
+                        <a href="#" class="btn btn-outline-dark disabled">...</a>
+                        <a href="#" class="btn btn-outline-dark disabled">...</a>
                     </div>
                 </div>
             }
         </div>
 
     </div>
-    <div class="row">
-        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Dictionary")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-book"></i></h4>
-                    <h5>Vorlesungsverzeichnis</h5>
+    <div class="row justify-content-md-center" style="margin-bottom: 20px">
+        <div class="col-sm-6 col-md-3 col-lg-2">
+            <div class="card text-center">
+                <a href="@Url.Action("Index", "Dictionary")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-book"></i></h5>
+                    <h6>Vorlesungsverzeichnis</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
                     @if (Model.Organiser != null)
                     {
-                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.Semester.Id})" class="btn btn-default">@Model.Semester.Name</a>
-                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.NextSemester.Id})" class="btn btn-default">@Model.NextSemester.Name</a>
+                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
+                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
                     }
                     else
                     {
-                        <a href="#" class="btn btn-default disabled">...</a>
-                        <a href="#" class="btn btn-default disabled">...</a>
+                        <a href="#" class="btn btn-outline-dark disabled">...</a>
+                        <a href="#" class="btn btn-outline-dark disabled">...</a>
                     }
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
+            <div class="card text-center">
                 @if (Model.Organiser != null)
                 {
 
-                    <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-university"></i></h4>
-                        <h5>Räume</h5>
+                    <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-university"></i></h5>
+                        <h6>Räume</h6>
                     </a>
                 }
                 else
                 {
-                    <a href="@Url.Action("Index", "Rooms")" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-university"></i></h4>
-                        <h5>Räume</h5>
+                    <a href="@Url.Action("Index", "Rooms")" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-university"></i></h5>
+                        <h6>Räume</h6>
                     </a>
 
                 }
                 <div class="btn-group btn-group-justified">
-                    <a href=#" class="btn btn-default disabled">...</a>
-                    <a href="@Url.Action("Search", "Room")" class="btn btn-default disabled">Raumsuche</a>
+                    <a href=#" class="btn btn-outline-dark disabled">...</a>
+                    <a href="@Url.Action("Search", "Room")" class="btn btn-outline-dark disabled">Raumsuche</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
+            <div class="card text-center">
                 @if (Model.Organiser != null)
                 {
-                    <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
-                        <h5>Lehrende (@Model.Organiser.ShortName)</h5>
+                    <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-chalkboard-teacher"></i></h5>
+                        <h6>Lehrende (@Model.Organiser.ShortName)</h6>
                     </a>
                 }
                 else
                 {
-                    <a href="@Url.Action("Index", "Lecturer")" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-address-card-o"></i></h4>
-                        <h5>Lehrende</h5>
+                    <a href="@Url.Action("Index", "Lecturer")" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-address-card-o"></i></h5>
+                        <h6>Lehrende</h6>
                     </a>
                 }
                 <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-default disabled">...</a>
-                    <a href="#" class="btn btn-default disabled">...</a>
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
+            <div class="card text-center">
                 @if (Model.Organiser != null)
                 {
-                    <a href="@Url.Action("Organiser", "Curricula", new {id = Model.Organiser.Id})" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-trophy"></i></h4>
-                        <h5>Studiengänge</h5>
+                    <a href="@Url.Action("Organiser", "Curricula", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-trophy"></i></h5>
+                        <h6>Studiengänge</h6>
                     </a>
                 }
                 else
                 {
-                    <a href="@Url.Action("Index", "Curricula")" class="btn btn-default btn-block">
-                        <h4><i class="fa fa-3x fa-trophy"></i></h4>
-                        <h5>Studiengänge</h5>
+                    <a href="@Url.Action("Index", "Curricula")" class="btn btn-outline-dark btn-block">
+                        <h5><i class="fa fa-2x fa-trophy"></i></h5>
+                        <h6>Studiengänge</h6>
                     </a>
                 }
                 <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-default disabled">...</a>
-                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-default">SPOs</a>
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
+                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-outline-dark">SPOs</a>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-offset-2 col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Event")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-bullhorn"></i></h4>
-                    <h5>Veranstaltungen</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default disabled">...</a>
-                    <a href="" class="btn btn-default disabled">...</a>
-                </div>
+<div class="row justify-content-md-center">
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Event")" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-bullhorn"></i></h5>
+                <h6>Veranstaltungen</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="" class="btn btn-outline-dark disabled">...</a>
+                <a href="" class="btn btn-outline-dark disabled">...</a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Overview", "Advertisements")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-window-maximize"></i></h4>
-                    <h5>Schaukasten</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Index", "Newsletter")" class="btn btn-default">Newsletter</a>
-                    <a href="https://jobs.hm.edu" target="_blank" class="btn btn-default">Jobbörse HM</a>
-                </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="@Url.Action("Overview", "Advertisements")" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-window-maximize"></i></h5>
+                <h6>Schaukasten</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="@Url.Action("Index", "Newsletter")" class="btn btn-outline-dark">Newsletter</a>
+                <a href="https://jobs.hm.edu" target="_blank" class="btn btn-outline-dark">Jobbörse HM</a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Index", "Union")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-handshake-o"></i></h4>
-                    <h5>Meine Fachschaft</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-default disabled">...</a>
-                    <a href="" class="btn btn-default disabled">...</a>
-                </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Union")" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-handshake"></i></h5>
+                <h6>Meine Fachschaft</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="" class="btn btn-outline-dark disabled">...</a>
+                <a href="" class="btn btn-outline-dark disabled">...</a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-3x fa-legal"></i></h4>
-                    <h5>Fristen & Termine</h5>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-default disabled">...</a>
-                    <a href="#" class="btn btn-default disabled">...</a>
-                </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="https://www.hm.edu/studierende/mein_studium/verlauf/termine.de.html" target="_blank" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-clock"></i></h5>
+                <h6>Fristen & Termine</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="#" class="btn btn-outline-dark disabled">...</a>
+                <a href="#" class="btn btn-outline-dark disabled">...</a>
             </div>
         </div>
     </div>
 </div>
+
 
 
 

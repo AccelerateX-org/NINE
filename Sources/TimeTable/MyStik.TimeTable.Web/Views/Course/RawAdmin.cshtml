@@ -1,0 +1,124 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.Course
+
+
+@{
+    ViewBag.Title = "Verwaltung";
+    var userService = new UserInfoService();
+    var studentService = new StudentService();
+
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-group"></i> Eintragungen</h4>
+                </div>
+                <table id="tabParticipient" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>SubscriptionID</th>
+                            <th>UserID</th>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>Curr</th>
+                            <th>Sem</th>
+                            <th><i class="fa fa-pencil"></i></th>
+                            <th><i class="fa fa-exclamation"></i></th>
+                            <th>Eingetragen</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sub in Model.Occurrence.Subscriptions)
+                        {
+                            var user = userService.GetUser(sub.UserId);
+                            var student = studentService.GetCurrentStudent(sub.UserId);
+
+                            <tr id="@sub.Id">
+                                <td>@sub.Id</td>
+                                <td>@sub.UserId</td>
+                                @if (user != null)
+                                {
+                                    <td>@user.LastName</td>
+                                    <td>@user.FirstName</td>
+                                }
+                                else
+                                {
+                                    <td>unbekannt</td>
+                                    <td>kein Benutzerkonto vorhanden</td>
+                                }
+                                @if (student != null)
+                                {
+                                    <td>@student.Curriculum.ShortName</td>
+                                    <td>@student.FirstSemester.Name</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+                                @if (sub.OnWaitingList)
+                                {
+                                    <td><span hidden="">0</span><i class="fa fa-hourglass-half"></i></td>
+                                }
+                                else
+                                {
+                                    <td><span hidden="">1</span><i class="fa fa-group"></i></td>
+                                }
+                                @if (sub.Priority.HasValue)
+                                {
+                                    <td>@sub.Priority.Value</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@sub.TimeStamp</td>
+                                <td>
+                                    <a href="@Url.Action("RawRemoveSubscription", new {courseId = Model.Id, id = sub.Id})" class="btn btn-danger">Löschen</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            var t = $('#tabParticipient').DataTable({
+                "paging": false,
+                "columnDefs": [
+                    {
+                        "type": "de_datetime",
+                        "targets": 8
+                    }
+                ],
+                "order": [[0, 'asc']]
+            });
+        })
+    </script>
+}

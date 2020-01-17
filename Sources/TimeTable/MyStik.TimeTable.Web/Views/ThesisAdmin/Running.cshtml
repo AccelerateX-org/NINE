@@ -44,7 +44,13 @@
                     <tbody>
                     @foreach (var thesis in Model)
                     {
-                        <tr id="@thesis.Thesis.Id">
+                        var rowClass = "";
+                        if (thesis.DaysToExpire < 0)
+                        {
+                            rowClass = "danger";
+                        }
+
+                        <tr id="@thesis.Thesis.Id" class="@rowClass">
                             <td></td>
                             @if (thesis.User != null)
                             {
@@ -88,11 +94,19 @@
                             </td>
                             @if (thesis.Thesis.IssueDate != null)
                             {
-                                var diff = thesis.Thesis.ExpirationDate.Value.Date - DateTime.Today;
+                                if (thesis.Thesis.RenewalDate != null)
+                                {
+                                    <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
+                                    <td>@thesis.Thesis.RenewalDate.Value.ToShortDateString() (verlängert)</td>
+                                    <td>@thesis.DaysToExpire</td>
 
-                                <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
-                                <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
-                                <td>@diff.Days</td>
+                                }
+                                else
+                                {
+                                    <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
+                                    <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                    <td>@thesis.DaysToExpire</td>
+                                }
                             }
                             else
                             {

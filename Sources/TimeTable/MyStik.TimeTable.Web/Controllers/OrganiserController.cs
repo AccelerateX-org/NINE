@@ -170,32 +170,28 @@ namespace MyStik.TimeTable.Web.Controllers
             if (member == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            // Alle Vorlesungen
-            // Alle Sprechstunden
-            // Alle Newsletter
-            // Alle Veranstaltungen
+            // Alle Lehrveranstaltungen
 
-            // => 
+            var model = new LecturerOverviewModel { Lecturer = member };
 
-            var model = new LecturerCharacteristicModel { Lecturer = member };
+            var allCourses = Db.Activities.OfType<Course>().Where(x =>
+                x.Dates.Any(d =>
+                    d.Hosts.Any(h =>
+                        h.Id == member.Id))).ToList();
 
-            var semester = SemesterService.GetLatestSemester(member.Organiser);
-            var user = AppUser;
-
-            var courseService = new CourseService(Db);
-
-            model.Courses = courseService.GetCourses(semester.Name, member);
-
-            foreach (var course in model.Courses)
+            foreach (var course in allCourses)
             {
-                course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);
+                var semester = course.SemesterGroups.Select(x => x.Semester).Distinct().FirstOrDefault();
+
+                model.Courses.Add(new CourseOverviewModel
+                {
+                    Course = course,
+                    Semester = semester
+                });
+
             }
 
-            // Sprechstunde im aktuellen Semester
-            var ohService = new OfficeHourService(Db);
-            model.OfficeHour = ohService.GetLatestOfficeHour(member);
 
-            model.Semester = semester;
 
             ViewBag.UserRight = GetUserRight(User.Identity.Name, member.Organiser.ShortName);
 
@@ -661,9 +657,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (member != null)
             {
+                foreach (var ownership in member.Ownerships.ToList())
+                {
+                    Db.ActivityOwners.Remove(ownership);
+                }
+
+
                 var org = member.Organiser;
 
                 org.Members.Remove(member);
+
                 Db.Members.Remove(member);
 
                 // TODO: wie löscht man den Rest, z.B. Termine?

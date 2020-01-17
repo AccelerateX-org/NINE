@@ -187,10 +187,7 @@
 
                                     }
                                 </ul>
-                                @if (!isOk)
-                                {
-                                    <a href="@Url.Action("AddSupervisors", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn hinzufügen</a>
-                                }
+                                <a href="@Url.Action("AddSupervisors", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn hinzufügen</a>
                             </div>
                         </div>
                     </div>
@@ -199,17 +196,22 @@
                         // Ausgegeben
                         var isIssued = Model.Thesis.IssueDate != null;
                         var isDelivered = Model.Thesis.DeliveryDate != null;
-                        var daysToExpiry = 0;
+                        var daysToExpiry = Model.DaysToExpire;
 
                         if (!isDelivered)
                         {
                             if (isIssued)
                             {
-                                var diff = Model.Thesis.ExpirationDate.Value.Date - DateTime.Today;
-                                daysToExpiry = diff.Days;
                                 if (daysToExpiry <= 14)
                                 {
-                                    mediaStyle = "fa-exclamation-triangle text-danger";
+                                    if (daysToExpiry < 0)
+                                    {
+                                        mediaStyle = "fa-exclamation-triangle text-danger";
+                                    }
+                                    else
+                                    {
+                                        mediaStyle = "fa-exclamation-triangle text-danger";
+                                    }
                                 }
                                 else
                                 {
@@ -242,9 +244,24 @@
                                         <ul class="fa-ul">
                                             <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
                                             <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                                            <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                                            @if (daysToExpiry < 0)
+                                            {
+                                                <li><i class="fa fa-li fa-cog"></i>Abgabe überfällig</li>
+                                            }
+                                            else
+                                            {
+                                                if (Model.Thesis.RenewalDate != null)
+                                                 {
+                                                     <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe (Abgabe verlängert)</li>
+                                                 }
+                                                 else
+                                                 {
+                                                     <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                                                 }
+                                            }
                                         </ul>
                                         <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe erfassen</a>
+                                        <a href="@Url.Action("Extend", new {id = Model.Thesis.Id})" class="btn btn-primary">Verlängerung erfassen</a>
                                     }
                                     else
                                     {

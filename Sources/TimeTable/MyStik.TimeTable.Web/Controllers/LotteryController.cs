@@ -3040,6 +3040,51 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult CheckConsistency(Guid id)
+        {
+            var userService = new UserInfoService();
+            var service1 = new LotteryService(Db, id);
+            var lottery = service1.GetLottery();
+            var courses = service1.GetLotteryCourseList();
+
+            foreach (var course in courses)
+            {
+                var userIDs = course.Occurrence.Subscriptions.Select(x => x.UserId).Distinct().ToList();
+
+                foreach (var userID in userIDs)
+                {
+                    var user = userService.GetUser(userID);
+
+                    var subscriptions = course.Occurrence.Subscriptions.Where(x => x.UserId.Equals(userID)).OrderBy(x => x.TimeStamp).ToList();
+
+                    if (user == null)
+                    {
+                        foreach (var subscription in subscriptions)
+                        {
+                            Db.Subscriptions.Remove(subscription);
+                        }
+                    }
+                    else
+                    {
+                        // alle bis auf die erste löschen
+                        if (subscriptions.Count > 1)
+                        {
+                            foreach (var subscription in subscriptions)
+                            {
+                                if (subscription != subscriptions.First())
+                                {
+                                    Db.Subscriptions.Remove(subscription);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+                
+            return RedirectToAction("Details", new {id = id});
+        }
     }
 
 }

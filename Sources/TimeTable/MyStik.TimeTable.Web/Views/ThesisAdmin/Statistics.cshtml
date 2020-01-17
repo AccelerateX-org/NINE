@@ -1,0 +1,70 @@
+﻿@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.ThesisStatisticsModel
+
+@{
+    ViewBag.Title = "Abschlussarbeiten";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Aufstellung der Abschlussarbeiten nach Semestern (Stichtag ist das Datum der jeweiligen Notenmeldung)</h4>
+                </div>
+                <table id="tabThesis" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Studiengang</th>
+                            @foreach (var s in Model.Semester)
+                            {
+                                <th>@s.Name</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var c in Model.Curricula)
+                    {
+                        <tr id="@c.Id">
+                            <td>@c.Name (@c.ShortName)</td>
+                            @foreach (var s in Model.Semester)
+                            {
+                                <td>@Model.Matrix[s][c]</td>
+                            } 
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+            var t = $('#tabThesis').DataTable({
+                "paging": false
+            });
+
+
+        });
+    </script>
+}

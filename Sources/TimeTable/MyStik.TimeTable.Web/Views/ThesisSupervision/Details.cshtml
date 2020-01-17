@@ -5,17 +5,36 @@
     ViewBag.Title = "Abschlussarbeit";
 }
 
+
+@{
+    var isMultiple = Model.Thesis.Supervisors.Count > 1;
+}
+
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Status Abschlussarbeit @Model.User.FullName</h4>
+                    @if (isMultiple)
+                    {
+                        if (Model.Position == 1)
+                        {
+                            <h4>Status Abschlussarbeit @Model.User.FullName (ErstprüferIn)</h4>
+                        }
+                        else
+                        {
+                            <h4>Status Abschlussarbeit @Model.User.FullName (ZweitprüferIn)</h4>
+                        }
+                    }
+                    else
+                    {
+                        <h4>Status Abschlussarbeit @Model.User.FullName</h4>
+                    }
                 </div>
                 <div class="list-group">
                     <div class="list-group-item">
                         <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
-                        <a href="#" class="btn btn-default">E-Mail senden</a>
+                        <a href="mailto:@Model.User.Email" class="btn btn-default">E-Mail senden</a>
                     </div>
                     @{
                         var isNameOk = !string.IsNullOrEmpty(Model.User.FirstName) && !string.IsNullOrEmpty(Model.User.LastName);
@@ -124,7 +143,10 @@
                                     <li><i class="fa fa-calendar fa-li"></i>de: "@Model.Thesis.TitleDe"</li>
                                     <li><i class="fa fa-barcode fa-li"></i>en: "@Model.Thesis.TitleEn"</li>
                                 </ul>
-                                <a href="@Url.Action("ChangeTitle", new {id=Model.Thesis.Id})" class="btn btn-primary">Titel ändern</a>
+                                @if (Model.Position == 1)
+                                {
+                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Titel ändern</a>
+                                }
                             </div>
                         </div>
                     </div>
@@ -170,6 +192,10 @@
                                     <a href="@Url.Action("Accept", new {id=Model.Supervisor.Id})" class="btn btn-success">Betreuung annehmen</a>
                                     <a href="@Url.Action("Reject", new {id=Model.Supervisor.Id})" class="btn btn-danger">Betreuung ablehnen</a>
                                 }
+                                @if (Model.Position == 1)
+                                {
+                                    <a href="@Url.Action("AddSupervisors", new {id=Model.Thesis.Id})" class="btn btn-primary">Optional weiteren Betreuer hinzufügen</a>
+                                }
                             </div>
                         </div>
                     </div>
@@ -178,14 +204,13 @@
                         // Ausgegeben
                         var isIssued = Model.Thesis.IssueDate != null;
                         var isDelivered = Model.Thesis.DeliveryDate != null;
-                        var daysToExpiry = 0;
 
                         if (!isDelivered)
                         {
                             if (isIssued)
                             {
                                 var diff = Model.Thesis.ExpirationDate.Value.Date - DateTime.Today;
-                                daysToExpiry = diff.Days;
+                                var daysToExpiry = diff.Days;
                                 if (daysToExpiry <= 14)
                                 {
                                     mediaStyle = "fa-exclamation-triangle text-danger";
@@ -221,20 +246,30 @@
                                     <ul class="fa-ul">
                                         <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
                                         <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                                        <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                                        <li><i class="fa fa-li fa-cog"></i>Noch @Model.DaysToExpire Tage bis zur Abgabe</li>
                                     </ul>
-                                    <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe erfassen</a>
+                                    if (Model.Position == 1)
+                                    {
+
+                                        <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe erfassen</a>
+                                    }
                                 }
                                 else
                                 {
                                     <p>Arbeit wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() abgegeben.</p>
-                                    <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                                    if (Model.Position == 1)
+                                    {
+                                        <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                                    }
                                 }
                             }
                             else
                             {
                                 <p>Noch nicht angemeldet</p>
-                                <a href="@Url.Action("Issue", new {id=Model.Thesis.Id})" class="btn btn-primary">Anmelden</a>
+                                if (Model.Position == 1)
+                                {
+                                    <a href="@Url.Action("Issue", new {id = Model.Thesis.Id})" class="btn btn-primary">Anmelden</a>
+                                }
                             }
                         </div>
                     </div>
@@ -254,17 +289,28 @@
                         </div>
                         <div class="media-body">
                             <h4 class="media-heading">Benotung</h4>
-                            @if (isOk)
+                            @if (Model.Thesis.DeliveryDate != null)
                             {
-                                <p>Arbeit wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() bewertet.</p>
-                                <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Neue Notenmeldung ausfüllen</a>
-                                <a href="@Url.Action("MarkingEmpty", new {id=Model.Thesis.Id})" class="btn btn-primary">Leere Notenmeldung anfordern</a>
+                                if (isOk)
+                                {
+                                    <p>Arbeit wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() bewertet.</p>
+                                }
+                                else
+                                {
+                                    <p>Noch nicht bewertet</p>
+                                @*
+                                <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
+                                    *@
+
+                                    if (Model.Position == 1)
+                                    {
+                                        <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary">Notenmeldung anfordern</a>
+                                    }
+                                }
                             }
                             else
                             {
-                                <p>Noch nicht bewertet</p>
-                                <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
-                                <a href="@Url.Action("MarkingEmpty", new {id=Model.Thesis.Id})" class="btn btn-primary">Leere Notenmeldung anfordern</a>
+                                <p>Noch nicht abgegeben</p>
                             }
                         </div>
                     </div>

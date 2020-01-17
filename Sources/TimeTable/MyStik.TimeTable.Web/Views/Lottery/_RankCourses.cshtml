@@ -80,10 +80,18 @@
 </div>
 
 <div class="col-md-12">
-    <div class="btn-group-vertical btn-block">
-        <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default btn-block">Vorauswahl ändern</a>
-        <a class="btn btn-primary btn-block" id="hauptbutton2">Weiter mit Schritt 3: Kontrolle und Bestätigung</a>
+    <div id="btnBox2">
+        <div class="btn-group-vertical btn-block">
+            <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default btn-block">Vorauswahl ändern</a>
+            <a class="btn btn-primary btn-block" id="hauptbutton2">Weiter mit Schritt 3: Kontrolle und Bestätigung</a>
+        </div>
     </div>
+    <div id="loading2" hidden>
+        <h4>
+            <i class="fa fa-spinner fa-spin text-muted"></i>
+        </h4>
+    </div>
+
 </div>
 
 

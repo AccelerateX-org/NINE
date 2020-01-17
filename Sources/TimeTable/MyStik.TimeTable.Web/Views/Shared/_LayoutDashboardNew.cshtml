@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNet.Identity
 @using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Services
 <!DOCTYPE html>
 <html lang="de-DE">
 <head>
@@ -8,277 +10,158 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>nine | @ViewBag.Title</title>
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/font-awesome/css/font-awesome.min.css")" />
-<!--    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css")" />-->
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap/css/bootstrap.min.css")" />
-<!--    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/uniform/css/uniform.default.css")" /> -->
-<!--    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css")" />-->
+    <link rel="stylesheet" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Assets/libs/fontawesome/css/all.min.css")" />
     @RenderSection("styles", required: false)
-<!--
-<link rel="stylesheet" href="@Url.Content("~/Assets/global/css/components.css")" />
-<link rel="stylesheet" href="@Url.Content("~/Assets/global/css/plugins.css")" />
-<link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/layout.css")" />
-<link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/themes/fillter.css")" />
-<link rel="stylesheet" href="@Url.Content("~/Assets/admin/layout/css/custom.css")" />
-<link rel="stylesheet" href="@Url.Content("~/Assets/fillter/css/fillter.css")" />
-    -->
-    @Scripts.Render("~/bundles/modernizr")
     <link rel="shortcut icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo_nine.svg")" />
 </head>
 <body>
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                    nine@shortcut
-                </a>
-            </div>
-            <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Suchen">
-                </div>
-                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+    @{
+        var userService = new UserInfoService();
+        var user = userService.GetUser(User.Identity.GetUserId());
+
+    }
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+            <i class="fas fa-home fa-2x"></i>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-center disabled" href="@Url.Action("Index", "Calendar")"><i class="fas fa-calendar fa-fw"></i><br />Mein Tag</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center disabled" href="#"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
+                </li>
+                @if (user.MemberState == MemberState.Staff)
+                {
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />Meine Lehre</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-center disabled" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />Meine Lehre</a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <a class="nav-link text-center disabled" href="#"><i class="fas fa-flask fa-fw"></i><br />Meine Forschung</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-center disabled" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-university fa-fw"></i><br />Meine Hochschule
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#"><i class="fas fa-map fa-fw"></i> Campus / Räume</a>
+                        <a class="dropdown-item" href="#"><i class="fas fa-address-card fa-fw"></i> Personen</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#"><i class="fas fa-graduation-cap fa-fw"></i> Studienangebote</a>
+                        <a class="dropdown-item" href="#"><i class="fas fa-book fa-fw"></i> Vorlesungsverzeichnisse</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#"><i class="fas fa-envelope fa-fw"></i> Informationskanäle</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" role="search" action="@Url.Action("Index", "Search")">
+                <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
             </form>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown" id="header_notification_bar">
-                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                            <i class="fa fa-bell-o"></i>
-                            <span class="badge badge-default" id="AnzahlNeue" style="display: none">
-                            </span>
-                        </a>
-                        <ul id="NotificationList" class="dropdown-menu"></ul>
-                    </li>
-                    
-                    
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user-circle"></i>
-                            <span>
-                                @User.Identity.GetUserName()
-                            </span>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="@Url.Action("Index", "UserProfile")">
-                                    <i class="fa fa-fw fa-cogs"></i> @Resources.MySettings
-                                </a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("Index", "Manage")">
-                                    <i class="fa fa-fw fa-user-secret"></i> @Resources.MyUserProfile
-                                </a>
-                            </li>
-                            <li class="divider">
-                            </li>
-                            <li>
-                                <a href="javascript:document.getElementById('logoutForm').submit()">
-                                    <i class="fa fa-fw fa-power-off"></i> @Resources.LogOut
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
+            <ul class="navbar-nav">
+                <li class="nav-item active dropdown">
+                    <a class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-fw"></i><br />@user.FullName
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="@Url.Action("SendMeANotofication", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a>
+                        <a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a>
+                        <a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i>  @Resources.LogOut</a>
+                    </div>
+                </li>
+            </ul>
         </div>
     </nav>
-    <div style="margin-top: 50px">
+
+    <div class="container-fluid" style="margin-top: 20px">
         @RenderBody()
     </div>
-<!-- BEGIN FOOTER -->
-<div class="page-footer">
-    <div class="page-footer-inner">
-        <div class="pull-left">
-            <ul class="list-inline">
-                <li><a href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a></li>
-                <li><a href="@Url.Action("TermsOfUse", "Home")">Nutzungsbedingungen</a></li>
-                <li><a href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a></li>
-            </ul>
-        </div>
-        <div class="pull-right">
-            <ul class="list-inline">
-                <li>
-                    <a href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
-                        <img src="~/Assets/global/img/flags/de.png"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
-                        <img src="~/Assets/global/img/flags/gb.png"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("SetCulture", "Home", new {culture = "fr"})">
-                        <img src="~/Assets/global/img/flags/fr.png"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("SetCulture", "Home", new {culture = "es"})">
-                        <img src="~/Assets/global/img/flags/es.png"/>
-                    </a>
-                </li>
-            </ul>
+
+    <div class="container-fluid">
+        <hr />
+        <div class="d-flex flex-row bd-highlight mb-3">
+            <a class="p-2" href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a>
+            <a class="p-2" href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a>
+            <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
+
+            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
+                <img src="~/Assets/global/img/flags/de.png" />
+            </a>
+            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
+                <img src="~/Assets/global/img/flags/gb.png" />
+            </a>
+            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "fr"})">
+                <img src="~/Assets/global/img/flags/fr.png" />
+            </a>
+            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "es"})">
+                <img src="~/Assets/global/img/flags/es.png" />
+            </a>
         </div>
     </div>
-    <div class="scroll-to-top">
-        <i class="icon-arrow-up"></i>
-    </div>
-</div>
-<!-- END FOOTER -->
-@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm"}))
-{
-    @Html.AntiForgeryToken()
-}
 
 
-
-
-
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-<!--
-<script src="@Url.Content("~/Assets/global/plugins/respond.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/excanvas.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/jquery-migrate.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/jquery-ui/jquery-ui.min.js")"></script>
--->
-<script src="@Url.Content("~/Assets/global/plugins/bootstrap/js/bootstrap.min.js")"></script>
-<!--
-<script src="@Url.Content("~/Assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/jquery.blockui.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/jquery.cokie.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/uniform/jquery.uniform.min.js")"></script>
-<script src="@Url.Content("~/Assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js")"></script>
--->
-@RenderSection("scripts", required: false)
-<!--
-<script src="@Url.Content("~/Assets/global/scripts/metronic.js")"></script>
-<script src="@Url.Content("~/Assets/admin/layout/scripts/layout.js")"></script>
-<script src="@Url.Content("~/Assets/admin/layout/scripts/quick-sidebar.js")"></script>
--->
-<script>
-    jQuery(document).ready(function() {
-        //Metronic.init(); // init metronic core componets
-        //Layout.init(); // init layout
-        //QuickSidebar.init(); // init quick sidebar
-
-        // Inhalt Quicksidebar laden
-        $.ajax({
-            type: "POST",
-            url: "@Url.Action("Agenda", "Activity")",
-            success: function(data) {
-                $("#agenda").html(data);
-            }
-        });
-
-        var menuId = "@ViewBag.MenuId";
-        if (menuId != null) {
-            $("#" + menuId).addClass("active");
-        }
-
-        $("#AnzahlNeue").hide();
-        //$("#NotificationList").hide();
-
-        // Inhalt für die NotificationList laden
-
-        $.ajax({
-            type: "POST",
-            data: { userId: "@User.Identity.GetUserId()" },
-            url: "@Url.Action("GetNotificationList", "Dashboard")",
-            success: function(data) {
-
-                //$("#NotificationList").show();
-                $("#NotificationList").html(data);
-
-                var n = $("#AnzahlNeueNotifications").text();
-
-                // welches Element ist das, was den slimscroll bekommen soll?
-                // init aufrufen
-                //Metronic.initSlimScroll('.scroller');
-                $('#notificationScroller').slimScroll({
-                    color: '#444444',
-                    height: '250px',
-                    alwaysVisible: true,
-                    size: '7px'
-                });
-
-                if (n > 0) {
-                    $("#AnzahlNeue").show();
-                    $("#AnzahlNeue").html($("#AnzahlNeueNotifications").text());
-                }
-            }
-        });
-
-
-    });
-
-    function MarkAsRead(ChangeId) {
-        $.ajax({
-            type: "POST",
-            data: { userId: "@User.Identity.GetUserId()", changeId: ChangeId },
-            url: "@Url.Action("MarkAsRead", "Dashboard")",
-            success: function(data) {
-                $("#NotificationList").html(data);
-
-                var n = $("#AnzahlNeueNotifications").text();
-
-                $('#notificationScroller').slimScroll({
-                    color: '#444444',
-                    height: '250px',
-                    alwaysVisible: true,
-                    size: '7px'
-                });
-
-                if (n > 0) {
-                    $("#AnzahlNeue").show();
-                    $("#AnzahlNeue").html($("#AnzahlNeueNotifications").text());
-                } else {
-                    $("#AnzahlNeue").hide();
-                }
-            }
-        });
+    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
     }
 
-</script>
 
-@if (!Request.IsLocal)
-{
-    <!-- Matomo -->
+
+
+    <script src="@Url.Content("~/Assets/libs/jquery/jquery.slim.min.js")"></script>
+    <script src="@Url.Content("~/Assets/libs/popper/popper.min.min.js")"></script>
+    <script src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.min.js")"></script>
+    @RenderSection("scripts", required: false)
+
     <script type="text/javascript">
-        var _paq = _paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function() {
-            var u = "//shortcut.wi.hm.edu/analytics/";
-            _paq.push(['setTrackerUrl', u + 'piwik.php']);
-            _paq.push(['setSiteId', '2']);
-            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-            g.type = 'text/javascript';
-            g.async = true;
-            g.defer = true;
-            g.src = u + 'piwik.js';
-            s.parentNode.insertBefore(g, s);
-        })();
+    $(function() {
+        if (document.cookie.indexOf("cookieNotification") < 0) {
+            $('#cookie-consent').slideDown('slow');
+        }
+        $('#consent').on('click',
+            function() {
+                document.cookie = "cookieNotification=yes; max-age=" + (5 * 365 * 24 * 60 * 60);
+                $('#cookie-consent').slideUp('slow');
+            });
+        $('#learn-more').on('click',
+            function() {
+                location.href = '@Url.Action("TermsOfUse", "Home")';
+            });
+    });
     </script>
-    <!-- End Matomo Code -->
-}
-
-
-@if (!Request.IsLocal)
-{
-    <script type="text/javascript" src="https://acceleratex.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-l2el80/b/2/7ebd7d8b8f8cafb14c7b0966803e5701/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=de-DE&collectorId=a0e7d8dc"></script>
-}
+    @if (!Request.IsLocal)
+    {
+        <!-- Matomo -->
+        <script type="text/javascript">
+            var _paq = _paq || [];
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                var u = "//shortcut.wi.hm.edu/analytics/";
+                _paq.push(['setTrackerUrl', u + 'piwik.php']);
+                _paq.push(['setSiteId', '2']);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript'; g.async = true; g.defer = true; g.src = u + 'piwik.js'; s.parentNode.insertBefore(g, s);
+            })();
+        </script>
+        <!-- End Matomo Code -->
+    }
 
 </body>
 </html>
-

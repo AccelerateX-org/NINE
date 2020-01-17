@@ -10,7 +10,11 @@ namespace MyStik.TimeTable.Web.Areas.Lab.Controllers
     public class HomeController : Controller
     {
         // GET: Lab/Home
-        public ActionResult Index()
+        public ActionResult MyDay()
+        {
+            return View();
+        }
+        public ActionResult WhatsUp()
         {
             return View();
         }

@@ -27,8 +27,8 @@
                             <th>Vorname</th>
                             <th>Studiengang</th>
                             <th>geplante Abgabe</th>
-                            <th>Tage</th>
-                            <th>Status</th>
+                            <th>tatsächliche Abgabe</th>
+                            <th>Status Anmeldung</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,7 +47,14 @@
                             {
                                 <td></td>
                             }
-                            <td></td>
+                            @if (thesis.Thesis.DeliveryDate.HasValue)
+                            {
+                                <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                             <td>@thesis.GetStateMessage(Model.Member)</td>
                         </tr>
                         }

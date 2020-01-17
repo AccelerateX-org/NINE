@@ -1,0 +1,256 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisEmail
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Notenmeldung Abschlussarbeit</title>
+	<style>
+		body {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 11px;
+			line-height: 1.4;
+		}
+
+		table, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+
+		td {
+			padding: 3px;
+		}
+
+		.vordruck {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 9px;
+			line-height: 1.1;
+			margin-bottom: 60px;
+		}
+
+		.vordruck2 {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 9px;
+			line-height: 1.1;
+			margin-bottom: 5px;
+		}
+		
+
+
+	</style>
+</head>
+
+<body>
+	<table style="width: 100%">
+		<tr>
+			<td style="width: 33%; vertical-align: top;">
+				<div class="vordruck">
+					Eingang<br>Bereich Prüfung und Praktikum
+				</div>
+			</td>
+			<td style="width:33%;vertical-align: text-top;">
+				<div class="vordruck">
+					Erfasst und erledigt
+				</div>
+			</td>
+			<td rowspan="2" style="width: 33%">
+				<img style="margin-left: 10pt"
+					 src="data:image/gif;base64,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">
+				<br>
+				Hochschule München
+				<br />
+				@Model.Thesis.Student.Curriculum.Organiser.Name
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="vordruck2">
+					Datum, Handzeichen
+				</div>
+			</td>
+			<td>
+				<div class="vordruck2">
+					Datum, Handzeichen
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align: center;">
+				<h1>Beleg für das Erfassen der Abschlussarbeit</h1>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align: left;">
+				<h2>@Model.Thesis.User.LastName,  @Model.Thesis.User.FirstName</h2>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align: left;">
+				<div class="vordruck2">
+					Name, Vorname des/der Studierenden
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: left;">
+				<h2>
+					@Model.Thesis.Student.Curriculum.Name (@Model.Thesis.Student.Curriculum.ShortName)
+				</h2>
+			</td>
+			<td style="text-align: left;">
+				<h1>@Model.Thesis.Student.Number</h1>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: left;">
+				<div class="vordruck2">
+					Studiengang
+				</div>
+			</td>
+			<td style="text-align: left;">
+				<div class="vordruck2">
+					Matrikelnummer
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<h1>Note der Abschlussarbeit</h1>
+			</td>
+			<td>
+				<h1>________</h1>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" style="vertical-align: text-top;">
+				<h2>Titel in Deutsch</h2>
+				<div>@Model.Thesis.Thesis.TitleDe</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" style="vertical-align: text-top;">
+				<h2>Titel in Englisch</h2>
+				<div>@Model.Thesis.Thesis.TitleEn</div>
+			</td>
+		</tr>
+		@if (Model.Thesis.Thesis.Supervisors.Count > 1)
+		{
+			<tr>
+				<td style="width: 33%;">
+					<div style="margin-top: 40px"></div>
+				</td>
+				<td style="width: 33%;">
+					<div style="margin-top: 40px">
+						@Model.Thesis.PrimarySupervisor.Member.FullName
+					</div>
+				</td>
+				<td style="width: 33%">
+					<div style="margin-top: 40px"></div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 33%;">
+					<div class="vordruck2">
+						Datum ErstprüferIn
+					</div>
+				</td>
+				<td style="width: 33%;">
+					<div class="vordruck2">Name ErstprüferIn</div>
+				</td>
+				<td style="width: 33%">
+					<div class="vordruck2">Unterschrift ErstprüferIn</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 33%;">
+					<div style="margin-top: 40px"></div>
+				</td>
+				<td style="width: 33%;">
+					<div style="margin-top: 40px">
+						@Model.Thesis.SecondarySupervisor.Member.FullName
+					</div>
+				</td>
+				<td style="width: 33%">
+					<div style="margin-top: 40px"></div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 33%;">
+					<div class="vordruck2">Datum ZweitprüferIn</div>
+				</td>
+				<td style="width: 33%;">
+					<div class="vordruck2">Name ZweitprüferIn</div>
+				</td>
+				<td style="width: 33%">
+					<div class="vordruck2">Unterschrift ZweitprüferIn</div>
+				</td>
+			</tr>
+		}
+		else
+		{
+			<tr>
+				<td style="width: 33%;">
+					<div style="margin-top: 40px"></div>
+				</td>
+				<td style="width: 33%;">
+					<div style="margin-top: 40px">
+						@Model.Thesis.PrimarySupervisor.Member.FullName
+					</div>
+				</td>
+				<td style="width: 33%">
+					<div style="margin-top: 40px"></div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 33%;">
+					<div class="vordruck2">
+						Datum PrüferIn
+					</div>
+				</td>
+				<td style="width: 33%;">
+					<div class="vordruck2">Name PrüferIn</div>
+				</td>
+				<td style="width: 33%">
+					<div class="vordruck2">Unterschrift PrüferIn</div>
+				</td>
+			</tr>
+		}
+		<tr>
+			<td colspan="3">
+				<div style="margin-top: 40px"></div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<div class="vordruck2">Besondere Vorkommnisse (z.B. Erteilung der Fiktionsnote "5" wegen nicht fristgerechter Abgabe)</div>
+			</td>
+		</tr>
+		<tr>
+			<td style="width: 33%;">
+				<div style="margin-top: 40px"></div>
+			</td>
+			<td style="width: 33%;">
+				<div style="margin-top: 40px"></div>
+			</td>
+			<td style="width: 33%">
+				<div style="margin-top: 40px"></div>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:33%;">
+				<div class="vordruck2">Datum Vorsitzende/in der Prüfungskommission</div>
+			</td>
+			<td style="width:33%;">
+				<div class="vordruck2">Name Vorsitzende/in der Prüfungskommission</div>
+			</td>
+			<td style="width:33%">
+				<div class="vordruck2">Unterschrift Vorsitzende/in der Prüfungskommission</div>
+			</td>
+		</tr>
+
+	</table>
+</body>
+
+</html>

@@ -17,45 +17,42 @@
                     @foreach (var act in Model.MyCourses)
                     {
                         <div class="list-group-item">
-                            <span class="badge badge-default"><i class="fa fa-user"></i> @act.Activity.Occurrence.Subscriptions.Count</span>
                             <h5 class="list-group-item-heading">
                                 <a href="@Url.Action("Details", "Course", new {id=act.Id})">@act.Activity.Name (@act.Activity.ShortName)</a>
                             </h5>
                             <div class="list-group-item-text">
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-9">
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-group"></i>@Html.GroupList(act.Activity.SemesterGroups, false, false)</li>
-                                            @if (act.CurrentDate != null)
+                                <ul class="fa-ul">
+                                    <li><i class="fa fa-li fa-book"></i>@Html.GroupList(act.Activity.SemesterGroups, false, false)</li>
+                                    <li><i class="fa fa-li fa-group"></i>Teilnehmer: @act.Activity.Occurrence.Subscriptions.Count(x => !x.OnWaitingList)</li>
+                                    <li><i class="fa fa-li fa-hourglass-half"></i>Warteliste: @act.Activity.Occurrence.Subscriptions.Count(x => x.OnWaitingList)</li>
+                                    @if (act.CurrentDate != null)
+                                    {
+                                        <li><i class="fa fa-li fa-calendar"></i><strong>Jetzt in @Html.RoomList(act.CurrentDate.Summary.Date.Rooms)</strong></li>
+                                    }
+                                    else
+                                    {
+                                        if (act.NextDate != null)
+                                        {
+                                            if (act.NextDate.Summary.Date.Occurrence.IsCanceled)
                                             {
-                                                <li><i class="fa fa-li fa-calendar"></i><strong>Jetzt in @Html.RoomList(act.CurrentDate.Summary.Date.Rooms)</strong></li>
+                                                <li><i class="fa fa-li fa-calendar-times-o text-danger"></i>@Html.Date(act.NextDate.Summary.Date) - ABGESAGT</li>
                                             }
                                             else
                                             {
-                                                if (act.NextDate != null)
-                                                {
-                                                    if (act.NextDate.Summary.Date.Occurrence.IsCanceled)
-                                                    {
-                                                        <li><i class="fa fa-li fa-calendar-times-o text-danger"></i>@Html.Date(act.NextDate.Summary.Date) - ABGESAGT</li>
-                                                    }
-                                                    else
-                                                    {
-                                                        <li><i class="fa fa-li fa-calendar"></i>@Html.Date(act.NextDate.Summary.Date) in @Html.RoomList(act.NextDate.Summary.Date.Rooms) - <a href="@Url.Action("CancelDate", "Course", new {id = act.NextDate.Summary.Date.Occurrence.Id})">absagen</a></li>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <li><i class="fa fa-li fa-calendar"></i>Keine zukünftigen Termine <i class="fa fa-check text-success"></i></li>
-                                                }
+                                                <li><i class="fa fa-li fa-calendar"></i>@Html.Date(act.NextDate.Summary.Date) in @Html.RoomList(act.NextDate.Summary.Date.Rooms) - <a href="@Url.Action("CancelDate", "Course", new {id = act.NextDate.Summary.Date.Occurrence.Id})">absagen</a></li>
                                             }
-                                        </ul>
-                                    </div>
-                                    <div class="col-md-6 col-lg-3">
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-envelope-o"></i><a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = act.Activity.Occurrence.Id})">Mail senden</a></li>
-                                            <li><i class="fa fa-li fa-download"></i><a href="@Url.Action("Download", "Course", new {id = act.Activity.Id})">Teilnehmerlisten</a></li>
-                                        </ul>
-                                    </div>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-calendar"></i>Keine zukünftigen Termine <i class="fa fa-check text-success"></i></li>
+                                        }
+                                    }
+                                </ul>
+                                <div class="btn-group">
+                                    <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = act.Activity.Occurrence.Id})" class="btn btn-default"><i class="fa fa-envelope"></i> Mail senden</a>
+                                    <a href="@Url.Action("Download", "Course", new {id = act.Activity.Id})" class="btn btn-default"><i class="fa fa-download"></i> Download Teilnehmerlisten</a>
+                                    <a href="@Url.Action("AdminNewDates", "Course",new {id = act.Activity.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Termine</a>
+                                    <a href="@Url.Action("AdminNewParticipients", "Course", new {id = act.Activity.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmende</a>
                                 </div>
                             </div>
                         </div>

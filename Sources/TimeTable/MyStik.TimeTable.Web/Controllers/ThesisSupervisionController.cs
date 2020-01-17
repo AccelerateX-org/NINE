@@ -26,7 +26,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var userService = new UserInfoService();
 
-            var theses = Db.Theses.Where(x => x.Supervisors.Any(m => m.Member.Id == member.Id)).ToList();
+            
+            var theses = Db.Theses.Where(x => 
+                x.Supervisors.Any(m => m.Member.Id == member.Id) && // Alle Abschlussarbeiten für den Betreuer
+                x.GradeDate == null // noch nicht benotet
+            ).ToList();
+
 
             var model = new SupervisionOverviewModel();
             model.Organiser = org;
@@ -48,6 +53,81 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        /*
+        public ActionResult Requests()
+        {
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+            var member = GetMyMembership();
+
+            var userService = new UserInfoService();
+
+
+            var theses = Db.Theses.Where(x =>
+                    x.Supervisors.Any(m => m.Member.Id == member.Id) && // Alle Abschlussarbeiten für den Betreuer
+                    x.DeliveryDate == null   // noch nich abgegeben
+            ).ToList();
+
+
+            var model = new SupervisionOverviewModel();
+            model.Organiser = org;
+            model.Member = member;
+
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Thesis.Add(tm);
+            }
+
+
+            return View(model);
+        }
+        */
+
+        public ActionResult Cleared()
+        {
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+            var member = GetMyMembership();
+
+            var userService = new UserInfoService();
+
+
+            var theses = Db.Theses.Where(x =>
+                    x.Supervisors.Any(m => m.Member.Id == member.Id) && // Alle Abschlussarbeiten für den Betreuer
+                    x.DeliveryDate != null &&  // abgegeben
+                    x.IsCleared != null && x.IsCleared == true  // archiviert / abgerechnet
+            ).ToList();
+
+
+            var model = new SupervisionOverviewModel {Organiser = org, Member = member};
+
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Thesis.Add(tm);
+            }
+
+
+            return View(model);
+        }
+
+
 
 
         public ActionResult Details(Guid id)
@@ -370,7 +450,7 @@ namespace MyStik.TimeTable.Web.Controllers
             email.Thesis = tm;
             email.Receiver = user;
 
-            var html = this.RenderViewToString("_PrintOut", email);
+            var html = this.RenderViewToString("_ThesisPrintOut", email);
             PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
             //pdf.Save("document.pdf");
             pdf.Save(stream, false);
@@ -406,6 +486,85 @@ namespace MyStik.TimeTable.Web.Controllers
             model.ActionUser = senderUser;
 
             return model;
+        }
+
+        public ActionResult AddSupervisors(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+
+            var model = new ThesisSupervisionModel
+            {
+                Thesis = thesis,
+                OrganiserId = thesis.Student.Curriculum.Organiser.Id
+            };
+
+
+            // Liste aller Fakultäten
+            ViewBag.Organiser = Db.Organisers.Where(x => x.Id == thesis.Student.Curriculum.Organiser.Id).OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddSupervisors(Guid id, Guid[] DozIds)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            if (thesis == null)
+            {
+                return Json(new { result = "Redirect", url = Url.Action("RequestIncomplete") });
+            }
+
+
+            var supervisors = new List<Supervisor>();
+
+            foreach (var dozId in DozIds)
+            {
+                var member = Db.Members.SingleOrDefault(x => x.Id == dozId);
+
+                if (member != null && thesis.Supervisors.All(x => x.Member.Id != member.Id))
+                {
+                    var supervisor = new Supervisor
+                    {
+                        Thesis = thesis,
+                        Member = member
+                    };
+                    thesis.Supervisors.Add(supervisor);
+                    Db.Supervisors.Add(supervisor);
+
+                    supervisors.Add(supervisor);
+                }
+            }
+
+            Db.SaveChanges();
+
+            var userService = new UserInfoService();
+            var user = GetCurrentUser();
+
+            foreach (var supervisor in supervisors)
+            {
+                // der user des angefragten Lehrenden
+                var supervisorUser = userService.GetUser(supervisor.Member.UserId);
+
+                if (supervisorUser != null)
+                {
+                    var tm = InitMailModel(thesis, user);
+                    tm.AsSubstitute = true;
+
+                    new MailController().ThesisSupervisionRequestEMail(tm, supervisorUser).Deliver();
+                }
+
+            }
+
+
+            return Json(new { result = "Redirect", url = Url.Action("Details", new { id = thesis.Id }) });
         }
 
     }

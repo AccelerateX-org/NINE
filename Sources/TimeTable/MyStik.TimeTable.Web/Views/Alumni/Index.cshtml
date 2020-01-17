@@ -5,43 +5,59 @@
 
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Alumni</h4>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th>Studiengang</th>
-                            <th>Semester</th>
-                            <th>Name</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var item in @Model)
-                        {
-                            <tr>
-                                <td>@item.Alumni.Curriculum.Name</td>
-                                <td>@item.Alumni.Semester.Name</td>
-                                @if (item.User != null)
+
+    <div class="row" style="margin-top: 20px">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Alumni</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Download")" class="btn btn-default">
+                            <i class="fa fa-download"></i> Listen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Studiengang</th>
+                                    <th>Semester</th>
+                                    <th>Name</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var item in @Model)
                                 {
-                                    <td>@item.User.FullName</td>
+                                    <tr>
+                                        <td>@item.Alumni.Curriculum.Name</td>
+                                        <td>@item.Alumni.Semester.Name</td>
+                                        @if (item.User != null)
+                                        {
+                                            <td>@item.User.FullName</td>
+                                        }
+                                        else
+                                        {
+                                            <td>Kein Benutzerkonto vorhanden</td>
+                                        }
+                                    </tr>
                                 }
-                                else
-                                {
-                                    <td>Kein Benutzerkonto vorhanden</td>
-                                }
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+
+
+
 
 

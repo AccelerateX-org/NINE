@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -76,10 +77,12 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
-            var acticeorgs =
+            var acticeorgs = SemesterService.GetActiveOrganiser(sem, false);
+            /*
                 Db.Organisers.Where(
                     x => x.IsFaculty && x.Activities.Any(a =>
                              a.SemesterGroups.Any(s => s.Semester.EndCourses >= DateTime.Today))).ToList();
+                             */
 
             ViewBag.Faculties = acticeorgs.Select(c => new SelectListItem
             {
@@ -699,7 +702,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return PartialView("_SaveError"); // muss noch gemacht werden
 
             // Berechnung der neuen Zeiten
-            var day = DateTime.Parse(model.NewDate);
+            var day = DateTime.ParseExact(model.NewDate, "dd.MM.yyyy", CultureInfo.InvariantCulture);
             var from = DateTime.Parse(model.NewBegin);
             var to = DateTime.Parse(model.NewEnd);
 
@@ -1378,7 +1381,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 foreach (var date in model.Dates)
                 {
                     string[] elems = date.Split('#');
-                    var day = DateTime.Parse(elems[0]);
+                    var day = DateTime.ParseExact(elems[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var begin = TimeSpan.Parse(elems[1]);
                     var end = TimeSpan.Parse(elems[2]);
                     var isWdh = bool.Parse(elems[3]);
@@ -1389,7 +1392,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     // sonst nimm nur den Einzeltag
                     if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        var lastDay = DateTime.Parse(elems[4]);
+                        var lastDay = DateTime.ParseExact(elems[4], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                         var frequency = int.Parse(elems[5]);
                         dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
@@ -1716,7 +1719,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 foreach (var date in model.Dates)
                 {
                     string[] elems = date.Split('#');
-                    var day = DateTime.Parse(elems[0]);
+                    var day = DateTime.ParseExact(elems[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var begin = TimeSpan.Parse(elems[1]);
                     var end = TimeSpan.Parse(elems[2]);
                     var isWdh = bool.Parse(elems[3]);
@@ -1727,7 +1730,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     // sonst nimm nur den Einzeltag
                     if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        var lastDay = DateTime.Parse(elems[4]);
+                        var lastDay = DateTime.ParseExact(elems[4], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                         var frequency = int.Parse(elems[5]);
                         dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
@@ -2801,8 +2804,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                         writer.Write("{0};{1}",
                             user.LastName, user.FirstName);
-                        writer.Write(Environment.NewLine);
                 }
+                else
+                {
+                    writer.Write("n.n.;kein Benutzerkonto");
+
+                }
+                writer.Write(Environment.NewLine);
             }
 
             writer.Flush();
@@ -3536,5 +3544,22 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult RawAdmin(Guid id)
+        {
+            var model = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == id);
+
+            return View(model);
+        }
+
+        public ActionResult RawRemoveSubscription(Guid courseId, Guid id)
+        {
+            var subscription = Db.Subscriptions.SingleOrDefault(x => x.Id == id);
+            Db.Subscriptions.Remove(subscription);
+            Db.SaveChanges();
+
+            return RedirectToAction("RawAdmin", new {id = courseId});
+        }
+
     }
 }

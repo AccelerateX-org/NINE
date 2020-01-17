@@ -43,8 +43,13 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             var list = new List<CalendarDateDto>();
 
-            var allDates = Db.ActivityDates.Where(x => x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) &&
-                                        x.Begin >= from && x.End <= until).ToList();
+            var allDates = Db.ActivityDates.Where(x => 
+                (x.Activity.Occurrence.Subscriptions.Any(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)) ||
+                 x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id))
+                 )
+                &&
+                x.Begin >= from && x.End <= until).ToList();
+
 
             foreach (var activityDate in allDates)
             {

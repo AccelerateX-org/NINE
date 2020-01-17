@@ -360,7 +360,7 @@ namespace MyStik.TimeTable.Web.Services
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal ICollection<OrganiserMember> GetMemberships(string userName)
+        internal List<OrganiserMember> GetMemberships(string userName)
         {
             if (string.IsNullOrEmpty(userName))
                 return new List<OrganiserMember>();
@@ -369,8 +369,14 @@ namespace MyStik.TimeTable.Web.Services
             if (user == null)
                 return new List<OrganiserMember>();
 
+            return GetMemberships(user);
+        }
+
+        internal List<OrganiserMember> GetMemberships(ApplicationUser user)
+        {
             return db.Members.Where(m => m.UserId.Equals(user.Id)).ToList();
         }
+
 
         /// <summary>
         /// 

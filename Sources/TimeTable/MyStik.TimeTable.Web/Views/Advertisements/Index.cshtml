@@ -105,7 +105,14 @@
                     @foreach (var adv in Model)
                     {
                         <tr>
-                            <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">@adv.Title</a></td>
+                            @if (string.IsNullOrEmpty(adv.Title))
+                            {
+                                <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">(ohne Titel)</a></td>
+                            }
+                            else
+                            {
+                                <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">@adv.Title</a></td>
+                            }
                             <td>@adv.Created.ToShortDateString()</td>
                             <td>@adv.VisibleUntil.ToShortDateString()</td>
                             <td>@adv.Owner.FullName</td>

@@ -273,8 +273,17 @@
                     <span id="minProjekte">Sie müssen jedoch mindestens <span id="minProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
                     <span id="maxProjekte">Sie können maximal <span id="maxProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
                 </p>
+                
+                <div id="btnBox1">
+                    <a class="btn btn-primary btn-block disabled" id="hauptbutton">Weiter mit Schritt 2: Reihenfolge bzw. Priorisierung festlegen</a>
+                </div>
 
-                <a class="btn btn-primary btn-block disabled" id="hauptbutton">Weiter mit Schritt 2: Reihenfolge bzw. Priorisierung festlegen</a>
+                <div id="loading1" hidden>
+                    <h4>
+                        <i class="fa fa-spinner fa-spin text-muted"></i>
+                    </h4>
+                </div>
+
             </div>
         </div>
     </div>
@@ -356,6 +365,11 @@
 
             $('#hauptbutton').click(function() {
 
+
+                $('#btnBox1').hide();
+                $('#loading1').show();
+
+
                 var list = $('.ausgewaehlt').get();
                 var n = list.length;
 
@@ -408,6 +422,10 @@
 
             $('#hauptbutton2').click(function() {
 
+                $('#btnBox2').hide();
+                $('#loading2').show();
+
+
                 var list = $('.ui-state-default').get();
                 var n = list.length;
 
@@ -445,6 +463,10 @@
 
         function initConfirmPage() {
             $('#hauptbutton3').click(function() {
+
+                $('#btnBox3').hide();
+                $('#loading3').show();
+                
 
                 var list = $('.ui-state-default').get();
                 var n = list.length;

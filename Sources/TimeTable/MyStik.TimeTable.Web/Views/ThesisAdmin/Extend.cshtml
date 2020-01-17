@@ -1,0 +1,77 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisExtendViewModel
+@{
+    ViewBag.Title = "Extend";
+}
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+
+<div class="container">
+    <div class="row" style="margin-top: 50px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5>Verlängerung Abschlussarbeit</h5>
+                </div>
+                <div class="portlet-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                    {
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(model => model.Thesis.Id)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Bisheriges Abgabedatum</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">@Model.Thesis.ExpirationDate.Value.ToShortDateString()</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Neues Abgabedatum</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.NewDateEnd, new { @class = "form-control datepicker" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-4 col-md-6">
+                                    <input type="submit" value="Verlängerung speichern" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </fieldset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+
+    <script>
+        $(function () {
+
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+
+        });
+
+
+    </script>
+}

@@ -1,12 +1,13 @@
 ﻿@using MyStik.TimeTable.Data
-@model MyStik.TimeTable.Web.Models.LecturerCharacteristicModel
+@model MyStik.TimeTable.Web.Models.LecturerOverviewModel
 @{
     ViewBag.Title = "Index";
 }
 
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -29,7 +30,7 @@
                     <div class="col-md-12">
                         <div class="form-inline">
                             <div class="form-group">
-                                <a href="@Url.Action("Index", "OrganiserMembers")" class="btn btn-default">
+                                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default">
                                     <i class="fa fa-arrow-left"></i> zurück zur Liste
                                 </a>
                             </div>
@@ -60,152 +61,58 @@
 
 
 <div class="container-fluid">
+ 
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4><i class="fa fa-user-md"></i> </h4>
+                    <h4><i class="fa fa-calendar"></i> Alle Lehrveranstaltungen</h4>
                 </div>
-                <div class="panel-body">
-                    @if (Model.OfficeHour != null)
-                    {
-                        if (Model.OfficeHour.Dates.Any())
+                <table id="tabCourses" class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Kurzname</th>
+                        <th>Titel</th>
+                        <th>Eingetragen</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var course in Model.Courses)
                         {
-                            <a href="@Url.Action("Lecturer", "OfficeHour", new {id = Model.Lecturer.Id})" class="btn btn-default">Zur Terminliste</a>
+                            <tr>
+                                @if (course.Semester != null)
+                                {
+                                    <td>@course.Semester.Name</td>
+                                }
+                                else
+                                {
+                                    <td>ohne Semester</td>
+                                }
+                                <td>@course.Course.ShortName</td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Course", new {id=course.Course.Id})">@course.Course.Name</a>
+                                </td>
+                                <td>@course.Course.Occurrence.Subscriptions.Count</td>
+                            </tr>
                         }
-                        else
-                        {
-                            if (Model.OfficeHour.ByAgreement)
-                            {
-                                <div class="alert alert-info">
-                                    <h5>Nach Vereinbarung</h5>
-                                    @if (!string.IsNullOrEmpty(Model.OfficeHour.Description))
-                                    {
-                                    <p>@Html.Raw(@Model.OfficeHour.Description)</p>
-                                    }
-                                </div>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        <div class="alert alert-warning">
-                            <h5>Es wird keine Sprechstunde angeboten</h5>
-                        </div>
-                    }
-                </div>
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-
-@if (ViewBag.UserRight.IsStaff)
-{
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@Model.Semester.Name)</h4>
-                </div>
-                <div class="panel-body">
-                    @if (Model.Courses.Any())
-                    {
-                        @Html.Partial("_CourseListSummary", Model.Courses)
-                    }
-                    else
-                    {
-                        <div class="alert alert-warning">
-                            <h5>Es werden keine Lehrveranstaltungen angeboten</h5>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-}
-else
-{
-    var sem = Model.Semester;
-    if (sem.Groups.Any(x => x.IsAvailable && x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Lecturer.Organiser.Id))
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-calendar"></i> Lehrveranstaltungen (@Model.Semester.Name)</h4>
-                    </div>
-                    <div class="panel-body">
-                        @if (Model.Courses.Any())
-                        {
-                            @Html.Partial("_CourseListSummary", Model.Courses)
-                        }
-                        else
-                        {
-                            <div class="alert alert-warning">
-                                <h5>Es werden keine Lehrveranstaltungen angeboten</h5>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-}
-
-    @if (ViewBag.UserRight.IsStaff)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="portlet light bordered">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-calendar"></i> Stundenplan
-                            <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                        </div>
-                        <div class="actions">
-                            <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div id="calendar" class="has-toolbar">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-
 </div>
 
 @section scripts
 {
-    <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
-    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
 
-    <script type="text/javascript">
-
-            $(document).ready(function () {
-                $('#loading').hide();
-
-                initCalendar(false);
-
-                $('#calendar').fullCalendar('removeEvents');
-
-                $('#calendar').fullCalendar('addEventSource',
-                {
-                    url: '@Url.Action("CourseEventsByLecturer", "Calendar")',
-                    type: 'POST',
-                    data: {
-                        dozId: "@Model.Lecturer.Id",
-                        showPersonalDates: true
-                    }
-                });
-            });
-
+    <script>
+        var t = $('#tabCourses').DataTable({
+            "paging": false
+        });
     </script>
 }

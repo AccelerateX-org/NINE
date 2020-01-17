@@ -15,6 +15,13 @@
                     </h4>
                 </div>
                 <div class="list-group">
+                    @if (ViewBag.UserRight.IsMemberAdmin)
+                    {
+                        <a class="list-group-item list-group-item-danger" href="@Url.Action("MemberAdmin", new {id=Model.Lecturer.Id})">
+                            <h5 class="list-group-item-heading"><i class="fa fa-cog"></i> Verwaltung</h5>
+                        </a>
+                    }
+
                     @if (!string.IsNullOrEmpty(Model.Lecturer.UrlProfile))
                     {
                         <a href="@Model.Lecturer.UrlProfile" class="list-group-item" target="_blank">
@@ -25,7 +32,7 @@
                     {
                         if (Model.OfficeHour.Dates.Any())
                         {
-                            <a href="@Url.Action("Lecturer", "OfficeHour", new {id = Model.Lecturer.Id, semId=Model.OfficeHour.Semester.Id})" class="list-group-item">
+                            <a href="@Url.Action("Lecturer", "OfficeHour", new {id = Model.Lecturer.Id, semId = Model.OfficeHour.Semester.Id})" class="list-group-item">
                                 <h5 class="list-group-item-heading"><i class="fa fa-user-md"></i> Sprechstundentermine</h5>
                             </a>
                         }
@@ -51,7 +58,7 @@
                     }
                     @if (ViewBag.UserRight.IsStaff)
                     {
-                        <a class="list-group-item" href="@Url.Action("Calendar", new {id=Model.Lecturer.Id})">
+                        <a class="list-group-item" href="@Url.Action("Calendar", new {id = Model.Lecturer.Id})">
                             <h5 class="list-group-item-heading"><i class="fa fa-calendar"></i> Kalender</h5>
                         </a>
                     }

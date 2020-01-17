@@ -54,8 +54,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    x.DeliveryDate == null &&   // noch nich abgegeben
-                    x.IsCleared == null         // noch nicht archiviert
+                    x.DeliveryDate == null && // noch nich abgegeben
+                    x.IsCleared == null // noch nicht archiviert
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -100,9 +100,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    x.IsCleared == null  &&     // noch nicht archiviert
-                    x.GradeDate == null &&      // noch keine Note gemeldet
-                    x.DeliveryDate != null      // abgegeben haben
+                    x.IsCleared == null && // noch nicht archiviert
+                    x.GradeDate == null && // noch keine Note gemeldet
+                    x.DeliveryDate != null // abgegeben haben
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -145,8 +145,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    x.IsCleared == null &&      // noch nicht archiviert
-                    x.GradeDate != null         // abgegeben haben
+                    x.IsCleared == null && // noch nicht archiviert
+                    x.GradeDate != null // abgegeben haben
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -205,6 +205,55 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = userRight;
             ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+        public ActionResult Statistics()
+        {
+            var semesterList = new List<Semester>();
+
+            // das aktuelle Semester
+            var pSem = SemesterService.GetSemester(DateTime.Today);
+            semesterList.Add(pSem);
+
+            // Vorsemester
+            pSem = SemesterService.GetPreviousSemester(pSem);
+            semesterList.Add(pSem);
+
+            // Vorvorsemester
+            pSem = SemesterService.GetPreviousSemester(pSem);
+            semesterList.Add(pSem);
+
+            var org = GetMyOrganisation();
+
+            var matrix = new Dictionary<Semester, Dictionary<Curriculum, int>>();
+
+            foreach (var semester in semesterList)
+            {
+                matrix[semester] = new Dictionary<Curriculum, int>();
+                var nextStartDay = semester.EndCourses.AddDays(1);
+                foreach (var curriculum in org.Curricula)
+                {
+
+                    // benotete Arbeiten po Studiengang und Semester
+                    var nThesis = Db.Theses.Count(x => x.GradeDate != null &&
+                                                       semester.StartCourses <= x.GradeDate &&
+                                                       x.GradeDate < nextStartDay &&
+                                                       x.Student.Curriculum.Id == curriculum.Id);
+
+                    matrix[semester][curriculum] = nThesis;
+                }
+            }
+
+            var model = new ThesisStatisticsModel
+            {
+                Organiser = org,
+                Semester = semesterList,
+                Curricula = org.Curricula,
+                Matrix = matrix
+            };
 
 
             return View(model);
@@ -310,7 +359,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return RedirectToAction("Details", new {id=thesis.Id});
+            return RedirectToAction("Details", new {id = thesis.Id});
         }
 
 
@@ -431,7 +480,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+            return RedirectToAction("Details", new {id = thesis.Id});
         }
 
         /// <summary>
@@ -459,7 +508,7 @@ namespace MyStik.TimeTable.Web.Controllers
             new MailController().ThesisSupervisorRemoveEMail(model, supervisorUser).Deliver();
 
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+            return RedirectToAction("Details", new {id = thesis.Id});
         }
 
 
@@ -477,11 +526,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Liste aller Fakultäten
-            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
+            ViewBag.Organiser = Db.Organisers.Where(x => x.Id == thesis.Student.Curriculum.Organiser.Id)
+                .OrderBy(x => x.ShortName).Select(c => new SelectListItem
+                {
+                    Text = c.ShortName,
+                    Value = c.Id.ToString(),
+                });
 
 
 
@@ -495,7 +545,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (thesis == null)
             {
-                return Json(new { result = "Redirect", url = Url.Action("RequestIncomplete") });
+                return Json(new {result = "Redirect", url = Url.Action("RequestIncomplete")});
             }
 
 
@@ -540,7 +590,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return Json(new { result = "Redirect", url = Url.Action("Details", new { id = thesis.Id }) });
+            return Json(new {result = "Redirect", url = Url.Action("Details", new {id = thesis.Id})});
         }
 
         public ActionResult RequestIncomplete()
@@ -586,14 +636,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            
+
             // Mail an Studierenden
             var tm = InitMailModel(thesis, user);
             tm.AsSubstitute = true;
 
             new MailController().ThesisSupervisorIssuedEMail(tm).Deliver();
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+            return RedirectToAction("Details", new {id = thesis.Id});
         }
 
         /// <summary>
@@ -641,7 +691,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+            return RedirectToAction("Details", new {id = thesis.Id});
         }
 
 
@@ -729,8 +779,8 @@ namespace MyStik.TimeTable.Web.Controllers
             email.Thesis = tm;
             email.Receiver = user;
 
-            
-            var html = this.RenderViewToString("_PrintOut", email);
+
+            var html = this.RenderViewToString("_ThesisPrintOut", email);
             PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
             //pdf.Save("document.pdf");
             pdf.Save(stream, false);
@@ -739,9 +789,9 @@ namespace MyStik.TimeTable.Web.Controllers
             stream.Position = 0;
             email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
             email.Send();
-            
 
-            return RedirectToAction("Details", new { id = thesis.Id });
+
+            return RedirectToAction("Details", new {id = thesis.Id});
 
         }
 
@@ -768,6 +818,47 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return model;
         }
-    }
 
+        public ActionResult Extend(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var user = GetCurrentUser();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            var model = new ThesisExtendViewModel();
+            model.Thesis = thesis;
+            model.StudentUser = userService.GetUser(thesis.Student.UserId);
+            model.NewDateEnd = thesis.ExpirationDate.Value.ToShortDateString();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Extend(ThesisExtendViewModel model)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+            var date = DateTime.Parse(model.NewDateEnd);
+
+            if (date <= thesis.ExpirationDate.Value)
+            {
+                ModelState.AddModelError("NewDateEnd", "Das neue Datum muss nach dem bisherigem Datum liegen.");
+
+                var userService = new UserInfoService();
+                var m = new ThesisExtendViewModel();
+                m.Thesis = thesis;
+                m.StudentUser = userService.GetUser(thesis.Student.UserId);
+                m.NewDateEnd = thesis.ExpirationDate.Value.ToShortDateString();
+
+                return View(m);
+            }
+
+
+            thesis.RenewalDate = date;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+    }
 }

@@ -460,5 +460,47 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Curricula", "Subscription");
         }
 
+        public FileResult Download()
+        {
+            var member = GetMyMembership();
+
+            var alumni = Db.Alumnae.Where(x => x.Curriculum.Organiser.Id == member.Organiser.Id).ToList();
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Name;Vorname;Studiengang;Semester;E-Mail");
+
+            writer.Write(Environment.NewLine);
+
+
+            foreach (var alumnus in alumni)
+            {
+                var user = UserManager.FindById(alumnus.UserId);
+
+                if (user != null)
+                {
+                    writer.Write("{0};{1};{2};{3};{4}",
+                        user.LastName, user.FirstName,
+                        alumnus.Curriculum.ShortName, alumnus.Semester.Name,
+                        user.Email);
+                    writer.Write(Environment.NewLine);
+                }
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Alumni");
+            sb.Append(member.Organiser.ShortName);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
     }
 }

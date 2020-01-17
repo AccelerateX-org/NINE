@@ -54,6 +54,9 @@
                                         <li>
                                             <a href="@Url.Action("Students", new {id = Model.Lottery.Id})"><i class="fa fa-user"></i> Studierende</a>
                                         </li>
+                                        <li>
+                                            <a href="@Url.Action("CheckConsistency", new {id = Model.Lottery.Id})"><i class="fa fa-exclamation-triangle"></i> Konsistenz Check</a>
+                                        </li>
                                     </ul>
                                 </div>
 
@@ -320,6 +323,14 @@
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        <div class="list-group-item list-group-item-danger">
+                            <p>Ohne Angabe meines Studiengangs kann ich hier nichts auswählen. 
+                                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-default">Angabe Studiengang</a></p>
+                        </div>
+
                     }
                 </div>
             </div>

@@ -109,7 +109,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Immer alle anzeigen, die was haben
             ViewBag.Faculties = acticeorgs.OrderBy(f => f.ShortName).Select(f => new SelectListItem
             {
-                Text = f.ShortName,
+                Text = f.Name,
                 Value = f.Id.ToString(),
             });
 
@@ -236,7 +236,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.Faculties = orgs.Select(f => new SelectListItem
             {
-                Text = f.ShortName,
+                Text = f.Name,
                 Value = f.Id.ToString(),
             });
 
@@ -396,7 +396,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.Faculties = orgs.Select(f => new SelectListItem
             {
-                Text = f.ShortName,
+                Text = f.Name,
                 Value = f.Id.ToString(),
             });
 

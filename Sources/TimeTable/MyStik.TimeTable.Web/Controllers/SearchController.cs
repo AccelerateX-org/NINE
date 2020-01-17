@@ -62,7 +62,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 bSearchForCourses = isAvailable;
             }
 
-            if (bSearchForCourses)
+            if (bSearchForCourses && nextSemester != null)
             {
                 nextCoursesList.AddRange(new CourseService(Db).SearchCourses(nextSemester.Id, searchText, org));
                 foreach (var course in nextCoursesList)

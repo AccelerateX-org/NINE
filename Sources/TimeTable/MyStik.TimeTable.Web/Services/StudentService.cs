@@ -36,6 +36,9 @@ namespace MyStik.TimeTable.Web.Services
         /// <returns></returns>
         public Student GetCurrentStudent(ApplicationUser user)
         {
+            if (user == null)
+                return null;
+
             return Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
                 .FirstOrDefault();
         }

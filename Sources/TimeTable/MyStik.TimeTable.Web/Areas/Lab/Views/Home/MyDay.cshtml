@@ -1,0 +1,113 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.HomeViewModel
+@{
+    ViewBag.Title = "Willkommen";
+}
+
+
+<div class="row">
+    <div class="col-sm">
+        <div class="form-inline">
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+            <label class="sr-only" for="inlineFormInputName2">Name</label>
+            <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Jane Doe">
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <div class="form-inline">
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                <label class="custom-control-label" for="customCheck1">Eintragungen</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="customCheck2">
+                <label class="custom-control-label" for="customCheck2">Empfehlungen <span class="badge badge-pill badge-danger">4</span></label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="customCheck3">
+                <label class="custom-control-label" for="customCheck3">Alles</label>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Vormittag</h5>
+                <h6 class="card-subtitle mb-2 text-muted">08:00-12:00</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Nachmittag</h5>
+                <h6 class="card-subtitle mb-2 text-muted">12:00-17:00</h6>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div>12:15-15:00 <i class="far fa-clock text-danger"></i></div>
+                            <div>R 0.055 <i class="fas fa-arrows-alt-h text-danger"></i></div>
+                        </div>
+                        <div class="col-sm">
+                            <div>Mathe 1</div>
+                            <div>Rebhan</div>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div>14:00-17:15</div>
+                            <div>R BG.089</div>
+                        </div>
+                        <div class="col-sm">
+                            <div>Software Engineering 1</div>
+                            <div><i class="fas fa-users"></i> 28</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="card-body">
+                <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Abend</h5>
+                <h6 class="card-subtitle mb-2 text-muted">17:00-22:00</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-sm">
+                            <div>17:45-21:00</div>
+                            <div>R 0.055</div>
+                        </div>
+                        <div class="col-sm">
+                            <div>Gastvortrag: "Blockchain & more"</div>
+                            <div>Bill Gates</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="card-body">
+                <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a>
+            </div>
+        </div>
+    </div>
+</div>

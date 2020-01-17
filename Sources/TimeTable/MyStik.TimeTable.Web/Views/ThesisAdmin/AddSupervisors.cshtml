@@ -153,6 +153,12 @@
 
             var list = $("#DozTable > table > tbody > tr").get();
             n = list.length;
+
+            if (n > 1) {
+                alert("nur eine Person auswählen");
+                return;
+            }
+
             if (n > 0) {
                 for (var i = 0; i < n; i++) {
                     dozList[i] = list[i].id;
