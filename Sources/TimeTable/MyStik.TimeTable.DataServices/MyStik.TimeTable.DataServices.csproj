@@ -95,6 +95,7 @@
     <Compile Include="Lottery\Data\DrawingGame.cs" />
     <Compile Include="Lottery\Data\DrawingLot.cs" />
     <Compile Include="Lottery\Data\DrawingLotPot.cs" />
+    <Compile Include="Lottery\Data\DrawingMessage.cs" />
     <Compile Include="Lottery\Data\DrawingSeat.cs" />
     <Compile Include="Lottery\DrawingService.cs" />
     <Compile Include="EventDateSubscriptionTicket.cs" />

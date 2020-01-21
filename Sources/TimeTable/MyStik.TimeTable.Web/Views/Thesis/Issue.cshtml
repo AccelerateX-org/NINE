@@ -18,6 +18,16 @@
                     <i class="fa fa-file-o"></i> Anmeldung meiner Abschlussarbeit
                 </h4>
                 <div class="panel-body">
+                    
+                    <div class="alert alert-info">
+                        <strong>Wichtige Hinweise:</strong>
+                        <ul>
+                            <li>Über das Anmeldedatum legen Sie automatisch das Abgabedatum fest.</li>
+                            <li>Die Bearbeitungsdauer für Abschlussarbeiten in Ihrem Studiengang <strong>@Model.Thesis.Student.Curriculum.ShortName</strong> beträgt <strong>@Model.GetWorkingPeriod() Monate</strong>.</li>
+                        </ul>
+                    </div>
+                    
+
 
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
                     {

@@ -177,6 +177,8 @@
                         // Ausgegeben
                         var isIssued = Model.Thesis.IssueDate != null;
                         var daysToExpiry = 0;
+                        var hasSupervisor = Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null);
+                        var hasTitle = !string.IsNullOrEmpty(Model.Thesis.TitleDe) && !string.IsNullOrEmpty(Model.Thesis.TitleEn);
 
                         if (Model.Thesis.GradeDate != null)
                         {
@@ -236,7 +238,23 @@
                                     }
                                     else
                                     {
-                                        <a href="@Url.Action("Issue")" class="btn btn-primary">Anmelden</a>
+                                        if (hasSupervisor && hasTitle)
+                                        {
+                                            <a href="@Url.Action("Issue")" class="btn btn-primary">Anmelden</a>
+                                        }
+                                        else
+                                        {
+                                            if (!hasSupervisor)
+                                            {
+                                                <p>Anmeldung erst dann möglich, wenn BetreuerIn zugesagt hat.</p>
+
+                                            }
+                                            if (!hasTitle)
+                                            {
+                                                <p>Anmeldung erst dann möglich, wenn Titel festgelegt wurde.</p>
+                                            }
+                                        }
+
                                     }
                                 </div>
                             </div>

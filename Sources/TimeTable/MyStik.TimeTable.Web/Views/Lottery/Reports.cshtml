@@ -1,0 +1,14 @@
+﻿@model MyStik.TimeTable.Data.Lottery
+@{
+    ViewBag.Title = "Reports";
+}
+
+<h2>Ziehungsberichte</h2>
+
+<ul>
+    @foreach (var drawiung in Model.Drawings)
+    {
+        <li><a href="@Url.Action("Report", new {id=drawiung.Id})">@drawiung.Start - @drawiung.End</a></li>
+    }
+</ul>
+

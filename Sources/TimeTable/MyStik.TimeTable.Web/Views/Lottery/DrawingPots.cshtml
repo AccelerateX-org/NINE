@@ -86,7 +86,7 @@
                             <th colspan="5">Buchungsliste</th>
                             @if (Model.Lottery.IsFixed)
                             {
-                                <th colspan="@colhead + 1">Aufschlüsselung Teilnehmerliste</th>
+                                <th colspan="@(colhead + 1)">Aufschlüsselung Teilnehmerliste</th>
                                 <th colspan="@colhead">Aufschlüsselung Warteliste</th>
                             }
                         </tr>
@@ -170,7 +170,7 @@
                                  }
 
 
-                                <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == null)</td>
+                                <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == 0)</td>
                                 for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
                                  {
                                      <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == i)</td>

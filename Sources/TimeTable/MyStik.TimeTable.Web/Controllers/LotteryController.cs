@@ -615,6 +615,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     sub.IsConfirmed = false;
                     sub.LapCount = 0;
                     sub.OnWaitingList = true;
+                    sub.HostRemark = string.Empty;
                 }
             }
 
@@ -723,10 +724,80 @@ namespace MyStik.TimeTable.Web.Controllers
             model.InitLotPots();
             ViewBag.Rounds = model.ExecuteDrawing();
 
-            Db.SaveChanges();
+            // Den Bericht anlegen
+            var userService = new UserInfoService();
+            var sb = new StringBuilder();
+
+            sb.AppendLine("<table class=\"table table-condensed\">");
+            sb.AppendLine("<thead>");
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<th>Datum</th>");
+            sb.AppendLine("<th>LV</th>");
+            sb.AppendLine("<th>StudentIn</th>");
+            sb.AppendLine("<th>Prio</th>");
+            sb.AppendLine("<th>Bemerkung</th>");
+            sb.AppendLine("</tr>");
+            sb.AppendLine("</thead>");
+            sb.AppendLine("<tbody>");
+
+            foreach (var message in model.Messages)
+            {
+                sb.AppendLine("<tr>");
+                sb.AppendLine($"<td>{message.TimeStamp}</td>");
+
+                if (message.Course != null)
+                {
+                    sb.AppendLine($"<td>{message.Course.ShortName}</td>");
+                }
+                else
+                {
+                    sb.AppendLine("<td></td>");
+                }
+
+
+                if (!string.IsNullOrEmpty(message.UserId))
+                {
+                    var user = userService.GetUser(message.UserId);
+                    if (user != null)
+                    {
+                        sb.AppendLine($"<td>{user.FullName}</td>");
+                    }
+                    else
+                    {
+                        sb.AppendLine("<td>unbekannt</td>");
+                    }
+                }
+                else
+                {
+                    sb.AppendLine("<td></td>");
+                }
+
+                if (message.Subscription != null)
+                {
+                    sb.AppendLine($"<td>{message.Subscription.Priority}</td>");
+                }
+                else
+                {
+                    sb.AppendLine("<td></td>");
+                }
+
+
+                sb.AppendLine($"<td>{message.Remark}</td>");
+                sb.AppendLine("</tr>");
+
+            }
+            sb.AppendLine("</tbody>");
+            sb.AppendLine("</table>");
+
+
+            drawing.Message = sb.ToString();
 
             // Mailversand
             drawing.End = DateTime.Now;
+            Db.LotteryDrawings.Add(drawing);
+
+            Db.SaveChanges();
+
 
             logger.InfoFormat("Manuelle Ausführung Lotterie {0} Verteilung beendet", drawing.Lottery.Name);
             logger.InfoFormat("Manuelle Ausführung Lotterie {0} Mailversand gestartet", drawing.Lottery.Name);
@@ -3085,6 +3156,30 @@ namespace MyStik.TimeTable.Web.Controllers
                 
             return RedirectToAction("Details", new {id = id});
         }
+
+        public ActionResult Reports(Guid id)
+        {
+            var service1 = new LotteryService(Db, id);
+            var lottery = service1.GetLottery();
+
+            return View(lottery);
+        }
+
+
+        public ActionResult DeleteReport(Guid id)
+        {
+            var drawing = Db.LotteryDrawings.SingleOrDefault(x => x.Id == id);
+
+            var lottery = drawing.Lottery;
+
+            Db.LotteryDrawings.Remove(drawing);
+            Db.SaveChanges();
+
+
+
+            return RedirectToAction("Details", new {id=lottery.Id});
+        }
+
     }
 
 }

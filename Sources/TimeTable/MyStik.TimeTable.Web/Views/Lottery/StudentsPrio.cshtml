@@ -135,6 +135,10 @@
                                         <ul class="fa-ul">
                                             <li><i class="fa fa-li fa-clock-o"></i>@seat.Subscription.TimeStamp</li>
                                             <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
+                                            @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
+                                            {
+                                                <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
+                                            }
                                         </ul>
                                     </div>
                                 }
@@ -162,9 +166,9 @@
                                              <div>@lot.Course.ShortName
                                                  <ul class="fa-ul">
                                                      <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
-                                                     @if (!string.IsNullOrEmpty(lot.Message))
+                                                     @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
                                                      {
-                                                         <li><i class="fa fa-li fa-file-text"></i>@lot.Subscription.PositionRemark</li>
+                                                         <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
                                                      }
                                                  </ul>
                                              </div>

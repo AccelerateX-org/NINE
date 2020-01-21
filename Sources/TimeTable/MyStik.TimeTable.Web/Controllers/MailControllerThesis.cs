@@ -73,7 +73,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Kopie an Studierenden
             CC.Add(mailModel.StudentUser.Email);
 
-            Subject = $"Neue Anmeldung für eine Abschlussarbeit";
+            Subject = $"Neue Betreuungsanfrage für eine Abschlussarbeit";
 
 
             return Email("ThesisSupervisionRequestEMail", mailModel);

@@ -131,6 +131,14 @@
                         @foreach (var thesis in Model.ActiveTheses)
                         {
                             <div class="list-group-item">
+                                @if (thesis.Thesis.DeliveryDate != null)
+                                {
+                                    <i class="fas fa-trophy"></i>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-secondary">@thesis.DaysToExpire</span>
+                                }
                                 <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
                             </div>
                         }

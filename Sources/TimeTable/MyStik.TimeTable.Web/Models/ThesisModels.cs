@@ -453,6 +453,19 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        public int GetWorkingPeriod()
+        {
+            int period = 0;
+            bool success = int.TryParse(Thesis.Student.Curriculum.Version, out period);
+            if (!success || period == 0)
+            {
+                period = 3;
+            }
+
+            return period;
+
+        }
+
     }
 
     public class ThesisSupervisionModel

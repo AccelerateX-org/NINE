@@ -17,8 +17,26 @@ namespace MyStik.TimeTable.DataServices.Lottery.Data
 
         public bool IsTouched { get; set; }
 
-        public string Message { get; set; }
+        private string Message { get; set; }
 
         public int Priority => Subscription.Priority ?? 0;
+
+        public void InitMessage()
+        {
+            Message = "";
+        }
+
+        public void AddMessage(string msg)
+        {
+            Message += $"<li>{DateTime.Now}: {msg}</li>";
+        }
+
+        public void SaveMessage()
+        {
+            if (string.IsNullOrEmpty(Message))
+                Subscription.HostRemark = string.Empty;
+            else
+                Subscription.HostRemark = $"<ul>{Message}</ul>";
+        }
     }
 }

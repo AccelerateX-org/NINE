@@ -25,6 +25,9 @@ namespace MyStik.TimeTable.DataServices.Lottery
         /// </summary>
         public List<DrawingGame> Games { get; }
 
+        public List<DrawingMessage> Messages { get; }
+
+
         public DrawingService(TimeTableDbContext db, Guid id)
         {
             this.db = db;
@@ -43,16 +46,24 @@ namespace MyStik.TimeTable.DataServices.Lottery
             LotPots = new List<DrawingLotPot>();
 
             Games = new List<DrawingGame>();
+
+            Messages = new List<DrawingMessage>();
+
+            AddMessage(null, null, "Ziehung angelegt");
         }
 
         public void InitLotPots()
         {
+            AddMessage(null, null, "Beginn Initialisierung der Lostöpfe");
+            AddMessage(null, null, $"Anzahl Lehrveranstaltungen: {Courses.Count}");
+
             var bookingService = new BookingService(db);
 
             // Pro Kurs die Lostöpfe anlegen
             foreach (var course in Courses)
             {
                 var bookingLists = bookingService.GetBookingLists(course.Occurrence.Id);
+                AddMessage(course, null, $"Anzahl Buchungslisten: {bookingLists.Count}");
 
                 foreach (var bookingList in bookingLists)
                 {
@@ -110,6 +121,8 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             seat.Subscription = subscription;
 
                             game.Seats.Add(seat);
+
+                            AddMessage(course, subscription, "Vorhandener Platz");
                         }
                         else
                         {
@@ -122,6 +135,8 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             game.Lots.Add(drawingLot);
 
                             lotPot.Lots.Add(drawingLot);
+
+                            AddMessage(course, subscription, "Los");
                         }
                     }
 
@@ -168,6 +183,17 @@ namespace MyStik.TimeTable.DataServices.Lottery
         {
             var round = 0;
 
+            // Alle Nachrichten auf null setzen
+            foreach (var game in Games)
+            {
+                foreach (var drawingLot in game.Lots)
+                {
+                    drawingLot.InitMessage();
+                }
+            }
+
+
+
             while (DrawAllPots() > 0)
             {
                 round++;
@@ -183,6 +209,15 @@ namespace MyStik.TimeTable.DataServices.Lottery
                 round++;
             }
 
+            // alle Texte sichern
+            foreach (var game in Games)
+            {
+                foreach (var drawingLot in game.Lots)
+                {
+                    drawingLot.SaveMessage();
+                }
+            }
+
 
             return round;
         }
@@ -190,6 +225,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
         private int DrawAllPots()
         {
+            AddMessage(null, null, "Starte Ziehung");
             // Zuerst nachsehen, ob Wünsche offen sind
             foreach (var game in Games)
             {
@@ -200,7 +236,9 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     {
                         lot.IsValid = false;
                         lot.IsTouched = true;
-                        lot.Message = "Die Wünsche konnten erfüllt werden, Los wird nicht mehr gebraucht";
+                        lot.AddMessage("Die Wünsche konnten erfüllt werden, dieses Los wird nicht mehr gebraucht");
+
+                        AddMessage(lot.Course, lot.Subscription, "Die Wünsche konnten erfüllt werden, dieses Los wird nicht mehr gebraucht");
                     }
                 }
             }
@@ -217,19 +255,26 @@ namespace MyStik.TimeTable.DataServices.Lottery
                 {
                     // das zugehörige Spiel suchen
                     var game = Games.SingleOrDefault(x => x.UserId.Equals(lot.Subscription.UserId));
+
+                    // Die besten n Lose, also Prio 1,2,3 
                     var studentLots = game.Lots.OrderBy(x => x.Priority).Take(game.CoursesWanted).ToList();
 
-                    // Student ist glücklich, wenn er seine Prio 1 bis n bekommen hat
+                    // Student ist glücklich, wenn er alle seine Prio 1 bis n bekommen hat
                     var isHappy = !studentLots.Any(x => x.Subscription.OnWaitingList);
 
                     if (isHappy)
                     {
                         // jetzt können wir alle seine anderen Lose auf "invalid" setzen
+                        // warum: das sind die Lose mit geringer Prio, die er nicht mehr braucht
+                        // er hat schon die besten Prios erhalten
                         foreach (var drawingLot in studentLots.Where(x => x.Subscription.OnWaitingList))
                         {
                             drawingLot.IsValid = false;
                             drawingLot.IsTouched = true;
-                            drawingLot.Message = "Die Wünsche konnten erfüllt werden, Los wird nicht mehr gebraucht";
+                            drawingLot.AddMessage("Die Wünsche konnten erfüllt werden, dieses Los wird nicht mehr gebraucht");
+
+                            AddMessage(drawingLot.Course, drawingLot.Subscription, "Die Wünsche konnten erfüllt werden, dieses Los wird nicht mehr gebraucht");
+
                         }
                     }
                 }
@@ -258,16 +303,21 @@ namespace MyStik.TimeTable.DataServices.Lottery
                                 drawingLot.IsValid = false;
                                 drawingLot.IsTouched = true;
                                 drawingLot.Subscription.OnWaitingList = true; // Zurück auf die Warteliste
-                                drawingLot.Message =
-                                    "Die Wünsche konnten erfüllt werden, Los wird nicht mehr gebraucht";
+                                drawingLot.AddMessage(
+                                    "Zuviel vergebenes Los. Platz wird wieder freigegeben");
 
                                 nReject++;
+
+                                AddMessage(drawingLot.Course, drawingLot.Subscription, "Zuviel vergebenes Los. Platz wird wieder freigegeben");
                             }
                         }
                     }
                 }
 
             }
+
+            AddMessage(null, null, $"Ziehung beendet mit {nReject} wieder zurückgegebenen Plätzen");
+
             return nReject;
         }
 
@@ -275,15 +325,37 @@ namespace MyStik.TimeTable.DataServices.Lottery
         {
             // Anzahl der verfügbaren Plätze
             // Ausgangslage - aller bereits gezogener Plätze
-            var nCapacity = lotPot.SeatsAvailable - lotPot.Lots.Count(x => !x.Subscription.OnWaitingList);
+            var alreadyTaken = lotPot.Lots.Count(x => !x.Subscription.OnWaitingList);
+
+            var nCapacity = lotPot.SeatsAvailable - alreadyTaken;
+
+            AddMessage(lotPot.Course, null, "Starte Ziehung für Lostopf");
+            AddMessage(lotPot.Course, null, $"Freie Plätze vor Losdurchgang {lotPot.SeatsAvailable}");
+            AddMessage(lotPot.Course, null, $"Belegte Plätze durch gezogene Lose {alreadyTaken}");
+            AddMessage(lotPot.Course, null, $"Verfügbare Kapazität {nCapacity}");
+
 
             // alle gültigen Lose, die noch auf der Warteliste sind
+
+            var debugLots = lotPot.Lots.Where(x => x.Subscription.OnWaitingList).GroupBy(x => x.Priority)
+                .OrderBy(x => x.Key);
+            foreach (var lotGroup in debugLots)
+            {
+                var lotList = lotGroup.ToList();
+                AddMessage(lotPot.Course, null, $"Lose insgesamt: {lotList.Count} in Prio {lotGroup.Key}");
+            }
+
+
             var allLots = lotPot.Lots.Where(x => x.IsValid && x.Subscription.OnWaitingList).GroupBy(x => x.Priority)
                 .OrderBy(x => x.Key);
 
+
             foreach (var lotGroup in allLots)
             {
+
                 var lotList = lotGroup.ToList();
+
+                AddMessage(lotPot.Course, null, $"Valide Lose insgesamt: {lotList.Count} in Prio {lotGroup.Key}");
 
                 // passt die ganze Liste rein?
                 if (lotList.Count <= nCapacity)
@@ -293,7 +365,9 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     {
                         lot.Subscription.OnWaitingList = false;
                         lot.IsTouched = true;
-                        lot.Message = "Erfolg";
+                        lot.AddMessage("Platz erhalten, weil noch ausreichend Kapazität vorhanden");
+
+                        AddMessage(lot.Course, lot.Subscription, "Platz erhalten, weil noch ausreichend Kapazität vorhanden");
                     }
 
                     nCapacity = nCapacity - lotList.Count;
@@ -308,7 +382,9 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     {
                         lot.Subscription.OnWaitingList = false;
                         lot.IsTouched = true;
-                        lot.Message = "Erfolg";
+                        lot.AddMessage("Platz durch Los erhalten");
+
+                        AddMessage(lot.Course, lot.Subscription, "Platz durch Los erhalten");
                     }
 
                     break;
@@ -325,14 +401,34 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
                 // Student ist Ober-Pechvogel, wenn er gar nichts erhalten hat => zuerst 1 Kurs
                 // gar nichts: Keinen Platz und auch kein Los auf der Warteliste
-                var isJinx = !game.Seats.Any() && studentLots.All(x => x.IsValid && x.Subscription.OnWaitingList);
+                
+                // alte Formulierung
+                // var isJinx = !game.Seats.Any() && studentLots.All(x => x.IsValid && x.Subscription.OnWaitingList);
+
+                var nSeats = game.Seats.Count;
+                var nLots = studentLots.Count;
+                var nWaitingLots = studentLots.Count(x => x.Subscription.OnWaitingList);
+                var validLots = studentLots.Count(x => x.IsValid);
+                var nWaitingValidLots = studentLots.Count(x => x.IsValid && x.Subscription.OnWaitingList);
+
+                AddMessage(game.UserId, $"Plätze: {nSeats}, Lose {nLots}, auf Warteliste {nWaitingLots}, valide {validLots}, valide und Warteliste {nWaitingValidLots}");
+
+
+                bool isJinx = nSeats == 0 && nLots == nWaitingLots;
+
 
                 if (isJinx)
                 {
+                    AddMessage(game.UserId, $"Bisher keinen Platz erhalten");
+
                     // Suche einen Kurs, der noch freie Plätze hat und in dem er noch nicht drin ist
-                    var availableCourse = LotPots.Where(x =>
+                    var availableCourses = LotPots.Where(x =>
                         !x.Course.Occurrence.Subscriptions.Any(s => s.UserId.Equals(game.UserId)) &&
-                        x.RemainingSeats > 0).OrderByDescending(x => x.RemainingSeats).FirstOrDefault();
+                        x.RemainingSeats > 0).OrderByDescending(x => x.RemainingSeats).ToList();
+                        
+                     AddMessage(null, null, $"Es sind {availableCourses.Count} LVs noch frei");
+
+                     var availableCourse = availableCourses.FirstOrDefault();
 
                     if (availableCourse == null)
                     {
@@ -364,13 +460,15 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             var lot = new DrawingLot();
                             lot.IsTouched = true;
                             lot.IsValid = true;
-                            lot.Message = "Mindestens mal eine Lehrveranstaltung für den Pechvogel";
+                            lot.AddMessage("Platz über Pechvogelregel erhaltem");
                             lot.Subscription = subscription;
                             lot.Course = availableCourse.Course;
 
                             game.Lots.Add(lot);
 
                             availableCourse.Lots.Add(lot);
+
+                            AddMessage(lot.Course, lot.Subscription, "Platz über Pechvogelregel erhaltem");
 
                             /*
                             var lotPot = LotPots.SingleOrDefault(x => x.Course.Id == availableCourse.Course.Id);
@@ -433,7 +531,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             var lot = new DrawingLot();
                             lot.IsTouched = true;
                             lot.IsValid = true;
-                            lot.Message = "Trägt zur Erfüllung der Wünsche bei";
+                            lot.AddMessage("Trägt zur Erfüllung der Wünsche bei");
                             lot.Subscription = subscription;
                             lot.Course = availableCourse.Course;
 
@@ -459,5 +557,32 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
             return nSuccess;
         }
+
+        private void AddMessage(Course course, OccurrenceSubscription subscription, string remark)
+        {
+            Messages.Add(new DrawingMessage
+            {
+                TimeStamp = DateTime.Now,
+                Course = course,
+                Subscription = subscription,
+                UserId = subscription?.UserId,
+                Remark = remark
+            });
+
+        }
+
+        private void AddMessage(string userId, string remark)
+        {
+            Messages.Add(new DrawingMessage
+            {
+                TimeStamp = DateTime.Now,
+                Course = null,
+                Subscription = null,
+                UserId = userId,
+                Remark = remark
+            });
+
+        }
+
     }
 }

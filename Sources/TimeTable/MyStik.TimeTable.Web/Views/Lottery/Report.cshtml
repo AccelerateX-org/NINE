@@ -20,7 +20,15 @@
     </div>
 </div>
 
+<a href="@Url.Action("DeleteReport", new {id = Model.Id})">Löschen</a>
+
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Raw(Model.Message)
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             @foreach (var course in Model.OccurrenceDrawings)
@@ -93,7 +101,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             }
         </div>
     </div>

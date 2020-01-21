@@ -4181,6 +4181,7 @@
     <Content Include="Views\ThesisSupervision\AddSupervisors.cshtml" />
     <Content Include="Views\Shared\_ThesisPrintOut.cshtml" />
     <Content Include="Views\ThesisAdmin\Extend.cshtml" />
+    <Content Include="Views\Lottery\Reports.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
