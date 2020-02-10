@@ -46,6 +46,24 @@ namespace MyStik.TimeTable.Data
         public virtual Student Student { get; set; }
 
         /// <summary>
+        /// Vom Studierenden selbst festgelegter geplanter Beginn
+        /// wird automatisch zum Anmlededatum, wenn nicht anderweitig festgelegt
+        /// </summary>
+        public DateTime? PlannedBegin { get; set; }
+
+        /// <summary>
+        /// Geplantes Ende - wird immer automatisch auf Basis des Bearbeitunsgzeitraums des Studiengangs gesetzt
+        /// </summary>
+        public DateTime? PlannedEnd { get; set; }
+
+        /// <summary>
+        /// Datum der letzten Planänderung
+        /// Kann gemacht werden, solangde Arbeit noch nicht angemeldet ist
+        /// </summary>
+        public DateTime? LastPlanChange { get; set; }
+
+
+        /// <summary>
         /// Datum der Ausgabe
         /// Wird vom Studierenden am Tag der Anmeldung gesetzt
         /// </summary>

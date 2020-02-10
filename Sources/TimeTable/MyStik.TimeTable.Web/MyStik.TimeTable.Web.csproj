@@ -290,6 +290,7 @@
     <Compile Include="Api\Controller\ApiBaseController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
     <Compile Include="Api\Controller\CampusController.cs" />
+    <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
     <Compile Include="Api\Controller\CieHomeController.cs" />
     <Compile Include="Api\Controller\CoursesController.cs" />
@@ -311,6 +312,7 @@
     <Compile Include="Api\DTOs\ActionDto.cs" />
     <Compile Include="Api\DTOs\BaseDto.cs" />
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
+    <Compile Include="Api\DTOs\ZpCourseDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
     <Compile Include="Api\DTOs\CurriculumDto.cs" />
     <Compile Include="Api\DTOs\ModuleDto.cs" />
@@ -415,6 +417,8 @@
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\ExamController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
+    <Compile Include="Controllers\InternshipAdminController.cs" />
+    <Compile Include="Controllers\InternshipController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
     <Compile Include="Controllers\MailControllerMisc.cs" />
@@ -431,6 +435,7 @@
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
+    <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\ThesisAdminController.cs" />
     <Compile Include="Controllers\ThesisSupervisionController.cs" />
@@ -525,6 +530,7 @@
     <Compile Include="Models\HomeModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ImportModels.cs" />
+    <Compile Include="Models\InternshipModels.cs" />
     <Compile Include="Models\LecturerModels.cs" />
     <Compile Include="Models\LevelModels.cs" />
     <Compile Include="Models\LotteryModels.cs" />
@@ -3678,7 +3684,6 @@
     <Content Include="Views\Lottery\Select.cshtml" />
     <Content Include="Views\Lottery\_CourseTable.cshtml" />
     <Content Include="Views\Lottery\State.cshtml" />
-    <Content Include="Views\Lottery\Drawing.cshtml" />
     <Content Include="Views\Lottery\List.cshtml" />
     <Content Include="Views\Lottery\Subscribers.cshtml" />
     <Content Include="Views\Lottery\Edit.cshtml" />
@@ -3707,7 +3712,6 @@
     <Content Include="Views\CoursePlan\Overview.cshtml" />
     <Content Include="Views\RoomReport\Index.cshtml" />
     <Content Include="Views\RoomReport\TimeLine.cshtml" />
-    <Content Include="Views\Thesis\Index.cshtml" />
     <Content Include="Views\Module\Index.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumSelectList.cshtml" />
     <Content Include="Views\Building\Index.cshtml" />
@@ -3938,7 +3942,7 @@
     <Content Include="Views\Lottery\Selection.cshtml" />
     <Content Include="Views\Lottery\Students.cshtml" />
     <Content Include="Views\Lottery\SubscriberReport.cshtml" />
-    <Content Include="Views\Lottery\TestRun.cshtml" />
+    <Content Include="Views\Lottery\TestRunStart.cshtml" />
     <Content Include="Views\Lottery\_BetEditor.cshtml" />
     <Content Include="Views\Lottery\_BetState.cshtml" />
     <Content Include="Views\Lottery\_BetView.cshtml" />
@@ -4113,7 +4117,7 @@
     <Content Include="Views\Lecturer\Organiser.cshtml" />
     <Content Include="Views\Curricula\Organiser.cshtml" />
     <Content Include="Views\Lottery\StudentsPrio.cshtml" />
-    <Content Include="Views\Thesis\MyWork.cshtml" />
+    <Content Include="Views\Thesis\Index.cshtml" />
     <Content Include="Views\Thesis\Request.cshtml" />
     <Content Include="Views\ThesisAdmin\Approval.cshtml" />
     <Content Include="Views\ThesisAdmin\Deny.cshtml" />
@@ -4137,17 +4141,14 @@
     <Content Include="Views\Mail\ThesisSupervisorAssignEMail.html.cshtml" />
     <Content Include="Views\Thesis\AddSupervisors.cshtml" />
     <Content Include="Views\ThesisSupervision\ChangeTitle.cshtml" />
-    <Content Include="Views\ThesisSupervision\Marking.cshtml" />
     <Content Include="Views\Emails\ThesisMarked.cshtml" />
     <Content Include="Views\Emails\ThesisMarked.Html.cshtml" />
-    <Content Include="Views\ThesisSupervision\_PrintOut.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorIssuedEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorTitleChangedEMail.html.cshtml" />
     <Content Include="Views\ThesisAdmin\Archived.cshtml" />
     <Content Include="Views\ThesisAdmin\ChangeTitle.cshtml" />
     <Content Include="Views\ThesisAdmin\AddSupervisors.cshtml" />
     <Content Include="Views\ThesisAdmin\RequestIncomplete.cshtml" />
-    <Content Include="Views\ThesisAdmin\_PrintOut.cshtml" />
     <Content Include="Views\Mail\ThesisDeliveredEMail.html.cshtml" />
     <Content Include="Views\Mail\GenericMessageMail.html.cshtml" />
     <Content Include="Areas\Lab\Views\Shared\_Layout.cshtml" />
@@ -4182,6 +4183,25 @@
     <Content Include="Views\Shared\_ThesisPrintOut.cshtml" />
     <Content Include="Views\ThesisAdmin\Extend.cshtml" />
     <Content Include="Views\Lottery\Reports.cshtml" />
+    <Content Include="Views\Student\_ViewStart.cshtml" />
+    <Content Include="Views\Student\Index.cshtml" />
+    <Content Include="Views\Lottery\StatisticsOverall.cshtml" />
+    <Content Include="Views\ThesisAdmin\Announced.cshtml" />
+    <Content Include="Views\ThesisAdmin\Plannend.cshtml" />
+    <Content Include="Views\ThesisAdmin\Issued.cshtml" />
+    <Content Include="Views\Thesis\Plan.cshtml" />
+    <Content Include="Views\Thesis\Advisor.cshtml" />
+    <Content Include="Views\Internship\Index.cshtml" />
+    <Content Include="Views\Internship\Check.cshtml" />
+    <Content Include="Views\InternshipAdmin\Index.cshtml" />
+    <Content Include="Views\Lottery\TestRunResult.cshtml" />
+    <Content Include="Views\Internship\Plan.cshtml" />
+    <Content Include="Views\Internship\Advisor.cshtml" />
+    <Content Include="Views\InternshipAdmin\Announced.cshtml" />
+    <Content Include="Views\InternshipAdmin\Deny.cshtml" />
+    <Content Include="Views\InternshipAdmin\Approval.cshtml" />
+    <Content Include="Views\InternshipAdmin\Plannend.cshtml" />
+    <Content Include="Views\InternshipAdmin\Details.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

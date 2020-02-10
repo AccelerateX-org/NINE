@@ -40,6 +40,133 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Index");
         }
 
+
+        /// <summary>
+        /// Angekündigt
+        /// Alle Arbeiten, bei das Prüfungsamt noch nicht draufgesehen hat
+        /// oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Announced()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.RequestAuthority == null) ||       // PA hat das noch nicht gesehen
+                    (x.RequestAuthority != null && x.IsPassed.HasValue && x.IsPassed.Value == false) // Voraussetzungen nicht erfüllt
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+
+        public ActionResult Plannend()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IsPassed.HasValue && x.IsPassed.Value == true) && // Voraussetzungen erfüllt
+                    (x.IssueDate == null) // noch nicht angemeldet
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+
+        public ActionResult Issued()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null) && // angemeldet
+                    x.DeliveryDate == null      // noch nicht abgegeben
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+
         public ActionResult Running()
         {
             var org = GetMyOrganisation();
@@ -54,6 +181,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null && x.IssueDate.Value <= DateTime.Today) && // angemeldet in der Vergangenheit
                     x.DeliveryDate == null && // noch nich abgegeben
                     x.IsCleared == null // noch nicht archiviert
             ).ToList();
@@ -425,7 +553,7 @@ namespace MyStik.TimeTable.Web.Controllers
             new MailController().ThesisConditionCheckResponseEMail(tm).Deliver();
 
 
-            return RedirectToAction("Running");
+            return RedirectToAction("Announced");
         }
 
 
@@ -448,7 +576,7 @@ namespace MyStik.TimeTable.Web.Controllers
             new MailController().ThesisConditionCheckResponseEMail(tm).Deliver();
 
 
-            return RedirectToAction("Running");
+            return RedirectToAction("Announced");
         }
 
         /// <summary>

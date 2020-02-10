@@ -8,14 +8,15 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <h4 class="panel-heading">
-                    <i class="fa fa-file-o"></i> Prüfung der Voraussetzungen
+                    <i class="fa fa-legal"></i> Prüfung der Voraussetzungen
                 </h4>
                 <div class="panel-body">
-                    <div class="alert alert-info">
+                    <div class="alert alert-danger">
                         <h5>Hinweise</h5>
                         <ul>
-                            <li>Hiermit bestätige ich, dass ich die Voraussetzungen für die Anmeldung meiner Abschlussarbeit erfüllt habe.</li>
+                            <li>Hiermit bestätige ich, dass ich alle Voraussetzungen für die Anmeldung meiner Abschlussarbeit erfüllt habe.</li>
                             <li>Ich habe die Prüfung an Hand eigener Unterlagen und/oder Verwendung von primuss durchgeführt.</li>
+                            <li>Mir ist bewusst, dass das Prüfungsamt jederzeit meine hier gemachten Angaben überprüfen wird.</li>
                         </ul>
                     </div>
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
@@ -25,8 +26,8 @@
                         @Html.ValidationSummary(true)
                         <div class="form-group">
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Die Voraussetzungen sind erfüllt</button>
-                                <a href="@Url.Action("MyWork")" class="btn btn-default">Abbrechen</a>
+                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Ich habe alle Voraussetzungen erfüllt</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
                             </div>
                         </div>
                     }

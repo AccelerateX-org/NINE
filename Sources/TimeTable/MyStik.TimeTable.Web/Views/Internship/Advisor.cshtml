@@ -1,0 +1,110 @@
+﻿@using System.Activities.Statements
+@model MyStik.TimeTable.Web.Models.InternshipAdvisorViewModel
+@{
+    ViewBag.Title = "Abschlussarbeit";
+}
+
+
+@section styles
+{
+}
+
+@{
+    var selectList = new SelectList(
+        new List<SelectListItem>
+        {
+            new SelectListItem {Text = "Beratung, Planung & Strategie", Value = "Beratung, Planung & Strategie"},
+            new SelectListItem {Text = "Design, Medien & Gestaltung", Value = "Design, Medien & Gestaltung"},
+            new SelectListItem {Text = "Dokumentation & Redaktion", Value = "Dokumentation & Redaktion"},
+            new SelectListItem {Text = "Einkauf & Besachaffung", Value = "Einkauf & Besachaffung"},
+            new SelectListItem {Text = "Fertigung & Produktion", Value = "Fertigung & Produktion"},
+            new SelectListItem {Text = "Forschung & Entwicklung", Value = "Forschung & Entwicklung"},
+            new SelectListItem {Text = "Informatik & Software", Value = "Informatik & Software"},
+            new SelectListItem {Text = "Kundendienst & Customer Support", Value = "Kundendienst & Customer Support"},
+            new SelectListItem {Text = "Logistik / SCM", Value = "Logistik / SCM"},
+            new SelectListItem {Text = "Management & Unternehmensführung", Value = "Management & Unternehmensführung"},
+            new SelectListItem {Text = "Marketing & Kommunikation", Value = "Marketing & Kommunikation"},
+            new SelectListItem {Text = "Projektmanagement", Value = "Projektmanagement"},
+            new SelectListItem {Text = "Qualitätsmanagement", Value = "Qualitätsmanagement"},
+            new SelectListItem {Text = "Reporting & Controlling", Value = "Reporting & Controlling"},
+            new SelectListItem {Text = "Technik & Engineering", Value = "Technik & Engineering"},
+            new SelectListItem {Text = "Verkauf, Vertrieb & Akquise", Value = "Verkauf, Vertrieb & Akquise"},
+        }, "Value", "Text");
+}
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-industry"></i> AnsprechpartnerIn im Unternehmen
+                </h4>
+                <div class="panel-body">
+                    <div class="alert alert-warning">
+                        <h5>Wichtiger Hinweis:</h5>
+                        <p>Die Angabe der personenbezogenen Daten sollte nach Absprache mit allen Beteiligten gemacht werden.</p>
+                        <p>Einige PrüferInnen / SPOs sehen den Kontakt zum Unternehmen als verppflichtende Angabe an.</p>
+                    </div>
+
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                    {
+                        @Html.HiddenFor(m => m.Internship.Id)
+                        <div class="form-group">
+                            <label for="CorporateName" class="col-sm-3 control-label">Unternehmen</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.CorporateName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="PersonAction" class="col-sm-3 control-label">Tätigkeitsbereich / Abteilung</label>
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(m => m.PersonAction, selectList, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="PersonFirstName" class="col-sm-3 control-label">Vorname</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.PersonFirstName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="PersonLastName" class="col-sm-3 control-label">Nachname</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.PersonLastName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="PersonEMail" class="col-sm-3 control-label">E-Mail (geschäftlich)</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.PersonEMail, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="PersonPhone" class="col-sm-3 control-label">Telefonnummer (geschäftlich)</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.PersonPhone, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> speichern</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+
+    </script>
+}

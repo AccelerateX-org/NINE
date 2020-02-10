@@ -1,4 +1,4 @@
-﻿
+﻿@model MyStik.TimeTable.Web.Models.AdvertisementNewModel
 @{
     ViewBag.Title = "Digitaler Schaukasten";
 }
@@ -13,28 +13,72 @@
                 </div>
                 <div class="list-group">
                     <a class="list-group-item" href="@Url.Action("Internship", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-wrench"></i> praktisches Studiensemester</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-wrench"></i> praktisches Studiensemester
+                            @if (Model.Internships.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.Internships.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="@Url.Action("Thesis", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-graduation-cap"></i> Abschussarbeiten</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-graduation-cap"></i> Abschussarbeiten
+                            @if (Model.Theses.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.Theses.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="@Url.Action("Tutor", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-flask"></i> SHKs & Tutoren</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-flask"></i> SHKs & Tutoren
+                            @if (Model.Tutors.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.Tutors.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="@Url.Action("WorkingStudent", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-industry"></i> Werkstudententätigkeiten</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-industry"></i> Werkstudententätigkeiten
+                            @if (Model.WorkingStudents.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.WorkingStudents.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="@Url.Action("Advancement", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-money"></i> Stipendien</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-money"></i> Stipendien
+                            @if (Model.Advancements.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.Advancements.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="@Url.Action("Abroad", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-globe"></i> Auslandsaufenthalt</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-globe"></i> Auslandsaufenthalt
+                            @if (Model.StayAbroads.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.StayAbroads.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="@Url.Action("Competition", "Advertisements")">
-                        <h5 class="list-group-item-heading"><i class="fa fa-trophy"></i> Studentische Wettbewerbe</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-trophy"></i> Studentische Wettbewerbe
+                            @if (Model.Competitions.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.Competitions.Count neue</span>
+                            }
+                        </h5>
                     </a>
                     <a class="list-group-item" href="https://jobs.hm.edu/" target="_blank">
-                        <h5 class="list-group-item-heading"><i class="fa fa-external-link"></i> Jobportal der HM</h5>
+                        <h5 class="list-group-item-heading">
+                            <i class="fa fa-external-link"></i> Festanstellungen im Jobportal der HM
+                        </h5>
                     </a>
                 </div>
             </div>

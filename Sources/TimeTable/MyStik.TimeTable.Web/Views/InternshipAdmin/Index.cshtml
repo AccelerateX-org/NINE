@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "Praxissemester";
+}
+
+
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h4>Praxissemester @ViewBag.Organiser.ShortName</h4>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h5>Workflow Schritte Studierende(r)</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Announced")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-2x fa-bullhorn"></i></h4>
+                    <h5>angekündigt</h5>
+                    <p>Prüfung Voraussetzungen</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Plannend")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-2x fa-group"></i></h4>
+                    <h5>in Planung</h5>
+                    <p>Suche Unternehmen etc.</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Issued")" class="btn btn-default btn-block disabled">
+                    <h4><i class="fa fa-2x fa-legal"></i></h4>
+                    <h5>genehmigte</h5>
+                    <p>laufende und zukünftige</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Running")" class="btn btn-default btn-block disabled">
+                    <h4><i class="fa fa-2x fa-cogs"></i></h4>
+                    <h5>Laufende</h5>
+                    <p>im Unternehemn</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 10px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h5>Workflow Schritte PrüferIn</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Done")" class="btn btn-default btn-block disabled">
+                    <h4><i class="fa fa-2x fa-truck"></i></h4>
+                    <h5>Planung Kolloquium</h5>
+                    <p>Termin, Zusammensetzung</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Graduates")" class="btn btn-default btn-block disabled">
+                    <h4><i class="fa fa-2x fa-graduation-cap"></i></h4>
+                    <h5>abgeschlossene Praktika</h5>
+                    <p>Noten wurden gemeldet</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Archived")" class="btn btn-default btn-block disabled">
+                    <h4><i class="fa fa-2x fa-archive"></i></h4>
+                    <h5>Historie</h5>
+                    <p>Archiv</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h5>Auswertungen und Verwaltung</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Statistics")" class="btn btn-default btn-block disabled">
+                    <h4><i class="fa fa-2x fa-bar-chart"></i></h4>
+                    <h5>Statistik</h5>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

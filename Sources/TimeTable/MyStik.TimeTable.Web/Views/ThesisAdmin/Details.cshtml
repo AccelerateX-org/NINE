@@ -20,10 +20,10 @@
                         @if (Model.Thesis.DeliveryDate != null)
                         {
                             if (Model.Thesis.GradeDate != null)
-                             {
-                                 <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success disabled">Note melden</a>
-                                 <a href="@Url.Action("Archive", new {id = Model.Thesis.Id})" class="btn btn-success">Arbeit abgerechnet</a>
-                             }
+                            {
+                                <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success disabled">Note melden</a>
+                                <a href="@Url.Action("Archive", new {id = Model.Thesis.Id})" class="btn btn-success">Arbeit abgerechnet</a>
+                            }
                             else
                             {
                                 <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success">Note melden</a>
@@ -142,16 +142,81 @@
                             <div class="media-body">
                                 <h4 class="media-heading">Festlegung des Themas</h4>
                                 <ul class="fa-ul">
-                                    <li><i class="fa fa-calendar fa-li"></i>de: "@Model.Thesis.TitleDe"</li>
-                                    <li><i class="fa fa-barcode fa-li"></i>en: "@Model.Thesis.TitleEn"</li>
+                                    <li><i class="fa fa-file-text fa-li"></i>de: "@Model.Thesis.TitleDe"</li>
+                                    <li><i class="fa fa-file-text fa-li"></i>en: "@Model.Thesis.TitleEn"</li>
                                 </ul>
                                 @if (Model.Thesis.GradeDate == null)
                                 {
-                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Titel korrigieren</a>
+                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Thema korrigieren</a>
                                 }
                             </div>
                         </div>
                     </div>
+                    @{
+                        isOk = Model.Thesis.PlannedBegin.HasValue && Model.Thesis.PlannedEnd.HasValue;
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Festlegung des geplanten Bearbeitungszeitraums</h4>
+                                @if (isOk)
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-calendar fa-li"></i>Beginn: "@Model.Thesis.PlannedBegin.Value.ToShortDateString()"</li>
+                                        <li><i class="fa fa-calendar fa-li"></i>Ende: "@Model.Thesis.PlannedEnd.Value.ToShortDateString()"</li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p>Kein geplanter Bearbeitungszeitraum festgelegt</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @{
+                        isOk = true;
+
+                        mediaStyle = "fa-info-circle text-primary";
+
+                        var advisor = Model.Thesis.Advisors.FirstOrDefault();
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Angabe Unternehmen</h4>
+                                @if (advisor != null)
+                                {
+                                <ul class="fa-ul">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-industry fa-li"></i>@advisor.PersonFirstName @advisor.PersonLastName</li>
+                                        <li><i class="fa fa-user fa-li"></i>@advisor.CorporateName - @advisor.PersonAction</li>
+                                        <li><i class="fa fa-envelope fa-li"></i>@advisor.PersonEMail</li>
+                                        <li><i class="fa fa-phone fa-li"></i>@advisor.PersonPhone</li>
+                                    </ul>
+                                </ul>
+                                }
+                                else
+                                {
+                                    <p>Kein Unternehmenskontakt angegeben</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+
 
                     @{
                         isOk = Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null);
@@ -165,21 +230,21 @@
                                 <i class="fa fa-5x @mediaStyle"></i>
                             </div>
                             <div class="media-body">
-                                <h4 class="media-heading">Auswahl der BetreuerInnen</h4>
+                                <h4 class="media-heading">Auswahl der PrüferIn</h4>
                                 <ul class="fa-ul">
                                     @foreach (var s in Model.Thesis.Supervisors)
                                     {
                                         if (s.AcceptanceDate != null)
                                         {
                                             <li>
-                                                <i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString()) 
+                                                <i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString())
                                                 <a href="@Url.Action("RemoveSupervisor", new {id = s.Id})" class="btn btn-default btn-xs">entfernen</a>
                                             </li>
                                         }
                                         else
                                         {
                                             <li>
-                                                <i class="fa fa-user-md fa-li"></i>@s.Member.FullName (keine Antwort) 
+                                                <i class="fa fa-user-md fa-li"></i>@s.Member.FullName (keine Antwort)
                                                 <a href="@Url.Action("AssignSupervisor", new {id = s.Id})" class="btn btn-default btn-xs">bestätigen</a>
                                                 <a href="@Url.Action("RemoveSupervisor", new {id = s.Id})" class="btn btn-default btn-xs">entfernen</a>
                                             </li>
@@ -187,7 +252,7 @@
 
                                     }
                                 </ul>
-                                <a href="@Url.Action("AddSupervisors", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn hinzufügen</a>
+                                <a href="@Url.Action("AddSupervisors", new {id=Model.Thesis.Id})" class="btn btn-primary">PrüferIn hinzufügen</a>
                             </div>
                         </div>
                     </div>
@@ -251,13 +316,13 @@
                                             else
                                             {
                                                 if (Model.Thesis.RenewalDate != null)
-                                                 {
-                                                     <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe (Abgabe verlängert)</li>
-                                                 }
-                                                 else
-                                                 {
-                                                     <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
-                                                 }
+                                                {
+                                                    <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe (Abgabe verlängert)</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                                                }
                                             }
                                         </ul>
                                         <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe erfassen</a>
@@ -276,7 +341,15 @@
                                 else
                                 {
                                     <p>Noch nicht angemeldet</p>
-                                    <a href="@Url.Action("Issue", new {id=Model.Thesis.Id})" class="btn btn-primary">Anmelden</a>
+                                    if (Model.Thesis.Supervisors.All(x => x.AcceptanceDate == null))
+                                    {
+                                        <p>Es muss mindestsns ein(e) PrüferIn angegeben sein.</p>
+
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Issue", new {id=Model.Thesis.Id})" class="btn btn-primary">Anmelden</a>
+                                    }
                                 }
                             </div>
                         </div>

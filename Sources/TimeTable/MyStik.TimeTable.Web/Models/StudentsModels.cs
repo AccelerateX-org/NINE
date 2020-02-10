@@ -300,4 +300,17 @@ namespace MyStik.TimeTable.Web.Models
         public List<StudentsByCurriculumViewModel> StudentsByCurriculum { get; private set; }
     }
 
+
+    public class StudentSummaryModel
+    {
+        public Student Student { get; set; }
+
+        public Thesis Thesis { get; set; }
+
+        public Internship Internship { get; set; }
+
+        public List<Semester> Semester { get; set; }
+    }
+
+
 }

@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Linq;
+using System.Net.Mail;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Services;
+using MyStik.TimeTable.Web.Utils;
+using PdfSharp;
+using PdfSharp.Pdf;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -13,7 +19,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class ThesisController : BaseController
     {
-        public ActionResult MyWork()
+        public ActionResult Index()
         {
             var user = GetCurrentUser();
             var student = StudentService.GetCurrentStudent(user);
@@ -81,7 +87,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("MyWork");
+            return RedirectToAction("Index");
         }
 
 
@@ -138,7 +144,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("MyWork");
+            return RedirectToAction("Index");
         }
 
 
@@ -213,7 +219,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return Json(new { result = "Redirect", url = Url.Action("MyWork") });
+            return Json(new { result = "Redirect", url = Url.Action("Index") });
         }
 
 
@@ -244,7 +250,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return RedirectToAction("MyWork");
+            return RedirectToAction("Index");
         }
 
         public ActionResult RemoveSupervisor(Guid id)
@@ -272,7 +278,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("MyWork");
+            return RedirectToAction("Index");
         }
 
         public ActionResult Issue()
@@ -335,8 +341,75 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return RedirectToAction("MyWork");
+            return RedirectToAction("Index");
         }
+
+
+        public ActionResult Plan()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+            var model = new ThesisStateModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis,
+                IssueDate = DateTime.Today.ToShortDateString()
+            };
+
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Plan(ThesisStateModel model)
+        {
+            var date = DateTime.Parse(model.IssueDate);
+
+            if (date < DateTime.Today)
+            {
+                var user = GetCurrentUser();
+                var student = StudentService.GetCurrentStudent(user);
+                var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+                var model2 = new ThesisStateModel
+                {
+                    User = user,
+                    Student = student,
+                    Thesis = thesis2,
+                    IssueDate = DateTime.Today.ToShortDateString()
+                };
+
+                ModelState.AddModelError("", "Das Datum muss in der Zukunft liegen");
+
+                return View(model2);
+            }
+
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+            int period = 0;
+            bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
+            if (!success || period == 0)
+            {
+                period = 3;
+            }
+
+            thesis.PlannedBegin = DateTime.Parse(model.IssueDate);
+            thesis.PlannedEnd = thesis.PlannedBegin.Value.AddMonths(period);
+            thesis.LastPlanChange = DateTime.Now;
+            ;
+
+            Db.SaveChanges();
+
+
+
+            return RedirectToAction("Index");
+        }
+
 
         private ThesisMailModel InitMailModel(Thesis t, ApplicationUser senderUser)
         {
@@ -361,6 +434,99 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return model;
         }
+
+
+        public ActionResult Advisor(Guid id)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            var model = new ThesisAdvisorViewModel
+            {
+                Thesis = thesis
+            };
+
+            var advisor = thesis.Advisors.FirstOrDefault();
+            if (advisor != null)
+            {
+                model.CorporateName = advisor.CorporateName;
+                model.PersonFirstName = advisor.PersonFirstName;
+                model.PersonLastName = advisor.PersonLastName;
+                model.PersonAction = advisor.PersonAction;
+                model.PersonEMail = advisor.PersonEMail;
+                model.PersonPhone = advisor.PersonPhone;
+            }
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Advisor(ThesisAdvisorViewModel model)
+        {
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+            var advisor = thesis.Advisors.FirstOrDefault();
+
+            if (advisor == null)
+            {
+                advisor = new Advisor();
+                advisor.Thesis = thesis;
+                thesis.Advisors.Add(advisor);
+            }
+
+            advisor.CorporateName = model.CorporateName;
+            advisor.PersonFirstName = model.PersonFirstName;
+            advisor.PersonLastName = model.PersonLastName;
+            advisor.PersonAction = model.PersonAction;
+            advisor.PersonEMail = model.PersonEMail;
+            advisor.PersonPhone = model.PersonPhone;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult MarkingEmpty(Guid id)
+        {
+            var userService = new UserInfoService();
+            var user = GetCurrentUser();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
+            var tm = new ThesisStateModel()
+            {
+                Thesis = thesis,
+                Student = thesis.Student,
+                User = userService.GetUser(thesis.Student.UserId),
+                Mark = ""
+            };
+
+
+            // hier zunächst mit Postal - weil es so geht
+            var stream = new MemoryStream();
+
+            var email = new ThesisEmail("ThesisMarked");
+            email.To = user.Email;
+            email.From = MailController.InitSystemFrom();
+            email.Subject = "Notenmeldung Abschlussarbeit";
+            email.Thesis = tm;
+            email.Receiver = user;
+
+            var html = this.RenderViewToString("_ThesisPrintOut", email);
+            PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
+            //pdf.Save("document.pdf");
+            pdf.Save(stream, false);
+
+            // Stream zurücksetzen
+            stream.Position = 0;
+            email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+            email.Send();
+
+            return RedirectToAction("Index");
+        }
+
 
     }
 }

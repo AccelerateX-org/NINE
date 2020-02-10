@@ -37,6 +37,11 @@
                                         <i class="fa fa-plus-circle"></i> Wahlverfahren anlegen
                                     </a>
                                 </div>
+                                <div class="form-group">
+                                    <a href="@Url.Action("StatisticsOverall", new {id = ViewBag.Semester.Id})" class="btn btn-default">
+                                        <i class="fa fa-bar-chart"></i> Gesamtstatistik
+                                    </a>
+                                </div>
                                 if (Request.IsLocal)
                                 {
                                     <div class="form-group">
@@ -99,6 +104,7 @@
                         <div class="col-md-3">
                             <ul class="fa-ul">
                                 <li><i class="fa-li fa fa-percent"></i>Buchungsstatus</li>
+                                <li><i class="fa-li fa fa-ban text-danger"></i>wird nicht angezeigt</li>
                             </ul>
                         </div>
                     </div>
@@ -117,6 +123,7 @@
                             <table class="table table-condensed">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th></th>
                                         <th>Name</th>
                                         <th style="text-align: right"><i class="fa fa-book"></i></th>
@@ -156,6 +163,14 @@
                                         @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
                                         {
                                             <td>@i</td>
+                                            if (lottery.Lottery.IsActive)
+                                            {
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                <td><i class="fa fa-ban text-danger"></i></td>
+                                            }
                                             <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
                                         }
                                         else
@@ -169,7 +184,16 @@
                                             {
                                                 <td></td>
                                             }
-                                            <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
+                                            if (lottery.Lottery.IsActive)
+                                            {
+                                                <td><i class="fa fa-unlock"></i></td>
+                                                <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
+                                            }
+                                            else
+                                            {
+                                                <td><i class="fa fa-lock"></i></td>
+                                                <td>@lottery.Lottery.Name</td>
+                                            }
                                         }
                                         <td style="text-align: right">@lottery.Lottery.Occurrences.Count</td>
                                         <td style="text-align: right">@lottery.Capacity</td>

@@ -87,7 +87,7 @@
                                 <i class="fa fa-5x @mediaStyle"></i>
                             </div>
                             <div class="media-body">
-                                <h4 class="media-heading">Prüfung der Voraussetzungen</h4>
+                                <h4 class="media-heading">Erfüllung der Voraussetzungen</h4>
                                 @if (Model.ConditionRequest == RequestState.None)
                                 {
                                     <p>Voraussetzungen wurden nicht geprüft</p>
@@ -138,7 +138,7 @@
                                 <i class="fa fa-5x @mediaStyle"></i>
                             </div>
                             <div class="media-body">
-                                <h4 class="media-heading">Festlegung des Themas</h4>
+                                <h4 class="media-heading">Thema</h4>
                                 <ul class="fa-ul">
                                     <li><i class="fa fa-calendar fa-li"></i>de: "@Model.Thesis.TitleDe"</li>
                                     <li><i class="fa fa-barcode fa-li"></i>en: "@Model.Thesis.TitleEn"</li>
@@ -150,6 +150,73 @@
                             </div>
                         </div>
                     </div>
+
+                    @{
+                        isOk = Model.Thesis.PlannedBegin != null &&
+                               Model.Thesis.PlannedEnd != null;
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Geplanter Bearbeitungszeitraum</h4>
+                                <p>Der geplante Zeitraum dient der Information für den/die PrüferIn. Es kann, muss aber nicht identisch zum Datum der Anmeldung sein.</p>
+                                @if (Model.Thesis.PlannedBegin != null && Model.Thesis.PlannedEnd != null && Model.Thesis.LastPlanChange != null)
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-calendar fa-li"></i>geplanter Beginn: @Model.Thesis.PlannedBegin.Value.ToShortDateString() </li>
+                                        <li><i class="fa fa-calendar fa-li"></i>geplantes Abgabedatum: @Model.Thesis.PlannedEnd.Value.ToShortDateString()</li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p>Bis noch keinen Zeitraum festgelegt</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    @{
+                        isOk = Model.Thesis.Advisors.Any();
+                        var advisor = Model.Thesis.Advisors.FirstOrDefault();
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-info-circle text-primary";
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">BetreuerIn im Unternehmen</h4>
+                                @if (advisor != null)
+                                {
+                                    <p>Aktuelle Angabe</p>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-industry fa-li"></i>@advisor.PersonFirstName @advisor.PersonLastName</li>
+                                        <li><i class="fa fa-user fa-li"></i>@advisor.CorporateName - @advisor.PersonAction</li>
+                                        <li><i class="fa fa-envelope fa-li"></i>@advisor.PersonEMail</li>
+                                        <li><i class="fa fa-phone fa-li"></i>@advisor.PersonPhone</li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p>keine Angabe gemacht</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
 
                     @{
                         isOk = Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null);
@@ -232,89 +299,90 @@
 
                     }
 
-                <div class="list-group-item">
-                    <div class="media">
-                        <div class="media-left">
-                            <i class="fa fa-5x @mediaStyle"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">Anmeldung / Abgabe</h4>
-                            @if (isIssued)
-                            {
-                                if (!isDelivered)
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Anmeldung / Abgabe</h4>
+                                @if (isIssued)
                                 {
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
-                                        <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                                        <li><i class="fa fa-li fa-cog"></i>Noch @Model.DaysToExpire Tage bis zur Abgabe</li>
+                                    if (!isDelivered)
+                                    {
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                                            <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                            <li><i class="fa fa-li fa-cog"></i>Noch @Model.DaysToExpire Tage bis zur Abgabe</li>
+                                        </ul>
+                                        if (Model.Position == 1)
+                                        {
+
+                                            <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe bestätigt</a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>Arbeit wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() abgegeben.</p>
+                                        if (Model.Position == 1)
+                                        {
+                                            <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Noch nicht angemeldet.</p>
+                                    <ul>
+                                        <li>Die Anmeldung erfolgt entweder durch den Studierenden. Dabei kann vom geplanten Bearbeitungszeitraum abgewichen werden.</li>
+                                        <li>Andernfalls wird die Arbeit automatisch zum geplanten Termin angemeldet.</li>
                                     </ul>
-                                    if (Model.Position == 1)
-                                    {
+                                    
+                                }
+                            </div>
+                        </div>
+                    </div>
 
-                                        <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe bestätigt</a>
+                    @{
+                        isOk = Model.Thesis.GradeDate != null;
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Benotung</h4>
+                                @if (Model.Thesis.DeliveryDate != null)
+                                {
+                                    if (isOk)
+                                    {
+                                        <p>Arbeit wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() bewertet.</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Noch nicht bewertet</p>
+                                        @*
+                            <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
+                                        *@
+
+                                        if (Model.Position == 1)
+                                        {
+                                            <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary">Notenmeldung anfordern</a>
+                                        }
                                     }
                                 }
                                 else
                                 {
-                                    <p>Arbeit wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() abgegeben.</p>
-                                    if (Model.Position == 1)
-                                    {
-                                        <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
-                                    }
+                                    <p>Noch nicht abgegeben</p>
                                 }
-                            }
-                            else
-                            {
-                                <p>Noch nicht angemeldet</p>
-                                if (Model.Position == 1)
-                                {
-                                    <a href="@Url.Action("Issue", new {id = Model.Thesis.Id})" class="btn btn-primary">Anmelden</a>
-                                }
-                            }
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                @{
-                    isOk = Model.Thesis.GradeDate != null;
-
-                    mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
-
-                }
-
-                <div class="list-group-item">
-                    <div class="media">
-                        <div class="media-left">
-                            <i class="fa fa-5x @mediaStyle"></i>
-                        </div>
-                        <div class="media-body">
-                            <h4 class="media-heading">Benotung</h4>
-                            @if (Model.Thesis.DeliveryDate != null)
-                            {
-                                if (isOk)
-                                {
-                                    <p>Arbeit wurde am @Model.Thesis.GradeDate.Value.ToShortDateString() bewertet.</p>
-                                }
-                                else
-                                {
-                                    <p>Noch nicht bewertet</p>
-                                @*
-                                <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
-                                    *@
-
-                                    if (Model.Position == 1)
-                                    {
-                                        <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary">Notenmeldung anfordern</a>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                <p>Noch nicht abgegeben</p>
-                            }
-                        </div>
-                    </div>
-                </div>
                 </div>
             </div>
         </div>

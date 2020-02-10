@@ -34,7 +34,7 @@
                         @Html.ValidationSummary(false)
                         @Html.HiddenFor(m => m.Thesis.Id)
                         <div class="form-group">
-                            <label for="IssueDate" class="col-sm-3 control-label">Datum der Anmeldung (muss in der Zukunft liegen)</label>
+                            <label for="IssueDate" class="col-sm-3 control-label">Datum der Anmeldung (heute oder später)</label>
                             <div class="col-sm-6">
                                 @Html.TextBoxFor(m => m.IssueDate, new { @class = "form-control datepicker" })
                             </div>
@@ -44,7 +44,7 @@
                         <div class="form-group">
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> speichern</button>
-                                <a href="@Url.Action("MyWork")" class="btn btn-default">Abbrechen</a>
+                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
                             </div>
                         </div>
                     }

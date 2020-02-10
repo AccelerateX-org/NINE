@@ -257,7 +257,30 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
         /// <param name="u"></param>
         private void CreateCourseEvent(Kurs course, Unterricht u)
         {
-            var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(u.RaumID));
+            // die u.RaumID kann auch mehrere Räume enthalten
+            // Trennzeichen mit "~"
+            Raum room = null;
+            if (u.RaumID.StartsWith("~"))
+            {
+                // das sind nun mehrere Räume
+                var roomIds = u.RaumID.Trim().Split('~');
+                foreach (var roomId in roomIds)
+                {
+                    if (!string.IsNullOrEmpty(roomId))
+                    {
+                        room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(roomId));
+                        // es reicht, wenn ein Raum dabei ist
+                        if (room != null)
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(u.RaumID));
+            }
+
+            
             var lecturer = ctx.Dozenten.SingleOrDefault(l => l.DozentID.Equals(u.DozentID));
 
             if (lecturer == null)
@@ -275,7 +298,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 termin = course.Termine.SingleOrDefault(e =>
                     e.Tag == u.Tag &&
                     e.BisStunde + 1 == u.Stunde &&
-                    e.Raeume.Any(r => r.RaumID.Equals(u.RaumID)) &&
+                    e.Raeume.Any(r => r.RaumID.Equals(room.RaumID)) &&
                     e.Dozenten.Any(d => d.DozentID.Equals(u.DozentID)));
                 if (termin != null)
                 {
@@ -287,7 +310,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 termin = course.Termine.SingleOrDefault(e =>
                     e.Tag == u.Tag &&
                     e.VonStunde - 1 == u.Stunde &&
-                    e.Raeume.Any(r => r.RaumID.Equals(u.RaumID)) &&
+                    e.Raeume.Any(r => r.RaumID.Equals(room.RaumID)) &&
                     e.Dozenten.Any(d => d.DozentID.Equals(u.DozentID)));
                 if (termin != null)
                 {
@@ -295,15 +318,42 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                     return;
                 }
 
-                // gleicher Tag und innerhalb des bisherigen Zeitraums und gleicher Raum
+                // gleicher Tag und innerhalb des bisherigen Zeitraums und gleicher Raum und Dozent schon angegeben
                 // das können wohl auch mehr werden!
                 termin = course.Termine.SingleOrDefault(e =>
                     e.Tag == u.Tag &&
                     (e.VonStunde <= u.Stunde && u.Stunde <= e.BisStunde) &&
-                    e.Raeume.Any(r => r.RaumID.Equals(u.RaumID)) &&
+                    e.Raeume.Any(r => r.RaumID.Equals(room.RaumID)) &&
                     e.Dozenten.Any(d => d.DozentID.Equals(u.DozentID)));
                 if (termin != null)
                     return;
+
+                // gleicher Zeitraum
+                termin = course.Termine.SingleOrDefault(e =>
+                    e.Tag == u.Tag &&
+                    (e.VonStunde <= u.Stunde && u.Stunde <= e.BisStunde));
+
+                if (termin != null)
+                {
+                    // wenn es ein neuer Raum ist, dann einen neuen Termin machen
+                    var kursRaum = termin.Raeume.SingleOrDefault(r => r.RaumID.Equals(room.RaumID));
+
+                    if (kursRaum != null)
+                    {
+                        // wenn der Raum bekannt ist
+                        var kursDozent = termin.Dozenten.SingleOrDefault(d => d.DozentID.Equals(lecturer.DozentID));
+                        if (kursDozent != null)
+                        {
+                            // wenn Dozent schon drin => nix machen
+                        }
+                        else
+                        {
+                            // wenn neuer Dozent für diesen Termin => an Termin anhängen
+                            termin.Dozenten.Add(lecturer);
+                            return;
+                        }
+                    }
+                }
             }
             else
             {
@@ -384,13 +434,16 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             if (u.RaumID.StartsWith("~"))
             {
                 // das sind nun mehrere Räume
-                var roomIds = u.RaumID.Split('~');
+                var roomIds = u.RaumID.Trim().Split('~');
                 foreach (var roomId in roomIds)
                 {
-                    var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(roomId));
-                    if (room != null)
+                    if (!string.IsNullOrEmpty(roomId))
                     {
-                        rooms.Add(room);
+                        var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(roomId));
+                        if (room != null)
+                        {
+                            rooms.Add(room);
+                        }
                     }
                 }
             }

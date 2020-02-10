@@ -34,9 +34,19 @@
                 <li class="nav-item">
                     <a class="nav-link text-center disabled" href="@Url.Action("Index", "Calendar")"><i class="fas fa-calendar fa-fw"></i><br />Mein Tag</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center disabled" href="#"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
-                </li>
+                @if (user.MemberState == MemberState.Student)
+                {
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Student")"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-center disabled" href="#"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
+                    </li>
+                }
+
                 @if (user.MemberState == MemberState.Staff)
                 {
                     <li class="nav-item active">

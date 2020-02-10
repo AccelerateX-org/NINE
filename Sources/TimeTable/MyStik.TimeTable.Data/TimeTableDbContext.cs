@@ -176,7 +176,7 @@ namespace MyStik.TimeTable.Data
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
 
-
+        public DbSet<Internship> Internships { get; set; }
 
 
 

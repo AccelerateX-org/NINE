@@ -2668,33 +2668,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.InitLotPots();
 
-            var org = GetMyOrganisation();
 
-            var userDb = new ApplicationDbContext();
-            var userName = $"{org.ShortName}.test.stud";
-
-            var users = userDb.Users.Where(x => x.UserName.StartsWith(userName)).ToList();
-
-            // jeden testuser durchgehen
-            var students = new List<Student>();
-            foreach (var user in users)
-            {
-                var student = Db.Students.Where(x => x.UserId.Equals(user.Id)).OrderByDescending(x => x.Created)
-                    .FirstOrDefault();
-                if (student != null)
-                {
-                    students.Add(student);
-                }
-            }
-            ViewBag.Students = students;
-
-            return View(model);
+            return View("TestRunStart", model);
         }
 
 
 
 
-        public ActionResult DrawLotPots(Guid id)
+        public ActionResult TestDrawing(Guid id)
         {
             var drawing = new LotteryDrawing();
             drawing.Start = DateTime.Now;
@@ -2721,7 +2702,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             }
 
-            return View("TestRun", model);
+            return View("TestRunResult", model);
         }
 
 
@@ -3178,6 +3159,87 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Details", new {id=lottery.Id});
+        }
+
+
+        public ActionResult Show(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(x => x.Id == id);
+
+            lottery.IsActive = true;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = lottery.Id });
+        }
+
+        public ActionResult Hide(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(x => x.Id == id);
+
+            lottery.IsActive = false;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = lottery.Id });
+        }
+
+
+        public ActionResult StatisticsOverall(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var semester = SemesterService.GetSemester(id);
+
+
+            var alLotteries = Db.Lotteries.Where(x =>
+                x.Semester != null && x.Semester.Id == semester.Id &&
+                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
+
+
+            var userService = new UserInfoService();
+
+            var model = new List<LotteryStudentStatisticsModel>();
+
+
+            foreach (var lottery in alLotteries)
+            {
+                foreach (var occurrence in lottery.Occurrences)
+                {
+                    // nur die Plätze - keine Wartelisten
+                    foreach (var subscription in occurrence.Subscriptions.Where(x => !x.OnWaitingList).ToList())
+                    {
+                        var user = userService.GetUser(subscription.UserId);
+                        var student = Db.Students.Where(x => x.UserId.Equals(subscription.UserId))
+                            .OrderByDescending(x => x.Created).FirstOrDefault();
+
+                        var studentModel = model.SingleOrDefault(x => x.StudentUser.Id.Equals(subscription.UserId));
+
+                        if (studentModel == null)
+                        {
+
+                            studentModel = new LotteryStudentStatisticsModel
+                            {
+                                Student = student,
+                                StudentUser = user,
+                                LotterySubscription = new List<LotterySubscriptionStatisticsModel>()
+                            };
+
+                            model.Add(studentModel);
+                        }
+
+                        studentModel.LotterySubscription.Add(
+                            new LotterySubscriptionStatisticsModel
+                            {
+                                Lottery = lottery,
+                                Subscription = subscription
+                            });
+                    }
+                }
+            }
+
+
+            return View(model);
         }
 
     }

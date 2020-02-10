@@ -1,0 +1,91 @@
+﻿@model ICollection<MyStik.TimeTable.Web.Models.LotteryStudentStatisticsModel>
+@{
+    ViewBag.Title = "StatisticsOverall";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Auswertung aller Wahlverfahren im Semester @ViewBag:Semester.Name nach Studierenden</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Liste der Studierenden</h4>
+                </div>
+
+
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>Zugeteilt</th>
+                            <th>unbekannt</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model)
+                        {
+                        <tr>
+                            <td>@student.StudentUser.FullName</td>
+                            @for (var i = 1; i <= 6; i++)
+                            {
+                                var nPrio = student.LotterySubscription.Count(x => x.Subscription.Priority == i);
+                                if (nPrio > 0)
+                                {
+                                    <td>@nPrio</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                            @{
+
+                                var nPech = student.LotterySubscription.Count(x => x.Subscription.Priority == 0);
+                                if (nPech > 0)
+                                {
+                                    <td>@nPech</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+
+                                var nUnknown = student.LotterySubscription.Count(x => x.Subscription.Priority == null);
+                                if (nUnknown > 0)
+                                {
+                                    <td>@nUnknown</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</div>

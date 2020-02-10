@@ -50,8 +50,8 @@
                         <h6>Mein Studium (@Model.Student.Curriculum.ShortName)</h6>
                     </a>
                     <div class="btn-group btn-group-justified">
-                        <a href="#" class="btn btn-outline-dark disabled">...</a>
-                        <a href="@Url.Action("MyWork", "Thesis")" class="btn btn-outline-dark">Abschlussarbeit</a>
+                        <a href="@Url.Action("Index", "Internship")" class="btn btn-outline-dark">Praxissemester</a>
+                        <a href="@Url.Action("Index", "Thesis")" class="btn btn-outline-dark">Abschlussarbeit</a>
                     </div>
                 </div>
             }
@@ -169,7 +169,7 @@
                 <h6>Veranstaltungen</h6>
             </a>
             <div class="btn-group btn-group-justified">
-                <a href="" class="btn btn-outline-dark disabled">...</a>
+                <a href="@Url.Action("Index", "Newsletter")" class="btn btn-outline-dark">Newsletter</a>
                 <a href="" class="btn btn-outline-dark disabled">...</a>
             </div>
         </div>
@@ -177,12 +177,18 @@
     <div class="col-sm-6 col-md-3 col-lg-2">
         <div class="card text-center">
             <a href="@Url.Action("Overview", "Advertisements")" class="btn btn-outline-dark btn-block">
-                <h5><i class="fa fa-2x fa-window-maximize"></i></h5>
-                <h6>Schaukasten</h6>
+                <h5>
+                    <i class="fa fa-2x fa-window-maximize"></i>
+                    @if (Model.Advertisements.Count > 0)
+                    {
+                        <span class="badge badge-danger">@Model.Advertisements.Count neue</span>
+                    }
+                </h5>
+                <h6>Schaukasten<br />(Stellenzeigen & mehr)</h6>
             </a>
             <div class="btn-group btn-group-justified">
-                <a href="@Url.Action("Index", "Newsletter")" class="btn btn-outline-dark">Newsletter</a>
-                <a href="https://jobs.hm.edu" target="_blank" class="btn btn-outline-dark">Jobbörse HM</a>
+                <a href="" class="btn btn-outline-dark disabled">...</a>
+                <a href="" class="btn btn-outline-dark disabled">...</a>
             </div>
         </div>
     </div>

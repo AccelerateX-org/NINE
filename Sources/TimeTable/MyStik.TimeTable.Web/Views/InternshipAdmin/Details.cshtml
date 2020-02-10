@@ -1,0 +1,165 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.InternshipStateModel
+@{
+    ViewBag.Title = "Praxissemester";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Status Praxissemester @Model.User.FullName</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
+                        <a href="mailto:@Model.User.Email" class="btn btn-default">E-Mail senden</a>
+                    </div>
+                    @{
+                        var isNameOk = !string.IsNullOrEmpty(Model.User.FirstName) && !string.IsNullOrEmpty(Model.User.LastName);
+                        var isStudOk = !string.IsNullOrEmpty(Model.Student.Number);
+
+                        var isOk = isNameOk && isStudOk;
+
+                        var mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Allgemeine Angaben</h4>
+                                <ul class="fa-ul">
+                                    @if (isNameOk)
+                                    {
+                                        <li><i class="fa fa-user fa-li"></i>@Model.User.FullName</li>
+
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-user fa-li"></i> Angabe unvollständig</li>
+                                    }
+                                    @if (isStudOk)
+                                    {
+                                        <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer: @Model.Student.Number </li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer fehlt</li>
+                                    }
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    @{
+                        isOk = Model.Internship.IsPassed.Value;
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Prüfung der Voraussetzungen</h4>
+                                @if (Model.Internship.RequestAuthority != null)
+                                {
+                                    if (isOk)
+                                    {
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-calendar"></i>Am @Model.Internship.RequestDate wurde der Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                            <li><i class="fa fa-li fa-calendar-check-o"></i>Die Voraussetzungen sind erfüllt (bestätigt am @Model.Internship.RequestDate.Value.ToShortDateString() von @Model.Internship.RequestAuthority.FullName)</li>
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-calendar"></i>Am @Model.Internship.RequestDate wurde der Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                            <li><i class="fa fa-li fa-calendar-times-o"></i>Der Antrag wurde abgelehnt (am @Model.Internship.RequestDate.Value.ToShortDateString() von @Model.Internship.RequestAuthority.FullName)</li>
+                                            <li><i class="fa fa-li fa-ban text-danger"></i>Es fehlt die folgende(n) Voraussetzung(en): @Model.Internship.RequestMessage</li>
+                                        </ul>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>Prüfung der Voraussetzungen wurde selbstständig durchgeführt.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    @{
+                        isOk = Model.Internship.PlannedBegin.HasValue && Model.Internship.PlannedEnd.HasValue;
+
+                        mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Festlegung des geplanten Bearbeitungszeitraums</h4>
+                                @if (isOk)
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-calendar fa-li"></i>Beginn: "@Model.Internship.PlannedBegin.Value.ToShortDateString()"</li>
+                                        <li><i class="fa fa-calendar fa-li"></i>Ende: "@Model.Internship.PlannedEnd.Value.ToShortDateString()"</li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p>Kein geplanter Bearbeitungszeitraum festgelegt</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @{
+                        isOk = true;
+
+                        mediaStyle = "fa-info-circle text-primary";
+
+                        var advisor = Model.Internship.Advisors.FirstOrDefault();
+                    }
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Angabe Unternehmen</h4>
+                                @if (advisor != null)
+                                {
+                                <ul class="fa-ul">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-industry fa-li"></i>@advisor.PersonFirstName @advisor.PersonLastName</li>
+                                        <li><i class="fa fa-user fa-li"></i>@advisor.CorporateName - @advisor.PersonAction</li>
+                                        <li><i class="fa fa-envelope fa-li"></i>@advisor.PersonEMail</li>
+                                        <li><i class="fa fa-phone fa-li"></i>@advisor.PersonPhone</li>
+                                    </ul>
+                                </ul>
+                                }
+                                else
+                                {
+                                    <p>Kein Unternehmenskontakt angegeben</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -100,7 +100,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             var allCourses = Db.Activities.OfType<Course>().Where(x =>
                 x.SemesterGroups.Any(g =>
-                    g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && g.IsAvailable &&
+                    g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && 
+                    g.IsAvailable &&
                     g.Semester.Id == sem.Id)).ToList();
 
             var converter = new CourseConverter(Db);

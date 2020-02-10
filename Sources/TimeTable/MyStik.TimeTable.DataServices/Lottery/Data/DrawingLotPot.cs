@@ -32,7 +32,9 @@ namespace MyStik.TimeTable.DataServices.Lottery.Data
 
         public List<DrawingLot> Lots { get; private set; }
 
-
+        /// <summary>
+        /// Berücksichtigt den aktuellen Zustand aller Subscriptions dieses Losttopfs
+        /// </summary>
         public int SeatsAvailable => Capacity - BookingList.Participients.Count;
 
         public double BookingRank
@@ -48,6 +50,7 @@ namespace MyStik.TimeTable.DataServices.Lottery.Data
             }
         }
 
+        /* Überflüssig
         public int RemainingSeats
         {
             get
@@ -55,6 +58,7 @@ namespace MyStik.TimeTable.DataServices.Lottery.Data
                 return SeatsAvailable - Lots.Count(x => !x.Subscription.OnWaitingList);
             }
         }
+        */
 
         public double OccupancyRate => BookingList.Participients.Count / (double) Capacity;
     }

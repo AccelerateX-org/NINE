@@ -1,0 +1,125 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.StudentSummaryModel
+@{
+    ViewBag.Title = "Mein Studium";
+}
+
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Aktueller Studiengang
+                    </div>
+                    <div class="card-body">
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-graduation-cap"></i>@Model.Student.Curriculum.Name</li>
+                            <li><i class="fa fa-li fa-calendar"></i>Seit: @Model.Student.FirstSemester.Name</li>
+                            <li><i class="fa fa-li fa-clock"></i>angelegt am: @Model.Student.Created</li>
+                            <li><i class="fa fa-li fa-university"></i>@Model.Student.Curriculum.Organiser.Name (@Model.Student.Curriculum.Organiser.ShortName)</li>
+                            @if (!string.IsNullOrEmpty(Model.Student.Number))
+                            {
+                                <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @Model.Student.Number</li>
+                            }
+                            else
+                            {
+                                <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                            }
+                            @if (Model.Student.IsPartTime)
+                            {
+                                <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                            }
+                            @if (Model.Student.IsDual)
+                            {
+                                <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                            }
+                            <li><i class="fa fa-li fa-line-chart"></i>48 / 210 ECTS</li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <a href="@Url.Action("ChangeNumber", "Subscription", new {id = Model.Student.Id})" class="card-link">Matrikelnummer ändern</a>
+                        <a href="@Url.Action("ChangeCurriculum", "Subscription",new {id = Model.Student.Id})" class="card-link">Studiengang ändern</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 20px">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Sonstiges
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">Auslandsaufenthalt</div>
+                        <div class="list-group-item">Stellenangebote</div>
+                        <div class="list-group-item">Fachschaft</div>
+                        <div class="list-group-item">Studienplan</div>
+                        <div class="list-group-item">SPO</div>
+                        <div class="list-group-item">Fristen & Termine</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-md-12">
+                <div class="card border-danger">
+                    <div class="card-header">
+                        Fachsemester nach Studienplan
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            Fachsemester 1
+                        </div>
+                        <div class="list-group-item">
+                            Fachsemester 2
+                            <p>Studienrichtung INF gewählt</p>
+                        </div>
+                        <div class="list-group-item">
+                            Fachsemester 3
+                            <p>Sprachpaket 3+0 gewählt</p>
+                        </div>
+                        <div class="list-group-item">
+                            Fachsemester 4
+                        </div>
+                        <div class="list-group-item">
+                            Fachsemester 5
+                            <p>kein WPM gewählt</p>
+                        </div>
+                        <div class="list-group-item">
+                            Fachsemester 6
+
+                        </div>
+                        <div class="list-group-item">
+                            Fachsemester 7
+                            <p>Abschlussarbeit noch nicht begonnen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card border-danger">
+                    <div class="card-header">
+                        Historie Studiensemester
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @foreach (var semester in Model.Semester.OrderByDescending(x => x.EndCourses))
+                        {
+                            <div class="list-group-item"><a href="@Url.Action("Courses", "Planer", new {id = semester.Id})">@semester.Name</a></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

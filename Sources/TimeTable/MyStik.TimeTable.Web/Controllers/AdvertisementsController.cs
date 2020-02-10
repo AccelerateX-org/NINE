@@ -32,7 +32,28 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Overview()
         {
-            return View();
+            var org = GetMyOrganisation();
+            var limit = DateTime.Today.AddDays(-7);
+
+            var model = new AdvertisementNewModel
+            {
+                Internships = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id && 
+                                                      x.ForInternship && x.Created >= limit).ToList(),
+                Theses = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                      x.ForThesis && x.Created >= limit).ToList(),
+                StayAbroads = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                      x.ForStayAbroad && x.Created >= limit).ToList(),
+                WorkingStudents = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                      x.ForWorkingStudent && x.Created >= limit).ToList(),
+                Competitions = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                      x.ForCompetition && x.Created >= limit).ToList(),
+                Tutors = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                      x.ForTutor && x.Created >= limit).ToList(),
+                Advancements = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                      x.ForAdvancement && x.Created >= limit).ToList(),
+            };
+
+            return View(model);
         }
 
         /// <summary>

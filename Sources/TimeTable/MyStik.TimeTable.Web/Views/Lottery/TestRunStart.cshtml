@@ -1,0 +1,237 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.DataServices.Lottery.DrawingService
+@{
+    ViewBag.Title = "Testlauf";
+    var iUser = 0;
+    var userService = new UserInfoService();
+
+    var nCols1 = Model.Lottery.MaxSubscription + 1;
+    var nCols2 = Model.Lottery.MaxSubscription + 2;
+
+    var colhead = Model.Lottery.MaxSubscription + 1;
+
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Wahlverfahren "@Model.Lottery.Name" - Testlauf</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Drawing", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("InitTest", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-wrench"></i> Einstellungen
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("Download", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-download"></i> Rohdaten
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("TestDrawing", new {id=Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-play"></i> Ausführen ohne Speichern
+                            </a>
+                        </div>
+
+                        <div class="form-group dropdown">
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-random"></i> Testbenutzer <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("InitTestUser", new {id = Model.Lottery.Id})">
+                                        <i class="fa fa-user-plus"></i> Testbenutzer anlegen
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("SubscribeTest", new {id = Model.Lottery.Id})">
+                                        <i class="fa fa-pencil"></i> Testbenutzer eintragen
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("ClearTest", new {id = Model.Lottery.Id})">
+                                        <i class="fa fa-user-times"></i> Testbenutzer austragen
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Legende / Symbole</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <ul class="fa-ul">
+                                <li><i class="fa-li fa fa-unlock text-success"></i>Keine Zugangsbeschränkung nach Studiengang</li>
+                                <li><i class="fa-li fa fa-lock text-danger"></i>Zugang nur für Studierende der jeweiligen Studiengänge</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <ul class="fa-ul">
+                                <li><i class="fa-li fa fa-bed"></i>Anzahl der Plätze (Kapazität)</li>
+                                <li><i class="fa-li fa fa-group"></i>Anzahl Teilnehmer</li>
+                                <li><i class="fa-li fa fa-hourglass-half"></i>Anzahl Einträge auf Warteliste</li>
+                                <li><i class="fa-li fa fa-percent text-warning"></i>"Auslastung" - Verhältnis Anzahl Teilnehmer zu Kapazität</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <ul class="fa-ul">
+                                <li><i class="fa-li fa fa-percent text-danger"></i>"Überbuchung" - Verhältnis freie Plätze zu Wartelisteneinträge mit Priorität 1</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Liste der Buchungslisten (ggf. mehrere pro Lehrveranstaltung bei Platzvergabe nach Studiengängen)</h4>
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th colspan="2">Lehrveranstaltung</th>
+                    <th colspan="5">Buchungsliste</th>
+                    @if (Model.Lottery.IsFixed)
+                    {
+                        <th colspan="@(colhead + 1)">Aufschlüsselung Teilnehmerliste</th>
+                        <th colspan="@colhead">Aufschlüsselung Warteliste</th>
+                    }
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Bezeichnung</th>
+                    <th><i class="fa fa-bed"></i></th>
+                    <th><i class="fa fa-group"></i></th>
+                    <th><i class="fa fa-hourglass-half"></i></th>
+                    <th><i class="fa fa-percent text-warning"></i></th>
+
+                    @if (Model.Lottery.IsFixed)
+                    {
+                        <th><i class="fa fa-percent text-danger"></i></th>
+                        <th>Keine Prio</th>
+                        for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                        {
+                            <th>@i</th>
+                        }
+                        <th>Keine Prio</th>
+                        for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                        {
+                            <th>@i</th>
+                        }
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var lotPot in Model.LotPots.OrderByDescending(x => x.BookingRank).ThenByDescending(x => x.Lots.Count(y => y.Priority == 1)))
+                {
+                    <tr>
+                        <td>
+                            @if (lotPot.Course.Occurrence.IsCoterie)
+                            {
+                                <i class="fa fa-lock text-danger"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-unlock text-success"></i>
+
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "Course", new {id = lotPot.Course.Id})">@lotPot.Course.Name (@lotPot.Course.ShortName)</a>
+                        </td>
+                        <td>
+                            @lotPot.Name
+                        </td>
+                        @if (lotPot.Capacity == int.MaxValue)
+                        {
+                            <td>n.b.</td>
+                        }
+                        else
+                        {
+                            <td>@lotPot.Capacity</td>
+                        }
+
+                        <td>@lotPot.BookingList.Participients.Count</td>
+                        <td>@lotPot.BookingList.WaitingList.Count</td>
+
+                        @if (lotPot.Capacity == int.MaxValue)
+                        {
+                            <td></td>
+                        }
+                        else
+                        {
+                            <td>@lotPot.OccupancyRate.ToString("0%")</td>
+                        }
+
+                        @if (Model.Lottery.IsFixed)
+                        {
+
+                            if (lotPot.Capacity == int.MaxValue)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@lotPot.BookingRank.ToString("0%")</td>
+                            }
+
+
+                            <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == 0)</td>
+                            for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                            {
+                                <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == i)</td>
+                            }
+
+
+                            <td>@lotPot.Lots.Count(x => x.Priority == 0)</td>
+                            for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                            {
+                                <td>@lotPot.Lots.Count(x => x.Priority == i)</td>
+                            }
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+

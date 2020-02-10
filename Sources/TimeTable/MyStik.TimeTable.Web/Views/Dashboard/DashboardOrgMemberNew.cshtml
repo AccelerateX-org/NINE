@@ -144,13 +144,13 @@
             </div>
             <div class="col-sm-6 col-md-3 col-lg-2">
                 <div class="card text-center">
-                    <a href="@Url.Action("Index", "Contacts")" class="btn btn-outline-dark btn-block disabled">
+                    <a href="@Url.Action("Index", "InternshipAdmin")" class="btn btn-outline-dark btn-block">
                         <h5><i class="fas fa-2x fa-industry"></i></h5>
-                        <h6>Kontakte</h6>
+                        <h6>Praxissemester</h6>
                     </a>
                     <div class="btn-group btn-group-justified">
                         <a href="@Url.Action("Index", "Alumni")" class="btn btn-outline-dark">Alumni</a>
-                        <a href="" class="btn btn-outline-dark disabled">...</a>
+                        <a href="@Url.Action("Index", "Contacts")" class="btn btn-outline-dark disabled">Kontakte</a>
                     </div>
                 </div>
             </div>
@@ -171,7 +171,13 @@
             <div class="col-sm-6 col-md-3 col-lg-2">
                 <div class="card text-center">
                     <a href="@Url.Action("Index", "Advertisements")" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fas fa-2x fa-window-maximize"></i></h5>
+                        <h5>
+                            <i class="fas fa-2x fa-window-maximize"></i>
+                            @if (Model.Advertisements.Count > 0)
+                            {
+                                <span class="badge badge-danger">@Model.Advertisements.Count neue</span>
+                            }
+                        </h5>
                         <h6>Schaukasten</h6>
                     </a>
                     <div class="btn-group btn-group-justified">

@@ -508,4 +508,27 @@ namespace MyStik.TimeTable.Web.Models
         public string NewDateEnd { get; set; }
     }
 
+
+    public class ThesisAdvisorViewModel
+    {
+        public Thesis Thesis { get; set; }
+
+        public string CorporateName { get; set; }
+
+        public string PersonFirstName { get; set; }
+
+        public string PersonLastName { get; set; }
+
+        /// <summary>
+        /// Tätigkeitsgebiet / Abteilung
+        /// </summary>
+        public string PersonAction { get; set; }
+
+
+        public string PersonEMail { get; set; }
+
+        public string PersonPhone { get; set; }
+
+    }
+
 }

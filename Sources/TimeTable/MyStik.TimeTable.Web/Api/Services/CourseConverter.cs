@@ -284,5 +284,55 @@ namespace MyStik.TimeTable.Web.Api.Services
 
         }
 
+        public ZpaCourseDto ConvertZpa(Course c)
+        {
+            var zpaCourse = new ZpaCourseDto();
+
+            zpaCourse.Name = c.Name;
+            zpaCourse.ShortName = c.ShortName;
+            zpaCourse.Description = c.Description;
+            zpaCourse.Dates = new List<ZpaCourseDateDto>();
+
+            foreach (var date in c.Dates)
+            {
+                var zpaDate = new ZpaCourseDateDto();
+
+                zpaDate.From = date.Begin;
+                zpaDate.Until = date.End;
+                zpaDate.IsCanceled = date.Occurrence.IsCanceled;
+                zpaDate.Title = date.Title;
+                zpaDate.Lecturer = new List<ZpaLecturerDto>();
+                zpaDate.Rooms = new List<ZpaRoomDto>();
+
+                foreach (var host in date.Hosts)
+                {
+                    var zpaLecturer = new ZpaLecturerDto();
+
+                    zpaLecturer.Name = host.Name;
+                    zpaLecturer.ShortName = host.ShortName;
+
+                    zpaDate.Lecturer.Add(zpaLecturer);
+                }
+
+                foreach (var room in date.Rooms)
+                {
+                    var zpaRoom = new ZpaRoomDto();
+
+                    zpaRoom.Number = room.Number;
+
+                    zpaDate.Rooms.Add(zpaRoom);
+                }
+
+
+                zpaCourse.Dates.Add(zpaDate);
+            }
+
+
+
+
+
+            return zpaCourse;
+        }
+
     }
 }

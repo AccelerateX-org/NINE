@@ -1028,6 +1028,16 @@
             
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.ZpaCourseController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.ZpaCourseController.GetCourses(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.CieCourseController">
             <summary>
             
@@ -1518,6 +1528,91 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.NamedDto.ShortName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.ShortName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.Description">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.Dates">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto.From">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto.Until">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto.Title">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto.IsCanceled">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto.Rooms">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto.Lecturer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ZpaRoomDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaRoomDto.Number">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ZpaLecturerDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaLecturerDto.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaLecturerDto.ShortName">
             <summary>
             
             </summary>
@@ -5692,6 +5787,21 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.InternshipAdminController.Announced">
+            <summary>
+            Angekündigt
+            Alle Arbeiten, bei das Prüfungsamt noch nicht draufgesehen hat
+            oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.InternshipAdminController.Approval(System.Guid)">
+            <summary>
+            Anzeige des Annahme / Ablehnungsdialog
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.LevelController">
             <summary>
             
@@ -6307,6 +6417,14 @@
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Index">
             <summary>
             Der Status meiner Abschlussarbeit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Announced">
+            <summary>
+            Angekündigt
+            Alle Arbeiten, bei das Prüfungsamt noch nicht draufgesehen hat
+            oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
             </summary>
             <returns></returns>
         </member>
@@ -14865,6 +14983,36 @@
             Name der Datei
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.InternshipStateModel.User">
+            <summary>
+            User des Studenten
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.InternshipStateModel.Student">
+            <summary>
+            Student (Verfasser)
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.InternshipStateModel.Internship">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.InternshipAdvisorViewModel.PersonAction">
+            <summary>
+            Tätigkeitsgebiet / Abteilung
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Models.InternshipDetailModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.InternshipDetailModel.Internship">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.LecturerCharacteristicModel">
             <summary>
             
@@ -18665,6 +18813,11 @@
         <member name="T:MyStik.TimeTable.Web.Models.ThesisStatisticsModel">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisAdvisorViewModel.PersonAction">
+            <summary>
+            Tätigkeitsgebiet / Abteilung
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Models.UserViewModel">

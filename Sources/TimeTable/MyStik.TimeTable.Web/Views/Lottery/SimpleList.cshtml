@@ -14,9 +14,12 @@
                 <div class="list-group">
                     @foreach (var lottery in Model)
                     {
-                        <a href="@Url.Action("Details", new {id=lottery.Id})" class="list-group-item">
-                            <h5>@lottery.Name</h5>
-                        </a>
+                        if (lottery.IsActive)
+                        {
+                            <a href="@Url.Action("Details", new {id=lottery.Id})" class="list-group-item">
+                                <h5>@lottery.Name</h5>
+                            </a>
+                        }
                     }
                 </div>
             </div>

@@ -136,7 +136,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
                             lotPot.Lots.Add(drawingLot);
 
-                            AddMessage(course, subscription, "Los");
+                            AddMessage(course, subscription, "Ein Los für die Verlosung erhalten");
                         }
                     }
 
@@ -325,14 +325,18 @@ namespace MyStik.TimeTable.DataServices.Lottery
         {
             // Anzahl der verfügbaren Plätze
             // Ausgangslage - aller bereits gezogener Plätze
+            // OHI: 20200204: Hier werden die zugelosten Plätze doppelt berücksichtigt
+            /*
             var alreadyTaken = lotPot.Lots.Count(x => !x.Subscription.OnWaitingList);
 
             var nCapacity = lotPot.SeatsAvailable - alreadyTaken;
+            */
+            // da ist der aktuelle Stand bereits berücksichtigt
+            var nCapacity = lotPot.SeatsAvailable;
+
 
             AddMessage(lotPot.Course, null, "Starte Ziehung für Lostopf");
-            AddMessage(lotPot.Course, null, $"Freie Plätze vor Losdurchgang {lotPot.SeatsAvailable}");
-            AddMessage(lotPot.Course, null, $"Belegte Plätze durch gezogene Lose {alreadyTaken}");
-            AddMessage(lotPot.Course, null, $"Verfügbare Kapazität {nCapacity}");
+            AddMessage(lotPot.Course, null, $"Freie Plätze im Lostopf {nCapacity}");
 
 
             // alle gültigen Lose, die noch auf der Warteliste sind
@@ -424,7 +428,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     // Suche einen Kurs, der noch freie Plätze hat und in dem er noch nicht drin ist
                     var availableCourses = LotPots.Where(x =>
                         !x.Course.Occurrence.Subscriptions.Any(s => s.UserId.Equals(game.UserId)) &&
-                        x.RemainingSeats > 0).OrderByDescending(x => x.RemainingSeats).ToList();
+                        x.SeatsAvailable > 0).OrderByDescending(x => x.SeatsAvailable).ToList();
                         
                      AddMessage(null, null, $"Es sind {availableCourses.Count} LVs noch frei");
 
@@ -477,6 +481,8 @@ namespace MyStik.TimeTable.DataServices.Lottery
                         }
                         else
                         {
+                            AddMessage(game.UserId, "Will nichts anderes. Es hätte noch einen Platz in einer anderen Lehrveranstaltung gegeben.");
+
                             game.Message =
                                 "Es hätte noch einen Platz in einer anderen Lehrveranstaltung gegeben.";
                         }
@@ -500,7 +506,7 @@ namespace MyStik.TimeTable.DataServices.Lottery
                     // Suche einen Kurs, der noch freie Plätze hat und in dem er noch nicht drin ist
                     var availableCourse = LotPots.Where(x =>
                         !x.Course.Occurrence.Subscriptions.Any(s => s.UserId.Equals(game.UserId)) &&
-                        x.RemainingSeats > 0).OrderByDescending(x => x.RemainingSeats).FirstOrDefault();
+                        x.SeatsAvailable > 0).OrderByDescending(x => x.SeatsAvailable).FirstOrDefault();
 
                     if (availableCourse == null)
                     {
@@ -528,10 +534,11 @@ namespace MyStik.TimeTable.DataServices.Lottery
                                 Subscription = subscription
                             });
 
+                            // Ein neues Los
                             var lot = new DrawingLot();
                             lot.IsTouched = true;
                             lot.IsValid = true;
-                            lot.AddMessage("Trägt zur Erfüllung der Wünsche bei");
+                            lot.AddMessage("Platz durch Auffüllen erhalten");
                             lot.Subscription = subscription;
                             lot.Course = availableCourse.Course;
 
@@ -544,10 +551,14 @@ namespace MyStik.TimeTable.DataServices.Lottery
                             lotPot.Lots.Add(lot);
                             */
 
+                            AddMessage(lot.Course, lot.Subscription, "Platz durch Auffüllen erhalten");
+
                             nSuccess++;
                         }
                         else
                         {
+                            AddMessage(game.UserId, "Will nichts anderes. Es hätte noch einen Platz in einer anderen Lehrveranstaltung gegeben.");
+
                             game.Message =
                                 "Es hätte noch einen Platz in einer anderen Lehrveranstaltung gegeben.";
                         }

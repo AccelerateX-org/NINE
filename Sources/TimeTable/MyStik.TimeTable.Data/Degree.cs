@@ -45,6 +45,16 @@ namespace MyStik.TimeTable.Data
         public bool IsUndergraduate { get; set; }
 
         /// <summary>
+        /// Zertifikat, damit kein eigener Abschluss
+        /// </summary>
+        public bool IsCertificate { get; set; }
+
+        /// <summary>
+        /// Promotionsstudium - nur der Vollständigkeit halber
+        /// </summary>
+        public bool IsPhD { get; set; }
+
+        /// <summary>
         /// Liste aller Studiengänge mit diesem Abschluss
         /// </summary>
         public virtual ICollection<Curriculum> Curricula { get; set; }

@@ -123,6 +123,7 @@
     <Compile Include="ExaminationUnit.cs" />
     <Compile Include="Examiner.cs" />
     <Compile Include="ExamPaper.cs" />
+    <Compile Include="Internship.cs" />
     <Compile Include="Lecturer.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Course.cs" />
@@ -356,6 +357,18 @@
     <Compile Include="Migrations\201903081605249_ThesisV4.Designer.cs">
       <DependentUpon>201903081605249_ThesisV4.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001231407182_Internship_v1.cs" />
+    <Compile Include="Migrations\202001231407182_Internship_v1.Designer.cs">
+      <DependentUpon>202001231407182_Internship_v1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001280925458_ThesisV5.cs" />
+    <Compile Include="Migrations\202001280925458_ThesisV5.Designer.cs">
+      <DependentUpon>202001280925458_ThesisV5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002071027041_InternshipV2.cs" />
+    <Compile Include="Migrations\202002071027041_InternshipV2.Designer.cs">
+      <DependentUpon>202002071027041_InternshipV2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -565,6 +578,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903081605249_ThesisV4.resx">
       <DependentUpon>201903081605249_ThesisV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001231407182_Internship_v1.resx">
+      <DependentUpon>202001231407182_Internship_v1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001280925458_ThesisV5.resx">
+      <DependentUpon>202001280925458_ThesisV5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002071027041_InternshipV2.resx">
+      <DependentUpon>202002071027041_InternshipV2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

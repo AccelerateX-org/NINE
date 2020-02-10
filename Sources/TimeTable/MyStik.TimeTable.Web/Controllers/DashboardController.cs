@@ -497,6 +497,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var currentSemester = student != null ? SemesterService.GetNewestSemester(student.Curriculum.Organiser) : SemesterService.GetSemester(DateTime.Today);
             var prevSemester = SemesterService.GetPreviousSemester(currentSemester);
 
+
+
             var model = new DashboardStudentViewModel
             {
                 User = userRight.User,
@@ -505,6 +507,19 @@ namespace MyStik.TimeTable.Web.Controllers
                 Student = student,
                 Organiser = student?.Curriculum.Organiser
             };
+
+            if (student != null)
+            {
+                var limit = DateTime.Today.AddDays(-7);
+                model.Advertisements = Db.Advertisements.Where(x => x.Owner.Organiser.Id == student.Curriculum.Organiser.Id &&
+                                                       x.Created >= limit).ToList();
+            }
+            else
+            {
+                model.Advertisements = new List<Advertisement>();
+            }
+
+
 
             return model;
         }
@@ -524,6 +539,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 NextSemester = currentSemester,
                 Organiser = org
             };
+
+            var limit = DateTime.Today.AddDays(-7);
+            model.Advertisements = Db.Advertisements.Where(x => x.Owner.Organiser.Id == org.Id &&
+                                                                x.Created >= limit).ToList();
+
 
             return model;
         }

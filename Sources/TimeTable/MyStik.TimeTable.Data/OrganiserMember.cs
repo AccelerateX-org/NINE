@@ -72,6 +72,10 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Gäste, LBs etc sind nur "assoziiert"
+        /// Profs, MAs können nur in einer Fakultät "daheim" sein
+        /// LBs sind immer assoziiert
+        /// "importierte" Profs sind ebenfalls assoziiert
+        /// myOrg => die Org wo ich daheim bin
         /// </summary>
         public bool IsAssociated { get; set; }
 

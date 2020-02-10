@@ -1,0 +1,199 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.InternshipStateModel
+@{
+    ViewBag.Title = "Praxissemeter";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <h1><i class="fa fa-exclamation-circle"></i> ACHTUNG</h1>
+                <p>Das hier ist noch experimentell. An der FK09 wird ausprobiert, in wie weit NINE für die Orga der Praxissemester nützlich sein kann.</p>
+                <p>Alle Angaben hier sind freiwillig und haben momentan noch keinerlei prüfungsrechtliche Bedeutung!</p>
+            </div>
+            
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Mein Praxissmester im Studiengang @Model.Student.Curriculum.ShortName</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-info">
+                        <h5>Wichtiger Hinweis:</h5>
+                        <p>Auf dieser Seite kann ich den Ablauf meines Praxissemester planen. Es beinhaltet eine Checkliste der wichtigsten Aktivitäten und soll den organisatorischen Ablauf für alle Beteiligten vereinfachen.</p>
+                        <p>Im Zweifel ist unverzüglich mit dem Prüfungsamt und/oder dem Praktikumsbetreuer Kontakt aufzunehmen. Entsprechende Informationen finden sich auf der Webseite der Hochschule.</p>
+                    </div>
+                    @{
+                        var isNameOk = !string.IsNullOrEmpty(Model.User.FirstName) && !string.IsNullOrEmpty(Model.User.LastName);
+                        var isStudOk = !string.IsNullOrEmpty(Model.Student.Number);
+
+                        var isOk = isNameOk && isStudOk;
+
+                        var mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                    }
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Allgemeine Angaben</h4>
+                                <ul class="fa-ul">
+                                    @if (isNameOk)
+                                    {
+                                        <li><i class="fa fa-user fa-li"></i>@Model.User.FullName <a href="@Url.Action("Index", "UserProfile")" class="btn btn-default btn-xs">ändern</a></li>
+
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-user fa-li"></i><a href="@Url.Action("Index", "UserProfile")" class="btn btn-danger btn-xs">ergänzen</a></li>
+                                    }
+                                    @if (isStudOk)
+                                    {
+                                        <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer: @Model.Student.Number <a href="@Url.Action("ChangeNumber", "Subscription", new {id = Model.Student.Id})" class="btn btn-default btn-xs">ändern</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer fehlt <a href="@Url.Action("ChangeNumber", "Subscription", new {id = Model.Student.Id})" class="btn btn-danger btn-xs">ergänzen</a></li>
+                                    }
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                @{
+                    isOk = Model.Internship != null && Model.Internship.IsPassed == true;
+
+                    mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+                }
+
+                <div class="list-group-item">
+                    <div class="media">
+                        <div class="media-left">
+                            <i class="fa fa-5x @mediaStyle"></i>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">Voraussetzungen prüfen</h4>
+                            @if (Model.Internship == null)
+                            {
+                                <p>Durch einen Blick in primuss kann ich erkennen, ob ich die Voraussetzungen erfüllt habe. Wenn ich das erledigt habe, dann kann ich mit der Planung meines Praxissemesters beginnen.</p>
+                                @*<a href="@Url.Action("Request")" class="btn btn-primary">Voraussetzungen prüfen lassen</a>*@
+                                <a href="@Url.Action("Check")" class="btn btn-primary">Prüfung ist erfolgt - mit Planung beginnen</a>
+                            }
+                            else
+                            {
+
+                                if (Model.Internship.IsPassed.Value)
+                                {
+                                    if (Model.Internship.RequestAuthority != null)
+                                    {
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Internship.RequestDate den Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                            <li><i class="fa fa-li fa-calendar-check-o"></i>Ich habe die Voraussetzungen erfüllt (bestätigt am @Model.Internship.RequestDate.Value.ToShortDateString() von @Model.Internship.RequestAuthority.FullName)</li>
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <p>Habe die Prüfung der Voraussetzungen selbst durchgeführt.</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Internship.RequestDate den Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                        <li><i class="fa fa-li fa-calendar-times-o"></i>Der Antrag wurde abgelehnt (am @Model.Internship.ResponseDate.Value.ToShortDateString() von @Model.Internship.RequestAuthority.FullName)</li>
+                                        <li><i class="fa fa-li fa-ban text-danger"></i>Es fehlt die folgende(n) Voraussetzung(en): @Model.Internship.RequestMessage</li>
+                                    </ul>
+                                    <a href="@Url.Action("Check")" class="btn btn-primary">Voraussetzungen wurden erfüllt</a>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+
+                @if (Model.Internship != null)
+                {
+
+                    isOk = Model.Internship.PlannedBegin != null &&
+                           Model.Internship.PlannedEnd != null;
+
+                    mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">Geplanten Bearbeitungszeitraum festlegen</h4>
+                                <p>Der geplante Zeitraum dient der Information für den/die PraktikumsbetreuerIn. Es kann, muss aber nicht identisch zum tatsächlichen Zeitraum sein.</p>
+                                @if (Model.Internship.PlannedBegin != null && Model.Internship.PlannedEnd != null && Model.Internship.LastPlanChange != null)
+                                {
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-calendar fa-li"></i>geplanter Beginn: @Model.Internship.PlannedBegin.Value.ToShortDateString() </li>
+                                        <li><i class="fa fa-calendar fa-li"></i>geplantes Abgabedatum: @Model.Internship.PlannedEnd.Value.ToShortDateString()</li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p>Bisher wurde noch kein geplanter Zeitraum festgelegt</p>
+                                }
+                                @if (Model.Internship.AcceptedDate == null)
+                                {
+                                    <a href="@Url.Action("Plan", new {id = Model.Internship.Id})" class="btn btn-primary">Zeitraum festlegen / ändern</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    isOk = Model.Internship.Advisors.Any();
+                    var advisor = Model.Internship.Advisors.FirstOrDefault();
+
+                    mediaStyle = isOk ? "fa-check text-success" : "fa-info-circle text-primary";
+
+
+                    <div class="list-group-item">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="fa fa-5x @mediaStyle"></i>
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">BetreuerIn im Unternehmen angeben</h4>
+                                @if (advisor != null)
+                                {
+                                    <p>Aktuelle Angaben</p>
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-industry fa-li"></i>@advisor.PersonFirstName @advisor.PersonLastName</li>
+                                        <li><i class="fa fa-user fa-li"></i>@advisor.CorporateName - @advisor.PersonAction</li>
+                                        <li><i class="fa fa-envelope fa-li"></i>@advisor.PersonEMail</li>
+                                        <li><i class="fa fa-phone fa-li"></i>@advisor.PersonPhone</li>
+                                    </ul>
+
+                                    <a href="@Url.Action("Advisor", new {id = Model.Internship.Id})" class="btn btn-primary">BetreuerIn angeben</a>
+                                }
+                                else
+                                {
+                                    <p>Nur bei Arbeiten im Unternehmen erforderlich</p>
+                                    if (!isOk)
+                                    {
+                                        <a href="@Url.Action("Advisor", new {id = Model.Internship.Id})" class="btn btn-primary">BetreuerIn angeben</a>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+

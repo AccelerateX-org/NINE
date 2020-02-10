@@ -69,6 +69,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public SemesterActivityModel PreviousSemesterActivities { get; private set; }
 
+        public List<Advertisement> Advertisements { get; set; }
     }
 
     /// <summary>
@@ -138,6 +139,7 @@ namespace MyStik.TimeTable.Web.Models
         public Student Student { get; set; }
 
         public ICollection<Lottery> Lotteries { get; set; }
+
 
     }
     /// <summary>

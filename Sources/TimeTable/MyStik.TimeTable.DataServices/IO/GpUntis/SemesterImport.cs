@@ -674,8 +674,19 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                             }
                             else
                             {
-                                var capGroup = group.CapacityGroups.SingleOrDefault(x =>
-                                    x.Name.ToUpper().Equals(zuordnung.Kapazitätsgruppe.ToUpper()));
+                                CapacityGroup capGroup = null;
+
+
+                                if (string.IsNullOrEmpty(zuordnung.Kapazitätsgruppe))
+                                {
+                                    capGroup = group.CapacityGroups.SingleOrDefault(x =>
+                                        string.IsNullOrEmpty(x.Name));
+                                }
+                                else
+                                {
+                                    capGroup = group.CapacityGroups.SingleOrDefault(x =>
+                                        x.Name.ToUpper().Equals(zuordnung.Kapazitätsgruppe.ToUpper()));
+                                }
 
                                 if (capGroup == null)
                                 {

@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="panel panel-danger">
                 <div class="panel-heading">
-                    <h4><i class="fa fa-file-text-o"></i> Prüfung der Voraussetzungen</h4>
+                    <h4><i class="fa fa-legal"></i> Prüfung der Voraussetzungen</h4>
                 </div>
                 <div class="panel-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
@@ -38,7 +38,7 @@
                         <div class="form-group">
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn-danger"><i class="fa fa-ban"></i> Antrag ablehnen</button>
-                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
+                                <a href="@Url.Action("Announced")" class="btn btn-default">Abbrechen</a>
                             </div>
                         </div>
                     }

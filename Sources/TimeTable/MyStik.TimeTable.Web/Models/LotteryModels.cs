@@ -770,4 +770,19 @@ namespace MyStik.TimeTable.Web.Models
         public string Code { get; set; }
     }
 
+    public class LotteryStudentStatisticsModel
+    {
+        public Student Student { get; set; }
+
+        public ApplicationUser StudentUser { get; set; }
+
+        public List<LotterySubscriptionStatisticsModel> LotterySubscription { get; set; }
+    }
+
+    public class LotterySubscriptionStatisticsModel
+    {
+        public Lottery Lottery { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+    }
 }
