@@ -90,5 +90,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ActivityOwner> Owners { get; set; }
 
+        public virtual ICollection<ContentChannel> Channels { get; set; }
+
     }
 }

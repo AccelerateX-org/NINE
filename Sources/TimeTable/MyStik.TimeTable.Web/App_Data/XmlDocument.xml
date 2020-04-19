@@ -1537,6 +1537,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.Id">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.Name">
             <summary>
             
@@ -8458,7 +8463,22 @@
             <param name="dateIds"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.RemoveVirtualRooms(System.Collections.Generic.ICollection{System.Guid})">
+            <summary>
+            Löscht bei allen angegebenen Terminen die Rauminformation
+            </summary>
+            <param name="dateIds"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.AddRoomToDates(System.Collections.Generic.ICollection{System.Guid},System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="dateIds"></param>
+            <param name="roomId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.AddVirtualRoomToDates(System.Collections.Generic.ICollection{System.Guid},System.Guid)">
             <summary>
             
             </summary>
@@ -8620,7 +8640,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.RemoveSubscription2(System.Guid,System.String)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CourseController.RemoveSubscription2(System.Guid)">
             <summary>
             
             </summary>
@@ -10741,7 +10761,7 @@
             <param name="htmlAttributes"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.LecturerList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.OrganiserMember},System.Boolean)">
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.LecturerList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.OrganiserMember},System.Boolean,System.Boolean)">
             <summary>
             
             </summary>
@@ -10750,7 +10770,27 @@
             <param name="showLinks"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.Room},System.Boolean,System.Boolean)">
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.Room},System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="rooms"></param>
+            <param name="showLinks"></param>
+            <param name="showCapacity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.VirtualRoom},System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="htmlHelper"></param>
+            <param name="rooms"></param>
+            <param name="showLinks"></param>
+            <param name="showCapacity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Helpers.HtmlHelperExtensions.RoomList(System.Web.Mvc.HtmlHelper,System.Collections.Generic.ICollection{MyStik.TimeTable.Data.VirtualRoomAccess},System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             
             </summary>
@@ -12358,6 +12398,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CourseSummaryModel.VirtualRooms">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.CourseSummaryModel.Curricula">
             <summary>
             Die beteiligten Studiengänge
@@ -13353,86 +13398,6 @@
             
             </summary>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.ModuleId">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Name">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.ShortName">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.MV">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Lecturer">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Language">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Groups">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.SWS">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Work">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.ECTS">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Requirements">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Skills">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Description">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Leistung">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Books">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Models.CurriculumGroupCreateModel">
             <summary>
             
@@ -13554,6 +13519,26 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.SelectModuleViewModel.Modules">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.ModuleId">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.CurriculumModuleCreateModel.ShortName">
             <summary>
             
             </summary>
@@ -15651,6 +15636,11 @@
         <member name="P:MyStik.TimeTable.Web.Models.OccurrenceMailingModel.IsDistributionList">
             <summary>
             true: wenn es ein Gruppenverteiler ist
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.OccurrenceMailingModel.CurrId">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Models.MailDeliverSummaryReportModel">

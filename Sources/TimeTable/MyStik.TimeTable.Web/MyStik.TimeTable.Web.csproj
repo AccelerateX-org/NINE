@@ -399,11 +399,13 @@
     <Compile Include="Areas\Lab\LabAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActivityController.cs" />
+    <Compile Include="Controllers\ActivityDateController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminDashboardController.cs" />
     <Compile Include="Controllers\AdvertisementsController.cs" />
     <Compile Include="Controllers\AlumniController.cs" />
     <Compile Include="Controllers\ArchiveController.cs" />
+    <Compile Include="Controllers\AssessmentController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
@@ -411,10 +413,12 @@
     <Compile Include="Controllers\CoursesController.cs" />
     <Compile Include="Controllers\CurriculaController.cs" />
     <Compile Include="Controllers\CurriculumCriteriaController.cs" />
+    <Compile Include="Controllers\CurriculumModuleController.cs" />
     <Compile Include="Controllers\CurriculumPackageController.cs" />
     <Compile Include="Controllers\CurriculumRequirementController.cs" />
     <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\EventSummaryController.cs" />
     <Compile Include="Controllers\ExamController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\InternshipAdminController.cs" />
@@ -427,6 +431,7 @@
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
+    <Compile Include="Controllers\NoticeBoardController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\PackageOptionController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
@@ -445,6 +450,7 @@
     <Compile Include="Controllers\ThesisController.cs" />
     <Compile Include="Controllers\ThesisWorkflowController.cs" />
     <Compile Include="Controllers\UntisController.cs" />
+    <Compile Include="Controllers\VirtualRoomController.cs" />
     <Compile Include="Controllers\_AlumniController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
@@ -513,6 +519,7 @@
     <Compile Include="Models\AdvertisementModels.cs" />
     <Compile Include="Models\AlumniModels.cs" />
     <Compile Include="Models\AgendaModels.cs" />
+    <Compile Include="Models\AssessmentModels.cs" />
     <Compile Include="Models\BookingModels.cs" />
     <Compile Include="Models\CalendarModels.cs" />
     <Compile Include="Models\CantineModels.cs" />
@@ -520,7 +527,9 @@
     <Compile Include="Models\CieModels.cs" />
     <Compile Include="Models\CourseModels.cs" />
     <Compile Include="Models\CoursePlanModels.cs" />
+    <Compile Include="Models\CoursesModel.cs" />
     <Compile Include="Models\CurriculaViewModels.cs" />
+    <Compile Include="Models\CurriculumModuleModels.cs" />
     <Compile Include="Models\CurriculumViewModel.cs" />
     <Compile Include="Models\DashboardModels.cs" />
     <Compile Include="Models\DBAnalysisModels.cs" />
@@ -540,6 +549,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ModuleModels.cs" />
     <Compile Include="Models\NewsletterModels.cs" />
+    <Compile Include="Models\NoticeBoardModels.cs" />
     <Compile Include="Models\OccurrenceModels.cs" />
     <Compile Include="Models\OfficeHourModels.cs" />
     <Compile Include="Models\OrganiserModels.cs" />
@@ -4202,6 +4212,37 @@
     <Content Include="Views\InternshipAdmin\Approval.cshtml" />
     <Content Include="Views\InternshipAdmin\Plannend.cshtml" />
     <Content Include="Views\InternshipAdmin\Details.cshtml" />
+    <Content Include="Views\NoticeBoard\_ViewStart.cshtml" />
+    <Content Include="Views\NoticeBoard\Index.cshtml" />
+    <Content Include="Views\EventSummary\_ViewStart.cshtml" />
+    <Content Include="Views\EventSummary\Index.cshtml" />
+    <Content Include="Views\Mailing\Curriculum.cshtml" />
+    <Content Include="Views\ThesisAdmin\RepairExpiry.cshtml" />
+    <Content Include="Views\Courses\CopyDay.cshtml" />
+    <Content Include="Views\Courses\CopyDayReport.cshtml" />
+    <Content Include="Views\CurriculumModule\Index.cshtml" />
+    <Content Include="Views\CurriculumModule\_ViewStart.cshtml" />
+    <Content Include="Views\CurriculumModule\Create.cshtml" />
+    <Content Include="Views\CurriculumModule\Details.cshtml" />
+    <Content Include="Views\CurriculumModule\Admin.cshtml" />
+    <Content Include="Views\CurriculumModule\Courses.cshtml" />
+    <Content Include="Views\CurriculumModule\Selection.cshtml" />
+    <Content Include="Views\Dashboard\FirstVisit.cshtml" />
+    <Content Include="Views\Shared\_LayoutFirstVisit.cshtml" />
+    <Content Include="Views\Curricula\_ViewStart.cshtml" />
+    <Content Include="Views\Assessment\Index.cshtml" />
+    <Content Include="Views\Assessment\_ViewStart.cshtml" />
+    <Content Include="Views\Assessment\Details.cshtml" />
+    <Content Include="Views\ActivityDate\Details.cshtml" />
+    <Content Include="Views\ActivityDate\_CourseSummaryHeader.cshtml" />
+    <Content Include="Views\VirtualRoom\Index.cshtml" />
+    <Content Include="Views\VirtualRoom\Create.cshtml" />
+    <Content Include="Views\VirtualRoom\Edit.cshtml" />
+    <Content Include="Views\VirtualRoom\Details.cshtml" />
+    <Content Include="Views\Calendar\_ViewStart.cshtml" />
+    <Content Include="Views\CurriculumModule\_CourseTable.cshtml" />
+    <Content Include="Views\CurriculumModule\Participants.cshtml" />
+    <Content Include="Views\Mailing\CurriculumModule.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

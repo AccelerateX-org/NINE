@@ -83,7 +83,7 @@
                                         <tr id="@slot.Id">
                                             <td>@Html.TimeSpan(slot)</td>
                                             <td>
-                                                <a href="@Url.Action("CoursePlan", "Students", new {id = sub.UserId})">@name</a>
+                                                <a href="@Url.Action("Details", "Students", new {id = sub.UserId})">@name</a>
                                             </td>
                                             <td>@sub.TimeStamp</td>
                                             <td>@sub.SubscriberRemark</td>

@@ -2,9 +2,74 @@
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CurriculumViewModel
 @{
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Studiengang";
 }
 
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-award"></i> @Html.FacultyLabel(Model.Curriculum.Organiser) @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+            </div>
+            <div class="list-group">
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-cogs"></i> Verwaltung
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-book"></i> Modulhandbuch
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-microphone"></i> Vorlesungsverzeichnis
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-question-circle"></i> Orientierungstests
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled" data-toggle="modal" data-target="#exampleModal">
+                    <i class="fas fa-fw fa-poll"></i> Auswahlverfahren
+                </a>
+
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-gavel"></i> Prüfungskommission
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-hospital-symbol"></i> Studienfachberatung
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-user-friends"></i> Alumni-Netzwerk
+                </a>
+                <a href="#" class="list-group-item  list-group-item-action disabled">
+                    <i class="fas fa-fw fa-industry"></i> Kooperationspartner
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Wichtiger Hinweis</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body alert-danger">
+                <p>Die Funktion "Auswahlverahren" ist eine Notlösung für das SoSe 2020. Sie ist funktionsfähig, befindet sich aber im Experimentierstadium / Betatestphase.</p>
+                <p>Bitte melden Sie jegliche Schwierigkeit umgehend an folgende Adresse <a href="mailto: support-nine@hm.edu">support-nine@hm.edu</a>.</p>
+                <p>Vielen Dank für Ihr Verständnis.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                <a href="@Url.Action("Index", "Assessment", new {id=Model.Curriculum.Id})" class="btn btn-primary">Akzeptiert und weiter zu den Auswahlverfahren</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*
 
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-study">
@@ -77,78 +142,78 @@
 
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             @if (ViewBag.UserRight.IsCurriculumAdmin)
-    {
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>
-                    <i class="fa fa-cogs"></i> Verwaltung
-                </h4>
-            </div>
-            <div class="list-group">
-                <a href="@Url.Action("Edit", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-cog"></i> Allgemeine Einstellungen
-                    </h5>
-                </a>
-                <a href="@Url.Action("GroupList", "Curricula", new {id=Model.Curriculum.Id})" class="list-group-item">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-group"></i> Studiengruppen
-                    </h5>
-                </a>
-                <a href="@Url.Action("Index", "CurriculumPackage", new {id=Model.Curriculum.Id})" class="list-group-item">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-suitcase"></i> Anforderungen
-                    </h5>
-                </a>
-                <a href="@Url.Action("Import", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-upload"></i> Import
-                    </h5>
-                    <p class="list-group-item-text">Einlesen von Textdateien</p>
-                </a>
-                <a href="@Url.Action("Export", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-download"></i> Export
-                    </h5>
-                    <p class="list-group-item-text">Einlesen von Textdateien</p>
-                </a>
-                <a href="@Url.Action("Delete", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-trash-o"></i> Struktur Löschen
-                    </h5>
-                    <p class="list-group-item-text">Löscht Pakete, Optionen sowie Module. Studiengruppen bleiben bestehen.</p>
-                </a>
-                <a href="@Url.Action("Transfer", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-refresh"></i> Umhängen
-                    </h5>
-                    <p class="list-group-item-text">Studien- und Semestergruppen auf einen anderen Studiengang übertragen.</p>
-                </a>
-                <a href="@Url.Action("Destroy", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
-                    <h5 class="list-group-item-heading">
-                        <i class="fa fa-fw fa-trash-o"></i> Löschen
-                    </h5>
-                    <p class="list-group-item-text">Löscht, aber nur wenn es keine Semestergruppen gibt.</p>
-                </a>
-                @if (Request.IsLocal)
-                {
-                    <a href="@Url.Action("Repair", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-trash-o"></i> Reparieren
-                        </h5>
-                        <p class="list-group-item-text">Löscht Chapter und Topics</p>
-                    </a>
-                }
-            </div>
-        </div>
-}
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            <i class="fa fa-cogs"></i> Verwaltung
+                        </h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Edit", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-cog"></i> Allgemeine Einstellungen
+                            </h5>
+                        </a>
+                        <a href="@Url.Action("GroupList", "Curricula", new {id=Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-group"></i> Studiengruppen
+                            </h5>
+                        </a>
+                        <a href="@Url.Action("Index", "CurriculumPackage", new {id=Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-suitcase"></i> Anforderungen
+                            </h5>
+                        </a>
+                        <a href="@Url.Action("Import", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-upload"></i> Import
+                            </h5>
+                            <p class="list-group-item-text">Einlesen von Textdateien</p>
+                        </a>
+                        <a href="@Url.Action("Export", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-download"></i> Export
+                            </h5>
+                            <p class="list-group-item-text">Einlesen von Textdateien</p>
+                        </a>
+                        <a href="@Url.Action("Delete", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-trash-o"></i> Struktur Löschen
+                            </h5>
+                            <p class="list-group-item-text">Löscht Pakete, Optionen sowie Module. Studiengruppen bleiben bestehen.</p>
+                        </a>
+                        <a href="@Url.Action("Transfer", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-refresh"></i> Umhängen
+                            </h5>
+                            <p class="list-group-item-text">Studien- und Semestergruppen auf einen anderen Studiengang übertragen.</p>
+                        </a>
+                        <a href="@Url.Action("Destroy", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-trash-o"></i> Löschen
+                            </h5>
+                            <p class="list-group-item-text">Löscht, aber nur wenn es keine Semestergruppen gibt.</p>
+                        </a>
+                        @if (Request.IsLocal)
+                        {
+                            <a href="@Url.Action("Repair", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item list-group-item-danger">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-trash-o"></i> Reparieren
+                                </h5>
+                                <p class="list-group-item-text">Löscht Chapter und Topics</p>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
         </div>
 
-        </div>
+    </div>
 </div>
 
 
-
+*@
 
 
 

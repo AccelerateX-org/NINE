@@ -1,0 +1,88 @@
+﻿@model ICollection<MyStik.TimeTable.Data.VirtualRoom>
+@{
+    ViewBag.Title = "Virtuelle Räume";
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Meine virtuellen Räume</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Schedule", "Planer")" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> zurück zu "Mein Stundenplan"
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("Create")" , class="btn btn-default">
+                                <i class="fa fa-plus-circle"></i> Virtuellen Raum hinzufügen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Bezeichnung</th>
+                                        <th>Beschreibung</th>
+                                        <th>Link</th>
+                                        <th>Zugangsname</th>
+                                        <th>Zugangstoken</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var room in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("Details", new {id = room.Id})">@room.Name</a>
+                                        </td>
+                                        <td>@room.Description</td>
+                                        <td>
+                                            <a href="@room.AccessUrl">@room.AccessUrl</a>
+                                        </td>
+                                        <td>@room.TokenName</td>
+                                        <td>@room.Token</td>
+                                        <td>
+                                            <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-default btn-xs"><i class="fa fa-edit"></i>Ändern</a>
+                                            <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i>Löschen</a>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

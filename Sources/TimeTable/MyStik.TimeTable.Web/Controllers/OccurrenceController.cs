@@ -32,7 +32,7 @@ namespace MyStik.TimeTable.Web.Controllers
 			var writer = new StreamWriter(ms, Encoding.Default);
 
 			writer.Write(
-				"Name;Vorname;Studiengang;Semester;Status");
+				"Name;Vorname;Studiengang;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
 
@@ -54,10 +54,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 					var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
 
-					writer.Write("{0};{1};{2};{3};{4}",
+					writer.Write("{0};{1};{2};{3};{4};{5}",
 						user.LastName, user.FirstName, 
 						group, sem,
-						subState);
+						subState,
+						user.Email);
 					writer.Write(Environment.NewLine);
 				}
 			}
@@ -95,7 +96,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 			writer.Write(
-				"Name;Vorname;Studiengang;Semester;Status");
+				"Name;Vorname;Studiengang;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
 
@@ -117,10 +118,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 					var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
 
-					writer.Write("{0};{1};{2};{3};{4}",
+					writer.Write("{0};{1};{2};{3};{4};{5}",
 						user.LastName, user.FirstName,
 						group, sem,
-						subState);
+						subState,
+						user.Email);
 					writer.Write(Environment.NewLine);
 				}
 			}
@@ -157,7 +159,7 @@ namespace MyStik.TimeTable.Web.Controllers
 			var writer = new StreamWriter(ms, Encoding.Default);
 
 			writer.Write(
-				"Name;Vorname;Studiengang;Semester;Status");
+				"Name;Vorname;Studiengang;Semester;Status;E-Mail");
 
 			writer.Write(Environment.NewLine);
 
@@ -180,10 +182,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 					var subState = subscription.OnWaitingList ? "Warteliste" : "Teilnehmer";
 
-					writer.Write("{0};{1};{2};{3};{4}",
+					writer.Write("{0};{1};{2};{3};{4};{5}",
 						user.LastName, user.FirstName,
 						group, sem,
-						subState);
+						subState,
+						user.Email);
 					writer.Write(Environment.NewLine);
 				}
 			}

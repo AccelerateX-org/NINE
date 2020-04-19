@@ -1,0 +1,129 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.ModuleSemesterCoursesModel
+
+@{
+    ViewBag.Title = "Auswahl";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Lehrangebot für @Model.Module.Name (@Model.Module.ShortName / @Model.Module.ModuleId) im @Model.Semester.Name
+            </div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Courses", new {moduleId = Model.Module.Id, semId=Model.Semester.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+            </ul>
+            <div class="form-inline">
+                <label class="sr-only" for="inlineFormInputName2">Name</label>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Dem Lehrformat zuordnen</div>
+                    </div>
+                    <select class="form-control mb-2 mr-sm-2" id="teachingFornat">
+                        @foreach (var m in Model.Module.ModuleCourses)
+                        {
+                            <option value="@m.Id">@m.Name</option>
+                        }
+                    </select>
+                </div>
+
+
+
+                <label class="sr-only" for="inlineFormInputGroupUsername2">Suchbegriff</label>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Suchbegriff</div>
+                    </div>
+                    <input type="text" class="form-control" id="searchText" placeholder="z.B. Name, Kurzname, Nummer">
+                </div>
+
+                <button class="btn btn-primary mb-2" onclick="search()">Suchen und hinzufügen</button>
+                <button class="btn btn-primary mb-2" onclick="saveCourseList()">Änderungen speichern</button>
+            </div>
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Lehrformat</th>
+                        <th>Name</th>
+                        <th>Kurzname</th>
+                        <th>Gruppen</th>
+                        <th>Wochentag(e)</th>
+                        <th>Räume</th>
+                        <th>Lehrende</th>
+                        <th>TN</th>
+                        <th>WL</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="courseTable">
+                    @Html.Partial("_CourseTable", Model.Courses)
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+        function saveCourseList() {
+            var groupList = new Array();
+
+            var list = $("#courseTable > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    groupList[i] = list[i].id;
+                }
+            }
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("SaveCourseList")',
+                    data: {
+                        moduleId: "@Model.Module.Id",
+                        courseIds: groupList
+                    },
+                    success: function (data, success, xhr) {
+                        window.location.replace("@Url.Action("Courses", new { moduleId = Model.Module.Id})");
+                    }
+                });
+
+        }
+
+        function search() {
+            var searchText = $('#searchText').val();
+            var teachingFormat = $('#teachingFornat').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("Search")',
+                    data: {
+                        searchText: searchText,
+                        moduleCourseId: teachingFormat,
+                        semId: "@Model.Semester.Id.ToString()"
+                    },
+                    success: function (data, success, xhr) {
+                        $('#courseTable').append(data);
+                    }
+                });
+
+        }
+
+    </script>
+}
+
+
+
+

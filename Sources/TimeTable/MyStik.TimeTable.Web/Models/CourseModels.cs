@@ -38,6 +38,7 @@ namespace MyStik.TimeTable.Web.Models
             Dates = new List<CourseDateModel>();
             Lecturers = new List<OrganiserMember>();
             Rooms = new List<Room>();
+            VirtualRooms = new List<VirtualRoom>();
             Curricula = new List<Curriculum>();
             ConflictingDates = new Dictionary<ActivityDate, List<ActivityDate>>();
         }
@@ -66,6 +67,12 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public List<Room> Rooms { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<VirtualRoom> VirtualRooms { get; set; }
 
         /// <summary>
         /// Die beteiligten Studiengänge
@@ -193,6 +200,33 @@ namespace MyStik.TimeTable.Web.Models
                 return sb.ToString();
             }
         }
+
+        public string DefaultVirtualRoom
+        {
+            get
+            {
+                if (!Dates.Any())
+                    return "Keine Termine";
+
+                if (Dates.Count > 1)
+                    return "Verschiedene";
+
+                if (!VirtualRooms.Any())
+                    return "keine Raumangaben";
+
+                var sb = new StringBuilder();
+                foreach (var room in VirtualRooms)
+                {
+                    sb.Append(room.Name);
+                    if (room != VirtualRooms.Last())
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                return sb.ToString();
+            }
+        }
+
 
         private ActivityDate _currentDate;
 
@@ -626,6 +660,10 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public Guid ActivityDateId { get; set; }
+
+        public CourseSummaryModel Summary { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
     }
 
     /// <summary>

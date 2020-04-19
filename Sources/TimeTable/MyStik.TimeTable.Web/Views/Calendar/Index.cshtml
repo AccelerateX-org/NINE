@@ -1,24 +1,180 @@
-﻿
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CalendarMyDayModel
 @{
-    ViewBag.Title = "iCal";
+    ViewBag.Title = "Mein Tag";
 }
 
-<h2>Persönliche Termine über iCal</h2>
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+}
 
-<div class="panel panel-default">
-    <div class="panel-heading">iCal - Datei</div>
-    <div class="panel-body">
-        <p>Die iCal-Datei läßt sich in verschiedene Mailprogramme einlesen, z.B. MS-Outlook.</p>
-        <p><strong>Hinweis:</strong> Die iCal Datei enthält nur die Termine zum Zeitpunkt des Downloads. Wer ständig auf dem laufenden gehalten werden möchte, kann den iCal-Feed verwenden.</p>
-        <div><a href="@Url.Action("File", "Calendar")" class="btn btn-default"><i class="fa fa-download text-success"></i> Download iCal-Datei für <strong>@ViewBag.CalendarPeriod</strong></a></div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Weitere Sichten
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("PersonalPlan", "Activity")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-calendar-day"></i> Tageskalender
+                        </a>
+                        <a href="@Url.Action("PersonalPlanWeekly", "Activity", new {id = Model.CurrentSemester.Id})" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-calendar-week"></i> Wochenkalender @Model.CurrentSemester.Name
+                        </a>
+                        <a href="@Url.Action("Index", "UserProfile")#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-download"></i> iCal Feed
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model.Dates.Any())
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            @Model.Day.ToShortDateString()
+                            @if (Model.Day.Date == DateTime.Today.Date)
+                            {
+                                <a href="@Url.Action("Tomorrow")" class="btn btn-primary">Morgen</a>
+                            }
+                        </div>
+                        <div class="list-group list-group-flush">
+                            @foreach (var date in Model.Dates)
+                            {
+                                var course = date.Date.Activity as Course;
+                                var oh = date.Date.Activity as OfficeHour;
+
+                                <div class="card mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @if (date.Date.Occurrence.IsCanceled)
+                                            {
+                                                if (date.Slot != null)
+                                                {
+                                                    <h4 class="card-header text-white bg-danger">@Html.TimeSpan(date.Slot) - abgesagt</h4>
+                                                }
+                                                else
+                                                {
+                                                    <h4 class="card-header text-white bg-danger">@Html.TimeSpan(date.Date) - abgesagt</h4>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (date.Slot != null)
+                                                {
+                                                    <h4 class="card-header">@Html.TimeSpan(date.Slot)</h4>
+                                                }
+                                                else
+                                                {
+                                                    <h4 class="card-header">@Html.TimeSpan(date.Date)</h4>
+                                                }
+                                            }
+                                            <ul class="fa-ul">
+                                                <li>@Html.LecturerList(date.Date.Hosts, asInline: true)</li>
+                                                <li>@Html.RoomList(date.Date.Rooms, asInline: true)</li>
+                                                <li>@Html.RoomList(date.Date.VirtualRooms, asInline: true)</li>
+                                                @if (course != null && !string.IsNullOrEmpty(course.UrlMoodleCourse))
+                                                {
+                                                    <li><i class="fas fa-li fa-globe"></i><a href="@course.UrlMoodleCourse" target="_blank">moodle (@course.KeyMoodleCourse)</a></li>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-8">
+                                            @if (course != null)
+                                            {
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <a href="@Url.Action("Details", "Course", new {id = date.Date.Activity.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
+                                                    </h5>
+                                                    <p class="card-text">@date.Date.Title</p>
+                                                    <p class="card-text"><small class="text-muted">@date.Date.Description</small></p>
+                                                    @if (date.IsHost)
+                                                    {
+                                                        <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = date.Date.Activity.Occurrence.Id})" class="btn btn-primary"><i class="fas fa-envelope"></i> Mail senden</a>
+                                                        <a href="@Url.Action("AdminNewParticipients", "Course", new {id = date.Date.Activity.Id})" class="btn btn-primary"><i class="fas fa-users"></i> Teilnehmende</a>
+                                                        <a href="@Url.Action("CancelDate", "Course", new {id = date.Date.Occurrence.Id})" class="btn btn-danger"><i class="fas fa-times"></i> absagen</a>
+                                                    }
+
+                                                </div>
+                                            }
+
+                                            @if (oh != null)
+                                            {
+                                                if (date.IsHost)
+                                                {
+                                                    var nSub = date.Date.Occurrence.Subscriptions.Count + date.Date.Slots.Sum(x => x.Occurrence.Subscriptions.Count);
+
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            @if (date.Date.Slots.Any())
+                                                            {
+                                                                <a href="@Url.Action("DateDetails", "Lecturer", new {id = date.Date.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
+                                                            }
+                                                        </h5>
+                                                        <p class="card-text">Eintragungen: @nSub</p>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    var member = date.Date.Activity.Owners.First().Member;
+
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            @if (date.Date.Slots.Any())
+                                                            {
+                                                                <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new {id = date.Date.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
+                                                                <p class="card-text">@date.Subscription.SubscriberRemark</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("Lecturer", "OfficeHour", new {id = member.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
+                                                            }
+                                                        </h5>
+                                                    </div>
+                                                }
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            Keine Termine am @Model.Day.ToShortDateString()
+                            @if (Model.Day.Date == DateTime.Today.Date)
+                            {
+                                <a href="@Url.Action("Tomorrow")" class="btn btn-primary">Morgen</a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">iCal - Feed</div>
-    <div class="panel-body">
-        <p>Die iCal-Feed läßt sich als Kalender, z.B. in MS-Outlook oder google Calendar einbinden. Das jeweilige Programm ruft dann je nach Einstellungen die aktuellen Termine ab.</p>
-        <div>URL für iCal Client Feed (<strong>@ViewBag.CalendarPeriod</strong>): <span class="text-primary">@Url.Action("Feed", "Calendar", new { token = ViewBag.CalendarToken }, "http")</span></div>
-    </div>
-</div>
+
+
+
 

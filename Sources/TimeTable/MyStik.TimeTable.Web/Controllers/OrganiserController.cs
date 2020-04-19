@@ -662,6 +662,23 @@ namespace MyStik.TimeTable.Web.Controllers
                     Db.ActivityOwners.Remove(ownership);
                 }
 
+                var ads = Db.Advertisements.Where(x => x.Owner.Id == member.Id).ToList();
+
+                foreach (var adv in ads)
+                {
+                    if (adv.Attachment != null)
+                    {
+                        // Löschen
+                        var bs = Db.Storages.SingleOrDefault(x => x.Id == adv.Attachment.Id);
+                        if (bs != null)
+                        {
+                            Db.Storages.Remove(bs);
+                        }
+                    }
+
+                    Db.Advertisements.Remove(adv);
+                }
+
 
                 var org = member.Organiser;
 

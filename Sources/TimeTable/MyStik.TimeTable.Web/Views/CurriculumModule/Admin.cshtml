@@ -1,0 +1,51 @@
+﻿@model MyStik.TimeTable.Data.CurriculumModule
+
+@{
+    ViewBag.Title = "Modul";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Modulverwaltung
+            </div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Details", new {id=Model.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-cogs fa-fw"></i><br />Allgemeines</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Lehrformate</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Lehrangebote</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Akkreditierungen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Delete", new {id=Model.Id})"><i class="fas fa-trash fa-fw"></i><br />Löschen</a>
+                </li>
+            </ul>
+            <div class="card-body">
+                <h5 class="card-title">Allgemeine Angaben</h5>
+                <ul>
+                    <li>Nummer / ID: @Model.ModuleId</li>
+                    <li>Bezeichnung: @Model.Name</li>
+                    <li>Stundenplankürzel: @Model.ShortName</li>
+                </ul>
+                <h5 class="card-title">Lehrformate</h5>
+                <ul>
+                    @foreach (var c in Model.ModuleCourses)
+                    {
+                        <li>@c.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+

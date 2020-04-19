@@ -21,10 +21,16 @@
         <div class="col-md-12">
             <div class="alert alert-danger">
                 <h4><i class="fa fa-fire-extinguisher"></i> Bereinigen des Wahlverfahrens</h4>
-                <p>Es werden alle Eintragungen ohne Priorität gelöscht, da diese Eintragungen nicht im Zuge des Wahlverfahrens zu Stande gekommen sind. 
-                    Alle Informationen werden unwiederbringlich gelöscht. Die Aktion kann nicht rückgängig gemacht werden.</p>
+                <p>
+                    Es werden alle Eintragungen ohne Priorität gelöscht, da diese Eintragungen nicht im Zuge des Wahlverfahrens zu Stande gekommen sind.
+                    Alle Informationen werden unwiederbringlich gelöscht. Die Aktion kann nicht rückgängig gemacht werden.
+                </p>
                 <a class="btn btn-danger" href="@Url.Action("ClearanceConfirmed", new {id = Model.Id})"> Ja, das Wahlverfahren soll bereinigt werden</a>
                 <a class="btn btn-default" href="@Url.Action("Details", new {id = Model.Id})"> Abbrechen und zurück</a>
+                <hr />
+                <a class="btn btn-danger" href="@Url.Action("ClearanceTotalConfirmed", new {id = Model.Id})"> ALLE Eintragungen löschen</a>
+                <hr />
+                <a class="btn btn-danger" href="@Url.Action("ClearanceMinMax", new {id = Model.Id})"> Min/Max belegbar korrigieren</a>
             </div>
         </div>
     </div>

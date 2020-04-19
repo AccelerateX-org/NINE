@@ -288,6 +288,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var zpaCourse = new ZpaCourseDto();
 
+            zpaCourse.Id = c.Id;
             zpaCourse.Name = c.Name;
             zpaCourse.ShortName = c.ShortName;
             zpaCourse.Description = c.Description;

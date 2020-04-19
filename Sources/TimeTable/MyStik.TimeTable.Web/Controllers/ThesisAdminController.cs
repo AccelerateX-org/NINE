@@ -988,5 +988,52 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new { id = thesis.Id });
         }
+
+        public ActionResult RepairExpiry()
+        {
+            var org = GetMyOrganisation();
+
+            var model = org.Curricula.ToList();
+
+            return View(model);
+        }
+
+        public ActionResult RepairExpiryGo()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null) && // angemeldet
+                    x.DeliveryDate == null      // noch nicht abgegeben
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                int period = 0;
+                bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
+                if (!success || period == 0)
+                {
+                    period = 3;
+                }
+
+                thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period).AddDays(-1);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Issued");
+        }
+
     }
 }

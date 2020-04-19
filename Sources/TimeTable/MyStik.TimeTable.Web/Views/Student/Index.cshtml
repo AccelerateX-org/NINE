@@ -14,34 +14,46 @@
                         Aktueller Studiengang
                     </div>
                     <div class="card-body">
-                        <ul class="fa-ul">
-                            <li><i class="fa fa-li fa-graduation-cap"></i>@Model.Student.Curriculum.Name</li>
-                            <li><i class="fa fa-li fa-calendar"></i>Seit: @Model.Student.FirstSemester.Name</li>
-                            <li><i class="fa fa-li fa-clock"></i>angelegt am: @Model.Student.Created</li>
-                            <li><i class="fa fa-li fa-university"></i>@Model.Student.Curriculum.Organiser.Name (@Model.Student.Curriculum.Organiser.ShortName)</li>
-                            @if (!string.IsNullOrEmpty(Model.Student.Number))
-                            {
-                                <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @Model.Student.Number</li>
-                            }
-                            else
-                            {
-                                <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
-                            }
-                            @if (Model.Student.IsPartTime)
-                            {
-                                <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
-                            }
-                            @if (Model.Student.IsDual)
-                            {
-                                <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
-                            }
-                            <li><i class="fa fa-li fa-line-chart"></i>48 / 210 ECTS</li>
-                        </ul>
+                        @if (Model.Student != null)
+                        {
+                            <ul class="fa-ul">
+                                <li><i class="fa fa-li fa-graduation-cap"></i>@Model.Student.Curriculum.Name</li>
+                                <li><i class="fa fa-li fa-calendar"></i>Seit: @Model.Student.FirstSemester.Name</li>
+                                <li><i class="fa fa-li fa-clock"></i>angelegt am: @Model.Student.Created</li>
+                                <li><i class="fa fa-li fa-university"></i>@Model.Student.Curriculum.Organiser.Name (@Model.Student.Curriculum.Organiser.ShortName)</li>
+                                @if (!string.IsNullOrEmpty(Model.Student.Number))
+                                {
+                                    <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @Model.Student.Number</li>
+                                }
+                                else
+                                {
+                                    <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                                }
+                                @if (Model.Student.IsPartTime)
+                                {
+                                    <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                                }
+                                @if (Model.Student.IsDual)
+                                {
+                                    <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                                }
+                                <li><i class="fa fa-li fa-line-chart"></i>48 / 210 ECTS</li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger">
+                                <strong>Hinweis:</strong> Ich bin in keinem Studiengang eingetragen
+                            </div>
+                        }
                     </div>
-                    <div class="card-body">
-                        <a href="@Url.Action("ChangeNumber", "Subscription", new {id = Model.Student.Id})" class="card-link">Matrikelnummer ändern</a>
-                        <a href="@Url.Action("ChangeCurriculum", "Subscription",new {id = Model.Student.Id})" class="card-link">Studiengang ändern</a>
-                    </div>
+                    @if (Model.Student != null)
+                    {
+                        <div class="card-body">
+                            <a href="@Url.Action("ChangeNumber", "Subscription", new {id = Model.Student.Id})" class="card-link">Matrikelnummer ändern</a>
+                            <a href="@Url.Action("ChangeCurriculum", "Subscription", new {id = Model.Student.Id})" class="card-link">Studiengang ändern</a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

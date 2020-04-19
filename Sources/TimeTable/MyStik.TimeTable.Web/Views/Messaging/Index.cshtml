@@ -18,18 +18,16 @@
                             Alle Studierenden, mit nicht abgeschlossenem Studium.
                         </div>
                     </a>
-                <!--
-                <a href="@Url.Action("Curriculum", "Mailing")" class="list-group-item">
-                    <h5 class="list-group-item-heading">Auswahl von Studierenden nach Studiengang und Studiensemester</h5>
-                    <div class="list-group-tem-text">
-                        Studiensemester = Senester nach Studienbeginn seit wann als jemand immatrikuliert ist
-                    </div>
-                </a>
-                    -->
+                    <a href="@Url.Action("Curriculum", "Mailing")" class="list-group-item">
+                        <h5 class="list-group-item-heading">Auswahl von Studierenden nach Studiengang und Studiensemester</h5>
+                        <div class="list-group-tem-text">
+                            Das <i>Studiensemester</i> gilt das Semester, welches Studierende als "Beginn ihres Studiums" angegeben haben.
+                        </div>
+                    </a>
                     <a href="@Url.Action("StudentGroup", "Mailing")" class="list-group-item">
                         <h5 class="list-group-item-heading">Auswahl von Studierenden nach Studiengang und <i>Fachsemester</i></h5>
                         <div class="list-group-tem-text">
-                            Das <i>Fachsemester</i> ergibt sich daraus in welchen Lehrveranstaltung einer Semestergruppe jemand eingetragen ist. 
+                            Das <i>Fachsemester</i> ergibt sich implizit daraus in welchen Lehrveranstaltung einer Semestergruppe jemand eingetragen ist. 
                             Ist jemand in einer Veranstaltung des 1. Semester eingetragenn, dann wird das als "Erstsemester" angenommen.
                         </div>
                     </a>

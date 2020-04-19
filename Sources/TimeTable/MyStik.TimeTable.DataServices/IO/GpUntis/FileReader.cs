@@ -49,6 +49,12 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             ReadGPU001("GPU001.txt");   // Unterricht
 
 
+            // GPU0016: Zeitrestriktionen => belegte Zeiten von Räumen
+            _Logger.Info("Lese Zeitrestriktionen");
+            ReadGPU016("GPU016.txt");   // Unterricht
+
+
+
             // ab hier ; separiert
             ReadConfigDays("configDays.txt");
 
@@ -249,6 +255,76 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 lastUnterrichtID = u.UnterrichtID;
             }
         }
+
+        private void ReadGPU016(string fileName)
+        {
+            var lines = GetFileContent(fileName);
+
+            if (!lines.Any())
+                return;
+
+
+            foreach (var line in lines)
+            {
+                // Unterricht einlesen
+                var words = line.Split(seperator);
+
+                var r = new Restriktion
+                {
+                    Typ = words[0].Replace("\"", ""),
+                    ElementID = words[1].Replace("\"", ""),
+                    Tag = int.Parse(words[2]),
+                    Stunde = int.Parse(words[3]),
+                    Level= int.Parse(words[4])
+                };
+
+                if (r.Typ.Equals("R") && r.Level == -3)
+                {
+                    Context.Restriktionen.Add(r);
+                }
+            }
+
+            // Alle Resriktionen durchgehen
+            var orderedRestrictions = Context.Restriktionen.OrderBy(x => x.ElementID).ThenBy(x => x.Tag)
+                .ThenBy(x => x.Stunde).ToList();
+
+
+            foreach (var restriction in orderedRestrictions)
+            {
+                var room = ctx.Raeume.SingleOrDefault(r => r.RaumID.Equals(restriction.ElementID));
+
+                if (room != null)
+                {
+
+                    // gleicher Tag und am hinteren Ende bisherigen Zeitraums und gleicher Raum und gleicher Dozent
+                    var blockade = Context.Blockaden.SingleOrDefault(e =>
+                        e.Tag == restriction.Tag &&
+                        e.BisStunde + 1 == restriction.Stunde &&
+                        e.Raum.RaumID.Equals(restriction.ElementID));
+                    if (blockade != null)
+                    {
+                        blockade.BisStunde++;
+                    }
+                    else
+                    {
+                        // nicht vorhanden, dann anderer Tag oder Lücke oder anderer Raum 
+                        blockade = new RaumBlockade
+                        {
+                            Raum = room,
+                            Tag = restriction.Tag,
+                            VonStunde = restriction.Stunde,
+                            BisStunde = restriction.Stunde
+                        };
+
+                        Context.Blockaden.Add(blockade);
+                    }
+                }
+            }
+
+
+        }
+
+
 
         /// <summary>
         /// Anlegen eines neuen Kurstermins

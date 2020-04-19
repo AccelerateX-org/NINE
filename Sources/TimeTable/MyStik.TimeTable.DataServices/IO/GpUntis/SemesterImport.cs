@@ -816,5 +816,161 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             db.SaveChanges();
 
         }
+
+        public void CheckRestriktions()
+        {
+            var db = new TimeTableDbContext();
+            var org = db.Organisers.SingleOrDefault(o => o.Id == _orgId);
+
+            if (org == null)
+            {
+                _import.AddErrorMessage("Import", "Unbekannte Organisationseinheit", true);
+                return;
+            }
+
+            foreach (var blockade in _import.Blockaden)
+            {
+                _import.AddErrorMessage("Import",
+                    $"Raum [{blockade.Raum.Nummer}]: Reservierung wird angelegt für Tag [{blockade.Tag}] im Zeitraum [{blockade.VonStunde}-{blockade.BisStunde}]", false);
+
+            }
+
+        }
+
+
+        public string ImportReservation(RaumBlockade b)
+        {
+            string msg;
+
+            var db = new TimeTableDbContext();
+            var org = db.Organisers.SingleOrDefault(o => o.Id == _orgId);
+            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
+            
+
+            var name = $"Restriktionen Stundenplanung {semester.Name}";
+
+            var reservation = db.Activities.OfType<Reservation>().FirstOrDefault(r => r.Organiser.Id == org.Id && r.Name.Equals(name));
+
+            if (reservation == null)
+            {
+                reservation = new Reservation
+                {
+                    Name = name,
+                    ShortName = $"SP {semester.Name}",
+                    Description = "Importierte Restrektionen aus Stundenplanug",
+                    UserId = "",
+                    Organiser = org
+                };
+
+                db.Activities.Add(reservation);
+            }
+
+            // Datum anlegen für jeden Raum
+
+
+
+
+            // Die Zeiten werden jetzt aus dem Kontext gelesen
+            if (!_import.Stunden.ContainsKey(b.VonStunde))
+            {
+                _import.AddErrorMessage("Import", string.Format("Stunde {0} nicht definiert", b.VonStunde), false);
+           }
+            if (!_import.Stunden.ContainsKey(b.BisStunde))
+            {
+                _import.AddErrorMessage("Import", string.Format("Stunde {0} nicht definiert", b.BisStunde), false);
+            }
+
+            // Termin liegt an einem Tag, der nicht importiert werden soll
+            if (!_import.Tage.ContainsKey(b.Tag))
+            {
+                _import.AddErrorMessage("Import", string.Format("Tag {0} nicht definiert", b.Tag), false);
+            }
+
+            if (!_import.Tage[b.Tag])
+            {
+                _import.AddErrorMessage("Import", string.Format("Tag {0} soll nicht importiert werden", b.Tag), false);
+            }
+
+
+            var occBegin = _import.Stunden[b.VonStunde].Start;
+            var occEnd = _import.Stunden[b.BisStunde].Ende;
+
+            // den wahren zeitraum bestimmen
+            // Hypothese: immer Vorlesungszeitraum des Semesters
+            var semesterAnfang = semester.StartCourses;
+            var semesterEnde = semester.EndCourses;
+
+            // abweichende Angaben? dann diese nehmen
+            if (_firstDate.HasValue)
+            {
+                semesterAnfang = _firstDate.Value;
+            }
+
+            if (_lastDate.HasValue)
+            {
+                semesterEnde = _lastDate.Value;
+            }
+
+            // Tag der ersten Veranstaltung nach Vorlesungsbeginn ermitteln
+            var semesterStartTag = (int)semesterAnfang.DayOfWeek;
+            var day = b.Tag;
+            int nDays = day - semesterStartTag;
+            if (nDays < 0)
+                nDays += 7;
+
+            DateTime occDate = semesterAnfang.AddDays(nDays);
+
+
+            //Solange neue Termine anlegen bis das Enddatum des Semesters erreicht ist
+            int numOcc = 0;
+            while (occDate <= semesterEnde)
+            {
+                bool isVorlesung = true;
+                foreach (var sd in semester.Dates)
+                {
+                    // Wenn der Termin in eine vorlesungsfreie Zeit fällt, dann nicht importieren
+                    if (sd.From.Date <= occDate.Date &&
+                        occDate.Date <= sd.To.Date &&
+                        sd.HasCourses == false)
+                    {
+                        isVorlesung = false;
+                    }
+                }
+
+                if (isVorlesung)
+                {
+                    var ocStart = new DateTime(occDate.Year, occDate.Month, occDate.Day, occBegin.Hour,
+                        occBegin.Minute, occBegin.Second);
+                    var ocEnd = new DateTime(occDate.Year, occDate.Month, occDate.Day, occEnd.Hour,
+                        occEnd.Minute, occEnd.Second);
+
+                    var occ = new ActivityDate
+                    {
+                        Begin = ocStart,
+                        End = ocEnd,
+                        Activity = reservation,
+                        Occurrence = null,
+                    };
+
+                    var room = InitRoom(db, b.Raum, org);
+                    if (room != null)
+                    {
+                        occ.Rooms.Add(room);
+                    }
+
+                    db.ActivityDates.Add(occ);
+                    numOcc++;
+                }
+
+                occDate = occDate.AddDays(7);
+            }
+
+            db.SaveChanges();
+
+            msg = string.Format("Reservierung für Raum {0} mit Terminen importiert", b.Raum.Nummer);
+
+            return msg;
+        }
+
     }
 }

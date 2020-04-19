@@ -815,5 +815,157 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
+        public ActionResult Curriculum()
+        {
+            var org = GetMyOrganisation();
+
+
+
+            ViewBag.UserRight = GetUserRight();
+
+            var model = new OccurrenceMailingModel();
+
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+            var nextDate = DateTime.Today.AddDays(70);
+
+            ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= nextDate).OrderByDescending(x => x.EndCourses)
+                .Select(f => new SelectListItem
+                    {
+                        Text = f.Name,
+                        Value = f.Id.ToString(),
+                    }
+                );
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Curriculum(OccurrenceMailingModel model)
+        {
+            var logger = LogManager.GetLogger("StudentGroup");
+
+            var sem = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+
+            var students = Db.Students.Where(x => x.Curriculum.Id == curr.Id && x.FirstSemester.Id == sem.Id &&
+                                   x.LastSemester == null).ToList();
+
+            var userList = new List<ApplicationUser>();
+
+            foreach (var student in students)
+            {
+                ApplicationUser user = UserManager.FindById(student.UserId);
+                if (user != null)
+                {
+                    userList.Add(user);
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendFormat("Studiengang {0}, Studienbeginn {1}", curr.ShortName, sem.Name);
+
+            model.ListName = sb.ToString();
+            model.IsDistributionList = true;
+
+            logger.InfoFormat("UserList with {0} entires", userList.Count);
+
+            if (!User.IsInRole("SysAdmin"))
+            {
+                SendMail(userList, model);
+            }
+            return View("ReceiverList", userList);
+        }
+
+
+
+        public ActionResult CurriculumModule(Guid moduleId, Guid semId)
+        {
+            ViewBag.UserRight = GetUserRight();
+
+            var model = new OccurrenceMailingModel();
+
+            model.ModuleId = moduleId;
+            model.SemId = semId;
+
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+
+            ViewBag.Module = module;
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult CurriculumModule(OccurrenceMailingModel model)
+        {
+            var logger = LogManager.GetLogger("StudentGroup");
+
+            var sem = Db.Semesters.SingleOrDefault(x => x.Id == model.SemId);
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.ModuleId);
+
+
+            var list = new List<ModuleParticipantModel>();
+
+            foreach (var moduleCourse in module.ModuleCourses)
+            {
+                var courses =
+                    moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == sem.Id))
+                        .Select(x => x.Course).Distinct().ToList();
+
+
+                foreach (var course in courses)
+                {
+                    foreach (var subscription in course.Occurrence.Subscriptions)
+                    {
+                        var participant = list.SingleOrDefault(x => x.UserId.Equals(subscription.UserId));
+
+                        if (participant == null)
+                        {
+                            participant = new ModuleParticipantModel
+                            {
+                                UserId = subscription.UserId
+                            };
+                            list.Add(participant);
+                        }
+                    }
+                }
+            }
+
+            var userList = new List<ApplicationUser>();
+
+            foreach (var student in list)
+            {
+                ApplicationUser user = UserManager.FindById(student.UserId);
+                if (user != null)
+                {
+                    userList.Add(user);
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendFormat("Modul {0} ({1})", module.Name, module.ShortName);
+
+            model.ListName = sb.ToString();
+            model.IsImportant = true;
+            model.IsDistributionList = false;
+
+            logger.InfoFormat("UserList with {0} entires", userList.Count);
+
+            if (!User.IsInRole("SysAdmin"))
+            {
+                SendMail(userList, model);
+            }
+            return View("ReceiverList", userList);
+        }
+
+
+
     }
 }

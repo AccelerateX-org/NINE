@@ -17,7 +17,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Meine laufenden Abschlussarbeiten</h4>
+                    <h4>Meine Abschlussarbeiten, die noch nicht abgerechnet wurden</h4>
                 </div>
                 <table id="tabThesis" class="table table-condensed">
                     <thead>
@@ -28,6 +28,7 @@
                             <th>Studiengang</th>
                             <th>geplante Abgabe</th>
                             <th>tatsächliche Abgabe</th>
+                            <th>Benotung erfolgt</th>
                             <th>Status Anmeldung</th>
                         </tr>
                     </thead>
@@ -50,6 +51,14 @@
                             @if (thesis.Thesis.DeliveryDate.HasValue)
                             {
                                 <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            @if (thesis.Thesis.GradeDate.HasValue)
+                            {
+                                <td>@thesis.Thesis.GradeDate.Value.ToShortDateString()</td>
                             }
                             else
                             {
@@ -86,7 +95,7 @@
                 },
                 {
                     "type": "de_date",
-                    "targets": [4]
+                    "targets": [4, 5, 6]
                 }],
                 "order": [[1, 'asc']]
             });

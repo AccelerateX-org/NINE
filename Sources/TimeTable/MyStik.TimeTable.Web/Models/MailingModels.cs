@@ -100,6 +100,18 @@ namespace MyStik.TimeTable.Web.Models
         public string GroupIds { get; set; }
 
         public ICollection<string> GroupIdList { get; set; }
+
+        [Display(Name = "Semester Studienbeginn")]
+        public Guid SemId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Studienprogramm")]
+        public Guid CurrId { get; set; }
+
+        public Guid ModuleId { get; set; }
+
     }
 
     /// <summary>

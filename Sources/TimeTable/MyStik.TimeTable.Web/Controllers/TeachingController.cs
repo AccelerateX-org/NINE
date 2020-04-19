@@ -55,6 +55,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveTheses.Add(tm);
             }
 
+            var member = GetMyMembership();
+            model.Modules = Db.CurriculumModules.Where(x => x.MV.Id == member.Id).ToList();
 
 
             model.Members = MemberService.GetMemberships(user);

@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Erster Besuch";
+}
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
+    <div class="col-md-12">
+        <h2 class="text-center">Willkommen bei NINE für...</h2>
+    </div>
+</div>
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-6 col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">... Studieninteressierte</h5>
+                <h6 class="card-subtitle mb-2 text-muted">In Berührung kommen </h6>
+                <p class="card-text">Informieren, Ausprobieren, Beraten lassen</p>
+                <div class="alert alert-danger" role="alert">
+                    <strong>Hinweis:</strong><br/>
+                    In diesem Bereich werden als Notlösung im SoSe 2020 digitale Formen von Auswahlverfahren angeboten.
+                </div>
+                <a href="@Url.Action("Index", "Curricula")" class="btn btn-primary">Zu den Studiengängen</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">... Studierende</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Organisation  des Studienalltags</h6>
+                <p class="card-text">Vorlesungsverzeichnisse, persönlicher Stundenplan  & mehr</p>
+                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-primary">Zum digitalen Studienbuch</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">... Lehrende</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Gestaltung des Lehrbetriebs</h6>
+                <p class="card-text">Terminverwaltung, Raumbelegung, Benachrichtigungen</p>
+                <a href="#" class="btn btn-primary disabled">Bitte bei Betreuer*innen in der jeweiligen Fakultät melden</a>
+            </div>
+        </div>
+    </div>
+</div>
+

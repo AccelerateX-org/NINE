@@ -1,0 +1,52 @@
+﻿@model MyStik.TimeTable.Web.Models.AssessmentOverviewModel
+@{
+    ViewBag.Title = "Auswahlverfahren";
+}
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-poll"></i> Auswahlverfahren für Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+            </div>
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>Bezeichnung</th>
+                    <th>Status</th>
+                    <th>Zeitraum</th>
+                    <th>Bemerkung</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="@Url.Action("Details")"> WiSe 2020/21 Studienrichtung "Fotodesign"</a></td>
+                        <td>Einreichen Mappe</td>
+                        <td>04.05.2020 - 29.05.2020</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>WiSe 2020/21 Studienrichtung "Industriedesign"</td>
+                        <td>Vorauswahl der eingereichten Mappen</td>
+                        <td>01.06.2020 - 12.06.2020</td>
+                        <td>Nach Abschluss der Vorauswahl werden alle per E-Mail informiert</td>
+                    </tr>
+                    <tr>
+                        <td>WiSe 2020/21 Studienrichtung "Kommunikationsdesign"</td>
+                        <td>Aufnahmeprüfung</td>
+                        <td>15.06.2020 - 17.06.2020</td>
+                        <td>Bearbeitung der bereitgestellten Prüfungsaufgaben</td>
+                    </tr>
+                <tr>
+                    <td>WiSe 2020/21 Studienrichtung "Digitaldesign"</td>
+                    <td>Auswertung und Auswahl</td>
+                    <td>18.06.2020 - 30.06.2020</td>
+                    <td>Nach Abschluss der Vorauswahl werden alle per E-Mail informiert</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

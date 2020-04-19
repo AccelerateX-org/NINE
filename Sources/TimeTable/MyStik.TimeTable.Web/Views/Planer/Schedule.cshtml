@@ -27,7 +27,7 @@
                                     <li><i class="fa fa-li fa-hourglass-half"></i>Warteliste: @act.Activity.Occurrence.Subscriptions.Count(x => x.OnWaitingList)</li>
                                     @if (act.CurrentDate != null)
                                     {
-                                        <li><i class="fa fa-li fa-calendar"></i><strong>Jetzt in @Html.RoomList(act.CurrentDate.Summary.Date.Rooms)</strong></li>
+                                        <li><i class="fa fa-li fa-calendar"></i><strong>Jetzt in @Html.RoomList(act.CurrentDate.Summary.Date.Rooms), @Html.RoomList(act.CurrentDate.Summary.Date.VirtualRooms)</strong></li>
                                     }
                                     else
                                     {
@@ -39,7 +39,7 @@
                                             }
                                             else
                                             {
-                                                <li><i class="fa fa-li fa-calendar"></i>@Html.Date(act.NextDate.Summary.Date) in @Html.RoomList(act.NextDate.Summary.Date.Rooms) - <a href="@Url.Action("CancelDate", "Course", new {id = act.NextDate.Summary.Date.Occurrence.Id})">absagen</a></li>
+                                                <li><i class="fa fa-li fa-calendar"></i>@Html.Date(act.NextDate.Summary.Date) in @Html.RoomList(act.NextDate.Summary.Date.Rooms), @Html.RoomList(act.NextDate.Summary.Date.VirtualRooms) <a href="@Url.Action("CancelDate", "Course", new {id = act.NextDate.Summary.Date.Occurrence.Id})" class="btn btn-danger btn-xs"><i class="fa fa-times"></i> absagen</a></li>
                                             }
                                         }
                                         else

@@ -1,0 +1,25 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+
+@{
+    ViewBag.Title = "RepairExpiry";
+}
+
+<h2>RepairExpiry</h2>
+
+<p>Setzt alle Abgadaten der bereits angemeldeten Arbeiten ausgehend vom Anmeldedatum entsprechend der Angaben in den Studiengängen.</p>
+
+<ul>
+    @foreach (var c in Model)
+    {
+        if (string.IsNullOrEmpty(c.Version))
+        {
+            <li>@c.ShortName: keine Angabe, Standard 3 Monate</li>
+        }
+        else
+        {
+            <li>@c.ShortName: @c.Version Monate</li>
+        }
+    }
+</ul>
+
+<a href="@Url.Action("RepairExpiryGo")" class="btn btn-danger">Ausführen, kein Undo!!!</a>

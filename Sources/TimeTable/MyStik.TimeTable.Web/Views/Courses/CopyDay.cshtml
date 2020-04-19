@@ -1,0 +1,122 @@
+﻿@model MyStik.TimeTable.Web.Models.CopyDayViewModel
+@{
+    ViewBag.Title = "Admin";
+}
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Verwaltung Lehrangebot @Model.Organiser.ShortName für @Model.Semester.Name</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Einen Vorlesungstag kopieren</h4>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+                    {
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+                        @Html.HiddenFor(m => m.Semester.Id)
+                        <fieldset>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CurrId, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    @Html.DropDownListFor(model => model.CurrId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SourceDate, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.SourceDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+                                    @Html.ValidationMessageFor(m => m.SourceDate)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TargetDate, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(model => model.TargetDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+                                    @Html.ValidationMessageFor(m => m.TargetDate)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Termine verschieben</label>
+                                <div class="col-sm-8">
+                                    @Html.CheckBoxFor(item => item.Move)
+                                    @Html.LabelFor(item => item.Move, new { @class = "control-label" })
+                                </div>
+                            </div>
+
+
+                            <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Kopieren / Verschieben</button>
+                            <a href="@Url.Action("Semester", new {id=Model.Semester.Id})" class="btn btn-default"><i class="fa fa-arrow-left"></i> Abbrechen</a>
+                        </fieldset>
+                    }
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+    <script>
+
+
+        $(function () {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+
+            $('.timepicker-24').timepicker({
+                autoclose: true,
+                minuteStep: 15,
+                showSeconds: false,
+                showMeridian: false
+            });
+
+            $('.timepicker').parent('.input-group').on('click',
+                '.input-group-btn',
+                function (e) {
+                    e.preventDefault();
+                    $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
+                });
+        });
+
+
+    </script>
+
+}

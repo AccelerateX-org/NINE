@@ -48,7 +48,7 @@
                 @if (Model.Dates.Count == 1)
                 {
                     <i class="fa-li fa fa-calendar"></i>
-                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: false)]</span>
+                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: false), @Html.RoomList(Model.VirtualRooms, showLinks: false)]</span>
                 }
                 else
                 {
@@ -86,7 +86,7 @@ else
                 @if (Model.Dates.Count == 1)
                 {
                     <i class="fa-li fa fa-calendar"></i>
-                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: true)]</span>
+                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: true), @Html.RoomList(Model.VirtualRooms, showLinks:true)]</span>
                 }
                 else
                 {

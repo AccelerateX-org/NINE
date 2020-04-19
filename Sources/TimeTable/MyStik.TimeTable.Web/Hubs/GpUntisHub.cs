@@ -235,14 +235,34 @@ namespace MyStik.TimeTable.Web.Hubs
                 msg = importer.ImportCourse(k);
                 i++;
 
-                perc1 = (i * 100) / n;
+                perc1 = (i * 90) / n;
 
                 Clients.Caller.updateProgress(msg, perc1);
             }
 
-            msg = "Alle Kurse importiert";
+            msg = "Alle Kurse importiert - Importiere Raumreservierungen";
+            perc1 = 90;
+            Clients.Caller.updateProgress(msg, perc1);
+
+
+            n = reader.Context.Blockaden.Count;
+            i = 0;
+
+            foreach (var k in reader.Context.Blockaden)
+            {
+                msg = importer.ImportReservation(k);
+                i++;
+
+                perc1 = 90 + (i * 10) / n;
+
+                Clients.Caller.updateProgress(msg, perc1);
+            }
+
+            msg = "Alle Daten importiert";
             perc1 = 100;
             Clients.Caller.updateProgress(msg, perc1);
+
+
         }
     }
 }

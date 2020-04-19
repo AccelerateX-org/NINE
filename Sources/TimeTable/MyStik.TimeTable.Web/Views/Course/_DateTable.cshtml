@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Data.Course
 <table class="table table-condensed">
@@ -8,7 +9,8 @@
             <th>Tag</th>
             <th>Datum</th>
             <th>Zeitraum</th>
-            <th>Ort</th>
+            <th>Ort(e)</th>
+            <th>Raumkonflikte</th>
             <th>Dozent</th>
             <th>Titel/Beschreibung</th>
             <th>Kurzinfo</th>
@@ -35,10 +37,29 @@
             <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
             <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
             <td><del>@Html.TimeSpan(date)</del></td>
-            <td colspan="4">abgesagt</td>
+            <td colspan="5">abgesagt</td>
             <td>
                 @if (date.End >= DateTime.Now)
                 {
+                    if (Model.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
+                     {
+                         <div class="btn-group pull-right" role="group">
+                             @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                 new {dateId = date.Id},
+                                 new AjaxOptions()
+                                 {
+                                     HttpMethod = "Post",
+                                     InsertionMode = InsertionMode.Replace,
+                                     UpdateTargetId = "modalDelete",
+                                     OnSuccess = "showEditDateInformation()"
+                                 },
+                                 new {@class = "btn btn-default btn-xs"}
+                                 )
+                         </div>
+                     }
+
+
+
                     if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                     {
                         <div class="btn-group pull-right" role="group">
@@ -97,6 +118,19 @@
             }
             else
             {
+                var allConflicts = new List<ActivityDate>();
+                foreach (var room in date.Rooms)
+                {
+                    var roomConflicts = room.Dates.Where(d => (d.End > date.Begin && d.End < date.End ||
+                                                       d.Begin > date.Begin && d.Begin < date.End ||
+                                                       d.Begin < date.Begin && d.End > date.End) &&
+                                                      d.Activity.Id != date.Activity.Id).ToList();
+
+                    allConflicts.AddRange(roomConflicts);
+                }
+
+
+
                 <tr @histAttr>
                     <td>
                         @if (date.End >= DateTime.Now)
@@ -107,7 +141,41 @@
                     <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
                     <td>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</td>
                     <td>@Html.TimeSpan(date)</td>
-                    <td>@Html.RoomList(date.Rooms)</td>
+                    <td>
+                        @if (date.Rooms.Any())
+                        {
+                            @Html.RoomList(date.Rooms)<br/>
+                        }
+                        @if (date.VirtualRooms.Any())
+                        {
+                            @Html.RoomList(date.VirtualRooms)
+                        }
+                    </td>
+                    @if (allConflicts.Any())
+                    {
+                        <td>
+                                @foreach (var conflict in allConflicts)
+                                {
+                                    if (conflict.Activity is Reservation)
+                                    {
+                                        <div>Raumreservierung: @conflict.Activity.Name (@Html.TimeSpan(conflict))</div>
+                                    }
+                                    else if (conflict.Activity is Course)
+                                    {
+                                        <div><a href="@Url.Action("Details", new {id=conflict.Activity.Id})">@conflict.Activity.ShortName (@Html.TimeSpan(conflict))</a></div>
+                                    }
+                                    else
+                                    {
+                                        <td>@conflict.Activity.Name (@Html.TimeSpan(conflict))</td>
+                                    }
+                                }
+                        </td>
+
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                     <td>@Html.LecturerList(date.Hosts)</td>
                     @if (string.IsNullOrEmpty(date.Title) && string.IsNullOrEmpty(date.Description))
                     {
@@ -131,6 +199,24 @@
                     <td>
                         @if (date.End >= DateTime.Now)
                         {
+                            if (Model.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                <div class="btn-group pull-right" role="group">
+                                    @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                        new {dateId = date.Id},
+                                        new AjaxOptions()
+                                        {
+                                            HttpMethod = "Post",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = "modalDelete",
+                                            OnSuccess = "showEditDateInformation()"
+                                        },
+                                        new {@class = "btn btn-default btn-xs"}
+                                        )
+                                </div>
+                            }
+
+
                             if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                             {
                                 <div class="btn-group pull-right" role="group">
@@ -140,7 +226,7 @@
                                         new {@class = "btn btn-default btn-xs"}
                                         )
 
-                                    @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new {id = date.Occurrence.Id}, new {@class = "btn btn-default btn-xs"})
+                                    @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new { id = date.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
 
 
                                     @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
@@ -154,7 +240,6 @@
                                         },
                                         new {@class = "btn btn-default btn-xs"}
                                         )
-
 
                                     @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
                                         new {dateId = date.Id},

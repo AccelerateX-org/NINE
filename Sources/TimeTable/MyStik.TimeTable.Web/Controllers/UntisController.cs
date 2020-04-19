@@ -156,6 +156,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             importer.CheckCourses();
 
+            importer.CheckRestriktions();
+
             reader.Context.AddErrorMessage("Zusammenfassung", string.Format("Von {0} Kursen werden {1} importiert",
                 reader.Context.Kurse.Count, reader.Context.Kurse.Count(x => x.IsValid)), false);
 

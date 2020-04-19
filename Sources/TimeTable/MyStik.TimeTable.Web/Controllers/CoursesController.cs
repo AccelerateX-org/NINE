@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
@@ -531,10 +532,21 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult CreateSemester()
         {
             var org = GetMyOrganisation();
+
             var nextSemester = SemesterService.GetNextSemester(DateTime.Today);
 
 
             return RedirectToAction("InitGroups", new {id = nextSemester.Id});
+        }
+
+        public ActionResult CreateCurrentSemester()
+        {
+            var org = GetMyOrganisation();
+
+            var nextSemester = SemesterService.GetSemester(DateTime.Today);
+
+
+            return RedirectToAction("InitGroups", new { id = nextSemester.Id });
         }
 
 
@@ -691,5 +703,154 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_EmptyRow");
         }
+
+        public ActionResult CopyDay()
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var org = GetMyOrganisation();
+
+            var model = new CopyDayViewModel
+            {
+                Semester = semester,
+                Organiser = org,
+            };
+
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CopyDay(CopyDayViewModel model)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var org = GetMyOrganisation();
+            var cur = org.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+            var sourceDay = DateTime.Parse(model.SourceDate);
+            var targetDay = DateTime.Parse(model.TargetDate);
+
+
+            var report = new CopyDayReport
+            {
+                Curriculum = cur,
+                SourceDay = sourceDay,
+                TargetDay = targetDay,
+                CourseReports = new List<CopyDayCourseReport>()
+            };
+
+
+            var begin = sourceDay;
+            var end = sourceDay.AddDays(1);
+
+            var allDates = Db.ActivityDates.Where(x =>
+                x.Activity.SemesterGroups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == cur.Id) &&
+                x.Begin >= begin && x.End < end
+                ).ToList();
+
+
+            foreach (var date in allDates)
+            {
+                var course = date.Activity as Course;
+
+                if (course != null)
+                {
+                    // check, ob es den Termin schon gibt
+                    var newBegin = targetDay.AddHours(date.Begin.Hour).AddMinutes(date.Begin.Minute);
+                    var newEnd = targetDay.AddHours(date.End.Hour).AddMinutes(date.End.Minute);
+
+                    var activityDate = course.Dates.FirstOrDefault(d => d.Begin == newBegin && d.End == newEnd);
+                    var isNew = false;
+                    var isMove = false;
+
+                    if (activityDate == null)
+                    {
+
+                        if (model.Move)
+                        {
+                            var tempDate = new ActivityDate
+                            {
+                                Begin = date.Begin,
+                                End = date.End,
+                            };
+
+                            date.Begin = newBegin;
+                            date.End = newEnd;
+
+
+                            var copyReport = new CopyDayCourseReport
+                            {
+                                Course = course,
+                                SourceDate = tempDate,
+                                TargetDate = date,
+                                IsNew = false,
+                                IsMove = true
+                            };
+
+                            report.CourseReports.Add(copyReport);
+
+                        }
+                        else
+                        {
+                            isNew = true;
+
+                            activityDate = new ActivityDate
+                            {
+                                Activity = course,
+                                Begin = newBegin,
+                                End = newEnd,
+                                Occurrence = new Occurrence
+                                {
+                                    Capacity = -1,
+                                    IsAvailable = true,
+                                    FromIsRestricted = false,
+                                    UntilIsRestricted = false,
+                                    IsCanceled = false,
+                                    IsMoved = false,
+                                    UseGroups = false,
+                                },
+
+                            };
+
+                            foreach (var room in date.Rooms)
+                            {
+                                activityDate.Rooms.Add(room);
+                            }
+
+                            foreach (var doz in date.Hosts)
+                            {
+                                activityDate.Hosts.Add(doz);
+                            }
+
+                            Db.ActivityDates.Add(activityDate);
+
+                            var copyReport = new CopyDayCourseReport
+                            {
+                                Course = course,
+                                SourceDate = date,
+                                TargetDate = activityDate,
+                                IsNew = isNew
+                            };
+
+                            report.CourseReports.Add(copyReport);
+                        }
+
+                    }
+
+
+
+                }
+            }
+
+            Db.SaveChanges();
+
+            return View("CopyDayReport", report);
+        }
+
     }
 }

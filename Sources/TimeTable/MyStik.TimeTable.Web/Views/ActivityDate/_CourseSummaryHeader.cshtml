@@ -1,0 +1,24 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseSummaryModel
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model != null)
+                {
+                    <h4>@Model.Course.Name (@Model.Course.ShortName)</h4>
+                    <ul>
+                        <li>@Html.GroupList(Model.Course.SemesterGroups, showLink: false)</li>
+                        <li>@Html.LecturerList(Model.Lecturers, showLinks: false)</li>
+                        <li><i class="fa fa-calendar"></i> @Model.DefaultDay <i class="fa fa-clock-o"></i> @Model.DefaultTimespan <i class="fa fa-building"></i> @Model.DefaultRoom</li>
+                    </ul>
+                }
+                else
+                {
+                    <h1>Zusammenfassung fehlt</h1>
+                }
+            </div>
+        </div>
+    </div>
+</div>

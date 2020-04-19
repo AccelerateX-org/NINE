@@ -13,23 +13,41 @@
 }
 
 
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-trophy"></i> Studiengänge</h4>
-                </div>
-                <div class="list-group">
-                    <div class="list-group">
-                        @foreach (var org in Model.OrderBy(x => x.ShortName))
-                        {
-                            <a href="@Url.Action("Organiser", new { id=org.Id})" class="list-group-item">
-                                <h5 class="list-group-item-heading">@Html.FacultyLabel(org) @org.Name</h5>
-                            </a>
-                        }
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-award"></i> Studiengänge
+            </div>
+            <div class="accordion" id="accordionCurricula">
+                @foreach (var org in Model.OrderBy(x => x.ShortName))
+                {
+                    var headId = "h" + org.Id;
+                    var collapseId = "c" + org.Id;
+
+                    <div class="card">
+                        <div class="card-header" id="@headId">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#@collapseId" aria-expanded="true" aria-controls="@collapseId">
+                                    @Html.FacultyLabel(org) @org.Name
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="@collapseId" class="collapse" aria-labelledby="@headId" data-parent="#accordionCurricula">
+                            <div class="card-body">
+                                <div class="list-group">
+                                    @foreach (var curr in org.Curricula)
+                                    {
+                                        <a href="@Url.Action("Index", "Curriculum", new { id=curr.Id})" class="list-group-item  list-group-item-action">
+                                            @curr.Name
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>

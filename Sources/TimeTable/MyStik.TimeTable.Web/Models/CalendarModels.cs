@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -125,6 +126,28 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public CourseSummaryModel CourseSummary { get; set; }
+    }
+
+
+    public class CalendarMyDayModel
+    {
+        public Semester CurrentSemester { get; set; }
+
+        public DateTime Day { get; set; }
+
+        public List<CalendarMyDayDateModel> Dates { get; set; }
+    }
+
+    public class CalendarMyDayDateModel
+    {
+        public ActivityDate Date { get; set; }
+
+        public ActivitySlot Slot { get; set; }
+
+        public OccurrenceSubscription Subscription { get; set; }
+
+        public bool IsHost { get; set; }
+
     }
 
 }

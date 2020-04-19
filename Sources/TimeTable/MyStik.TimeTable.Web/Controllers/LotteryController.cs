@@ -574,6 +574,37 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult ClearanceTotalConfirmed(Guid id)
+        {
+            var model = new DrawingService(Db, id);
+
+            var drawing = new LotteryDrawing();
+            drawing.Start = DateTime.Now;
+
+            var subService = new SubscriptionService(Db);
+
+            foreach (var course in model.Courses)
+            {
+                foreach (var subscription in course.Occurrence.Subscriptions.ToList())
+                {
+                    var mailService = new LotteryMailService(model);
+                    mailService.SendLotteryRemoveMail(drawing, GetMyMembership(), model.Lottery, course, subscription);
+
+                    subService.DeleteSubscription(subscription);
+                }
+            }
+
+            // Am Ende eine Mail an den Ausführenden senden, wer alles informiert wurde
+
+
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+
+
+
+
         /// <summary>
         /// Confirmation for reset of lottery
         /// </summary>
@@ -3240,6 +3271,37 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return View(model);
+        }
+
+
+        public ActionResult ClearanceMinMax(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(x => x.Id == id);
+
+            var model = new DrawingService(Db, id);
+
+            model.InitLotPots();
+
+            var min = lottery.MaxConfirm;
+            var max = lottery.MaxExceptionConfirm;
+
+            foreach (var student in model.Games)
+            {
+                if (student.LotteryGame.CoursesWanted > max)
+                {
+                    student.LotteryGame.CoursesWanted = max;
+
+                    if (min < max)
+                    {
+                        student.LotteryGame.CoursesWanted = min;
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Drawing", new {id = id});
         }
 
     }

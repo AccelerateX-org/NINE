@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -14,23 +15,39 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
             var student = StudentService.GetCurrentStudent(user.Id);
-            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
-            var startSemester = student.FirstSemester;
-            var endSemester = SemesterService.GetSemester(DateTime.Today);
-
-            var semesterList = Db.Semesters.Where(x =>
-                x.StartCourses >= startSemester.StartCourses && x.EndCourses <= endSemester.EndCourses).ToList();
-
-
-            var model = new StudentSummaryModel
+            if (student != null)
             {
-                Student = student,
-                Thesis = thesis,
-                Semester = semesterList
-            };
+                var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
-            return View(model);
+                var startSemester = student.FirstSemester;
+                var endSemester = SemesterService.GetSemester(DateTime.Today);
+
+                var semesterList = Db.Semesters.Where(x =>
+                    x.StartCourses >= startSemester.StartCourses && x.EndCourses <= endSemester.EndCourses).ToList();
+
+
+                var model = new StudentSummaryModel
+                {
+                    Student = student,
+                    Thesis = thesis,
+                    Semester = semesterList
+                };
+
+                return View(model);
+            }
+            else
+            {
+                var model = new StudentSummaryModel
+                {
+                    Student = null,
+                    Thesis = null,
+                    Semester = new List<Semester>()
+                };
+
+                return View(model);
+
+            }
         }
     }
 }

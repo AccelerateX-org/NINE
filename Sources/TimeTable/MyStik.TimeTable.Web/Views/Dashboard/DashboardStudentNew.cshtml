@@ -4,16 +4,16 @@
     ViewBag.Title = Resources.MenuDashboard;
 }
 
-    <div class="row justify-content-md-center" style="margin-bottom: 20px" style="margin-top: 20px">
+    <div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
         <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center">
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="btn btn-outline-dark btn-block">
+            <div class="card text-center bg-light">
+                <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark btn-block disabled">
                     <h5><i class="fa fa-2x fa-calendar"></i></h5>
-                    <h6>Mein Kalender</h6>
+                    <h6>"Mein Kalender" ist jetzt "Mein Tag"</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("PersonalPlanToday", "Activity")" class="btn btn-outline-dark">Heute</a>
-                    <a href="@Url.Action("PersonalPlanTomorrow", "Activity")" class="btn btn-outline-dark">Morgen</a>
+                    <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Heute</a>
+                    <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Morgen</a>
                 </div>
             </div>
         </div>

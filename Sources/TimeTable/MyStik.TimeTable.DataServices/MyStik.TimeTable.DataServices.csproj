@@ -91,6 +91,8 @@
     <Compile Include="IO\Cie\FileReader.cs" />
     <Compile Include="IO\Cie\ImportContext.cs" />
     <Compile Include="IO\Cie\SemesterImport.cs" />
+    <Compile Include="IO\GpUntis\Data\RaumBlockade.cs" />
+    <Compile Include="IO\GpUntis\Data\Restriktion.cs" />
     <Compile Include="IO\MemberUpdateService.cs" />
     <Compile Include="Lottery\Data\DrawingGame.cs" />
     <Compile Include="Lottery\Data\DrawingLot.cs" />

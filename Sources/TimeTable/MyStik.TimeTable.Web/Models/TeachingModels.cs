@@ -28,6 +28,8 @@ namespace MyStik.TimeTable.Web.Models
         public List<OrganiserMember> Members { get; set; }
 
         public List<ThesisStateModel> ActiveTheses { get; set; }
+
+        public List<CurriculumModule> Modules { get; set; }
     }
 
 

@@ -1,0 +1,87 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+@{
+    ViewBag.Title = "Tagesprogramm";
+}
+
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Aktionen
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Index", "Reservation")#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-history"></i> Raumreservierungen
+                        </a>
+                        <a href="@Url.Action("Index", "Reservation")#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-history"></i> Lehrveranstaltungen
+                        </a>
+                        <a href="@Url.Action("Index", "Reservation")#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-history"></i> Veranstaltungen
+                        </a>
+                        <a href="@Url.Action("Search", "Room")#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-archive"></i> Raumsuche
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        Zeitplan
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Beginn</th>
+                            <th>Ende</th>
+                            <th>Raum</th>
+                            <th>Veranstaltung</th>
+                            <th>Lehrende</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    <div class="card-body">
+                        <a href="@Url.Action("Create", "Course")" class="card-link">Lehrveranstaltung anlegen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        Aktuelle Raumbelegungen
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Raum</th>
+                                <th>Bis</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="card-body">
+                        <a href="@Url.Action("Index", "ThesisSupervision")" class="card-link">Übersicht</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

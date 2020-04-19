@@ -7,7 +7,14 @@
 }
 
 <div>
-    <h5>@Model.User.FullName</h5>
+    @if (Model.User != null)
+    {
+        <h5>@Model.User.FullName</h5>
+    }
+    else
+    {
+        <h5 class="text-danger">Kein Benutzerkonto vorhanden</h5>
+    }
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Eintragung</a></li>
@@ -53,7 +60,7 @@
                     }
                     <div class="btn-group btn-group-justified" role="group" aria-label="...">
                         <a href="mailto:@Model.User.Email" class="btn btn-default"><i class="fa fa-envelope-o"></i> E-Mail schreiben</a>
-                        
+
                         @if (!Model.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                         {
                             if (Model.Subscription.OnWaitingList)
@@ -92,7 +99,7 @@
                         var linkText = item.CourseSummary.Course.Name + " (" + item.CourseSummary.Course.ShortName + ")";
                         <tr>
                             <td>
-                                @Html.ActionLink(linkText, "Index", "Course", new { id = item.CourseSummary.Course.Id }, null)
+                                @Html.ActionLink(linkText, "Index", "Course", new {id = item.CourseSummary.Course.Id}, null)
                             </td>
                             <td>
                                 @Html.GroupList(item.CourseSummary.Course.SemesterGroups)
@@ -128,7 +135,8 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                            <a href="@Url.Action("RemoveSubscription2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
+
+                            <a href="@Url.Action("RemoveSubscription2", new {Id = Model.Subscription.Id})" class="btn btn-danger"><i class="fa fa-times"></i> Austragen</a>
                         </div>
                     </div>
                 </div>

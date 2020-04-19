@@ -43,6 +43,8 @@ namespace MyStik.TimeTable.Data
         
         public DbSet<SemesterDate> SemesterDates { get; set; }
 
+        public DbSet<ContentChannel> ContentChannels { get; set; }
+        
 
         public DbSet<Curriculum> Curricula { get; set; }
         
@@ -178,7 +180,9 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<Internship> Internships { get; set; }
 
+        public DbSet<VirtualRoom> VirtualRooms { get; set; }
 
+        public DbSet<VirtualRoomAccess> VirtualRoomAccesses { get; set; }
 
         public TimeTableDbContext() : base()
         {

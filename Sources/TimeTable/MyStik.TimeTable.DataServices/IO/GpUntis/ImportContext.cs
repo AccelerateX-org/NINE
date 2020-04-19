@@ -18,6 +18,10 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             Stunden = new Dictionary<int, ImportTimeSpan>();
             GruppenZuordnungen = new List<Zuordnung>();
 
+            Restriktionen = new List<Restriktion>();
+
+            Blockaden = new List<RaumBlockade>();
+
         }
 
 
@@ -32,6 +36,8 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
 
         public ICollection<Zuordnung> GruppenZuordnungen { get; set; }
 
+        public ICollection<Restriktion> Restriktionen { get; set; }
+        public ICollection<RaumBlockade> Blockaden { get; set; }
     }
 
     public class ImportTimeSpan

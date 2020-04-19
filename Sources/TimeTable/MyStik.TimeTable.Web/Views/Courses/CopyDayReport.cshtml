@@ -1,0 +1,76 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CopyDayReport
+@{
+    ViewBag.Title = "Admin";
+}
+
+
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Termine kopiert für @Model.Curriculum.ShortName von @Model.SourceDay.ToShortDateString() auf @Model.TargetDay.ToShortDateString()</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Kopierte Termine</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <a href="@Url.Action("CopyDay")">Nächsten Termin kopieren</a>
+                    </div>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Lehrveranstaltung</th>
+                        <th>Kurzbezeichnung</th>
+                        <th>Gruppen</th>
+                        <th>Zeitraum</th>
+                        <th>Neuer Termin</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var date in Model.CourseReports)
+                    {
+                        <tr>
+                            <td>@date.Course.Name</td>
+                            <td>@date.Course.ShortName</td>
+                            <td>@Html.GroupList(date.Course.SemesterGroups, false, false)</td>
+                            <td>@Html.TimeSpanWithDate(date.SourceDate)</td>
+                            <td>@Html.TimeSpanWithDate(date.TargetDate)</td>
+                            @if (date.IsMove)
+                            {
+                                <td>Termin verschoben</td>
+                            }
+                            else
+                            {
+                                if (date.IsNew)
+                                 {
+                                     <td>Termin angelegt</td>
+                                 }
+                                 else
+                                 {
+                                     <td>Termin war bereits vorhanden</td>
+                                 }
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

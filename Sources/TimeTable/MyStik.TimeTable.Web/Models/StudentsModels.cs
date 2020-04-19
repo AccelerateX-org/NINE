@@ -292,12 +292,15 @@ namespace MyStik.TimeTable.Web.Models
         public StudentsOrgViewModel()
         {
             StudentsByCurriculum = new List<StudentsByCurriculumViewModel>();
+            Semesters = new List<Semester>();
         }
 
 
         public ActivityOrganiser Organiser { get; set; }
 
         public List<StudentsByCurriculumViewModel> StudentsByCurriculum { get; private set; }
+
+        public List<Semester> Semesters { get; set; }
     }
 
 

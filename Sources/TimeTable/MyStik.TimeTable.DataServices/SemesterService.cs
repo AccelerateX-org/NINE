@@ -381,6 +381,8 @@ namespace MyStik.TimeTable.DataServices
 
         public bool IsActive(Semester semester)
         {
+            if (semester == null)
+                return false;
             return _db.SemesterGroups.Any(x => x.Semester.Id == semester.Id);
         }
 

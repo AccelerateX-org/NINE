@@ -227,6 +227,17 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                     userRight.IsOwner =
                         activity.Owners.Any(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id)); // Ist Owner der Aktivität
+
+
+                    // member ist Modulverantwortlicher
+                    var module = Db.CurriculumModules.Where(x =>
+                        x.MV.Id == member.Id && 
+                        x.ModuleCourses.Any(c => c.Nexus.Any(n => n.Course.Id == activity.Id)));
+
+                    if (module != null)
+                    {
+                        userRight.IsHost = true;
+                    }
                 }
                 else
                 {
@@ -327,6 +338,18 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             return new MemberService(Db, UserManager).GetMember(User.Identity.Name);
         }
+
+        protected ICollection<OrganiserMember> GetMyMemberships()
+        {
+            return new MemberService(Db, UserManager).GetMemberships(User.Identity.Name);
+        }
+
+        protected ICollection<Alumnus> GetMyAlumni()
+        {
+            return new List<Alumnus>();
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

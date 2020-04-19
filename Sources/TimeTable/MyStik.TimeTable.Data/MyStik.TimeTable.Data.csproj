@@ -107,6 +107,7 @@
     <Compile Include="CertificateModule.cs" />
     <Compile Include="CertificateSubject.cs" />
     <Compile Include="Contact.cs" />
+    <Compile Include="ContentChannel.cs" />
     <Compile Include="CorporateContact.cs" />
     <Compile Include="CourseModuleNexus.cs" />
     <Compile Include="CriteriaSample.cs" />
@@ -369,6 +370,14 @@
     <Compile Include="Migrations\202002071027041_InternshipV2.Designer.cs">
       <DependentUpon>202002071027041_InternshipV2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202003181950178_ContentChannelV1.cs" />
+    <Compile Include="Migrations\202003181950178_ContentChannelV1.Designer.cs">
+      <DependentUpon>202003181950178_ContentChannelV1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003230746484_VirtualRoomsV1.cs" />
+    <Compile Include="Migrations\202003230746484_VirtualRoomsV1.Designer.cs">
+      <DependentUpon>202003230746484_VirtualRoomsV1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -421,6 +430,8 @@
     <Compile Include="ThesisProvider.cs" />
     <Compile Include="ThesisWorkflow.cs" />
     <Compile Include="TimeTableDbContext.cs" />
+    <Compile Include="VirtualRoom.cs" />
+    <Compile Include="VirtualRoomAccess.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201411090617524_SeemsterGroup.resx">
@@ -587,6 +598,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002071027041_InternshipV2.resx">
       <DependentUpon>202002071027041_InternshipV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003181950178_ContentChannelV1.resx">
+      <DependentUpon>202003181950178_ContentChannelV1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003230746484_VirtualRoomsV1.resx">
+      <DependentUpon>202003230746484_VirtualRoomsV1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

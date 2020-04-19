@@ -36,6 +36,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("DashboardOrgMember", CreateDashboardModelOrgMember(userRight));
             }
 
+            var meberships = GetMyMemberships();
+            var student = StudentService.GetCurrentStudent(userRight.User.Id);
+            var alumni = GetMyAlumni();
+
+            // wenn alles nix, dann erster Besuch
+            if (!meberships.Any() && student == null && !alumni.Any())
+            {
+                return View("FirstVisit");
+            }
+
+            // alle anderen Fälle
+            // wer  member ist ist Dozent => Check mit Fachschaft
+            // wer nur student ist Student
+            // aber auch: nochmal check auf "eine Sicht für alle"
+
+
+
+
 
             switch (userRight.User.MemberState)
             {

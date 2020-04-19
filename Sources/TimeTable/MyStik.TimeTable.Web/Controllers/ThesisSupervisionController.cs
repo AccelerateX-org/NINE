@@ -29,7 +29,7 @@ namespace MyStik.TimeTable.Web.Controllers
             
             var theses = Db.Theses.Where(x => 
                 x.Supervisors.Any(m => m.Member.Id == member.Id) && // Alle Abschlussarbeiten für den Betreuer
-                x.GradeDate == null // noch nicht benotet
+                x.IsCleared == null || x.IsCleared.Value == false // noch nicht abgerechnet
             ).ToList();
 
 

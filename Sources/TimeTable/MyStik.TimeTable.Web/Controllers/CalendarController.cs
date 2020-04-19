@@ -24,6 +24,112 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class CalendarController : BaseController
     {
+        public ActionResult Index()
+        {
+            var day = DateTime.Today;
+
+            var model = GetMyCalendar(day);
+
+            return View("Index", model);
+        }
+
+        public ActionResult Today()
+        {
+            var day = DateTime.Today;
+
+            var model = GetMyCalendar(day);
+
+            return View("Index", model);
+        }
+        public ActionResult Tomorrow()
+        {
+            var day = DateTime.Today.AddDays(1);
+
+            var model = GetMyCalendar(day);
+
+            return View("Index", model);
+        }
+
+
+        private CalendarMyDayModel GetMyCalendar(DateTime day)
+        {
+            var user = GetCurrentUser();
+            var currentSemester = SemesterService.GetSemester(day);
+            var begin = day;
+            var end = begin.AddDays(1);
+
+
+            var dateList = new List<CalendarMyDayDateModel>();
+
+            var subscriptionDatess =
+                Db.ActivityDates.Where(d =>
+                    (d.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                     d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                     d.Slots.Any(slot => slot.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))) &&
+                    d.End >= begin && d.End <= end).OrderBy(d => d.Begin).ToList();
+
+            foreach (var date in subscriptionDatess)
+            {
+                var slot = date.Slots.FirstOrDefault(x =>
+                    x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+
+                var subscription = 
+                    slot != null ?
+                        slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id)) :
+                        date.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+
+                var mDate = new CalendarMyDayDateModel
+                {
+                    Date = date,
+                    Slot = slot,
+                    Subscription = subscription,
+                    IsHost = false
+                };
+
+                dateList.Add(mDate);
+            }
+
+
+            var lectureDates =
+                Db.ActivityDates.Where(d =>
+                    d.Hosts.Any(l => !string.IsNullOrEmpty(l.UserId) && l.UserId.Equals(user.Id)) &&
+                    d.End >= begin && d.End <= end).OrderBy(d => d.Begin).ToList();
+
+
+            foreach (var date in lectureDates)
+            {
+                var mDate = dateList.SingleOrDefault(x => x.Date.Id == date.Id);
+
+                if (mDate == null)
+                {
+                    mDate = new CalendarMyDayDateModel
+                    {
+                        Date = date,
+                        IsHost = true
+                    };
+
+                    dateList.Add(mDate);
+                }
+                else
+                {
+                    mDate.IsHost = true;
+                }
+            }
+
+
+            var model = new CalendarMyDayModel
+            {
+                CurrentSemester = currentSemester,
+                Day = day,
+                Dates = dateList.OrderBy(x => x.Date.Begin).ToList()
+            };
+
+            return model;
+        }
+
+
+
         private IEnumerable<CalendarEventModel> GetCalendarEvents(IEnumerable<ActivityDateSummary> dates, bool showPersonalDates)
         {
             var events = new List<CalendarEventModel>();
@@ -1091,6 +1197,17 @@ namespace MyStik.TimeTable.Web.Controllers
                     sb.Append(room.Number);
                     if (room != date.Date.Rooms.Last())
                         sb.Append(", ");
+                }
+
+                if (date.Date.VirtualRooms.Any())
+                {
+                    sb.Append(", ");
+                    foreach (var vRoom in date.Date.VirtualRooms)
+                    {
+                        sb.Append(vRoom.Room.Name);
+                        if (vRoom != date.Date.VirtualRooms.Last())
+                            sb.Append(", ");
+                    }
                 }
 
                 evt.Location = sb.ToString();

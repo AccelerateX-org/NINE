@@ -10,6 +10,7 @@
 </div>
 <div>
     @Html.RoomList(Model.Summary.Date.Rooms, false)
+    @Html.RoomList(Model.Summary.Date.VirtualRooms, false)
 </div>
 @if (Model.Summary.Date.Occurrence != null)
 {

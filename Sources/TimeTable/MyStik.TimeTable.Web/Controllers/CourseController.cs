@@ -483,6 +483,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (date != null)
                 {
                     date.Rooms.Clear();
+                    date.VirtualRooms.Clear();
                 }
 
                 Db.SaveChanges();
@@ -561,6 +562,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     date.Occurrence.IsCanceled = true;
                     date.Rooms.Clear();
+                    date.VirtualRooms.Clear();
                 }
 
                 Db.SaveChanges();
@@ -2144,24 +2146,11 @@ namespace MyStik.TimeTable.Web.Controllers
             // Die Zuordnung zum Dozent bleibt aber bestehen!
             if (date != null)
             {
-                var changeService = new ChangeService(Db);
-                // Absage => auch Raumänderung (Raum wird freigegeben)
-                var changeObject = changeService.CreateActivityDateStateChange(date, true);
-                if (changeObject != null)
-                {
-                    changeObject.UserId = AppUser.Id;
-                    Db.DateChanges.Add(changeObject);
-                }
-
-
                 date.Occurrence.IsCanceled = true;
                 date.Rooms.Clear();
+                date.VirtualRooms.Clear();
 
                 Db.SaveChanges();
-
-                NotificationService nservice = new NotificationService();
-                nservice.CreateSingleNotification(changeObject.Id.ToString());
-
             }
 
             var course = date.Activity as Course;
@@ -2206,6 +2195,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     date.Occurrence.IsCanceled = true;
                     date.Rooms.Clear();
+                    date.VirtualRooms.Clear();
 
                     course = date.Activity as Course;
 
@@ -2234,26 +2224,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (date != null)
             {
-                var changeService = new ChangeService(Db);
-
-                // Reaktivierung => KEINE Raumänderung
-                var changeObject = changeService.CreateActivityDateStateChange(date, false);
-                if (changeObject != null)
-                {
-                    changeObject.UserId = AppUser.Id;
-                    Db.DateChanges.Add(changeObject);
-
-                    Db.SaveChanges();
-
-                    NotificationService nservice = new NotificationService();
-                    nservice.CreateSingleNotification(changeObject.Id.ToString());
-                }
-
-
                 date.Occurrence.IsCanceled = false;
-
                 Db.SaveChanges();
-
             }
 
             var course = date.Activity as Course;
@@ -2284,22 +2256,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Die Zuordnung zum Dozent bleibt aber bestehen!
                 if (date != null)
                 {
-                    // Reaktivierung => KEINE Raumänderung
-                    var changeObject = changeService.CreateActivityDateStateChange(date, false);
-                    if (changeObject != null)
-                    {
-                        changeObject.UserId = AppUser.Id;
-                        Db.DateChanges.Add(changeObject);
-
-                        Db.SaveChanges();
-
-                        NotificationService nservice = new NotificationService();
-                        nservice.CreateSingleNotification(changeObject.Id.ToString());
-                    }
-
-
                     date.Occurrence.IsCanceled = false;
-
                     course = date.Activity as Course;
                 }
                 Db.SaveChanges();
@@ -2391,19 +2348,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 // Alle Räume freigeben
                 if (date != null)
                 {
-                    // Raumänderung
-                    var changeObject = changeService.CreateActivityDateRoomChange(date);
-                    if (changeObject != null)
-                    {
-                        changeObject.UserId = AppUser.Id;
-                        Db.DateChanges.Add(changeObject);
-
-                        Db.SaveChanges();
-
-                        NotificationService nservice = new NotificationService();
-                        nservice.CreateSingleNotification(changeObject.Id.ToString());
-                    }
-
                     date.Rooms.Clear();
 
                     if (course == null)
@@ -2421,6 +2365,39 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         /// <summary>
+        /// Löscht bei allen angegebenen Terminen die Rauminformation
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult RemoveVirtualRooms(ICollection<Guid> dateIds)
+        {
+            Course course = null;
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                // Alle Räume freigeben
+                if (date != null)
+                {
+                    date.VirtualRooms.Clear();
+
+                    if (course == null)
+                        course = date.Activity as Course;
+                }
+                Db.SaveChanges();
+            }
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+            return PartialView("_DateTable", course);
+        }
+
+
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="dateIds"></param>
@@ -2432,7 +2409,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var room = Db.Rooms.SingleOrDefault(r => r.Id == roomId);
 
             Course course = null;
-            var changeService = new ChangeService(Db);
 
             foreach (var dateId in dateIds)
             {
@@ -2442,21 +2418,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     if (room != null)
                     {
-                        // Raumänderung
-                        var changeObject = changeService.CreateActivityDateRoomChange(date);
-                        if (changeObject != null)
-                        {
-                            changeObject.UserId = AppUser.Id;
-                            Db.DateChanges.Add(changeObject);
-
-                            Db.SaveChanges();
-
-                            NotificationService nservice = new NotificationService();
-                            nservice.CreateSingleNotification(changeObject.Id.ToString());
-
-                        }
-
-
                         date.Rooms.Add(room);
                     }
 
@@ -2474,6 +2435,65 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_DateTable", course);
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateIds"></param>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public PartialViewResult AddVirtualRoomToDates(ICollection<Guid> dateIds, Guid roomId)
+        {
+            var room = Db.VirtualRooms.SingleOrDefault(r => r.Id == roomId);
+
+            Course course = null;
+
+            foreach (var dateId in dateIds)
+            {
+                var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
+
+                if (date != null)
+                {
+                    if (room != null)
+                    {
+                        var roomAssign = date.VirtualRooms.FirstOrDefault(x => x.Room.Id == room.Id);
+                        if (roomAssign == null)
+                        {
+                            roomAssign = new VirtualRoomAccess
+                            {
+                                Date = date,
+                                Room = room,
+                                isDefault = true
+                            };
+
+
+                            date.VirtualRooms.Add(roomAssign);
+
+                            Db.VirtualRoomAccesses.Add(roomAssign);
+                        }
+
+
+                    }
+
+                    if (course == null)
+                        course = date.Activity as Course;
+                }
+
+
+            }
+
+            Db.SaveChanges();
+
+            var userRights = GetUserRight(User.Identity.Name, course);
+            ViewBag.UserRight = userRights;
+
+
+            return PartialView("_DateTable", course);
+        }
+
+
 
         /// <summary>
         /// 
@@ -2872,8 +2892,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
-            var user = UserManager.FindById(subscription.UserId);
-            var student = studentService.GetCurrentStudent(subscription.UserId);
+
             var course = Db.Activities.OfType<Course>()
                 .SingleOrDefault(x => x.Occurrence.Id == subscription.Occurrence.Id);
 
@@ -2890,6 +2909,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            var user = UserManager.FindById(subscription.UserId);
+            var student = studentService.GetCurrentStudent(subscription.UserId);
+
+
             var model = new UserCoursePlanViewModel
             {
                 User = user,
@@ -2903,7 +2926,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courses =
                 Db.Activities.OfType<Course>()
-                    .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) &&
+                    .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(subscription.UserId)) &&
                                 c.SemesterGroups.Any((g => g.Semester.Id == semester.Id)))
                     .OrderBy(c => c.Name)
                     .ToList();
@@ -3160,6 +3183,41 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="id"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
+        public ActionResult RemoveSubscription2(Guid id)
+        {
+            var logger = LogManager.GetLogger("DischargeActivity");
+
+            var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(s => s.Id == id);
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Occurrence.Id == subscription.Occurrence.Id);
+            var host = GetCurrentUser();
+            
+
+
+            if (subscription != null)
+            {
+                var userId = subscription.UserId;
+
+                var subService = new SubscriptionService(Db);
+                subService.DeleteSubscription(subscription);
+
+                var mailService = new SubscriptionMailService();
+                mailService.SendSubscriptionEMail(course, userId, host);
+
+                var subscriber = GetUser(subscription.UserId);
+                logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
+                    course.Name, course.ShortName, subscriber.UserName);
+            }
+            else
+            {
+                logger.ErrorFormat("subscription missing {0}", id);
+            }
+
+
+
+            return RedirectToAction("AdminNewParticipients", new { id = course.Id });
+        }
+
+        /*
         public ActionResult RemoveSubscription2(Guid id, string userId)
         {
             var logger = LogManager.GetLogger("DischargeActivity");
@@ -3199,6 +3257,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("AdminNewParticipients", new { id = course.Id });
         }
+        */
 
         /// <summary>
         /// 

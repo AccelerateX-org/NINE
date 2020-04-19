@@ -1,0 +1,102 @@
+﻿@model MyStik.TimeTable.Web.Models.NoticeBoardModel
+@using MyStik.TimeTable.Web.Helpers
+
+@{
+    ViewBag.Title = "Schwarzes Brett";
+}
+
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Terminänderungen
+            </div>
+            <div class="card-body">
+                <ul class="fa-ul">
+                </ul>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("CalendarChanges")" class="card-link">Alle Änderungen</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Angebote Abschlussarbeiten und Praxissemester
+            </div>
+            <div class="list-group">
+                @foreach (var adv in Model.Advertisements)
+                {
+                    <a href="#" class="list-group-item list-group-item-action">@adv.Created.ToShortDateString(): @adv.Title</a>
+                }
+            </div>           
+            <div class="card-body">
+                <a href="@Url.Action("Jobs", "Advertisements")" class="card-link">Alle Angebote</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Stellenangebote
+            </div>
+            <div class="card-body">
+                <ul class="fa-ul">
+                </ul>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("CalendarChanges")" class="card-link">Alle Änderungen</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 20px">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Veranstaltungen
+            </div>
+            <div class="card-body">
+                <ul class="fa-ul">
+                </ul>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("CalendarChanges")" class="card-link">Alle Änderungen</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Ausschreibungen Stipendien, Wettbewerbe
+            </div>
+            <div class="card-body">
+                <ul class="fa-ul">
+                </ul>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("CalendarChanges")" class="card-link">Alle Änderungen</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                Ankündigungen, Fristen und Termine
+            </div>
+            <div class="card-body">
+                <ul class="fa-ul">
+                </ul>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("CalendarChanges")" class="card-link">Alle Änderungen</a>
+                <a href="@Url.Action("CalendarChanges")" class="card-link">Hochschulweite Termine</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+

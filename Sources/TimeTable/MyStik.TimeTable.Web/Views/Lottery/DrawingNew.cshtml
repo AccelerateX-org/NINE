@@ -33,11 +33,12 @@
                                         <a href="@Url.Action("TestRun", new {id = Model.Lottery.Id})"><i class="fa fa-flask"></i> Testlauf</a>
                                     </li>
                                     <li>
-                                        <a href="@Url.Action("Clearance", new {id = Model.Lottery.Id})"><i class="fa fa-fire-extinguisher"></i> Bereinigen</a>
+                                        <a href="@Url.Action("Reset", new {id = Model.Lottery.Id})"><i class="fa fa-bomb"></i> Zurücksetzen - alle auf Warteliste</a>
 
                                     </li>
+                                    <li role="separator" class="divider"></li>
                                     <li>
-                                        <a href="@Url.Action("Reset", new {id = Model.Lottery.Id})"><i class="fa fa-bomb"></i> Zurücksetzen - alle auf Warteliste</a>
+                                        <a href="@Url.Action("Clearance", new {id = Model.Lottery.Id})"><i class="fa fa-fire-extinguisher"></i> Bereinigen & Korrekturen</a>
 
                                     </li>
                                 </ul>

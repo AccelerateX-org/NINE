@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Studengangslisten";
     var i = 0;
+    var nSem = Model.Semesters.Count;
 }
 
 <div class="panel panel-default">
@@ -48,36 +49,47 @@
                     <table class="table table-condensed">
                         <thead>
                             <tr>
-                                <th colspan="2">Studiengang</th>
-                                <th colspan="3">Studierende</th>
-                                <th colspan="1">Alumnae</th>
+                                <th colspan="1">Studiengang</th>
+                                <th colspan="@nSem + 1">Aktive Studierende nach Semester</th>
+                                <th colspan="2">Abgeschlossene</th>
+                                <th></th>
                             </tr>
                             <tr>
                                 <th>Name</th>
-                                <th>Aktiv</th>
+                                @foreach (var sem in Model.Semesters)
+                                {
+                                    <th>@sem.Name</th>
+                                }
+                                <th>älter</th>
                                 <th>Gesamt</th>
-                                <th>Aktiv</th>
-                                <th>Abgeschlossen</th>
-                                <th>Gesamt</th>
+                                <th>Alumnae</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach (var curr in Model.StudentsByCurriculum)
                         {
+                            var nActive = 0;
+                            var nAll = @curr.Students.Count(x => x.LastSemester == null);
                             <tr>
                                 <td>@curr.Curriculum.ShortName</td>
                                 @if (curr.Curriculum.IsDeprecated)
                                 {
-                                    <td><i class="fa fa-ban text-danger"></i></td>
+                                    <i class="fa fa-ban text-danger"></i>
                                 }
-                                else
+                                @foreach (var sem in Model.Semesters)
                                 {
-                                    <td></td>
+                                    var nStud = @curr.Students.Count(x => x.LastSemester == null && x.FirstSemester.Id == sem.Id);
+                                    nActive += nStud;
+                                    <td>@nStud</td>
                                 }
-                                <td>@curr.Students.Count</td>
-                                <td>@curr.Students.Count(x => x.LastSemester == null)</td>
+                                @{
+                                    var nOld = nAll - nActive;
+                                }
+                                <td>@nOld</td>
                                 <td>@curr.Students.Count(x => x.LastSemester != null)</td>
                                 <td>@curr.Alumnae.Count</td>
+                                <td><a href="@Url.Action("List", new {id=curr.Curriculum.Id})" class="btn btn-primary">Adressliste</a></td>
                             </tr>
                         }
                         </tbody>

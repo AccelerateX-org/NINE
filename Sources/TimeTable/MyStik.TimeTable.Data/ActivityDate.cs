@@ -54,6 +54,12 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<Room> Rooms { get; set; }
 
+
+        /// <summary>
+        /// Direkte Belegung des Raumes (altes Konzept)
+        /// </summary>
+        public virtual ICollection<VirtualRoomAccess> VirtualRooms { get; set; }
+
         /// <summary>
         /// Belegung des Raumes
         /// </summary>

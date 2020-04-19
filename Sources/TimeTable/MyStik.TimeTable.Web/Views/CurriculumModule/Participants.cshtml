@@ -1,0 +1,134 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.ModuleSemesterCoursesModel
+
+@{
+    ViewBag.Title = "Teilnehmende";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Teilnehmende @Model.Module.Name (@Model.Module.ShortName / @Model.Module.ModuleId) im @Model.Semester.Name
+            </div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Courses", new {moduleId = Model.Module.Id, semId=Model.Semester.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("CurriculumModule", "Mailing", new {moduleId = Model.Module.Id, semId=Model.Semester.Id})"><i class="fas fa-envelope fa-fw"></i><br />Mail senden</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Download", new {moduleId = Model.Module.Id, semId=Model.Semester.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
+                </li>
+            </ul>
+            <table id="tabParticipient" class="table table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>SG</th>
+                    <th>Sem</th>
+                    @foreach (var c in Model.Courses)
+                    {
+                        <th>@c.CourseSummary.Course.ShortName</th>
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var participant in Model.Participants)
+                    {
+                        <tr>
+                            <td></td>
+                            @if (participant.User != null)
+                            {
+                                <td>@participant.User.LastName</td>
+                                <td>@participant.User.FirstName</td>
+                            }
+                            else
+                            {
+                                <td>unbekannt</td>
+                                <td>kein Benutzerkonto vorhanden</td>
+                            }
+                            @if (participant.Student != null)
+                            {
+                                <td>@participant.Student.Curriculum.ShortName</td>
+                                <td>@participant.Student.FirstSemester.Name</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+
+
+                            @foreach (var c in Model.Courses)
+                            {
+                                var pc = participant.Courses.FirstOrDefault(x => x.Course.Id == c.CourseSummary.Course.Id);
+
+                                if (pc == null)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    if (pc.Subscription.OnWaitingList)
+                                    {
+                                        <td>WL</td>
+                                    }
+                                    else
+                                    {
+                                        <td>TN</td>
+                                    }
+                                }
+                            }
+                        </tr>
+                    }
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            var t = $('#tabParticipient').DataTable({
+                "paging": false,
+                "columnDefs": [{
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                }]
+            });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
+
+        })
+    </script>
+}

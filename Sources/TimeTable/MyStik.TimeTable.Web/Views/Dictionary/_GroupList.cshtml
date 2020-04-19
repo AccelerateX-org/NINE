@@ -54,7 +54,7 @@
                     @if (course.Dates.Count == 1)
                     {
                         <i class="fa-li fa fa-calendar"></i>
-                        <span>immer @Html.Date(course.Dates.First()) in [@Html.RoomList(course.Rooms, showLinks: false)]</span>
+                        <span>immer @Html.Date(course.Dates.First()) in [@Html.RoomList(course.Rooms, showLinks: false), showLinks: false)]</span>
                     }
                     else
                     {

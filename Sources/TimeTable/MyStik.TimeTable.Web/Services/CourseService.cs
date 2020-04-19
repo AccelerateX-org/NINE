@@ -508,6 +508,12 @@ namespace MyStik.TimeTable.Web.Services
                 Db.Rooms.Where(l => l.Dates.Any(occ => occ.Activity.Id == course.Id)).ToList();
             summary.Rooms.AddRange(rooms);
 
+            var vRooms =
+                Db.VirtualRooms.Where(l => l.Accesses.Any(a => a.Date.Activity.Id == course.Id)).ToList();
+            summary.VirtualRooms.AddRange(vRooms);
+
+
+
             summary.Lottery =
                 Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
 

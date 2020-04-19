@@ -64,14 +64,34 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // Liste aller Studiengänge
-            var currs = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList(); 
+            var currs = Db.Curricula.Where(x => x.Organiser.Id == org.Id).ToList();
 
-            
+            var semesterToday = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semesterToday);
+
+            var isActive = SemesterService.IsActive(nextSemester);
+
+            var startSemester = semesterToday;
+            if (isActive)
+            {
+                startSemester = nextSemester;
+            }
+
+
 
             var model = new StudentsOrgViewModel
             {
                 Organiser = org
             };
+
+
+            model.Semesters.Add(startSemester);
+            for (var i = 0; i <= 6; i++)
+            {
+                var prevSemester = SemesterService.GetPreviousSemester(startSemester);
+                model.Semesters.Add(prevSemester);
+                startSemester = prevSemester;
+            }
 
 
 
@@ -88,6 +108,71 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             return View(model);
+        }
+
+        public FileResult List(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            // nur aktive, d.h. noch kein Abschlussemester
+            var students = Db.Students.Where(x => x.Curriculum.Id == curr.Id && x.LastSemester == null).ToList();
+
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Name;Vorname;E-Mail;Studienbeginn;Letztes Login");
+
+            writer.Write(Environment.NewLine);
+
+            foreach (var student in students)
+            {
+                var user = UserManager.FindById(student.UserId);
+
+                if (user != null)
+                {
+                    // Altfälle oder sonstige Ausnahme
+                    // Studiengang für gleichen user
+                    // mit neuerem Beginn
+                    // anders als bisheriges
+                    var nextStudiesCount = Db.Students.Count(x =>
+                        x.UserId.Equals(user.Id) &&
+                        x.Curriculum.Id != student.Curriculum.Id &&
+                        x.FirstSemester.StartCourses > student.FirstSemester.StartCourses);
+
+                    if (nextStudiesCount == 0)
+                    {
+                        if (user.LastLogin.HasValue)
+                        {
+                            writer.Write("{0};{1};{2};{3};{4}",
+                                user.LastName, user.FirstName, user.Email,
+                                student.FirstSemester.Name,
+                                user.LastLogin.Value.ToShortDateString());
+                        }
+                        else
+                        {
+                            writer.Write("{0};{1};{2};{3};n.a.",
+                                user.LastName, user.FirstName, user.Email,
+                                student.FirstSemester.Name
+                                );
+                        }
+
+                        writer.Write(Environment.NewLine);
+                    }
+                }
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Studierende_");
+            sb.Append(curr.ShortName);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
         public ActionResult SemesterGroups()

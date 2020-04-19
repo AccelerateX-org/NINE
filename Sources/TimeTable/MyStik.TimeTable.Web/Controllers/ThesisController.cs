@@ -335,7 +335,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             thesis.IssueDate = DateTime.Parse(model.IssueDate);
-            thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period);
+            thesis.ExpirationDate = thesis.IssueDate.Value.AddMonths(period).AddDays(-1);
 
             Db.SaveChanges();
 

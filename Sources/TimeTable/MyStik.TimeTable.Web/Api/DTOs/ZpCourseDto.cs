@@ -13,6 +13,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// <summary>
         /// 
         /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
         /// <summary>
         /// 

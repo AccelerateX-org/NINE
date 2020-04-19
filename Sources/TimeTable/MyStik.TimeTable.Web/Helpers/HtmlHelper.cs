@@ -49,9 +49,18 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <param name="hosts"></param>
         /// <param name="showLinks"></param>
         /// <returns></returns>
-        public static MvcHtmlString LecturerList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> hosts, bool showLinks=true)
+        public static MvcHtmlString LecturerList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> hosts, bool showLinks=true, bool asInline=false)
         {
             var sb = new StringBuilder();
+            if (asInline)
+            {
+                sb.Append("<i class=\"fas fa-li fa-chalkboard-teacher\"></i> ");
+            }
+            else
+            {
+                sb.Append("<i class=\"fa fa-user\"></i> ");
+            }
+
             foreach (var host in hosts)
             {
                 var lecName = string.IsNullOrEmpty(host.Name) ? "N.N." : host.Name;
@@ -82,9 +91,20 @@ namespace MyStik.TimeTable.Web.Helpers
         /// <param name="showLinks"></param>
         /// <param name="showCapacity"></param>
         /// <returns></returns>
-        public static MvcHtmlString RoomList(this HtmlHelper htmlHelper, ICollection<Room> rooms, bool showLinks=true, bool showCapacity=false)
+        public static MvcHtmlString RoomList(this HtmlHelper htmlHelper, ICollection<Room> rooms, bool showLinks=true, bool showCapacity=false, bool asInline = false)
         {
+            if (!rooms.Any())
+                return new MvcHtmlString(string.Empty);
+
             var sb = new StringBuilder();
+            if (asInline)
+            {
+                sb.Append("<i class=\"fas fa-li fa-building\"></i> ");
+            }
+            else
+            {
+                sb.Append("<i class=\"fa fa-building\"></i> ");
+            }
             foreach (var room in rooms)
             {
                 if (showLinks)
@@ -116,6 +136,122 @@ namespace MyStik.TimeTable.Web.Helpers
 
             return new MvcHtmlString(sb.ToString());
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="rooms"></param>
+        /// <param name="showLinks"></param>
+        /// <param name="showCapacity"></param>
+        /// <returns></returns>
+        public static MvcHtmlString RoomList(this HtmlHelper htmlHelper, ICollection<VirtualRoom> rooms, bool showLinks = true, bool showCapacity = false, bool asInline = false)
+        {
+            if (!rooms.Any())
+                return new MvcHtmlString(string.Empty);
+
+            var sb = new StringBuilder();
+
+            if (asInline)
+            {
+                sb.Append("<i class=\"fas fa-li fa-tv\"></i>");
+            }
+            else
+            {
+                sb.Append("<i class=\"fa fa-tv\"></i> ");
+            }
+            foreach (var room in rooms)
+            {
+                if (showLinks)
+                {
+                    if (string.IsNullOrEmpty(room.Name))
+                    {
+                        sb.Append(htmlHelper.ActionLink("N.N.", "Details", "VirtualRoom", new { id = room.Id }, null));
+                    }
+                    else
+                    {
+                        sb.Append(htmlHelper.ActionLink(room.Name, "Details", "VirtualRoom", new { id = room.Id }, null));
+                    }
+                }
+                else
+                {
+                    sb.Append(room.Name);
+                }
+
+                /*
+                if (showCapacity)
+                {
+                    sb.AppendFormat(" ({0})", room.Capacity);
+                }
+                */
+
+                if (room != rooms.Last())
+                {
+                    sb.Append(htmlHelper.Raw(", "));
+                }
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="rooms"></param>
+        /// <param name="showLinks"></param>
+        /// <param name="showCapacity"></param>
+        /// <returns></returns>
+        public static MvcHtmlString RoomList(this HtmlHelper htmlHelper, ICollection<VirtualRoomAccess> rooms, bool showLinks = true, bool showCapacity = false, bool asInline = false)
+        {
+            if (!rooms.Any())
+                return new MvcHtmlString(string.Empty);
+
+            var sb = new StringBuilder();
+
+            if (asInline)
+            {
+                sb.Append("<i class=\"fas fa-li fa-tv\"></i>");
+            }
+            else
+            {
+                sb.Append("<i class=\"fa fa-tv\"></i> ");
+            }
+
+            foreach (var room in rooms)
+            {
+                if (showLinks)
+                {
+                    if (string.IsNullOrEmpty(room.Room.Name))
+                    {
+                        sb.Append(htmlHelper.ActionLink("N.N.", "Details", "VirtualRoom", new { id = room.Room.Id }, null));
+                    }
+                    else
+                    {
+                        sb.Append(htmlHelper.ActionLink(room.Room.Name, "Details", "VirtualRoom", new { id = room.Room.Id }, null));
+                    }
+                }
+                else
+                {
+                    sb.Append(room.Room.Name);
+                }
+
+                /*
+                if (showCapacity)
+                {
+                    sb.AppendFormat(" ({0})", room.Capacity);
+                }
+                */
+
+                if (room != rooms.Last())
+                {
+                    sb.Append(htmlHelper.Raw(", "));
+                }
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
 
         /// <summary>
         /// 

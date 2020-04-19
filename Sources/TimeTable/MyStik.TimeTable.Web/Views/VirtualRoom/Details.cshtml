@@ -1,0 +1,40 @@
+﻿@model MyStik.TimeTable.Data.VirtualRoom
+@{
+    ViewBag.Title = "Virtueller Raum";
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Virtueller Raum "@Model.Name" (@Model.Owner.FullName)</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Beschreibung</h5>
+                        @if (string.IsNullOrEmpty(Model.Description))
+                        {
+                            <div class="list-group-item-text"><i>Keine Beschreibung vorhanden</i></div>
+                        }
+                        else
+                        {
+                            <div class="list-group-item-text">@Html.Raw(Model.Description)</div>
+                        }
+                    </div>
+
+                    <div class="list-group-item">
+                        <h5 class="list-group-item-heading">Zugang</h5>
+                        <div class="list-group-item-text">
+                            <ul class="fa-ul">
+                                <li><i class="fa fa-li fa-globe"></i><strong>URL:</strong> <a href="@Model.AccessUrl" target="_blank">@Model.AccessUrl</a></li>
+                                <li><i class="fa fa-li fa-key"></i><strong>@Model.TokenName:</strong> @Model.Token</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

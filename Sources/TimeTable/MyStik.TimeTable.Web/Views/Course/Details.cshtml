@@ -33,7 +33,29 @@
                                     <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-download"></i> Listen</a>
                                     <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Termine</a>
                                     <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmende</a>
-                                    
+                                    @if (Model.Summary.Course.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
+                                    {
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-cogs"></i> Einstellungen <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})"><i class="fa fa-edit"></i> Beschreibung</a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})"><i class="fa fa-book"></i> Semestergruppen</a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})"><i class="fa fa-tag"></i> Themengebiet ("Modul")</a>
+                                                </li>
+                                                <li>
+                                                    <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})"><i class="fa fa-legal"></i> Zugangsbeschränkungen, Platzkontigente</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    }
+
                                     @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                                     {
                                         <div class="btn-group">

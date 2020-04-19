@@ -122,6 +122,12 @@
                             </h5>
                             <p class="list-group-item-text">Anlegen und Löschen</p>
                         </a>
+                        <a href="@Url.Action("CopyDay", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-copy"></i> Tag kopieren
+                            </h5>
+                            <p class="list-group-item-text">Einen kompletten Vorlesungstag eines Studiengangs kopieren oder verschieben</p>
+                        </a>
                     </div>
                 </div>
             }
