@@ -11,6 +11,16 @@
                 <div class="panel-heading">
                     <h4><i class="fa fa-graduation-cap"></i> Meine Studiengänge</h4>
                 </div>
+                
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info">
+                        <h5>Hinweis</h5>
+                        <p>Das hier ist nicht primuss. Es gibt auch keine Verbindung zu primuss. Aus diesem Grund muss hier jede(r) den eigenen Studiengang angegeben.
+                            Anschliesend stehen alle Funktionen zur Verfügung, z.B. für das Zusammenstellen des persönlichen Stundenplans oder das Buchen von Sprechstundenterminen.</p>
+                    </div>
+                }
+
                 <div class="list-group">
                     <div class="list-group-item">
                         <a href="@Url.Action("StartCurriculum")" class="btn btn-danger">Neuen Studiengang beginnen</a>

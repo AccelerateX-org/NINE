@@ -99,13 +99,16 @@
     <Compile Include="AdvertisementRole.cs" />
     <Compile Include="Advisor.cs" />
     <Compile Include="Alumnus.cs" />
+    <Compile Include="Assesment.cs" />
     <Compile Include="BinaryStorage.cs" />
     <Compile Include="BookingConfirmation.cs" />
     <Compile Include="Building.cs" />
+    <Compile Include="Candidature.cs" />
     <Compile Include="CapacityCourse.cs" />
     <Compile Include="CapacityGroup.cs" />
     <Compile Include="CertificateModule.cs" />
     <Compile Include="CertificateSubject.cs" />
+    <Compile Include="Committee.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="ContentChannel.cs" />
     <Compile Include="CorporateContact.cs" />
@@ -378,6 +381,14 @@
     <Compile Include="Migrations\202003230746484_VirtualRoomsV1.Designer.cs">
       <DependentUpon>202003230746484_VirtualRoomsV1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004260740320_Assessment_V1.cs" />
+    <Compile Include="Migrations\202004260740320_Assessment_V1.Designer.cs">
+      <DependentUpon>202004260740320_Assessment_V1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004261031222_Assessment_V2.cs" />
+    <Compile Include="Migrations\202004261031222_Assessment_V2.Designer.cs">
+      <DependentUpon>202004261031222_Assessment_V2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -604,6 +615,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202003230746484_VirtualRoomsV1.resx">
       <DependentUpon>202003230746484_VirtualRoomsV1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004260740320_Assessment_V1.resx">
+      <DependentUpon>202004260740320_Assessment_V1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004261031222_Assessment_V2.resx">
+      <DependentUpon>202004261031222_Assessment_V2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

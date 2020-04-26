@@ -19,37 +19,37 @@
     </div>
     <div class="col-sm-6 col-md-3 col-lg-2">
         <div class="card text-center">
-            <a href="@Url.Action("Schedule", "Planer")" class="btn btn-outline-dark btn-block">
+            <a href="@Url.Action("Schedule", "Planer")" class="btn btn-outline-dark btn-block  disabled">
                 <h5><i class="fas fa-2x fa-map"></i></h5>
-                <h6>Mein Stundenplan</h6>
+                <h6>"Mein Stundenplan" ist jetzt "Meine Lehre"</h6>
             </a>
             <div class="btn-group btn-group-justified">
-                <a href="@Url.Action("Schedule", "Planer", new {id=Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
-                <a href="@Url.Action("Schedule", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
+                <a href="@Url.Action("Schedule", "Planer", new {id=Model.Semester.Id})" class="btn btn-outline-dark disabled">@Model.Semester.Name</a>
+                <a href="@Url.Action("Schedule", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark disabled">@Model.NextSemester.Name</a>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-md-3 col-lg-2">
         <div class="card text-center">
-            <a href="@Url.Action("OfficeHour", "Lecturer")" class="btn btn-outline-dark btn-block">
+            <a href="@Url.Action("OfficeHour", "Lecturer")" class="btn btn-outline-dark btn-block disabled">
                 <h5><i class="fas fa-2x fa-user-md"></i></h5>
-                <h6>Meine Sprechstunden</h6>
+                <h6>"Meine Sprechstunden" ist jetzt "Meine Lehre"</h6>
             </a>
             <div class="btn-group btn-group-justified">
-                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
-                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
+                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.Semester.Id})" class="btn btn-outline-dark disabled">@Model.Semester.Name</a>
+                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark disabled">@Model.NextSemester.Name</a>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-md-3 col-lg-2">
         <div class="card text-center">
-            <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-outline-dark btn-block">
+            <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-outline-dark btn-block disabled">
                 <h5><i class="fas fa-2x fa-file"></i></h5>
-                <h6>Meine Abschlussarbeiten</h6>
+                <h6>"Meine Abschlussarbeiten" ist jetzt "Meine Lehre"</h6>
             </a>
             <div class="btn-group btn-group-justified">
                 <a href="" class="btn btn-outline-dark disabled">Anfragen</a>
-                <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-dark">Abgerechnet</a>
+                <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-dark disabled">Abgerechnet</a>
             </div>
         </div>
     </div>
@@ -95,11 +95,11 @@
             <div class="col-sm-6 col-md-3 col-lg-2">
                 <div class="card text-center">
                     <a href="@Url.Action("Organiser", "Curricula", new {id=Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fas fa-2x fa-trophy"></i></h5>
+                        <h5><i class="fas fa-2x fa-award"></i></h5>
                         <h6>Studiengänge</h6>
                     </a>
                     <div class="btn-group btn-group-justified">
-                        <a href="@Url.Action("Index", "Module")" class="btn btn-outline-dark">Modulkatalog</a>
+                        <a href="@Url.Action("Admin", "Assessment")" class="btn btn-outline-dark">Auswahlverfahren</a>
                         <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-outline-dark">SPOs</a>
                     </div>
                 </div>
@@ -190,7 +190,7 @@
                 <div class="card text-center">
                     <a href="@Url.Action("Index", "CurriculumModule")" class="btn btn-outline-dark btn-block disabled">
                         <h5><i class="fas fa-2x fa-bookmark"></i></h5>
-                        <h6>Meine Module</h6>
+                        <h6>"Meine Module" finde ich unter "Meine Lehre"</h6>
                     </a>
                     <div class="btn-group btn-group-justified">
                         <a href="" class="btn btn-outline-dark disabled">...</a>

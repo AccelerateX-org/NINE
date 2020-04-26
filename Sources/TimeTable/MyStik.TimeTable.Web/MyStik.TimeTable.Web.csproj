@@ -407,6 +407,7 @@
     <Compile Include="Controllers\ArchiveController.cs" />
     <Compile Include="Controllers\AssessmentController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
+    <Compile Include="Controllers\CandidatureController.cs" />
     <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\CoursePlanController.cs" />
@@ -4243,6 +4244,14 @@
     <Content Include="Views\CurriculumModule\_CourseTable.cshtml" />
     <Content Include="Views\CurriculumModule\Participants.cshtml" />
     <Content Include="Views\Mailing\CurriculumModule.cshtml" />
+    <Content Include="Views\Assessment\Admin.cshtml" />
+    <Content Include="Views\Assessment\Create.cshtml" />
+    <Content Include="Views\Assessment\Overview.cshtml" />
+    <Content Include="Views\Assessment\_Disclaimer.cshtml" />
+    <Content Include="Views\Assessment\Start.cshtml" />
+    <Content Include="Views\Candidature\MyRoom.cshtml" />
+    <Content Include="Views\Candidature\_ViewStart.cshtml" />
+    <Content Include="Views\Assessment\Candidates.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

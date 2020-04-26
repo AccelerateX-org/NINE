@@ -10,22 +10,19 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-award"></i> @Html.FacultyLabel(Model.Curriculum.Organiser) @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                <i class="fas fa-award"></i> @Html.FacultyLabel(Model.Curriculum.Organiser) Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
             </div>
             <div class="list-group">
                 <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-cogs"></i> Verwaltung
-                </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled">
                     <i class="fas fa-fw fa-book"></i> Modulhandbuch
                 </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-microphone"></i> Vorlesungsverzeichnis
+                <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId=Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
+                    <i class="fas fa-fw fa-microphone"></i> Vorlesungsverzeichnis @Model.Semester.Name
                 </a>
                 <a href="#" class="list-group-item  list-group-item-action disabled">
                     <i class="fas fa-fw fa-question-circle"></i> Orientierungstests
                 </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled" data-toggle="modal" data-target="#exampleModal">
+                <a href="#" class="list-group-item  list-group-item-action" data-toggle="modal" data-target="#exampleModal">
                     <i class="fas fa-fw fa-poll"></i> Auswahlverfahren
                 </a>
 

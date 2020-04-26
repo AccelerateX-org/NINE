@@ -7,118 +7,169 @@
 
 
 <div class="row">
-    <div class="col-md-2">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        Archive
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Index", "StudyBook")#" class="list-group-item list-group-item-action">
-                            <i class="fas fa-w fa-history"></i> Semester
+<div class="col-md-3">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Weitere Sichten
+                </div>
+                <div class="list-group">
+                    @if (Model.PlaningSemester != null)
+                    {
+                        <a href="@Url.Action("Planning", "Teaching")#" class="list-group-item list-group-item-warning list-group-item-action">
+                            <i class="fas fa-fw fa-history"></i> Planung nächstes Semester
                         </a>
-                        <a href="@Url.Action("Cleared", "ThesisSupervision")#" class="list-group-item list-group-item-action">
-                            <i class="fas fa-w fa-archive"></i> Abschlussarbeiten
+                    }
+                    <a href="@Url.Action("Index", "StudyBook")#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-fw fa-history"></i> Vergangene Semester
+                    </a>
+                    @if (Model.CurrentSemester.OfficeHours.Any())
+                    {
+                        <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})" class="list-group-item list-group-item-action disabled">
+                            <i class="fas fa-fw fa-plus"></i> Sprechstunde anlegen
                         </a>
-                    </div>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-plus"></i> Sprechstunde anlegen
+                        </a>
+                    }
+                    <a href="@Url.Action("Create", "Course")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-fw fa-plus"></i> Lehrveranstaltung anlegen
+                    </a>
+                    <a href="@Url.Action("Index", "CurriculumModule")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-fw fa-plus"></i> Modul anlegen
+                    </a>
+
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row" style="margin-top: 20px">
-            <div class="col-12">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-12">
 
-                <div class="card">
-                    <div class="card-header">
-                        Meine Fakultät(en)
-                    </div>
+            <div class="card">
+                <div class="card-header">
+                    Meine Fakultät(en)
+                </div>
 
-                    <div class="list-group">
-                        @foreach (var member in Model.Members)
-                        {
+                <div class="list-group">
+                    @foreach (var member in Model.Members)
+                    {
                         <a href="#" class="list-group-item list-group-item-action">
                             @Html.FacultyLabel(member.Organiser)
                         </a>
-                        }
+                    }
                     <!--
                     <a href="#" class="list-group-item list-group-item-action">
                         <i class="fas fa-w fa-star"></i> Fakultät hinzufügen
                     </a>
                     -->
-                    </div>
                 </div>
             </div>
-
         </div>
 
     </div>
-    <div class="col-md-6">
-        @if (Model.PlaningSemester != null)
-        {
-            <div class="row" style="margin-bottom: 20px">
-                <div class="col-md-12">
-                    <div class="card border-danger">
-                        <div class="card-header text-white bg-danger">
-                            @Model.PlaningSemester.Semester.Name (Planung)
-                        </div>
-                        <div class="list-group list-group-flush">
-                            @foreach (var course in Model.PlaningSemester.Courses)
-                            {
-                                <div class="list-group-item"><a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.Name (@course.ShortName)</a></div>
-                            }
-                            @foreach (var oh in Model.PlaningSemester.OfficeHours)
-                            {
-                                <div class="list-group-item"><a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.PlaningSemester.Semester.Id})">Sprechstunde</a></div>
-                            }
-                        </div>
-                        <div class="card-body">
-                            @if (Model.PlaningSemester.OfficeHours.Any())
-                            {
-                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.PlaningSemester.Semester.Id})" class="card-link disabled">Sprechstunde anlegen</a>
-                            }
-                            else
-                            {
-                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.PlaningSemester.Semester.Id})" class="card-link">Sprechstunde anlegen</a>
-                            }
 
-                            <a href="@Url.Action("Create", "Course")" class="card-link">Lehrveranstaltung anlegen</a>
-                        </div>
-                    </div>
+</div>
+<div class="col-md-6">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Das aktuelle Semester <strong>@Model.CurrentSemester.Semester.Name</strong>
                 </div>
-            </div>
-        }
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        @Model.CurrentSemester.Semester.Name
-                    </div>
-                    <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush">
+                    @foreach (var oh in Model.CurrentSemester.OfficeHours)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})">
+                                    <i class="fas fa-user-md"></i> Sprechstunde
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <ul class="fa-ul"></ul>
+                                    </div>
+                                    <div class="col-md-8">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        }
+
                         @foreach (var course in Model.CurrentSemester.Courses)
                         {
-                            <div class="list-group-item"><a href="@Url.Action("Details", "Course", new {id = course.Id})">@course.Name (@course.ShortName)</a></div>
-                        }
-                        @foreach (var oh in Model.CurrentSemester.OfficeHours)
-                        {
-                            <div class="list-group-item"><a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})">Sprechstunde</a></div>
-                        }
-                    </div>
-                    <div class="card-body">
-                        @if (Model.CurrentSemester.OfficeHours.Any())
-                        {
-                            <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})" class="card-link disabled">Sprechstunde anlegen</a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})" class="card-link">Sprechstunde anlegen</a>
-                        }
-                        <a href="@Url.Action("Create", "Course")" class="card-link">Lehrveranstaltung anlegen</a>
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">
+                                        <i class="fas fa-microphone"></i> 
+                                        @course.Course.Name (@course.Course.ShortName)
+                                    </a>
 
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <ul class="fa-ul">
+                                                <li>@Html.RoomList(course.Rooms, asInline: true)</li>
+                                                <li>@Html.RoomList(course.VirtualRooms, asInline: true)</li>
+                                                @if (course != null && !string.IsNullOrEmpty(course.Course.UrlMoodleCourse))
+                                                {
+                                                    <li><i class="fas fa-li fa-globe"></i><a href="@course.Course.UrlMoodleCourse" target="_blank">moodle (@course.Course.KeyMoodleCourse)</a></li>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = course.Course.Occurrence.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-envelope"></i> Mail senden</a>
+                                            <a href="@Url.Action("AdminNewParticipients", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-users"></i> Teilnehmende</a>
+                                            <a href="@Url.Action("AdminNewDates", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-calendar"></i> Termine</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @foreach (var module in Model.CurrentSemester.Modules)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <a href="@Url.Action("Details", "CurriculumModule", new {id = module.Module.Id})">
+                                        <i class="fas fa-atom"></i> 
+                                        @module.Module.Name (@module.Module.ShortName)
+                                    </a>
+
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <ul class="fa-ul">
+                                                @foreach (var course in module.Courses)
+                                                {
+                                                    <li><i class="fas fa-li fa-microphone"></i><a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" target="_blank">@course.Course.ShortName</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <a href="@Url.Action("CurriculumModule", "Mailing", new {moduleId = module.Module.Id, semId = Model.CurrentSemester.Semester.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-envelope"></i> Mail senden</a>
+                                            <a href="@Url.Action("Participants", "CurriculumModule", new {moduleId = module.Module.Id, semId = Model.CurrentSemester.Semester.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-users"></i> Teilnehmende</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                </div>
             </div>
-        </div>
+            @*
         <div class="row" style="margin-top:20px">
             <div class="col-md-12">
                 <div class="card">
@@ -137,35 +188,42 @@
                 </div>
             </div>
         </div>
+                *@
+        </div>
     </div>
-    <div class="col-md-4">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        Laufende Abschlussarbeiten
-                    </div>
-                    <div class="list-group list-group-flush">
-                        @foreach (var thesis in Model.ActiveTheses)
-                        {
-                            <div class="list-group-item">
-                                @if (thesis.Thesis.DeliveryDate != null)
-                                {
-                                    <i class="fas fa-trophy"></i>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-secondary">@thesis.DaysToExpire</span>
-                                }
-                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                            </div>
-                        }
-                    </div>
-                    <div class="card-body">
-                        <a href="@Url.Action("Index", "ThesisSupervision")" class="card-link">Übersicht</a>
-                    </div>
+</div>
+
+<div class="col-md-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Abschlussarbeiten
+                </div>
+                <div class="list-group list-group-flush">
+                    @foreach (var thesis in Model.ActiveTheses)
+                    {
+                        <div class="list-group-item">
+                            @if (thesis.Thesis.DeliveryDate != null)
+                            {
+                                <i class="fas fa-trophy"></i>
+                            }
+                            else
+                            {
+                                <span class="badge badge-secondary">@thesis.DaysToExpire</span>
+                            }
+                            <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                        </div>
+                    }
+                </div>
+                <div class="card-body">
+                    <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Laufende</a>
+                    <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm"><i class="fas fa-archive"></i> Abgerechnete</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
+
+

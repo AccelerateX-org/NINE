@@ -308,6 +308,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
+            var nStudent = Db.Students.Count(x => x.UserId.Equals(user.Id));
+            if (nStudent == 1)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
             return RedirectToAction("Curricula");
         }
 

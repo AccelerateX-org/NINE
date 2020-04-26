@@ -52,108 +52,107 @@
                                 var course = date.Date.Activity as Course;
                                 var oh = date.Date.Activity as OfficeHour;
 
+                                var cardStyle = "";
+                                if (date.Date.Occurrence.IsCanceled)
+                                {
+                                    cardStyle = "text-white bg-danger";
+                                }
+
+
                                 <div class="card mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            @if (date.Date.Occurrence.IsCanceled)
+                                    <div class="card-header @cardStyle">
+                                        @if (date.Slot != null)
+                                        {
+                                            @Html.TimeSpan(date.Slot)
+                                        }
+                                        else
+                                        {
+                                            @Html.TimeSpan(date.Date)
+                                        }
+
+                                        @if (course != null)
+                                        {
+                                            <a href="@Url.Action("Details", "Course", new {id = date.Date.Activity.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
+                                        }                                        
+                                        @if (oh != null)
+                                        {
+                                            if (date.IsHost)
                                             {
-                                                if (date.Slot != null)
+                                                if (date.Date.Slots.Any())
                                                 {
-                                                    <h4 class="card-header text-white bg-danger">@Html.TimeSpan(date.Slot) - abgesagt</h4>
+                                                    <a href="@Url.Action("DateDetails", "Lecturer", new {id = date.Date.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
                                                 }
                                                 else
                                                 {
-                                                    <h4 class="card-header text-white bg-danger">@Html.TimeSpan(date.Date) - abgesagt</h4>
+                                                    <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
                                                 }
                                             }
                                             else
                                             {
-                                                if (date.Slot != null)
+                                                if (date.Date.Slots.Any())
                                                 {
-                                                    <h4 class="card-header">@Html.TimeSpan(date.Slot)</h4>
-                                                }
-                                                else
-                                                {
-                                                    <h4 class="card-header">@Html.TimeSpan(date.Date)</h4>
-                                                }
-                                            }
-                                            <ul class="fa-ul">
-                                                <li>@Html.LecturerList(date.Date.Hosts, asInline: true)</li>
-                                                <li>@Html.RoomList(date.Date.Rooms, asInline: true)</li>
-                                                <li>@Html.RoomList(date.Date.VirtualRooms, asInline: true)</li>
-                                                @if (course != null && !string.IsNullOrEmpty(course.UrlMoodleCourse))
-                                                {
-                                                    <li><i class="fas fa-li fa-globe"></i><a href="@course.UrlMoodleCourse" target="_blank">moodle (@course.KeyMoodleCourse)</a></li>
-                                                }
-
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-8">
-                                            @if (course != null)
-                                            {
-                                                <div class="card-body">
-                                                    <h5 class="card-title">
-                                                        <a href="@Url.Action("Details", "Course", new {id = date.Date.Activity.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
-                                                    </h5>
-                                                    <p class="card-text">@date.Date.Title</p>
-                                                    <p class="card-text"><small class="text-muted">@date.Date.Description</small></p>
-                                                    @if (date.IsHost)
-                                                    {
-                                                        <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = date.Date.Activity.Occurrence.Id})" class="btn btn-primary"><i class="fas fa-envelope"></i> Mail senden</a>
-                                                        <a href="@Url.Action("AdminNewParticipients", "Course", new {id = date.Date.Activity.Id})" class="btn btn-primary"><i class="fas fa-users"></i> Teilnehmende</a>
-                                                        <a href="@Url.Action("CancelDate", "Course", new {id = date.Date.Occurrence.Id})" class="btn btn-danger"><i class="fas fa-times"></i> absagen</a>
-                                                    }
-
-                                                </div>
-                                            }
-
-                                            @if (oh != null)
-                                            {
-                                                if (date.IsHost)
-                                                {
-                                                    var nSub = date.Date.Occurrence.Subscriptions.Count + date.Date.Slots.Sum(x => x.Occurrence.Subscriptions.Count);
-
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">
-                                                            @if (date.Date.Slots.Any())
-                                                            {
-                                                                <a href="@Url.Action("DateDetails", "Lecturer", new {id = date.Date.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
-                                                            }
-                                                        </h5>
-                                                        <p class="card-text">Eintragungen: @nSub</p>
-                                                    </div>
+                                                    <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new {id = date.Date.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
                                                 }
                                                 else
                                                 {
                                                     var member = date.Date.Activity.Owners.First().Member;
-
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">
-                                                            @if (date.Date.Slots.Any())
-                                                            {
-                                                                <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new {id = date.Date.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
-                                                                <p class="card-text">@date.Subscription.SubscriberRemark</p>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a href="@Url.Action("Lecturer", "OfficeHour", new {id = member.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
-                                                            }
-                                                        </h5>
-                                                    </div>
+                                                    <a href="@Url.Action("Lecturer", "OfficeHour", new {id = member.Id})">@date.Date.Activity.Name (@date.Date.Activity.ShortName)</a>
                                                 }
                                             }
+                                        }
 
+
+                                        @if (date.Date.Occurrence.IsCanceled)
+                                        {
+                                            <span> - abgesagt</span>
+                                        }
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <ul class="fa-ul">
+                                                    <li>@Html.LecturerList(date.Date.Hosts, asInline: true)</li>
+                                                    <li>@Html.RoomList(date.Date.Rooms, asInline: true)</li>
+                                                    <li>@Html.RoomList(date.Date.VirtualRooms, asInline: true)</li>
+                                                    @if (course != null && !string.IsNullOrEmpty(course.UrlMoodleCourse))
+                                                    {
+                                                        <li><i class="fas fa-li fa-globe"></i><a href="@course.UrlMoodleCourse" target="_blank">moodle (@course.KeyMoodleCourse)</a></li>
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-8">
+                                                @if (course != null)
+                                                {
+                                                    <p class="card-text">@date.Date.Title</p>
+                                                    <p class="card-text"><small class="text-muted">@date.Date.Description</small></p>
+                                                    if (date.IsHost)
+                                                    {
+                                                        <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = date.Date.Activity.Occurrence.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-envelope"></i> Mail senden</a>
+                                                        <a href="@Url.Action("AdminNewParticipients", "Course", new {id = date.Date.Activity.Id})" class="btn btn-outline-secondary btn-sm"><i class="fas fa-users"></i> Teilnehmende</a>
+                                                        <a href="@Url.Action("CancelDate", "Course", new {id = date.Date.Occurrence.Id})" class="btn btn-outline-danger btn-sm"><i class="fas fa-times"></i> absagen</a>
+                                                    }
+                                                }
+
+                                                @if (oh != null)
+                                                {
+                                                    if (date.IsHost)
+                                                    {
+                                                        var nSub = date.Date.Occurrence.Subscriptions.Count + date.Date.Slots.Sum(x => x.Occurrence.Subscriptions.Count);
+                                                        <p class="card-text">Eintragungen: @nSub</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="card-text">@date.Subscription.SubscriberRemark</p>
+                                                    }
+                                                }
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             }
-
-
-
                         </div>
                     </div>
                 }

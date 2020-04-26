@@ -1,0 +1,63 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.Assessment
+@{
+    ViewBag.Title = "Teilnehmde";
+    var userInfoService = new UserInfoService();
+}
+
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-poll"></i> Teilnehmende am Auswahlverfahren für @Model.Name
+            </div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+            </ul>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    @foreach (var stage in Model.Stages)
+                    {
+                        <th>Anzahl Arbeiten</th>
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var candidate in Model.Candidatures)
+                {
+                    var user = userInfoService.GetUser(candidate.UserId);
+
+                    if (user != null)
+                    {
+                        <tr>
+                            <td>@user.LastName</td>
+                            <td>@user.FirstName</td>
+                            
+                            @foreach (var stage in Model.Stages)
+                            {
+                                var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+
+                                if (mStage != null)
+                                {
+                                    <td>@mStage.Material.Count</td>
+                                }
+                                else
+                                {
+                                    <td>#N/A</td>
+                                }
+                            }
+                        </tr>
+                    }
+
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

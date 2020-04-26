@@ -1,9 +1,10 @@
 ﻿@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.AssessmentOverviewModel
+@model ICollection<MyStik.TimeTable.Data.Assessment>
 @{
     ViewBag.Title = "Auswahlverfahren";
 }
+
 
 @Html.Partial("_Disclaimer")
 
@@ -11,21 +12,14 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-poll"></i> Auswahlverfahren für Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                <i class="fas fa-poll"></i> Alle  aktuellen Auswahlverfahren
             </div>
-            <ul class="nav bg-light text-dark">
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Curriculum", new {id = Model.Curriculum.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-cogs fa-fw"></i><br />Verwaltung</a>
-                </li>
-            </ul>
-            @foreach (var assessment in Model.Assessments)
+
+            @foreach (var assessment in Model)
             {
                 <div class="card md-3">
                     <div class="card-header">
-                        @assessment.Name
+                        @assessment.Name (@assessment.Curriculum.Name, @assessment.Curriculum.Organiser.Name)
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -40,7 +34,7 @@
                             </div>
                             <div class="col-md-8">
                                 <p>@assessment.Description</p>
-                                <a href="@Url.Action("Start", assessment.Id)" class="btn btn-outline-primary btn-sm">Teilnehmen</a>
+                                <a href="@Url.Action("Start", new {id=assessment.Id} )" class="btn btn-outline-primary btn-sm">Teilnehmen</a>
                             </div>
                         </div>
                     </div>
@@ -49,5 +43,4 @@
         </div>
     </div>
 </div>
-
 

@@ -3,29 +3,17 @@
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 
 @{
-    var containerType = "container-fluid";
-    if (!Request.IsAuthenticated)
-    {
-        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
-        containerType = "container";
-    }
-
     ViewBag.Title = "Studiengänge";
 }
 
 
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-trophy"></i>
-                        <a href="@Url.Action("Index")">Studiengänge</a> /
-                        @Model.Organiser.ShortName
-                    </h4>
-                </div>
-                <div class="list-group">
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-award"></i> Studiengänge @Model.Organiser.Name (@Model.Organiser.ShortName)
+            </div>
+            <div class="list-group">
                 @*
                     @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsCurriculumAdmin)
                     {
@@ -37,14 +25,13 @@
                             </div>
                         </div>
                     }
-                    *@
-                    @foreach (var curr in Model.Organiser.Curricula.OrderBy(x => x.Name))
-                    {
-                        <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
-                        </a>
-                    }
-                </div>
+                *@
+                @foreach (var curr in Model.Organiser.Curricula.OrderBy(x => x.Name))
+                {
+                    <a href="@Url.Action("Index", "Curriculum", new { id=curr.Id})" class="list-group-item  list-group-item-action">
+                        @curr.Name (@curr.ShortName)
+                    </a>
+                }
             </div>
         </div>
     </div>

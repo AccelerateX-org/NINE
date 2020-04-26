@@ -33,10 +33,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new TeachingOverviewModel();
 
-            model.CurrentSemester = TeachingService.GetActivities(currentSemester, user);
+            var member = GetMyMembership();
+
+            model.CurrentSemester = TeachingService.GetActivities(currentSemester, user, member);
             if (isActive)
             {
-                model.PlaningSemester = TeachingService.GetActivities(nextSemester, user);
+                model.PlaningSemester = TeachingService.GetActivities(nextSemester, user, member);
             }
             model.ActiveTheses = new List<ThesisStateModel>();
 
@@ -54,9 +56,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 model.ActiveTheses.Add(tm);
             }
-
-            var member = GetMyMembership();
-            model.Modules = Db.CurriculumModules.Where(x => x.MV.Id == member.Id).ToList();
 
 
             model.Members = MemberService.GetMemberships(user);

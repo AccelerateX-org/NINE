@@ -1,0 +1,89 @@
+﻿@model MyStik.TimeTable.Web.Models.AssessmentCreateModel
+@{
+    ViewBag.Title = "Neues Auswahlverfahren";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Neues Auswahlverfahren anlegen
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <h5>Hinweis:</h5>
+                    <p>Aktuell müssen alle Referenzen und Datumsangaben als reiner Text eingegegben werden. Datum muss deutsches Format sein.</p>
+                </div>
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    <div class="form-group row">
+                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Description" class="col-sm-2 col-form-label">Beschreibung</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="CurriculumShortName" class="col-sm-2 col-form-label">Kurzname des Studiengangs</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.CurriculumShortName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Semester" class="col-sm-2 col-form-label">Name des Semester (WiSe 2020)</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.SemesterName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Stage1Name" class="col-sm-2 col-form-label">Phase 1: Name</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Stage1Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Stage1Start" class="col-sm-2 col-form-label">Phase 1: Von</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Stage1Start, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Stage1End" class="col-sm-2 col-form-label">Phase 1: Bis</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Stage1End, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Stage2Name" class="col-sm-2 col-form-label">Phase 2: Name</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Stage2Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Stage2Start" class="col-sm-2 col-form-label">Phase 2: Von</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Stage2Start, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Stage2End" class="col-sm-2 col-form-label">Phase 2: Bis</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Stage2End, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-primary">Anlegen</button>
+                            <a href="@Url.Action("Admin")" class="btn btn-default">Abbrechen</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

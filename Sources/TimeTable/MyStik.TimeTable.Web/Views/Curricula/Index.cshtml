@@ -37,10 +37,10 @@
                         <div id="@collapseId" class="collapse" aria-labelledby="@headId" data-parent="#accordionCurricula">
                             <div class="card-body">
                                 <div class="list-group">
-                                    @foreach (var curr in org.Curricula)
+                                    @foreach (var curr in org.Curricula.OrderBy(x => x.Name))
                                     {
                                         <a href="@Url.Action("Index", "Curriculum", new { id=curr.Id})" class="list-group-item  list-group-item-action">
-                                            @curr.Name
+                                            @curr.Name (@curr.ShortName)
                                         </a>
                                     }
                                 </div>

@@ -184,6 +184,25 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<VirtualRoomAccess> VirtualRoomAccesses { get; set; }
 
+
+        public DbSet<Assessment> Assessments { get; set; }
+
+        public DbSet<AssessmentStage> AssessmentStages { get; set; }
+
+        public DbSet<AssessmentStageMaterial> AssessmentStageMaterial { get; set; }
+
+        public DbSet<Candidature> Candidatures { get; set; }
+
+        public DbSet<CandidatureStage> CandidatureStages { get; set; }
+
+        public DbSet<CandidatureStageMaterial> CandidatureStageMaterial { get; set; }
+
+        public DbSet<Committee> Committees { get; set; }
+
+        public DbSet<CommitteeMember> CommitteeMember { get; set; }
+
+
+
         public TimeTableDbContext() : base()
         {
         }

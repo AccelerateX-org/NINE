@@ -26,7 +26,12 @@ namespace MyStik.TimeTable.Web.Controllers
     {
         public ActionResult Index()
         {
+
+#if DEBUG
+            var day = new DateTime(2020, 4, 21);
+#else
             var day = DateTime.Today;
+#endif
 
             var model = GetMyCalendar(day);
 
@@ -738,9 +743,40 @@ namespace MyStik.TimeTable.Web.Controllers
                 courses.AddRange(mylisten);
             }
 
+
+
+            // Alle Vorlesungen, die ich halte
+            var member = GetMyMembership();
+            if (member != null)
+            {
+                var mylecture =
+                    Db.Activities.OfType<Course>()
+                        .Where(c =>
+                            c.SemesterGroups.Any(g => g.Semester.Id == semester.Id) &&
+                            c.Dates.Any(oc => oc.Hosts.Any(l => l.Id == member.Id)))
+                        .ToList();
+                foreach (var lectureCourse in mylecture)
+                {
+                    if (!courses.Contains(lectureCourse))
+                    {
+                        courses.Add(lectureCourse);
+                    }
+                }
+            }
+
+
+
             foreach (var course in courses)
             {
-                var isWaiting = course.Occurrence.Subscriptions.Any(x => x.UserId == user.Id && x.OnWaitingList);
+                var color = "#ddd";
+
+                var hasSubscription = course.Occurrence.Subscriptions.Any(x => x.UserId == user.Id);
+                if (hasSubscription)
+                {
+                    var isWaiting = course.Occurrence.Subscriptions.Any(x => x.UserId == user.Id && x.OnWaitingList);
+                    color = isWaiting ? "#c89f23" : "#37918b";
+                }
+
 
 
                 var days = (from occ in course.Dates
@@ -772,7 +808,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                         end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                         textColor = "#000",
-                        backgroundColor = isWaiting ? "#c89f23" : "#37918b",
+                        backgroundColor = color,
                         borderColor = "#000",
                         htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel),
                     });

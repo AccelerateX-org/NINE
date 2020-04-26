@@ -29,17 +29,35 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<ThesisStateModel> ActiveTheses { get; set; }
 
-        public List<CurriculumModule> Modules { get; set; }
     }
 
 
     public class TeachingSemesterSummaryModel
     {
+        public TeachingSemesterSummaryModel()
+        {
+            Modules = new List<TeachingModuleSemesterModel>();
+            Courses = new List<CourseSummaryModel>();
+        }
+
         public Semester Semester { get; set; }
 
-        public List<Course> Courses { get; set;  }
+        public List<CourseSummaryModel> Courses { get; set;  }
 
         public List<OfficeHour> OfficeHours { get; set;  }
 
+        public List<TeachingModuleSemesterModel> Modules { get; set; }
+    }
+
+    public class TeachingModuleSemesterModel
+    {
+        public TeachingModuleSemesterModel()
+        {
+            Courses = new List<CourseSummaryModel>();
+        }
+
+        public CurriculumModule Module { get; set; }
+        
+        public List<CourseSummaryModel> Courses { get; set; }
     }
 }

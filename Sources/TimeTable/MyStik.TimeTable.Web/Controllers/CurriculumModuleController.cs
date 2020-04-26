@@ -214,7 +214,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == semId))
                         .Select(x => x.Course).Distinct().ToList();
 
-
                 foreach (var course in courses)
                 {
                     var summary = courseSummaryService.GetCourseSummary(course);

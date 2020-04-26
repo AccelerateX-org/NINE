@@ -1,0 +1,69 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.AssessmentOverviewModel
+@{
+    ViewBag.Title = "Auswahlverfahren";
+}
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-poll"></i> Auswahlverfahren an der @Model.Organiser.Name (@Model.Organiser.ShortName)
+            </div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Dashboard")"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Create")"><i class="fas fa-plus fa-fw"></i><br />Anlegen</a>
+                </li>
+            </ul>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Studiengang</th>
+                    <th>Bezeichnung</th>
+                    <th>Beschreibung</th>
+                    <th>Kommittee</th>
+                    <th>Ablauf</th>
+                    <th>Teilnehmende</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var assessment in Model.Assessments)
+                {
+                    <tr>
+                        <td>@assessment.Curriculum.Name (@assessment.Curriculum.ShortName)</td>
+                        <td>@assessment.Name</td>
+                        <td>@assessment.Description</td>
+                        <td>
+                            @foreach (var m in assessment.Committee.Members)
+                            {
+                                <div>
+                                    @m.Member.FullName
+                                    @if (m.HasChair)
+                                    {
+                                        <i class=" fas fa-chair"></i>
+                                    }
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            @foreach (var stage in assessment.Stages)
+                            {
+                                <div>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</div>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Candidates", new {id = assessment.Id})">@assessment.Candidatures.Count</a>
+                        </td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

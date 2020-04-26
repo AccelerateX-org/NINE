@@ -1,0 +1,84 @@
+﻿@model MyStik.TimeTable.Data.Candidature
+@{
+    ViewBag.Title = "Auswahlverfahren";
+}
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4><i class="fas fa-poll"></i> Meine Teilnahme an @Model.Assessment.Name</h4>
+                <ul class="fa-ul">
+                    @if (string.IsNullOrEmpty(Model.Characteristics))
+                    {
+                        <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch keine Kurzbiografie verfasst</li>
+                    }
+                    @if (string.IsNullOrEmpty(Model.Motivation))
+                    {
+                        <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch kein Motivationsschreiben verfasst</li>
+                    }
+                </ul>
+                <a href="#" class="btn btn-outline-primary">Texte eingeben</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="row" style="margin-top: 20px">
+    @foreach (var stage in Model.Assessment.Stages)
+    {
+        var now = DateTime.Now;
+        var isOn = stage.OpeningDateTime <= now && now <= stage.ClosingDateTime;
+        var isFuture = now < stage.OpeningDateTime;
+
+
+        var round = Model.Stages.SingleOrDefault(x => x.AssessmentStage.Id == stage.Id);
+
+
+
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@stage.Name</h5>
+                    <p class="card-text">@stage.Description</p>
+                    <ul class="fa-ul">
+                        @if (isFuture)
+                        {
+                            <li><i class="fas fa-li fa-calendar-alt"></i>beginnt am @stage.OpeningDateTime</li>
+                        }
+                        else
+                        {
+                            if (isOn)
+                            {
+                                <li><i class="fas fa-li fa-calendar-alt"></i>läuft noch bis @stage.ClosingDateTime</li>
+                            }
+                            else
+                            {
+                                <li><i class="fas fa-li fa-calendar-alt"></i>seit @stage.ClosingDateTime abgeschlossen</li>
+                            }
+                        }
+                        @if (round != null)
+                        {
+                            <li><i class="fas fa-li fa-file-upload"></i>Bisher @round.Material.Count Dokumente hochgeladen</li>
+                        }
+                        else
+                        {
+                            <li><i class="fas fa-li fa-file-upload"></i>Bisher noch nicht teilgenommen</li>
+                        }
+                    </ul>
+                    @if (isOn)
+                    {
+                        <a href="#" class="btn btn-outline-primary">Dateien hochladen</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+

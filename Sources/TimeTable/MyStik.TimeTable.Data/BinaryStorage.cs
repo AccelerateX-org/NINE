@@ -39,5 +39,10 @@ namespace MyStik.TimeTable.Data
         /// Wie oft abgerufen
         /// </summary>
         public int AccessCount { get; set; }
+
+        /// <summary>
+        /// Datum Hochgeladen
+        /// </summary>
+        public DateTime? Created { get; set; }
     }
 }
