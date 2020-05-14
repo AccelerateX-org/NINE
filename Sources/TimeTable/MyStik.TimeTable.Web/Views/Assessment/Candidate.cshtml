@@ -1,0 +1,61 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.Candidature
+@{
+    ViewBag.Title = "Album";
+    var userService = new UserInfoService();
+
+    var user = userService.GetUser(Model.UserId);
+}
+
+@Html.Partial("_Watermark")
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">@user.FullName</h4>
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="card-title">Kurzbiografie</h5>
+                        <div class="card-text">
+                            @Model.Characteristics
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="card-title">Motivationsschreiben</h5>
+                        <div class="card-text">
+                            @Model.Motivation
+                        </div>
+                    </div>
+                </div>
+                @foreach (var stage in Model.Stages)
+                {
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="card-title">Eingereichte Unterlagen aus Stufe "@stage.AssessmentStage.Name"</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @foreach (var m in stage.Material)
+                        {
+                            <div class="col">
+                                <div class="card" style="width: 18rem;">
+                                    <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" class="card-img-top" />
+                                    <div class="card-body">
+                                        <h6 class="card-title">@m.Storage.Name</h6>
+                                        <p class="card-text">@m.Storage.Description</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

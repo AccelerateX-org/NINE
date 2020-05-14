@@ -37,4 +37,22 @@ namespace MyStik.TimeTable.Web.Models
 
         public string Stage2End { get; set; }
     }
+
+
+    public class AssessmentStageCreateModel
+    {
+        public Guid AssessmentId { get; set; }
+
+        public Guid StageId { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public string Start { get; set; }
+
+        public string End { get; set; }
+
+        public string Publish { get; set; }
+    }
 }

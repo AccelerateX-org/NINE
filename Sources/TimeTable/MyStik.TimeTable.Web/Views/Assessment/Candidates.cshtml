@@ -5,6 +5,8 @@
     var userInfoService = new UserInfoService();
 }
 
+@Html.Partial("_Watermark")
+
 
 <div class="row" style="margin-top: 20px">
     <div class="col-12">
@@ -19,43 +21,43 @@
             </ul>
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Vorname</th>
-                    @foreach (var stage in Model.Stages)
-                    {
-                        <th>Anzahl Arbeiten</th>
-                    }
-                </tr>
+                    <tr>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        @foreach (var stage in Model.Stages)
+                        {
+                            <th>Anzahl Arbeiten</th>
+                        }
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var candidate in Model.Candidatures)
-                {
-                    var user = userInfoService.GetUser(candidate.UserId);
-
-                    if (user != null)
+                    @foreach (var candidate in Model.Candidatures)
                     {
-                        <tr>
-                            <td>@user.LastName</td>
-                            <td>@user.FirstName</td>
-                            
-                            @foreach (var stage in Model.Stages)
-                            {
-                                var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+                        var user = userInfoService.GetUser(candidate.UserId);
 
-                                if (mStage != null)
+                        if (user != null)
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("Candidate", new {id=candidate.Id})">@user.LastName</a></td>
+                                <td>@user.FirstName</td>
+
+                                @foreach (var stage in Model.Stages)
                                 {
-                                    <td>@mStage.Material.Count</td>
+                                    var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+
+                                    if (mStage != null)
+                                    {
+                                        <td>@mStage.Material.Count</td>
+                                    }
+                                    else
+                                    {
+                                        <td>#N/A</td>
+                                    }
                                 }
-                                else
-                                {
-                                    <td>#N/A</td>
-                                }
-                            }
-                        </tr>
+                            </tr>
+                        }
+
                     }
-
-                }
                 </tbody>
             </table>
         </div>

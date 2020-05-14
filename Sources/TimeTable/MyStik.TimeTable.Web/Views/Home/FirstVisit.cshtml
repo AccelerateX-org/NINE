@@ -1,0 +1,55 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Startseite";
+}
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
+    <div class="col-md-12">
+        <h4 class="text-center">Willkommen bei NINE <small>Informationsdienste rund um Studium und Lehre</small></h4>
+        <div class="text-center">Ein Studierenden- und Lehrprojekt von <a href="https://shortcut.wi.hm.edu/portal" target="_blank">shortcut</a></div>
+    </div>
+</div>
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-6 col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-user-astronaut"></i><br />
+                    Studieninteressierte
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Neue Welt Studium</h6>
+                <p class="card-text">Informieren, Ausprobieren, beraten lassen</p>
+                <a href="@Url.Action("Index", "Candidature")" class="btn btn-outline-primary">Mein Einstieg</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-user-graduate"></i><br />
+                    Studierende
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Organisation  des Studienalltags</h6>
+                <p class="card-text">Vorlesungsverzeichnisse, persönlicher Stundenplan  & mehr</p>
+                <a href="@Url.Action("Index", "Student")" class="btn btn-outline-primary">Mein Studium</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-chalkboard-teacher"></i><br />
+                    Lehrende
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Gestaltung des Lehrbetriebs</h6>
+                <p class="card-text">Terminverwaltung, Raumbelegung, Benachrichtigungen</p>
+                <a href="@Url.Action("Index", "Teaching")" class="btn btn-outline-primary">Meine Lehre</a>
+            </div>
+        </div>
+    </div>
+</div>
+

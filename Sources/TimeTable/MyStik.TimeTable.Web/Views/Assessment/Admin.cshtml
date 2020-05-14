@@ -4,6 +4,8 @@
     ViewBag.Title = "Auswahlverfahren";
 }
 
+@Html.Partial("_Watermark")
+
 <div class="row" style="margin-top: 20px">
     <div class="col-12">
         <div class="card">
@@ -20,45 +22,43 @@
             </ul>
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Studiengang</th>
-                    <th>Bezeichnung</th>
-                    <th>Beschreibung</th>
-                    <th>Kommittee</th>
-                    <th>Ablauf</th>
-                    <th>Teilnehmende</th>
-                </tr>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Studiengang</th>
+                        <th>Kommittee</th>
+                        <th>Ablauf</th>
+                        <th>Teilnehmende</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var assessment in Model.Assessments)
-                {
-                    <tr>
-                        <td>@assessment.Curriculum.Name (@assessment.Curriculum.ShortName)</td>
-                        <td>@assessment.Name</td>
-                        <td>@assessment.Description</td>
-                        <td>
-                            @foreach (var m in assessment.Committee.Members)
-                            {
-                                <div>
-                                    @m.Member.FullName
-                                    @if (m.HasChair)
-                                    {
-                                        <i class=" fas fa-chair"></i>
-                                    }
-                                </div>
-                            }
-                        </td>
-                        <td>
-                            @foreach (var stage in assessment.Stages)
-                            {
-                                <div>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</div>
-                            }
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Candidates", new {id = assessment.Id})">@assessment.Candidatures.Count</a>
-                        </td>
-                    </tr>
-                }
+                    @foreach (var assessment in Model.Assessments)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Details", new {id=assessment.Id})">@assessment.Name</a></td>
+                            <td>@assessment.Curriculum.Name (@assessment.Curriculum.ShortName)</td>
+                            <td>
+                                @foreach (var m in assessment.Committee.Members)
+                                {
+                                    <div>
+                                        @m.Member.FullName
+                                        @if (m.HasChair)
+                                        {
+                                            <i class=" fas fa-chair"></i>
+                                        }
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @foreach (var stage in assessment.Stages)
+                                {
+                                    <div>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</div>
+                                }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Candidates", new {id = assessment.Id})">@assessment.Candidatures.Count</a>
+                            </td>
+                        </tr>
+                    }
 
                 </tbody>
             </table>

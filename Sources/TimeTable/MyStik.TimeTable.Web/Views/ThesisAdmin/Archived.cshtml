@@ -49,8 +49,16 @@
                     {
                         <tr id="@thesis.Thesis.Id">
                             <td></td>
-                            <td>@thesis.User.LastName</td>
-                            <td>@thesis.User.FirstName</td>
+                            @if (thesis.User != null)
+                            {
+                                <td>@thesis.User.LastName</td>
+                                <td>@thesis.User.FirstName</td>
+                            }
+                            else
+                            {
+                                <td>kein Benutzerkonto</td>
+                                <td></td>
+                            }
                             <td>@thesis.Student.Number</td>
                             <td>@thesis.Student.Curriculum.ShortName</td>
                             @if (thesis.Thesis.RequestDate.HasValue)
@@ -179,7 +187,7 @@
 
                         var id = $(this).attr('id');
                         if (id != null) {
-                            window.location.href = "@Url.Action("Details", "Thesis")/" + id;
+                            window.location.href = "@Url.Action("Details", "ThesisAdmin")/" + id;
                         }
                     }
                 });

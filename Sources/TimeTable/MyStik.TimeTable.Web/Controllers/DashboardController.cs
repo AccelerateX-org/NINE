@@ -43,6 +43,12 @@ namespace MyStik.TimeTable.Web.Controllers
             // wenn alles nix, dann erster Besuch
             if (!meberships.Any() && student == null && !alumni.Any())
             {
+                // Falls es Bewerbungen gibt, dann zur Startseite
+                var cand = Db.Candidatures.Where(x => x.UserId.Equals(userRight.User.Id)).ToList();
+
+                if (cand.Any())
+                    return RedirectToAction("Index", "Candidature");
+
                 return View("FirstVisit");
             }
 

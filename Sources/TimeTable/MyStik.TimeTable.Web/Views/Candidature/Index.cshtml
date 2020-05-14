@@ -1,0 +1,51 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Candidature>
+@{
+    ViewBag.Title = "Auswahlverfahren";
+}
+
+
+@Html.Partial("_Watermark")
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Weitere Sichten
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Index", "Assessment")#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-fw fa-list"></i> Aktuelle Auswahlverfahren
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">Meine Auswahlverfahren</div>
+
+                    @foreach (var candidature in Model)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4><i class="fas fa-poll"></i> Meine Teilnahme an @candidature.Assessment.Name</h4>
+                                <a href="@Url.Action("MyRoom", new {id=candidature.Id})" class="btn btn-outline-primary">Bearbeiten</a>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+
+                </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,54 @@
+﻿@model MyStik.TimeTable.Web.Models.CandidatureUploadMaterialModel
+@{
+    ViewBag.Title = "Material hochladen";
+}
+
+@Html.Partial("_Watermark")
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Stufe bearbeiten
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <h5>Hinweis:</h5>
+                    <p>Aktuell gibt es noch keine Fortschrittsanzeige beim Upload. Der laufende Upload muss abgewartet werden. Bitte um Geduld.</p>
+                </div>
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.HiddenFor(m => m.Stage.Id)
+                    <div class="form-group row">
+                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Description" class="col-sm-2 col-form-label">Beschreibung</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="File" class="col-sm-2 col-form-label">Datei</label>
+                        <div class="col-sm-10">
+                            <div>
+                                <input type="file" name="File" id="File" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-upload"></i> Hochladen</button>
+                            <a href="@Url.Action("Stage", new {stagwId=Model.Stage.AssessmentStage.Id, canId=Model.Stage.Candidature.Id})" class="btn btn-outline-secondary"><i class="fas fa-times"> </i> Abbrechen</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

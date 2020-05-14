@@ -1,0 +1,183 @@
+﻿@model MyStik.TimeTable.Data.CandidatureStage
+@{
+    ViewBag.Title = "Auswahlverfahren";
+}
+
+@section styles {
+    <link href="@Url.Content("~/Assets/libs/dropzone/dropzone.css")" rel="stylesheet" type="text/css" />
+
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Assets/libs/dropzone/dropzone.js")" type="text/javascript"></script>
+
+    <script>
+        $('#dlgDeleteMaterial').on('show.bs.modal',
+            function(event) {
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var matId = button.data('materialid') // Extract info from data-* attributes
+                var modal = $(this);
+                $('#hiddenDeleteMatId').val(matId);
+            });
+
+
+        $("#btnDeleteMaterial").click(function() {
+            var matId = $("#hiddenDeleteMatId").val();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("DeleteMaterial")',
+                    data: {
+                        matId: matId
+                    },
+                    success: function (data, success, xhr) {
+                        $("#"+matId).remove();
+                    }
+                });
+
+
+            $('#dlgDeleteMaterial').modal("hide");
+        });
+
+
+        $('#dlgEditMaterial').on('show.bs.modal',
+            function(event) {
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var matId = button.data('materialid') // Extract info from data-* attributes
+                var matTitle = button.data('materialtitle') // Extract info from data-* attributes
+                var matDesc = button.data('materialdesc') // Extract info from data-* attributes
+                var modal = $(this);
+                $('#hiddenEditMatId').val(matId);
+                $('#matTitle').val(matTitle);
+                $('#matDesc').val(matDesc);
+            });
+
+
+        $("#btnEditMaterial").click(function() {
+            var matId = $("#hiddenEditMatId").val();
+            var matTitle = $("#matTitle").val();
+            var matDesc = $("#matDesc").val();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("EditMaterial")',
+                    data: {
+                        matId: matId,
+                        matTitle: matTitle,
+                        matDesc: matDesc
+                    },
+                    success: function (data, success, xhr) {
+                        $("#" + matId).html(data);
+                    }
+                });
+
+
+            $('#dlgEditMaterial').modal("hide");
+        });
+
+    </script>
+}
+
+
+    @Html.Partial("_Watermark")
+
+    <div class="row" style="margin-top: 20px">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-poll"></i> Meine Teilnahme an @Model.AssessmentStage.Assessment.Name
+                </div>
+                <ul class="nav bg-light text-dark">
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("MyRoom", new {id = Model.Candidature.Id})"><i class="fas fa-chevron-left fa-fw"></i><br/>zurück</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("UploadMaterial", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br/>Datei hochladen</a>
+                    </li>
+                </ul>
+
+                <div class="row">
+                    <div class="card-body">
+                        <h5 class="card-title">Material hier direkt hochladen</h5>
+                        <p class="card-subtitle">Titel und Beschreibungstext können nachträglich ergänzt oder geändert werden</p>
+                        <form action="@Url.Action("UploadFile")" class="dropzone">
+                            @Html.HiddenFor(m => m.Id)
+                        </form>
+                        <a href="@Url.Action("Stage", new {stageId = Model.AssessmentStage.Id, candId = Model.Candidature.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren</a>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="card-body">
+                        <h5 class="card-title">Bisher hochgeladen wurden</h5>
+
+                        <div class="row">
+                            @foreach (var material in Model.Material)
+                            {
+                                <div id="@material.Id" class="col-md-2">
+                                    @Html.Partial("_MaterialBox", material)
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="dlgDeleteMaterial" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalLabel1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel1">Material löschen</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Soll dieses Material wirklich gelöscht werden?</p>
+                    <p>Die Aktion kann nicht rückgängig gemacht werden.</p>
+                    <input id="hiddenDeleteMatId" type="text" hidden/>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnDeleteMaterial" type="button" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Löschen</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Abbrechen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="dlgEditMaterial" tabindex="-1" role="dialog" aria-labelledby="modalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel2">Material ändern</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="matTitle" class="col-form-label">Titel</label>
+                        <input type="text" class="form-control" id="matTitle" name="matTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="matDesc" class="col-form-label">Beschreibung</label>
+                        <textarea class="form-control" id="matDesc" name="matDesc"></textarea>
+                    </div>
+                    <input id="hiddenEditMatId" type="text" hidden />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btnEditMaterial" type="button" class="btn btn-outline-primary"><i class="fas fa-save"></i> Speichern</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Abbrechen</button>
+            </div>
+        </div>
+    </div>
+</div>
+

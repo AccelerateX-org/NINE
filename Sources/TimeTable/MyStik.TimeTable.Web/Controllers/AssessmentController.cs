@@ -32,10 +32,11 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Details()
+        public ActionResult Details(Guid id)
         {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
 
-            return View();
+            return View(assessment);
         }
 
 
@@ -68,6 +69,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult Candidate(Guid id)
+        {
+            var candidate = Db.Candidatures.SingleOrDefault(x => x.Id == id);
+
+
+            return View(candidate);
+        }
+
+
+
 
         public ActionResult Create()
         {
@@ -161,6 +173,40 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Admin", new {id = curr.Id});
+        }
+
+        public ActionResult EditStage(Guid id)
+        {
+            var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == id);
+
+            var model = new AssessmentStageCreateModel {
+                AssessmentId = stage.Assessment.Id,
+                StageId = stage.Id,
+                Name = stage.Name,
+                Description = stage.Description,
+                Start = stage.OpeningDateTime.ToString(),
+                End = stage.ClosingDateTime.ToString(),
+                Publish = stage.ReportingDateTime.ToString()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditStage(AssessmentStageCreateModel model)
+        {
+            var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == model.StageId);
+
+            stage.Name = model.Name;
+            stage.Description = model.Description;
+            stage.OpeningDateTime = DateTime.Parse(model.Start);
+            stage.ClosingDateTime = DateTime.Parse(model.End);
+            stage.ReportingDateTime = DateTime.Parse(model.Publish);
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new {id = model.AssessmentId});
         }
     }
 }

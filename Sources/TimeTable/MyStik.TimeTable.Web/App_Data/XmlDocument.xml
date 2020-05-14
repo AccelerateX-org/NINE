@@ -12038,6 +12038,11 @@
             
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Models.CandidatureUploadMaterialModel">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.MensaViewModel">
             <summary>
             

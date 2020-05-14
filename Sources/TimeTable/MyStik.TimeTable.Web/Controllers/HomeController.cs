@@ -27,6 +27,9 @@ namespace MyStik.TimeTable.Web.Controllers
             if (Request.IsAuthenticated)
                 return RedirectToAction("Index", "Dashboard");
 
+            return View("FirstVisit");
+
+            /*
             var model = new HomeViewModel();
 
             var userDb = new ApplicationDbContext();
@@ -37,6 +40,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Rooms = Db.Rooms.Count();
 
             return View("Landing", model);
+            */
         }
 
 

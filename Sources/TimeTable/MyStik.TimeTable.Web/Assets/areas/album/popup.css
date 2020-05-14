@@ -1,0 +1,136 @@
+﻿@charset "UTF-8";
+
+#abdecker {
+    width: 100%;
+    height: 100vh;
+    z-index: 30;
+    background-color: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: -100vh;
+    left: 0;
+    transition: all 0.5s ease-in-out;
+    /* vertikal und horizonal zentrieren */
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+    #abdecker.sichtbar {
+        top: 0;
+    }
+
+/* die animierte "Sanduhr", die anzeigt, dass ein groÃŸes Bild geladen wird */
+
+#abdeckerSanduhr {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    left: calc(50vw - 25px);
+    top: calc(50vh - 25px);
+    opacity: 0;
+    /* dreht sich animiert! */
+    animation: rotation 1.5s linear infinite;
+    animation-direction: reverse;
+}
+
+    #abdeckerSanduhr.sichtbar {
+        opacity: 1;
+    }
+
+#grossBild {
+    max-width: 90vw;
+    height: 95vh;
+    position: relative;
+    background-color: #fff;
+    padding: 0.4rem;
+    border-radius: 4px;
+    transform: translateY(-140vh) rotate(-90deg);
+    transition: transform 0.7s ease-in-out;
+}
+
+    /* das eingefügte DIV ermöglicht vertikales Scrollen,
+wenn die Bilder z.B. hochformatik sind */
+    #grossBild div {
+        height: 90%;
+        width: 100%;
+        overflow: scroll;
+    }
+
+    /* das Foto */
+    #grossBild img[alt] {
+        /* height: 93%; */
+        /* object-fit: cover; */
+        object-fit: fill;
+    }
+
+    #grossBild figcaption {
+        /* text-align: center; */
+        margin-top: 1rem;
+        padding: 0 0.5rem;
+        font-size: 100%;
+        line-height: 1.2;
+        color: #444;
+    }
+
+    #grossBild.sichtbar {
+        transform: translateY(0) rotate(0);
+    }
+
+#schliesser {
+    color: #fff;
+    font-size: 150%;
+    text-align: center;
+    width: 1em;
+    padding: 0.5em 1em;
+    position: absolute;
+    right: -1.2em;
+    top: -1em;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+#weiterSymbol {
+    width: 1.6em;
+    position: absolute;
+    right: -1.5em;
+    top: 45%;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+#zurueckSymbol {
+    width: 1.6em;
+    position: absolute;
+    left: -1.5em;
+    top: 45%;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+#playSymbol {
+    width: 1.6em;
+    position: absolute;
+    right: -1.5em;
+    top: 2rem;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+    #schliesser:hover,
+    #weiterSymbol:hover,
+    #zurueckSymbol:hover,
+    #playSymbol:hover {
+        transform: scale(1.2);
+    }
+
+/* Animation der "Sanduhr" */
+@keyframes rotation {
+    0% {
+        transform-origin: center center;
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(-360deg);
+    }
+}

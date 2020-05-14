@@ -1,157 +1,84 @@
-﻿
+﻿@model MyStik.TimeTable.Data.Assessment
 @{
     ViewBag.Title = "Auswahlverfahren";
 }
 
-<div class="row" style="margin-top: 20px">
-    <div class="col-12">
-        <h4><i class="fas fa-poll"></i> Details zum Auswahlverfahren x</h4>
-    </div>
-</div>
-
-<div class="row" style="margin-top: 20px">
-    <div class="col">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Runde 1: Hochladen der Mappe</h5>
-                <p class="card-text">Ladet eure Mappe Seite für Seite als .jpg (Auflösung max. 300x300) hoch.</p>
-                <ul class="fa-ul">
-                    <li><i class="fas fa-li fa-calendar-alt"></i>04.05.2020 12:00 - 31.05.2020 20:00 - Noch 5 Tage</li>
-                    <li><i class="fas fa-li fa-file-upload"></i>Bisher 8 Dokumente hochgeladen</li>
-                    <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch kein Motivationsschreiben verfasst</li>
-                </ul>
-                <a href="#" class="btn btn-primary">Starten</a>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Runde 2: Aufnahmeprüfung</h5>
-                <p class="card-text">Es werden Aufgaben bereitgestellt. Ihr habt 48 h Zeit diese zu bearbeiten und die Ergebnisse hier hochzuladen.</p>
-                <ul class="fa-ul">
-                    <li><i class="fas fa-li fa-calendar-alt"></i>04.06.2020 12:00 - 06.06.2020 12:00</li>
-                </ul>
-                <a href="#" class="btn btn-primary">Starten</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
+@Html.Partial("_Watermark")
 
 
 <div class="row" style="margin-top: 20px">
-    <div class="col-12">
+    <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-                <i class="fas fa-folder-open"></i> Runde 1: Einreichen der Mappe
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1"><i class="fas fa-download"></i>Bereitgestellte Unterlagen</h5>
+            <div class="card-header">Details zum Auswahlverfahren @Model.Name</div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Neue Stufe</a>
+                </li>
+            </ul>
+            <div class="row">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Stufen</h5>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Bezeichnung</th>
+                                    <th>Beginn</th>
+                                    <th>Ende</th>
+                                    <th>Veröffentlichung</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.Stages)
+                                {
+                                    <tr>
+                                        <td><a href="@Url.Action("EditStage", new {id=s.Id})">@s.Name</a></td>
+                                        <td>@s.OpeningDateTime</td>
+                                        <td>@s.ClosingDateTime</td>
+                                        <td>@s.ReportingDateTime</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                    <p class="mb-1">Keine</p>
                 </div>
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1"><i class="fas fa-upload"></i>Eingereichte Unterlagen</h5>
-                        <small>maximal 25 Dateien a 25 MB</small>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Kommittee</h5>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Rolle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Committee.Members)
+                                {
+                                    <tr>
+                                        <td>@c.Member.FullName</td>
+                                        @if (c.HasChair)
+                                        {
+                                            <td><i class=" fas fa-chair"></i> Vorsitz</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Datei</th>
-                                <th>Größe</th>
-                                <th>Hochgeladen </th>
-                                <th>Bemerkung</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>bild01.png</td>
-                                <td>9276239023 bytes</td>
-                                <td>05.05.2020 23:41</td>
-                                <td>Acryl auf Leinwand</td>
-                                <td><a href="#" class="btn btn-danger"><i class="fas fa-trash"></i> Löschen</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
                 </div>
-            </div>
-            <div class="card-body">
-                <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Neues Dokument hochladen</a>
-                <a href="#" class="btn btn-primary"><i class="fas fa-envelope"></i> Bericht schicken lassen</a>
             </div>
         </div>
     </div>
 </div>
-
-<div class="row" style="margin-top: 20px">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-folder-open"></i> Runde 2: Prüfungsaufgaben
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1"><i class="fas fa-download"></i>Bereitgestellte Unterlagen</h5>
-                    </div>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Datei</th>
-                                <th>Größe</th>
-                                <th>Letzter Downlod </th>
-                                <th>Bemerkung</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>aufgaben.pdf</td>
-                                <td>1112334 bytes</td>
-                                <td>08.05.2020 00:23</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1"><i class="fas fa-upload"></i>Eingereichte Unterlagen</h5>
-                        <small>maximal 3 Dateien a 10 MB</small>
-                    </div>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Datei</th>
-                                <th>Größe</th>
-                                <th>Hochgeladen </th>
-                                <th>Bemerkung</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>antwort.pdf</td>
-                                <td>12339023 bytes</td>
-                                <td>09.05.2020 21:09</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-body">
-                <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Neues Dokument hochladen</a>
-                <a href="#" class="btn btn-primary"><i class="fas fa-envelope"></i> Bericht schicken lassen</a>
-            </div>
-        </div>
-    </div>
-</div>
-
