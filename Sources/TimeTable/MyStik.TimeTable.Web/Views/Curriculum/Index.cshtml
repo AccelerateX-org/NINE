@@ -22,8 +22,8 @@
                 <a href="#" class="list-group-item  list-group-item-action disabled">
                     <i class="fas fa-fw fa-question-circle"></i> Orientierungstests
                 </a>
-                <a href="#" class="list-group-item  list-group-item-action" data-toggle="modal" data-target="#exampleModal">
-                    <i class="fas fa-fw fa-poll"></i> Auswahlverfahren
+                <a href="#" class="list-group-item  list-group-item-action disabled" @*data-toggle="modal" data-target="#exampleModal"*@>
+                    <i class="fas fa-fw fa-poll"></i> Eignungsprüfung
                 </a>
 
                 <a href="#" class="list-group-item  list-group-item-action disabled">
@@ -60,7 +60,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
-                <a href="@Url.Action("Index", "Assessment", new {id=Model.Curriculum.Id})" class="btn btn-primary">Akzeptiert und weiter zu den Auswahlverfahren</a>
+                <a href="@Url.Action("Index", "Assessment", new {id=Model.Curriculum.Id})" class="btn btn-primary">Akzeptiert und weiter zu den Eignungsprüfung</a>
             </div>
         </div>
     </div>

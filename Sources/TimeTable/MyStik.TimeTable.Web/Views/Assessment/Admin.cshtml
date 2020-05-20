@@ -1,7 +1,7 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.AssessmentOverviewModel
 @{
-    ViewBag.Title = "Auswahlverfahren";
+    ViewBag.Title = "Eignungsprüfung";
 }
 
 @Html.Partial("_Watermark")
@@ -10,15 +10,18 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-poll"></i> Auswahlverfahren an der @Model.Organiser.Name (@Model.Organiser.ShortName)
+                <i class="fas fa-poll"></i> Eignungsprüfung an der @Model.Organiser.Name (@Model.Organiser.ShortName)
             </div>
             <ul class="nav bg-light text-dark">
                 <li class="nav-item">
                     <a class="nav-link text-center" href="@Url.Action("Index", "Dashboard")"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Create")"><i class="fas fa-plus fa-fw"></i><br />Anlegen</a>
-                </li>
+                @if (ViewBag.UserRights.Member.IsAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Create")"><i class="fas fa-plus fa-fw"></i><br />Anlegen</a>
+                    </li>
+                }
             </ul>
             <table class="table">
                 <thead>

@@ -72,6 +72,11 @@ namespace MyStik.TimeTable.Data
         public virtual Degree  Degree { get; set; }
 
         /// <summary>
+        /// Die Selbstverwaltung
+        /// </summary>
+        public virtual Autonomy Autonomy { get; set; }
+
+        /// <summary>
         /// Studiengangleiter
         /// </summary>
         public virtual ActivityOrganiser Organiser { get; set; }

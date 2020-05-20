@@ -1,6 +1,6 @@
 ﻿@model MyStik.TimeTable.Data.Assessment
 @{
-    ViewBag.Title = "Teilnahme an Auswahlverfahren";
+    ViewBag.Title = "Teilnahme an Eignungsprüfung";
 }
 
 
@@ -11,26 +11,14 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-poll"></i> Meine Teilnahme am Auswahlverfahren "@Model.Name"
+                <i class="fas fa-poll"></i> Meine Teilnahme an der Eignungsprüfung "@Model.Name"
             </div>
 
             <div class="card-body">
-                <h5 class="card-title">Zusätzliche Nutzungsvereinbarungen und/oder FAQs</h5>
-                <p class="card-text">Ich sollte folgende Punkte gründlich durchlesen. Bei Fragen wende ich mich an XXXX</p>
-
+                <h5 class="card-title">Zusätzliche Nutzungsbedingungen und/oder FAQs</h5>
                 <ul>
-                    <li>
-                        Muss ich hier Dinge hochladen?
-                        <ul>
-                            <li>ja, es geht dieses Semester nicht anders</li>
-                        </ul>
-                    </li>
-                    <li>
-                        Ich habe kein stabiles Internet
-                        <ul>
-                            <li>Dann schick uns einen USB-Stick mit der Post</li>
-                        </ul>
-                    </li>
+                    <li>Alle Angaben, Dateien werden ausschließlich zur Durchführung der Eignungsprüfung verwendet.</li>
+                    <li>Nach Abschluss der Eignungsprüfung werden die Daten automatisch gelöscht.</li>
                 </ul>
 
                 <a href="@Url.Action("Create", "Candidature", new {id =@Model.Id})" class="btn btn-outline-primary">Teilnahme starten</a>

@@ -17,7 +17,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var cand = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
 
-            return View(cand);
+            if (cand.Any())
+                return View(cand);
+
+            return RedirectToAction("Index", "Assessment");
         }
 
         public ActionResult Create(Guid id)
@@ -25,6 +28,33 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
 
             var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var candidature =
+                Db.Candidatures.SingleOrDefault(x => x.Assessment.Id == assessment.Id && x.UserId.Equals(user.Id));
+
+            if (candidature == null)
+            {
+                return View(assessment);
+                candidature = new Candidature
+                {
+                    Assessment = assessment,
+                    Joined = DateTime.Now,
+                    UserId = user.Id,
+                };
+
+                Db.Candidatures.Add(candidature);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("MyRoom", new {id = candidature.Id});
+        }
+
+        [HttpPost]
+        public ActionResult Create(Assessment model)
+        {
+            var user = GetCurrentUser();
+
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == model.Id);
 
             var candidature =
                 Db.Candidatures.SingleOrDefault(x => x.Assessment.Id == assessment.Id && x.UserId.Equals(user.Id));
@@ -42,7 +72,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("MyRoom", new {id = candidature.Id});
+            return RedirectToAction("MyRoom", new { id = candidature.Id });
         }
 
         public ActionResult MyRoom(Guid id)
@@ -221,5 +251,56 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_MaterialBox", mat);
         }
 
+
+        [HttpPost]
+        public ActionResult UploadProfileImage(HttpPostedFileBase file)
+        {
+            var user = GetCurrentUser();
+
+            var userDb = new ApplicationDbContext();
+
+            var currentUser = userDb.Users.SingleOrDefault(u => u.Id.Equals(user.Id));
+
+            if (file != null && currentUser != null)
+            {
+                currentUser.FileType = file.ContentType;
+                currentUser.BinaryData = new byte[file.ContentLength];
+
+                file.InputStream.Read(currentUser.BinaryData, 0, file.ContentLength);
+
+                userDb.SaveChanges();
+            }
+
+
+            return null;
+        }
+
+        public ActionResult GetProfileImage()
+        {
+            var user = GetCurrentUser();
+            return File(user.BinaryData, user.FileType);
+        }
+
+        public ActionResult DeleteProfileImage(Guid id)
+        {
+
+            var user = GetCurrentUser();
+
+            var userDb = new ApplicationDbContext();
+
+            var currentUser = userDb.Users.SingleOrDefault(u => u.Id.Equals(user.Id));
+
+            if (currentUser != null)
+            {
+                currentUser.FileType = String.Empty;
+                currentUser.BinaryData = null;
+
+                userDb.SaveChanges();
+            }
+
+            var candidature = Db.Candidatures.SingleOrDefault(x => x.Id == id);
+
+            return RedirectToAction("MyRoom", new { id = candidature.Id });
+        }
     }
 }

@@ -16,10 +16,21 @@ namespace MyStik.TimeTable.Data
 
         public string Description { get; set; }
 
+        /// <summary>
+        /// deprecated
+        /// </summary>
         public virtual Curriculum Curriculum { get; set; }
 
 
+        public virtual Autonomy Autonomy { get; set; }
+
+
         public virtual ICollection<CommitteeMember> Members { get; set; }
+
+        /// <summary>
+        /// thematische Veranstaltungsreihe, z.B. "Sitzung", "Arbeitstreffen"
+        /// </summary>
+        public virtual ICollection<Meeting> Meetings { get; set; }
     }
 
     /// <summary>
@@ -36,7 +47,20 @@ namespace MyStik.TimeTable.Data
         public DateTime? Until { get; set; }
 
         
+        /// <summary>
+        /// Vorsitz
+        /// </summary>
         public bool HasChair { get; set; }
+
+        /// <summary>
+        /// Ist Stellverterter
+        /// </summary>
+        public bool IsSubstitute { get; set; }
+
+        /// <summary>
+        /// Stimmrecht
+        /// </summary>
+        public bool HasVotingRight { get; set; }
 
         /// <summary>
         /// Aktuell nur Member

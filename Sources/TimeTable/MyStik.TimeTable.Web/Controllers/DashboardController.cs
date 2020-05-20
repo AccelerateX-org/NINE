@@ -49,7 +49,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (cand.Any())
                     return RedirectToAction("Index", "Candidature");
 
-                return View("FirstVisit");
+                return RedirectToAction("Index", "Assessment");
             }
 
             // alle anderen Fälle

@@ -4,6 +4,7 @@ using System.Data.Entity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -95,8 +96,26 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public DateTime? Approved { get; set; }
 
+        /// <summary>
+        /// Akademischer Grad
+        /// </summary>
+        public string Title { get; set; }
 
-#region veraltet
+        /// <summary>
+        /// Der Datentyp
+        /// </summary>
+        public string FileType { get; set; }
+
+        /// <summary>
+        /// Das Prfilbild
+        /// </summary>
+        // Das ist erforderlich, sonst geht es z.B. in SQL-Server CE nicht
+        // bzw. dort wird 4000 als maximale Länge automatisch angenommen!
+        [MaxLength]
+        public byte[] BinaryData { get; set; }
+
+
+        #region veraltet
 
         /// <summary>
         /// Telefonnummern des Benutzers

@@ -1,6 +1,14 @@
-﻿@model MyStik.TimeTable.Data.CandidatureStage
+﻿@using System.Web.ModelBinding
+@model MyStik.TimeTable.Data.CandidatureStage
 @{
-    ViewBag.Title = "Auswahlverfahren";
+    ViewBag.Title = "Eignungsprüfung";
+
+    var maxFiles = 35;
+    var maxDropSize = 35;
+
+    var dropSize = Math.Min(maxDropSize, Math.Max(0, maxFiles - Model.Material.Count));
+
+
 }
 
 @section styles {
@@ -12,6 +20,16 @@
     <script src="@Url.Content("~/Assets/libs/dropzone/dropzone.js")" type="text/javascript"></script>
 
     <script>
+
+        Dropzone.options.formDrop = {
+            acceptedFiles: '.png,.jpg,.gif,image/*',
+            capture: 'camera',
+            maxFiles: @dropSize,
+            parallelUploads: 1,
+            dictDefaultMessage: 'Ablagebereich für Dateien: max. @dropSize Dateien' 
+        };
+
+
         $('#dlgDeleteMaterial').on('show.bs.modal',
             function(event) {
                 var button = $(event.relatedTarget) // Button that triggered the modal
@@ -30,8 +48,8 @@
                     data: {
                         matId: matId
                     },
-                    success: function (data, success, xhr) {
-                        $("#"+matId).remove();
+                    success: function(data, success, xhr) {
+                        $("#" + matId).remove();
                     }
                 });
 
@@ -67,7 +85,7 @@
                         matTitle: matTitle,
                         matDesc: matDesc
                     },
-                    success: function (data, success, xhr) {
+                    success: function(data, success, xhr) {
                         $("#" + matId).html(data);
                     }
                 });
@@ -82,50 +100,66 @@
 
     @Html.Partial("_Watermark")
 
-    <div class="row" style="margin-top: 20px">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-poll"></i> Meine Teilnahme an @Model.AssessmentStage.Assessment.Name
-                </div>
-                <ul class="nav bg-light text-dark">
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("MyRoom", new {id = Model.Candidature.Id})"><i class="fas fa-chevron-left fa-fw"></i><br/>zurück</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("UploadMaterial", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br/>Datei hochladen</a>
-                    </li>
-                </ul>
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <h4><i class="fas fa-poll"></i> Meine Teilnahme an der Eignungsprüfung "@Model.AssessmentStage.Assessment.Name"</h4>
 
-                <div class="row">
-                    <div class="card-body">
-                        <h5 class="card-title">Material hier direkt hochladen</h5>
-                        <p class="card-subtitle">Titel und Beschreibungstext können nachträglich ergänzt oder geändert werden</p>
-                        <form action="@Url.Action("UploadFile")" class="dropzone">
-                            @Html.HiddenFor(m => m.Id)
-                        </form>
-                        <a href="@Url.Action("Stage", new {stageId = Model.AssessmentStage.Id, candId = Model.Candidature.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren</a>
+        <div class="card">
+            <h5 class="card-header">Hochladen von Material</h5>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("MyRoom", new {id = Model.Candidature.Id})"><i class="fas fa-chevron-left fa-fw"></i><br/>zurück</a>
+                </li>
+                    
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("SendReport", new {id = Model.Id})"><i class="fas fa-envelope fa-fw"></i><br/>Bericht senden lassen</a>
+                </li>
+                    
+            </ul>
+
+            <div class="card-body">
+                @if (Model.Material.Count >= maxFiles)
+                {
+                    <div class="alert alert-warning">
+                        Es können keine Dateien mehr hochgeladen werden. Die maximale Anzahl von @maxFiles Dateien wurde erreicht.
                     </div>
-                </div>
+                }
+                else
+                {
+                    <h5 class="card-title">Hinweise</h5>
+                    <ul>
+                        <li>Legen Sie die Dateien möglichst einzeln auf dem Ablagebereich ab oder klicken Sie auf den Ablagebereich.</li>
+                        <li>Am Smartphone auf den Ablagebereich drücken und Bilder auswählen bze. fotografieren.</li>
+                        <li>Insgesamt dürfen maximal <strong>@maxFiles Dateien</strong> hochgeladen werden.</li>
+                        <li>Es dürfen nur Dateien in den Formaten .png, .jpeg und .gif hochgeladen werden.</li>
+                        <li>Titel und Beschreibungstext für die einzelnen Dateien können nachträglich ergänzt oder geändert werden.</li>
+                    </ul>
+                    <form id="formDrop" action="@Url.Action("UploadFile")" class="dropzone">
+                        @Html.HiddenFor(m => m.Id)
+                    </form>
+                    <a href="@Url.Action("Stage", new {stageId = Model.AssessmentStage.Id, candId = Model.Candidature.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladene Bilder anzeigen</a>
+                }
+            </div>
+        </div>
 
 
+        <div class="card">
+            <h5 class="card-header">Bereits hochgeladenes Material</h5>
+
+            <div class="card-body">
                 <div class="row">
-                    <div class="card-body">
-                        <h5 class="card-title">Bisher hochgeladen wurden</h5>
-
-                        <div class="row">
-                            @foreach (var material in Model.Material)
-                            {
-                                <div id="@material.Id" class="col-md-2">
-                                    @Html.Partial("_MaterialBox", material)
-                                </div>
-                            }
+                    @foreach (var material in Model.Material)
+                    {
+                        <div id="@material.Id" class="col-md-2">
+                            @Html.Partial("_MaterialBox", material)
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
 
     <!-- Modal -->
@@ -164,11 +198,11 @@
                 <form>
                     <div class="form-group">
                         <label for="matTitle" class="col-form-label">Titel</label>
-                        <input type="text" class="form-control" id="matTitle" name="matTitle">
+                        <input type="text" class="form-control" id="matTitle" name="matTitle" maxlength="30">
                     </div>
                     <div class="form-group">
                         <label for="matDesc" class="col-form-label">Beschreibung</label>
-                        <textarea class="form-control" id="matDesc" name="matDesc"></textarea>
+                        <textarea class="form-control" id="matDesc" name="matDesc" maxlength="140"></textarea>
                     </div>
                     <input id="hiddenEditMatId" type="text" hidden />
                 </form>

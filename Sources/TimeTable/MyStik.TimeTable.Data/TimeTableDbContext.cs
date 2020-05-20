@@ -44,7 +44,10 @@ namespace MyStik.TimeTable.Data
         public DbSet<SemesterDate> SemesterDates { get; set; }
 
         public DbSet<ContentChannel> ContentChannels { get; set; }
-        
+
+        public DbSet<CurriculumProgram> CurriculumPrograms { get; set; }
+
+        public DbSet<CurriculumAccreditation> CurriculumAccreditations { get; set; }
 
         public DbSet<Curriculum> Curricula { get; set; }
         
@@ -196,6 +199,9 @@ namespace MyStik.TimeTable.Data
         public DbSet<CandidatureStage> CandidatureStages { get; set; }
 
         public DbSet<CandidatureStageMaterial> CandidatureStageMaterial { get; set; }
+
+        public DbSet<Autonomy> Autonomy { get; set; }
+
 
         public DbSet<Committee> Committees { get; set; }
 

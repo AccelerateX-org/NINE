@@ -15,20 +15,33 @@
             <div class="card-body">
                 <h4 class="card-title">@user.FullName</h4>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-5">
                         <h5 class="card-title">Kurzbiografie</h5>
                         <div class="card-text">
                             @Model.Characteristics
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5">
                         <h5 class="card-title">Motivationsschreiben</h5>
                         <div class="card-text">
                             @Model.Motivation
                         </div>
                     </div>
+                    <div class="col-2">
+                        <h5 class="card-title">@user.FullName</h5>
+                        <div class="card">
+                            @if (user.BinaryData != null && user.BinaryData.Length > 0)
+                            {
+                                <img src="@Url.Action("GetProfileImage", new {id = Model.Id})" class="card-img-top"/>
+                            }
+                            else
+                            {
+                                <p>Kein Profilbild vorhanden</p>
+                            }
+                        </div>
+                    </div>
                 </div>
-                @foreach (var stage in Model.Stages)
+                @foreach (var stage in Model.Stages.OrderByDescending(x => x.AssessmentStage.ClosingDateTime))
                 {
                     <div class="row">
                         <div class="col-12">

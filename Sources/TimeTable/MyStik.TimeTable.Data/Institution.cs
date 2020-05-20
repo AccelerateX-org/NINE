@@ -20,6 +20,12 @@ namespace MyStik.TimeTable.Data
         public string Domain { get; set; }
 
         /// <summary>
+        /// Die Selbstverwaltung
+        /// </summary>
+        public virtual Autonomy Autonomy { get; set; }
+
+
+        /// <summary>
         /// Liste aller Veranstalter der Institution
         /// </summary>
         public virtual ICollection<ActivityOrganiser> Organisers { get; set; }

@@ -36,6 +36,8 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
 
+            ViewBag.UserRights = GetUserRight();
+
             return View(assessment);
         }
 
@@ -58,7 +60,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Assessments = Db.Assessments.Where(x => x.Curriculum.Organiser.Id == org.Id).ToList()
             };
 
-
+            ViewBag.UserRights = GetUserRight();
 
             return View(model);
         }
@@ -208,5 +210,98 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new {id = model.AssessmentId});
         }
+
+        public ActionResult ClearCandidates(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var isAdmin = assessment.Committee.Members.Any(x => x.HasChair && x.Member.UserId == user.Id);
+            if (!isAdmin)
+                return View("_NoAccess");
+
+
+
+            foreach (var candidature in assessment.Candidatures.ToList())
+            {
+                foreach (var stage in candidature.Stages.ToList())
+                {
+                    foreach (var material in stage.Material.ToList())
+                    {
+                        Db.Storages.Remove(material.Storage);
+                        Db.CandidatureStageMaterial.Remove(material);
+                    }
+
+                    Db.CandidatureStages.Remove(stage);
+                }
+
+                Db.Candidatures.Remove(candidature);
+            }
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new {id = id});
+        }
+
+        public ActionResult Delete(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var isAdmin = assessment.Committee.Members.Any(x => x.HasChair && x.Member.UserId == user.Id);
+            if (!isAdmin)
+                return View("_NoAccess");
+
+
+
+            foreach (var candidature in assessment.Candidatures.ToList())
+            {
+                foreach (var stage in candidature.Stages.ToList())
+                {
+                    foreach (var material in stage.Material.ToList())
+                    {
+                        Db.Storages.Remove(material.Storage);
+                        Db.CandidatureStageMaterial.Remove(material);
+                    }
+
+                    Db.CandidatureStages.Remove(stage);
+                }
+
+                Db.Candidatures.Remove(candidature);
+            }
+
+
+            foreach (var stage in assessment.Stages.ToList())
+            {
+                foreach (var material in stage.Material.ToList())
+                {
+                    Db.Storages.Remove(material.Storage);
+                    Db.AssessmentStageMaterial.Remove(material);
+                }
+
+                Db.AssessmentStages.Remove(stage);
+            }
+
+            Db.Assessments.Remove(assessment);
+
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Admin");
+        }
+
+
+
+        public ActionResult GetProfileImage(Guid id)
+        {
+            var candidature = Db.Candidatures.SingleOrDefault(x => x.Id == id);
+            var user = GetUser(candidature.UserId);
+            return File(user.BinaryData, user.FileType);
+        }
+
+
+
     }
 }

@@ -514,6 +514,10 @@
     <Compile Include="Migrations\201701260816414_UserContact.Designer.cs">
       <DependentUpon>201701260816414_UserContact.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202005170751476_UserProfile_V2.cs" />
+    <Compile Include="Migrations\202005170751476_UserProfile_V2.Designer.cs">
+      <DependentUpon>202005170751476_UserProfile_V2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActivityModels.cs" />
@@ -2919,6 +2923,20 @@
     <Content Include="Assets\libs\bootstrap\js\bootstrap.bundle.min.js" />
     <Content Include="Assets\libs\bootstrap\js\bootstrap.js" />
     <Content Include="Assets\libs\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Assets\libs\datatables.net-bs4\css\dataTables.bootstrap4.css" />
+    <Content Include="Assets\libs\datatables.net-bs4\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Assets\libs\datatables.net-bs4\js\dataTables.bootstrap4.js" />
+    <Content Include="Assets\libs\datatables.net-bs4\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Assets\libs\datatables.net-responsive-bs4\css\responsive.bootstrap4.css" />
+    <Content Include="Assets\libs\datatables.net-responsive-bs4\css\responsive.bootstrap4.min.css" />
+    <Content Include="Assets\libs\datatables.net-responsive-bs4\js\responsive.bootstrap4.js" />
+    <Content Include="Assets\libs\datatables.net-responsive-bs4\js\responsive.bootstrap4.min.js" />
+    <Content Include="Assets\libs\datatables.net-responsive\js\dataTables.responsive.js" />
+    <Content Include="Assets\libs\datatables.net-responsive\js\dataTables.responsive.min.js" />
+    <Content Include="Assets\libs\datatables.net-responsive\License.txt" />
+    <Content Include="Assets\libs\datatables.net\js\jquery.dataTables.js" />
+    <Content Include="Assets\libs\datatables.net\js\jquery.dataTables.min.js" />
+    <Content Include="Assets\libs\datatables.net\License.txt" />
     <Content Include="Assets\libs\dropzone\basic.css" />
     <Content Include="Assets\libs\dropzone\dropzone-amd-module.js" />
     <Content Include="Assets\libs\dropzone\dropzone.css" />
@@ -3318,6 +3336,14 @@
     <Content Include="Assets\libs\popper\umd\popper.min.js.map" />
     <Content Include="Areas\Lab\Views\Home\WhatsUp.cshtml" />
     <Content Include="Assets\libs\dropzone\dropzone.js.map" />
+    <Content Include="Assets\libs\datatables.net-bs4\package.json" />
+    <Content Include="Assets\libs\datatables.net-bs4\Readme.md" />
+    <Content Include="Assets\libs\datatables.net-responsive-bs4\package.json" />
+    <Content Include="Assets\libs\datatables.net-responsive-bs4\Readme.md" />
+    <Content Include="Assets\libs\datatables.net-responsive\package.json" />
+    <Content Include="Assets\libs\datatables.net-responsive\Readme.md" />
+    <Content Include="Assets\libs\datatables.net\package.json" />
+    <Content Include="Assets\libs\datatables.net\Readme.md" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -4238,6 +4264,7 @@
     <Content Include="Views\Shared\_Watermark.cshtml" />
     <Content Include="Views\Candidature\_MaterialBox.cshtml" />
     <Content Include="Views\Assessment\Album.cshtml" />
+    <Content Include="Views\Candidature\Create.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4290,6 +4317,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701260816414_UserContact.resx">
       <DependentUpon>201701260816414_UserContact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005170751476_UserProfile_V2.resx">
+      <DependentUpon>202005170751476_UserProfile_V2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.de.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

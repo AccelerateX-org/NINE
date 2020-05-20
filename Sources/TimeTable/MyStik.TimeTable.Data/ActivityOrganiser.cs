@@ -40,6 +40,12 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool IsFaculty { get; set; }
 
+        /// <summary>
+        /// Die Selbstverwaltung
+        /// </summary>
+        public virtual Autonomy Autonomy { get; set; }
+
+
         public virtual ICollection<Curriculum> Curricula { get; set; }
 
         public virtual ICollection<Activity> Activities { get; set; }

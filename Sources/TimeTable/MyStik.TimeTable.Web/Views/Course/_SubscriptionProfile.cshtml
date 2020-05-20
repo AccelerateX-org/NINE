@@ -2,7 +2,7 @@
 @model MyStik.TimeTable.Web.Models.UserCoursePlanViewModel
 
 @{
-    var hasLottery = Model.Summary.Lottery != null;
+    var hasLottery = Model.Summary.Lottery != null && Model.Summary.Lottery.LastDrawing >= DateTime.Now;
     var hasPrio1 = hasLottery && Model.Subscription.Priority.HasValue && (Model.Subscription.Priority.Value == 1);
 }
 

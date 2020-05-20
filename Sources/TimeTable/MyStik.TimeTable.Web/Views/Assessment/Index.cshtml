@@ -2,7 +2,7 @@
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.AssessmentOverviewModel
 @{
-    ViewBag.Title = "Auswahlverfahren";
+    ViewBag.Title = "Eignungsprüfungen";
 }
 
 @Html.Partial("_Disclaimer")
@@ -14,7 +14,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-poll"></i> Auswahlverfahren für Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                <i class="fas fa-poll"></i> Eignungsprüfung für Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
             </div>
             <ul class="nav bg-light text-dark">
                 <li class="nav-item">
