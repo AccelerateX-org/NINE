@@ -62,6 +62,9 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool HasVotingRight { get; set; }
 
+
+        public virtual Committee Committee { get; set; }
+
         /// <summary>
         /// Aktuell nur Member
         /// </summary>

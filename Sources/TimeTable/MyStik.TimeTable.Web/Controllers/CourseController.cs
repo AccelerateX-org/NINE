@@ -1128,6 +1128,12 @@ namespace MyStik.TimeTable.Web.Controllers
             date.Activity.Dates.Remove(date);
             date.Hosts.Clear();
             date.Rooms.Clear();
+
+            foreach (var vRoom in date.VirtualRooms.ToList())
+            {
+                Db.VirtualRoomAccesses.Remove(vRoom);
+            }
+
             Db.ActivityDates.Remove(date);
 
             Db.SaveChanges();

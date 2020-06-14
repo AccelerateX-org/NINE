@@ -15,11 +15,15 @@
 {
     <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
-    
+
     <script>
-        $(document).ready( function () {
-            $('#tabCandidates').DataTable();
-        } );
+        $(document).ready(function() {
+            $('#tabCandidates').DataTable(
+                {
+                    paging: false
+                }
+            );
+        });
 
     </script>
 }
@@ -38,15 +42,20 @@
                 <li class="nav-item">
                     <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
+                </li>
             </ul>
             <table id="tabCandidates" class="table">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Vorname</th>
+                        <th>Kurzbiografie</th>
+                        <th>Motivation</th>
                         @foreach (var stage in Model.Stages)
                         {
-                            <th>Anzahl Arbeiten in "@stage.Name"</th>
+                            <th># Arbeiten in @stage.Name</th>
                         }
                     </tr>
                 </thead>
@@ -54,38 +63,57 @@
                     @foreach (var candidate in Model.Candidatures)
                     {
                         var user = userInfoService.GetUser(candidate.UserId);
+                        <tr>
 
-                        if (user != null)
-                        {
-                            <tr>
+                            @if (user != null)
+                            {
                                 <td><a href="@Url.Action("Candidate", new {id=candidate.Id})">@user.LastName</a></td>
                                 <td>@user.FirstName</td>
+                            }
+                            else
+                            {
+                                <td>kein Benutzerkonto</td>
+                                <td></td>
+                            }
 
-                                @foreach (var stage in Model.Stages)
+                            @if (string.IsNullOrEmpty(candidate.Characteristics))
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@candidate.Characteristics.Length</td>
+                            }
+                            @if (string.IsNullOrEmpty(candidate.Motivation))
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@candidate.Motivation.Length</td>
+                            }
+
+                            @foreach (var stage in Model.Stages)
+                            {
+                                var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+
+                                if (mStage != null)
                                 {
-                                    var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+                                    //var byteCount = mStage.Material.Where(x => x.Storage != null && x.Storage.BinaryData != null).Sum(x => x.Storage.BinaryData.Length) / 1000000;
+                                    //                                totalByteCount += byteCount;
+                                    //var missing = mStage.Material.Count(x => x.Storage == null || x.Storage.BinaryData == null);
 
-                                    if (mStage != null)
-                                    {
-                                        var byteCount = mStage.Material.Sum(x => x.Storage.BinaryData.Length) / 1000000;
-                                        totalByteCount += byteCount;
-
-                                        <td>@mStage.Material.Count (@byteCount MB)</td>
-                                    }
-                                    else
-                                    {
-                                        <td>#N/A</td>
-                                    }
+                                    <td>@mStage.Material.Count</td>
                                 }
-                            </tr>
-                        }
-
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        </tr>
                     }
                 </tbody>
             </table>
-            <div class="card-body">
-                <h4>Speicherplatz gesamt: @totalByteCount MB</h4>
-            </div>
         </div>
     </div>
 </div>

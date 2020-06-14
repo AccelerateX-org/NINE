@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
@@ -34,9 +37,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Details(Guid id)
         {
+            var user = GetCurrentUser();
+
             var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
 
+            var member = assessment.Committee.Members.FirstOrDefault(x => x.Member.UserId.Equals(user.Id));
+
             ViewBag.UserRights = GetUserRight();
+            ViewBag.Member = member;
 
             return View(assessment);
         }
@@ -109,7 +117,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
 
 
-            var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.Equals(model.CurriculumShortName) && x.Organiser.Id == org.Id);
+            var curr = Db.Curricula.SingleOrDefault(x =>
+                x.ShortName.Equals(model.CurriculumShortName) && x.Organiser.Id == org.Id);
             var sem = Db.Semesters.SingleOrDefault(x => x.Name.Equals(model.SemesterName));
 
             var start1 = DateTime.Parse(model.Stage1Start);
@@ -181,7 +190,8 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == id);
 
-            var model = new AssessmentStageCreateModel {
+            var model = new AssessmentStageCreateModel
+            {
                 AssessmentId = stage.Assessment.Id,
                 StageId = stage.Id,
                 Name = stage.Name,
@@ -303,5 +313,178 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+        public ActionResult AddMember(Guid id)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+
+            var model = new AddCommitteeMemberModel()
+            {
+                Assessment = assessment,
+                OrganiserId2 = assessment.Curriculum.Organiser.Id
+
+            };
+
+            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddMembers(Guid AssessmentId, ICollection<Guid> DozIds)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == AssessmentId);
+
+
+            if (DozIds == null || DozIds.Count == 0)
+            {
+                foreach (var member in assessment.Committee.Members.ToList())
+                {
+                    Db.CommitteeMember.Remove(member);
+                }
+
+                Db.SaveChanges();
+
+                return PartialView("_SaveSuccess");
+            }
+
+
+            foreach (var member in assessment.Committee.Members.ToList())
+            {
+                var inList= DozIds.Contains(member.Member.Id);
+
+                if (inList)
+                {
+                    DozIds.Remove(member.Member.Id);
+                }
+                else
+                {
+                    Db.CommitteeMember.Remove(member);
+                }
+            }
+
+            // die verbleibenden sind neu
+
+            foreach (var dozId in DozIds)
+            {
+                var cm = new CommitteeMember
+                {
+                    Member = Db.Members.SingleOrDefault(x => x.Id == dozId),
+                    HasChair = false,
+                    Committee = assessment.Committee
+                };
+
+                Db.CommitteeMember.Add(cm);
+            }
+
+
+            Db.SaveChanges();
+
+            return Json(new { result = "Redirect", url = Url.Action("Details",  new {id = assessment.Id}) });
+
+        }
+
+        public ActionResult AddChair(Guid asid, Guid cmid)
+        {
+            var cm = Db.CommitteeMember.SingleOrDefault(x => x.Id == cmid);
+            cm.HasChair = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new {id = asid});
+        }
+
+        public ActionResult RemoveChair(Guid asid, Guid cmid)
+        {
+            var cm = Db.CommitteeMember.SingleOrDefault(x => x.Id == cmid);
+            cm.HasChair = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = asid });
+        }
+
+
+        public ActionResult DeleteMember(Guid asid, Guid cmid)
+        {
+            var cm = Db.CommitteeMember.SingleOrDefault(x => x.Id == cmid);
+
+            Db.CommitteeMember.Remove(cm);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = asid });
+        }
+
+        public FileResult DownloadCand(Guid id)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Name;Vorname;E-Mail");
+
+            foreach (var stage in assessment.Stages)
+            {
+                writer.Write(
+                    ";# Arbeiten in {0}", stage.Name);
+            }
+
+            writer.Write(Environment.NewLine);
+
+            foreach(var candidate in assessment.Candidatures)
+            {
+
+                var user = UserManager.FindById(candidate.UserId);
+
+                if (user != null)
+                {
+                    writer.Write("{0};{1};{2}",
+                        user.LastName, user.FirstName,
+                        user.Email);
+                }
+                else
+                {
+                    writer.Write("kein Benutzerkonto;;");
+                }
+
+
+
+                foreach (var stage in assessment.Stages)
+                {
+                    var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+
+                    if (mStage != null)
+                    {
+                        writer.Write(";{0}", mStage.Material.Count);
+                    }
+                    else
+                    {
+                        writer.Write(";{0}", 0);
+                    }
+                }
+
+                writer.Write(Environment.NewLine);
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("TN");
+            sb.Append(assessment.Name);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+
+        }
     }
 }

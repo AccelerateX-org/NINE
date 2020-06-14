@@ -1,0 +1,321 @@
+/* ==================== Webfont ==================== */
+
+@font-face {
+  font-family: "Inter";
+  src: url("../f/Inter-Bold.woff2") format("woff2"),
+    url("../f/Inter-Bold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../f/Inter-Regular.woff2") format("woff2"),
+    url("../f/Inter-Regular.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../f/Inter-Italic.woff2") format("woff2"),
+    url("../f/Inter-Italic.woff") format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../f/Inter-BoldItalic.woff2") format("woff2"),
+    url("../f/Inter-BoldItalic.woff") format("woff");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* ==================== allgemeine Regeln ==================== */
+
+:root {
+  --breite: 95%;
+  --maxBreite: 1600px;
+  --minBreite: 240px; /* minBreite der Grid-Columns */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font: 100%/1.5 "Inter", Helvetica, Arial, Sans-Serif;
+  font-weight: 600;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 800;
+  font-size: 100%;
+  line-height: 1;
+}
+
+a,
+a:visited {
+  color: rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  outline: none;
+}
+
+a:hover {
+  /* border-bottom: 1px solid; */
+}
+
+h1 {
+  margin-bottom: 1em;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+/* ==================== header ==================== */
+
+header {
+  background: #000;
+  color: #fff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+header section {
+  width: var(--breite);
+  max-width: var(--maxBreite);
+  margin: 0 auto;
+}
+
+header h1 {
+  font-size: 150%;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+/* ==================== Menü im Header für Bewerber-Auswahl ==================== */
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+#showPullDown {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+}
+
+/* das Menü mit den Bewerberinnen */
+#pullDown {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  overflow-y: auto;
+  width: 24rem;
+  padding: 1rem 1rem 1rem 2rem;
+  background-color: hsla(0, 0%, 0%, 95%);
+  transform: translateY(-200vh);
+  transition: all 0.6s ease-in-out;
+}
+
+#pullDown h2 {
+  font-size: 133%;
+  font-weight: 600;
+  margin: 0.15rem 0 1.5rem 0;
+}
+
+/* wird via JS ein- und ausgeschaltet */
+#pullDown.sichtbar {
+  transform: translateY(0);
+}
+
+#pullDown a {
+  color: inherit;
+}
+
+#pullDown a:hover {
+  color: red;
+}
+
+#hidePullDown {
+  color: inherit;
+  font-size: 150%;
+  position: absolute;
+  top: -0.1rem;
+  right: 0.3rem;
+}
+
+/* =========================== main =========================== */
+
+main {
+  display: block;
+  width: var(--breite);
+  max-width: var(--maxBreite);
+  margin: 6rem auto 1rem auto;
+  scroll-margin-top: 6rem;
+  position: relative;
+}
+
+main h2 {
+  margin: 1.5rem 0;
+  font-weight: 800;
+  font-size: 133%;
+}
+
+@media only screen and (max-width: 480px) {
+  main {
+    margin-top: 4%;
+    width: 96%;
+  }
+}
+
+/* ========================== Anmerkungen ========================== */
+
+/* Textinformationen, die die Bewerberin im Formular eingegeben hat */
+.anmerkungen {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1rem;
+}
+
+.anmerkungen p + p {
+  text-indent: 1.5rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .anmerkungen {
+    display: block;
+  }
+  .anmerkungen div + div {
+    margin-top: 1.5rem;
+  }
+}
+
+/* Lade-Text, nur sichtbar bis alle Bilder geladen sind */
+#loading {
+  text-align: center;
+  width: 100%;
+  padding: 0 3em;
+  position: absolute;
+  top: calc(50vh - 1rem);
+  left: 0;
+  opacity: 0.7;
+  transition: all 0.5s;
+}
+
+figcaption {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 85%;
+  line-height: 1;
+  position: relative;
+  top: -0.2em;
+}
+
+.hinweis {
+  margin: 1.5em 0 0.5em 0;
+  font-size: 80%;
+}
+
+/* ==================== galerie ==================== */
+
+.galerie {
+  list-style-type: none;
+  margin: 0 0 1.5em 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--minBreite), 1fr));
+  grid-gap: 2vmin;
+
+  transition: all 0.7s ease-in-out;
+
+  /*
+  Galerie erst sichtbar, wenn alle Bilder geladen sind
+  siehe 'window.addEventListener("load"…)'
+  */
+  /* transform: translateX(-250vw);*/
+}
+
+.galerie.sichtbar {
+  transform: translateX(0);
+}
+
+.galerie img {
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.galerie img:hover {
+  opacity: 0.9;
+}
+
+/* ==================== footer ==================== */
+
+footer {
+  width: var(--breite);
+  max-width: var(--maxBreite);
+  border-top: 1px solid #ccc;
+  margin: 1em auto 3em auto;
+}
+
+footer a {
+  font-size: 80%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/*
+============== Sachen für die jeweilige index.php, die alle Galerien auflistet ==============
+*/
+html.index {
+  font: 100%/1.5 "roboto_slab", Helvetica, Arial, Sans-Serif;
+  font-weight: 600;
+}
+
+/* .index ul,
+.index ol {
+  margin: 3vh 0;
+  column-width: 20em;
+  column-gap: 1em;
+  text-transform: capitalize;
+} */
+.index a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  outline: none;
+}
+.index a:visited {
+  color: rgba(0, 0, 0, 0.3);
+}
+.index a:hover {
+  color: red;
+}

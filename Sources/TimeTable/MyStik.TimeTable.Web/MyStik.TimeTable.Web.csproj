@@ -290,6 +290,7 @@
     <Compile Include="Api\Controller\ApiBaseController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
     <Compile Include="Api\Controller\CampusController.cs" />
+    <Compile Include="Api\Controller\MvgController.cs" />
     <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
     <Compile Include="Api\Controller\CieHomeController.cs" />
@@ -312,6 +313,7 @@
     <Compile Include="Api\DTOs\ActionDto.cs" />
     <Compile Include="Api\DTOs\BaseDto.cs" />
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
+    <Compile Include="Api\DTOs\MvgDto.cs" />
     <Compile Include="Api\DTOs\ZpCourseDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
     <Compile Include="Api\DTOs\CurriculumDto.cs" />
@@ -409,6 +411,7 @@
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\CandidatureController.cs" />
     <Compile Include="Controllers\CieController.cs" />
+    <Compile Include="Controllers\CommitteeController.cs" />
     <Compile Include="Controllers\ContactsController.cs" />
     <Compile Include="Controllers\CoursePlanController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
@@ -703,7 +706,11 @@
     <Content Include="Assets\admin\pages\scripts\calendar.js" />
     <Content Include="Assets\admin\pages\scripts\portlet-draggable.js" />
     <Content Include="Assets\areas\admin\styles.css" />
+    <Content Include="Assets\areas\album\jquery.bsPhotoGallery.css" />
+    <Content Include="Assets\areas\album\jquery.bsPhotoGallery.js" />
     <Content Include="Assets\areas\album\popup.css" />
+    <Content Include="Assets\areas\album\script.js" />
+    <Content Include="Assets\areas\album\style.css" />
     <Content Include="Assets\fillter\css\fillter-infoscreen.css" />
     <Content Include="Assets\admin\pages\scripts\ui-nestable.min.js" />
     <Content Include="Assets\fillter\css\fillter.css" />
@@ -2953,6 +2960,8 @@
     <Content Include="Assets\libs\fontawesome\webfonts\fa-regular-400.svg" />
     <Content Include="Assets\libs\fontawesome\webfonts\fa-solid-900.svg" />
     <Content Include="Assets\libs\jquery\core.js" />
+    <Content Include="Assets\libs\jquery\jquery-ui.css" />
+    <Content Include="Assets\libs\jquery\jquery-ui.js" />
     <Content Include="Assets\libs\jquery\jquery.js" />
     <Content Include="Assets\libs\jquery\jquery.min.js" />
     <Content Include="Assets\libs\jquery\jquery.slim.js" />
@@ -4265,6 +4274,8 @@
     <Content Include="Views\Candidature\_MaterialBox.cshtml" />
     <Content Include="Views\Assessment\Album.cshtml" />
     <Content Include="Views\Candidature\Create.cshtml" />
+    <Content Include="Views\Committee\Index.cshtml" />
+    <Content Include="Views\Assessment\AddMember.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4282,6 +4293,7 @@
     <Folder Include="Utils\Filter\" />
     <Folder Include="Views\API2\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Mvg\" />
     <Folder Include="Views\Notification\" />
     <Folder Include="Views\Site\" />
     <Folder Include="Views\Storage\" />

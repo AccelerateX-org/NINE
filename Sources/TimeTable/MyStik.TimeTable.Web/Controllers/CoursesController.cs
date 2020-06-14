@@ -424,19 +424,34 @@ namespace MyStik.TimeTable.Web.Controllers
             var writer = new StreamWriter(ms, Encoding.Default);
 
 
-            writer.Write("Studiengang;Gruppe;Dozent;Kurzname;Name;Eintragungen");
+            writer.Write("Studiengang;Gruppe;Kürzel;Vorname;Nachname;E-Mail;Kurzname;Titel;Eintragungen");
             writer.Write(Environment.NewLine);
 
 
             foreach (var course in model)
             {
+                if (course.User != null)
+                {
+                    writer.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8}",
+                        course.Curriculum.ShortName, course.Group.FullName,
+                        course.Lecturer.ShortName,
+                        course.User.FirstName,
+                        course.User.LastName,
+                        course.User.Email,
+                        course.Course.ShortName,
+                        course.Course.Name,
+                        course.Course.Occurrence.Subscriptions.Count);
+                }
+                else
+                {
+                    writer.Write("{0};{1};{2};;;;{3};{4};{5}",
+                        course.Curriculum.ShortName, course.Group.FullName,
+                        course.Lecturer.ShortName,
+                        course.Course.ShortName,
+                        course.Course.Name,
+                        course.Course.Occurrence.Subscriptions.Count);
+                }
 
-                writer.Write("{0};{1};{2};{3};{4};{5}",
-                    course.Curriculum.ShortName, course.Group.FullName,
-                    course.Lecturer.Name,
-                    course.Course.ShortName,
-                    course.Course.Name,
-                    course.Course.Occurrence.Subscriptions.Count);
                 writer.Write(Environment.NewLine);
             }
 
@@ -457,7 +472,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private List<SemesterCourseViewModel> CreateSemesterReport(Semester semester, ActivityOrganiser org)
         {
-
+            var userInfoService = new UserInfoService();
             var model = new List<SemesterCourseViewModel>();
 
             // Alle Lehrveranstaltungen in diesem Semester
@@ -484,6 +499,7 @@ namespace MyStik.TimeTable.Web.Controllers
                             Course = course,
                             Curriculum = semesterGroup.CapacityGroup.CurriculumGroup.Curriculum,
                             Lecturer = lecture,
+                            User = userInfoService.GetUser(lecture.UserId),
                             Group = semesterGroup
                         };
 

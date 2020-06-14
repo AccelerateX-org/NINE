@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using System.Xml.Linq;
 using MyStik.TimeTable.Data;
@@ -76,6 +77,92 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return list.AsQueryable();
         }
+
+
+        [Route("myday")]
+        [HttpPost]
+        public IQueryable<ActiveEvent> MyDay([FromBody] CalendarDayRequestModel model)
+        {
+            var converter = new CourseConverter(Db);
+            var userService = new UserInfoService();
+            var user = userService.GetUser(model.userid);
+
+            var from = model.date.Date;
+            var until = from.AddDays(1);
+
+            var list = new List<ActiveEvent>();
+
+            var allDates = Db.ActivityDates.Where(x =>
+                (x.Activity.Occurrence.Subscriptions.Any(s => !string.IsNullOrEmpty(s.UserId) && s.UserId.Equals(user.Id)) ||
+                 x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id))
+                )
+                &&
+                x.Begin >= from && x.End <= until).ToList();
+
+
+            foreach (var activityDate in allDates)
+            {
+                var calendarDate = new ActiveEvent();
+
+                calendarDate.course = activityDate.Activity.Name;
+                calendarDate.starttime = activityDate.Begin;
+                calendarDate.endtime = activityDate.End;
+
+                var sb = new StringBuilder();
+                foreach (var host in activityDate.Hosts)
+                {
+                    sb.Append(host.Name);
+                    if (host != activityDate.Hosts.Last())
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                calendarDate.teacher = sb.ToString();
+                sb.Clear();
+
+                foreach (var room in activityDate.Rooms)
+                {
+                    sb.Append(room.Number);
+                    if (room != activityDate.Rooms.Last())
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                calendarDate.room = sb.ToString();
+                sb.Clear();
+
+                foreach (var virtualRoom in activityDate.VirtualRooms)
+                {
+                    sb.Append(virtualRoom.Room.Name);
+                    if (virtualRoom != activityDate.VirtualRooms.Last())
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                calendarDate.virtual_room = sb.ToString();
+                sb.Clear();
+
+                if (activityDate.Occurrence.IsCanceled)
+                {
+                    calendarDate.special = "X";
+                }
+
+
+                if (activityDate.Activity is Course course)
+                {
+                    calendarDate.moodle = course.UrlMoodleCourse;
+                    calendarDate.moodle_key = course.KeyMoodleCourse;
+                }
+
+
+                list.Add(calendarDate);
+            }
+
+
+
+            return list.AsQueryable();
+        }
+
 
     }
 }

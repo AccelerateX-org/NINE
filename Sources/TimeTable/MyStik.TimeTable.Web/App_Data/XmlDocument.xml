@@ -5170,6 +5170,13 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.CommitteeController.Index(System.Nullable{System.Guid})">
+            <summary>
+            Liste aller Gremien
+            </summary>
+            <param name="id">Autonomie</param>
+            <returns></returns>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.ContactsController">
             <summary>
             

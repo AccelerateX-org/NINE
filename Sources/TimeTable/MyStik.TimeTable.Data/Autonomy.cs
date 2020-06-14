@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
+    /// <summary>
+    /// Eine Einheit der Selbstverwaltung
+    /// - Institution
+    /// - Organiser
+    /// - Curriculum
+    ///
+    /// Zuordnung zu Elementen
+    /// - Assessments (Auswahlkommission)
+    /// </summary>
     public class Autonomy
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

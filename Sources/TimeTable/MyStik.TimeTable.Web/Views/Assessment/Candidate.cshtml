@@ -1,11 +1,47 @@
 ﻿@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Candidature
 @{
+    /**/
+
     ViewBag.Title = "Album";
     var userService = new UserInfoService();
 
     var user = userService.GetUser(Model.UserId);
 }
+
+@section styles
+{
+    @*
+    <link href="@Url.Content("~/Assets/areas/album/jquery.bsPhotoGallery.css")" rel="stylesheet" type="text/css" />
+    *@
+
+    <link href="@Url.Content("~/Assets/areas/album/style.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/areas/album/popup.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts
+{
+    @*
+    <script src="@Url.Content("~/Assets/areas/album/jquery.bsPhotoGallery.js")" type="text/javascript"></script>
+    <script>
+        $('ul.row').bsPhotoGallery({
+            'classes': 'col-lg-2 col-md-2 col-sm-3 col-xs-4',
+            'showControl': true,
+            'hasModal': true,
+            'fullHeight': true,
+            'iconClose': 'glyphicon glyphicon-remove-circle',
+            'iconLeft': 'glyphicon glyphicon-chevron-left',
+            'iconRight': 'glyphicon glyphicon-chevron-right'
+        });
+
+    </script>
+        *@
+
+
+    <script src="@Url.Content("~/Assets/areas/album/script.js")" type="text/javascript"></script>
+
+}
+
 
 @Html.Partial("_Watermark")
 
@@ -32,7 +68,7 @@
                         <div class="card">
                             @if (user.BinaryData != null && user.BinaryData.Length > 0)
                             {
-                                <img src="@Url.Action("GetProfileImage", new {id = Model.Id})" class="card-img-top"/>
+                                <img src="@Url.Action("GetProfileImage", new {id = Model.Id})" class="card-img-top" />
                             }
                             else
                             {
@@ -48,11 +84,48 @@
                             <h5 class="card-title">Eingereichte Unterlagen aus Stufe "@stage.AssessmentStage.Name"</h5>
                         </div>
                     </div>
-                    <div class="row">
+
+                    <article class="galerie">
+
                         @foreach (var m in stage.Material)
                         {
-                            <div class="col">
-                                <div class="card" style="width: 18rem;">
+
+                            <a href="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" title="@m.Storage.Name">
+                                <li>
+                                    <figure>
+                                        <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" alt="">
+                                        <figcaption>@m.Storage.Name</figcaption>
+                                    </figure>
+                                </li>
+                            </a>
+                        }
+
+                    </article>
+
+
+                                  @*
+                <ul class="row">
+                    @foreach (var m in stage.Material)
+                    {
+
+                        <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4 col-xxs-12">
+                            <img class="img-fluid" src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})">
+                            <div class="text">@m.Storage.Name</div>
+                        </li>
+                    }
+                </ul>
+                        *@
+
+
+
+                        @*
+                <div class="row">
+                    @foreach (var m in stage.Material)
+                    {
+                        if (m.Storage != null)
+                        {
+                            <div class="col-md-2">
+                                <div class="card">
                                     <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" class="card-img-top" />
                                     <div class="card-body">
                                         <h6 class="card-title">@m.Storage.Name</h6>
@@ -61,14 +134,35 @@
                                 </div>
                             </div>
                         }
+                        else
+                        {
+                            <div class="col-md-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Fehlendes Bild</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
 
-                    </div>
-                }
-            </div>
+                </div>
+                        *@
+                        }
+                </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade"
+     id="myModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
 
 

@@ -1,0 +1,160 @@
+﻿@model MyStik.TimeTable.Web.Models.AddCommitteeMemberModel
+@{
+    ViewBag.Title = "Gremium";
+}
+
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/libs/jquery/jquery-ui.css")" />
+
+}
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-md-12">
+        <h4><i class="fas fa-poll"></i> Gremium für Eignungsprüfung "@Model.Assessment.Name"</h4>
+        <div class="card">
+            <div class="card-body">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="DozTable">Dozent(en)</label>
+                    <div class="col-sm-9">
+                        <div id="DozTable">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Fakultät</th>
+                                        <th>Name</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control  input-sm" id="DozId">
+                                        </th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dozList">
+                                    @foreach (var doz in Model.Assessment.Committee.Members)
+                                    {
+                                        <tr id="@doz.Member.Id">
+                                            <td>@doz.Member.Organiser.ShortName</td>
+                                            <td>@doz.Member.Name</td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="deleteRow('@doz.Member.Id')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <a class="btn btn-default" href="@Url.Action("Details", new {id = Model.Assessment.Id})"><i class="fa fa-arrow-left"></i> abbrechen</a>
+                        <button class="btn btn-outline-primary" onclick="saveMembers()"><i class="fas fa-save"></i> speichern</button>
+                        <span id="loading"><i class="fas fa-spinner fa-spin text-muted"></i></span>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="@Url.Content("~/Assets/libs/jquery/jquery-ui.js")"></script>
+
+    <script>
+        $(function() {
+            $('#DozId').autocomplete({
+                source: function(request, response) {
+                    var org = $("#OrganiserId2 option:selected").val();
+                    
+
+                    $.ajax({
+                        url: '@Url.Action("LecturerList", "Curriculum")',
+                        type: 'POST',
+                        //dataType: "json",
+
+                        data: {
+                            orgId: org,
+                            name: request.term
+                        },
+
+                        success: function(data, success, xhr) {
+                            response($.map(data,
+                                function(item) {
+
+                                    return {
+                                        text: item.id,
+                                        label: item.name,
+                                        value: item.name
+                                    };
+                                }));
+
+                        },
+
+                        error: function(data) { alert(data); },
+                    });
+
+                },
+                select: function(event, ui) {
+
+                    var orgText = $("#OrganiserId2 option:selected").text();
+
+
+                    $("#dozList").append("<tr id=\"" + ui.item.text + "\"><td>" + orgText + "</td><td>" + ui.item.value + "</td><td><button class=\"btn btn-outline-danger\" onclick=\"deleteRow('" + ui.item.text + "');\"><i class=\"fas fa-trash-alt\"></i></button></td></tr>");
+
+                }
+            });
+
+        });
+
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+
+        function saveMembers() {
+
+            $("#loading").show();
+
+            var dateId = '@Model.Assessment.Id';
+            var dozList = new Array();
+
+            var list = $("#DozTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    dozList[i] = list[i].id;
+                }
+            }
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("AddMembers", "Assessment")',
+                    data: {
+                        AssessmentId: dateId,
+                        DozIds: dozList
+                    },
+                    success: function(data, success, xhr) {
+                        window.location = data.url;
+                    }
+                });
+
+        }
+
+    </script>
+}

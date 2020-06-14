@@ -40,7 +40,16 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         }
     }
 
-public class AngularPushNotification
+
+    public class SubscriptionRequest
+    {
+        public PushSubscription Subscription { get; set; }
+
+        public string UserId { get; set; }
+    }
+
+
+    public class AngularPushNotification
 {
     private const string WRAPPER_START = "{\"notification\":";
     private const string WRAPPER_END = "}";

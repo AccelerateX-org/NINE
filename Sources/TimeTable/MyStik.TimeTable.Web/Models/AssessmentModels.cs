@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Optimization;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -55,4 +56,12 @@ namespace MyStik.TimeTable.Web.Models
 
         public string Publish { get; set; }
     }
+
+    public class AddCommitteeMemberModel
+    {
+        public Assessment Assessment { get; set; }
+
+        public Guid OrganiserId2 { get; set; }
+    }
 }
+

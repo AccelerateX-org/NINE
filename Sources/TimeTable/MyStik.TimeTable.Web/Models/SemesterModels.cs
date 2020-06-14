@@ -275,6 +275,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public OrganiserMember Lecturer { get; set; }
 
+
+        public ApplicationUser User { get; set; }
     }
 
 

@@ -193,6 +193,9 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var stage = Db.CandidatureStages.SingleOrDefault(x => x.Id == id);
 
+            if (file == null || stage == null)
+                return null;
+
             var material = new CandidatureStageMaterial
             {
                 Stage = stage,
@@ -200,24 +203,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.CandidatureStageMaterial.Add(material);
 
-            if (file != null)
+            var storage = new BinaryStorage
             {
-                var storage = new BinaryStorage
-                {
-                    Category = "Material",
-                    FileType = file.ContentType,
-                    BinaryData = new byte[file.ContentLength],
-                    Created = DateTime.Now,
-                    Name = string.Empty,
-                    Description = string.Empty
-                };
+                Category = "Material",
+                FileType = file.ContentType,
+                BinaryData = new byte[file.ContentLength],
+                Created = DateTime.Now,
+                Name = string.Empty,
+                Description = string.Empty
+            };
 
-                file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
+            file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
 
-                Db.Storages.Add(storage);
+            Db.Storages.Add(storage);
 
-                material.Storage = storage;
-            }
+            material.Storage = storage;
 
             Db.SaveChanges();
 
@@ -230,7 +230,11 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var mat = Db.CandidatureStageMaterial.SingleOrDefault(x => x.Id == matId);
 
-            Db.Storages.Remove(mat.Storage);
+            if (mat.Storage != null)
+            {
+                Db.Storages.Remove(mat.Storage);
+            }
+
             Db.CandidatureStageMaterial.Remove(mat);
 
             Db.SaveChanges();

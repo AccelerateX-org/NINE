@@ -4,6 +4,9 @@
     ViewBag.Title = "Eignungsprüfung";
     var userInfoService = new UserInfoService();
     var totalByteCount = 0;
+
+    var isCommittee = ViewBag.UserRights.Member.IsAdmin || (ViewBag.Member != null);
+    var isAdmin = isCommittee && ViewBag.Member.HasChair;
 }
 
 @Html.Partial("_Watermark")
@@ -11,22 +14,33 @@
 
 <div class="row" style="margin-top: 20px">
     <div class="col-md-12">
-        <h4><i class="fas fa-poll"></i> Details zum Eignungsprüfung "@Model.Name"</h4>
+        <h4><i class="fas fa-poll"></i> Details zur Eignungsprüfung "@Model.Name"</h4>
         <div class="card">
             <ul class="nav bg-light text-dark">
                 <li class="nav-item">
                     <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
                 </li>
+                @if (isCommittee)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-book fa-fw"></i><br />Mappen</a>
+                    </li>
+                }
+
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-gavel fa-fw"></i><br />Bewertung</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Neue Stufe</a>
+                    </li>
+                }
+
                 @if (ViewBag.UserRights.Member.IsAdmin)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br/>Neue Stufe</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-search fa-fw"></i><br/>Bewerten</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-danger" href="@Url.Action("Delete", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br/>Löschen</a>
+                        <a class="nav-link text-center text-danger" href="@Url.Action("Delete", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Löschen</a>
                     </li>
                 }
             </ul>
@@ -37,7 +51,7 @@
                 <div class="card-header" id="headingOne">
                     <h2 class="mb-0">
                         <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Kommittee - Funktion noch unvollständig
+                            Kommittee
                         </button>
                     </h2>
                 </div>
@@ -47,16 +61,36 @@
                         <ul class="fa-ul">
                             @foreach (var c in Model.Committee.Members)
                             {
+                                var sIcon = "fa-user";
+                                
                                 if (c.HasChair)
                                 {
-                                    <li><i class="fas fa-li fa-chair"></i> @c.Member.FullName</li>
+                                    sIcon = "fa-chair";
                                 }
-                                else
+                                
+                            <li>
+                                <i class="fas fa-li @sIcon"></i>@c.Member.FullName
+                                @if (isAdmin)
                                 {
-                                    <li><i class="fas fa-li fa-user"></i>@c.Member.FullName</li>
+                                    if (c.HasChair)
+                                    {
+                                        <a class="btn btn-outline-danger" href="@Url.Action("RemoveChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz entfernen</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-outline-primary" href="@Url.Action("AddChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz geben</a>
+                                    }
+                                    <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-trash-alt fa-fw"></i> Mitglied entfernen</a>
+
                                 }
+                            </li>
                             }
                         </ul>
+                        @if (isAdmin)
+                        {
+                            <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i> Mitglied hinzufügen</a>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -79,7 +113,7 @@
                                         <li>Zeitraum für Hochladen von Material: @s.OpeningDateTime - @s.ClosingDateTime</li>
                                         <li>Zeitpunkt Bekanntgabe Ergebnisse: @s.ReportingDateTime</li>
                                     </ul>
-                                    if (ViewBag.UserRights.Member.IsAdmin)
+                                    if (isAdmin)
                                     {
 
                                         <a href="@Url.Action("EditStage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Ändern</a>
@@ -94,63 +128,19 @@
                 <div class="card-header" id="headingThree">
                     <h2 class="mb-0">
                         <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            TeilnehmerInnen
+                            Auswertungen / Statistiken zu TeilnehmerInnen
                         </button>
                     </h2>
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                     <div class="card-body">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Vorname</th>
-                                @foreach (var stage in Model.Stages)
-                                {
-                                    <th>Anzahl Arbeiten in "@stage.Name"</th>
-                                }
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var candidate in Model.Candidatures)
-                            {
-                                var user = userInfoService.GetUser(candidate.UserId);
-
-                                if (user != null)
-                                {
-                                    <tr>
-                                        <td><a href="@Url.Action("Candidate", new {id=candidate.Id})">@user.LastName</a></td>
-                                        <td>@user.FirstName</td>
-
-                                        @foreach (var stage in Model.Stages)
-                                        {
-                                            var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
-
-                                            if (mStage != null)
-                                            {
-                                                var byteCount = mStage.Material.Sum(x => x.Storage.BinaryData.Length) / 1000000;
-                                                totalByteCount += byteCount;
-
-                                                <td>@mStage.Material.Count (@byteCount MB)</td>
-                                            }
-                                            else
-                                            {
-                                                <td>#N/A</td>
-                                            }
-                                        }
-                                    </tr>
-                                }
-
-                            }
-                            </tbody>
-                        </table>
-                        <div class="card-body">
-                            <h4>Speicherplatz gesamt: @totalByteCount MB</h4>
-                            @if (ViewBag.UserRights.Member.IsAdmin)
-                            {
-                                <a class="btn btn-outline-danger" href="@Url.Action("ClearCandidates", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i> Alle TeilnehmerInnen löschen</a>
-                            }
-                        </div>
+                        <ul>
+                            <li>Anzahl TeilnehmerInnen: @Model.Candidatures.Count</li>
+                        </ul>
+                        @if (ViewBag.UserRights.Member.IsAdmin)
+                        {
+                            <a class="btn btn-outline-danger" href="@Url.Action("ClearCandidates", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i> Alle TeilnehmerInnen löschen</a>
+                        }
                     </div>
                 </div>
             </div>
