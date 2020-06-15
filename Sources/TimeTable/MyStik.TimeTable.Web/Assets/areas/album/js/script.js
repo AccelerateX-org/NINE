@@ -78,7 +78,7 @@ abdecker.id = "abdecker";
 // die animierte "Sanduhr", die anzeigt, dass ein großes Bild geladen wird
 const abdeckerSanduhr = document.createElement("img");
 abdeckerSanduhr.id = "abdeckerSanduhr";
-abdeckerSanduhr.src = "./assets/p/waiting_white.svg";
+abdeckerSanduhr.src = "/Assets/areas/album/p/waiting_white.svg";
 
 const grossBild = document.createElement("figure");
 grossBild.id = "grossBild";
@@ -97,21 +97,21 @@ schliesser.tabIndex = "0"; // Schreibweise in JS beachten!
 schliesser.title = "Großbild schliessen";
 
 const weiterSymbol = document.createElement("img");
-weiterSymbol.src = "./assets/p/forward.svg";
+weiterSymbol.src = "/Assets/areas/album/p/forward.svg";
 weiterSymbol.id = "weiterSymbol";
 weiterSymbol.role = "button";
 weiterSymbol.tabIndex = "0";
 weiterSymbol.title = "nächstes Bild zeigen";
 
 const zurueckSymbol = document.createElement("img");
-zurueckSymbol.src = "./assets/p/back.svg";
+zurueckSymbol.src = "/Assets/areas/album/p/back.svg";
 zurueckSymbol.id = "zurueckSymbol";
 zurueckSymbol.role = "button";
 zurueckSymbol.tabIndex = "0";
 zurueckSymbol.title = "vorheriges Bild zeigen";
 
 const playSymbol = document.createElement("img");
-playSymbol.src = "./assets/p/play.svg";
+playSymbol.src = "/Assets/areas/album/p/play.svg";
 playSymbol.id = "playSymbol";
 playSymbol.role = "button";
 playSymbol.tabIndex = "0";
@@ -169,7 +169,7 @@ function grossBildWeg() {
 
   // Slideshow soll nicht weiterlaufen
   slideShowLaufen = false;
-  playSymbol.src = "./assets/p/play.svg";
+    playSymbol.src = "/Assets/areas/album/p/play.svg";
 
   grossBild.addEventListener(
     "transitionend",
@@ -189,10 +189,13 @@ function grossBildWeg() {
 }
 
 // die Links, in denen sich die Bilder der Galerie befinden
+
 const myImageLinks = document.querySelectorAll(".galerie a");
+console.log("register events for: " + myImageLinks);
 myImageLinks.forEach(function(ereignis) {
   ereignis.addEventListener("click", grossBildZeigen);
 });
+
 
 // "×" zum Schliessen des grossBild
 schliesser.addEventListener("click", grossBildWeg);
@@ -288,9 +291,9 @@ function weiterGehen() {
 function slideShowAnAus() {
   slideShowLaufen = !slideShowLaufen;
   if (slideShowLaufen === true) {
-    playSymbol.src = "./assets/p/pause.svg";
+      playSymbol.src = "/Assets/areas/album/p/pause.svg";
   } else {
-    playSymbol.src = "./assets/p/play.svg";
+      playSymbol.src = "/Assets/areas/album/p/play.svg";
   }
 }
 
@@ -325,7 +328,7 @@ function handleKey(ereignis) {
       grossBildWeg();
       // Slideshow soll dann natürlich nicht mehr laufen
       slideShowLaufen = false;
-      playSymbol.src = "./assets/p/play.svg";
+        playSymbol.src = "/Assets/areas/album/p/play.svg";
     }
 
     // automatische Slideshow starten/anhalten bei Drücken der "Space"-Taste
@@ -361,7 +364,7 @@ galerieFigcaptions.forEach(function(ereignis) {
 });
 
 // ======== Pulldown oberhalb der Galerie mit weiteren BewerberInnen ========
-
+/*
 const showPullDown = document.querySelector("#showPullDown");
 const hidePullDown = document.querySelector("#hidePullDown");
 const pullDown = document.querySelector("#pullDown");
@@ -372,4 +375,29 @@ showPullDown.addEventListener("click", function() {
 
 hidePullDown.addEventListener("click", function() {
   pullDown.classList.remove("sichtbar");
+});
+*/
+
+// die Buttons
+const cardTextFormatieren = document.querySelectorAll(".cardTextFormatieren");
+
+function preformatiertTogglen(ereignis) {
+    const myCardText = ereignis.target.previousElementSibling;
+    myCardText.classList.toggle("preformatiert");
+}
+
+// der jeweilige Button formatiert den darüber befindlichen "div.card-text"
+// ACHTUNG: dafür muss in der CSS-Datei folgendes eingefügt sein:
+
+/*
+.preformatiert {
+  white-space: pre;
+  font-family: inherit;
+}
+*/
+
+// und in HTML natürlich die Buttons mit der Klasse "cardTextFormatieren"
+
+cardTextFormatieren.forEach(function (ereignis) {
+    ereignis.addEventListener("click", preformatiertTogglen);
 });

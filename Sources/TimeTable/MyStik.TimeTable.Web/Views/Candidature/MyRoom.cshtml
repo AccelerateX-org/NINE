@@ -160,7 +160,7 @@
                 var isFuture = now < stage.OpeningDateTime;
 
 
-                var round = Model.Stages.SingleOrDefault(x => x.AssessmentStage.Id == stage.Id);
+                var round = Model.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
 
                 var headId = "h" + stage.Id.ToString();
                 var bodyId = "b" + stage.Id.ToString();

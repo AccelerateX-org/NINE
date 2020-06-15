@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300px" height="300px" viewBox="0 0 300 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+    <title>waiting copy</title>
+    <desc>Created with Sketch.</desc>
+    <g id="waiting-copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.298060826">
+        <g id="waiting" transform="translate(25.000000, 25.000000)">
+            <circle id="Oval" stroke="#FFFFFF" stroke-width="30" cx="125" cy="125" r="125"></circle>
+            <polygon id="Triangle" fill="#FFFFFF" points="125 125 193 208 57 208"></polygon>
+            <polygon id="Triangle-Copy" fill="#FFFFFF" transform="translate(125.000000, 83.500000) scale(1, -1) translate(-125.000000, -83.500000) " points="125 42 193 125 57 125"></polygon>
+        </g>
+    </g>
+</svg>

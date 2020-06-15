@@ -5,8 +5,9 @@
     var userInfoService = new UserInfoService();
     var totalByteCount = 0;
 
-    var isCommittee = ViewBag.UserRights.Member.IsAdmin || (ViewBag.Member != null);
-    var isAdmin = isCommittee && ViewBag.Member.HasChair;
+    var isAdmin = ViewBag.UserRights.Member.IsAdmin;
+    var isCommittee = isAdmin || (ViewBag.Member != null);
+    var hasChair = isAdmin || (ViewBag.Member != null && ViewBag.Member.HasChair);
 }
 
 @Html.Partial("_Watermark")
@@ -30,19 +31,24 @@
                 @if (isAdmin)
                 {
                     <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
+                    </li>
+
+                    @*
+                        <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-gavel fa-fw"></i><br />Bewertung</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Neue Stufe</a>
                     </li>
-                }
-
-                @if (ViewBag.UserRights.Member.IsAdmin)
-                {
+                        *@
+                    @*
                     <li class="nav-item">
                         <a class="nav-link text-center text-danger" href="@Url.Action("Delete", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Löschen</a>
                     </li>
+                        *@
                 }
+
             </ul>
         </div>
         
@@ -70,7 +76,7 @@
                                 
                             <li>
                                 <i class="fas fa-li @sIcon"></i>@c.Member.FullName
-                                @if (isAdmin)
+                                @if (hasChair)
                                 {
                                     if (c.HasChair)
                                     {
@@ -86,7 +92,7 @@
                             </li>
                             }
                         </ul>
-                        @if (isAdmin)
+                        @if (hasChair)
                         {
                             <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i> Mitglied hinzufügen</a>
                         }
@@ -113,7 +119,7 @@
                                         <li>Zeitraum für Hochladen von Material: @s.OpeningDateTime - @s.ClosingDateTime</li>
                                         <li>Zeitpunkt Bekanntgabe Ergebnisse: @s.ReportingDateTime</li>
                                     </ul>
-                                    if (isAdmin)
+                                    if (hasChair)
                                     {
 
                                         <a href="@Url.Action("EditStage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Ändern</a>
@@ -137,10 +143,12 @@
                         <ul>
                             <li>Anzahl TeilnehmerInnen: @Model.Candidatures.Count</li>
                         </ul>
-                        @if (ViewBag.UserRights.Member.IsAdmin)
+                    @*
+                        @if (isAdmin)
                         {
                             <a class="btn btn-outline-danger" href="@Url.Action("ClearCandidates", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i> Alle TeilnehmerInnen löschen</a>
                         }
+                        *@
                     </div>
                 </div>
             </div>

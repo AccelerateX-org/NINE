@@ -11,35 +11,13 @@
 
 @section styles
 {
-    @*
-    <link href="@Url.Content("~/Assets/areas/album/jquery.bsPhotoGallery.css")" rel="stylesheet" type="text/css" />
-    *@
-
-    <link href="@Url.Content("~/Assets/areas/album/style.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/areas/album/popup.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/areas/album/c/style.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/areas/album/c/popup.css")" rel="stylesheet" type="text/css" />
 }
 
 @section scripts
 {
-    @*
-    <script src="@Url.Content("~/Assets/areas/album/jquery.bsPhotoGallery.js")" type="text/javascript"></script>
-    <script>
-        $('ul.row').bsPhotoGallery({
-            'classes': 'col-lg-2 col-md-2 col-sm-3 col-xs-4',
-            'showControl': true,
-            'hasModal': true,
-            'fullHeight': true,
-            'iconClose': 'glyphicon glyphicon-remove-circle',
-            'iconLeft': 'glyphicon glyphicon-chevron-left',
-            'iconRight': 'glyphicon glyphicon-chevron-right'
-        });
-
-    </script>
-        *@
-
-
-    <script src="@Url.Content("~/Assets/areas/album/script.js")" type="text/javascript"></script>
-
+    <script src="@Url.Content("~/Assets/areas/album/js/script.js")" type="text/javascript"></script>
 }
 
 
@@ -50,18 +28,21 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">@user.FullName</h4>
+                <p id="loading">Bilder werden geladen – einen Augenblick bitte!</p>
                 <div class="row">
                     <div class="col-5">
                         <h5 class="card-title">Kurzbiografie</h5>
                         <div class="card-text">
                             @Model.Characteristics
                         </div>
+                        <button class="cardTextFormatieren">Format an/aus</button>
                     </div>
                     <div class="col-5">
                         <h5 class="card-title">Motivationsschreiben</h5>
                         <div class="card-text">
                             @Model.Motivation
                         </div>
+                        <button class="cardTextFormatieren">Format an/aus</button>
                     </div>
                     <div class="col-2">
                         <h5 class="card-title">@user.FullName</h5>
@@ -94,7 +75,7 @@
                                 <li>
                                     <figure>
                                         <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" alt="">
-                                        <figcaption>@m.Storage.Name</figcaption>
+                                        <figcaption>@m.Storage.Name - @m.Storage.Description</figcaption>
                                     </figure>
                                 </li>
                             </a>
@@ -103,66 +84,9 @@
                     </article>
 
 
-                                  @*
-                <ul class="row">
-                    @foreach (var m in stage.Material)
-                    {
-
-                        <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4 col-xxs-12">
-                            <img class="img-fluid" src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})">
-                            <div class="text">@m.Storage.Name</div>
-                        </li>
-                    }
-                </ul>
-                        *@
-
-
-
-                        @*
-                <div class="row">
-                    @foreach (var m in stage.Material)
-                    {
-                        if (m.Storage != null)
-                        {
-                            <div class="col-md-2">
-                                <div class="card">
-                                    <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" class="card-img-top" />
-                                    <div class="card-body">
-                                        <h6 class="card-title">@m.Storage.Name</h6>
-                                        <p class="card-text">@m.Storage.Description</p>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="col-md-2">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Fehlendes Bild</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-
-                </div>
-                        *@
-                        }
-                </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade"
-     id="myModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
+                }
             </div>
         </div>
     </div>
 </div>
-
 

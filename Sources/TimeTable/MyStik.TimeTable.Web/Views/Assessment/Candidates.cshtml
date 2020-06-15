@@ -18,11 +18,19 @@
 
     <script>
         $(document).ready(function() {
-            $('#tabCandidates').DataTable(
+            var t = $('#tabCandidates').DataTable(
                 {
-                    paging: false
+                    "paging": false,
+                    "order": [[1, 'asc']]
                 }
             );
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
         });
 
     </script>
@@ -42,32 +50,30 @@
                 <li class="nav-item">
                     <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
-                </li>
             </ul>
             <table id="tabCandidates" class="table">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Vorname</th>
-                        <th>Kurzbiografie</th>
-                        <th>Motivation</th>
-                        @foreach (var stage in Model.Stages)
-                        {
-                            <th># Arbeiten in @stage.Name</th>
-                        }
-                    </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>Kurzbiografie</th>
+                    <th>Motivation</th>
+                    @foreach (var stage in Model.Stages)
+                    {
+                        <th># Arbeiten in @stage.Name</th>
+                    }
+                </tr>
                 </thead>
                 <tbody>
                     @foreach (var candidate in Model.Candidatures)
                     {
                         var user = userInfoService.GetUser(candidate.UserId);
                         <tr>
-
+                            <td></td>
                             @if (user != null)
                             {
-                                <td><a href="@Url.Action("Candidate", new {id=candidate.Id})">@user.LastName</a></td>
+                                <td><a href="@Url.Action("Candidate", new {id=candidate.Id})" target="_blank">@user.LastName</a></td>
                                 <td>@user.FirstName</td>
                             }
                             else

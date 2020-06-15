@@ -41,7 +41,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
 
-            var member = assessment.Committee.Members.FirstOrDefault(x => x.Member.UserId.Equals(user.Id));
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
 
             ViewBag.UserRights = GetUserRight();
             ViewBag.Member = member;
@@ -446,8 +446,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (user != null)
                 {
                     writer.Write("{0};{1};{2}",
-                        user.LastName, user.FirstName,
-                        user.Email);
+                        user.LastName, user.FirstName, user.Email);
                 }
                 else
                 {
