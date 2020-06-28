@@ -357,7 +357,7 @@ playButton.addEventListener("click", function(ereignis) {
 const galerieFigcaptions = document.querySelectorAll(".galerie figcaption");
 
 galerieFigcaptions.forEach(function(ereignis) {
-  const laenge = 34; // so viele Zeichen darstellen
+  const laenge = 120; // so viele Zeichen darstellen
   let langText = ereignis.textContent;
   let kurzText = langText.substring(0, laenge) + "…";
   ereignis.textContent = kurzText;

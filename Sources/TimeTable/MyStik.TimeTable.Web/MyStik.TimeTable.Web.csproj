@@ -4293,6 +4293,12 @@
     <Content Include="Views\Candidature\Create.cshtml" />
     <Content Include="Views\Committee\Index.cshtml" />
     <Content Include="Views\Assessment\AddMember.cshtml" />
+    <Content Include="Views\Assessment\Stage.cshtml" />
+    <Content Include="Views\Assessment\_MaterialBox.cshtml" />
+    <Content Include="Views\Assessment\Acceptance.cshtml" />
+    <Content Include="Views\Assessment\UploadResults.cshtml" />
+    <Content Include="Views\Shared\_Errors.cshtml" />
+    <Content Include="Views\Assessment\UploadDates.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

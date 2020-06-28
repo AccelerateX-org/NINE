@@ -54,15 +54,18 @@ namespace MyStik.TimeTable.Web.Services
 
             var semester = db.Semesters.SingleOrDefault(s => s.Id == request.SemesterId);
 
-            var officeHour = db.Activities.OfType<OfficeHour>()
+            OfficeHour officeHour = null;
+                /*
+                db.Activities.OfType<OfficeHour>()
                 .SingleOrDefault(oh => oh.Semester.Id == semester.Id &&
                     oh.Dates.Any(oc => oc.Hosts.Any(l => l.Id == lecturer.Id)));
+                    */
 
             if (officeHour == null)
             {
                 officeHour = new OfficeHour
                 {
-                    Name = "Sprechstunde",
+                    Name = request.Name,
                     ShortName = lecturer.ShortName,
                     ByAgreement = request.ByAgreement,
                     Description = request.Text,

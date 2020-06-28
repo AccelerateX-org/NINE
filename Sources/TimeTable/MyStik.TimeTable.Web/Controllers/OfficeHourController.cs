@@ -310,7 +310,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Lecturer(Guid id, Guid? semId)
         {
-            var semester = SemesterService.GetSemester(semId);
             var hostRequested = Db.Members.FirstOrDefault(l => l.Id == id);
             var user = GetCurrentUser();
 
@@ -320,7 +319,24 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             var ohService = new OfficeHourService(Db);
-            var officeHour = ohService.GetOfficeHour(hostRequested, semester);
+
+
+            OfficeHour officeHour = null;
+            var semester = SemesterService.GetSemester(semId);
+
+
+            if (semester != null)
+            {
+                officeHour = ohService.GetOfficeHour(hostRequested, semester);
+            }
+            else
+            {
+                officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x => x.Id == semId);
+                semester = officeHour.Semester;
+            }
+
+
+
             if (officeHour == null)
             {
                 // TODO: keine Sprechstunde
@@ -1345,6 +1361,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(id);
             var m = GetMyMembership();
 
+            /*
             if (m != null)
             {
                 var courseService = new OfficeHourService(Db);
@@ -1354,6 +1371,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     return RedirectToAction("Lecturer", new { id = m.Id });
                 }
             }
+            */
 
             var model = new OfficeHourCreateModel
             {
@@ -1375,6 +1393,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(id);
             var m = GetMyMembership();
 
+            /*
             if (m != null)
             {
                 var courseService = new OfficeHourService(Db);
@@ -1384,9 +1403,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     return RedirectToAction("Lecturer", new {id = m.Id});
                 }
             }
+            */
 
             var model = new OfficeHourCreateModel
             {
+                Name = "Allgemeine Sprechstunde",
                 DayOfWeek = 1,
                 StartTime = "16:00",
                 EndTime = "17:00",
@@ -1433,6 +1454,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var request = new OfficeHourCreateRequest
             {
+                Name = model.Name,
                 DozId = member.Id,
                 StartTime = start,
                 EndTime = end,
@@ -1467,6 +1489,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var dozId = string.Empty;
             var m = GetMyMembership();
 
+            /*
             if (m != null)
             {
                 var courseService = new OfficeHourService(Db);
@@ -1476,6 +1499,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     return RedirectToAction("Lecturer", new {id = m.Id});
                 }
             }
+            */
 
             // Member-Admin darf Sprechstunde für andere (und sich) anlegen
             if (m != null && !m.IsMemberAdmin)
@@ -1486,6 +1510,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new OfficeHourCreateModel
             {
+                Name = "Allgemeine Sprechstunde",
                 DayOfWeek = 1,
                 StartTime = "16:00",
                 EndTime = "17:00",
@@ -1533,6 +1558,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var request = new OfficeHourCreateRequest
             {
+                Name = model.Name,
                 DozId = member.Id,
                 StartTime = start,
                 EndTime = end,
@@ -1568,6 +1594,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var m = GetMyMembership();
 
+            /*
             if (m != null)
             {
                 var courseService = new OfficeHourService(Db);
@@ -1577,9 +1604,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     return RedirectToAction("Lecturer", new { id = m.Id });
                 }
             }
+            */
 
             var model = new OfficeHourCreateModel
             {
+                Name = "Allgemeine Sprechstunde",
                 Description = "",
                 Semester = semester
             };
@@ -1607,6 +1636,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var request = new OfficeHourCreateRequest
             {
+                Name = model.Name,
                 DozId = member.Id,
                 StartTime = TimeSpan.Zero,
                 EndTime = TimeSpan.Zero,

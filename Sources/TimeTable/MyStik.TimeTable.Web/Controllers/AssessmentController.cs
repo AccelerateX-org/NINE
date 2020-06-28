@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -198,7 +200,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Description = stage.Description,
                 Start = stage.OpeningDateTime.ToString(),
                 End = stage.ClosingDateTime.ToString(),
-                Publish = stage.ReportingDateTime.ToString()
+                Publish = stage.ReportingDateTime.ToString(),
+                IsAvailable = stage.IsAvailable
             };
 
             return View(model);
@@ -214,6 +217,7 @@ namespace MyStik.TimeTable.Web.Controllers
             stage.OpeningDateTime = DateTime.Parse(model.Start);
             stage.ClosingDateTime = DateTime.Parse(model.End);
             stage.ReportingDateTime = DateTime.Parse(model.Publish);
+            stage.IsAvailable = model.IsAvailable;
 
             Db.SaveChanges();
 
@@ -421,7 +425,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public FileResult DownloadCand(Guid id)
         {
+            var user = GetCurrentUser();
             var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!userRight.Member.IsAdmin)
+                return null;
 
 
             var ms = new MemoryStream();
@@ -441,12 +451,12 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach(var candidate in assessment.Candidatures)
             {
 
-                var user = UserManager.FindById(candidate.UserId);
+                var candUser = UserManager.FindById(candidate.UserId);
 
-                if (user != null)
+                if (candUser != null)
                 {
                     writer.Write("{0};{1};{2}",
-                        user.LastName, user.FirstName, user.Email);
+                        candUser.LastName, candUser.FirstName, candUser.Email);
                 }
                 else
                 {
@@ -484,6 +494,456 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
 
+        }
+
+        public ActionResult Stage(Guid id)
+        {
+            var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == id);
+
+            return View(stage);
+        }
+
+        [HttpPost]
+        public ActionResult UploadFile(HttpPostedFileBase file, Guid id)
+        {
+            var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == id);
+
+            if (file == null || stage == null)
+                return null;
+
+            var material = new AssessmentStageMaterial
+            {
+                Stage = stage,
+            };
+
+            Db.AssessmentStageMaterial.Add(material);
+
+            var storage = new BinaryStorage
+            {
+                Category = "Material",
+                FileType = file.ContentType,
+                BinaryData = new byte[file.ContentLength],
+                Created = DateTime.Now,
+                Name = file.FileName,
+                Description = string.Empty
+            };
+
+            file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
+
+            Db.Storages.Add(storage);
+
+            material.Storage = storage;
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult DeleteMaterial(Guid matId)
+        {
+            var mat = Db.AssessmentStageMaterial.SingleOrDefault(x => x.Id == matId);
+
+            if (mat.Storage != null)
+            {
+                Db.Storages.Remove(mat.Storage);
+            }
+
+            Db.AssessmentStageMaterial.Remove(mat);
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+        [HttpPost]
+        public PartialViewResult EditMaterial(Guid matId, string matTitle, string matDesc)
+        {
+            var mat = Db.AssessmentStageMaterial.SingleOrDefault(x => x.Id == matId);
+
+            mat.Storage.Name = matTitle;
+            mat.Storage.Description = matDesc;
+
+            Db.SaveChanges();
+
+            return PartialView("_MaterialBox", mat);
+        }
+
+        public ActionResult UploadResults(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!userRight.Member.IsAdmin)
+                return View("_NoAccess");
+
+
+            return View(assessment);
+        }
+
+        [HttpPost]
+        public ActionResult UploadResults(Assessment model, HttpPostedFileBase resultFile)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == model.Id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+
+            var userInfoService = new UserInfoService();
+            var errors = new List<string>();
+
+
+            if (resultFile == null)
+                return null;
+            
+            var bytes = new byte[resultFile.ContentLength];
+            resultFile.InputStream.Read(bytes, 0, resultFile.ContentLength);
+
+            var stream = new System.IO.MemoryStream(bytes);
+            var reader = new System.IO.StreamReader(stream, Encoding.Default);
+            var text = reader.ReadToEnd();
+
+            string[] lines = text.Split('\n');
+
+            var i = 0;
+            foreach (var line in lines)
+            {
+                if (i > 0)
+                {
+                    string newline = line.Trim();
+
+                    if (!string.IsNullOrEmpty(newline))
+                    {
+                        string[] words = newline.Split(';');
+
+                        var lastName = words[0].Trim();
+                        var firstName = words[1].Trim();
+                        var email = words[2].Trim();
+
+                        var candUser = userInfoService.GetUserByEmail(email);
+
+                        if (candUser == null)
+                        {
+                            var msg = $"Kein Benutzer für E-Mail Adresse {email} vorhanden";
+                            errors.Add(msg);
+                            continue;
+                        }
+
+                        if (!(candUser.FirstName.ToLower().Equals(firstName.ToLower()) &&
+                              candUser.LastName.ToLower().Equals(lastName.ToLower())))
+                        {
+                            var msg = $"Angaben für den Benutzer {email} stimmen nicht überein: Datei: {firstName} {lastName}, Datenbank: {candUser.FirstName} {candUser.LastName}";
+                            errors.Add(msg);
+                            continue;
+
+                        }
+
+
+                        var candidate = assessment.Candidatures.SingleOrDefault(x => x.UserId.Equals(candUser.Id));
+
+                        if (candidate == null)
+                        {
+                            var msg = $"Benutzer {email} nicht im Verfahren dabei";
+                            errors.Add(msg);
+                            continue;
+                        }
+
+                        candidate.IsAccepted = true;
+                    }
+                }
+
+                i++;
+            }
+
+            if (errors.Any())
+            {
+                return View("_Errors", errors);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Acceptance", new {id = assessment.Id});
+        }
+
+
+        public ActionResult Acceptance(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+
+            var model = new AssessmenSummaryModel
+            {
+                Assessment = assessment,
+                Candidates = new List<AssessmentCandidateViewModel>()
+            };
+
+            var userInfoService = new UserInfoService();
+            var officeHour = GetOfficeHour(assessment);
+
+            foreach (var candidature in assessment.Candidatures)
+            {
+                var candUser = userInfoService.GetUser(candidature.UserId);
+
+                var ohDate = candUser != null ?
+                    officeHour.Dates.FirstOrDefault(x =>
+                    x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(candUser.Id)))
+                    : null;
+
+
+                var candModel = new AssessmentCandidateViewModel
+                {
+                    Candidature = candidature,
+                    User = candUser,
+                    Date = ohDate
+                };
+
+                model.Candidates.Add(candModel);
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Reset(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!userRight.Member.IsAdmin)
+                return View("_NoAccess");
+
+            foreach (var candidature in assessment.Candidatures)
+            {
+                candidature.IsAccepted = null;
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Acceptance", new { id = assessment.Id });
+        }
+
+
+        public ActionResult UploadDates(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!userRight.Member.IsAdmin)
+                return View("_NoAccess");
+
+
+            return View(assessment);
+        }
+
+        [HttpPost]
+        public ActionResult UploadDates(Assessment model, HttpPostedFileBase resultFile)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == model.Id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+
+            var userInfoService = new UserInfoService();
+            var errors = new List<string>();
+
+
+            if (resultFile == null)
+                return null;
+
+            var officeHour = GetOfficeHour(assessment);
+
+
+            var bytes = new byte[resultFile.ContentLength];
+            resultFile.InputStream.Read(bytes, 0, resultFile.ContentLength);
+
+            var stream = new System.IO.MemoryStream(bytes);
+            var reader = new System.IO.StreamReader(stream, Encoding.Default);
+            var text = reader.ReadToEnd();
+
+            string[] lines = text.Split('\n');
+
+            var i = 0;
+            foreach (var line in lines)
+            {
+                if (i > 0)
+                {
+                    string newline = line.Trim();
+
+                    if (!string.IsNullOrEmpty(newline))
+                    {
+                        string[] words = newline.Split(';');
+
+                        var lastName = words[0].Trim();
+                        var firstName = words[1].Trim();
+                        var email = words[2].Trim();
+                        var date = DateTime.ParseExact(words[3].Trim(), "dd.MM.yyyy", null);
+                        var from = TimeSpan.ParseExact(words[4].Trim(), @"h\:mm", null);
+                        var until = TimeSpan.ParseExact(words[5].Trim(), @"h\:mm", null);
+
+                        var candUser = userInfoService.GetUserByEmail(email);
+
+                        if (candUser == null)
+                        {
+                            var msg = $"Kein Benutzer für E-Mail Adresse {email} vorhanden";
+                            errors.Add(msg);
+                            continue;
+                        }
+
+                        if (!(candUser.FirstName.ToLower().Equals(firstName.ToLower()) &&
+                              candUser.LastName.ToLower().Equals(lastName.ToLower())))
+                        {
+                            var msg = $"Angaben für den Benutzer {email} stimmen nicht überein: Datei: {firstName} {lastName}, Datenbank: {candUser.FirstName} {candUser.LastName}";
+                            errors.Add(msg);
+                            continue;
+
+                        }
+
+
+                        var candidate = assessment.Candidatures.SingleOrDefault(x => x.UserId.Equals(candUser.Id));
+
+                        if (candidate == null)
+                        {
+                            var msg = $"Benutzer {email} nicht im Verfahren dabei";
+                            errors.Add(msg);
+                            continue;
+                        }
+
+
+                        if (candidate.IsAccepted != true)
+                        {
+                            var msg = $"Benutzer {email} wurde bisher nicht als angenommen markiert";
+                            errors.Add(msg);
+                            continue;
+                        }
+
+
+                        // so jetzt Datum und Uhrzeit Termin finden hinzufügen und/oder Termin anlegen
+                        var begin = date.Add(from);
+                        var end = date.Add(until);
+
+                        var ohDate = officeHour.Dates.SingleOrDefault(x => x.Begin == begin && x.End == end);
+
+                        if (ohDate == null)
+                        {
+                            ohDate = new ActivityDate
+                            {
+                                Activity = officeHour,
+                                Begin = begin,
+                                End = end,
+                                Occurrence = new Occurrence
+                                {
+                                    IsAvailable = true,
+                                    Capacity = 0,
+                                    FromIsRestricted = false,
+                                    UntilIsRestricted = false,
+                                    UntilTimeSpan = null,
+                                    IsCanceled = false,
+                                    IsMoved = false,
+                                }
+                            };
+
+                            Db.ActivityDates.Add(ohDate);
+                        }
+
+
+                        // die subscription suchen
+                        var ohSubDate = officeHour.Dates.FirstOrDefault(x =>
+                            x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(candUser.Id)));
+
+                        if (ohSubDate == null)
+                        {
+                            var ohSubscription = new OccurrenceSubscription
+                            {
+                                Occurrence = ohDate.Occurrence,
+                                OnWaitingList = false,
+                                UserId = candUser.Id,
+                                TimeStamp = DateTime.Now
+                            };
+
+                            Db.Subscriptions.Add(ohSubscription);
+
+                        }
+                        else
+                        {
+                            var msg = $"Benutzer {email} hat schon einen Termin am {ohSubDate.Begin}";
+                            errors.Add(msg);
+                            continue;
+                        }
+                    }
+                }
+
+                i++;
+            }
+
+            if (errors.Any())
+            {
+                return View("_Errors", errors);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Acceptance", new { id = assessment.Id });
+        }
+
+
+        private OfficeHour GetOfficeHour(Assessment assessment)
+        {
+            var ohName = $"Eignungsgespräche {assessment.Name}";
+
+            var oh = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x => x.Name.Equals(ohName));
+
+            if (oh != null)
+                return oh;
+
+            // Neue Sprechstunde anlegen
+            // Alle Kommittee-Mitglieder werden zu Ownern
+            oh = new OfficeHour
+            {
+                Name = ohName,
+                Semester = assessment.Semester,
+                IsInternal = true,
+                FutureSubscriptions = 1,
+                Description = "Eignungsgespräche",
+                Organiser = assessment.Curriculum.Organiser,
+                Occurrence = new Occurrence
+                {
+                    IsAvailable = true,
+                    Capacity = 4,
+                    FromIsRestricted = false,
+                    UntilIsRestricted = false,
+                    UntilTimeSpan = null,
+                    IsCanceled = false,
+                    IsMoved = false,
+                }
+            };
+
+            foreach (var committeeMember in assessment.Committee.Members)
+            {
+                ActivityOwner owner = new ActivityOwner
+                {
+                    Activity = oh,
+                    Member = committeeMember.Member,
+                    IsLocked = false
+                };
+
+                oh.Owners.Add(owner);
+                Db.ActivityOwners.Add(owner);
+            }
+
+
+            Db.Activities.Add(oh);
+            Db.SaveChanges();
+
+            return oh;
         }
     }
 }

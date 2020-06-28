@@ -24,18 +24,9 @@
                     <a href="@Url.Action("Index", "StudyBook")#" class="list-group-item list-group-item-action">
                         <i class="fas fa-fw fa-history"></i> Vergangene Semester
                     </a>
-                    @if (Model.CurrentSemester.OfficeHours.Any())
-                    {
-                        <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})" class="list-group-item list-group-item-action disabled">
-                            <i class="fas fa-fw fa-plus"></i> Sprechstunde anlegen
-                        </a>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})" class="list-group-item list-group-item-action">
-                            <i class="fas fa-fw fa-plus"></i> Sprechstunde anlegen
-                        </a>
-                    }
+                    <a href="@Url.Action("Create", "OfficeHour", new {id = Model.CurrentSemester.Semester.Id})" class="list-group-item list-group-item-action">
+                        <i class="fas fa-fw fa-plus"></i> Sprechstunde für @Model.CurrentSemester.Semester.Name anlegen
+                    </a>
                     <a href="@Url.Action("Create", "Course")" class="list-group-item list-group-item-action">
                         <i class="fas fa-fw fa-plus"></i> Lehrveranstaltung anlegen
                     </a>
@@ -90,8 +81,8 @@
                     {
                         <div class="card mb-3">
                             <div class="card-header">
-                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.CurrentSemester.Semester.Id})">
-                                    <i class="fas fa-user-md"></i> Sprechstunde
+                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = oh.Id})">
+                                    <i class="fas fa-user-md"></i> Sprechstunde "@oh.Name"
                                 </a>
                             </div>
                             <div class="card-body">

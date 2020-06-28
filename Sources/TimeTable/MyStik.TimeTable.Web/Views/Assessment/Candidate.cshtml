@@ -71,7 +71,7 @@
                         @foreach (var m in stage.Material)
                         {
 
-                            <a href="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" title="@m.Storage.Name">
+                            <a href="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" title="@m.Storage.Name  - @m.Storage.Description">
                                 <li>
                                     <figure>
                                         <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" alt="">

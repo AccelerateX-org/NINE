@@ -350,6 +350,9 @@ namespace MyStik.TimeTable.Web.Models
     {
         public OrganiserMember Member { get; set; }
 
+
+        public string Name { get; set; }
+
         public Semester Semester { get; set; }
 
         /// <summary>

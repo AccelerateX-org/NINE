@@ -26,6 +26,9 @@
                     <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-book fa-fw"></i><br />Mappen</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Acceptance", new {id = Model.Id})"><i class="fas fa-check fa-fw"></i><br />Angenommene</a>
+                    </li>
                 }
 
                 @if (isAdmin)
@@ -33,20 +36,29 @@
                     <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("UploadResults", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Ergebnisse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("UploadDates", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Termine</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Reset", new {id = Model.Id})"><i class="fas fa-recycle fa-fw"></i><br />Zurücksetzen</a>
+                    </li>
 
                     @*
-                        <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-gavel fa-fw"></i><br />Bewertung</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Neue Stufe</a>
-                    </li>
-                        *@
+                <li class="nav-item">
+                <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-gavel fa-fw"></i><br />Bewertung</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Neue Stufe</a>
+            </li>
+                    *@
                     @*
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-danger" href="@Url.Action("Delete", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Löschen</a>
-                    </li>
-                        *@
+            <li class="nav-item">
+                <a class="nav-link text-center text-danger" href="@Url.Action("Delete", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Löschen</a>
+            </li>
+                    *@
                 }
 
             </ul>
@@ -114,15 +126,28 @@
                             <div class="card-body">
                                 @foreach (var s in Model.Stages)
                                 {
-                                    <p>@s.Name</p>
                                     <ul class="fa-ul">
-                                        <li>Zeitraum für Hochladen von Material: @s.OpeningDateTime - @s.ClosingDateTime</li>
-                                        <li>Zeitpunkt Bekanntgabe Ergebnisse: @s.ReportingDateTime</li>
+                                        <li><i class="fa-li fas fa-tag"></i>Titel: @s.Name</li>
+                                        <li><i class="fa-li fas fa-tags"></i>Beschreibung: @s.Description</li>
+                                        <li><i class="fa-li fas fa-calendar-alt"></i>Zeitraum für Hochladen von Material: @s.OpeningDateTime - @s.ClosingDateTime</li>
+                                        <li><i class="fa-li fas fa-calendar-day"></i>Zeitpunkt Bekanntgabe Ergebnisse: @s.ReportingDateTime</li>
+                                        <li>
+                                            <i class="fa-li fas fa-file-pdf-o"></i>Hochgeladenes Material
+                                            <ul>
+                                                @foreach (var m in s.Material)
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("ShowFile", "Advertisements", new {id = m.Storage.Id})" target="_blank">@m.Storage.Name</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
                                     </ul>
                                     if (hasChair)
                                     {
 
                                         <a href="@Url.Action("EditStage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Ändern</a>
+                                        <a href="@Url.Action("Stage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-upload"></i> Material hochladen</a>
                                     }
                                 }
                             </div>

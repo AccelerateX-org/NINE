@@ -14,6 +14,7 @@ namespace MyStik.TimeTable.Web.Models
         public ActivityOrganiser Organiser { get; set; }
 
         public List<Assessment> Assessments { get; set; }
+
     }
 
     public class AssessmentCreateModel
@@ -55,6 +56,8 @@ namespace MyStik.TimeTable.Web.Models
         public string End { get; set; }
 
         public string Publish { get; set; }
+
+        public bool IsAvailable { get; set; }
     }
 
     public class AddCommitteeMemberModel
@@ -62,6 +65,28 @@ namespace MyStik.TimeTable.Web.Models
         public Assessment Assessment { get; set; }
 
         public Guid OrganiserId2 { get; set; }
+    }
+
+    public class AssessmenSummaryModel
+    {
+        public Curriculum Curriculum { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
+
+        public Assessment Assessment { get; set; }
+
+        public List<AssessmentCandidateViewModel> Candidates { get; set; }
+    }
+
+
+    public class AssessmentCandidateViewModel
+    {
+        public Candidature Candidature { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public ActivityDate Date { get; set; }
+
     }
 }
 

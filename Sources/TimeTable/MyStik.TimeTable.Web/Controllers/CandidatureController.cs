@@ -138,6 +138,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(round);
         }
 
+        /*
         public ActionResult UploadMaterial(Guid id)
         {
             var stage = Db.CandidatureStages.SingleOrDefault(x => x.Id == id);
@@ -187,6 +188,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Stage", new {candId = stage.Candidature.Id, stageId = stage.AssessmentStage.Id});
         }
+        */
 
         [HttpPost]
         public ActionResult UploadFile(HttpPostedFileBase file, Guid id)

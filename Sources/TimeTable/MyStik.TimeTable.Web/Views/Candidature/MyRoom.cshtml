@@ -35,7 +35,11 @@
 <div class="row" style="margin-top: 20px">
     <div class="col-12">
         <h4><i class="fas fa-poll"></i> Meine Teilnahme an der Eignungsprüfung "@Model.Assessment.Name"</h4>
-
+        <div class="alert alert-warning">
+            <h5>Wichtiger Hinweis:</h5>
+            <p>Alle Angaben hier sind ohne Gewähr!!!</p>
+            <p>Informationen zum Ablauf des Verfahrens werden ausschließlich über das Bewerbungssystem <a href="https://www.hm.edu/studieninteressiert/bewerbung/bachelor_bewerbung/index.de.html" target="_blank"> primus</a>s kommuniziert.</p>
+        </div>
         <div class="accordion" id="accordionExample">
             <div class="card">
                 <div class="card-header" id="headingOne">
@@ -107,127 +111,104 @@
                     </div>
                 </div>
             </div>
-            @*
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Collapsible Group Item #1
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Collapsible Group Item #2
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingThree">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Collapsible Group Item #3
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                    <div class="card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                </div>
-            </div>
-            *@
 
             @foreach (var stage in Model.Assessment.Stages.OrderBy(x => x.OpeningDateTime.Value))
             {
-                var now = DateTime.Now;
-                var isOn = stage.OpeningDateTime <= now && now <= stage.ClosingDateTime;
-                var isFuture = now < stage.OpeningDateTime;
+                var showStage = stage.IsAvailable || (!stage.IsAvailable && Model.IsAccepted.HasValue && Model.IsAccepted.Value);
 
 
-                var round = Model.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+                if (showStage)
+                {
+                    var now = DateTime.Now;
+                    var isOn = stage.OpeningDateTime <= now && now <= stage.ClosingDateTime.Value.AddMinutes(45);
+                    var isFuture = now < stage.OpeningDateTime;
 
-                var headId = "h" + stage.Id.ToString();
-                var bodyId = "b" + stage.Id.ToString();
 
-                var colapseState = isFuture ? "disabled" : "";
+                    var round = Model.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
 
-                <div class="card">
-                    <div class="card-header" id="@headId">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
-                                @stage.Name (@stage.OpeningDateTime.Value - @stage.ClosingDateTime.Value)
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="@bodyId" class="collapse" aria-labelledby="@headId" data-parent="#accordionExample">
-                        <div class="card-body">
-                            <p class="card-text">@stage.Description</p>
-                            <ul class="fa-ul">
-                                @if (isFuture)
-                                {
-                                    <li><i class="fas fa-li fa-calendar-alt"></i>beginnt am @stage.OpeningDateTime</li>
-                                }
-                                else
-                                {
-                                    if (isOn)
+
+
+
+                    var headId = "h" + stage.Id.ToString();
+                    var bodyId = "b" + stage.Id.ToString();
+
+                    var colapseState = isFuture ? "disabled" : "";
+
+                    <div class="card">
+                        <div class="card-header" id="@headId">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
+                                    @stage.Name (@stage.OpeningDateTime.Value - @stage.ClosingDateTime.Value)
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="@bodyId" class="collapse" aria-labelledby="@headId" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <p class="card-text">@stage.Description</p>
+                                <ul class="fa-ul">
+                                    @if (isFuture)
                                     {
-                                        <li><i class="fas fa-li fa-calendar-alt"></i>läuft noch bis @stage.ClosingDateTime</li>
-                                        if (round != null)
-                                        {
-                                            <li><i class="fas fa-li fa-file-upload"></i>Bisher @round.Material.Count Dokumente hochgeladen</li>
-                                        }
-                                        else
-                                        {
-                                            <li><i class="fas fa-li fa-file-upload"></i>Bisher noch nichts hochgeladen</li>
-                                        }
+                                        <li><i class="fas fa-li fa-calendar-alt"></i>beginnt am @stage.OpeningDateTime</li>
                                     }
                                     else
                                     {
-                                        <li><i class="fas fa-li fa-calendar-alt"></i>seit @stage.ClosingDateTime abgeschlossen</li>
-
-                                        if (round != null)
+                                        if (isOn)
                                         {
-                                            <li><i class="fas fa-li fa-file-upload"></i>Es wurden @round.Material.Count Dokumente hochgeladen</li>
+                                            <li><i class="fas fa-li fa-calendar-alt"></i>läuft noch bis @stage.ClosingDateTime</li>
+                                            if (stage.Material.Any())
+                                            {
+                                                <li><i class="fas fa-li fa-download"></i>Unterlagen
+                                                    <ul>
+                                                        @foreach (var stageMaterial in stage.Material)
+                                                        {
+                                                            <li>
+                                                                <a href="@Url.Action("ShowFile", "Advertisements", new {id = stageMaterial.Storage.Id})" target="_blank">@stageMaterial.Storage.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+
+                                            if (round != null)
+                                            {
+                                                <li><i class="fas fa-li fa-file-upload"></i>Bisher @round.Material.Count Dokumente hochgeladen</li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fas fa-li fa-file-upload"></i>Bisher noch nichts hochgeladen</li>
+                                            }
                                         }
                                         else
                                         {
-                                            <li><i class="fas fa-li fa-file-upload"></i>Es wurde nichts hochgeladen</li>
-                                        }
+                                            <li><i class="fas fa-li fa-calendar-alt"></i>seit @stage.ClosingDateTime abgeschlossen</li>
 
+                                            if (round != null)
+                                            {
+                                                <li><i class="fas fa-li fa-file-upload"></i>Es wurden @round.Material.Count Dokumente hochgeladen</li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fas fa-li fa-file-upload"></i>Es wurde nichts hochgeladen</li>
+                                            }
+
+                                        }
                                     }
+                                </ul>
+                                @if (isOn)
+                                {
+                                    <a href="@Url.Action("Stage", new {stageId = stage.Id, candId = Model.Id})" class="btn btn-outline-primary">Dateien hochladen</a>
                                 }
-                            </ul>
-                            @if (isOn)
-                            {
-                                <a href="@Url.Action("Stage", new {stageId = stage.Id, candId = Model.Id})" class="btn btn-outline-primary">Dateien hochladen</a>
-                            }
-                            @if (!isFuture)
-                            {
+                                @if (!isFuture)
+                                {
                                 @*
                                     <a href="@Url.Action("StageRepot", new {id = stage.Id})" class="btn btn-outline-secondary">Bericht anzeigen</a>
                                     *@
-                            }
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-
         </div>
     </div>
 </div>

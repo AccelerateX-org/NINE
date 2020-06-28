@@ -1,0 +1,44 @@
+﻿@model MyStik.TimeTable.Data.Assessment
+@{
+    ViewBag.Title = "Zulassungsverfahren";
+}
+
+<h2>Hochladen der Datei mit den Namen der angenommenen BewerberInnen</h2>
+
+<h4>Wichtig</h4>
+<p>Die Datei darf nur die Namen der angenommenen BewerberInnen enthalten.</p>
+<p>Die BewerberInnen werden anHand der E-Mail Adresse identifiziert.</p>
+
+<h5>Aufbau der Datei</h5>
+<ul>
+    <li>Vorname</li>
+    <li>Nachname</li>
+    <li>E-Mail Adresse</li>
+</ul>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-group">
+            <label class="col-md-2 control-label">Anhang</label>
+            <div class="col-md-10">
+                <div>
+                    <input type="file" name="resultFile" id="resultFile" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Speichern" class="btn btn-default" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+

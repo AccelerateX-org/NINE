@@ -1,0 +1,144 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.AssessmenSummaryModel
+@{
+    ViewBag.Title = "Angenommene BewerberInnen";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+            var t = $('#tabCandidates').DataTable(
+                {
+                    "paging": false,
+                    "order": [[1, 'asc']]
+                }
+            );
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
+        });
+
+    </script>
+}
+
+
+@Html.Partial("_Watermark")
+
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-poll"></i> Bisher angenommene BewerberInnen im Eignungsprüfung für @Model.Assessment.Name
+            </div>
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Details", new {id = Model.Assessment.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+            </ul>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Bisher zugelassen</h4>
+                        <table id="tabCandidates" class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Vorname</th>
+                                    <th>E-Mail</th>
+                                    <th>Termin Eignungsgespräch</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var candidate in Model.Candidates.Where(x => x.Candidature.IsAccepted == true))
+                                {
+                                    <tr>
+                                    <td></td>
+                                    @if (candidate.User != null)
+                                    {
+                                        <td><a href="@Url.Action("Candidate", new {id=candidate.Candidature.Id})" target="_blank">@candidate.User.LastName</a></td>
+                                        <td>@candidate.User.FirstName</td>
+                                        <td>@candidate.User.Email</td>
+                                    }
+                                    else
+                                    {
+                                        <td>kein Benutzerkonto</td>
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                    @if (candidate.Date != null)
+                                    {
+                                        <td>@Html.TimeSpanWithDate(candidate.Date)</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="card-title">Bisher nicht bearbeitet</h4>
+                        <table id="tabRejected" class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Vorname</th>
+                                <th>E-Mail</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var candidate in Model.Candidates.Where(x => x.Candidature.IsAccepted != true))
+                            {
+                                <tr>
+                                    <td></td>
+                                    @if (candidate.User != null)
+                                    {
+                                        <td><a href="@Url.Action("Candidate", new {id=candidate.Candidature.Id})" target="_blank">@candidate.User.LastName</a></td>
+                                        <td>@candidate.User.FirstName</td>
+                                        <td>@candidate.User.Email</td>
+                                    }
+                                    else
+                                    {
+                                        <td>kein Benutzerkonto</td>
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                    @if (candidate.Date != null)
+                                    {
+                                        <td>@Html.TimeSpanWithDate(candidate.Date)</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,57 +4,6 @@
     ViewBag.Title = Resources.MenuDashboard;
 }
 
-<div class="row justify-content-md-center" style="margin-bottom: 20px">
-    <div class="col-sm-6 col-md-3 col-lg-2">
-        <div class="card text-center bg-light">
-            <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark btn-block disabled">
-                <h5><i class="fa fa-2x fa-calendar"></i></h5>
-                <h6>"Mein Kalender" ist jetzt "Mein Tag"</h6>
-            </a>
-            <div class="btn-group btn-group-justified">
-                <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Heute</a>
-                <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Morgen</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-md-3 col-lg-2">
-        <div class="card text-center">
-            <a href="@Url.Action("Schedule", "Planer")" class="btn btn-outline-dark btn-block  disabled">
-                <h5><i class="fas fa-2x fa-map"></i></h5>
-                <h6>"Mein Stundenplan" ist jetzt "Meine Lehre"</h6>
-            </a>
-            <div class="btn-group btn-group-justified">
-                <a href="@Url.Action("Schedule", "Planer", new {id=Model.Semester.Id})" class="btn btn-outline-dark disabled">@Model.Semester.Name</a>
-                <a href="@Url.Action("Schedule", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark disabled">@Model.NextSemester.Name</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-md-3 col-lg-2">
-        <div class="card text-center">
-            <a href="@Url.Action("OfficeHour", "Lecturer")" class="btn btn-outline-dark btn-block disabled">
-                <h5><i class="fas fa-2x fa-user-md"></i></h5>
-                <h6>"Meine Sprechstunden" ist jetzt "Meine Lehre"</h6>
-            </a>
-            <div class="btn-group btn-group-justified">
-                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.Semester.Id})" class="btn btn-outline-dark disabled">@Model.Semester.Name</a>
-                <a href="@Url.Action("OfficeHour", "Lecturer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark disabled">@Model.NextSemester.Name</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-md-3 col-lg-2">
-        <div class="card text-center">
-            <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-outline-dark btn-block disabled">
-                <h5><i class="fas fa-2x fa-file"></i></h5>
-                <h6>"Meine Abschlussarbeiten" ist jetzt "Meine Lehre"</h6>
-            </a>
-            <div class="btn-group btn-group-justified">
-                <a href="" class="btn btn-outline-dark disabled">Anfragen</a>
-                <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-dark disabled">Abgerechnet</a>
-            </div>
-        </div>
-    </div>
-</div>
-
         <div class="row  justify-content-md-center"  style="margin-bottom: 20px">
             <div class="col-sm-6 col-md-3 col-lg-2">
                 <div class="card text-center">

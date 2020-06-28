@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.OfficeHourCreateModel
+﻿@using RazorEngine.Compilation.ImpromptuInterface.InvokeExt
+@model MyStik.TimeTable.Web.Models.OfficeHourCreateModel
 @{
     ViewBag.Title = "Sprechstunde anlegen";
 }
@@ -40,6 +41,12 @@
                             @Html.ValidationSummary()
                             @Html.HiddenFor(model => model.Type)
                             @Html.HiddenFor(model => model.Semester.Id)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Bezeichnung</label>
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Wochentag</label>
                                 <div class="col-sm-6">

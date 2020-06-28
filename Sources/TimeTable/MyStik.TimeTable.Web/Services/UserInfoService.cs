@@ -38,5 +38,13 @@ namespace MyStik.TimeTable.Web.Services
 
             return _db.Users.SingleOrDefault(u => u.Id.Equals(userId));
         }
+
+        public ApplicationUser GetUserByEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return null;
+
+            return _db.Users.SingleOrDefault(x => x.Email.ToLower().Equals(email.ToLower()));
+        }
     }
 }

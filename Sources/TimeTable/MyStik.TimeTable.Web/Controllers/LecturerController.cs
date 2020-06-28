@@ -59,12 +59,25 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult OfficeHour(Guid? id)
         {
-            var semester = SemesterService.GetSemester(id);
             var member = GetMyMembership();
-
-            var officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x =>
-                x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id));
             var infoService = new OfficeHourInfoService(UserManager);
+
+
+            OfficeHour officeHour = null;
+            var semester = SemesterService.GetSemester(id);
+
+
+            if (semester != null)
+            {
+                officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x =>
+                    x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id));
+            }
+            else
+            {
+                officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x => x.Id == id);
+                semester = officeHour.Semester;
+            }
+
 
             if (officeHour == null)
                 return RedirectToAction("Create", "OfficeHour", new { id = semester.Id });

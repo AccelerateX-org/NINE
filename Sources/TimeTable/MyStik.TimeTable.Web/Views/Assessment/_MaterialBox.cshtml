@@ -1,0 +1,59 @@
+﻿@model MyStik.TimeTable.Data.AssessmentStageMaterial
+
+@if (Model.Storage != null)
+{
+    <div class="card">
+        <div class="card-img">
+            <a href="@Url.Action("ShowFile", "Advertisements", new {id = Model.Storage.Id})" target="_blank">Anzeigen</a>
+        </div>
+
+            <ul class="fa-ul">
+                @if (string.IsNullOrEmpty(Model.Storage.Name))
+                {
+                    <li><i class="fas fa-li fa-hashtag"></i><i>Kein Eintrag vorhanden</i></li>
+                }
+                else
+                {
+                    <li><i class="fas fa-li fa-hashtag"></i>@Model.Storage.Name</li>
+                }
+                @if (string.IsNullOrEmpty(Model.Storage.Description))
+                {
+                    <li><i class="fas fa-li fa-info-circle"></i><i>Kein Eintrag vorhanden</i></li>
+                }
+                else
+                {
+                    <li><i class="fas fa-li fa-info-circle"></i>@Model.Storage.Description</li>
+                }
+                <li><i class="fas fa-li fa-calendar-day"></i>Hochgeladen am: @Model.Storage.Created.Value</li>
+            </ul>
+
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#dlgEditMaterial"
+                        data-materialid="@Model.Id"
+                        data-materialtitle="@Model.Storage.Name"
+                        data-materialdesc="@Model.Storage.Description">
+                    <i class="fas fa-edit"></i> Ändern
+                </button>
+                <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#dlgDeleteMaterial" data-materialid="@Model.Id">
+                    <i class="fas fa-trash-alt"></i> Löschen
+                </button>
+            </div>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-img">
+            <img src="" alt="Kein Bild vorhanden" class="card-img-top"/>
+        </div>
+
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary disabled">
+                <i class="fas fa-edit"></i> Ändern
+            </button>
+            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#dlgDeleteMaterial" data-materialid="@Model.Id">
+                <i class="fas fa-trash-alt"></i> Löschen
+            </button>
+        </div>
+    </div>
+}

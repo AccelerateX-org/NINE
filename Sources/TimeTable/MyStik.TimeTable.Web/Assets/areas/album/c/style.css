@@ -169,10 +169,11 @@ main h2 {
 
 figcaption {
   color: rgba(0, 0, 0, 0.4);
-  font-size: 85%;
+  font-size: 100%;
   line-height: 1;
   position: relative;
   top: -0.2em;
+  margin-top: 10px;
 }
 
 .hinweis {

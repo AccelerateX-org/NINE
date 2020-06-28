@@ -15,7 +15,7 @@
                     {
                         <div class="list-group-item">
                             <div class="list-group-item-heading">
-                                <h5>@item.Lecturer.Name</h5>
+                                <h5>@item.Lecturer.Name (@item.OfficeHour.Name)</h5>
                             </div>
                             <ul class="fa-ul">
                                 @if (!string.IsNullOrEmpty(item.OfficeHour.Description))
@@ -35,7 +35,7 @@
                                     {
                                         if (item.Date != null)
                                         {
-                                            @Html.ActionLink("zur Terminliste", "Lecturer", "OfficeHour", new { id = item.Lecturer.Id, semId = Model.Semester.Id }, null)
+                                            @Html.ActionLink("zur Terminliste", "Lecturer", "OfficeHour", new { id = item.Lecturer.Id, semId = item.OfficeHour.Id }, null)
                                         }
                                         else
                                         {
