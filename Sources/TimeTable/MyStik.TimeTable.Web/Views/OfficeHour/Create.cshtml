@@ -25,7 +25,7 @@
                             </p>
                         </div>
                     }
-                    <a href="@Url.Action("CreateOpenSystem", "OfficeHour", new {id = Model.Semester.Id})" class="list-group-item">
+                    <a href="@Url.Action("CreateOpenSystem", "OfficeHour", new {semId = Model.Semester.Id, dozId=Model.Member.Id })" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             Offene Sprechstunde
                         </h5>
@@ -33,7 +33,7 @@
                             Angabe eines Zeitraums. Anzahl an Eintragungen zu einem Termin kann beschränkt werden.
                         </p>
                     </a>
-                    <a href="@Url.Action("CreateSlotSystem", "OfficeHour", new {id = Model.Semester.Id})" class="list-group-item">
+                    <a href="@Url.Action("CreateSlotSystem", "OfficeHour", new {semId = Model.Semester.Id, dozId=Model.Member.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             Slotsystem
                         </h5>
@@ -41,7 +41,7 @@
                             Aufteilung eines Termins in kleinere Einheiten (Slots).
                         </p>
                     </a>
-                    <a href="@Url.Action("CreateByAgreement", "OfficeHour", new {id = Model.Semester.Id})" class="list-group-item">
+                    <a href="@Url.Action("CreateByAgreement", "OfficeHour", new {semId = Model.Semester.Id, dozId=Model.Member.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             Nach Vereinbarung
                         </h5>

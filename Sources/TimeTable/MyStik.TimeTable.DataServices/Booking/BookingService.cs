@@ -104,7 +104,7 @@ namespace MyStik.TimeTable.DataServices.Booking
         {
             var list = new BookingList("Gesamtliste");
             list.Occurrence = _occ;
-            foreach (var occurrenceGroup in _occ.Groups)
+            foreach (var occurrenceGroup in _occ.Groups.Where(x => x.SemesterGroups.Any()))
             {
                 var curr = occurrenceGroup.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum;
                 if (!list.Curricula.Contains(curr))
@@ -117,7 +117,7 @@ namespace MyStik.TimeTable.DataServices.Booking
 
         private void CreateListByCurriculum()
         {
-            foreach (var occurrenceGroup in _occ.Groups)
+            foreach (var occurrenceGroup in _occ.Groups.Where(x => x.SemesterGroups.Any()))
             {
                 var curr = occurrenceGroup.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum;
                 var list = _lists.FirstOrDefault(x => x.Curricula.Any(c => c.Id == curr.Id));

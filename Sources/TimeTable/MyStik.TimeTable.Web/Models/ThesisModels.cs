@@ -284,12 +284,11 @@ namespace MyStik.TimeTable.Web.Models
                 if (Thesis?.RequestDate == null)
                     return RequestState.None;
 
-                // Antrag gestellt, noch keine Antwort
-                if (!Thesis.ResponseDate.HasValue)
+                if (Thesis.RequestAuthority == null)
                     return RequestState.InProgress;
 
                 // Antrag angenommen
-                if (Thesis.IsPassed.HasValue && Thesis.IsPassed.Value)
+                if (Thesis.RequestAuthority != null && Thesis.IsPassed.HasValue && Thesis.IsPassed.Value)
                     return RequestState.Accepted;
 
                 // Antrag abgelehnt

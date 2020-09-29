@@ -21,6 +21,10 @@ namespace MyStik.TimeTable.Web.Models
     {
         public ApplicationUser User { get; set; }
 
+        public Semester PrevSemester { get; set; }
+
+        public Semester NextSemester { get; set; }
+
         public TeachingSemesterSummaryModel CurrentSemester { get; set; }
 
         public TeachingSemesterSummaryModel PlaningSemester { get; set; }
@@ -38,13 +42,14 @@ namespace MyStik.TimeTable.Web.Models
         {
             Modules = new List<TeachingModuleSemesterModel>();
             Courses = new List<CourseSummaryModel>();
+            OfficeHours = new List<OfficeHourCharacteristicModel>();
         }
 
         public Semester Semester { get; set; }
 
         public List<CourseSummaryModel> Courses { get; set;  }
 
-        public List<OfficeHour> OfficeHours { get; set;  }
+        public List<OfficeHourCharacteristicModel> OfficeHours { get; set;  }
 
         public List<TeachingModuleSemesterModel> Modules { get; set; }
     }

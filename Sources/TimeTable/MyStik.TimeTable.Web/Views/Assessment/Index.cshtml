@@ -35,7 +35,7 @@
                             <div class="col-md-4">
                                 <div>Abauf</div>
                                 <ul>
-                                    @foreach (var stage in assessment.Stages)
+                                    @foreach (var stage in assessment.Stages.OrderBy(x => x.OpeningDateTime))
                                     {
                                         <li>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</li>
                                     }

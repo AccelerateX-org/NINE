@@ -45,9 +45,20 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [System.Web.Http.Route("{getkey}")]
         public ApiPushKeyRequest GetPublicKey()
         {
+            /*
+                {
+                  "subject": "mailto:nine@hm.edu",
+                  "publicKey": "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA",
+                  "privateKey": "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c"
+                }
+             */
+
+
+
+
             var model = new ApiPushKeyRequest
             {
-                key = "BP2HjQtANkxLEBNq37OAth8Q1Oi59ZcWZO_lKbtRorfg_qY30lSlzMxGHYqH_a4S1p449HLOBy1jM2jy-bliq0o"
+                key = "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA"
             };
 
             return model;

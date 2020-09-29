@@ -19,25 +19,41 @@
                 <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId=Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
                     <i class="fas fa-fw fa-microphone"></i> Vorlesungsverzeichnis @Model.Semester.Name
                 </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-question-circle"></i> Orientierungstests
-                </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled" @*data-toggle="modal" data-target="#exampleModal"*@>
-                    <i class="fas fa-fw fa-poll"></i> Eignungsprüfung
-                </a>
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
 
-                <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-gavel"></i> Prüfungskommission
-                </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-hospital-symbol"></i> Studienfachberatung
-                </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-user-friends"></i> Alumni-Netzwerk
-                </a>
-                <a href="#" class="list-group-item  list-group-item-action disabled">
-                    <i class="fas fa-fw fa-industry"></i> Kooperationspartner
-                </a>
+                    <a href="@Url.Action("GroupList", "Curricula", new {id = Model.Curriculum.Id})" class="list-group-item list-group-item-action">
+                        <i class="fas fa-fw fa-puzzle-piece"></i> Aufbau - Studiengruppen
+                    </a>
+                    <a href="@Url.Action("Students", new {id = Model.Curriculum.Id})" class="list-group-item list-group-item-action">
+                        <i class="fas fa-fw fa-users"></i> Studierende
+                    </a>
+                    <a href="@Url.Action("Edit", "Curriculum", new {id=Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
+                        <i class="fa fa-fw fa-cog"></i> Allgemeine Einstellungen
+                    </a>
+                }
+
+                @*
+        <a href="#" class="list-group-item  list-group-item-action disabled">
+            <i class="fas fa-fw fa-question-circle"></i> Orientierungstests
+        </a>
+        <a href="#" class="list-group-item  list-group-item-action disabled" >
+            <i class="fas fa-fw fa-poll"></i> Eignungsprüfung
+        </a>
+
+        <a href="#" class="list-group-item  list-group-item-action disabled">
+            <i class="fas fa-fw fa-gavel"></i> Prüfungskommission
+        </a>
+        <a href="#" class="list-group-item  list-group-item-action disabled">
+            <i class="fas fa-fw fa-hospital-symbol"></i> Studienfachberatung
+        </a>
+        <a href="#" class="list-group-item  list-group-item-action disabled">
+            <i class="fas fa-fw fa-user-friends"></i> Alumni-Netzwerk
+        </a>
+        <a href="#" class="list-group-item  list-group-item-action disabled">
+            <i class="fas fa-fw fa-industry"></i> Kooperationspartner
+        </a>
+                *@
             </div>
         </div>
     </div>

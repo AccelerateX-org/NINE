@@ -3304,6 +3304,35 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Drawing", new {id = id});
         }
 
+        public ActionResult Capacities(Guid id)
+        {
+            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+
+            var model = new LotteryLotPotModel
+            {
+                Lottery = lottery,
+                LotteryId = lottery.Id,
+            };
+
+
+            var actService = new ActivityService(Db);
+            var courseService = new CourseService(Db);
+
+            foreach (var occurrence in lottery.Occurrences)
+            {
+                var actSummary = actService.GetSummary(occurrence);
+                var courseSummary = courseService.GetCourseSummary(actSummary.Activity as Course);
+
+                model.PotElements.Add(new LotteryLotPotCourseModel
+                {
+                    ActivitySummary = actSummary,
+                    CourseSummary = courseSummary
+                });
+            }
+
+
+            return View(model);
+        }
     }
 
 }

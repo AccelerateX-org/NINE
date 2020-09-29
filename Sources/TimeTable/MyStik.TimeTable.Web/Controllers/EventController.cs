@@ -253,8 +253,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult CreateSeriesEvent(string id)
         {
-            var memberService = new MemberService(Db, UserManager);
-            var member = memberService.GetMember(User.Identity.Name, id);
+            var member = GetMyMembership();
 
             var org = Db.Organisers.SingleOrDefault(o => o.ShortName.ToUpper().Equals(id.ToUpper()));
 
@@ -280,7 +279,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult CreateSeriesEvent(EventCreateSeriesModel model) {
+        public ActionResult CreateSeriesEvent(EventCreateSeriesModel model)
+        {
+
+            var user = GetCurrentUser();
             // Veranstalter abfragen (Organisation, bspw. FS09)
             var org = Db.Organisers.SingleOrDefault(o => o.Id == model.OrgId);
 
@@ -307,8 +309,7 @@ namespace MyStik.TimeTable.Web.Controllers
             if (string.IsNullOrEmpty(model.Lecturer)) // Wenn das Feld nicht ausgefüllt wurde...
             {
                 // ... wird der aktuell eingeloggte User verwendet
-                var memberService = new MemberService(Db, UserManager);
-                var member = memberService.GetMember(User.Identity.Name, org.ShortName);
+                var member = MemberService.GetMember(user.Id, org.Id);
                 doz = org.Members.SingleOrDefault(m => m.ShortName.ToUpper().Equals(member.ShortName));
             }
             else // ansonsten wird der eingetragene Benutzer verwendet

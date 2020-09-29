@@ -72,7 +72,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("MyRoom", new { id = candidature.Id });
+            return RedirectToAction("MyRoom", new {id = candidature.Id});
         }
 
         public ActionResult MyRoom(Guid id)
@@ -84,6 +84,19 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 return View("_NoAccess");
             }
+
+            // jetzt noch den Sprechstundentermin
+
+
+            var officeHour = GetOfficeHour(candidature.Assessment);
+            if (officeHour != null)
+            {
+                var ohSubDate = officeHour.Dates.FirstOrDefault(x =>
+                    x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)));
+
+                ViewBag.OfficeHourDate = ohSubDate;
+            }
+
 
 
             return View(candidature);
@@ -306,7 +319,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var candidature = Db.Candidatures.SingleOrDefault(x => x.Id == id);
 
-            return RedirectToAction("MyRoom", new { id = candidature.Id });
+            return RedirectToAction("MyRoom", new {id = candidature.Id});
+        }
+
+        private OfficeHour GetOfficeHour(Assessment assessment)
+        {
+            var ohName = $"Eignungsgespräche {assessment.Name}";
+
+            return Db.Activities.OfType<OfficeHour>().FirstOrDefault(x => x.Name.Equals(ohName));
         }
     }
 }

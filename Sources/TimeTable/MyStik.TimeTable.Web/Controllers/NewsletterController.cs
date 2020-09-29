@@ -40,20 +40,22 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult Faculty(Guid facultyId)
         {
+            var user = GetCurrentUser();
+            var member = MemberService.GetMember(user.Id, facultyId);
             var newsletters = Db.Activities.OfType<Newsletter>().Where(x => x.Organiser.Id == facultyId).ToList();
 
             var model = new List<NewsletterViewModel>();
 
             var userRight = new UserRight();
             userRight.User = UserManager.FindByName(User.Identity.Name);
-            userRight.Member = GetMyMembership();
+            userRight.Member = member;
 
             var semester = SemesterService.GetSemester(DateTime.Today);
 
             foreach (var newsletter in newsletters)
             {
-                bool isMember = IsUserMemberOf(newsletter.Organiser.ShortName) || User.IsInRole("SysAdmin");
-                bool isAdmin = IsUserAdminOf(newsletter.Organiser.ShortName) || User.IsInRole("SysAdmin");
+                bool isMember = (member != null);
+                bool isAdmin = (member != null) && member.IsNewsAdmin;
 
                 model.Add(new NewsletterViewModel
                 {

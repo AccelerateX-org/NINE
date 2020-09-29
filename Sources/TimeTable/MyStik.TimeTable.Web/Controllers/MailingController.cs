@@ -263,9 +263,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 // Liste der Empfänger ermitteln
                 // Alle Member rausfiltern
-
-                var orgName = new MemberService(Db, UserManager).GetOrganisationName(semester, User.Identity.Name);
-                var organiser = Db.Organisers.SingleOrDefault(org => org.ShortName.Equals(orgName));
+                var organiser = GetMyOrganisation();
 
                 if (organiser != null)
                 {

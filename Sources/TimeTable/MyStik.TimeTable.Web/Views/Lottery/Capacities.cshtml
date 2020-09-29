@@ -1,0 +1,188 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LotteryLotPotModel
+@{
+    ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
+}
+
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-study">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Wahlverfahren "@Model.Lottery.Name" - Zusammensetzung</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-menu">
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <a href="@Url.Action("Details", new {id =Model.Lottery.Id})" class="btn btn-default">
+                                <i class="fa fa-arrow-left"></i> Zurück
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="caption">
+                                <i class="fa fa-list"></i>
+                                Lehrveranstaltungen des Wahlverfahrens
+                            </h4>
+                            <div class="portlet-body">
+                                <div id="CourseTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                        <tr>
+                                            <th>Bezeichnung</th>
+                                            <th>Gruppen</th>
+                                            <th>Zugang</th>
+                                            <th>Kapazitäten</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="activityTable">
+                                        @foreach (var activity in Model.PotElements)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <a href="@Url.Action("Details", "Course", new {id=activity.ActivitySummary.Activity.Id})">@activity.ActivitySummary.Activity.Name (@activity.ActivitySummary.Activity.ShortName)</a>
+                                                </td>
+                                                <td>
+                                                    @Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+
+
+                                                @if (activity.CourseSummary.Course.Occurrence.IsCoterie)
+                                                {
+                                                    <td>nur für angegebene Studiengänge (alle anderen können nicht wählen)</td>
+                                                }
+                                                else
+                                                {
+                                                    if (activity.CourseSummary.Course.Occurrence.HasHomeBias)
+                                                    {
+                                                        <td>angebene Studiengänge werden bevorzugt</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>offen für alle</td>
+                                                    }
+                                                }
+
+                                                @if (activity.CourseSummary.Course.Occurrence.UseGroups)
+                                                {
+                                                    if (activity.CourseSummary.Course.Occurrence.UseExactFit)
+                                                    {
+                                                        <td>FEHLER</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Beschränkung pro Studiengang</td>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (activity.CourseSummary.Course.Occurrence.Capacity <= 0)
+                                                    {
+                                                        <td>Keine Platzbeschränkung</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Platzbeschränkung auf Kursebene: @activity.CourseSummary.Course.Occurrence.Capacity</td>
+                                                    }
+                                                }
+                                            </tr>
+                                        }
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script>
+        function deleteRow(id) {
+            $("#" + id).remove();
+        }
+
+        function saveLotPot() {
+            var groupList = new Array();
+
+            var list = $("#CourseTable > table > tbody > tr").get();
+            var n = list.length;
+            if (n > 0) {
+                for (var i = 0; i < n; i++) {
+                    groupList[i] = list[i].id;
+                }
+            }
+
+            $.ajax(
+            {
+                type: "POST",
+                url: '@Url.Action("ChangeLotPot")',
+                data: {
+                    LotteryId: "@Model.LotteryId",
+                    CourseIds: groupList
+                },
+                success: function(data, success, xhr) {
+                    window.location.replace("@Url.Action("Details", new {id=Model.Lottery.Id})");
+                }
+            });
+
+        }
+
+        function search() {
+            var groupId = $('#searchText').val();
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("Search")',
+                    data: {
+                        searchText: groupId,
+                        semId: "@Model.Lottery.Semester.Id.ToString()"
+                    },
+                    success: function (data, success, xhr) {
+                        $('#activityTable').append(data);
+                    }
+                });
+
+        }
+
+    </script>
+}
+
+
+

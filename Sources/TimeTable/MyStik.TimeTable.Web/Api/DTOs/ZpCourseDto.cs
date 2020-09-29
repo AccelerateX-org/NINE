@@ -34,6 +34,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public List<ZpaCourseDateDto> Dates { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ZpaGroupDto> Groups { get; set; }
     }
 
     /// <summary>
@@ -100,4 +105,16 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string ShortName { get; set; }
 
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ZpaGroupDto
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name { get; set; }
+    }
+
 }

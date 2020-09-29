@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Web.Services
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Assessment
 @{
     ViewBag.Title = "Eignungsprüfung";
@@ -29,6 +30,12 @@
                     <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("Acceptance", new {id = Model.Id})"><i class="fas fa-check fa-fw"></i><br />Angenommene</a>
                     </li>
+                    if (hasChair)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Stufe hinzufügen</a>
+                        </li>
+                    }
                 }
 
                 @if (isAdmin)
@@ -43,10 +50,14 @@
                         <a class="nav-link text-center" href="@Url.Action("UploadDates", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Termine</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("Reset", new {id = Model.Id})"><i class="fas fa-recycle fa-fw"></i><br />Zurücksetzen</a>
+                        <a class="nav-link text-center" href="@Url.Action("Export", new {id = Model.Id})"><i class="fas fa-file-archive fa-fw"></i><br />Material löschen</a>
                     </li>
 
+
                     @*
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Reset", new {id = Model.Id})"><i class="fas fa-recycle fa-fw"></i><br />Zurücksetzen</a>
+                    </li>
                 <li class="nav-item">
                 <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-gavel fa-fw"></i><br />Bewertung</a>
             </li>
@@ -121,38 +132,47 @@
                     </h2>
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-body">
-                                @foreach (var s in Model.Stages)
-                                {
+                    @foreach (var s in Model.Stages.OrderBy(x => x.OpeningDateTime))
+                    {
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="card-header">@Html.TimeSpanWithDate(s.OpeningDateTime.Value, s.ClosingDateTime.Value): @s.Name </div>
+                                <div class="card-body">
+                                    <div class="card-text">@s.Description</div>
+                                    <div class="card-text">Bereitgestelltes Material</div>
                                     <ul class="fa-ul">
-                                        <li><i class="fa-li fas fa-tag"></i>Titel: @s.Name</li>
-                                        <li><i class="fa-li fas fa-tags"></i>Beschreibung: @s.Description</li>
-                                        <li><i class="fa-li fas fa-calendar-alt"></i>Zeitraum für Hochladen von Material: @s.OpeningDateTime - @s.ClosingDateTime</li>
-                                        <li><i class="fa-li fas fa-calendar-day"></i>Zeitpunkt Bekanntgabe Ergebnisse: @s.ReportingDateTime</li>
-                                        <li>
-                                            <i class="fa-li fas fa-file-pdf-o"></i>Hochgeladenes Material
-                                            <ul>
-                                                @foreach (var m in s.Material)
-                                                {
-                                                    <li>
-                                                        <a href="@Url.Action("ShowFile", "Advertisements", new {id = m.Storage.Id})" target="_blank">@m.Storage.Name</a>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </li>
+                                        @foreach (var m in s.Material)
+                                        {
+                                            <li>
+                                                <i class="fa-li fas fa-file-pdf"></i>
+                                                <a href="@Url.Action("ShowFile", "Advertisements", new {id = m.Storage.Id})" target="_blank">@m.Storage.Name</a>
+                                            </li>
+                                        }
                                     </ul>
-                                    if (hasChair)
+                                    @if (hasChair)
                                     {
 
                                         <a href="@Url.Action("EditStage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Ändern</a>
                                         <a href="@Url.Action("Stage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-upload"></i> Material hochladen</a>
                                     }
-                                }
+                                    @if (isAdmin)
+                                    {
+                                        if (Model.Candidatures.Any(x => x.Stages.Any(y => y.AssessmentStage.Id == s.Id)))
+                                        {
+                                            <a href="#" class="btn btn-outline-danger disabled"><i class="fas fa-trash-alt"></i> Löschen</a>
+
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("DeleteStage", new {id = s.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Löschen</a>
+                                        }
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+
+                    }
                 </div>
             </div>
             <div class="card">

@@ -566,6 +566,22 @@ namespace MyStik.TimeTable.Web.Helpers
             return new MvcHtmlString(sb.ToString());
         }
 
+
+        public static MvcHtmlString FacultyList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> members)
+        {
+            var sb = new StringBuilder();
+            foreach (var group in members)
+            {
+                sb.Append(group.ShortName);
+                if (group != members.Last())
+                {
+                    sb.Append(htmlHelper.Raw(", "));
+                }
+            }
+            return new MvcHtmlString(sb.ToString());
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

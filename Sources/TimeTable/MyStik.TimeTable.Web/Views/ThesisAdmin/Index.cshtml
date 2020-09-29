@@ -11,9 +11,10 @@
             <h4>Abschlussarbeiten @ViewBag.Organiser.ShortName</h4>
         </div>
     </div>
+    
     <div class="row" style="margin-top: 10px">
         <div class="col-lg-offset-2 col-md-12">
-            <h5>Workflow Schritte Studierende(r)</h5>
+            <h5>Workflow Schritte Prüfungsamt</h5>
         </div>
     </div>
     <div class="row">
@@ -22,11 +23,29 @@
                 <a href="@Url.Action("Announced")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-2x fa-bullhorn"></i></h4>
                     <h5>angekündigt</h5>
-                    <p>Prüfung Voraussetzungen</p>
+                    <p>Unbearbeitete Anträge</p>
                 </a>
             </div>
         </div>
         <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-default text-center">
+                <a href="@Url.Action("Approved")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-2x fa-search"></i></h4>
+                    <h5>geprüft</h5>
+                    <p>Voraussetzungen erfüllt</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row" style="margin-top: 10px">
+        <div class="col-lg-offset-2 col-md-12">
+            <h5>Workflow Schritte Studierende(r)</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Plannend")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-2x fa-group"></i></h4>

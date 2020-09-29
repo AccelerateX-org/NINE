@@ -59,33 +59,47 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult OfficeHour(Guid? id)
         {
-            var member = GetMyMembership();
+            var user = GetCurrentUser();
             var infoService = new OfficeHourInfoService(UserManager);
 
-
-            OfficeHour officeHour = null;
-            var semester = SemesterService.GetSemester(id);
-
-
-            if (semester != null)
+            if (id == null)
             {
-                officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x =>
-                    x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id));
-            }
-            else
-            {
-                officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x => x.Id == id);
-                semester = officeHour.Semester;
-            }
+                var summaryModel = new LecturerSummaryModel()
+                {
+                    Memberships = MemberService.GetFacultyMemberships(user.Id)
+                };
+
+                var officeHours = 
+                    Db.Activities.OfType<OfficeHour>().Where(x =>
+                        x.Owners.Any(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id)))
+                    .ToList();
+
+                foreach (var oh in officeHours)
+                {
+                    var ohModel = new LecturerOfficehourSummaryModel()
+                    {
+                        OfficeHour = oh
+                    };
 
 
-            if (officeHour == null)
-                return RedirectToAction("Create", "OfficeHour", new { id = semester.Id });
+                    summaryModel.OfficeHours.Add(ohModel);
+                }
+
+                var semester = SemesterService.GetSemester(DateTime.Today);
+
+                ViewBag.ThisSemester = semester;
+                ViewBag.NextSemester = SemesterService.GetNextSemester(semester);
+
+
+                return View(summaryModel);
+            }
+
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(x => x.Id == id.Value);
 
             var model = new OfficeHourSubscriptionViewModel
             {
                 OfficeHour = officeHour,
-                Semester = semester,
+                Semester = officeHour.Semester,
                 Host = infoService.GetHost(officeHour),
             };
 
@@ -160,6 +174,41 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+
+        public ActionResult Courses()
+        {
+            var user = GetCurrentUser();
+
+            var courses = Db.Activities.OfType<Course>().Where(x => 
+                x.Owners.Any(o => o.Member.UserId.Equals(user.Id)) ||
+                x.Dates.Any(d => d.Hosts.Any(h => !string.IsNullOrEmpty(h.UserId) && h.UserId.Equals(user.Id)))).ToList();
+
+            var model = new LecturerSummaryModel();
+
+            foreach (var c in courses)
+            {
+                var orderedDates = c.Dates.OrderBy(x => x.Begin).ToList();
+                var firstDate = orderedDates.FirstOrDefault();
+                var lastDate = orderedDates.LastOrDefault();
+                var owner = c.Owners.FirstOrDefault(o => !string.IsNullOrEmpty(o.Member.UserId) && o.Member.UserId.Equals(user.Id));
+                var dates = c.Dates.Where(x => x.Hosts.Any(h => !string.IsNullOrEmpty(h.UserId) && h.UserId.Equals(user.Id))).ToList();
+
+                var courseModel = new LecturerCourseSummaryModel
+                {
+                    Course = c,
+                    FirstDate = firstDate,
+                    LastDate = lastDate,
+                    Owner = owner,
+                    HostingDates = dates
+                };
+
+
+                model.Courses.Add(courseModel);
+            }
+
+
+            return View(model);
+        }
 
     }
 }

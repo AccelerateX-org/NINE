@@ -512,6 +512,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            /*
             var member = GetMember(user.UserName, _union.ShortName);
 
             if (member != null)
@@ -528,7 +529,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 @event.Owners.Add(owner);
                 Db.ActivityOwners.Add(owner);
-            }
+            }*/
 
             var dozList = new List<OrganiserMember>();
             if (model.DozIds != null)

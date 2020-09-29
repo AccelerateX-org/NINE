@@ -1,186 +1,78 @@
-﻿@model MyStik.TimeTable.Web.Models.HomeViewModel
+﻿
 @{
-    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
-    ViewBag.Title = "Willkommen";
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Startseite";
 }
 
-<div style="background-color: #e1e1e1;padding-bottom: 30px">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-7">
-                <h2>Herzlich Willkommen bei NINE</h2>
-                <p><i><b>No information no education</b></i> - das ist das Motto des Open Source Projekts NINE.</p>
-                <p>
-                    Gestartet 2012 als studentisches Projekt im Bachelorstudiengang Wirtschaftsingenieurwesen der Hochschule München.
-                    Seither wird NINE im Rahmen von Lehrveranstaltungen der Studienrichtung "Informationstechnik"
-                    kontinuierlich weiterentwickelt. Mehr Infos zum <a href="http://acceleratex.org">Open Source Projek NINE</a>.
-                </p>
-                <p>
-                    Seit 2014 wird der Einsatz von NINE zur Organisation des Lehrbetriebs an der Fakultät für Wirtschaftsingenieurwesen unter realen Bedingungen erprobt.
-                    Daraus entstehen immer wieder neue Ideen für Verbesserungen und Weiterentwicklungen. <a href="@Url.Action("Contact", "Home")">Feedback</a> ist ausdrücklich erwünscht.
-                </p>
+<div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
+    <div class="col-md-12">
+        <h4 class="text-center">Informationsdienste rund um Studium und Lehre</h4>
+        <h5 class="text-center">der Fakulttäten für</h5>
+        <p class="text-center mb-0"><a href="https://www.sw.hm.edu/" target="_blank">Angewandte Sozialwissenschaften</a></p>
+        <p class="text-center mb-0"><a href="https://www.bwl.hm.edu/" target="_blank">Betriebswirtschaft</a></p>
+        <p class="text-center mb-0"><a href="https://www.design.hm.edu/" target="_blank">Design</a></p>
+        <p class="text-center mb-0"><a href="https://www.gs.hm.edu/" target="_blank">Studium Generale und Interdisziplinäre Studien</a></p>
+        <p class="text-center mb-0"><a href="https://www.wi.hm.edu/" target="_blank">Wirtschaftsingenieurwesen</a></p>
+    </div>
+</div>
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-6 col-md-4">
+        <div class="card text-center border-secondary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-user-astronaut"></i><br />
+                    Studieninteressierte
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Neue Welt Studium</h6>
+                <p class="card-text">Modulkataloge, Eignungsprüfungen, Ansprechpartner</p>
             </div>
-            <div class="col-md-5">
-                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                    <!-- Indicators -->
-                    <ol class="carousel-indicators">
-                        @{
-                            var i = 0;
-                            foreach (var fac in Model.Faculties)
-                            {
-                                if (i == 0)
-                                {
-                                    <li data-target="#carousel-example-generic" data-slide-to="@i" class="active"></li>
-                                }
-                                else
-                                {
-                                    <li data-target="#carousel-example-generic" data-slide-to="@i"></li>
-                                }
-                                i++;
-                            }
-                        }
-                    </ol>
-
-                    <!-- Wrapper for slides -->
-                    <div class="carousel-inner" role="listbox" style="margin-top: 15px">
-                        @{
-                            i = 0;
-                            foreach (var fac in Model.Faculties)
-                            {
-                                if (i == 0)
-                                {
-                                    <div class="item active">
-                                        <img src="@Url.Content("~/Assets/fillter/img/white.gif")" alt="">
-                                        <div class="carousel-caption" style="color: #2b542c; text-shadow: 0px">
-                                            <h2><span class="label label-default" style="background-color: @fac.Organiser.HtmlColor">@fac.Organiser.Name</span>
-                                            </h2>
-                                            <p>Online im @Model.Semester.Name<br/> @fac.StudentCount Studierende<br/>
-                                            @fac.Organiser.Members.Count(x => !string.IsNullOrEmpty(x.UserId)) Lehrende</p>
-                                            <a href="@fac.Organiser.SupportUrl">Mehr Infos</a>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="item">
-                                        <img src="@Url.Content("~/Assets/fillter/img/white.gif")" alt="">
-                                        <div class="carousel-caption" style="color: #2b542c; text-shadow: 0px">
-                                            <h2>
-                                                <span class="label label-default" style="background-color: @fac.Organiser.HtmlColor">@fac.Organiser.Name</span>
-                                            </h2>
-                                            <p>Online im @Model.Semester.Name<br/> @fac.StudentCount Studierende<br/>
-                                                @fac.Organiser.Members.Count(x => !string.IsNullOrEmpty(x.UserId)) Lehrende</p>
-                                            <a href="@fac.Organiser.SupportUrl">Mehr Infos</a>
-                                        </div>
-                                    </div>
-                                }
-                            i++;
-                            }
-                        }
-                    </div>
-
-                    <!-- Controls -->
-                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card text-center border-secondary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-user-graduate"></i><br />
+                    Studierende
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Organisation  des Studienalltags</h6>
+                <p class="card-text">Vorlesungsverzeichnisse, Wahlverfahren, persönlicher Stundenplan, </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card text-center border-secondary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-chalkboard-teacher"></i><br />
+                    Lehrende
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Gestaltung des Lehrbetriebs</h6>
+                <p class="card-text">Terminverwaltung, Raumbelegung, Benachrichtigungen</p>
             </div>
         </div>
     </div>
 </div>
-<div class="container" style="margin-top: 30px">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Studierende</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4><i class="fa fa-calendar-check-o"></i> Persönlicher Stundenplan</h4>
-                    <p>
-                        Wann findet was wo statt? Ich trage mich in die Lehrveranstaltungen ein, die ich besuchen möchte.
-                        Bei Terminänderungen werde ich informiert: über iCAL-Feeds oder Push Notifications aufs Smart Phone.
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4><i class="fa fa-cutlery"></i> Speisepläne</h4>
-                    <p>Was gibt es heute zu Essen? Lohnt der Besuch der Mensa oder Cafeteria? Ein Service von <a href="http://openmensa.org">OpenMensa</a>.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Lehrende</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4><i class="fa fa-envelope-o"></i> Nachrichten</h4>
-                    <p>Einfach und direkt die Teilnehmer der eigenen Lehrveranstaltungen, einer Semestergruppe oder Studiengang erreichen.</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4><i class="fa fa-question-circle-o"></i> Sprechstunden</h4>
-                    <p>Sprechstundentermine nach Bedarf organisieren: ob 1 Stunde oder 5 min Slots.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Administration</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4><i class="fa fa-random"></i> Platzverlosungen</h4>
-                    <p>Lehrveranstaltungen zu Lotterien zusammenfassen und automatisch Plätze verlosen. Studierende erhalten Reservierungen, welche sie annehmen oder verfallen lassen können. Erhöht die Chancen auf den Wunschstundenplan.</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4><i class="fa fa-ticket"></i> Raumreservierungen</h4>
-                    <p>Ob für Sitzung, Vortrag oder Veranstaltung: die verfügbaren Räume anzeigen lassen und den Raum belegen.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-md-12">
-            <h4><img src="@Url.Content("~/Assets/fillter/img/logo_fillter.svg")" style="background-color:#080808;width:40px;padding-bottom: 5px "> Die Fillter-Apps</h4>
-            <p>
-                Die Zusammenstellung des Stundenplans, das Eintragen in Sprechstunden, etc. dafür gibt es NINE.
-                Für das Smartphone wollten viele ein App, die nur die wichtigsten Infos "rausfilltert", z.B. die tagesaktuellen Termine, den Mensaspeiseplan.
-                Die Fillter-Apps sollen genau das liefern. Das sind eigene Projekte, die von Studierendenteams jedes Semester verbessert und ausgebaut werden.
-            </p>
-            <ul class="list-inline">
-                <li>
-                    <a href='https://play.google.com/store/apps/details?id=de.fillter2&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                        <img alt='Get it on Google Play'
-                             src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'
-                             style="height: 65px"/>
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-12 col-md-12">
+        <div class="card text-center border-secondary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-2x fa-external-link-alt"></i><br />
+                    Weitere Systeme
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">Das ganze Universum</h6>
+                <p class="card-text">Bewerbung, Noten, Unterlagen</p>
+                <div class="text-center">
+                    <a class="btn btn-outline-secondary" href="https://www3.primuss.de/cgi-bin/login/index.pl?FH=fhm" target="_blank">
+                        <img src="@Url.Content("~/Assets/fillter/img/logo_small_primuss.png")" alt="primuss" />
                     </a>
-                </li>
-                <li>
-                    <a href="https://itunes.apple.com/us/app/fillter/id1203686910">
-                        <img alt="Get it on AppStore"
-                             src="@Url.Content("~/Assets/fillter/img/Download_on_the_App_Store_Badge_US-UK_135x40.svg")"
-                             style="height: 45px"/>
+                    <a class="btn btn-outline-secondary" href="https://moodle.hm.edu" target="_blank">
+                        <img src="@Url.Content("~/Assets/fillter/img/moodlelogo.png")" alt="moodle" />
                     </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -7,6 +7,7 @@
             <th>Gerätename</th>
             <th>OS</th>
             <th>Notifications Aktiviert</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -30,6 +31,9 @@
                         <input id="@device.Id" type="checkbox" onclick="toggleDateCheck(this)" />
                     }
 
+                </td>
+                <td>
+                    <a href="@Url.Action("DeleteDevice", new {id=device.Id})" class="btn btn-danger">Löschen</a>
                 </td>
             </tr>
         }

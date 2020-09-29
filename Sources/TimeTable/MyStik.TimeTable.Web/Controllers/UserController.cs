@@ -317,8 +317,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private ICollection<UserAdminViewModel> CreateUserList(ICollection<ApplicationUser> userList)
         {
-            var memberService = new MemberService(Db, UserManager);
-
             var model = new List<UserAdminViewModel>();
 
             foreach (var user in userList)
@@ -335,7 +333,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     User = user,
                     SubscriptionCount = string.IsNullOrEmpty(user.Id) ? -99 : Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
-                    Members = memberService.GetMemberships(user.UserName),
+                    Members = MemberService.GetMemberships(user.Id),
                     SemesterGroup = semSub != null ? semSub.SemesterGroup : null
                 });
             }
@@ -345,14 +343,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
         private UserAdminViewModel GetUserModel(ApplicationUser user)
         {
-            var memberService = new MemberService(Db, UserManager);
-
             var model = new UserAdminViewModel
             {
                 User = user,
                 SubscriptionCount = Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
-                IsStudent = memberService.IsStudent(user.UserName),
-                Members = memberService.GetMemberships(user.UserName),
+                IsStudent = (StudentService.GetCurrentStudent(user.Id) != null),
+                Members = MemberService.GetMemberships(user.Id),
             };
 
             return model;

@@ -289,6 +289,7 @@
     <Compile Include="Api\Controller\AccountController.cs" />
     <Compile Include="Api\Controller\ApiBaseController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
+    <Compile Include="Api\Controller\AssessmentsController.cs" />
     <Compile Include="Api\Controller\CampusController.cs" />
     <Compile Include="Api\Controller\MvgController.cs" />
     <Compile Include="Api\Controller\ZpaCourseController.cs" />
@@ -404,11 +405,13 @@
     <Compile Include="Controllers\ActivityDateController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminDashboardController.cs" />
+    <Compile Include="Controllers\AdministrationController.cs" />
     <Compile Include="Controllers\AdvertisementsController.cs" />
     <Compile Include="Controllers\AlumniController.cs" />
     <Compile Include="Controllers\ArchiveController.cs" />
     <Compile Include="Controllers\AssessmentController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
+    <Compile Include="Controllers\BulletinBoardController.cs" />
     <Compile Include="Controllers\CandidatureController.cs" />
     <Compile Include="Controllers\CieController.cs" />
     <Compile Include="Controllers\CommitteeController.cs" />
@@ -422,7 +425,6 @@
     <Compile Include="Controllers\CurriculumRequirementController.cs" />
     <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
-    <Compile Include="Controllers\EventSummaryController.cs" />
     <Compile Include="Controllers\ExamController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\InternshipAdminController.cs" />
@@ -440,11 +442,12 @@
     <Compile Include="Controllers\PackageOptionController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\PrintController.cs" />
+    <Compile Include="Controllers\ResearchController.cs" />
     <Compile Include="Controllers\RoomReportController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
-    <Compile Include="Controllers\StudentController.cs" />
+    <Compile Include="Controllers\StudiesController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\ThesisAdminController.cs" />
     <Compile Include="Controllers\ThesisSupervisionController.cs" />
@@ -453,6 +456,7 @@
     <Compile Include="Controllers\ThesisAnnouncementsController.cs" />
     <Compile Include="Controllers\ThesisController.cs" />
     <Compile Include="Controllers\ThesisWorkflowController.cs" />
+    <Compile Include="Controllers\UniversityController.cs" />
     <Compile Include="Controllers\UntisController.cs" />
     <Compile Include="Controllers\VirtualRoomController.cs" />
     <Compile Include="Controllers\_AlumniController.cs" />
@@ -498,6 +502,7 @@
     <Compile Include="Helpers\FakeView.cs" />
     <Compile Include="Helpers\HtmlHelper.cs" />
     <Compile Include="Hubs\FamosHub.cs" />
+    <Compile Include="Hubs\MaterialExportHub.cs" />
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
     <Compile Include="Jobs\LotteryJob.cs" />
@@ -603,6 +608,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.fr.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\ActivityDateService.cs" />
     <Compile Include="Services\ActivityService.cs" />
     <Compile Include="Services\BaseMailService.cs" />
     <Compile Include="Services\BaseService.cs" />
@@ -722,15 +728,12 @@
     <Content Include="Assets\fillter\css\style.css" />
     <Content Include="Assets\fillter\fonts\icomoon.svg" />
     <Content Include="Assets\fillter\img\deselect.svg" />
-    <Content Include="Assets\fillter\img\Download_on_the_App_Store_Badge_US-UK_135x40.svg" />
-    <Content Include="Assets\fillter\img\Hoko Screenwerbung.jpg" />
-    <Content Include="Assets\fillter\img\HOKO_Weeks_Stundenplan.jpg" />
+    <Content Include="Assets\fillter\img\favicon.ico" />
     <Content Include="Assets\fillter\img\logo-mvg.jpg" />
     <Content Include="Assets\fillter\img\logo.svg" />
     <Content Include="Assets\fillter\img\logoName.svg" />
     <Content Include="Assets\fillter\img\logo_fillter.svg" />
     <Content Include="Assets\fillter\img\logo_nine.svg" />
-    <Content Include="Assets\fillter\img\NINE-Logo-rot.png" />
     <Content Include="Assets\fillter\img\selectable.svg" />
     <Content Include="Assets\fillter\img\selected.svg" />
     <Content Include="Assets\fillter\img\white.gif" />
@@ -3829,7 +3832,6 @@
     <Content Include="Views\Lottery\Details.cshtml" />
     <Content Include="Views\Curriculum\_SemesterSelectList.cshtml" />
     <Content Include="Views\Shared\_LayoutPublicNew.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Lottery\Report.cshtml" />
     <Content Include="Views\Curriculum\Structure.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumGroupSelectList.cshtml" />
@@ -3953,7 +3955,6 @@
     <Content Include="Views\Home\Course.cshtml" />
     <Content Include="Views\Home\Dictionary.cshtml" />
     <Content Include="Views\Home\Fillter.cshtml" />
-    <Content Include="Views\Home\Landing.cshtml" />
     <Content Include="Views\Home\Semester.cshtml" />
     <Content Include="Views\Home\TermsOfUse.cshtml" />
     <Content Include="Views\Home\UniversityCalendar.cshtml" />
@@ -4222,8 +4223,8 @@
     <Content Include="Views\Shared\_ThesisPrintOut.cshtml" />
     <Content Include="Views\ThesisAdmin\Extend.cshtml" />
     <Content Include="Views\Lottery\Reports.cshtml" />
-    <Content Include="Views\Student\_ViewStart.cshtml" />
-    <Content Include="Views\Student\Index.cshtml" />
+    <Content Include="Views\Studies\_ViewStart.cshtml" />
+    <Content Include="Views\Studies\Index.cshtml" />
     <Content Include="Views\Lottery\StatisticsOverall.cshtml" />
     <Content Include="Views\ThesisAdmin\Announced.cshtml" />
     <Content Include="Views\ThesisAdmin\Plannend.cshtml" />
@@ -4243,8 +4244,8 @@
     <Content Include="Views\InternshipAdmin\Details.cshtml" />
     <Content Include="Views\NoticeBoard\_ViewStart.cshtml" />
     <Content Include="Views\NoticeBoard\Index.cshtml" />
-    <Content Include="Views\EventSummary\_ViewStart.cshtml" />
-    <Content Include="Views\EventSummary\Index.cshtml" />
+    <Content Include="Views\BulletinBoard\_ViewStart.cshtml" />
+    <Content Include="Views\BulletinBoard\Index.cshtml" />
     <Content Include="Views\Mailing\Curriculum.cshtml" />
     <Content Include="Views\ThesisAdmin\RepairExpiry.cshtml" />
     <Content Include="Views\Courses\CopyDay.cshtml" />
@@ -4286,7 +4287,7 @@
     <Content Include="Views\Assessment\EditStage.cshtml" />
     <Content Include="Views\Candidature\UploadMaterial.cshtml" />
     <Content Include="Views\Assessment\Candidate.cshtml" />
-    <Content Include="Views\Home\FirstVisit.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Watermark.cshtml" />
     <Content Include="Views\Candidature\_MaterialBox.cshtml" />
     <Content Include="Views\Assessment\Album.cshtml" />
@@ -4299,6 +4300,25 @@
     <Content Include="Views\Assessment\UploadResults.cshtml" />
     <Content Include="Views\Shared\_Errors.cshtml" />
     <Content Include="Views\Assessment\UploadDates.cshtml" />
+    <Content Include="Views\Assessment\CandidateDetails.cshtml" />
+    <Content Include="Views\Assessment\CreateStage.cshtml" />
+    <Content Include="Views\ThesisAdmin\Approved.cshtml" />
+    <Content Include="Views\Assessment\Export.cshtml" />
+    <Content Include="Views\Lottery\Capacities.cshtml" />
+    <Content Include="Views\Curriculum\Students.cshtml" />
+    <Content Include="Views\Rooms\_ViewStart.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Research\_ViewStart.cshtml" />
+    <Content Include="Views\Research\Index.cshtml" />
+    <Content Include="Views\University\_ViewStart.cshtml" />
+    <Content Include="Views\University\Index.cshtml" />
+    <Content Include="Views\Administration\_ViewStart.cshtml" />
+    <Content Include="Views\Administration\Index.cshtml" />
+    <Content Include="Views\Teaching\Apply.cshtml" />
+    <Content Include="Views\Administration\Apply.cshtml" />
+    <Content Include="Views\Lecturer\Courses.cshtml" />
+    <Content Include="Views\Home\FirstVisit.cshtml" />
+    <Content Include="Views\Lecturer\OfficeHour.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

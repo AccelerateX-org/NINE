@@ -865,7 +865,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult CreateDate(Guid id)
         {
-            var memberService = new MemberService(Db, UserManager);
+            var memberService = new MemberService(Db);
 
             var model = new OfficeHourCreateModel
             {
@@ -1356,22 +1356,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Create(Guid? id)
+        public ActionResult Create(Guid semId, Guid memberId)
         {
-            var semester = SemesterService.GetSemester(id);
-            var m = GetMyMembership();
-
-            /*
-            if (m != null)
-            {
-                var courseService = new OfficeHourService(Db);
-                var myOfficeHour = courseService.GetOfficeHour(m, semester);
-                if (myOfficeHour != null)
-                {
-                    return RedirectToAction("Lecturer", new { id = m.Id });
-                }
-            }
-            */
+            var semester = SemesterService.GetSemester(semId);
+            var m = MemberService.GetMember(memberId);
 
             var model = new OfficeHourCreateModel
             {
@@ -1388,22 +1376,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult CreateOpenSystem(Guid? id)
+        public ActionResult CreateOpenSystem(Guid semId, Guid dozId)
         {
-            var semester = SemesterService.GetSemester(id);
-            var m = GetMyMembership();
-
-            /*
-            if (m != null)
-            {
-                var courseService = new OfficeHourService(Db);
-                var myOfficeHour = courseService.GetOfficeHour(m, semester);
-                if (myOfficeHour != null)
-                {
-                    return RedirectToAction("Lecturer", new {id = m.Id});
-                }
-            }
-            */
+            var semester = SemesterService.GetSemester(semId);
+            var member = MemberService.GetMember(dozId);
+            var org = member.Organiser;
 
             var model = new OfficeHourCreateModel
             {
@@ -1424,7 +1401,6 @@ namespace MyStik.TimeTable.Web.Controllers
             SetTimeSelections();
             SetRestrictionSelections();
 
-            var org = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(org);
             
 
@@ -1441,8 +1417,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult CreateOpenSystem(OfficeHourCreateModel model)
         {
             var semester = SemesterService.GetSemester(model.Semester.Id);
-            var org = GetMyOrganisation();
-            var member = GetMyMembership();
+            var member = MemberService.GetMember(model.Member.Id);
 
             // Model in request umsetzen
             var start = TimeSpan.Parse(model.StartTime);
@@ -1464,7 +1439,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 SpareSlots = 0,
                 DayOfWeek = (DayOfWeek) model.DayOfWeek,
                 ByAgreement = false,
-                OrgId = org.Id,
+                OrgId = member.Organiser.Id,
                 SemesterId = semester.Id,
                 CreateDates = true,
                 Text = model.Description,
@@ -1473,7 +1448,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var officeHour = ohService.CreateOfficeHour(request);
 
-            return RedirectToAction("OfficeHour", "Lecturer", new {id = semester.Id});
+            return RedirectToAction("OfficeHour", "Lecturer", new {id = officeHour.Id});
         }
 
 
@@ -1481,31 +1456,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult CreateSlotSystem(Guid? id)
+        public ActionResult CreateSlotSystem(Guid semId, Guid dozId)
         {
-            var semester = SemesterService.GetSemester(id);
-
-
-            var dozId = string.Empty;
-            var m = GetMyMembership();
-
-            /*
-            if (m != null)
-            {
-                var courseService = new OfficeHourService(Db);
-                var myOfficeHour = courseService.GetOfficeHour(m, semester);
-                if (myOfficeHour != null)
-                {
-                    return RedirectToAction("Lecturer", new {id = m.Id});
-                }
-            }
-            */
-
-            // Member-Admin darf Sprechstunde für andere (und sich) anlegen
-            if (m != null && !m.IsMemberAdmin)
-            {
-                dozId = m.ShortName;
-            }
+            var semester = SemesterService.GetSemester(semId);
+            var member = MemberService.GetMember(dozId);
+            var org = member.Organiser;
 
 
             var model = new OfficeHourCreateModel
@@ -1523,13 +1478,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 SlotsPerDate = 1,
                 MaxFutureSlots = 1,
                 Semester = semester,
+                Member = member,
                 NewDateEnd = semester.EndCourses.ToShortDateString()
             };
 
             SetTimeSelections();
             SetRestrictionSelections();
 
-            var org = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(org);
 
 
@@ -1545,8 +1500,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult CreateSlotSystem(OfficeHourCreateModel model)
         {
             var semester = SemesterService.GetSemester(model.Semester.Id);
-            var org = GetMyOrganisation();
-            var member = GetMyMembership();
+            var member = MemberService.GetMember(model.Member.Id);
 
             // Model in request umsetzen
             var start = TimeSpan.Parse(model.StartTime);
@@ -1568,7 +1522,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 SpareSlots = model.SpareSlots,
                 DayOfWeek = (DayOfWeek) model.DayOfWeek,
                 ByAgreement = false,
-                OrgId = org.Id,
+                OrgId = member.Organiser.Id,
                 SemesterId = semester.Id,
                 CreateDates = true,
                 Text = model.Description,
@@ -1580,7 +1534,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var officeHour = ohService.CreateOfficeHour(request);
 
-            return RedirectToAction("OfficeHour", "Lecturer", new { id = semester.Id });
+            return RedirectToAction("OfficeHour", "Lecturer", new { id = officeHour.Id });
         }
 
 
@@ -1588,23 +1542,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult CreateByAgreement(Guid? id)
+        public ActionResult CreateByAgreement(Guid semId, Guid dozId)
         {
-            var semester = SemesterService.GetSemester(id);
+            var semester = SemesterService.GetSemester(semId);
+            var member = MemberService.GetMember(dozId);
+            var org = member.Organiser;
 
-            var m = GetMyMembership();
-
-            /*
-            if (m != null)
-            {
-                var courseService = new OfficeHourService(Db);
-                var myOfficeHour = courseService.GetOfficeHour(m, semester);
-                if (myOfficeHour != null)
-                {
-                    return RedirectToAction("Lecturer", new { id = m.Id });
-                }
-            }
-            */
 
             var model = new OfficeHourCreateModel
             {
@@ -1613,7 +1556,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
-            var org = GetMyOrganisation();
             ViewBag.UserRight = GetUserRight(org);
 
 
@@ -1629,8 +1571,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult CreateByAgreement(OfficeHourCreateModel model)
         {
             var semester = SemesterService.GetSemester(model.Semester.Id);
-            var org = GetMyOrganisation();
-            var member = GetMyMembership();
+            var member = MemberService.GetMember(model.Member.Id);
 
             var ohService = new OfficeHourService(Db);
 
@@ -1646,7 +1587,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 SpareSlots = 0,
                 DayOfWeek = DayOfWeek.Friday,
                 ByAgreement = true,
-                OrgId = org.Id,
+                OrgId = member.Organiser.Id,
                 SemesterId = semester.Id,
                 CreateDates = false,
                 Text = model.Description
@@ -1655,7 +1596,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var officeHour = ohService.CreateOfficeHour(request);
 
 
-            return RedirectToAction("OfficeHour", "Lecturer", new { id = semester.Id });
+            return RedirectToAction("OfficeHour", "Lecturer", new { id = officeHour.Id });
         }
 
         /// <summary>

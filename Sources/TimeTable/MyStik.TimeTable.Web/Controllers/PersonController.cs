@@ -26,9 +26,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult MyProfile(string orgName, string shortName)
         {
-            var memberService = new MemberService(Db, UserManager);
-            var model = memberService.GetMemberFromShortName(orgName, shortName);
-
+            var model = MemberService.GetMemberFromShortName(orgName, shortName);
             return View("Profile", model);
         }
     }

@@ -18,6 +18,16 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>Angekündigte Abschlussarbeiten - Prüfung der Voraussetzungen</h4>
+                    <div>
+                        Liste enthält alle Anträge, die noch nicht geprüft wurden oder deren Prüfung negativ ausgefallen ist.
+                    </div>
+                    <div>
+                        Einträge aus dieser Liste verschwinden, wenn
+                        <ul>
+                            <li>Die Prüfung der Voraussetzungen erfolgt ist und die Voraussetzungen erfüllt sind</li>
+                            <li>Sobald die Arbeit durch den Studierenden angemeldet wurde - egal welchen Zustand die Prüfung der Voraussetzung hat.</li>
+                        </ul>
+                    </div>
                 </div>
                 <table id="tabThesis" class="table table-condensed">
                     <thead>
@@ -31,6 +41,7 @@
                             <th>Datum Antwort</th>
                             <th>Status</th>
                             <th>Bemerkung Prüfungsamt</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +85,7 @@
                                         }
                                         else
                                         {
-                                            <td>Voraussetzungen erfüllt - Eigenauskunft</td>
+                                            <td>Selbstauskunft - unbearbeitet</td>
                                             <td></td>
                                         }
                                     }
@@ -96,6 +107,20 @@
                                 <td>Fehler - kein Antwortdatum</td>
                                 <td></td>
                             }
+                            
+                            <td>
+                                <ul>
+                                    @if (thesis.Thesis.IssueDate.HasValue)
+                                    {
+                                        <li>Angemeldet: @thesis.Thesis.IssueDate.Value.ToShortDateString()</li>
+                                    }
+                                    @if (thesis.Thesis.AcceptanceDate.HasValue)
+                                    {
+                                        <li>Betreuung angenommen: @thesis.Thesis.AcceptanceDate.Value.ToShortDateString()</li>
+                                    }
+                                </ul>
+                            </td>
+
                         </tr>
                     }
                     </tbody>

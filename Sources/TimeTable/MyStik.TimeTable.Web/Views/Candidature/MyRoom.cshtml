@@ -1,4 +1,6 @@
-﻿@using MyStik.TimeTable.Web.Services
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Candidature
 @{
     ViewBag.Title = "Eignungsprüfung";
@@ -137,9 +139,18 @@
                     <div class="card">
                         <div class="card-header" id="@headId">
                             <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
-                                    @stage.Name (@stage.OpeningDateTime.Value - @stage.ClosingDateTime.Value)
-                                </button>
+                                @if (isFuture)
+                                {
+                                    <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
+                                        ab @stage.OpeningDateTime.Value
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
+                                        @stage.Name (@stage.OpeningDateTime.Value - @stage.ClosingDateTime.Value)
+                                    </button>
+                                }
                             </h2>
                         </div>
                         <div id="@bodyId" class="collapse" aria-labelledby="@headId" data-parent="#accordionExample">
@@ -209,6 +220,27 @@
                     </div>
                 }
             }
+            
+            @if (ViewBag.OfficeHourDate != null)
+            {
+                <div class="card">
+                    <div class="card-header" id="headingDate">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseDate" aria-expanded="true" aria-controls="collapseDate">
+                                Termin Eignungsgespräch: @Html.TimeSpanWithDate(ViewBag.OfficeHourDate as ActivityDate) 
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseDate" class="collapse" aria-labelledby="headingDate" data-parent="#accordionExample">
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+
+            }
+            
+
         </div>
     </div>
 </div>

@@ -36,7 +36,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("DashboardOrgMember", CreateDashboardModelOrgMember(userRight));
             }
 
-            var meberships = GetMyMemberships();
+            var user = GetCurrentUser();
+            var meberships = MemberService.GetFacultyMemberships(user.Id);
             var student = StudentService.GetCurrentStudent(userRight.User.Id);
             var alumni = GetMyAlumni();
 
@@ -49,7 +50,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (cand.Any())
                     return RedirectToAction("Index", "Candidature");
 
-                return RedirectToAction("Index", "Assessment");
+                ViewBag.IsGuest = true;
+                return View();
             }
 
             // alle anderen Fälle

@@ -593,8 +593,9 @@ namespace MyStik.TimeTable.Web.Controllers
         public JsonResult RoomList(string number, DateTime? date, TimeSpan? from, TimeSpan? until, bool? useFree)
         {
             // Den User ermitteln
-            var isOrgAdmin = IsOrgAdmin();
             var org = GetMyOrganisation();
+            var member = MemberService.GetMember(org.Id);
+            var isOrgAdmin = member?.IsAdmin ?? false;
 
 
             IEnumerable<Room> roomList;
@@ -650,7 +651,10 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult RoomListByOrg(Guid orgId, string number)
         {
-            var isOrgAdmin = IsRoomAdmin(orgId);
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+            var member = MemberService.GetMember(org.Id);
+            var isOrgAdmin = member?.IsRoomAdmin ?? false;
 
             var roomList = new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, isOrgAdmin);
 
@@ -700,6 +704,9 @@ namespace MyStik.TimeTable.Web.Controllers
         public JsonResult RoomListForDay(string number, string sem, int? day, TimeSpan? from, TimeSpan? until)
         {
             IEnumerable<Room> roomList;
+            var org = GetMyOrganisation();
+            var member = MemberService.GetMember(org.Id);
+            var isOrgAdmin = member?.IsAdmin ?? false;
 
 
 
@@ -730,11 +737,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 var dayOfWeek = (DayOfWeek) day.Value;
 
                 roomList = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(dayOfWeek, from.Value,
-                    until.Value, semester, IsOrgAdmin(), allRooms);
+                    until.Value, semester, isOrgAdmin, allRooms);
             }
             else
             {
-                roomList = new MyStik.TimeTable.Web.Services.RoomService().GetAllRooms(IsOrgAdmin(), allRooms);
+                roomList = new MyStik.TimeTable.Web.Services.RoomService().GetAllRooms(isOrgAdmin, allRooms);
             }
 
 
@@ -1140,7 +1147,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Transfer(Guid id)
         {
             var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
-            var curricula = Db.Curricula.Where(x => x.Organiser.Id == curriculum.Id && x.Id != curriculum.Id)
+            var curricula = Db.Curricula.Where(x => x.Organiser.Id == curriculum.Organiser.Id && x.Id != curriculum.Id)
                 .OrderBy(f => f.ShortName);
 
             var model = new CurriculumTransferModel
@@ -1158,6 +1165,30 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+
+        [HttpPost]
+        public ActionResult Transfer(CurriculumTransferModel model)
+        {
+            var sourceCur = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var targetCur = Db.Curricula.SingleOrDefault(x => x.Id == model.TargetCurrId);
+
+
+            var allStudents = Db.Students.Where(x => x.Curriculum.Id == sourceCur.Id);
+
+            foreach (var student in allStudents)
+            {
+                student.Curriculum = targetCur;
+            }
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Students", new {id = sourceCur.Id});
+        }
+
+
+
 
         public ActionResult Destroy(Guid id)
         {
@@ -1215,7 +1246,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.CertificateModules.Remove(model);
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id=curr.Id});
+            return RedirectToAction("Admin", new {id = curr.Id});
         }
 
 
@@ -1238,7 +1269,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new { id = subject.CertificateModule.Curriculum.Id });
+            return RedirectToAction("Admin", new {id = subject.CertificateModule.Curriculum.Id});
         }
 
         public ActionResult DeleteSubject(Guid id)
@@ -1255,7 +1286,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.CertificateSubjects.Remove(model);
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new { id = curr.Id });
+            return RedirectToAction("Admin", new {id = curr.Id});
         }
 
         public ActionResult ModuleDetails(Guid id)
@@ -1356,5 +1387,19 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index", new {id = id});
         }
 
+
+        public ActionResult Students(Guid id)
+        {
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumSummaryModel
+            {
+                Curriculum = curriculum,
+                Students = Db.Students.Where(x => x.Curriculum.Id == curriculum.Id).ToList()
+            };
+
+
+            return View(model);
+        }
     }
 }

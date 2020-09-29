@@ -76,7 +76,6 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
 
-            var memberService = new MemberService(Db, UserManager);
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
 
             var org = GetMyOrganisation();

@@ -312,7 +312,12 @@ namespace MyStik.TimeTable.Web.Models
 
         public Internship Internship { get; set; }
 
-        public List<Semester> Semester { get; set; }
+        public Semester Semester { get; set; }
+        public Semester PrevSemester { get; set; }
+        public Semester NextSemester { get; set; }
+
+        public ICollection<CourseSummaryModel> Courses { get; set; }
+
     }
 
 

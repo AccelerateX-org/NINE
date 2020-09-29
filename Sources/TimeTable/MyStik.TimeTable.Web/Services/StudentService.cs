@@ -19,7 +19,7 @@ namespace MyStik.TimeTable.Web.Services
         }
 
         /// <summary>
-        /// 
+        /// Der zuletzt angelegte Studiengang
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>

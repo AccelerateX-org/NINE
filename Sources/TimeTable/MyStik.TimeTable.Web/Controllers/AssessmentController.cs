@@ -77,20 +77,58 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Candidates(Guid id)
         {
-            var model = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
 
-            return View(model);
+            var user = GetCurrentUser();
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+            ViewBag.UserRights = GetUserRight();
+            ViewBag.Member = member;
+
+            return View(assessment);
         }
 
         public ActionResult Candidate(Guid id)
         {
             var candidate = Db.Candidatures.SingleOrDefault(x => x.Id == id);
 
+            var user = GetCurrentUser();
+            var assessment = candidate.Assessment;
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+            ViewBag.UserRights = GetUserRight();
+            ViewBag.Member = member;
+
+            return View(candidate);
+        }
+        public ActionResult CandidateDetails(Guid id)
+        {
+            var candidate = Db.Candidatures.SingleOrDefault(x => x.Id == id);
+
+            var user = GetCurrentUser();
+            var assessment = candidate.Assessment;
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+            ViewBag.Assessments = Db.Assessments.ToList();
+            ViewBag.UserRights = GetUserRight();
+            ViewBag.Member = member;
 
             return View(candidate);
         }
 
-
+        
 
 
         public ActionResult Create()
@@ -123,12 +161,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 x.ShortName.Equals(model.CurriculumShortName) && x.Organiser.Id == org.Id);
             var sem = Db.Semesters.SingleOrDefault(x => x.Name.Equals(model.SemesterName));
 
-            var start1 = DateTime.Parse(model.Stage1Start);
-            var end1 = DateTime.Parse(model.Stage1End);
-
-            var start2 = DateTime.Parse(model.Stage2Start);
-            var end2 = DateTime.Parse(model.Stage2End);
-
 
             var assessment = new Assessment
             {
@@ -156,30 +188,9 @@ namespace MyStik.TimeTable.Web.Controllers
             assessment.Committee = committee;
 
 
-            var stage1 = new AssessmentStage
-            {
-                Assessment = assessment,
-                Name = model.Stage1Name,
-                OpeningDateTime = start1,
-                ClosingDateTime = end1
-            };
-
-            var stage2 = new AssessmentStage
-            {
-                Assessment = assessment,
-                Name = model.Stage2Name,
-                OpeningDateTime = start2,
-                ClosingDateTime = end2
-            };
-
-            assessment.Stages = new List<AssessmentStage>();
-            assessment.Stages.Add(stage1);
-            assessment.Stages.Add(stage2);
-
             Db.CommitteeMember.Add(comMember);
             Db.Committees.Add(committee);
-            Db.AssessmentStages.Add(stage1);
-            Db.AssessmentStages.Add(stage2);
+
             Db.Assessments.Add(assessment);
 
             Db.SaveChanges();
@@ -253,7 +264,6 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             Db.SaveChanges();
-
 
             return RedirectToAction("Details", new {id = id});
         }
@@ -579,6 +589,8 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!userRight.Member.IsAdmin)
                 return View("_NoAccess");
 
+            ViewBag.UserRights = GetUserRight();
+            ViewBag.Member = member;
 
             return View(assessment);
         }
@@ -606,55 +618,50 @@ namespace MyStik.TimeTable.Web.Controllers
 
             string[] lines = text.Split('\n');
 
-            var i = 0;
             foreach (var line in lines)
             {
-                if (i > 0)
+                string newline = line.Trim();
+
+                if (!string.IsNullOrEmpty(newline))
                 {
-                    string newline = line.Trim();
+                    string[] words = newline.Split(';');
 
-                    if (!string.IsNullOrEmpty(newline))
+                    var firstName = words[0].Trim();
+                    var lastName = words[1].Trim();
+                    var email = words[2].Trim();
+
+                    var candUser = userInfoService.GetUserByEmail(email);
+
+                    if (candUser == null)
                     {
-                        string[] words = newline.Split(';');
-
-                        var lastName = words[0].Trim();
-                        var firstName = words[1].Trim();
-                        var email = words[2].Trim();
-
-                        var candUser = userInfoService.GetUserByEmail(email);
-
-                        if (candUser == null)
-                        {
-                            var msg = $"Kein Benutzer für E-Mail Adresse {email} vorhanden";
-                            errors.Add(msg);
-                            continue;
-                        }
-
-                        if (!(candUser.FirstName.ToLower().Equals(firstName.ToLower()) &&
-                              candUser.LastName.ToLower().Equals(lastName.ToLower())))
-                        {
-                            var msg = $"Angaben für den Benutzer {email} stimmen nicht überein: Datei: {firstName} {lastName}, Datenbank: {candUser.FirstName} {candUser.LastName}";
-                            errors.Add(msg);
-                            continue;
-
-                        }
-
-
-                        var candidate = assessment.Candidatures.SingleOrDefault(x => x.UserId.Equals(candUser.Id));
-
-                        if (candidate == null)
-                        {
-                            var msg = $"Benutzer {email} nicht im Verfahren dabei";
-                            errors.Add(msg);
-                            continue;
-                        }
-
-                        candidate.IsAccepted = true;
+                        var msg = $"Kein Benutzer für E-Mail Adresse {email} vorhanden";
+                        errors.Add(msg);
+                        continue;
                     }
-                }
 
-                i++;
+                    if (!(candUser.FirstName.Trim().ToLower().Equals(firstName.ToLower()) &&
+                          candUser.LastName.Trim().ToLower().Equals(lastName.ToLower())))
+                    {
+                        var msg = $"Angaben für den Benutzer {email} stimmen nicht überein: Datei: \"{firstName}\" \"{lastName}\", Datenbank: \"{candUser.FirstName}\" \"{candUser.LastName}\"";
+                        errors.Add(msg);
+                        continue;
+
+                    }
+
+
+                    var candidate = assessment.Candidatures.SingleOrDefault(x => x.UserId.Equals(candUser.Id));
+
+                    if (candidate == null)
+                    {
+                        var msg = $"Benutzer {email} nicht im Verfahren dabei";
+                        errors.Add(msg);
+                        continue;
+                    }
+
+                    candidate.IsAccepted = true;
+                }
             }
+
 
             if (errors.Any())
             {
@@ -771,117 +778,111 @@ namespace MyStik.TimeTable.Web.Controllers
 
             string[] lines = text.Split('\n');
 
-            var i = 0;
             foreach (var line in lines)
             {
-                if (i > 0)
+                string newline = line.Trim();
+
+                if (!string.IsNullOrEmpty(newline))
                 {
-                    string newline = line.Trim();
+                    string[] words = newline.Split(';');
 
-                    if (!string.IsNullOrEmpty(newline))
+                    var firstName = words[0].Trim();
+                    var lastName = words[1].Trim();
+                    var email = words[2].Trim();
+                    var date = DateTime.ParseExact(words[3].Trim(), "dd.MM.yyyy", null);
+                    var from = TimeSpan.ParseExact(words[4].Trim(), @"h\:mm", null);
+                    var until = TimeSpan.ParseExact(words[5].Trim(), @"h\:mm", null);
+
+                    var candUser = userInfoService.GetUserByEmail(email);
+
+                    if (candUser == null)
                     {
-                        string[] words = newline.Split(';');
+                        var msg = $"Kein Benutzer für E-Mail Adresse {email} vorhanden";
+                        errors.Add(msg);
+                        continue;
+                    }
 
-                        var lastName = words[0].Trim();
-                        var firstName = words[1].Trim();
-                        var email = words[2].Trim();
-                        var date = DateTime.ParseExact(words[3].Trim(), "dd.MM.yyyy", null);
-                        var from = TimeSpan.ParseExact(words[4].Trim(), @"h\:mm", null);
-                        var until = TimeSpan.ParseExact(words[5].Trim(), @"h\:mm", null);
+                    if (!(candUser.FirstName.Trim().ToLower().Equals(firstName.ToLower()) &&
+                          candUser.LastName.Trim().ToLower().Equals(lastName.ToLower())))
+                    {
+                        var msg = $"Angaben für den Benutzer {email} stimmen nicht überein: Datei: {firstName} {lastName}, Datenbank: {candUser.FirstName} {candUser.LastName}";
+                        errors.Add(msg);
+                        continue;
 
-                        var candUser = userInfoService.GetUserByEmail(email);
+                    }
 
-                        if (candUser == null)
+
+                    var candidate = assessment.Candidatures.SingleOrDefault(x => x.UserId.Equals(candUser.Id));
+
+                    if (candidate == null)
+                    {
+                        var msg = $"Benutzer {email} nicht im Verfahren dabei";
+                        errors.Add(msg);
+                        continue;
+                    }
+
+
+                    if (candidate.IsAccepted != true)
+                    {
+                        var msg = $"Benutzer {email} wurde bisher nicht als angenommen markiert";
+                        errors.Add(msg);
+                        continue;
+                    }
+
+
+                    // so jetzt Datum und Uhrzeit Termin finden hinzufügen und/oder Termin anlegen
+                    var begin = date.Add(from);
+                    var end = date.Add(until);
+
+                    var ohDate = officeHour.Dates.SingleOrDefault(x => x.Begin == begin && x.End == end);
+
+                    if (ohDate == null)
+                    {
+                        ohDate = new ActivityDate
                         {
-                            var msg = $"Kein Benutzer für E-Mail Adresse {email} vorhanden";
-                            errors.Add(msg);
-                            continue;
-                        }
-
-                        if (!(candUser.FirstName.ToLower().Equals(firstName.ToLower()) &&
-                              candUser.LastName.ToLower().Equals(lastName.ToLower())))
-                        {
-                            var msg = $"Angaben für den Benutzer {email} stimmen nicht überein: Datei: {firstName} {lastName}, Datenbank: {candUser.FirstName} {candUser.LastName}";
-                            errors.Add(msg);
-                            continue;
-
-                        }
-
-
-                        var candidate = assessment.Candidatures.SingleOrDefault(x => x.UserId.Equals(candUser.Id));
-
-                        if (candidate == null)
-                        {
-                            var msg = $"Benutzer {email} nicht im Verfahren dabei";
-                            errors.Add(msg);
-                            continue;
-                        }
-
-
-                        if (candidate.IsAccepted != true)
-                        {
-                            var msg = $"Benutzer {email} wurde bisher nicht als angenommen markiert";
-                            errors.Add(msg);
-                            continue;
-                        }
-
-
-                        // so jetzt Datum und Uhrzeit Termin finden hinzufügen und/oder Termin anlegen
-                        var begin = date.Add(from);
-                        var end = date.Add(until);
-
-                        var ohDate = officeHour.Dates.SingleOrDefault(x => x.Begin == begin && x.End == end);
-
-                        if (ohDate == null)
-                        {
-                            ohDate = new ActivityDate
+                            Activity = officeHour,
+                            Begin = begin,
+                            End = end,
+                            Occurrence = new Occurrence
                             {
-                                Activity = officeHour,
-                                Begin = begin,
-                                End = end,
-                                Occurrence = new Occurrence
-                                {
-                                    IsAvailable = true,
-                                    Capacity = 0,
-                                    FromIsRestricted = false,
-                                    UntilIsRestricted = false,
-                                    UntilTimeSpan = null,
-                                    IsCanceled = false,
-                                    IsMoved = false,
-                                }
-                            };
+                                IsAvailable = true,
+                                Capacity = 0,
+                                FromIsRestricted = false,
+                                UntilIsRestricted = false,
+                                UntilTimeSpan = null,
+                                IsCanceled = false,
+                                IsMoved = false,
+                            }
+                        };
 
-                            Db.ActivityDates.Add(ohDate);
-                        }
+                        Db.ActivityDates.Add(ohDate);
+                    }
 
 
-                        // die subscription suchen
-                        var ohSubDate = officeHour.Dates.FirstOrDefault(x =>
-                            x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(candUser.Id)));
+                    // die subscription suchen
+                    var ohSubDate = officeHour.Dates.FirstOrDefault(x =>
+                        x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(candUser.Id)));
 
-                        if (ohSubDate == null)
+                    if (ohSubDate == null)
+                    {
+                        var ohSubscription = new OccurrenceSubscription
                         {
-                            var ohSubscription = new OccurrenceSubscription
-                            {
-                                Occurrence = ohDate.Occurrence,
-                                OnWaitingList = false,
-                                UserId = candUser.Id,
-                                TimeStamp = DateTime.Now
-                            };
+                            Occurrence = ohDate.Occurrence,
+                            OnWaitingList = false,
+                            UserId = candUser.Id,
+                            TimeStamp = DateTime.Now
+                        };
 
-                            Db.Subscriptions.Add(ohSubscription);
+                        Db.Subscriptions.Add(ohSubscription);
 
-                        }
-                        else
-                        {
-                            var msg = $"Benutzer {email} hat schon einen Termin am {ohSubDate.Begin}";
-                            errors.Add(msg);
-                            continue;
-                        }
+                    }
+                    else
+                    {
+                        var msg = $"Benutzer {email} hat schon einen Termin am {ohSubDate.Begin}";
+                        errors.Add(msg);
+                        continue;
                     }
                 }
-
-                i++;
             }
 
             if (errors.Any())
@@ -944,6 +945,96 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return oh;
+        }
+
+        public ActionResult ChangeAssessment(Guid candId, Guid asId)
+        {
+            var candidature = Db.Candidatures.SingleOrDefault(x => x.Id == candId);
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == asId);
+
+
+            candidature.Assessment = assessment;
+            Db.SaveChanges();
+
+
+            return RedirectToAction("CandidateDetails", new {id = candidature.Id});
+        }
+
+
+
+        public ActionResult CreateStage(Guid id)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var model = new AssessmentStageCreateModel
+            {
+                AssessmentId = assessment.Id,
+                Name = "Neue Stufe",
+                Description = "",
+                Start = DateTime.Now.ToString(),
+                End = DateTime.Now.ToString(),
+                Publish = DateTime.Now.ToString(),
+                IsAvailable = false
+            };
+
+            return View(model);
+
+        }
+
+        [HttpPost]
+        public ActionResult CreateStage(AssessmentStageCreateModel model)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == model.AssessmentId);
+
+            var stage = new AssessmentStage();
+
+            stage.Assessment = assessment;
+            stage.Name = model.Name;
+            stage.Description = model.Description;
+            stage.OpeningDateTime = DateTime.Parse(model.Start);
+            stage.ClosingDateTime = DateTime.Parse(model.End);
+            stage.ReportingDateTime = DateTime.Parse(model.Publish);
+            stage.IsAvailable = model.IsAvailable;
+
+            Db.AssessmentStages.Add(stage);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new { id = model.AssessmentId });
+        }
+
+        public ActionResult DeleteStage(Guid id)
+        {
+            var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == id);
+
+            var assessment = stage.Assessment;
+
+            // die Stufe muss leer sein
+            if (assessment.Candidatures.Any(x => x.Stages.Any(y => y.AssessmentStage.Id == id)))
+            {
+                return RedirectToAction("Details", new { id = assessment.Id });
+            }
+
+            // kann gelöscht werden
+            Db.AssessmentStages.Remove(stage);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new { id = assessment.Id });
+
+        }
+
+        public ActionResult Export(Guid id)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var model = new AssessmentStageCreateModel
+            {
+                AssessmentId = assessment.Id,
+                Name = assessment.Name,
+            };
+
+            return View(model);
         }
     }
 }

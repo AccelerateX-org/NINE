@@ -33,6 +33,8 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         protected readonly SemesterService SemesterService;
 
+        protected readonly MemberService MemberService;
+
         /// <summary>
         /// 
         /// </summary>
@@ -74,6 +76,7 @@ namespace MyStik.TimeTable.Web.Controllers
             SemesterService = new SemesterService(Db);
             DeleteService = new CascadingDeleteService(Db);
             StudentService = new StudentService(Db);
+            MemberService = new MemberService(Db);
         }
 
         /// <summary>
@@ -230,11 +233,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
                     // member ist Modulverantwortlicher
-                    var module = Db.CurriculumModules.Where(x =>
+                    var modules = Db.CurriculumModules.Where(x =>
                         x.MV.Id == member.Id && 
-                        x.ModuleCourses.Any(c => c.Nexus.Any(n => n.Course.Id == activity.Id)));
+                        x.ModuleCourses.Any(c => c.Nexus.Any(n => n.Course.Id == activity.Id))).ToList();
 
-                    if (module != null)
+                    if (modules.Any())
                     {
                         userRight.IsHost = true;
                     }
@@ -293,107 +296,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return userRight;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="orgName"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        protected bool HasUserRole(string userName, string orgName, string roleName)
-        {
-            return new MemberService(Db, UserManager).HasRole(userName, orgName, roleName);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="orgName"></param>
-        /// <returns></returns>
-        protected OrganiserMember GetMember(string userName, string orgName)
-        {
-            return new MemberService(Db, UserManager).GetMember(userName, orgName);
-        }
 
-        /// <summary>
+ /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         protected ActivityOrganiser GetMyOrganisation()
         {
-            if (User.IsInRole("SysAdmin") && Session["OrgAdminId"] != null)
-            {
-                var orgId = (Guid)Session["OrgAdminId"];
-
-                return Db.Organisers.SingleOrDefault(x => x.Id == orgId);
-            }
-
-            return new MemberService(Db, UserManager).GetOrganisation(User.Identity.Name);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        protected OrganiserMember GetMyMembership()
-        {
-            return new MemberService(Db, UserManager).GetMember(User.Identity.Name);
+            var user = GetCurrentUser();
+            return MemberService.GetOrganisation(user.Id);
         }
 
-        protected ICollection<OrganiserMember> GetMyMemberships()
-        {
-            return new MemberService(Db, UserManager).GetMemberships(User.Identity.Name);
-        }
+
+         protected OrganiserMember GetMyMembership()
+         {
+             var user = GetCurrentUser();
+             var members = MemberService.GetMemberships(user.Id);
+             return members.FirstOrDefault();
+         }
+
 
         protected ICollection<Alumnus> GetMyAlumni()
         {
             return new List<Alumnus>();
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="orgName"></param>
-        /// <returns></returns>
-        protected bool IsUserAdminOf(string orgName)
-        {
-            return new MemberService(Db, UserManager).IsUserAdminOf(User.Identity.Name, orgName);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="orgName"></param>
-        /// <returns></returns>
-        protected bool IsUserMemberOf(string orgName)
-        {
-            return new MemberService(Db, UserManager).IsUserMemberOf(User.Identity.Name, orgName);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        protected bool IsOrgAdmin()
-        {
-            return new MemberService(Db, UserManager).IsUserOrgAdmin(User.Identity.Name) || User.IsInRole("SysAdmin");
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
-        protected bool IsOrgAdmin(Guid orgId)
-        {
-            return new MemberService(Db, UserManager).IsUserOrgAdmin(User.Identity.Name, orgId) || User.IsInRole("SysAdmin");
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
-        protected bool IsRoomAdmin(Guid orgId)
-        {
-            return new MemberService(Db, UserManager).IsUserRoomAdmin(User.Identity.Name, orgId) || User.IsInRole("SysAdmin");
-        }
 
         /// <summary>
         /// 
@@ -458,6 +385,16 @@ namespace MyStik.TimeTable.Web.Controllers
         protected ApplicationUser GetUser(string userId)
         {
             return UserManager.FindById(userId);
+        }
+
+        protected Student GetCurrentStudent(string userId)
+        {
+            return StudentService.GetCurrentStudent(userId);
+        }
+
+        protected Semester GetLatestSemester(ActivityOrganiser org)
+        {
+            return SemesterService.GetLatestSemester(org);
         }
 
         /// <summary>

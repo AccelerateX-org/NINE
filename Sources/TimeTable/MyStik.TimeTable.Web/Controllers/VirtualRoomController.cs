@@ -79,6 +79,12 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var room = Db.VirtualRooms.SingleOrDefault(x => x.Id == id);
 
+            foreach (var roomAccess in room.Accesses.ToList())
+            {
+                Db.VirtualRoomAccesses.Remove(roomAccess);
+            }
+
+
             Db.VirtualRooms.Remove(room);
             Db.SaveChanges();
             

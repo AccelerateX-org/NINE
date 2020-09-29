@@ -24,23 +24,53 @@ namespace MyStik.TimeTable.Web.Controllers
         [AllowAnonymous]
         public ActionResult Index()
         {
-            if (Request.IsAuthenticated)
-                return RedirectToAction("Index", "Dashboard");
+            if (!Request.IsAuthenticated)
+                return View();
 
+
+            // Verteiler nach Rolle
+            var user = GetCurrentUser();
+            var student = GetCurrentStudent(user.Id);
+            var members = MemberService.GetFacultyMemberships(user.Id);
+
+            // Prio 1; Member
+            if (members.Any())
+            {
+                var adminMembers = members.Where(x =>
+                    x.IsAdmin || x.IsAlumniAdmin || x.IsCourseAdmin || x.IsCurriculumAdmin || x.IsEventAdmin ||
+                    x.IsExamAdmin || x.IsMemberAdmin || x.IsNewsAdmin || x.IsRoomAdmin || x.IsSemesterAdmin ||
+                    x.IsStudentAdmin).ToList();
+                if (adminMembers.Any())
+                {
+                    // mit Admin-Rechten
+                    return RedirectToAction("Index", "Administration");
+                }
+                else
+                {
+                    // ohne
+                    return RedirectToAction("Index", "Teaching");
+                }
+
+
+            }
+
+            // Prio 2; Student
+            if (student != null)
+            {
+                return RedirectToAction("Index", "Studies");
+
+            }
+
+            // Prio 3: Studiengangbewerber
+            var cand = Db.Candidatures.Where(x => x.UserId.Equals(user.Id)).ToList();
+
+            if (cand.Any())
+            {
+                return RedirectToAction("Index", "Studies");
+            }
+
+            // Prio 4: noch nichts
             return View("FirstVisit");
-
-            /*
-            var model = new HomeViewModel();
-
-            var userDb = new ApplicationDbContext();
-
-            model.Students = userDb.Users.Count(x => x.MemberState == MemberState.Student);
-            model.Lecturers = userDb.Users.Count(x => x.MemberState == MemberState.Staff);
-            model.Curricula = Db.Curricula.Count();
-            model.Rooms = Db.Rooms.Count();
-
-            return View("Landing", model);
-            */
         }
 
 

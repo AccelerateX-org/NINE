@@ -1562,6 +1562,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDto.Groups">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.ZpaCourseDateDto">
             <summary>
             
@@ -1618,6 +1623,16 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaLecturerDto.ShortName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.ZpaGroupDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.ZpaGroupDto.Name">
             <summary>
             
             </summary>
@@ -6389,6 +6404,11 @@
             <param name="ReturnUrl"></param>
             <returns></returns>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Controllers.StudiesController">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.SubscriptionController">
             <summary>
             
@@ -6435,7 +6455,15 @@
         <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Announced">
             <summary>
             Angekündigt
-            Alle Arbeiten, bei das Prüfungsamt noch nicht draufgesehen hat
+            Alle Arbeiten, bei denen das Prüfungsamt noch nicht draufgesehen hat
+            oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ThesisAdminController.Approved">
+            <summary>
+            Angekündigt
+            Alle Arbeiten, bei denen das Prüfungsamt noch nicht draufgesehen hat
             oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
             </summary>
             <returns></returns>
@@ -6819,67 +6847,10 @@
             <param name="isHost"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.HasUserRole(System.String,System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgName"></param>
-            <param name="roleName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.GetMember(System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgName"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.GetMyOrganisation">
             <summary>
             
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.GetMyMembership">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.IsUserAdminOf(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="orgName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.IsUserMemberOf(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="orgName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.IsOrgAdmin">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.IsOrgAdmin(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="orgId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.IsRoomAdmin(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="orgId"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.BaseController.SetTimeSelections">
@@ -9203,13 +9174,13 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.Create(System.Nullable{System.Guid})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.Create(System.Guid,System.Guid)">
             <summary>
             
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateOpenSystem(System.Nullable{System.Guid})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateOpenSystem(System.Guid,System.Guid)">
             <summary>
             
             </summary>
@@ -9222,7 +9193,7 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateSlotSystem(System.Nullable{System.Guid})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateSlotSystem(System.Guid,System.Guid)">
             <summary>
             
             </summary>
@@ -9235,7 +9206,7 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateByAgreement(System.Nullable{System.Guid})">
+        <member name="M:MyStik.TimeTable.Web.Controllers.OfficeHourController.CreateByAgreement(System.Guid,System.Guid)">
             <summary>
             
             </summary>
@@ -10951,6 +10922,18 @@
             <summary>
             
             </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Hubs.MaterialExportHub">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Hubs.MaterialExportHub.DeleteMaterial(System.Guid)">
+            <summary>
+            Löscht alle Kurse aus dem angegebenen Semester, die aus gpUntis importiert wurden
+            </summary>
+            <param name="semId"></param>
+            <param name="orgId"></param>
         </member>
         <member name="T:MyStik.TimeTable.Web.Hubs.GpUntisHub">
             <summary>
@@ -21467,6 +21450,17 @@
               Looks up a localized string similar to WPM-Wahl.
             </summary>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Services.ActivityDateService.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Services.ActivityDateService.#ctor(MyStik.TimeTable.Data.TimeTableDbContext)">
+            <summary>
+            
+            </summary>
+            <param name="db"></param>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Services.ActivityService">
             <summary>
             
@@ -21777,126 +21771,27 @@
             
             </summary>
         </member>
-        <member name="F:MyStik.TimeTable.Web.Services.MemberService.UserManager">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="F:MyStik.TimeTable.Web.Services.MemberService.db">
             <summary>
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.#ctor(MyStik.TimeTable.Data.TimeTableDbContext,MyStik.TimeTable.Web.IdentifyConfig.ApplicationUserManager)">
+        <member name="M:MyStik.TimeTable.Web.Services.MemberService.#ctor(MyStik.TimeTable.Data.TimeTableDbContext)">
             <summary>
             
             </summary>
             <param name="db"></param>
             <param name="userManager"></param>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsUserMemberOf(System.String,System.String)">
+        <member name="M:MyStik.TimeTable.Web.Services.MemberService.GetMember(System.String,System.Guid)">
             <summary>
             
             </summary>
             <param name="userName"></param>
             <param name="orgName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsUserOrgAdmin(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsUserOrgAdmin(System.String,System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsUserRoomAdmin(System.String,System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsUserAdminOf(System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.HasRole(System.String,System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgName"></param>
-            <param name="role"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.GetMember(System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <param name="orgName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.GetMember(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.GetOrganisationName(MyStik.TimeTable.Data.Semester,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="semester"></param>
-            <param name="userName"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Services.MemberService.GetOrganisation(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsOrgMember(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsStudent(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="userName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.IsLecturer(System.String,MyStik.TimeTable.Data.Semester)">
-            <summary>
-            Überprüft, ob der Benutzer im angegebenen Semester Dozent ist
-            d.h. es gibt mindestens eine LV mit mindestens einem Termin,
-            bei der der User als Host eingetragen ist
-            </summary>
-            <param name="userId">Id des Benutzers</param>
-            <param name="semester">Semester</param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Services.MemberService.GetMemberships(System.String)">
             <summary>
             
             </summary>
@@ -22342,7 +22237,7 @@
         </member>
         <member name="M:MyStik.TimeTable.Web.Services.StudentService.GetCurrentStudent(System.String)">
             <summary>
-            
+            Der zuletzt angelegte Studiengang
             </summary>
             <param name="userId"></param>
             <returns></returns>

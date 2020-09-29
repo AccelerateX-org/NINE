@@ -293,6 +293,7 @@ namespace MyStik.TimeTable.Web.Api.Services
             zpaCourse.ShortName = c.ShortName;
             zpaCourse.Description = c.Description;
             zpaCourse.Dates = new List<ZpaCourseDateDto>();
+            zpaCourse.Groups = new List<ZpaGroupDto>();
 
             foreach (var date in c.Dates)
             {
@@ -328,8 +329,14 @@ namespace MyStik.TimeTable.Web.Api.Services
                 zpaCourse.Dates.Add(zpaDate);
             }
 
+            foreach (var semesterGroup in c.SemesterGroups)
+            {
+                var zpaGroup = new ZpaGroupDto();
 
+                zpaGroup.Name = semesterGroup.FullName;
 
+                zpaCourse.Groups.Add(zpaGroup);
+            }
 
 
             return zpaCourse;

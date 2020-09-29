@@ -52,7 +52,7 @@
                                 }
                             </td>
                             <td>
-                                @foreach (var stage in assessment.Stages)
+                                @foreach (var stage in assessment.Stages.OrderBy(x => x.OpeningDateTime))
                                 {
                                     <div>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</div>
                                 }

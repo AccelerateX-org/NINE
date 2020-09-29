@@ -67,20 +67,32 @@
                     </div>
 
                     <article class="galerie">
-
-                        @foreach (var m in stage.Material)
+                        @if (stage.Material != null)
                         {
 
-                            <a href="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" title="@m.Storage.Name  - @m.Storage.Description">
-                                <li>
-                                    <figure>
-                                        <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" alt="">
-                                        <figcaption>@m.Storage.Name - @m.Storage.Description</figcaption>
-                                    </figure>
-                                </li>
-                            </a>
+                            foreach (var m in stage.Material)
+                            {
+                                if (m.Storage != null)
+                                {
+                                    <a href="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" title="@m.Storage.Name  - @m.Storage.Description">
+                                        <li>
+                                            <figure>
+                                                <img src="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" alt="">
+                                                <figcaption>@m.Storage.Name - @m.Storage.Description</figcaption>
+                                            </figure>
+                                        </li>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div>Bild fehlt</div>
+                                }
+                            }
                         }
-
+                        else
+                        {
+                            <div>Kein Material vorhanden</div>
+                        }
                     </article>
 
 

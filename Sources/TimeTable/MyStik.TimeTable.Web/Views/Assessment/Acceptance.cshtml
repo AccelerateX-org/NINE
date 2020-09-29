@@ -30,6 +30,21 @@
                 });
             }).draw();
 
+
+
+            var t2 = $('#tabRejected').DataTable(
+                {
+                    "paging": false,
+                    "order": [[1, 'asc']]
+                }
+            );
+
+            t2.on('order.dt search.dt', function () {
+                t2.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
         });
 
     </script>
@@ -52,7 +67,7 @@
             </ul>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <h4 class="card-title">Bisher zugelassen</h4>
                         <table id="tabCandidates" class="table">
                             <thead>
@@ -68,71 +83,73 @@
                                 @foreach (var candidate in Model.Candidates.Where(x => x.Candidature.IsAccepted == true))
                                 {
                                     <tr>
-                                    <td></td>
-                                    @if (candidate.User != null)
-                                    {
-                                        <td><a href="@Url.Action("Candidate", new {id=candidate.Candidature.Id})" target="_blank">@candidate.User.LastName</a></td>
-                                        <td>@candidate.User.FirstName</td>
-                                        <td>@candidate.User.Email</td>
-                                    }
-                                    else
-                                    {
-                                        <td>kein Benutzerkonto</td>
                                         <td></td>
-                                        <td></td>
-                                    }
-                                    @if (candidate.Date != null)
-                                    {
-                                        <td>@Html.TimeSpanWithDate(candidate.Date)</td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                </tr>
+                                        @if (candidate.User != null)
+                                        {
+                                            <td><a href="@Url.Action("Candidate", new {id=candidate.Candidature.Id})" target="_blank">@candidate.User.LastName</a></td>
+                                            <td>@candidate.User.FirstName</td>
+                                            <td>@candidate.User.Email</td>
+                                        }
+                                        else
+                                        {
+                                            <td>kein Benutzerkonto</td>
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                        @if (candidate.Date != null)
+                                        {
+                                            <td>@Html.TimeSpanWithDate(candidate.Date)</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
                                 }
                             </tbody>
                         </table>
 
                     </div>
-                    <div class="col-md-6">
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <h4 class="card-title">Bisher nicht bearbeitet</h4>
                         <table id="tabRejected" class="table">
                             <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Vorname</th>
-                                <th>E-Mail</th>
-                            </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Vorname</th>
+                                    <th>E-Mail</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            @foreach (var candidate in Model.Candidates.Where(x => x.Candidature.IsAccepted != true))
-                            {
-                                <tr>
-                                    <td></td>
-                                    @if (candidate.User != null)
-                                    {
-                                        <td><a href="@Url.Action("Candidate", new {id=candidate.Candidature.Id})" target="_blank">@candidate.User.LastName</a></td>
-                                        <td>@candidate.User.FirstName</td>
-                                        <td>@candidate.User.Email</td>
-                                    }
-                                    else
-                                    {
-                                        <td>kein Benutzerkonto</td>
+                                @foreach (var candidate in Model.Candidates.Where(x => x.Candidature.IsAccepted != true))
+                                {
+                                    <tr>
                                         <td></td>
-                                        <td></td>
-                                    }
-                                    @if (candidate.Date != null)
-                                    {
-                                        <td>@Html.TimeSpanWithDate(candidate.Date)</td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                </tr>
-                            }
+                                        @if (candidate.User != null)
+                                        {
+                                            <td><a href="@Url.Action("Candidate", new {id=candidate.Candidature.Id})" target="_blank">@candidate.User.LastName</a></td>
+                                            <td>@candidate.User.FirstName</td>
+                                            <td>@candidate.User.Email</td>
+                                        }
+                                        else
+                                        {
+                                            <td>kein Benutzerkonto</td>
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                        @if (candidate.Date != null)
+                                        {
+                                            <td>@Html.TimeSpanWithDate(candidate.Date)</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
                             </tbody>
                         </table>
 

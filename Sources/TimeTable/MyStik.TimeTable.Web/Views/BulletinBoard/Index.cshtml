@@ -1,0 +1,126 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Controllers.EventSummaryModel
+
+@{
+    ViewBag.Title = "Tagesprogramm";
+}
+
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabDates').DataTable(
+                {
+                    "paging": false,
+                    "columnDefs": [
+                    {
+                        "type": "de_time",
+                        "targets": [0, 1]
+                    }],
+                    "order": [[0, 'asc']]
+                }
+            );
+        });
+
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    
+                    <div class="card-header">
+                        <h4>Was läuft gerade (@Model.Now.ToShortDateString() - @Model.Now.ToShortTimeString())?</h4>
+                    </div>
+                    <ul class="nav bg-light text-dark">
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("Today", "Activity")"><i class="fas fa-film fa-fw"></i><br />Tagesprogramm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("DailyRota", "Activity")"><i class="fas fa-store fa-fw"></i><br />Raumbelegung</a>
+                        </li>
+                    </ul>
+                    <table id="tabDates" class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>Seit</th>
+                            <th>Bis</th>
+                            <th>Raum</th>
+                            <th>Veranstaltung</th>
+                            <th>Lehrende</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var date in Model.Dates)
+                        {
+                            <tr>
+                                <td>@date.Begin.ToShortTimeString()</td>
+                                <td>@date.End.ToShortTimeString()</td>
+                                <td>@Html.RoomList(date.Rooms, true, false, false)</td>
+                                <td>@date.Activity.Name (@date.Activity.ShortName)</td>
+                                <td>@Html.LecturerList(date.Hosts, true, false)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Aktuelle Aushänge</h4>
+                    </div>
+                    <ul class="nav bg-light text-dark">
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("Overview", "Advertisements")"><i class="fas fa-list fa-fw"></i><br />Alle</a>
+                        </li>
+                    </ul>
+
+                    <div class="list-group">
+                        @foreach (var ad in Model.Advertisements)
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <a class="mb-1" href="@Url.Action("Details", "Advertisements", new {id = ad.Id})"><strong>@ad.Title</strong></a>
+                                    <small>
+                                        @ad.Created.ToShortDateString() - @ad.Created.ToShortTimeString()
+                                    </small>
+                                </div>
+                                <p class="mb-1">@Html.Raw(ad.Description)</p>
+                                <small>Eingestellt von <a href="">@ad.Owner.FullName</a></small>
+                                @if (ad.Attachment != null)
+                                {
+                                    <small>
+                                        Anhang:
+                                        <a href="@Url.Action("ShowFile", "Advertisements", new {id = ad.Attachment.Id})" target="_blank">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    </small>
+                                }
+                            </div>
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

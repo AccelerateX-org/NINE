@@ -14,42 +14,20 @@
     <link rel="stylesheet" href="@Url.Content("~/Assets/libs/fontawesome/css/all.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/Assets/areas/admin/styles.css")" />
     @RenderSection("styles", required: false)
-    <link rel="shortcut icon" type="image/svg" href="@Url.Content("~/Assets/fillter/img/logo_nine.svg")" />
+    <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/fillter/img/favicon.ico")" />
 </head>
 <body>
     @{
         var userService = new UserInfoService();
         var user = userService.GetUser(User.Identity.GetUserId());
-
     }
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-        @if (Request.IsAuthenticated)
-        {
-            if (Request.IsLocal)
-            {
-                <a class="navbar-brand nav-link dropdown-toggle text-center" href="#" id="navbarHomeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-home fa-2x"></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarHomeDropdown">
-                    <a class="dropdown-item" href="@Url.Action("Index", "Home")"><i class="fas fa-th-large fa-fw"></i> bisherige Startseite mit Kacheln</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="@Url.Action("Index", "EventSummary")"><i class="fas fa-clock fa-fw"></i> Was läuft gerade?</a>
-                    <a class="dropdown-item" href="@Url.Action("Index", "NoticeBoard")"><i class="fas fa-chalkboard fa-fw"></i> Schwarzes Brett</a>
-                </div>
-            }
-            else
-            {
-                <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
-                    <i class="fas fa-home fa-2x"></i>
-                </a>
-            }
-        }
-        else
-        {
-            <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
-                <i class="fas fa-home fa-2x"></i>
-            </a>
-        }
+    @*
+    <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
+        <i class="fas fa-home fa-2x"></i>
+    </a>
+        *@
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -57,60 +35,42 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            @if (Request.IsAuthenticated)
+            @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
             {
                 <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Calendar")"><i class="fas fa-calendar fa-fw"></i><br/>Mein Tag</a>
+                    <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br/>Schwarzes Brett</a>
                 </li>
-                if (user.MemberState == MemberState.Student)
-                {
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "Student")"><i class="fas fa-user-graduate fa-fw"></i><br/>Mein Studium</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-center disabled" href="#"><i class="fas fa-user-graduate fa-fw"></i><br/>Mein Studium</a>
-                    </li>
-                }
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br/>Mein Studium</a>
+                </li>
 
-                if (user.MemberState == MemberState.Staff)
-                {
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br/>Meine Lehre</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link text-center disabled" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br/>Meine Lehre</a>
-                    </li>
-                }
-                <li class="nav-item">
-                    <a class="nav-link text-center disabled" href="#"><i class="fas fa-flask fa-fw"></i><br/>Meine Forschung</a>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br/>Meine Lehre</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-center disabled" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-university fa-fw"></i><br/>Meine Hochschule
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#"><i class="fas fa-map fa-fw"></i> Campus / Räume</a>
-                        <a class="dropdown-item" href="#"><i class="fas fa-address-card fa-fw"></i> Personen</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"><i class="fas fa-graduation-cap fa-fw"></i> Studienangebote</a>
-                        <a class="dropdown-item" href="#"><i class="fas fa-book fa-fw"></i> Vorlesungsverzeichnisse</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"><i class="fas fa-envelope fa-fw"></i> Informationskanäle</a>
-                    </div>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br/>Meine Forschung</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br/>Meine Hochschule</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br/>Meine Verwaltung</a>
                 </li>
             }
         </ul>
-        @if (Request.IsAuthenticated)
-        { 
+        @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
+        {
             <form class="form-inline my-2 my-lg-0" role="search" action="@Url.Action("Index", "Search")">
-                <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
-                <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+                @*
+                        <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+                    *@
+                <div class="input-group mb-3">
+                    <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
             </form>
         }
         <ul class="navbar-nav">
@@ -132,7 +92,7 @@
             else
             {
                 <li>
-                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light">Anmelden</a>
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light">@Resources.LoginButton</a>
                 </li>
             }
         </ul>
@@ -175,7 +135,7 @@
 
 
     <script src="@Url.Content("~/Assets/libs/jquery/jquery.min.js")"></script>
-    <script src="@Url.Content("~/Assets/libs/popper/popper.min.js")"></script>
+    <script src="@Url.Content("~/Assets/libs/popper/umd/popper.min.js")"></script>
     <script src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.min.js")"></script>
     @RenderSection("scripts", required: false)
 

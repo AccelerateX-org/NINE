@@ -124,10 +124,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
-            // TODO: aktuelles Semester für org
             var sem = SemesterService.GetSemester(DateTime.Today);
 
-            ViewBag.Semester = sem;
+            var nextSem = SemesterService.GetNextSemester(sem);
+
+
+            ViewBag.SemesterList = new List<Semester>();
+            ViewBag.SemesterList.Add(sem);
+            ViewBag.SemesterList.Add(nextSem);
 
             return View(model);
         }

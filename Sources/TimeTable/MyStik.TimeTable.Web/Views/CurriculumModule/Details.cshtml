@@ -13,9 +13,13 @@
                 <li class="nav-item">
                     <a class="nav-link text-center disabled" href="@Url.Action("Admin", new {id=Model.Id})"><i class="fas fa-cogs fa-fw"></i><br />Verwaltung</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Courses", new {moduleId =Model.Id, semId=ViewBag.Semester.Id})"><i class="fas fa-microphone fa-fw"></i><br />Lehrangebot @ViewBag.Semester.Name</a>
-                </li>
+                
+                @foreach (var sem in ViewBag.SemesterList)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-center" href="@Url.Action("Courses", new {moduleId =Model.Id, semId=sem.Id})"><i class="fas fa-microphone fa-fw"></i><br />Lehrangebot @sem.Name</a>
+                    </li>
+                }
             </ul>
 
             <div class="card-body">

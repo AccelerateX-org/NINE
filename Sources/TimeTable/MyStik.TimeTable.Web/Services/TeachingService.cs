@@ -16,8 +16,13 @@ namespace MyStik.TimeTable.Web.Services
             _db = db;
         }
 
-        public TeachingSemesterSummaryModel GetActivities(Semester semester, ApplicationUser user, OrganiserMember member)
+        public TeachingSemesterSummaryModel GetActivities(Semester semester, ApplicationUser user, ICollection<OrganiserMember> members)
         {
+            var model = new TeachingSemesterSummaryModel
+            {
+                Semester = semester,
+            };
+
             var courseSummaryService = new CourseService(_db);
 
             var courses = 
@@ -27,25 +32,41 @@ namespace MyStik.TimeTable.Web.Services
                          x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(user.Id))))
                 .ToList();
 
-
-            var officeHours = _db.Activities.OfType<OfficeHour>().Where(x =>
-                x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.UserId.Equals(user.Id)))
-                .ToList();
-
-            var modules = _db.CurriculumModules.Where(x => x.MV.Id == member.Id).ToList();
-
-            var model = new TeachingSemesterSummaryModel
-            {
-                Semester = semester,
-                OfficeHours = officeHours,
-            };
-
-
             foreach (var course in courses)
             {
                 var summary = courseSummaryService.GetCourseSummary(course);
                 model.Courses.Add(summary);
             }
+
+
+            var officeHours = _db.Activities.OfType<OfficeHour>().Where(x =>
+                x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.UserId.Equals(user.Id)))
+                .ToList();
+
+
+            foreach (var oh in officeHours)
+            {
+                var ohSummary = new OfficeHourCharacteristicModel()
+                {
+                    OfficeHour = oh
+                };
+
+                ohSummary.Date = oh.Dates.Where(x => x.Begin > DateTime.Now).OrderBy(x => x.Begin).FirstOrDefault();
+
+
+                model.OfficeHours.Add(ohSummary);
+            }
+
+
+
+
+
+            var modules = new List<CurriculumModule>();
+            foreach (var member in members)
+            {
+                modules.AddRange(_db.CurriculumModules.Where(x => x.MV.Id == member.Id).ToList());
+            }
+
 
             foreach (var module in modules)
             {

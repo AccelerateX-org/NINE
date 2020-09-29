@@ -1,0 +1,61 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+
+@{
+    ViewBag.Title = "Meine Hochschule";
+}
+
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Dictionary")" class="btn btn-outline-secondary btn-block">
+                <h5><i class="fas fa-2x fa-pen"></i></h5>
+                <h6>Vorlesungsverzeichnisse</h6>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Curricula")" class="btn btn-outline-secondary btn-block">
+                <h5><i class="fas fa-2x fa-award"></i></h5>
+                <h6>Studiengänge</h6>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Rooms")" class="btn btn-outline-secondary btn-block">
+                <h5><i class="fas fa-2x fa-building"></i></h5>
+                <h6>Räume</h6>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Lecturer")" class="btn btn-outline-secondary btn-block">
+                <h5><i class="fas fa-2x fa-chalkboard-teacher"></i></h5>
+                <h6>Lehrende</h6>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Newsletter")" class="btn btn-outline-secondary btn-block">
+                <h5><i class="fas fa-2x fa-newspaper"></i></h5>
+                <h6>Newsletter</h6>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card text-center">
+            <a href="" class="btn btn-outline-secondary btn-block">
+                <h5><i class="fas fa-2x fa-palette"></i></h5>
+                <h6>Fakultäten</h6>
+            </a>
+        </div>
+    </div>
+</div>

@@ -27,9 +27,18 @@
                             <div class="col-md-4">
                                 <div>Abauf</div>
                                 <ul>
-                                    @foreach (var stage in assessment.Stages)
+                                    @foreach (var stage in assessment.Stages.OrderBy(x => x.OpeningDateTime))
                                     {
-                                        <li>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</li>
+                                        var isFuture = stage.OpeningDateTime > DateTime.Now;
+
+                                        if (isFuture)
+                                        {
+                                            <li>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value)</li>
+                                        }
+                                        else
+                                        {
+                                            <li>@Html.TimeSpanWithDate(stage.OpeningDateTime.Value, stage.ClosingDateTime.Value): @stage.Name</li>
+                                        }
                                     }
                                 </ul>
                             </div>

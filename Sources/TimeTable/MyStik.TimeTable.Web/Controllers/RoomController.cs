@@ -412,9 +412,10 @@ namespace MyStik.TimeTable.Web.Controllers
             DateTime end = date.AddHours(to.Hours).AddMinutes(to.Minutes);
 
             var org = GetMyOrganisation();
+            var member = MemberService.GetMember(org.Id);
+            var isOrgAdmin = member?.IsAdmin ?? false;
 
-
-            var rooms = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(org.Id, IsOrgAdmin(), start, end);
+            var rooms = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(org.Id, isOrgAdmin, start, end);
 
             var model = new List<FreeRoomModel>();
 

@@ -4,163 +4,172 @@
     ViewBag.Title = Resources.MenuDashboard;
 }
 
-    <div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center bg-light">
-                <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark btn-block disabled">
-                    <h5><i class="fa fa-2x fa-calendar"></i></h5>
-                    <h6>"Mein Kalender" ist jetzt "Mein Tag"</h6>
-                </a>
-                <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Heute</a>
-                    <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Morgen</a>
-                </div>
+<div class="row" style="margin-bottom: 20px">
+    <div class="col-lg-12">
+
+        <div class="alert alert-info">
+            Voransicht: eine <a href="@Url.Action("Index", "EventSummary")"> alternative Startseite</a> mit Tagesprogramm und schwarzem Brett.
+        </div>
+    </div>
+</div>
+
+<div class="row  justify-content-md-center">
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center bg-light">
+            <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark btn-block disabled">
+                <h5><i class="fa fa-2x fa-calendar"></i></h5>
+                <h6>"Mein Kalender" ist jetzt "Mein Tag"</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Heute</a>
+                <a href="@Url.Action("Index", "Calendar")" class="btn btn-outline-dark disabled">Morgen</a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="@Url.Action("Semester", "Planer")" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-map"></i></h5>
+                <h6>Mein Stundenplan</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
+                <a href="@Url.Action("Courses", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-user-md"></i></h5>
+                <h6>Meine Sprechstunden</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                <a href="" class="btn btn-outline-dark disabled">...</a>
+                <a href="" class="btn btn-outline-dark disabled">...</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        @if (Model.Student != null)
+        {
             <div class="card text-center">
-                <a href="@Url.Action("Semester", "Planer")" class="btn btn-outline-dark btn-block">
-                    <h5><i class="fa fa-2x fa-map"></i></h5>
-                    <h6>Mein Stundenplan</h6>
+                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-graduation-cap"></i></h5>
+                    <h6>Mein Studium (@Model.Student.Curriculum.ShortName)</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="@Url.Action("Courses", "Planer", new {id=Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
-                    <a href="@Url.Action("Courses", "Planer", new {id=Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
+                    <a href="@Url.Action("Index", "Internship")" class="btn btn-outline-dark">Praxissemester</a>
+                    <a href="@Url.Action("Index", "Thesis")" class="btn btn-outline-dark">Abschlussarbeit</a>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center">
-                <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-outline-dark btn-block">
-                    <h5><i class="fa fa-2x fa-user-md"></i></h5>
-                    <h6>Meine Sprechstunden</h6>
+        }
+        else
+        {
+            <div class="panel panel-danger text-center">
+                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-danger btn-block">
+                    <h5><i class="fa fa-2x fa-graduation-cap"></i></h5>
+                    <h6>Studiengang wählen</h6>
                 </a>
                 <div class="btn-group btn-group-justified">
-                    <a href="" class="btn btn-outline-dark disabled">...</a>
-                    <a href="" class="btn btn-outline-dark disabled">...</a>
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
                 </div>
             </div>
+        }
+    </div>
+
+</div>
+<div class="row justify-content-md-center" style="margin-bottom: 20px">
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            <a href="@Url.Action("Index", "Dictionary")" class="btn btn-outline-dark btn-block">
+                <h5><i class="fa fa-2x fa-book"></i></h5>
+                <h6>Vorlesungsverzeichnis</h6>
+            </a>
+            <div class="btn-group btn-group-justified">
+                @if (Model.Organiser != null)
+                {
+                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
+                    <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
+                }
+                else
+                {
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
+                    <a href="#" class="btn btn-outline-dark disabled">...</a>
+                }
+            </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            @if (Model.Student != null)
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            @if (Model.Organiser != null)
             {
-                <div class="card text-center">
-                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-graduation-cap"></i></h5>
-                        <h6>Mein Studium (@Model.Student.Curriculum.ShortName)</h6>
-                    </a>
-                    <div class="btn-group btn-group-justified">
-                        <a href="@Url.Action("Index", "Internship")" class="btn btn-outline-dark">Praxissemester</a>
-                        <a href="@Url.Action("Index", "Thesis")" class="btn btn-outline-dark">Abschlussarbeit</a>
-                    </div>
-                </div>
+
+                <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-university"></i></h5>
+                    <h6>Räume</h6>
+                </a>
             }
             else
             {
-                <div class="panel panel-danger text-center">
-                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-danger btn-block">
-                        <h5><i class="fa fa-2x fa-graduation-cap"></i></h5>
-                        <h6>Studiengang wählen</h6>
-                    </a>
-                    <div class="btn-group btn-group-justified">
-                        <a href="#" class="btn btn-outline-dark disabled">...</a>
-                        <a href="#" class="btn btn-outline-dark disabled">...</a>
-                    </div>
-                </div>
-            }
-        </div>
-
-    </div>
-    <div class="row justify-content-md-center" style="margin-bottom: 20px">
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center">
-                <a href="@Url.Action("Index", "Dictionary")" class="btn btn-outline-dark btn-block">
-                    <h5><i class="fa fa-2x fa-book"></i></h5>
-                    <h6>Vorlesungsverzeichnis</h6>
+                <a href="@Url.Action("Index", "Rooms")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-university"></i></h5>
+                    <h6>Räume</h6>
                 </a>
-                <div class="btn-group btn-group-justified">
-                    @if (Model.Organiser != null)
-                    {
-                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.Semester.Id})" class="btn btn-outline-dark">@Model.Semester.Name</a>
-                        <a href="@Url.Action("Organiser", "Dictionary", new {orgId = Model.Organiser.Id, semId = Model.NextSemester.Id})" class="btn btn-outline-dark">@Model.NextSemester.Name</a>
-                    }
-                    else
-                    {
-                        <a href="#" class="btn btn-outline-dark disabled">...</a>
-                        <a href="#" class="btn btn-outline-dark disabled">...</a>
-                    }
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center">
-                @if (Model.Organiser != null)
-                {
 
-                    <a href="@Url.Action("Organiser", "Rooms", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-university"></i></h5>
-                        <h6>Räume</h6>
-                    </a>
-                }
-                else
-                {
-                    <a href="@Url.Action("Index", "Rooms")" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-university"></i></h5>
-                        <h6>Räume</h6>
-                    </a>
-
-                }
-                <div class="btn-group btn-group-justified">
-                    <a href=#" class="btn btn-outline-dark disabled">...</a>
-                    <a href="@Url.Action("Search", "Room")" class="btn btn-outline-dark disabled">Raumsuche</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center">
-                @if (Model.Organiser != null)
-                {
-                    <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-chalkboard-teacher"></i></h5>
-                        <h6>Lehrende (@Model.Organiser.ShortName)</h6>
-                    </a>
-                }
-                else
-                {
-                    <a href="@Url.Action("Index", "Lecturer")" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-address-card-o"></i></h5>
-                        <h6>Lehrende</h6>
-                    </a>
-                }
-                <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-outline-dark disabled">...</a>
-                    <a href="#" class="btn btn-outline-dark disabled">...</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
-            <div class="card text-center">
-                @if (Model.Organiser != null)
-                {
-                    <a href="@Url.Action("Organiser", "Curricula", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-trophy"></i></h5>
-                        <h6>Studiengänge</h6>
-                    </a>
-                }
-                else
-                {
-                    <a href="@Url.Action("Index", "Curricula")" class="btn btn-outline-dark btn-block">
-                        <h5><i class="fa fa-2x fa-trophy"></i></h5>
-                        <h6>Studiengänge</h6>
-                    </a>
-                }
-                <div class="btn-group btn-group-justified">
-                    <a href="#" class="btn btn-outline-dark disabled">...</a>
-                    <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-outline-dark">SPOs</a>
-                </div>
+            }
+            <div class="btn-group btn-group-justified">
+                <a href=#" class="btn btn-outline-dark disabled">...</a>
+                <a href="@Url.Action("Search", "Room")" class="btn btn-outline-dark disabled">Raumsuche</a>
             </div>
         </div>
     </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            @if (Model.Organiser != null)
+            {
+                <a href="@Url.Action("Organiser", "Lecturer", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-chalkboard-teacher"></i></h5>
+                    <h6>Lehrende (@Model.Organiser.ShortName)</h6>
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Lecturer")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-address-card-o"></i></h5>
+                    <h6>Lehrende</h6>
+                </a>
+            }
+            <div class="btn-group btn-group-justified">
+                <a href="#" class="btn btn-outline-dark disabled">...</a>
+                <a href="#" class="btn btn-outline-dark disabled">...</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="card text-center">
+            @if (Model.Organiser != null)
+            {
+                <a href="@Url.Action("Organiser", "Curricula", new {id = Model.Organiser.Id})" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-trophy"></i></h5>
+                    <h6>Studiengänge</h6>
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Curricula")" class="btn btn-outline-dark btn-block">
+                    <h5><i class="fa fa-2x fa-trophy"></i></h5>
+                    <h6>Studiengänge</h6>
+                </a>
+            }
+            <div class="btn-group btn-group-justified">
+                <a href="#" class="btn btn-outline-dark disabled">...</a>
+                <a href="https://www.hm.edu/studierende/mein_studium/recht/verordnungen_satzungen.de.html" target="_blank" class="btn btn-outline-dark">SPOs</a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row justify-content-md-center">
     <div class="col-sm-6 col-md-3 col-lg-2">
         <div class="card text-center">

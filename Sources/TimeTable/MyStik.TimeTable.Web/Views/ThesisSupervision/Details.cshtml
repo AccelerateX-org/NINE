@@ -88,14 +88,10 @@
                             </div>
                             <div class="media-body">
                                 <h4 class="media-heading">Erfüllung der Voraussetzungen</h4>
-                                @if (Model.ConditionRequest == RequestState.None)
-                                {
-                                    <p>Voraussetzungen wurden nicht geprüft</p>
-                                }
-                                else if (Model.ConditionRequest == RequestState.InProgress)
+                                @if (Model.ConditionRequest == RequestState.InProgress)
                                 {
                                     <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-calendar"></i>Am @Model.Thesis.RequestDate.Value.ToShortDateString() wurde der Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                        <li><i class="fa fa-li fa-calendar"></i>Prüfung der Voraussetzungen durch Selbstauskunft. Keine Überprüfung durch das Prüfungsamt</li>
                                     </ul>
                                 }
                                 else if (Model.ConditionRequest == RequestState.Accepted)
@@ -110,7 +106,7 @@
                                     }
                                     else
                                     {
-                                        <p>Prüfung der Voraussetzungen wurde selbstständig durchgeführt.</p>
+                                        <p>Da ist was schief gegangen</p>
                                     }
 
                                 }

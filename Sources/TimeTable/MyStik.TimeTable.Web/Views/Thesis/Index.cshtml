@@ -313,11 +313,19 @@
                                         <h4 class="media-heading">Arbeit angemeldet</h4>
                                         if (Model.Thesis.DeliveryDate == null)
                                         {
-                                            <ul class="fa-ul">
-                                                <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                                            @if (Model.Thesis.RenewalDate != null)
+                                            {
+                                                <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                                <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                            }
+                                            else
+                                            {
                                                 <li><i class="fa fa-calendar fa-li"></i>Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
                                                 <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
-                                            </ul>
+                                            }
+                                        </ul>
                                             <p>In einigen Fällen wird gefordert, dass zur Abgabe der Abschlussarbeit auch der Notenmeldebogen abgegeben werden soll.</p>
                                             <p>Die Notenmeldung wird mit Angaben zu Thema und PrüferIn(nen) ausgefüllt und an die im Benutzerkonto angegeben E-Mail Adresse versendet.</p>
                                             if (Model.Thesis.Supervisors.Any())

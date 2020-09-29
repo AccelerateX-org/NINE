@@ -25,27 +25,44 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var subscription = JsonConvert.DeserializeObject<PushSubscription>(device.DeviceName);
 
+                /*
+                    https://tools.reactpwa.com/vapid
+                    {
+                      "subject": "mailto:nine@hm.edu",
+                      "publicKey": "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA",
+                      "privateKey": "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c"
+                    }
+                 */
 
-                var publicKey = "BP2HjQtANkxLEBNq37OAth8Q1Oi59ZcWZO_lKbtRorfg_qY30lSlzMxGHYqH_a4S1p449HLOBy1jM2jy-bliq0o";
-                var privateKey = "QJoWkpOGd9H2YFkrU9PeT2jwRM1bU2I4spb3HD2Lgm8";
+
+                var publicKey = "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA";
+                var privateKey = "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c";
 
 
                 PushServiceClient pushClient = new PushServiceClient();
                 pushClient.DefaultAuthentication = new VapidAuthentication(publicKey, privateKey)
                 {
-                    Subject = "https://acceleratex.org"
+                    Subject = "mailto:nine@hm.edu"
                 };
 
 
-                PushMessage notification = new AngularPushNotification
+                var notification = new AngularPushNotification
                 {
                     Title = "news from NINE",
                     Body = $"from nine to fillter",
                     // Icon = "Assets/icon-96x96.png" - so geht es nicht, andere Art des Pfads
-                }.ToPushMessage();
+                    Data = new Dictionary<string, object>(),
+                    Icon = "img.png"
+                };
 
-                
-                pushClient.RequestPushMessageDeliveryAsync(subscription, notification);
+                notification.Data["url"] = "https://nine.hm.edu";
+                notification.Data["room"] = "R 2.089";
+                notification.Data["lecturer"] = "Hinz";
+
+                var pushNMessage = notification.ToPushMessage();
+
+
+                pushClient.RequestPushMessageDeliveryAsync(subscription, pushNMessage);
 
 
 

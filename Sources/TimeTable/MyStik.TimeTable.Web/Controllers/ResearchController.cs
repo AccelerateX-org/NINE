@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
-    public class EventSummaryController : Controller
+    public class ResearchController : Controller
     {
-        // GET: EventSummary
+        // GET: Research
         public ActionResult Index()
         {
             return View();

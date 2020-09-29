@@ -127,4 +127,11 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+    public class CurriculumSummaryModel
+    {
+        public Curriculum Curriculum { get; set; }
+
+        public List<Student> Students { get; set; }
+    }
+
 }

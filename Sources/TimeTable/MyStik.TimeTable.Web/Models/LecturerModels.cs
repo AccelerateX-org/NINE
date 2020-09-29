@@ -264,6 +264,47 @@ namespace MyStik.TimeTable.Web.Models
         public Semester Semester { get; set; }
     }
 
+
+    public class LecturerSummaryModel
+    {
+        public LecturerSummaryModel()
+        {
+            Courses = new List<LecturerCourseSummaryModel>();
+            OfficeHours = new List<LecturerOfficehourSummaryModel>();
+        }
+
+        public ICollection<LecturerCourseSummaryModel> Courses { get; private set; }
+        public ICollection<LecturerOfficehourSummaryModel> OfficeHours { get; private set; }
+
+        public ICollection<OrganiserMember> Memberships { get; set; }
+
+        public ICollection<CurriculumModule> Modules { get; set; }
+    }
+
+    public class LecturerCourseSummaryModel
+    {
+        public Course Course { get; set; }
+
+        public ActivityDate FirstDate { get; set; }
+
+        public ActivityDate LastDate { get; set; }
+
+        public ActivityOwner Owner { get; set; }
+
+        public List<ActivityDate> HostingDates { get; set; }
+    }
+
+    public class LecturerOfficehourSummaryModel
+    {
+        public OfficeHour OfficeHour { get; set; }
+
+        public ActivityDate FirstDate { get; set; }
+
+        public ActivityDate LastDate { get; set; }
+
+        public ActivityOwner Owner { get; set; }
+    }
+
 }
 
 

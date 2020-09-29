@@ -4,6 +4,11 @@
     ViewBag.Title = "Teilnehmde";
     var userInfoService = new UserInfoService();
     var totalByteCount = 0;
+
+    var isAdmin = ViewBag.UserRights.Member.IsAdmin;
+    var isCommittee = isAdmin || (ViewBag.Member != null);
+    var hasChair = isAdmin || (ViewBag.Member != null && ViewBag.Member.HasChair);
+
 }
 
 @section styles
@@ -63,6 +68,10 @@
                     {
                         <th># Arbeiten in @stage.Name</th>
                     }
+                    @if (isAdmin)
+                    {
+                        <th></th>
+                    }
                 </tr>
                 </thead>
                 <tbody>
@@ -101,20 +110,25 @@
 
                             @foreach (var stage in Model.Stages)
                             {
-                                var mStage = candidate.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+                                var myStages = candidate.Stages.Where(x => x.AssessmentStage.Id == stage.Id).ToList();
 
-                                if (mStage != null)
+                                if (myStages.Any())
                                 {
-                                    //var byteCount = mStage.Material.Where(x => x.Storage != null && x.Storage.BinaryData != null).Sum(x => x.Storage.BinaryData.Length) / 1000000;
-                                    //                                totalByteCount += byteCount;
-                                    //var missing = mStage.Material.Count(x => x.Storage == null || x.Storage.BinaryData == null);
-
-                                    <td>@mStage.Material.Count</td>
+                                    <td>
+                                        @foreach (var s in myStages)
+                                        {
+                                            <div>@s.Material.Count</div>
+                                        }
+                                    </td>
                                 }
                                 else
                                 {
                                     <td></td>
                                 }
+                            }
+                            @if (isAdmin)
+                            {
+                                <td><a href="@Url.Action("CandidateDetails", new {id=candidate.Id})" class="btn btn-outline-primary">Verwaltung</a></td>
                             }
                         </tr>
                     }

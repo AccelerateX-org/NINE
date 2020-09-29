@@ -276,6 +276,19 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult DeleteDevice(Guid id)
+        {
+            var _db = new ApplicationDbContext();
+            var device = _db.Devices.SingleOrDefault(x => x.Id == id);
+            if (device != null)
+            {
+                _db.Devices.Remove(device);
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
 
 
         /*

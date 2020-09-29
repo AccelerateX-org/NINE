@@ -43,7 +43,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         /// <summary>
         /// Angekündigt
-        /// Alle Arbeiten, bei das Prüfungsamt noch nicht draufgesehen hat
+        /// Alle Arbeiten, bei denen das Prüfungsamt noch nicht draufgesehen hat
         /// oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
         /// </summary>
         /// <returns></returns>
@@ -61,8 +61,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.RequestAuthority == null) ||       // PA hat das noch nicht gesehen
-                    (x.RequestAuthority != null && x.IsPassed.HasValue && x.IsPassed.Value == false) // Voraussetzungen nicht erfüllt
+                    x.IssueDate == null &&                // noch nicht angemeldet
+                    ((x.RequestAuthority == null) ||       // PA hat das noch nicht gesehen
+                    (x.RequestAuthority != null && x.IsPassed.HasValue && x.IsPassed.Value == false)) // Voraussetzungen nicht erfüllt
             ).ToList();
 
             var model = new List<ThesisStateModel>();
@@ -85,6 +86,56 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+
+        /// <summary>
+        /// Angekündigt
+        /// Alle Arbeiten, bei denen das Prüfungsamt noch nicht draufgesehen hat
+        /// oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Approved()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    x.IssueDate == null &&                // noch nicht angemeldet
+                    (x.RequestAuthority != null && x.IsPassed.HasValue && x.IsPassed.Value == true) // Voraussetzungen sind erfüllt
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
+
+
+
 
 
         public ActionResult Plannend()
@@ -967,7 +1018,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
-            var date = DateTime.Parse(model.NewDateEnd);
+            var date = DateTime.ParseExact(model.NewDateEnd, "dd.MM.yyyy", null);
 
             if (date <= thesis.ExpirationDate.Value)
             {

@@ -1,0 +1,53 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.Candidature
+@{
+    /**/
+
+    ViewBag.Title = "Verwaltung";
+    var userService = new UserInfoService();
+
+    var user = userService.GetUser(Model.UserId);
+}
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-12">
+        <div class="card">
+            <ul class="nav bg-light text-dark">
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Assessment.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
+                </li>
+            </ul>
+            <div class="card-body">
+                <h4 class="card-title">@user.FullName</h4>
+
+                <div class="row">
+                    <div class="col-5">
+                        <h5 class="card-title">Allgemeine Angabeb</h5>
+                        <div class="card-text">
+                            dies und das
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <h5 class="card-title">Umhängen nach</h5>
+                        <ul>
+                            @foreach (var assessment in ViewBag.Assessments)
+                            {
+                                if (assessment.Id == Model.Assessment.Id)
+                                {
+                                    <li>***@assessment.Name</li>
+                                }
+                                else
+                                {
+                                    <li><a href="@Url.Action("ChangeAssessment", new {candId = Model.Id, asId = assessment.Id})">@assessment.Name</a></li>
+                                }
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

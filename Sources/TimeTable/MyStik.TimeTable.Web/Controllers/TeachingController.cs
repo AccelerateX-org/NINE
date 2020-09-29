@@ -13,37 +13,60 @@ namespace MyStik.TimeTable.Web.Controllers
     public class TeachingController : BaseController
     {
         // GET: Teaching
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
+            var members = MemberService.GetFacultyMemberships(user.Id);
+            if (!members.Any())
+                return RedirectToAction("Apply");
 
-            // Die beiden aktuellen Semester holen
-            // Ausgehend von heute ist das nächste aktive, falls es bereits irgendwo Semestergruppen gibt
-            var semesterToday= SemesterService.GetSemester(DateTime.Today);
-            var nextSemester = SemesterService.GetNextSemester(semesterToday);
+            Semester currentSemester = null;
 
-            var isActive = SemesterService.IsActive(nextSemester);
+            if (id == null)
+            {
+                // das aktuelle Semester bestimmen es gilt das neues aller Semester in alle
+                // Fakultäen
+                var semesterToday = SemesterService.GetSemester(DateTime.Today);
+                var mySemester = semesterToday;
+                foreach (var organiserMember in members)
+                {
+                    var latestSemester = SemesterService.GetLatestSemester(organiserMember.Organiser);
 
-            var currentSemester = semesterToday;
+                    if (latestSemester.StartCourses > semesterToday.StartCourses)
+                    {
+                        mySemester = latestSemester;
+                    }
+                }
 
+                // gegencheck: wenn ich noch termine im aktuellen Semester habe, dann nimm das
+                if (mySemester != semesterToday)
+                {
+
+                }
+
+
+                currentSemester = mySemester;
+            }
+            else
+            {
+                currentSemester = SemesterService.GetSemester(id);
+            }
 
             var TeachingService = new TeachingService(Db);
-            var MemberService = new MemberService(Db, UserManager);
             var userService = new UserInfoService();
 
             var model = new TeachingOverviewModel();
 
-            var member = GetMyMembership();
+            model.CurrentSemester = TeachingService.GetActivities(currentSemester, user, members);
+            model.PrevSemester = SemesterService.GetPreviousSemester(currentSemester);
+            model.NextSemester = SemesterService.GetNextSemester(currentSemester);
+            model.Members = members.ToList();
 
-            model.CurrentSemester = TeachingService.GetActivities(currentSemester, user, member);
-            if (isActive)
-            {
-                model.PlaningSemester = TeachingService.GetActivities(nextSemester, user, member);
-            }
+
+            // Abschlussarbeiten
             model.ActiveTheses = new List<ThesisStateModel>();
 
             var theses = TeachingService.GetActiveTheses(user);
-
 
             foreach (var thesis in theses)
             {
@@ -58,11 +81,14 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            model.Members = MemberService.GetMemberships(user);
-
             return View(model);
         }
 
-
+        public ActionResult Apply()
+        {
+            return View();
+        }
     }
 }
+
+

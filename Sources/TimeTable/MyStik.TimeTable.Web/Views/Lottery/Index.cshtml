@@ -5,6 +5,15 @@
     var i = 0;
 }
 
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-study">
         <div class="container-fluid">
@@ -112,15 +121,15 @@
             </div>
         </div>
     </div>
-    
-    
+
+
     <div class="row">
         <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <table class="table table-condensed">
+                            <table class="table table-condensed" id="tabLotteries">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -142,92 +151,92 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var lottery in Model.OrderBy(x => x.Lottery.FirstDrawing).ThenBy(x => x.Lottery.DrawingTime))
-                                {
-                                    i++;
-                                    var nConfirmed = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => !s.OnWaitingList));
-                                    var nWaiting = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => s.OnWaitingList));
-                                    var perc = nConfirmed / (double)lottery.Capacity;
-
-                                    var rowColor = "";
-                                    if (nConfirmed >= lottery.Capacity)
+                                    @foreach (var lottery in Model.OrderBy(x => x.Lottery.FirstDrawing).ThenBy(x => x.Lottery.DrawingTime))
                                     {
-                                        rowColor = "danger";
-                                    }
-                                    else if (nConfirmed > 0.8 * lottery.Capacity && nConfirmed < lottery.Capacity)
-                                    {
-                                        rowColor = "warning";
-                                    }
+                                        i++;
+                                        var nConfirmed = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => !s.OnWaitingList));
+                                        var nWaiting = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => s.OnWaitingList));
+                                        var perc = nConfirmed / (double)lottery.Capacity;
 
-                                    <tr class="@rowColor">
-                                        @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+                                        var rowColor = "";
+                                        if (nConfirmed >= lottery.Capacity)
                                         {
-                                            <td>@i</td>
-                                            if (lottery.Lottery.IsActive)
-                                            {
-                                                <td></td>
-                                            }
-                                            else
-                                            {
-                                                <td><i class="fa fa-ban text-danger"></i></td>
-                                            }
-                                            <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
+                                            rowColor = "danger";
                                         }
-                                        else
+                                        else if (nConfirmed > 0.8 * lottery.Capacity && nConfirmed < lottery.Capacity)
                                         {
-                                            var hasSubscription = lottery.Lottery.Occurrences.Any(x => x.Subscriptions.Any(y => y.UserId.Equals(ViewBag.UserRight.User.Id)));
-                                            if (hasSubscription)
-                                            {
-                                                <td><i class="fa fa-pencil"></i></td>
-                                            }
-                                            else
+                                            rowColor = "warning";
+                                        }
+
+                                        <tr class="@rowColor">
+                                            @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
                                             {
                                                 <td></td>
-                                            }
-                                            if (lottery.Lottery.IsActive)
-                                            {
-                                                <td><i class="fa fa-unlock"></i></td>
+                                                if (lottery.Lottery.IsActive)
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td><i class="fa fa-ban text-danger"></i></td>
+                                                }
                                                 <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
                                             }
                                             else
                                             {
-                                                <td><i class="fa fa-lock"></i></td>
-                                                <td>@lottery.Lottery.Name</td>
+                                                var hasSubscription = lottery.Lottery.Occurrences.Any(x => x.Subscriptions.Any(y => y.UserId.Equals(ViewBag.UserRight.User.Id)));
+                                                if (hasSubscription)
+                                                {
+                                                    <td><i class="fa fa-pencil"></i></td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                if (lottery.Lottery.IsActive)
+                                                {
+                                                    <td><i class="fa fa-unlock"></i></td>
+                                                    <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td><i class="fa fa-lock"></i></td>
+                                                    <td>@lottery.Lottery.Name</td>
+                                                }
                                             }
-                                        }
-                                        <td style="text-align: right">@lottery.Lottery.Occurrences.Count</td>
-                                        <td style="text-align: right">@lottery.Capacity</td>
-                                        <td style="text-align: right">@lottery.TotalSubscriberCount</td>
-                                        <td style="text-align: right">@lottery.TotalSubscriptionCount</td>
-                                        <td style="text-align: right">@nConfirmed</td>
-                                        <td style="text-align: right">@nWaiting</td>
-                                        <td style="text-align: right">@perc.ToString("P")</td>
+                                            <td style="text-align: right">@lottery.Lottery.Occurrences.Count</td>
+                                            <td style="text-align: right">@lottery.Capacity</td>
+                                            <td style="text-align: right">@lottery.TotalSubscriberCount</td>
+                                            <td style="text-align: right">@lottery.TotalSubscriptionCount</td>
+                                            <td style="text-align: right">@nConfirmed</td>
+                                            <td style="text-align: right">@nWaiting</td>
+                                            <td style="text-align: right">@perc.ToString("P")</td>
 
-                                        @if (lottery.Lottery.IsActiveFrom.HasValue)
-                                        {
-                                            <td>@lottery.Lottery.IsActiveFrom.Value.ToShortDateString()</td>
-                                        }
-                                        else
-                                        {
-                                            <td></td>
-                                        }
-                                        @if (!lottery.Lottery.IsFixed)
-                                        {
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>Windhundverfahren</td>
-                                        }
-                                        else
-                                        {
-                                            <td>@lottery.Lottery.IsActiveUntil.Value.ToShortDateString()</td>
-                                            <td>@lottery.Lottery.FirstDrawing.ToShortDateString()</td>
-                                            <td>@lottery.Lottery.LastDrawing.ToShortDateString()</td>
-                                            <td>Platzverlosung</td>
-                                        }
-                                        <td>@lottery.Lottery.Owner.FullName</td>
-                                    </tr>
-                                }
+                                            @if (lottery.Lottery.IsActiveFrom.HasValue)
+                                            {
+                                                <td>@lottery.Lottery.IsActiveFrom.Value.ToShortDateString()</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            @if (!lottery.Lottery.IsFixed)
+                                            {
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>Windhundverfahren</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@lottery.Lottery.IsActiveUntil.Value.ToShortDateString()</td>
+                                                <td>@lottery.Lottery.FirstDrawing.ToShortDateString()</td>
+                                                <td>@lottery.Lottery.LastDrawing.ToShortDateString()</td>
+                                                <td>Platzverlosung</td>
+                                            }
+                                            <td>@lottery.Lottery.Owner.FullName</td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>
@@ -238,11 +247,36 @@
     </div>
 </div>
 
+
 @section scripts
 {
-    <script>
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
 
+    <script>
+        $(document).ready(function() {
+            var t = $('#tabLotteries').DataTable({
+                "paging": false,
+                "columnDefs": [{
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "type": "de_date",
+                        "targets": [10, 11, 12, 13]
+                    }],
+                "order": [[2, 'asc']]
+            });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+
+        });
     </script>
 }
-
-

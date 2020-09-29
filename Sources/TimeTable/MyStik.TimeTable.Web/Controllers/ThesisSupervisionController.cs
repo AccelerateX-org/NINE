@@ -23,6 +23,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
             var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
 
             var userService = new UserInfoService();
 
@@ -97,6 +99,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
             var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
 
             var userService = new UserInfoService();
 
@@ -140,6 +144,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetUser(thesis.Student.UserId);
             var student = thesis.Student;
             var member = GetMyMembership();
+
+            if (member == null)
+                return View("_NoAccess");
 
             var model = new ThesisStateModel
             {
@@ -204,6 +211,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var user = GetCurrentUser();
             var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
 
             var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
             var thesis = supervisor.Thesis;
@@ -229,6 +238,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var user = GetCurrentUser();
             var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
 
             var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
             var thesis = supervisor.Thesis;
@@ -255,6 +266,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var user = GetCurrentUser();
             var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
 
             var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
             var thesis = supervisor.Thesis;
