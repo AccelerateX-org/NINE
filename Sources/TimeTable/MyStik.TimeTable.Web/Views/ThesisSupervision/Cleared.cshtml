@@ -26,9 +26,8 @@
                             <th>Name</th>
                             <th>Vorname</th>
                             <th>Studiengang</th>
-                            <th>geplante Abgabe</th>
-                            <th>Tage</th>
-                            <th>Status Anmeldung</th>
+                            <th>Abgabe</th>
+                            <th>Thema</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,19 +35,26 @@
                         {
                         <tr id="@thesis.Thesis.Id">
                             <td></td>
-                            <td>@thesis.User.FirstName</td>
-                            <td>@thesis.User.LastName</td>
-                            <td>@thesis.Student.Curriculum.ShortName</td>
-                            @if (thesis.Thesis.ExpirationDate.HasValue)
+                            @if (thesis.User != null)
                             {
-                                <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                <td>@thesis.User.FirstName</td>
+                                <td>@thesis.User.LastName</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+                            <td>@thesis.Student.Curriculum.ShortName</td>
+                            @if (thesis.Thesis.DeliveryDate.HasValue)
+                            {
+                                <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
                             }
                             else
                             {
                                 <td></td>
                             }
-                            <td></td>
-                            <td>@thesis.GetStateMessage(Model.Member)</td>
+                            <td>@thesis.Thesis.TitleDe</td>
                         </tr>
                         }
                     </tbody>

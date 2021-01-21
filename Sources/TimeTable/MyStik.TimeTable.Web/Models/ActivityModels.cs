@@ -244,8 +244,8 @@ namespace MyStik.TimeTable.Web.Models
             {
                 if (Activity != null)
                 {
-                    var hour = Activity as OfficeHour;
-                    if (hour != null)
+                    /*
+                    if (Activity is OfficeHour hour)
                     {
                         var oh = hour;
                         var date = oh.Dates.FirstOrDefault();
@@ -255,6 +255,8 @@ namespace MyStik.TimeTable.Web.Models
                             return hour.Semester.Id.ToString();
                         }
                     }
+                    */
+
                     return Activity.Id.ToString();
                 }
                 return string.Empty;

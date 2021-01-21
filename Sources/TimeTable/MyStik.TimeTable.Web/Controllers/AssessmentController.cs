@@ -196,8 +196,40 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Admin", new {id = curr.Id});
+            return RedirectToAction("Details", new {id = assessment.Id});
         }
+
+
+        public ActionResult Edit(Guid id)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var model = new AssessmentCreateModel
+            {
+                AssessmentId = assessment.Id,
+                Name = assessment.Name,
+                Description = assessment.Description,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(AssessmentCreateModel model)
+        {
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == model.AssessmentId);
+
+            assessment.Name = model.Name;
+            assessment.Description = model.Description;
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new { id = assessment.Id });
+        }
+
+
+
 
         public ActionResult EditStage(Guid id)
         {

@@ -16,17 +16,17 @@
     @RenderSection("styles", required: false)
     <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/fillter/img/favicon.ico")" />
 </head>
-<body>
+<body style="background-color: #e1e1e1">
     @{
         var userService = new UserInfoService();
         var user = userService.GetUser(User.Identity.GetUserId());
     }
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
     @*
-    <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
-        <i class="fas fa-home fa-2x"></i>
-    </a>
+            <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
+                <i class="fas fa-home fa-2x"></i>
+            </a>
         *@
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,23 +38,23 @@
             @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
             {
                 <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br/>Schwarzes Brett</a>
+                    <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />Schwarzes Brett</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br/>Mein Studium</a>
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
                 </li>
 
                 <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br/>Meine Lehre</a>
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />Meine Lehre</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br/>Meine Forschung</a>
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />Meine Forschung</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br/>Meine Hochschule</a>
+                    <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br />Meine Hochschule</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br/>Meine Verwaltung</a>
+                    <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />Meine Verwaltung</a>
                 </li>
             }
         </ul>
@@ -78,7 +78,7 @@
             {
                 <li class="nav-item active dropdown">
                     <a class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle fa-fw"></i><br/>@user.FullName
+                        <i class="fas fa-user-circle fa-fw"></i><br />@user.FullName
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("SendMeANotofication", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a>
@@ -98,6 +98,42 @@
         </ul>
     </div>
 </nav>
+
+@RenderSection("menue2nd", required: false)
+
+
+@*
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />Schwarzes Brett</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
+                    </li>
+
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />Meine Lehre</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />Meine Forschung</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br />Meine Hochschule</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />Meine Verwaltung</a>
+                    </li>
+            </ul>
+        </div>
+    </nav>
+    *@
+
 
     <div class="container-fluid" style="margin-top: 20px">
         @RenderBody()

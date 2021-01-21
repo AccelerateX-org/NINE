@@ -191,14 +191,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            // Mailversand bei Änderung des Titels
+            // Mailversand bei Änderung des Thema
             if (thesis.IssueDate != null)
             {
-                // Mail an Studierenden, dass der Lehrende den Titel geändert hat
+                // Mail an Studierenden, dass der Lehrende den Thema geändert hat
                 var tm = InitMailModel(thesis, user);
 
                 new MailController().ThesisSupervisorTitleChangedEMail(tm).Deliver();
-
             }
 
 

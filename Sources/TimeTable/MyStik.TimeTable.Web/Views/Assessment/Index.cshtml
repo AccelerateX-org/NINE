@@ -2,7 +2,7 @@
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.AssessmentOverviewModel
 @{
-    ViewBag.Title = "Eignungsprüfungen";
+    ViewBag.Title = "Aufnahmeverfahren";
 }
 
 @Html.Partial("_Disclaimer")
@@ -14,7 +14,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-poll"></i> Eignungsprüfung für Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                <i class="fas fa-poll"></i> Aufnahmeverfahren für Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
             </div>
             <ul class="nav bg-light text-dark">
                 <li class="nav-item">
@@ -24,7 +24,7 @@
                     <a class="nav-link text-center" href="@Url.Action("Admin", new {id = Model.Curriculum.Id})"><i class="fas fa-cogs fa-fw"></i><br />Verwaltung</a>
                 </li>
             </ul>
-            @foreach (var assessment in Model.Assessments)
+            @foreach (var assessment in Model.Assessments.Where(x => x.Stages.Any(s => s.ClosingDateTime != null && s.ClosingDateTime.Value >= DateTime.Today)))
             {
                 <div class="card md-3">
                     <div class="card-header">

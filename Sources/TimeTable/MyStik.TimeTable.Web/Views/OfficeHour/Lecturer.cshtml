@@ -1,0 +1,50 @@
+﻿@model MyStik.TimeTable.Web.Models.LecturerOfficeHourModel
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Sprechstunden";
+
+    var semester = Model.OfficeHours.GroupBy(x => x.Semester);
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="fas fa-user-md"></i>
+                    Sprechstunden von @Model.Member.FullName
+                </h4>
+            </div>
+            <div class="list-group">
+                @foreach (var s in semester)
+                {
+                    <div class="list-group-item list-group-item-dark"><strong>@s.Key.Name</strong></div>
+
+                    foreach (var o in s)
+                    {
+                        if (o.ByAgreement)
+                        {
+                            if (string.IsNullOrEmpty(o.Description))
+                            {
+                                <div class="list-group-item">@o.Name - Nach Vereinbarung</div>
+                            }
+                            else
+                            {
+                                <div class="list-group-item">
+                                    <h5> @o.Name - Nach Vereinbarung</h5>
+                                    <p>@Html.Raw(o.Description)</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Details", "OfficeHour", new {id=o.Id})" class="list-group-item list-group-item-action">@o.Name - Termine</a>
+                        }
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -3201,17 +3201,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (subscription != null)
             {
-                var userId = subscription.UserId;
-
                 var subService = new SubscriptionService(Db);
                 subService.DeleteSubscription(subscription);
 
-                var mailService = new SubscriptionMailService();
-                mailService.SendSubscriptionEMail(course, userId, host);
 
                 var subscriber = GetUser(subscription.UserId);
-                logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
-                    course.Name, course.ShortName, subscriber.UserName);
+
+                if (subscriber != null)
+                {
+                    var mailService = new SubscriptionMailService();
+                    mailService.SendSubscriptionEMail(course, subscriber.Id, host);
+
+                    logger.InfoFormat("{0} ({1}) for [{2}]: removed from occurrence",
+                        course.Name, course.ShortName, subscriber.UserName);
+                }
             }
             else
             {

@@ -1,8 +1,11 @@
 ﻿@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Models
+@using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Web.Models.ThesisStateModel
 @{
     ViewBag.Title = "Abschlussarbeit";
+
+    var userService = new UserInfoService();
 }
 
 <div class="container-fluid">
@@ -58,7 +61,7 @@
                     </div>
 
                     @{
-                        isOk = Model.ConditionRequest == RequestState.Accepted;
+                        isOk = Model.ConditionRequest == RequestState.InProgress || Model.ConditionRequest == RequestState.Accepted;
 
                         mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
                     }
@@ -74,21 +77,20 @@
                                 {
                                     <p>Durch einen Blick in primuss kann ich erkennen, ob ich die Voraussetzungen erfüllt habe. Wenn ich das erledigt habe, dann kann ich mit der Planung meiner Abschlussarbeit beginnen.</p>
                                     @*<a href="@Url.Action("Request")" class="btn btn-primary">Voraussetzungen prüfen lassen</a>*@
-                                    <a href="@Url.Action("Check")" class="btn btn-primary">Prüfung ist erfolgt - mit Planung beginnen</a>
+                                    <a href="@Url.Action("Check")" class="btn btn-primary">Ich habe die Voraussetzungen erfüllt</a>
                                 }
                                 else if (Model.ConditionRequest == RequestState.InProgress)
                                 {
                                     <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate.Value.ToShortDateString() den Antrag auf Prüfung der Voraussetzungen gestellt. Der Antrag wird noch bearbeitet.</li>
+                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate bestätigt, dass ich die Voraussetzungen erfüllt habe.</li>
                                     </ul>
-                                    <a href="@Url.Action("Check")" class="btn btn-primary">Voraussetzungen selber prüfen</a>
                                 }
                                 else if (Model.ConditionRequest == RequestState.Accepted)
                                 {
                                     if (Model.Thesis.RequestAuthority != null)
                                     {
                                         <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate den Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                            <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate bestätigt, dass ich die Voraussetzungen erfüllt habe.</li>
                                             <li><i class="fa fa-li fa-calendar-check-o"></i>Ich habe die Voraussetzungen erfüllt (bestätigt am @Model.Thesis.RequestDate.Value.ToShortDateString() von @Model.Thesis.RequestAuthority.FullName)</li>
                                         </ul>
                                     }
@@ -101,11 +103,11 @@
                                 else if (Model.ConditionRequest == RequestState.Rejected)
                                 {
                                     <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate den Antrag auf Prüfung der Voraussetzungen gestellt.</li>
+                                        <li><i class="fa fa-li fa-calendar"></i>Habe am @Model.Thesis.RequestDate bestätigt, dass ich die Voraussetzungen erfüllt habe.</li>
                                         <li><i class="fa fa-li fa-calendar-times-o"></i>Der Antrag wurde abgelehnt (am @Model.Thesis.ResponseDate.Value.ToShortDateString() von @Model.Thesis.RequestAuthority.FullName)</li>
                                         <li><i class="fa fa-li fa-ban text-danger"></i>Es fehlt die folgende(n) Voraussetzung(en): @Model.Thesis.RequestMessage</li>
                                     </ul>
-                                    <a href="@Url.Action("Check")" class="btn btn-primary">Voraussetzungen wurden erfüllt</a>
+                                    <a href="@Url.Action("Check")" class="btn btn-primary">Ich habe die Voraussetzungen jetzt erfüllt</a>
                                 }
 
 
@@ -231,20 +233,35 @@
                                         <ul class="fa-ul">
                                             @foreach (var s in Model.Thesis.Supervisors)
                                             {
+
+                                                var supUser = userService.GetUser(s.Member.UserId);
+
                                                 if (s.AcceptanceDate != null)
                                                 {
-                                                    <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString())</li>
+                                            <li>
+                                                <i class="fa fa-user-md fa-li"></i>@s.Member.FullName (zugesagt am: @s.AcceptanceDate.Value.ToShortDateString())
+                                                @if (supUser != null)
+                                                {
+                                                    <a href="mailto:@supUser.Email" class="btn btn-default btn-xs">Mail senden</a>
+                                                }
+                                            </li>
                                                 }
                                                 else
                                                 {
-                                                    <li><i class="fa fa-user-md fa-li"></i>@s.Member.FullName (keine Antwort) <a href="@Url.Action("RemoveSupervisor", new {id = s.Id})" class="btn btn-default btn-xs">absagen</a></li>
+                                                    <li>
+                                                        <i class="fa fa-user-md fa-li"></i>@s.Member.FullName (@s.Member.Organiser.ShortName) (keine Antwort) 
+                                                        <a href="@Url.Action("RemoveSupervisor", new {id = s.Id})" class="btn btn-default btn-xs">absagen</a>
+                                                        @if (supUser != null)
+                                                        {
+                                                            <a href="mailto:@supUser.Email" class="btn btn-default btn-xs">Mail senden</a>
+                                                        }
+                                                    </li>
                                                 }
 
                                             }
                                         </ul>
                                         if (!isOk)
                                          {
-                                             <p>Es wird empfohlen zunächst den persönichen Kontakt herzustellen und dann erst hier die Anfrage zu stellen.</p>
                                              <a href="@Url.Action("RequestSupervision", new {id = Model.Thesis.Id})" class="btn btn-primary">PrüferIn anfragen</a>
                                          }
                                     }
@@ -254,11 +271,11 @@
                                         <ul>
                                             @if (string.IsNullOrEmpty(Model.Thesis.TitleDe))
                                             {
-                                                <li>Kein deutscher Titel angegeben</li>
+                                                <li>Kein Thema (deutsch) angegeben</li>
                                             }
                                             @if (string.IsNullOrEmpty(Model.Thesis.TitleEn))
                                             {
-                                                <li>Kein englischer Titel angegeben</li>
+                                                <li>Kein Thema (englisch) angegeben</li>
                                             }
                                             @if (Model.Thesis.PlannedBegin == null)
                                             {
@@ -361,7 +378,7 @@
                                             }
                                             if (!hasTitle)
                                             {
-                                                <p>Anmeldung erst dann möglich, wenn Titel festgelegt wurde.</p>
+                                                <p>Anmeldung erst dann möglich, wenn das Thema festgelegt wurde.</p>
                                             }
                                         }
 

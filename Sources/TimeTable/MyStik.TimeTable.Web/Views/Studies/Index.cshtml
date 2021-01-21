@@ -4,6 +4,42 @@
     ViewBag.Title = "Mein Studium";
 }
 
+@section menue2nd
+{
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Thesis")"><i class="fas fa-graduation-cap fa-fw"></i><br />Abschlussarbeit</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Dictionary")"><i class="fas fa-pen fa-fw"></i><br />Vorlesungsverzeichnis</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Lottery", new {id=Model.Semester.Id})"><i class="fas fa-random fa-fw"></i><br />Wahlverfahren</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Curricula", "Subscription")"><i class="fas fa-book fa-fw"></i><br />Studienbuch</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+}
+
+
 
 <div class="row">
     <div class="col-md-12">
@@ -14,41 +50,17 @@
                     {
                         <a href="@Url.Action("Index", new {id=Model.PrevSemester.Id})" class="btn btn-outline-primary btn-sm"><small><< @Model.PrevSemester.Name</small></a>
                     }
-                    @Model.Semester.Name
+                    Meine Eintragungen im @Model.Semester.Name
                     @if (Model.NextSemester != null)
                     {
                         <a href="@Url.Action("Index", new {id=Model.NextSemester.Id})" class="btn btn-outline-primary btn-sm"><small>@Model.NextSemester.Name >></small></a>
                     }
                 </h4>
-                
-                
-
-                <p>Mein aktueller Studiengang: @Model.Student.Curriculum.ShortName (seit @Model.Student.FirstSemester.Name)</p>
             </div>
-            <ul class="nav bg-light text-dark">
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Dictionary")"><i class="fas fa-pen fa-fw"></i><br />Vorlesungsverzeichnis</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Lottery", new {id=Model.Semester.Id})"><i class="fas fa-random fa-fw"></i><br />Wahlverfahren</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Curricula", "Subscription")"><i class="fas fa-book fa-fw"></i><br />Studienbuch</a>
-                </li>
-            </ul>
             <div class="list-group">
             @foreach (var course in Model.Courses)
             {
-                <div class="list-group-item list-group-item-action">
+                <div class="list-group-item">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1"><a href="@Url.Action("Details", "Course", new {id=course.Course.Id})">@course.Course.Name (@course.Course.ShortName)
                         </a></h6>
@@ -61,7 +73,7 @@
                     </div>
                     <ul class="fa-ul">
                         <li>
-                            <i class="fa-li fa fa-user-md"></i>
+                            <i class="fa-li fas fa-chalkboard-teacher"></i>
                             @if (course.Lecturers.Any())
                             {
                                 @Html.LecturerList(course.Lecturers, showLinks: true)
@@ -74,31 +86,31 @@
                         <li>
                             @if (course.Dates.Count == 1)
                             {
-                                <i class="fa-li fa fa-calendar"></i>
+                                <i class="fa-li fas fa-calendar-day"></i>
                                 <span>immer @Html.Date(course.Dates.First()) in [@Html.RoomList(course.Rooms, showLinks: true), @Html.RoomList(course.VirtualRooms, showLinks: true)]</span>
                             }
                             else
                             {
-                                <i class="fa-li fa fa-calendar"></i>
+                                <i class="fa-li fas fa-calendar-alt"></i>
                                 <span>insgesamt @course.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
                             }
 
                         </li>
                         <li>
-                            <i class="fa-li fa fa-book"></i>@Html.GroupList(course.Course.Occurrence)
+                            <i class="fa-li fas fa-book"></i>@Html.GroupList(course.Course.Occurrence)
                         </li>
                         @if (course.Subscription != null)
                         {
                             if (course.Subscription.OnWaitingList)
                             {
                                 <li class="text-danger">
-                                    <i class="fa-li fa fa-user-clock"></i>Status: Warteliste
+                                    <i class="fa-li fas fa-user-clock"></i>Status: Warteliste
                                 </li>
                             }
                             else
                             {
                                 <li class="text-success">
-                                    <i class="fa-li fa fa-user-check"></i>Status: Teilnehmer
+                                    <i class="fa-li fas fa-user-check"></i>Status: Teilnehmer
                                 </li>
                             }
                         }

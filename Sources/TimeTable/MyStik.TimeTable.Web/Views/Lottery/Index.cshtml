@@ -65,6 +65,14 @@
                                     </div>
                                 }
                             }
+                            @if (ViewBag.PreviousSemester != null)
+                            {
+                                <div class="form-group">
+                                    <a href="@Url.Action("Index", new {id=ViewBag.PreviousSemester.Id})" class="btn btn-info">
+                                        <i class="fa fa-chevron-left"></i> @ViewBag.PreviousSemester.Name
+                                    </a>
+                                </div>
+                            }
                             @if (ViewBag.NextSemester != null)
                             {
                                 <div class="form-group">
@@ -73,6 +81,8 @@
                                     </a>
                                 </div>
                             }
+
+
                         </div>
                     </div>
                 </div>

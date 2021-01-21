@@ -28,9 +28,8 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 if (cand.Any())
                 {
-                    // kein Student, aber laufende Eignungsprüfung
+                    // kein Student, aber laufende Aufnahmeverfahren
                     return RedirectToAction("Index", "Candidature");
-
                 }
 
                 if (meberships.Any())
@@ -38,7 +37,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     return RedirectToAction("Curricula", "Subscription");
                 }
                     
-                // kein Student und auch keine laufenden Eignungsprüfung
+                // kein Student und auch keine laufenden Aufnahmeverfahren
                 return RedirectToAction("Index", "Home");
             }
 

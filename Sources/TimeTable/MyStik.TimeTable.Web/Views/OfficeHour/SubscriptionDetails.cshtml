@@ -36,10 +36,13 @@
                     <h5>Mein Anliegen</h5>
                     <p>@Model.Subscription.SubscriberRemark</p>
                     
+                    <h5>Allgemeine Informationen zur Sprechstunde</h5>
+                    <p>@Html.Raw(Model.Date.Activity.Description)</p>
+                    
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Lecturer", new {id = Model.Host.Id, semId = Model.Semester.Id})" class="btn btn-default">
+                        <a href="@Url.Action("Subscriptions")" class="btn btn-default">
                             <i class="fa fa-arrow-left"></i>
-                            Zurück zur Terminliste
+                            Zurück zu meinen Buchungen
                         </a>
                         <a href="@Url.Action("EditDateSubscription", new {id = Model.Date.Id})" class="btn btn-default">
                             <i class="fa fa-pencil"></i> Anliegen ändern

@@ -1,7 +1,67 @@
-﻿
+﻿@model MyStik.TimeTable.Web.Models.StudentDetailViewModel
+
 @{
-    ViewBag.Title = "StudyPlan";
+    ViewBag.Title = "Studium";
 }
 
-<h2>Studiengang</h2>
+<div class="panel panel-default">
+    <div class="panel-body bg-fillter-lecturer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (Model.Student != null)
+                    {
+                        if (Model.Student.Curriculum != null && Model.Student.FirstSemester != null)
+                        {
+                            <h1>
+                                @Model.User.FirstName @Model.User.LastName | @Model.Student.Curriculum.ShortName (@Model.Student.FirstSemester.Name)
+                            </h1>
+                        }
+                        else
+                        {
+                            <h1>
+                                @Model.User.FirstName @Model.User.LastName | KEIN STUDIUM
+                            </h1>
+                        }
+                    }
+                    else
+                    {
+                        <h1>
+                            @Model.User.FirstName @Model.User.LastName
+                        </h1>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Übersicht</h4>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <h5 class="list-group-item-heading">Abschlussarbeit(en)</h5>
+                                <ul>
+                                    @foreach (var t in Model.Theses)
+                                    {
+                                        <li><a href="@Url.Action("Details", "ThesisAdmin", new {id = t.Id})">@t.TitleDe</a></li>
+                                    }
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 

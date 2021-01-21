@@ -3,7 +3,7 @@
 @using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Candidature
 @{
-    ViewBag.Title = "Eignungsprüfung";
+    ViewBag.Title = "Aufnahmeverfahren";
     var userInfoService = new UserInfoService();
     var user = userInfoService.GetUser(Model.UserId);
 
@@ -36,7 +36,7 @@
 
 <div class="row" style="margin-top: 20px">
     <div class="col-12">
-        <h4><i class="fas fa-poll"></i> Meine Teilnahme an der Eignungsprüfung "@Model.Assessment.Name"</h4>
+        <h4><i class="fas fa-poll"></i> Meine Teilnahme an der Aufnahmeverfahren "@Model.Assessment.Name"</h4>
         <div class="alert alert-warning">
             <h5>Wichtiger Hinweis:</h5>
             <p>Alle Angaben hier sind ohne Gewähr!!!</p>

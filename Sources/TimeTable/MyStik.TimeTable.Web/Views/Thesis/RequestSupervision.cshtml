@@ -20,6 +20,16 @@
                     <i class="fa fa-file-o"></i> Anfrage zur Betreuung meiner Abschlussarbeit
                 </h4>
                 <div class="panel-body">
+                    <div class="alert alert-info">
+                        <h4>Wichtige Hinweise:</h4>
+                        <ul>
+                            <li>Es kann nur ein Name ausgewählt werden (Erstprüfer). Etwaige Zweitprüfer werden vom Erstprüfer ergänzt.</li>
+                            <li>Bitte die Lehrenden zuerst persönlich kontaktieren</li>
+                            <li>Hier sind nur Lehrende aufgeführt, die über NINE per E-Mail erreichbar sind</li>
+                            <li>Hier sind auch Lehrbeauftragte aufgeführt, welche in der Regel keine Abschlussarbeiten betreuen (dürfen)</li>
+                            <li>Im Zweifel immmer zuerst Kontakt mit den Modulverantwortlichen / ProfessorInnen / Prüfungskommission aufnehmen</li>
+                        </ul>
+                    </div>
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label class="col-sm-3 control-label" for="DozTable">Betreuende(r) / Lehrende(r)</label>
@@ -106,7 +116,8 @@
 
                         data: {
                             orgId: org,
-                            name: request.term
+                            name: request.term,
+                            hasAccount: true
                         },
 
                         success: function(data, success, xhr) {

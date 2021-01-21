@@ -91,7 +91,7 @@
                                 @if (Model.ConditionRequest == RequestState.InProgress)
                                 {
                                     <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-calendar"></i>Prüfung der Voraussetzungen durch Selbstauskunft. Keine Überprüfung durch das Prüfungsamt</li>
+                                        <li><i class="fa fa-li fa-calendar"></i>Prüfung der Voraussetzungen durch Selbstauskunft. Bisher keine Überprüfung durch das Prüfungsamt</li>
                                     </ul>
                                 }
                                 else if (Model.ConditionRequest == RequestState.Accepted)
@@ -141,7 +141,7 @@
                                 </ul>
                                 @if (Model.Position == 1)
                                 {
-                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Titel ändern</a>
+                                    <a href="@Url.Action("ChangeTitle", new {id = Model.Thesis.Id})" class="btn btn-primary">Thema ändern</a>
                                 }
                             </div>
                         </div>
@@ -254,6 +254,7 @@
                                 {
                                     <a href="@Url.Action("Accept", new {id=Model.Supervisor.Id})" class="btn btn-success">Betreuung annehmen</a>
                                     <a href="@Url.Action("Reject", new {id=Model.Supervisor.Id})" class="btn btn-danger">Betreuung ablehnen</a>
+                                    <a href="mailto:@Model.User.Email" class="btn btn-default">E-Mail senden</a>
                                 }
                                 @if (Model.Position == 1)
                                 {

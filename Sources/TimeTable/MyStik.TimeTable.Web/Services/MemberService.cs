@@ -121,6 +121,11 @@ namespace MyStik.TimeTable.Web.Services
             return db.Members.Where(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(userId) && m.Organiser.IsFaculty && !m.Organiser.IsStudent).ToList();
         }
 
+        internal OrganiserMember GetOrganiserMember(Guid orgid, string userId)
+        {
+            return db.Members.FirstOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(userId) && m.Organiser.Id == orgid);
+        }
+
 
         /// <summary>
         /// 

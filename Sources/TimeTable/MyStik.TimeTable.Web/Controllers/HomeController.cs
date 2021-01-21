@@ -27,6 +27,9 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!Request.IsAuthenticated)
                 return View();
 
+            if (User.IsInRole("SysAdmin"))
+                return RedirectToAction("Index", "Home", new {area = "Admin"});
+
 
             // Verteiler nach Rolle
             var user = GetCurrentUser();
@@ -43,7 +46,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (adminMembers.Any())
                 {
                     // mit Admin-Rechten
-                    return RedirectToAction("Index", "Administration");
+
+                    // hat Lehre
+                    var isLecturer = Db.Activities.OfType<Course>().Any(x =>
+                        x.Dates.Any(d =>
+                            d.Hosts.Any(h =>
+                                !string.IsNullOrEmpty(h.UserId) && h.UserId.Equals(user.Id)) && d.Begin >= DateTime.Now));
+
+                    return RedirectToAction("Index", isLecturer ? "Teaching" : "Administration");
                 }
                 else
                 {

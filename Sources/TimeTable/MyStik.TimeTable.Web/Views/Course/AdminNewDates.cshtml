@@ -22,8 +22,7 @@
                         </div>
                         @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                         {
-
-                            <div class="form-group dropdown">
+                            <div id="dropDownMenu" class="form-group dropdown">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-check"></i> ausgewählte Termine <span class="caret"></span>
                                 </button>
@@ -46,11 +45,6 @@
                             <div class="form-group">
                                 <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-default">
                                     <i class="fa fa-plus-circle"></i> Termin anlegen
-                                </a>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("Index", "VirtualRoom")" class="btn btn-primary">
-                                    <i class="fa fa-tv"></i> Virtuelle Räume
                                 </a>
                             </div>
                         }
@@ -237,151 +231,153 @@
 {
 
     <script>
+        var nChecked = 0;
+
         $(document).ready(function() {
 
                 //$("tr[history]").hide();
+                $('#dropDownMenu').hide();
 
-                $("#toggleHistoryOn").click(function () {
+                $("#toggleHistoryOn").click(function() {
                     $("tr[history]").show();
                     $("#toggleHistoryOff").removeClass("active");
                 });
 
-                $("#toggleHistoryOff").click(function () {
+                $("#toggleHistoryOff").click(function() {
                     $("tr[history]").hide();
                     $("#toggleHistoryOn").removeClass("active");
                 });
 
 
+                $("#cancelAll").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
 
-            $("#cancelAll").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
+                    if (n > 0) {
+                        var dateList = new Array();
 
-                if (n > 0) {
-                    var dateList = new Array();
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
 
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("CancelDateList")',
+                                data: {
+                                    dateIds: dateList
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
+                    } else {
+                        alert("Es sind keine Termine zum Absagen markiert");
                     }
+                });
 
 
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("CancelDateList")',
-                            data: {
-                                dateIds: dateList
-                            },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
-                } else {
-                    alert("Es sind keine Termine zum Absagen markiert");
-                }
-            });
+                $("#refreshAll").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
 
 
-            $("#refreshAll").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("ReactivateDateList")',
+                                data: {
+                                    dateIds: dateList
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
+                    } else {
+                        alert("Es sind keine Termine zum Reaktivieren markiert");
                     }
+                });
 
 
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("ReactivateDateList")',
-                            data: {
-                                dateIds: dateList
-                            },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
-                } else {
-                    alert("Es sind keine Termine zum Reaktivieren markiert");
-                }
-            });
+                $("#deleteAll").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
 
-
-            $("#deleteAll").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    $('#confirmDeleteAllDates').modal("show");
-                } else {
-                    alert("Es sind keine Termine zum Löschen markiert");
-                }
-            });
-
-
-            $("#deleteAllConfirmed").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+                    if (n > 0) {
+                        $('#confirmDeleteAllDates').modal("show");
+                    } else {
+                        alert("Es sind keine Termine zum Löschen markiert");
                     }
+                });
 
 
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("DeleteDateList")',
-                            data: {
-                                dateIds: dateList
-                            },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
+                $("#deleteAllConfirmed").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
 
 
-                    $('#confirmDeleteAllDates').modal("hide");
-                }
-            });
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("DeleteDateList")',
+                                data: {
+                                    dateIds: dateList
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
 
-            $("#removeRooms").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
 
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+                        $('#confirmDeleteAllDates').modal("hide");
                     }
+                });
+
+                $("#removeRooms").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
 
 
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("RemoveRooms")',
-                            data: {
-                                dateIds: dateList
-                            },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
-                } else {
-                    alert("Es sind keine Termine zum Reaktivieren markiert");
-                }
-            });
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("RemoveRooms")',
+                                data: {
+                                    dateIds: dateList
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
+                    } else {
+                        alert("Es sind keine Termine zum Reaktivieren markiert");
+                    }
+                });
 
 
-                $("#removeVirtualRooms").click(function () {
+                $("#removeVirtualRooms").click(function() {
                     var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
                     var n = list.length;
 
@@ -400,7 +396,7 @@
                                 data: {
                                     dateIds: dateList
                                 },
-                                success: function (data, success, xhr) {
+                                success: function(data, success, xhr) {
                                     $("#dateTable").html(data);
                                 }
                             });
@@ -410,44 +406,45 @@
                 });
 
 
-            $('#roomNumber').autocomplete({
-                appendTo: "#myModalLabel2",
-                source: function (request, response) {
-                    var org = '@Model.Organiser.Id';
+                $('#roomNumber').autocomplete({
+                    appendTo: "#myModalLabel2",
+                    source: function(request, response) {
+                        var org = '@Model.Organiser.Id';
 
-                    $.ajax({
-                        url: '@Url.Action("RoomListByOrg", "Curriculum")',
-                        type: 'POST',
-                        //dataType: "json",
+                        $.ajax({
+                            url: '@Url.Action("RoomListByOrg", "Curriculum")',
+                            type: 'POST',
+                            //dataType: "json",
 
-                        data: {
-                            orgId: org,
-                            number: request.term
-                        },
+                            data: {
+                                orgId: org,
+                                number: request.term
+                            },
 
-                        success: function (data, success, xhr) {
-                            response($.map(data, function (item) {
+                            success: function(data, success, xhr) {
+                                response($.map(data,
+                                    function(item) {
 
-                                return {
-                                    text: item.id,
-                                    label: item.name,
-                                    value: item.name
-                                };
-                            }));
-                        },
+                                        return {
+                                            text: item.id,
+                                            label: item.name,
+                                            value: item.name
+                                        };
+                                    }));
+                            },
 
-                        error: function (data) { alert(data); },
-                    });
-                },
-                select: function (event, ui) {
-                    $('#hiddenRoomId').val(ui.item.text);
-                }
-            });
+                            error: function(data) { alert(data); },
+                        });
+                    },
+                    select: function(event, ui) {
+                        $('#hiddenRoomId').val(ui.item.text);
+                    }
+                });
 
 
                 $('#virtualRoomNumber').autocomplete({
                     appendTo: "#myModalLabel5",
-                    source: function (request, response) {
+                    source: function(request, response) {
                         var org = '@Model.Organiser.Id';
 
                         $.ajax({
@@ -460,100 +457,99 @@
                                 number: request.term
                             },
 
-                            success: function (data, success, xhr) {
-                                response($.map(data, function (item) {
+                            success: function(data, success, xhr) {
+                                response($.map(data,
+                                    function(item) {
 
-                                    return {
-                                        text: item.id,
-                                        label: item.name,
-                                        value: item.name
-                                    };
-                                }));
+                                        return {
+                                            text: item.id,
+                                            label: item.name,
+                                            value: item.name
+                                        };
+                                    }));
                             },
 
-                            error: function (data) { alert(data); },
+                            error: function(data) { alert(data); },
                         });
                     },
-                    select: function (event, ui) {
+                    select: function(event, ui) {
                         $('#hiddenVirtualRoomId').val(ui.item.text);
                     }
                 });
 
 
+                $("#addRoom").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
 
-
-            $("#addRoom").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    $('#dlgAddRoom').modal("show");
-                } else {
-                    alert("Es sind keine Termine markiert");
-                }
-            });
-
-            $("#btnAddRoom").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+                    if (n > 0) {
+                        $('#dlgAddRoom').modal("show");
+                    } else {
+                        alert("Es sind keine Termine markiert");
                     }
+                });
 
-                    var roomNo = $("#hiddenRoomId").val();
+                $("#btnAddRoom").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
 
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("AddRoomToDates")',
-                            data: {
-                                dateIds: dateList,
-                                roomId: roomNo
-                            },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
+
+                        var roomNo = $("#hiddenRoomId").val();
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("AddRoomToDates")',
+                                data: {
+                                    dateIds: dateList,
+                                    roomId: roomNo
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
 
 
-                    $('#dlgAddRoom').modal("hide");
-                }
-            });
-
-            $("#removeHosts").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+                        $('#dlgAddRoom').modal("hide");
                     }
+                });
+
+                $("#removeHosts").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
 
 
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("RemoveHosts")',
-                            data: {
-                                dateIds: dateList
-                            },
-                            success: function(data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
-                } else {
-                    alert("Es sind keine Termine zum Reaktivieren markiert");
-                }
-            });
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("RemoveHosts")',
+                                data: {
+                                    dateIds: dateList
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
+                    } else {
+                        alert("Es sind keine Termine zum Reaktivieren markiert");
+                    }
+                });
 
 
-                $("#addVirtualRoom").click(function () {
+                $("#addVirtualRoom").click(function() {
                     var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
                     var n = list.length;
 
@@ -564,7 +560,7 @@
                     }
                 });
 
-            $("#btnAddVirtualRoom").click(function () {
+                $("#btnAddVirtualRoom").click(function() {
                     var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
                     var n = list.length;
 
@@ -585,7 +581,7 @@
                                     dateIds: dateList,
                                     roomId: roomNo
                                 },
-                                success: function (data, success, xhr) {
+                                success: function(data, success, xhr) {
                                     $("#dateTable").html(data);
                                 }
                             });
@@ -596,134 +592,129 @@
                 });
 
 
+                $('#dozId').autocomplete({
+                    appendTo: "#myModalLabel4",
+                    source: function(request, response) {
+                        var org = '@Model.Organiser.Id';
 
+                        $.ajax({
+                            url: '@Url.Action("LecturerList", "Curriculum")',
+                            type: 'POST',
+                            //dataType: "json",
 
-
-            $('#dozId').autocomplete({
-                appendTo: "#myModalLabel4",
-                source: function (request, response) {
-                    var org = '@Model.Organiser.Id';
-
-                    $.ajax({
-                        url: '@Url.Action("LecturerList", "Curriculum")',
-                        type: 'POST',
-                        //dataType: "json",
-
-                        data: {
-                            orgId: org,
-                            name: request.term
-                        },
-
-                        success: function (data, success, xhr) {
-                            response($.map(data, function (item) {
-
-                                return {
-                                    text: item.id,
-                                    label: item.name + " (" + item.shortname + ")",
-                                    value: item.name + " (" + item.shortname + ")"
-                                };
-                            }));
-
-                        },
-
-                        error: function (data) { alert(data); }
-                    });
-                },
-                select: function(event, ui) {
-                    $('#hiddenDozId').val(ui.item.text);
-                }
-            });
-
-
-
-
-            $("#addHost").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    $('#dlgAddHost').modal("show");
-                } else {
-                    alert("Es sind keine Termine markiert");
-                }
-            });
-
-            $("#btnAddHost").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
-                    }
-
-                    var hostName = $("#hiddenDozId").val();
-
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("AddHostToDates")',
                             data: {
-                                dateIds: dateList,
-                                hostId: hostName
+                                orgId: org,
+                                name: request.term
                             },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
+
+                            success: function(data, success, xhr) {
+                                response($.map(data,
+                                    function(item) {
+
+                                        return {
+                                            text: item.id,
+                                            label: item.name + " (" + item.shortname + ")",
+                                            value: item.name + " (" + item.shortname + ")"
+                                        };
+                                    }));
+
+                            },
+
+                            error: function(data) { alert(data); }
                         });
-
-
-                    //$('#dlgAddHost').modal("hide");
-                }
-            });
-
-
-            $("#moveAll").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    $('#dlgMoveDates').modal("show");
-                } else {
-                    alert("Es sind keine Termine markiert");
-                }
-            });
-
-            $("#btnMoveDates").click(function () {
-                var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
-                var n = list.length;
-
-                if (n > 0) {
-                    var dateList = new Array();
-
-                    for (var i = 0; i < n; i++) {
-                        dateList[i] = list[i].id;
+                    },
+                    select: function(event, ui) {
+                        $('#hiddenDozId').val(ui.item.text);
                     }
-
-                    var newBegin = $("#NewBegin").val();
-                    var newEnd = $("#NewEnd").val();
-
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("MoveDates")',
-                            data: {
-                                dateIds: dateList,
-                                newBegin: newBegin,
-                                newEnd: newEnd
-                            },
-                            success: function (data, success, xhr) {
-                                $("#dateTable").html(data);
-                            }
-                        });
+                });
 
 
-                    //$('#dlgAddRoom').modal("hide");
-                }
-            });
+                $("#addHost").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
 
+                    if (n > 0) {
+                        $('#dlgAddHost').modal("show");
+                    } else {
+                        alert("Es sind keine Termine markiert");
+                    }
+                });
+
+                $("#btnAddHost").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
+
+                        var hostName = $("#hiddenDozId").val();
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("AddHostToDates")',
+                                data: {
+                                    dateIds: dateList,
+                                    hostId: hostName
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
+
+
+                        //$('#dlgAddHost').modal("hide");
+                    }
+                });
+
+
+                $("#moveAll").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        $('#dlgMoveDates').modal("show");
+                    } else {
+                        alert("Es sind keine Termine markiert");
+                    }
+                });
+
+                $("#btnMoveDates").click(function() {
+                    var list = $("#dateTable > table > tbody > tr input[type='checkbox'][checked='checked']").get();
+                    var n = list.length;
+
+                    if (n > 0) {
+                        var dateList = new Array();
+
+                        for (var i = 0; i < n; i++) {
+                            dateList[i] = list[i].id;
+                        }
+
+                        var newBegin = $("#NewBegin").val();
+                        var newEnd = $("#NewEnd").val();
+
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: '@Url.Action("MoveDates")',
+                                data: {
+                                    dateIds: dateList,
+                                    newBegin: newBegin,
+                                    newEnd: newEnd
+                                },
+                                success: function(data, success, xhr) {
+                                    $("#dateTable").html(data);
+                                }
+                            });
+
+
+                        //$('#dlgAddRoom').modal("hide");
+                    }
+                });
 
 
             }
@@ -734,15 +725,33 @@
             // aus dem mache ich ein jQuery Element
             // dann erst kann ich die DOM Eigenschaft über attr ändern
             // damit sie später auch wieder über jQuery ausgewertet werden kann
+
+            if (elem.checked) {
+                nChecked++;
+            } else {
+                nChecked--;
+            }
+
+
             $("#" + elem.id).attr("checked", elem.checked);
+
+            if (nChecked > 0) {
+                $('#dropDownMenu').show();
+            } else {
+                $('#dropDownMenu').hide();
+            }
+
         }
 
         function toggleDateCheckAll(elem) {
             $('.chk').trigger("click");
-            if ($("#" + elem.id).is(':checked'))
+            if ($("#" + elem.id).is(':checked')) {
                 $('.chk').attr('checked', true);
-            else
+                $('#dropDownMenu').show();
+            } else {
                 $('.chk').attr('checked', false);
+                $('#dropDownMenu').hide();
+            }
         }
 
         function showConfirmDeleteDate() {
@@ -760,7 +769,6 @@
         function hideEditDateInformation() {
             $('#confirmDeleteDate').modal("hide");
         }
-
 
 
     </script>

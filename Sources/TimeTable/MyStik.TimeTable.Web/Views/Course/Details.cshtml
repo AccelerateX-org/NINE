@@ -6,6 +6,14 @@
     ViewBag.Title = "Lehrveranstaltung";
 }
 
+@section styles {
+    <style>
+        #wikitext img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+}
 
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
@@ -77,12 +85,6 @@
                                                 </li>
                                                 @if (Model.Summary.Lottery == null)
                                                 {
-                                                    if (Model.Summary.Lottery == null)
-                                                    {
-                                                        <li>
-                                                            <a href="@Url.Action("AssignToLottery", new {id = Model.Summary.Course.Id})"><i class="fa fa-random"></i> In Wahlverfahren aufnehmen</a>
-                                                        </li>
-                                                    }
                                                     if (Model.Summary.Course.Occurrence.IsAvailable)
                                                     {
                                                         <li>
@@ -119,10 +121,6 @@
                                                 }
                                             </ul>
                                         </div>
-                                        <a href="@Url.Action("Index", "VirtualRoom")" class="btn btn-primary">
-                                            <i class="fa fa-tv"></i> Virtuelle Räume
-                                        </a>
-
                                     }
 
                                     @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)

@@ -74,11 +74,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("SimpleList", alLotteries.OrderBy(x => x.Name).ToList());
 
 
-            var nextSemester = new SemesterService().GetNextSemester(semester);
+            var nextSemester = SemesterService.GetNextSemester(semester);
             if (nextSemester != null && nextSemester.Groups.Any())
             {
                 ViewBag.NextSemester = nextSemester;
             }
+
+            ViewBag.PreviousSemester = SemesterService.GetPreviousSemester(semester);
 
 
             var model = new List<LotterySummaryModel>();

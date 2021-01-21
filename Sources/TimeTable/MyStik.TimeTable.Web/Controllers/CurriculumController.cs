@@ -46,6 +46,14 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
+            var assessments = Db.Assessments.Where(x => 
+                x.Curriculum.Id == curr.Id &&
+                x.Stages.Any(s => s.ClosingDateTime != null && s.ClosingDateTime.Value >= DateTime.Today)).ToList();
+
+            model.Assessments = assessments;
+
+
+
             // hier muss überprüft werden, ob der aktuelle Benutzer
             // der Fakultät des Studiengangs angehört oder nicht
             ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
@@ -553,7 +561,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        public JsonResult LecturerList(Guid? orgId, string name)
+        public JsonResult LecturerList(Guid? orgId, string name, bool hasAccount = false)
         {
 
             var org = orgId != null
@@ -562,19 +570,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (org != null)
             {
-                var list2 = org.Members.Where(l =>
-                        (!string.IsNullOrEmpty(l.ShortName) && l.ShortName.StartsWith(name.ToUpper())) ||
-                        (!string.IsNullOrEmpty(l.Name) && l.Name.ToUpper().StartsWith(name.ToUpper())))
-                    .OrderBy(l => l.Name)
-                    .Select(l => new
-                    {
-                        name = l.Name,
-                        shortname = l.ShortName,
-                        id = l.Id,
-                    })
-                    .Take(10);
+                if (hasAccount)
+                {
+                    var list2 = org.Members.Where(l =>
+                            (!string.IsNullOrEmpty(l.UserId)) && (
+                            (!string.IsNullOrEmpty(l.ShortName) && l.ShortName.StartsWith(name.ToUpper())) ||
+                            (!string.IsNullOrEmpty(l.Name) && l.Name.ToUpper().StartsWith(name.ToUpper()))))
+                        .OrderBy(l => l.Name)
+                        .Select(l => new
+                        {
+                            name = l.Name,
+                            shortname = l.ShortName,
+                            id = l.Id,
+                        })
+                        .Take(10);
 
-                return Json(list2);
+                    return Json(list2);
+                }
+                else
+                {
+                    var list2 = org.Members.Where(l =>
+                            (!string.IsNullOrEmpty(l.ShortName) && l.ShortName.StartsWith(name.ToUpper())) ||
+                            (!string.IsNullOrEmpty(l.Name) && l.Name.ToUpper().StartsWith(name.ToUpper())))
+                        .OrderBy(l => l.Name)
+                        .Select(l => new
+                        {
+                            name = l.Name,
+                            shortname = l.ShortName,
+                            id = l.Id,
+                        })
+                        .Take(10);
+
+                    return Json(list2);
+                }
             }
 
             return null;
@@ -652,9 +680,16 @@ namespace MyStik.TimeTable.Web.Controllers
         public JsonResult RoomListByOrg(Guid orgId, string number)
         {
             var user = GetCurrentUser();
-            var org = GetMyOrganisation();
-            var member = MemberService.GetMember(org.Id);
-            var isOrgAdmin = member?.IsRoomAdmin ?? false;
+            var org = GetOrganiser(orgId);
+            var member = MemberService.GetOrganiserMember(org.Id, user.Id);
+            var isOrgAdmin = false;
+            if (member != null)
+            {
+                if (member.IsRoomAdmin || member.IsAdmin)
+                {
+                    isOrgAdmin = true;
+                }
+            }
 
             var roomList = new MyStik.TimeTable.Web.Services.RoomService().GetRooms(orgId, isOrgAdmin);
 
@@ -706,7 +741,14 @@ namespace MyStik.TimeTable.Web.Controllers
             IEnumerable<Room> roomList;
             var org = GetMyOrganisation();
             var member = MemberService.GetMember(org.Id);
-            var isOrgAdmin = member?.IsAdmin ?? false;
+            var isOrgAdmin = false;
+            if (member != null)
+            {
+                if (member.IsRoomAdmin || member.IsAdmin)
+                {
+                    isOrgAdmin = true;
+                }
+            }
 
 
 

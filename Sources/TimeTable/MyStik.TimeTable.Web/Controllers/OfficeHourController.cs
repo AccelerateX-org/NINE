@@ -160,8 +160,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var member = GetMyMembership();
             if (member != null)
             {
-                model.MyOfficeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(x =>
-                    x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id));
+                model.MyOfficeHours = Db.Activities.OfType<OfficeHour>().Where(x =>
+                    x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.Id == member.Id))
+                    .ToList();
             }
 
 
@@ -172,14 +173,17 @@ namespace MyStik.TimeTable.Web.Controllers
                     ? officeHour.Dates.First().Hosts.FirstOrDefault()
                     : officeHour.Owners.First().Member;
 
-                var m = new OfficeHourDateViewModel();
+                if (lecturer != null)
+                {
+                    var m = new OfficeHourDateViewModel();
 
-                m.OfficeHour = officeHour;
-                m.Lecturer = lecturer;
+                    m.OfficeHour = officeHour;
+                    m.Lecturer = lecturer;
 
-                m.Date = officeHour.Dates.FirstOrDefault(x => x.End > DateTime.Now);
+                    m.Date = officeHour.Dates.FirstOrDefault(x => x.End > DateTime.Now);
 
-                model.OfficeHours.Add(m);
+                    model.OfficeHours.Add(m);
+                }
             }
 
             ViewBag.UserRight = GetUserRight(org);
@@ -190,6 +194,9 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Subscriptions()
         {
             var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+
+            ViewBag.Organiser = org;
 
             var now = DateTime.Now;
 
@@ -310,44 +317,39 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Lecturer(Guid id, Guid? semId)
         {
-            var hostRequested = Db.Members.FirstOrDefault(l => l.Id == id);
+            var member = Db.Members.FirstOrDefault(l => l.Id == id);
             var user = GetCurrentUser();
 
-            if (hostRequested == null)
+
+            // Alle Sprechstunden mit zukünftigen Semesterenden
+            var officeHours =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                    x.Semester.EndCourses >= DateTime.Today &&
+                    x.Owners.Any(k => k.Member.Id == member.Id)
+                ).ToList();
+
+            var model = new LecturerOfficeHourModel
             {
-                return RedirectToAction("Index");
-            }
-
-            var ohService = new OfficeHourService(Db);
-
-
-            OfficeHour officeHour = null;
-            var semester = SemesterService.GetSemester(semId);
+                Member = member,
+                OfficeHours = officeHours
+            };
 
 
-            if (semester != null)
-            {
-                officeHour = ohService.GetOfficeHour(hostRequested, semester);
-            }
-            else
-            {
-                officeHour = Db.Activities.OfType<OfficeHour>().FirstOrDefault(x => x.Id == semId);
-                semester = officeHour.Semester;
-            }
+            return View("Lecturer", model);
+        }
 
 
-
-            if (officeHour == null)
-            {
-                // TODO: keine Sprechstunde
-                return RedirectToAction("Index", "Lecturer");
-            }
+        public ActionResult Details(Guid id)
+        {
+            var officeHour = Db.Activities.OfType<OfficeHour>().SingleOrDefault(x => x.Id == id);
+            var owner = officeHour.Owners.FirstOrDefault();
+            var user = GetCurrentUser();
 
             var model2 = new OfficeHourSubscriptionViewModel
             {
                 OfficeHour = officeHour,
-                Semester = semester,
-                Host = hostRequested,
+                Semester = officeHour.Semester,
+                Host = owner?.Member,
             };
 
             var userRight = GetUserRight(User.Identity.Name, officeHour);
@@ -369,6 +371,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 return View("DateListPublic", model2);
             }
         }
+
+
 
         /// <summary>
         /// Sprechstundentermine des Dozenten im aktuellen Semester
@@ -1094,7 +1098,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("OfficeHour", "Lecturer", new { id=semester.Id });
+            return RedirectToAction("OfficeHour", "Lecturer", new { id=oh.Id });
         }
 
 
@@ -1141,7 +1145,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             
 
-            return RedirectToAction("OfficeHour", "Lecturer", new {id = oh.Semester.Id});
+            return RedirectToAction("OfficeHour", "Lecturer", new {id = oh.Id});
         }
 
         /// <summary>
@@ -1346,7 +1350,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
 
                 var officeHour = activityDate.Activity as OfficeHour;
-                return RedirectToAction("OfficeHour", "Lecturer", new {id=officeHour.Semester.Id});
+                return RedirectToAction("OfficeHour", "Lecturer", new {id=officeHour.Id});
             }
 
             return RedirectToAction("Index");
@@ -1395,7 +1399,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 DateOption = 0,
                 Text = string.Empty,
                 Semester = semester,
-                NewDateEnd = semester.EndCourses.ToShortDateString()
+                NewDateEnd = semester.EndCourses.ToShortDateString(),
+                Member = member
             };
 
             SetTimeSelections();
@@ -1553,7 +1558,8 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Name = "Allgemeine Sprechstunde",
                 Description = "",
-                Semester = semester
+                Semester = semester,
+                Member = member
             };
 
             ViewBag.UserRight = GetUserRight(org);
@@ -2036,7 +2042,7 @@ namespace MyStik.TimeTable.Web.Controllers
             officeHour.Description = model.Description;
             Db.SaveChanges();
 
-            return RedirectToAction("OfficeHour", "Lecturer", new { id = officeHour.Semester.Id });
+            return RedirectToAction("OfficeHour", "Lecturer", new { id = officeHour.Id });
         }
 
 

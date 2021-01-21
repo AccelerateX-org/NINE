@@ -1,95 +1,185 @@
-﻿@model MyStik.TimeTable.Web.Areas.Admin.Models.DataAdminModel
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Models
+
 @{
-    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+    ViewBag.Title = "Startseite";
+    var appDb = new TimeTableDbContext();
+    var userDb = new ApplicationDbContext();
 }
 
-<div class="page-header">
-    <h1>Daten und Benutzerkonten <small>nur für Testsysteme</small></h1>
-</div>
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-book"></i> Modulkataloge
-            </div>
-            <div class="panel-body">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Fakultät</th>
-                            <th>Studiengang</th>
-                            <th>Gruppen</th>
-                            <th>Module</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var curr in Model.Curricula)
-                    {
-                        <tr>
-                            <td>@curr.Curriculum.Organiser.ShortName</td>
-                            <td>@curr.Curriculum.ShortName</td>
-                            <td>@curr.Curriculum.CurriculumGroups.Count</td>
-                            <td></td>
-                            @if (curr.ModuleCatalog != null)
-                            {
-                                <td><a href="@Url.Action("ImportModuleCatalog", "Curriculum", new {org = curr.ModuleCatalog.Organiser, curr = curr.ModuleCatalog.ShortName})"><i class="fa fa-upload"></i></a></td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                            
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                    <i class="fa fa-users"></i> Benutzerkonten
-            </div>
-            <div class="panel-body">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Fakultät</th>
-                            <th>Benutzer</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var org in Model.Organisers)
-                        {
-                            <tr>
-                                <td>@org.Organiser.ShortName</td>
-                                @if (org.Users.Any())
-                                {
-                                    <td>
-                                        @foreach (var user in org.Users)
-                                        {
-                                            <div>@user.UserName</div>
-                                        }
-                                    </td>
-                                    <td>
-                                        <a href="@Url.Action("CreateTestUser", new {id = org.Organiser.Id})">Aktualisieren</a>                                        
-                                        <a href="@Url.Action("DeleteTestUser", new {id = org.Organiser.Id})">Löschen</a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                    <td><a href="@Url.Action("CreateTestUser", new {id = org.Organiser.Id})">Anlegen</a></td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+@section styles
+{
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="page-title">
+                Das Wichtigste auf einen Blick
+            </h3>
         </div>
     </div>
 </div>
 
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-rooms">
+                <div class="visual">
+                    <i class="fa fa-university"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        @appDb.Rooms.Count()
+                    </div>
+                    <div class="desc">Räume</div>
+                </div>
+                <a class="more" href="@Url.Action("Index", "Room", new {area="Admin"})">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-lecturer">
+                <div class="visual">
+                    <i class="fa fa-graduation-cap"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        @appDb.Organisers.Count()
+                    </div>
+                    <div class="desc">Veranstalter</div>
+                </div>
+                <a class="more" href="@Url.Action("Index", "Organiser", new {area="Admin"})">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-hm">
+                <div class="visual">
+                    <i class="fa fa-users"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        @userDb.Users.Count()
+                    </div>
+                    <div class="desc">Benutzer</div>
+                </div>
+                <a class="more" href="@Url.Action("Index", "User", new {area="Admin"})">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div class="dashboard-stat fillter-study">
+                <div class="visual">
+                    <i class="fa fa-exchange"></i>
+                </div>
+                <div class="details">
+                    <div class="number">
+                        @(appDb.DateChanges.Count() + appDb.RoomChanges.Count())
+                    </div>
+                    <div class="desc">Änderungen</div>
+                </div>
+                <a class="more" href="@Url.Action("Index", "Change", new { area = "Admin" })">
+                    Weiter
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject bold">Schnellzugriffe</span>
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="list-group">
+                        <a href="@Url.Action("Index", "Semester", new {area="Admin"})" class="list-group-item">
+                            <i class="fa fa-calendar fa-fw"></i> Semester
+                        </a>
+                        <a href="@Url.Action("Index", "Hangfire")" class="list-group-item">
+                            <i class="fa fa-users fa-fw"></i> Jobverwaltung
+                        </a>
+                        <a href="@Url.Action("Index", "Logging", new {area="Admin"})" class="list-group-item">
+                            <i class="fa fa-cloud fa-fw"></i> Log
+                        </a>
+                        <a href="@Url.Action("Index", "OfficeHour", new {area="Admin"})" class="list-group-item">
+                            <i class="fa fa-question-circle-o fa-fw"></i> Sprechstunden
+                        </a>
+                        <a href="@Url.Action("Index", "Test", new {area="Admin"})" class="list-group-item">
+                            <i class="fa fa-question-circle-o fa-fw"></i> Systemtest
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="well well-lg">
+                    <a href="@Url.Action("Index", "Database", new {area = "Admin"})" class="btn btn-primary btn-lg btn-block">
+                        <i class="fa fa-refresh"></i> Testdaten anlegen
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="well well-lg">
+                    <a href="@Url.Action("Index", "Integration", new {area = "Admin"})" class="btn btn-primary btn-lg btn-block">
+                        <i class="fa fa-refresh"></i> Rest API testen
+                    </a>
+                    <a href="http://vsl006.wi.private.hm.edu/primuss">Ein redirect</a>
+                    <button onclick="testShib()">AJAX Test</button>
+
+                    <form action="https://primuss-zahlen.ad.hm.edu/student/index.php" method="post">
+                        <button type="submit">Als Formular</button>
+                    </form>
+
+                </div>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h4>Test</h4>
+                    </div>
+                    <div class="panel-body">
+                        <a href="@Url.Action("Send", "Notification", new {area = "Admin"})" class="btn btn-default">Examensformen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+{
+    <script>
+
+        function testShib() {
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: 'https://primuss-zahlen.ad.hm.edu/redirect.php',
+                    success: function (data, success, xhr) {
+                        alert('huhu');
+                    },
+                    error: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                    }
+                });
+        }
+
+    </script>
+}

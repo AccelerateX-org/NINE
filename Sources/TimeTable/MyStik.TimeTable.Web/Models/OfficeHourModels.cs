@@ -882,7 +882,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public OfficeHour MyOfficeHour { get; set; }
+        public ICollection<OfficeHour> MyOfficeHours { get; set; }
     }
 
 
@@ -909,6 +909,12 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+    public class LecturerOfficeHourModel
+    {
+        public OrganiserMember Member { get; set; }
+
+        public List<OfficeHour> OfficeHours { get; set; }
+    }
 
 
 }

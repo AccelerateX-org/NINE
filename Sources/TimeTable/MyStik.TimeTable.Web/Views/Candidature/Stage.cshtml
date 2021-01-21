@@ -1,10 +1,10 @@
 ﻿@using System.Web.ModelBinding
 @model MyStik.TimeTable.Data.CandidatureStage
 @{
-    ViewBag.Title = "Eignungsprüfung";
+    ViewBag.Title = "Aufnahmeverfahren";
 
-    var maxFiles = 20;
-    var maxDropSize = 20;
+    var maxFiles = 25;
+    var maxDropSize = 25;
 
     var dropSize = Math.Min(maxDropSize, Math.Max(0, maxFiles - Model.Material.Count));
 
@@ -22,7 +22,7 @@
     <script>
 
         Dropzone.options.formDrop = {
-            acceptedFiles: '.png,.jpg,.gif,image/*',
+            acceptedFiles: '.png,.jpg,.gif,image/*,.pdf',
             capture: 'camera',
             maxFiles: @dropSize,
             parallelUploads: 1,
@@ -102,7 +102,7 @@
 
 <div class="row" style="margin-top: 20px">
     <div class="col-12">
-        <h4><i class="fas fa-poll"></i> Meine Teilnahme an der Eignungsprüfung "@Model.AssessmentStage.Assessment.Name"</h4>
+        <h4><i class="fas fa-poll"></i> Meine Teilnahme an der Aufnahmeverfahren "@Model.AssessmentStage.Assessment.Name"</h4>
 
         <div class="card">
             <h5 class="card-header">Hochladen von Material</h5>
@@ -132,7 +132,7 @@
                         <li>Legen Sie die Dateien möglichst einzeln auf dem Ablagebereich ab oder klicken Sie auf den Ablagebereich.</li>
                         <li>Am Smartphone auf den Ablagebereich drücken und Bilder auswählen bze. fotografieren.</li>
                         <li>Insgesamt dürfen maximal <strong>@maxFiles Dateien</strong> hochgeladen werden.</li>
-                        <li>Es dürfen nur Dateien in den Formaten .png, .jpeg und .gif hochgeladen werden.</li>
+                        <li>Es dürfen nur Dateien in den Formaten .png, .jpeg, .gif und .pdf hochgeladen werden.</li>
                         <li>Titel und Beschreibungstext für die einzelnen Dateien können nachträglich ergänzt oder geändert werden.</li>
                     </ul>
                     <form id="formDrop" action="@Url.Action("UploadFile")" class="dropzone">

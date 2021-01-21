@@ -52,14 +52,6 @@ namespace MyStik.TimeTable.Web.Helpers
         public static MvcHtmlString LecturerList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> hosts, bool showLinks=true, bool asInline=false)
         {
             var sb = new StringBuilder();
-            if (asInline)
-            {
-                sb.Append("<i class=\"fas fa-li fa-chalkboard-teacher\"></i> ");
-            }
-            else
-            {
-                sb.Append("<i class=\"fa fa-user\"></i> ");
-            }
 
             foreach (var host in hosts)
             {
@@ -570,10 +562,10 @@ namespace MyStik.TimeTable.Web.Helpers
         public static MvcHtmlString FacultyList(this HtmlHelper htmlHelper, ICollection<OrganiserMember> members)
         {
             var sb = new StringBuilder();
-            foreach (var group in members)
+            foreach (var member in members)
             {
-                sb.Append(group.ShortName);
-                if (group != members.Last())
+                sb.Append(member.Organiser.ShortName);
+                if (member != members.Last())
                 {
                     sb.Append(htmlHelper.Raw(", "));
                 }

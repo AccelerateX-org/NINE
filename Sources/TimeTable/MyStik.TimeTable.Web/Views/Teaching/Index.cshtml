@@ -6,6 +6,45 @@
 }
 
 
+@section menue2nd
+{
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.CurrentSemester.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Messaging")"><i class="fas fa-envelope fa-fw"></i><br />Mailverteiler</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("OfficeHour", "Lecturer")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Courses", "Lecturer")"><i class="fas fa-microphone fa-fw"></i><br />Lehrveranstaltungen</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "CurriculumModule")"><i class="fas fa-cube fa-fw"></i><br />Module</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "VirtualRoom")"><i class="fas fa-tv fa-fw"></i><br />virtuelle Räume</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Advertisements")"><i class="fas fa-file-upload fa-fw"></i><br />virtueller Schaukasten</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+}
+
+
 
 <div class="row">
     <div class="col-md-12">
@@ -16,37 +55,13 @@
                     {
                         <a href="@Url.Action("Index", new {id=Model.PrevSemester.Id})" class="btn btn-outline-primary btn-sm"><small><< @Model.PrevSemester.Name</small></a>
                     }
-                    @Model.CurrentSemester.Semester.Name
+                    Übersicht für @Model.CurrentSemester.Semester.Name
                     @if (Model.NextSemester != null)
                     {
                         <a href="@Url.Action("Index", new {id=Model.NextSemester.Id})" class="btn btn-outline-primary btn-sm"><small>@Model.NextSemester.Name >></small></a>
                     }
                 </h4>
-                <p>Meine Fakultät(en): @Html.FacultyList(Model.Members)</p>
             </div>
-            <ul class="nav bg-light text-dark">
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.CurrentSemester.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Messaging")"><i class="fas fa-envelope fa-fw"></i><br />Mailverteiler</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("OfficeHour", "Lecturer")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Courses", "Lecturer")"><i class="fas fa-microphone fa-fw"></i><br />Lehrveranstaltungen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "CurriculumModule")"><i class="fas fa-cube fa-fw"></i><br />Module</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "VirtualRoom")"><i class="fas fa-tv fa-fw"></i><br />virtuelle Räume</a>
-                </li>
-            </ul>
             <div class="list-group">
                 @foreach (var course in Model.CurrentSemester.Courses)
                 {
@@ -155,21 +170,43 @@
                             <ul class="fa-ul">
                                 @foreach (var thesis in Model.ActiveTheses)
                                 {
-
-                                    if (thesis.Thesis.DeliveryDate != null)
+                                    if (thesis.User != null)
                                     {
-                                        <li>
-                                            <span class="fa-li"><i class="fas fa-trophy"></i></span>
-                                            <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                                        </li>
+
+                                        if (thesis.Thesis.DeliveryDate != null)
+                                        {
+                                            <li>
+                                                <span class="fa-li"><i class="fas fa-trophy"></i></span>
+                                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <span class="fa-li"><i class="fas fa-cogs"></i></span>
+                                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                                                <span class="badge badge-secondary">@thesis.DaysToExpire</span>
+                                            </li>
+                                        }
                                     }
                                     else
                                     {
-                                        <li>
-                                            <span class="fa-li"><i class="fas fa-cogs"></i></span>
-                                            <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                                            <span class="badge badge-secondary">@thesis.DaysToExpire</span>
-                                        </li>
+                                        if (thesis.Thesis.DeliveryDate != null)
+                                        {
+                                            <li>
+                                                <span class="fa-li"><i class="fas fa-trophy"></i></span>
+                                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">Unbekannt (@thesis.Student.Curriculum.ShortName)</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <span class="fa-li"><i class="fas fa-cogs"></i></span>
+                                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">Unbekannt (@thesis.Student.Curriculum.ShortName)</a>
+                                                <span class="badge badge-secondary">@thesis.DaysToExpire</span>
+                                            </li>
+                                        }
+
                                     }
                                 }
                             </ul>

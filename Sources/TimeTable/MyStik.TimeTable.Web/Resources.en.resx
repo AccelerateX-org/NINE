@@ -529,7 +529,7 @@
     <value>The fillter apps for up-to-date information on the smartphone</value>
   </data>
   <data name="LoginButton" xml:space="preserve">
-    <value>Apply</value>
+    <value>Sign in</value>
   </data>
   <data name="LoginHeading" xml:space="preserve">
     <value>Login with NINE user account</value>

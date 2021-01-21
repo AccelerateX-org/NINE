@@ -125,13 +125,13 @@
 		</tr>
 		<tr>
 			<td colspan="3" style="vertical-align: text-top;">
-				<h2>Titel in Deutsch</h2>
+				<h2>Thema in Deutsch</h2>
 				<div>@Model.Thesis.Thesis.TitleDe</div>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="3" style="vertical-align: text-top;">
-				<h2>Titel in Englisch</h2>
+				<h2>Thema in Englisch</h2>
 				<div>@Model.Thesis.Thesis.TitleEn</div>
 			</td>
 		</tr>
@@ -143,7 +143,10 @@
 				</td>
 				<td style="width: 33%;">
 					<div style="margin-top: 40px">
-						@Model.Thesis.PrimarySupervisor.Member.FullName
+						@if (Model.Thesis.PrimarySupervisor.Member != null)
+						{
+							<div> @Model.Thesis.PrimarySupervisor.Member.FullName </div>
+						}
 					</div>
 				</td>
 				<td style="width: 33%">
@@ -169,7 +172,10 @@
 				</td>
 				<td style="width: 33%;">
 					<div style="margin-top: 40px">
-						@Model.Thesis.SecondarySupervisor.Member.FullName
+						@if (Model.Thesis.SecondarySupervisor != null && Model.Thesis.SecondarySupervisor.Member != null)
+						{
+							<div>@Model.Thesis.SecondarySupervisor.Member.FullName</div>
+						}
 					</div>
 				</td>
 				<td style="width: 33%">

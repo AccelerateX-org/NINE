@@ -1,69 +1,102 @@
 ﻿@using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Web.Models.OfficeHourOverviewModel>
 @{
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Semester";
 }
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-user-md"></i> Meine Sprechstundentermine
-                        <a href="@Url.Action("Index", "OfficeHour")" class="btn btn-danger btn-sm"><i class="fa fa-pencil"></i> neuen Termin buchen</a>
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @if (!Model.Any())
+@section menue2nd
+{
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    @if (ViewBag.Organiser != null)
                     {
-                        <div class="list-group-item list-group-item-danger">
-                            <h5>Keine zukünftigen Termine vorhanden</h5>
-                        </div>
+                        <a class="nav-link text-center" href="@Url.Action("Organiser", "Lecturer", new {id = ViewBag.Organiser.Id})"><i class="fas fa-plus fa-fw"></i><br />Neuen Termin buchen</a>
                     }
-
-                    @foreach (var semester in Model)
+                    else
                     {
-                        <div class="list-group-item disabled">
-                            <h5 class="list-group-item-heading">@semester.Semester.Name</h5>
-                        </div>
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Lecturer")"><i class="fas fa-plus fa-fw"></i><br />Neuen Termin buchen</a>
+                    }
+                </li>
+            @*
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-list fa-fw"></i><br />Historie</a>
+                </li>
+                *@
+            </ul>
+        </div>
+    </nav>
+}
 
-                        foreach (var ohDate in semester.OfficeHours.OrderBy(x => x.Lecturer.Name).ThenBy(x => x.Begin))
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="fas fa-user-md"></i>
+                    Meine aktuellen Buchungen
+                </h4>
+            </div>
+            <div class="list-group">
+                @if (!Model.Any())
+                {
+                    <div class="list-group-item list-group-item-danger">
+                        <h5>Keine zukünftigen Termine vorhanden</h5>
+                    </div>
+                }
+
+                @foreach (var semester in Model)
+                {
+                    <div class="list-group-item list-group-item-dark">
+                        <strong>@semester.Semester.Name</strong>
+                    </div>
+
+                    foreach (var ohDate in semester.OfficeHours.OrderBy(x => x.Lecturer.Name).ThenBy(x => x.Begin))
+                    {
+                        if (ohDate.Begin > DateTime.Now)
                         {
-                            if (ohDate.Begin > DateTime.Now)
-                            {
-                                <a href="@Url.Action("Lecturer", "OfficeHour", new {id = ohDate.Lecturer.Id})" class="list-group-item">
-                                    <h5 class="list-group-item-heading">@ohDate.Lecturer.FullName</h5>
-                                    <div class="list-group-item-text">
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(ohDate.Begin, ohDate.End)</li>
-                                            @if (!string.IsNullOrEmpty(ohDate.Subscription.SubscriberRemark))
-                                            {
-                                                <li><i class="fa fa-li fa-info-circle"></i>@ohDate.Subscription.SubscriberRemark</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </a>
-                            }
-                            else
-                            {
-                                <div class="list-group-item disabled">
-                                    <h5 class="list-group-item-heading">@ohDate.Lecturer.FullName</h5>
-                                    <div class="list-group-item-text">
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(ohDate.Begin, ohDate.End)</li>
-                                            @if (!string.IsNullOrEmpty(ohDate.Subscription.SubscriberRemark))
-                                            {
-                                                <li><i class="fa fa-li fa-info-circle"></i>@ohDate.Subscription.SubscriberRemark</li>
-                                            }
-                                        </ul>
-                                    </div>
+                            <a href="@Url.Action("SubscriptionDetails", "OfficeHour", new {id = ohDate.Date.Id})" class="list-group-item list-group-item-action">
+                                <h5 class="list-group-item-heading">@ohDate.Lecturer.FullName</h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(ohDate.Begin, ohDate.End)</li>
+                                        @if (!string.IsNullOrEmpty(ohDate.Subscription.SubscriberRemark))
+                                        {
+                                            <li><i class="fa fa-li fa-user"></i>Mein Anliegen: @ohDate.Subscription.SubscriberRemark</li>
+                                        }
+                                    </ul>
                                 </div>
-                            }
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="list-group-item disabled">
+                                <h5 class="list-group-item-heading">@ohDate.Lecturer.FullName</h5>
+                                <div class="list-group-item-text">
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(ohDate.Begin, ohDate.End)</li>
+                                        @if (!string.IsNullOrEmpty(ohDate.Subscription.SubscriberRemark))
+                                        {
+                                            <li><i class="fa fa-li fa-info-circle"></i>@ohDate.Subscription.SubscriberRemark</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
                         }
                     }
-                </div>
+                }
             </div>
+
         </div>
     </div>
 </div>
+
+
+
+

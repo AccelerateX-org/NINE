@@ -23,6 +23,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
+            return RedirectToAction("Index", "Home");
+
+            /*
             var userRight = GetUserRight();
             ViewBag.UserRight = userRight;
 
@@ -75,6 +78,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 default:
                     return View("DashboardDefault", CreateDashboardModelDefault(userRight));
             }
+            */
         }
 
         public ActionResult Schedule(Guid id)

@@ -195,7 +195,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 CC.Add(user.Email);
             }
 
-            Subject = $"Änderung Titel der Abschlussarbeit";
+            Subject = $"Änderung Thema der Abschlussarbeit";
 
 
             return Email("ThesisSupervisorTitleChangedEMail", mailModel);

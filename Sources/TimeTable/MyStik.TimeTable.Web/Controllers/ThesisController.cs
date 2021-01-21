@@ -163,12 +163,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Liste aller Fakultäten
             // nur die eigene
+            /*
             ViewBag.Organiser = Db.Organisers.Where(x => x.Id == thesis.Student.Curriculum.Organiser.Id).OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
+            */
 
+            ViewBag.Organiser = Db.Organisers.Where(x => x.IsFaculty && !x.IsStudent).OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            {
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
+            });
 
 
             return View(model);
@@ -247,6 +254,19 @@ namespace MyStik.TimeTable.Web.Controllers
                     thesis.TitleEn = model.TitleEn;
 
                 Db.SaveChanges();
+
+
+                // Mailversand bei Änderung des Titels
+                /*
+                if (thesis.IssueDate != null)
+                {
+                    // Mail an Studierenden, dass der Lehrende den Thema geändert hat
+                    var tm = InitMailModel(thesis, user);
+
+                    new MailController().ThesisSupervisorTitleChangedEMail(tm).Deliver();
+                }
+                */
+
             }
 
 

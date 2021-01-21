@@ -2,7 +2,7 @@
 @using MyStik.TimeTable.Web.Helpers
 @model ICollection<MyStik.TimeTable.Data.Assessment>
 @{
-    ViewBag.Title = "Eignungsprüfung";
+    ViewBag.Title = "Aufnahmeverfahren";
 }
 
 
@@ -13,10 +13,10 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-poll"></i> Alle  aktuellen Eignungsprüfungen
+                <i class="fas fa-poll"></i> Alle  aktuellen Aufnahmeverfahren
             </div>
 
-            @foreach (var assessment in Model)
+            @foreach (var assessment in Model.Where(x => x.Stages.Any(s => s.ClosingDateTime != null && s.ClosingDateTime.Value >= DateTime.Today)))
             {
                 <div class="card md-3">
                     <div class="card-header">

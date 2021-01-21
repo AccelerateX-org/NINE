@@ -8814,7 +8814,7 @@
             <param name="activeOnly"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.LecturerList(System.Nullable{System.Guid},System.String)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.LecturerList(System.Nullable{System.Guid},System.String,System.Boolean)">
             <summary>
             
             </summary>
@@ -16963,7 +16963,7 @@
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.OfficeHourOverviewModel.MyOfficeHour">
+        <member name="P:MyStik.TimeTable.Web.Models.OfficeHourOverviewModel.MyOfficeHours">
             <summary>
             
             </summary>
@@ -21348,6 +21348,21 @@
         <member name="P:MyStik.TimeTable.Web.Resources.TermsOfUse">
             <summary>
               Looks up a localized string similar to Nutzungsbedingungen.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.Thesis_General_Plural">
+            <summary>
+              Looks up a localized string similar to Abschlussarbeiten.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.Thesis_General_Single">
+            <summary>
+              Looks up a localized string similar to Abschlussarbeit.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.Thesis_State_Done">
+            <summary>
+              Looks up a localized string similar to Abgegeben.
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Resources.TimesString">

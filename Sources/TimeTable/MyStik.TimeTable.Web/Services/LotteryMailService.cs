@@ -42,8 +42,11 @@ namespace MyStik.TimeTable.Web.Services
 
                     try
                     {
-                        EmailService.Send(email);
-                        Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                        if (email.User != null)
+                        {
+                            EmailService.Send(email);
+                            Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                        }
                     }
                     catch (Exception exMail)
                     {
@@ -71,8 +74,12 @@ namespace MyStik.TimeTable.Web.Services
 
                 try
                 {
-                    EmailService.Send(email);
-                    Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                    if (email.User != null)
+                    {
+
+                        EmailService.Send(email);
+                        Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                    }
                 }
                 catch (Exception exMail)
                 {
@@ -102,8 +109,12 @@ namespace MyStik.TimeTable.Web.Services
 
                     try
                     {
-                        EmailService.Send(email);
-                        Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                        if (email.User != null)
+                        {
+
+                            EmailService.Send(email);
+                            Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                        }
                     }
                     catch (Exception exMail)
                     {
@@ -130,8 +141,11 @@ namespace MyStik.TimeTable.Web.Services
 
             try
             {
-                EmailService.Send(email);
-                Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                if (email.User != null)
+                {
+                    EmailService.Send(email);
+                    Logger.InfoFormat("E-Mail an {0} erfolgreich versendet", email.User.Email);
+                }
             }
             catch (Exception exMail)
             {

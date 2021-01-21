@@ -1231,4 +1231,13 @@
   <data name="TermsOfUse" xml:space="preserve">
     <value>Nutzungsbedingungen</value>
   </data>
+  <data name="Thesis_General_Plural" xml:space="preserve">
+    <value>Abschlussarbeiten</value>
+  </data>
+  <data name="Thesis_General_Single" xml:space="preserve">
+    <value>Abschlussarbeit</value>
+  </data>
+  <data name="Thesis_State_Done" xml:space="preserve">
+    <value>Abgegeben</value>
+  </data>
 </root>

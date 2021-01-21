@@ -264,6 +264,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<Student> Students { get; set; }
 
+        public List<Thesis> Theses { get; set; }
+
     }
 
     public class StudentSemesterViewModel

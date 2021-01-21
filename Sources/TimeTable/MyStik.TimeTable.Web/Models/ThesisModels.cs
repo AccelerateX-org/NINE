@@ -198,7 +198,7 @@ namespace MyStik.TimeTable.Web.Models
         public ApplicationUser User { get; set; }
 
 
-        [Display(Name = "Titel")]
+        [Display(Name = "Thema")]
         public string Title { get; set; }
 
         public int Period { get; set; }

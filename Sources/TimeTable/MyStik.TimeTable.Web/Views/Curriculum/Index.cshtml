@@ -19,6 +19,14 @@
                 <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId=Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
                     <i class="fas fa-fw fa-microphone"></i> Vorlesungsverzeichnis @Model.Semester.Name
                 </a>
+                @if (Model.Assessments.Any())
+                {
+                    <a href="@Url.Action("Index", "Assessment")" class="list-group-item  list-group-item-action">
+                        <i class="fas fa-fw fa-poll"></i> Auswahlverfahren
+                    </a>
+                }
+
+
                 @if (ViewBag.UserRight.IsCurriculumAdmin)
                 {
 
@@ -36,9 +44,6 @@
                 @*
         <a href="#" class="list-group-item  list-group-item-action disabled">
             <i class="fas fa-fw fa-question-circle"></i> Orientierungstests
-        </a>
-        <a href="#" class="list-group-item  list-group-item-action disabled" >
-            <i class="fas fa-fw fa-poll"></i> Eignungsprüfung
         </a>
 
         <a href="#" class="list-group-item  list-group-item-action disabled">
@@ -76,7 +81,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
-                <a href="@Url.Action("Index", "Assessment", new {id=Model.Curriculum.Id})" class="btn btn-primary">Akzeptiert und weiter zu den Eignungsprüfung</a>
+                <a href="@Url.Action("Index", "Assessment", new {id=Model.Curriculum.Id})" class="btn btn-primary">Akzeptiert und weiter zu den Aufnahmeverfahren</a>
             </div>
         </div>
     </div>

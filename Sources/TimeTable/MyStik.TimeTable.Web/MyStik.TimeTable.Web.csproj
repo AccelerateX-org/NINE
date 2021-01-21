@@ -733,7 +733,10 @@
     <Content Include="Assets\fillter\img\logo.svg" />
     <Content Include="Assets\fillter\img\logoName.svg" />
     <Content Include="Assets\fillter\img\logo_fillter.svg" />
+    <Content Include="Assets\fillter\img\logo_fillter_dark.png" />
     <Content Include="Assets\fillter\img\logo_nine.svg" />
+    <Content Include="Assets\fillter\img\logo_small_primuss.png" />
+    <Content Include="Assets\fillter\img\moodlelogo.png" />
     <Content Include="Assets\fillter\img\selectable.svg" />
     <Content Include="Assets\fillter\img\selected.svg" />
     <Content Include="Assets\fillter\img\white.gif" />
@@ -4319,6 +4322,8 @@
     <Content Include="Views\Lecturer\Courses.cshtml" />
     <Content Include="Views\Home\FirstVisit.cshtml" />
     <Content Include="Views\Lecturer\OfficeHour.cshtml" />
+    <Content Include="Views\Assessment\Edit.cshtml" />
+    <Content Include="Views\OfficeHour\Lecturer.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -3,9 +3,20 @@
 @if (Model.Storage != null)
 {
     <div class="card">
-            <div class="card-img">
-                <img src="@Url.Action("GetRessource", "Storage", new {id = Model.Storage.Id})" class="card-img-top"/>
-            </div>
+        <div class="card-img">
+            @if (Model.Storage.FileType.Contains("pdf"))
+            {
+                <div class="text-center">
+                    <i class="fas fa-file-pdf fa-4x"></i>
+                    <p>pdf-Datei</p>
+                </div>
+            }
+            else
+            {
+                <img src="@Url.Action("GetRessource", "Storage", new {id = Model.Storage.Id})" class="card-img-top" />
+
+            }
+        </div>
 
             <ul class="fa-ul">
                 @if (string.IsNullOrEmpty(Model.Storage.Name))

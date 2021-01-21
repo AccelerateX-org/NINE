@@ -59,22 +59,25 @@
                         </div>
                     }
                     <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                        <a href="mailto:@Model.User.Email" class="btn btn-default"><i class="fa fa-envelope-o"></i> E-Mail schreiben</a>
-
-                        @if (!Model.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                        @if (Model.User != null)
                         {
-                            if (Model.Subscription.OnWaitingList)
+                            <a href="mailto:@Model.User.Email" class="btn btn-default"><i class="fa fa-envelope-o"></i> E-Mail schreiben</a>
+
+                            if (!Model.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                             {
-                                if (!hasLottery || hasPrio1 || ViewBag.UserRight.IsCourseAdmin)
+                                if (Model.Subscription.OnWaitingList)
                                 {
-                                    <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-default"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
+                                    if (!hasLottery || hasPrio1 || ViewBag.UserRight.IsCourseAdmin)
+                                    {
+                                        <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-default"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                if (!hasLottery || ViewBag.UserRight.IsCourseAdmin)
+                                else
                                 {
-                                    <a href="@Url.Action("SetOnWaitingList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Auf Warteliste setzen</a>
+                                    if (!hasLottery || ViewBag.UserRight.IsCourseAdmin)
+                                    {
+                                        <a href="@Url.Action("SetOnWaitingList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Auf Warteliste setzen</a>
+                                    }
                                 }
                             }
                         }

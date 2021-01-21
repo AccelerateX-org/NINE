@@ -177,6 +177,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult SemesterGroups()
         {
+            // alle LVs eines Semesters
+
+
+
+
+
+
             return View();
         }
 
@@ -664,7 +671,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Curriculum(Guid id)
         {
-            var model = Db.Students.SingleOrDefault(x => x.Id == id);
+            var model = new StudentDetailViewModel();
+
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+            var user = UserManager.FindById(student.UserId);
+
+            model.Student = student;
+            model.User = user;
+            model.Theses =  Db.Theses.Where(x => x.Student.Id == student.Id).ToList();
 
             return View(model);
         }

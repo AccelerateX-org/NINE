@@ -2,7 +2,7 @@
 @using MyStik.TimeTable.Web.Services
 @model MyStik.TimeTable.Data.Assessment
 @{
-    ViewBag.Title = "Eignungsprüfung";
+    ViewBag.Title = "Aufnahmeverfahren";
     var userInfoService = new UserInfoService();
     var totalByteCount = 0;
 
@@ -16,7 +16,7 @@
 
 <div class="row" style="margin-top: 20px">
     <div class="col-md-12">
-        <h4><i class="fas fa-poll"></i> Details zur Eignungsprüfung "@Model.Name"</h4>
+        <h4><i class="fas fa-poll"></i> Details zur Aufnahmeverfahren "@Model.Name"</h4>
         <div class="card">
             <ul class="nav bg-light text-dark">
                 <li class="nav-item">
@@ -32,6 +32,9 @@
                     </li>
                     if (hasChair)
                     {
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("Edit", new {id = Model.Id})"><i class="fas fa-cog fa-fw"></i><br />Einstellungen</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Stufe hinzufügen</a>
                         </li>

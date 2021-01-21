@@ -14,6 +14,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Authorize(Roles = "SysAdmin")]
     public class HomeController : BaseController
     {
         /// <summary>
@@ -22,40 +23,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var model = new DataAdminModel();
-
-            var allOrgs = Db.Organisers.ToList();
-
-            foreach (var organiser in allOrgs)
-            {
-                var orgModel = new OrgState
-                {
-                    Organiser = organiser,
-                };
-
-                AddUser(orgModel.Users, organiser.ShortName, "stud");
-                AddUser(orgModel.Users, organiser.ShortName, "doz");
-                AddUser(orgModel.Users, organiser.ShortName, "admin");
-
-
-                model.Organisers.Add(orgModel);
-            }
-
-            var allCurr = Db.Curricula.ToList();
-            foreach (var curriculum in allCurr)
-            {
-                model.Curricula.Add(new CurriculumState
-                {
-                    Curriculum = curriculum,
-                });
-
-            }
-
-
-
-
-
-            return View(model);
+            return View();
         }
 
         /// <summary>

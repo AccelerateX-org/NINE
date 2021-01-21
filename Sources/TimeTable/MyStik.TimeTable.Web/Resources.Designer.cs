@@ -3209,6 +3209,33 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Abschlussarbeiten.
+        /// </summary>
+        public static string Thesis_General_Plural {
+            get {
+                return ResourceManager.GetString("Thesis_General_Plural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abschlussarbeit.
+        /// </summary>
+        public static string Thesis_General_Single {
+            get {
+                return ResourceManager.GetString("Thesis_General_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abgegeben.
+        /// </summary>
+        public static string Thesis_State_Done {
+            get {
+                return ResourceManager.GetString("Thesis_State_Done", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zeit(en).
         /// </summary>
         public static string TimesString {
