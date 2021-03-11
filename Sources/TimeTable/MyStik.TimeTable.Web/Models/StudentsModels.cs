@@ -320,6 +320,19 @@ namespace MyStik.TimeTable.Web.Models
 
         public ICollection<CourseSummaryModel> Courses { get; set; }
 
+        public ICollection<StudentLecturerViewModel> Lecturers { get; set; }
+
+    }
+
+
+    public class StudentLecturerViewModel
+    {
+        public OrganiserMember Lecturer { get; set; }
+
+        public ICollection<CourseSummaryModel> Courses { get; set; }
+
+        public ICollection<OfficeHourDateViewModel> OfficeHours { get; set; }
+
     }
 
 

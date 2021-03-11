@@ -89,6 +89,7 @@ namespace MyStik.TimeTable.Web.Helpers
                 return new MvcHtmlString(string.Empty);
 
             var sb = new StringBuilder();
+            /*
             if (asInline)
             {
                 sb.Append("<i class=\"fas fa-li fa-building\"></i> ");
@@ -97,6 +98,7 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<i class=\"fa fa-building\"></i> ");
             }
+            */
             foreach (var room in rooms)
             {
                 if (showLinks)
@@ -144,6 +146,7 @@ namespace MyStik.TimeTable.Web.Helpers
 
             var sb = new StringBuilder();
 
+            /*
             if (asInline)
             {
                 sb.Append("<i class=\"fas fa-li fa-tv\"></i>");
@@ -152,6 +155,7 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<i class=\"fa fa-tv\"></i> ");
             }
+            */
             foreach (var room in rooms)
             {
                 if (showLinks)
@@ -200,7 +204,7 @@ namespace MyStik.TimeTable.Web.Helpers
                 return new MvcHtmlString(string.Empty);
 
             var sb = new StringBuilder();
-
+            /*
             if (asInline)
             {
                 sb.Append("<i class=\"fas fa-li fa-tv\"></i>");
@@ -209,7 +213,7 @@ namespace MyStik.TimeTable.Web.Helpers
             {
                 sb.Append("<i class=\"fa fa-tv\"></i> ");
             }
-
+            */
             foreach (var room in rooms)
             {
                 if (showLinks)

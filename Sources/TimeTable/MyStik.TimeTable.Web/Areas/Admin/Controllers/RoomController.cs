@@ -152,8 +152,13 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         {
             var room = Db.Rooms.SingleOrDefault(r => r.Id == model.Room.Id);
 
-            if (room != null && room.Dates.Count == 0)
+            if (room != null)
             {
+                foreach (var roomDate in room.Dates)
+                {
+                    roomDate.Rooms.Remove(room);
+                }
+
                 Db.Rooms.Remove(room);
                 Db.SaveChanges();
             }

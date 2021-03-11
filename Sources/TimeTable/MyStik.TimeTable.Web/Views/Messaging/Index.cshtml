@@ -15,7 +15,13 @@
                     <a href="@Url.Action("AllStudents", "Mailing")" class="list-group-item">
                         <h5 class="list-group-item-heading">Alle Studierende der @Model.Organiser.ShortName</h5>
                         <div class="list-group-tem-text">
-                            Alle Studierenden, mit nicht abgeschlossenem Studium.
+                            Alle aktiven Studierenden der Fakultät, d.h. mit nicht bewerteter Abschnlussarbeit. Angabe des Studiengangs ist Selbstauskunft der Studierenden.
+                        </div>
+                    </a>
+                    <a href="@Url.Action("Curricula", "Mailing")" class="list-group-item">
+                        <h5 class="list-group-item-heading">Alle Studierende der @Model.Organiser.ShortName nach Studiengängen</h5>
+                        <div class="list-group-tem-text">
+                            Alle aktiven Studierenden einzelner Studiengänge der Fakultät, d.h. mit nicht bewerteter Abschnlussarbeit. Angabe des Studiengangs ist Selbstauskunft der Studierenden.
                         </div>
                     </a>
                     <a href="@Url.Action("Curriculum", "Mailing")" class="list-group-item">
@@ -27,7 +33,7 @@
                     <a href="@Url.Action("StudentGroup", "Mailing")" class="list-group-item">
                         <h5 class="list-group-item-heading">Auswahl von Studierenden nach Studiengang und <i>Fachsemester</i></h5>
                         <div class="list-group-tem-text">
-                            Das <i>Fachsemester</i> ergibt sich implizit daraus in welchen Lehrveranstaltung einer Semestergruppe jemand eingetragen ist. 
+                            Das <i>Fachsemester</i> ergibt sich implizit daraus in welchen Lehrveranstaltung einer Semestergruppe jemand eingetragen ist.
                             Ist jemand in einer Veranstaltung des 1. Semester eingetragenn, dann wird das als "Erstsemester" angenommen.
                         </div>
                     </a>

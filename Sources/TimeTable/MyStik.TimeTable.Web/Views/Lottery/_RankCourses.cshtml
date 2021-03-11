@@ -22,13 +22,14 @@
         @if (Model.Lottery.MaxConfirm == Model.Lottery.MaxExceptionConfirm)
         {
             <p><i class="fa fa-heartbeat"></i> Sie erhalten maximal in @Model.Lottery.MaxConfirm Lehrveranstaltungen einen Platz</p>
-            <input hidden="" value="@Model.Lottery.MaxConfirm" id="confirm"/>
+            <input hidden="" value="@Model.Lottery.MaxConfirm" id="confirm" />
         }
 
         @if (Model.Lottery.MaxConfirm < Model.Lottery.MaxExceptionConfirm)
         {
-            <hr/>
-            <h5><i class="fa fa-heart-o text-warning"></i> Bitte geben Sie die Anzahl der Lehrveranstaltungen an, die Sie tatsächlich belegen wollen.
+            <hr />
+            <h5>
+                <i class="fa fa-heart-o text-warning"></i> Bitte geben Sie die Anzahl der Lehrveranstaltungen an, die Sie tatsächlich belegen wollen.
             </h5>
             <div class="form form-horizontal">
                 <div class="form-group">
@@ -51,26 +52,50 @@
                 </div>
             </div>
         }
-        <hr/>
-        <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
-        <div class="form form-horizontal">
-            <div class="form-group">
-                <label class="col-md-2 control-label">Ich möchte ...</label>
-                <div class="col-md-10">
-                    <div class="radio-list">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="acceptAny" value="1" checked>
-                            das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
-                        </label>
-                        <label>
-                            <input type="radio" name="optionsRadios" id="acceptNope" value="0">
-                            nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
-                        </label>
+        <hr />
+        @if (!Model.Lottery.IsScheduled)
+        {
+            <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
+            <div class="form form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Ich möchte ...</label>
+                    <div class="col-md-10">
+                        <div class="radio-list">
+                            <label>
+                                <input type="radio" name="optionsRadios" id="acceptAny" value="1" checked>
+                                das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
+                            </label>
+                            <label>
+                                <input type="radio" name="optionsRadios" id="acceptNope" value="0">
+                                nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
+        }
+        else
+        {
+            <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
+            <div class="form form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Ich möchte ...</label>
+                    <div class="col-md-10">
+                        <div class="radio-list">
+                            <label>
+                                <input type="radio" name="optionsRadios" id="acceptAny" value="1" disabled>
+                                das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
+                            </label>
+                            <label>
+                                <input type="radio" name="optionsRadios" id="acceptNope" value="0" checked>
+                                nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @if (Model.Lottery.LoINeeded)
         {
             <h5><i class="fa fa-pencil"></i> Im Rahmen des Wahlverfahrens können Sie Bewerbungsschreiben einreichen. Dies können Sie nach dem Abschluss der Auswahl machen.</h5>

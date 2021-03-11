@@ -55,7 +55,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // user = student => nur wenn freigegeben
             var nextCoursesList = new List<CourseSummaryModel>();
             var bSearchForCourses = true;
-            if (user.MemberState != MemberState.Staff)
+            if (user.MemberState != MemberState.Staff && nextSemester != null)
             {
                 // nur wenn alle Gruppen freigegeben sind
                 var isAvailable = nextSemester.Groups.All(x => x.IsAvailable);

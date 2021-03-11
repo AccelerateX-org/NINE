@@ -321,6 +321,19 @@
                                     else
                                     {
                                         <p>Arbeit wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() abgegeben.</p>
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                                            @if (Model.Thesis.RenewalDate != null)
+                                            {
+                                                <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()  (Abgabe verlängert)</li>
+                                                <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                            }
+                                            else
+                                            {
+                                                <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                            }
+                                        </ul>
+
                                         if (Model.Position == 1)
                                         {
                                             <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
@@ -334,7 +347,7 @@
                                         <li>Die Anmeldung erfolgt entweder durch den Studierenden. Dabei kann vom geplanten Bearbeitungszeitraum abgewichen werden.</li>
                                         <li>Andernfalls wird die Arbeit automatisch zum geplanten Termin angemeldet.</li>
                                     </ul>
-                                    
+
                                 }
                             </div>
                         </div>

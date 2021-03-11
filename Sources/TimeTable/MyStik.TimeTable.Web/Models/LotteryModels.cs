@@ -93,8 +93,11 @@ namespace MyStik.TimeTable.Web.Models
         public bool LoIneeded { get; set; }
 
 
-        [Display(Name = "Automatische Ausführung")]
-        public bool IsScheduled { get; set; }
+        [Display(Name = "Pechvogelregel")]
+        public bool UseJinx { get; set; }
+
+        [Display(Name = "Änderungen blockieren")]
+        public bool UseLock { get; set; }
 
 
         /// <summary>

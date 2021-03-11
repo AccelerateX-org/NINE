@@ -335,7 +335,7 @@
                                             @if (Model.Thesis.RenewalDate != null)
                                             {
                                                 <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                                                <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                                <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</li>
                                             }
                                             else
                                             {

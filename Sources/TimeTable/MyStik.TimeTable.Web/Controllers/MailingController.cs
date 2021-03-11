@@ -883,6 +883,81 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+
+        public ActionResult Curricula()
+        {
+            var org = GetMyOrganisation();
+
+            ViewBag.UserRight = GetUserRight();
+
+            var model = new OccurrenceMailingModel();
+
+            var list = new List<SelectListItem>();
+            foreach (var curr in org.Curricula.OrderBy(f => f.ShortName))
+            {
+                var students = Db.Students.Count(x => x.Curriculum.Id == curr.Id &&
+                                                      x.LastSemester == null);
+
+                list.Add(new SelectListItem
+                {
+                    Text = curr.Name + "(" + students + " Empfänger:innen)",
+                    Value = curr.Id.ToString(),
+                });
+
+            }
+
+            ViewBag.Curricula = list;
+
+            /*
+            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            });
+            */
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Curricula(OccurrenceMailingModel model)
+        {
+            var logger = LogManager.GetLogger("StudentGroup");
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+
+            var students = Db.Students.Where(x => x.Curriculum.Id == curr.Id &&
+            x.LastSemester == null).ToList();
+
+            var userList = new List<ApplicationUser>();
+
+            foreach (var student in students)
+            {
+                ApplicationUser user = UserManager.FindById(student.UserId);
+                if (user != null)
+                {
+                    userList.Add(user);
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendFormat("Studiengang {0}", curr.ShortName);
+
+            model.ListName = sb.ToString();
+            model.IsDistributionList = true;
+
+            logger.InfoFormat("UserList with {0} entires", userList.Count);
+
+            if (!User.IsInRole("SysAdmin"))
+            {
+                SendMail(userList, model);
+            }
+            return View("ReceiverList", userList);
+        }
+
+
         public ActionResult CurriculumModule(Guid moduleId, Guid semId)
         {
             ViewBag.UserRight = GetUserRight();

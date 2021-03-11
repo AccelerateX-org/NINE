@@ -3832,7 +3832,7 @@
     <Content Include="Views\Emails\CustomBodyMail.Html.cshtml" />
     <Content Include="Views\Planer\_CourseList.cshtml" />
     <Content Include="Views\Curriculum\_TopicList.cshtml" />
-    <Content Include="Views\Lottery\Details.cshtml" />
+    <Content Include="Views\Lottery\__Details.cshtml" />
     <Content Include="Views\Curriculum\_SemesterSelectList.cshtml" />
     <Content Include="Views\Shared\_LayoutPublicNew.cshtml" />
     <Content Include="Views\Lottery\Report.cshtml" />
@@ -3971,7 +3971,7 @@
     <Content Include="Views\Lottery\Budgets.cshtml" />
     <Content Include="Views\Lottery\Check.cshtml" />
     <Content Include="Views\Lottery\Course.cshtml" />
-    <Content Include="Views\Lottery\DetailsOld.cshtml" />
+    <Content Include="Views\Lottery\__DetailsOld.cshtml" />
     <Content Include="Views\Lottery\DrawingPots.cshtml" />
     <Content Include="Views\Lottery\EditBudget.cshtml" />
     <Content Include="Views\Lottery\EditReference.cshtml" />
@@ -4324,6 +4324,8 @@
     <Content Include="Views\Lecturer\OfficeHour.cshtml" />
     <Content Include="Views\Assessment\Edit.cshtml" />
     <Content Include="Views\OfficeHour\Lecturer.cshtml" />
+    <Content Include="Views\Mailing\Curricula.cshtml" />
+    <Content Include="Views\Course\Participients.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

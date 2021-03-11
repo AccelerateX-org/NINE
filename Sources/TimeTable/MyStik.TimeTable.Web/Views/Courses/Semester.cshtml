@@ -1,138 +1,267 @@
-﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
 @{
-    ViewBag.Title = "Semester";
-    var isAvailable = Model.Semester.Groups.Any(x => x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id && x.IsAvailable);
+                /**/
+
+                Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+                ViewBag.Title = "Lehrangebot";
+                var isAvailable = Model.Semester.Groups.Any(x => x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == Model.Organiser.Id && x.IsAvailable);
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Lehrangebot 
-                    @Model.Organiser.ShortName im 
-                    @Model.Semester.Name 
-                    @if (isAvailable)
-                    {
-                        <small>(veröffentlicht)</small>
-                    }
-                </h1>
-            </div>
-        </div>
-    </div>
-</div>
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")" rel="stylesheet" type="text/css" />
+}
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-list"></i> Übersichten und Listen</h4>
-                </div>
-                <div class="list-group">
-                    @if (Request.IsLocal)
-                    {
-                        <a href="@Url.Action("Schedule", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-book"></i> Stundenpläne
-                            </h5>
-                            <p class="list-group-item-text">Anzeige der Wochenpläne (druckbar)</p>
-                        </a>
-                        <a href="@Url.Action("Calendar", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-calendar"></i> Kalender
-                            </h5>
-                            <p class="list-group-item-text">Anzeige als Tageskalender</p>
-                        </a>
-                    }
-                    <a href="@Url.Action("Groups", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-group"></i> Semestergruppen
-                        </h5>
-                        <p class="list-group-item-text">Anzeige der Gruppen</p>
-                    </a>
-                    <a href="@Url.Action("Organiser", "Dictionary", new {semId = Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-book"></i> Vorlesungsverzeichnis
-                        </h5>
-                        <p class="list-group-item-text">Für alle Studienangebote</p>
-                    </a>
-                    <a href="@Url.Action("List", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-list"></i> Datentabelle
-                        </h5>
-                        <p class="list-group-item-text">Suchen und Sortieren nach Stichwörten, Lehrenden, Räume und Zeiten</p>
-                    </a>
-                    <a href="@Url.Action("SemesterReport", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-download"></i> Semesterbericht
-                        </h5>
-                        <p class="list-group-item-text">Download einer .csv Datei mit wichtigsten Informationen</p>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-gamepad"></i> Prozesse</h4>
-                </div>
-                <div class="list-group">
-                    <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-random"></i> Wahlverfahren
-                        </h5>
-                        <p class="list-group-item-text">
-                            <ul>
-                                @foreach (var lottery in Model.ActiveLotteries)
-                                {
-                                    <li>@lottery.Name</li>
-                                }
-                            </ul>
-                        </p>
-                    </a>
-                    <a href="@Url.Action("Index", "Cie", new {id = Model.Semester.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">
-                            <i class="fa fa-fw fa-random"></i> Courses in English
-                        </h5>
-                        <div class="list-group-item-text">
-                            Zugang zum hochschulweiten CIE-Programm
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabCourses').DataTable({
+                "paging": false
+            });
+        });
+    </script>
+}
+
+
+@section menue2nd
+{
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("AdminGroups", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-list"></i><br />Semestergruppen</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Organiser", "Dictionary", new {semId = Model.Semester.Id, orgId=Model.Organiser.Id})"> <i class="fas fa-pen"></i><br />Vorlesungsverzeichnis</a>
+                </li>
             @if (ViewBag.UserRight.IsCourseAdmin)
             {
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-bullhorn"></i> Freigabe
-                            </h5>
-                            <p class="list-group-item-text">Freischalten, Zurückziehen der Semestergruppen</p>
-                        </a>
-                        <a href="@Url.Action("AdminGroups", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-wrench"></i> Semestergruppen
-                            </h5>
-                            <p class="list-group-item-text">Anlegen und Löschen</p>
-                        </a>
-                        <a href="@Url.Action("CopyDay", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-copy"></i> Tag kopieren
-                            </h5>
-                            <p class="list-group-item-text">Einen kompletten Vorlesungstag eines Studiengangs kopieren oder verschieben</p>
-                        </a>
-                    </div>
-                </div>
+
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-bullhorn"></i><br/>Freigaben</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("SemesterReport", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-download"></i><br/>Semesterbericht</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="fas fa-forward"></i><br/>Das nächste Semester anlegen</a>
+                </li>
             }
+            </ul>
         </div>
+    </nav>
+}
+
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <h4>
+
+                @if (Model.PreviousSemester != null)
+                {
+                    <a href="@Url.Action("Semester", new {id=Model.PreviousSemester.Id})" class="btn btn-outline-secondary btn-sm"><small><< @Model.PreviousSemester.Name</small></a>
+                }
+                Lehrangebot der @Model.Organiser.ShortName im @Model.Semester.Name
+                @if (Model.NextSemester != null)
+                {
+                    <a href="@Url.Action("Semester", new {id=Model.NextSemester.Id})" class="btn btn-outline-secondary btn-sm"><small>@Model.NextSemester.Name >></small></a>
+                }
+
+
+            </h4>
+        </div>
+        <table id="tabCourses" class="table table-striped table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Kurzname</th>
+                    <th>Titel</th>
+                    <th>Gruppe(n)</th>
+                    <th>Raumangabe(n)</th>
+                    <th>Dozent(en)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Courses)
+                {
+                    <tr>
+                        <td>
+                            @if (c.Course.IsInternal)
+                            {
+                                <i class="fa fa-lock"></i>
+                            }
+                            @Html.ActionLink(c.Course.ShortName, "Index", "Course", new { id = c.Course.Id }, null)
+                        </td>
+                        <td>
+                            @if (c.Course.IsInternal)
+                            {
+                                <i class="fa fa-lock"></i>
+                            }
+                            @c.Course.Name
+                        </td>
+                        <td>
+                            @Html.GroupList(c.Course.SemesterGroups, true)
+                        </td>
+                        <td>
+                            @Html.RoomList(c.Rooms)
+                        </td>
+                        <td>
+                            @Html.LecturerList(c.Lecturers)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
     </div>
 </div>
 
 
+
+@*
+
+    <div class="panel panel-default">
+        <div class="panel-body bg-fillter-study">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>
+                        Lehrangebot
+                        @Model.Organiser.ShortName im
+                        @Model.Semester.Name
+                        @if (isAvailable)
+                        {
+                            <small>(veröffentlicht)</small>
+                        }
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-list"></i> Übersichten und Listen</h4>
+                    </div>
+                    <div class="list-group">
+                        @if (Request.IsLocal)
+                        {
+                            <a href="@Url.Action("Schedule", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-book"></i> Stundenpläne
+                                </h5>
+                                <p class="list-group-item-text">Anzeige der Wochenpläne (druckbar)</p>
+                            </a>
+                            <a href="@Url.Action("Calendar", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-calendar"></i> Kalender
+                                </h5>
+                                <p class="list-group-item-text">Anzeige als Tageskalender</p>
+                            </a>
+                        }
+                        <a href="@Url.Action("Groups", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-group"></i> Semestergruppen
+                            </h5>
+                            <p class="list-group-item-text">Anzeige der Gruppen</p>
+                        </a>
+                        <a href="@Url.Action("Organiser", "Dictionary", new {semId = Model.Semester.Id, orgId=Model.Organiser.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-book"></i> Vorlesungsverzeichnis
+                            </h5>
+                            <p class="list-group-item-text">Für alle Studienangebote</p>
+                        </a>
+                        <a href="@Url.Action("List", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-list"></i> Datentabelle
+                            </h5>
+                            <p class="list-group-item-text">Suchen und Sortieren nach Stichwörten, Lehrenden, Räume und Zeiten</p>
+                        </a>
+                        <a href="@Url.Action("SemesterReport", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-download"></i> Semesterbericht
+                            </h5>
+                            <p class="list-group-item-text">Download einer .csv Datei mit wichtigsten Informationen</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-gamepad"></i> Prozesse</h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-random"></i> Wahlverfahren
+                            </h5>
+                            <p class="list-group-item-text">
+                                <ul>
+                                    @foreach (var lottery in Model.ActiveLotteries)
+                                    {
+                                        <li>@lottery.Name</li>
+                                    }
+                                </ul>
+                            </p>
+                        </a>
+                        <a href="@Url.Action("Index", "Cie", new {id = Model.Semester.Id})" class="list-group-item">
+                            <h5 class="list-group-item-heading">
+                                <i class="fa fa-fw fa-random"></i> Courses in English
+                            </h5>
+                            <div class="list-group-item-text">
+                                Zugang zum hochschulweiten CIE-Programm
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                @if (ViewBag.UserRight.IsCourseAdmin)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4><i class="fa fa-cogs"></i> Verwaltung</h4>
+                        </div>
+                        <div class="list-group">
+                            <a href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-bullhorn"></i> Freigabe
+                                </h5>
+                                <p class="list-group-item-text">Freischalten, Zurückziehen der Semestergruppen</p>
+                            </a>
+                            <a href="@Url.Action("AdminGroups", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-wrench"></i> Semestergruppen
+                                </h5>
+                                <p class="list-group-item-text">Anlegen und Löschen</p>
+                            </a>
+                            <a href="@Url.Action("CopyDay", "Courses", new {id = Model.Semester.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">
+                                    <i class="fa fa-fw fa-copy"></i> Tag kopieren
+                                </h5>
+                                <p class="list-group-item-text">Einen kompletten Vorlesungstag eines Studiengangs kopieren oder verschieben</p>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+*@

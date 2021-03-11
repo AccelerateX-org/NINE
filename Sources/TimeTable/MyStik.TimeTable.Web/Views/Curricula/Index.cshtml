@@ -18,6 +18,10 @@
         <div class="card">
             <div class="card-header">
                 <i class="fas fa-award"></i> Studiengänge
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
+                    <a href="@Url.Action("Create")" class="btn btn-default">Studiengang anlegen</a>
+                }
             </div>
             <div class="accordion" id="accordionCurricula">
                 @foreach (var org in Model.OrderBy(x => x.ShortName))

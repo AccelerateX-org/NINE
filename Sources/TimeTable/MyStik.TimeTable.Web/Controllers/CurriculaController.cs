@@ -27,6 +27,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             var model = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(g => g.ShortName).ToList();
+            ViewBag.UserRight = GetUserRight();
             return View(model);
         }
 
@@ -53,7 +54,11 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Create()
         {
             var model = new CurriculaCreateModel();
-            model.OrganiserId = GetMyOrganisation().Id;
+            var org = GetMyOrganisation();
+
+            ViewBag.Organiser = org;
+
+            model.OrganiserId = org.Id;
             return View(model);
         }
 
@@ -77,8 +82,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 };
                 Db.Curricula.Add(curr);
                 Db.SaveChanges();
+
+                return RedirectToAction("Index", "Curriculum", new {id = curr.Id});
             }
-            return RedirectToAction("Index", "Courses");
+
+
+            return RedirectToAction("Index", "Curriculum");
         }
 
         /// <summary>

@@ -91,7 +91,8 @@ namespace MyStik.TimeTable.Data
         public DateTime? IsActiveUntil { get; set; }
 
         /// <summary>
-        /// true: Keine Änderungen erlaubt
+        /// false: Windhundverfahren
+        /// true: Verlosung
         /// </summary>
         public bool IsFixed { get; set; }
 
@@ -113,8 +114,18 @@ namespace MyStik.TimeTable.Data
 
         public DrawingFrequency DrawingFrequency { get; set; }
 
+        /// <summary>
+        /// Workaround: Nutze Pechvogelregel
+        /// true: ohne Pechvogelregel
+        /// false: mit Pechvogelregel (default)
+        /// </summary>
         public bool IsScheduled { get; set; }
 
+        /// <summary>
+        /// Workaround: als "Studierende können ´Wahl nicht ändern"
+        /// true:
+        /// false: Studierende können die Wahl ändern d.h. sich austragen
+        /// </summary>
         public bool UseLapCount { get; set; }
 
         public virtual LotteryBundle LotteryBundle { get; set; }

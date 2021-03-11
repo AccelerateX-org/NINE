@@ -104,9 +104,9 @@
                             </div>
                         </div>
                         <div class="row">
-                        <div class="col-md-12">
-                            <h5>Sonstiges</h5>
-                        </div>
+                            <div class="col-md-12">
+                                <h5>Sonstiges</h5>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -135,6 +135,33 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        @Html.CheckBoxFor(item => item.UseJinx)
+                                        @Html.LabelFor(item => item.UseJinx, new { @class = "control-label" })
+                                        <ul>
+                                            <li>An: Studierende können Pechvogelregel wählen</li>
+                                            <li>Aus: Pechvogelregel kommt generell nicht zur Anwendung</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        @Html.CheckBoxFor(item => item.UseLock)
+                                        @Html.LabelFor(item => item.UseLock, new { @class = "control-label" })
+                                        <ul>
+                                            <li>An: Studierende können zugeloste Plätze nicht zurückgeben</li>
+                                            <li>Aus: Studierende können zueloste Plätze zurückgeben, d.h. ihre Wahl nachträglich ändern.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">

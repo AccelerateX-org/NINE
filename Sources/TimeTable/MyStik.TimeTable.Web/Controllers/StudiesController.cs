@@ -49,28 +49,23 @@ namespace MyStik.TimeTable.Web.Controllers
             if (id == null)
             {
                 semester = GetLatestSemester(student.Curriculum.Organiser);
-                prevSemester = SemesterService.GetPreviousSemester(semester);
             }
             else
             {
                 semester = SemesterService.GetSemester(id);
-                prevSemester = SemesterService.GetPreviousSemester(semester);
-                var latestSemester = GetLatestSemester(student.Curriculum.Organiser);
-
-                if (semester.StartCourses < latestSemester.StartCourses)
-                {
-                    nextSemester = SemesterService.GetNextSemester(semester);
-                }
-
-
             }
+
+            prevSemester = SemesterService.GetPreviousSemester(semester);
+            nextSemester = SemesterService.GetNextSemester(semester);
+
 
             var model = new StudentSummaryModel
             {
                 Student = student,
                 Semester = semester,
                 PrevSemester = prevSemester,
-                NextSemester = nextSemester
+                NextSemester = nextSemester,
+                Lecturers = new List<StudentLecturerViewModel>()
             };
 
 
@@ -97,9 +92,90 @@ namespace MyStik.TimeTable.Web.Controllers
                 summary.Lottery =
                     Db.Lotteries.FirstOrDefault(x => x.Occurrences.Any(y => y.Id == course.Occurrence.Id));
 
+                //
+                foreach (var lecturer in summary.Lecturers)
+                {
+                    var studentLecturer = model.Lecturers.SingleOrDefault(x => x.Lecturer.Id == lecturer.Id);
+                    if (studentLecturer == null)
+                    {
+                        studentLecturer = new StudentLecturerViewModel
+                        {
+                            Lecturer = lecturer,
+                            Courses = new List<CourseSummaryModel>(),
+                            OfficeHours = new List<OfficeHourDateViewModel>()
+                        };
+
+                        model.Lecturers.Add(studentLecturer);
+                    }
+
+                    studentLecturer.Courses.Add(summary);
+                }
             }
 
             // Alle gebuchten Sprechstundentermine in der Zukunft (Ende muss in Zukunft liegen)
+
+            var myOfficeHours = Db.Activities.OfType<OfficeHour>().Where(x =>
+                    x.Semester != null &&
+                    x.Dates.Any(d => d.End >= DateTime.Now && (
+                        d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)) ||
+                        d.Slots.Any(s => s.Occurrence.Subscriptions.Any(g => g.UserId.Equals(user.Id))))))
+                .ToList();
+
+            foreach (var officeHour in myOfficeHours)
+            {
+                var lecturer = officeHour.Owners.First().Member;
+
+                var studentLecturer = model.Lecturers.SingleOrDefault(x => x.Lecturer.Id == lecturer.Id);
+                if (studentLecturer == null)
+                {
+                    studentLecturer = new StudentLecturerViewModel
+                    {
+                        Lecturer = lecturer,
+                        Courses = new List<CourseSummaryModel>(),
+                        OfficeHours = new List<OfficeHourDateViewModel>()
+                    };
+
+                    model.Lecturers.Add(studentLecturer);
+                }
+
+
+                var dates = officeHour.Dates.Where(d => d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                    .ToList();
+
+                foreach (var date in dates)
+                {
+                    var ohDate = new OfficeHourDateViewModel();
+                    ohDate.OfficeHour = officeHour;
+                    ohDate.Date = date;
+                    ohDate.Lecturer = officeHour.Owners.First().Member;
+                    ohDate.Subscription = date.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+                    studentLecturer.OfficeHours.Add(ohDate);
+                }
+
+                // alle slots
+                dates = officeHour.Dates.Where(d => d.Slots.Any(s => s.Occurrence.Subscriptions.Any(g => g.UserId.Equals(user.Id))))
+                    .ToList();
+
+                foreach (var date in dates)
+                {
+                    var slots = date.Slots.Where(d => d.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                        .ToList();
+
+                    foreach (var slot in slots)
+                    {
+                        var ohDate = new OfficeHourDateViewModel();
+                        ohDate.OfficeHour = officeHour;
+                        ohDate.Date = date;
+                        ohDate.Slot = slot;
+                        ohDate.Lecturer = officeHour.Owners.First().Member;
+                        ohDate.Subscription = slot.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(user.Id));
+
+                        studentLecturer.OfficeHours.Add(ohDate);
+                    }
+                }
+            }
+
 
 
             return View(model);

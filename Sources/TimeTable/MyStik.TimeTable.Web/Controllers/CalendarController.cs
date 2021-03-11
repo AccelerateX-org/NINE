@@ -1171,6 +1171,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var dateList = GetActivityPlan(user.UserName, from, to);
 
+            //var tz = "Europe/Berlin";
             var tz = "Europe/Berlin";
 
             var iCal = new Calendar();
@@ -1184,6 +1185,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var evt = iCal.Create<CalendarEvent>(); 
                 evt.Summary = date.Name;
+                
                 if (date.Date.Occurrence != null && date.Date.Occurrence.IsCanceled)
                 {
                     evt.Summary += " - abgesagt!";

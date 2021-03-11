@@ -158,6 +158,25 @@
                                         <li><i class="fa fa-li fa-pencil"></i>HINWEIS: Lehrende können Eintragungen mit Priorität 1 vor der Durchführung der Verlosung übernehmen</li>
 
                                     }
+                                    if (IsAdmin)
+                                    {
+                                        if (Model.Lottery.IsScheduled)
+                                        {
+                                            <li><i class="fa fa-li fa-edit"></i>KEINE Anwendung der Pechvogelregel</li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-edit"></i>Pechvogelregel wird angewendet</li>
+                                        }
+                                        if (Model.Lottery.UseLapCount)
+                                        {
+                                            <li><i class="fa fa-li fa-edit"></i>Studierende müssen erhaltene Plätze annehmen, d.h. sie können sich aus zugelosten Plätzen nicht austragen.</li>
+                                        }
+                                        else
+                                        {
+                                            <li><i class="fa fa-li fa-edit"></i>Studierende können erhaltene Plätze ablehnen (=sich wieder austragen)</li>
+                                        }
+                                    }
                                 }
                             </ul>
                         </div>

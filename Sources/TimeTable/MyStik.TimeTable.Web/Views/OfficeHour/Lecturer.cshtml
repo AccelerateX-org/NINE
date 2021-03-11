@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.LecturerOfficeHourModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.LecturerOfficeHourModel
 @{
     Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Sprechstunden";
@@ -38,7 +39,17 @@
                         }
                         else
                         {
-                            <a href="@Url.Action("Details", "OfficeHour", new {id=o.Id})" class="list-group-item list-group-item-action">@o.Name - Termine</a>
+                            var dateMin = o.Dates.OrderBy(x => x.Begin).FirstOrDefault();
+                            var dateMax = o.Dates.OrderBy(x => x.End).LastOrDefault();
+
+                            if (dateMin != null && dateMax != null)
+                            {
+                                <a href="@Url.Action("Details", "OfficeHour", new {id=o.Id})" class="list-group-item list-group-item-action">@o.Name - Termine (@Html.TimeSpanWithDate(dateMin) - @Html.TimeSpanWithDate(dateMax))</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Details", "OfficeHour", new {id=o.Id})" class="list-group-item list-group-item-action">@o.Name - Termine</a>
+                            }
                         }
                     }
                 }

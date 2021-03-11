@@ -324,7 +324,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Alle Sprechstunden mit zukünftigen Semesterenden
             var officeHours =
                 Db.Activities.OfType<OfficeHour>().Where(x =>
-                    x.Semester.EndCourses >= DateTime.Today &&
+                    (x.Semester.EndCourses >= DateTime.Today || x.Dates.Any(d => d.End >= DateTime.Today)) &&
                     x.Owners.Any(k => k.Member.Id == member.Id)
                 ).ToList();
 

@@ -49,7 +49,7 @@
                             <td>
                                 <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
                                 <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-xs btn-default"><i class="fa fa-link"></i></a>
-                                @if (room.Dates.Count == 0 && !room.Assignments.Any())
+                                @if (!room.Assignments.Any())
                                 {
                                     <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>
                                 }

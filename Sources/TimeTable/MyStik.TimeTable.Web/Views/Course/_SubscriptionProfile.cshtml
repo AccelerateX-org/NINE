@@ -3,7 +3,7 @@
 
 @{
     var hasLottery = Model.Summary.Lottery != null && Model.Summary.Lottery.LastDrawing >= DateTime.Now;
-    var hasPrio1 = hasLottery && Model.Subscription.Priority.HasValue && (Model.Subscription.Priority.Value == 1);
+    var hasPrio1 = hasLottery && Model.Subscription.Priority.HasValue && (Model.Subscription.Priority.Value == 1) && Model.Summary.Lottery.AllowManualSubscription;
 }
 
 <div>

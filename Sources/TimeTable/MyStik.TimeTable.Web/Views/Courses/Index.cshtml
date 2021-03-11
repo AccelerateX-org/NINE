@@ -3,42 +3,67 @@
 
 
 @{
-    ViewBag.Title = "Lehrangebot";
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Semester  der " + Model.Organiser.ShortName;
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Lehrangebot @Model.Organiser.ShortName</h1>
-            </div>
+@section menue2nd
+{
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="fas fa-plus"></i><br />Das nächste Semester anlegen</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+}
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <h4>
+                Semester der @Model.Organiser.ShortName
+            </h4>
+        </div>
+        <div class="list-group">
+
+
+
+            @foreach (var sem in Model.ActiveSemesters.OrderByDescending(x => x.EndCourses))
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    @sem.Name
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="@Url.Action("Semester", "Courses", new {id = sem.Id})" class="btn btn-outline-secondary btn-sm" title="Termine">
+                            <i class="fas fa-calendar"></i>
+                        </a>
+                        <a href="@Url.Action("Semester", "Courses", new {id = sem.Id})" class="btn btn-outline-secondary btn-sm" title="Lehrveranstaltungen">
+                            <i class="fas fa-microphone"></i>
+                        </a>
+                        <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-outline-secondary btn-sm" title="Mail senden">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="@Url.Action("Details", "Semester", new {id = sem.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
+                            <i class="fas fa-cogs"></i>
+                        </a>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-calendar"></i> Semester
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @foreach (var sem in Model.ActiveSemesters.OrderByDescending(x => x.EndCourses))
-                    {
-                        <a href="@Url.Action("Semester", "Courses", new {id = sem.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@sem.Name</h5>
-                        </a>
-                    }
-                </div>
-            </div>
 
-        </div>
+@*
 
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4>
@@ -59,29 +84,12 @@
                             <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
                                 <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
                             </a>
-                           
+
                         }
                     }
                 </div>
             </div>
-            
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-book"></i> Module
-                    </h4>
-                </div>
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <h5>Modulverzeichnis soll mal hier hin</h5>
-                    </div>
-                    @*
-                    <a href="@Url.Action("Index", "ModuleDictionary")" class="list-group-item">
-                        <h5 class="list-group-item-heading">Modulverzeichnis</h5>
-                    </a>
-                    *@
-                </div>
-            </div>
+
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
             @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
@@ -163,7 +171,7 @@
 
 
 
-
+*@
 
 
 

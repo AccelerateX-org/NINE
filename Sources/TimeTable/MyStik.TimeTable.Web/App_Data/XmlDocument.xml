@@ -5293,7 +5293,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CoursesController.Semester(System.Guid)">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CoursesController.Semester(System.Nullable{System.Guid})">
             <summary>
             
             </summary>

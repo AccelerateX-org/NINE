@@ -25,6 +25,7 @@
                 <div class="list-group">
                     @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
                     {
+
                         @Html.Partial("_CourseSummarySubscription", Model.Summary)
                         if (Model.Summary.Course.IsInternal)
                         {

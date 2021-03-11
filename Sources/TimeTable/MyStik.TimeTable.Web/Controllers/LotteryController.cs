@@ -340,6 +340,8 @@ namespace MyStik.TimeTable.Web.Controllers
             model.ProcessType = lottery.IsFixed ? 2 : 1;
             model.AllowManualSubscription = lottery.AllowManualSubscription;
             model.LoIneeded = lottery.LoINeeded;
+            model.UseJinx = !lottery.IsScheduled;
+            model.UseLock = lottery.UseLapCount;
 
 
             return View(model);
@@ -364,6 +366,9 @@ namespace MyStik.TimeTable.Web.Controllers
             lottery.IsFixed = model.ProcessType != 1;
             lottery.AllowManualSubscription = model.AllowManualSubscription;
             lottery.LoINeeded = model.LoIneeded;
+            lottery.IsScheduled = !model.UseJinx;
+            lottery.UseLapCount = model.UseLock;
+
 
             Db.SaveChanges();
             logger.InfoFormat("Einstellungen zu Lotterie {0} verändert", lottery.Name);

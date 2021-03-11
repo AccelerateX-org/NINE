@@ -49,7 +49,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Semester(Guid id)
+        public ActionResult Semester(Guid? id)
         {
             var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
@@ -60,12 +60,33 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
             };
 
+            model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
+            model.NextSemester = SemesterService.GetNextSemester(semester);
+
+
+
             var lastEnd = DateTime.Today.AddDays(-90);
             var alLotteries = Db.Lotteries.Where(x =>
                 x.LastDrawing >= lastEnd && x.IsAvailable &&
                 x.Organiser != null && x.Organiser.Id == org.Id).OrderBy(x => x.FirstDrawing).ToList();
 
             model.ActiveLotteries.AddRange(alLotteries);
+
+            var courses =
+                Db.Activities.OfType<Course>().Where(c =>
+                    c.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
+                ).OrderBy(c => c.ShortName).ToList();
+
+            var courseService = new CourseService(Db);
+
+            foreach (var course in courses)
+            {
+                var summary = courseService.GetCourseSummary(course);
+                model.Courses.Add(summary);
+            }
+
 
 
             ViewBag.UserRight = GetUserRight();
@@ -299,7 +320,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Groups", new {id = id});
+            return RedirectToAction("AdminGroups", new {id = id});
         }
 
         /// <summary>
@@ -564,6 +585,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("InitGroups", new { id = nextSemester.Id });
         }
+
+        public ActionResult RemoveUnused(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var semester = SemesterService.GetSemester(id);
+
+            var groups = semester.Groups
+                .Where(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id && !g.Activities.Any())
+                .ToList();
+
+
+            foreach (var semesterGroup in groups)
+            {
+                Db.SemesterGroups.Remove(semesterGroup);
+
+            }
+
+            Db.SaveChanges();
+
+
+
+            return RedirectToAction("AdminGroups", new {id = id});
+        }
+
 
 
         /// <summary>

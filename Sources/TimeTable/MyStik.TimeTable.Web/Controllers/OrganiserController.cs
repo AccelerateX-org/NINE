@@ -148,9 +148,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 course.State = ActivityService.GetActivityState(course.Course.Occurrence, user);
             }
 
-            // Sprechstunde im aktuellen Semester
-            var ohService = new OfficeHourService(Db);
-            model.OfficeHour = ohService.GetLatestOfficeHour(member);
+
+            // alle zukünftigen Sprechstunden
+            model.OfficeHours = new List<OfficeHourSummaryModel>();
+            var officeHours =
+                Db.Activities.OfType<OfficeHour>().Where(x =>
+                    (x.Semester.EndCourses >= DateTime.Today || x.Dates.Any(d => d.End >= DateTime.Today)) &&
+                    x.Owners.Any(k => k.Member.Id == member.Id)
+                ).ToList();
+
+
+            foreach (var officeHour in officeHours)
+            {
+                model.OfficeHours.Add(new OfficeHourSummaryModel
+                {
+                    OfficeHour = officeHour
+                });
+            }
+
 
             model.Semester = semester;
 
