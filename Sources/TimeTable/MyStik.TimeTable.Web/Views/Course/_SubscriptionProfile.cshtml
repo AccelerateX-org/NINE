@@ -67,7 +67,8 @@
                             {
                                 if (Model.Subscription.OnWaitingList)
                                 {
-                                    if (!hasLottery || hasPrio1 || ViewBag.UserRight.IsCourseAdmin)
+                                    if ((!hasLottery || ViewBag.UserRight.IsCourseAdmin) ||
+                                        (hasLottery && hasPrio1))
                                     {
                                         <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-default"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
                                     }

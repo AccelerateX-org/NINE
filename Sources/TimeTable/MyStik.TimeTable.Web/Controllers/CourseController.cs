@@ -1198,6 +1198,24 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult DeleteCourse(CourseDeleteModel model)
         {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.Course.Id);
+
+            if (course.Occurrence.Subscriptions.Any())
+            {
+                var model2 = new CourseDeleteModel { Course = course };
+
+                return View(model2);
+            }
+
+            if (!course.ShortName.Equals(model.Code))
+            {
+                var model2 = new CourseDeleteModel { Course = course };
+
+                return View(model2);
+            }
+
+
+
             var timeTableService = new TimeTableInfoService(Db);
 
             timeTableService.DeleteCourse(model.Course.Id);

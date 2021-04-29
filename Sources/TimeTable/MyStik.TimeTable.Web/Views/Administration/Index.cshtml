@@ -44,12 +44,18 @@
         <div class="card border-secondary">
             <div class="card-body">
                 <h5 class="card-title text-center">
-                    <i class="fas fa-2x fa-map"></i><br />
-                    Stundenpläne
+                    <i class="fas fa-2x fa-people-carry"></i><br />
+                    Fakultät
                 </h5>
             </div>
             <div class="list-group">
-                <div class="list-group-item list-group-item-info">Die bisher her aufgeführten Funktionen finden sich ab sofort alle unter dem neu aufgebauten Bereich unter "Termine / Lehrveranstaltungen"</div>
+                <a href="@Url.Action("Index", "ThesisAdmin")" class="list-group-item list-group-item-action">Lehrende</a>
+                <a href="@Url.Action("Index", "Students")" class="list-group-item list-group-item-action">Studierende</a>
+                <a href="@Url.Action("Index", "Alumni")" class="list-group-item list-group-item-action">Alumni</a>
+                <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Externe Partner</a>
+                <a href="@Url.Action("Index", "Autonomy")" class="list-group-item list-group-item-action">Gremien</a>
+                <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Studiengänge</a>
+                <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Räume</a>
             </div>
         </div>
     </div>
@@ -63,8 +69,6 @@
             </div>
             <div class="list-group">
                 <a href="@Url.Action("Index", "Messaging")#" class="list-group-item list-group-item-action">Mailverteiler</a>
-                <a href="@Url.Action("Index", "Students")" class="list-group-item list-group-item-action">Studierende</a>
-                <a href="@Url.Action("Index", "Alumni")" class="list-group-item list-group-item-action">Alumni</a>
                 <a href="@Url.Action("Index", "Advertisements")" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
                 <a href="#" class="list-group-item list-group-item-action">Infoscreens</a>
                 <a href="@Url.Action("Admins", "Organiser")" class="list-group-item list-group-item-action">Rechte & Rollen</a>

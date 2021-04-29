@@ -164,9 +164,10 @@
                                 <i class="fa fa-5x @mediaStyle"></i>
                             </div>
                             <div class="media-body">
-                                <h4 class="media-heading">Festlegung des geplanten Bearbeitungszeitraums</h4>
+                                <h4 class="media-heading">Angabe eines geplanten Bearbeitungszeitraums</h4>
                                 @if (isOk)
                                 {
+                                    <p>Hinweis: wurde im Rahmen der Anfrage zur Betreuung der Arbeit angegeben. Kann, muss aber nichts mit dem realen Datum der Anmeldungzu tun haben.</p>
                                     <ul class="fa-ul">
                                         <li><i class="fa fa-calendar fa-li"></i>Beginn: "@Model.Thesis.PlannedBegin.Value.ToShortDateString()"</li>
                                         <li><i class="fa fa-calendar fa-li"></i>Ende: "@Model.Thesis.PlannedEnd.Value.ToShortDateString()"</li>

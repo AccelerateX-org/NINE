@@ -108,6 +108,12 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.23.4.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Magick.NET-Q16-AnyCPU.7.23.4\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
+    </Reference>
+    <Reference Include="Magick.NET.Core, Version=6.2.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Magick.NET.Core.6.2.0\lib\net40\Magick.NET.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -410,6 +416,7 @@
     <Compile Include="Controllers\AlumniController.cs" />
     <Compile Include="Controllers\ArchiveController.cs" />
     <Compile Include="Controllers\AssessmentController.cs" />
+    <Compile Include="Controllers\AutonomyController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\BulletinBoardController.cs" />
     <Compile Include="Controllers\CandidatureController.cs" />
@@ -533,6 +540,7 @@
     <Compile Include="Models\AlumniModels.cs" />
     <Compile Include="Models\AgendaModels.cs" />
     <Compile Include="Models\AssessmentModels.cs" />
+    <Compile Include="Models\AutonomyModels.cs" />
     <Compile Include="Models\BookingModels.cs" />
     <Compile Include="Models\CalendarModels.cs" />
     <Compile Include="Models\CandidatureModels.cs" />
@@ -1052,6 +1060,7 @@
     <Content Include="Assets\global\img\social\xing.png" />
     <Content Include="Assets\global\img\social\yahoo.png" />
     <Content Include="Assets\global\img\social\youtube.png" />
+    <Content Include="Assets\global\img\StuVe_CMYK_Breit_ContentSchmal.jpg" />
     <Content Include="Assets\global\img\syncfusion-icons-white.png" />
     <Content Include="Assets\global\img\syncfusion-icons.png" />
     <Content Include="Assets\global\plugins\angularjs\angular-cookies.min.js" />
@@ -4326,6 +4335,8 @@
     <Content Include="Views\OfficeHour\Lecturer.cshtml" />
     <Content Include="Views\Mailing\Curricula.cshtml" />
     <Content Include="Views\Course\Participients.cshtml" />
+    <Content Include="Views\Autonomy\Index.cshtml" />
+    <Content Include="Views\Autonomy\_ViewStart.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

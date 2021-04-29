@@ -29,9 +29,11 @@
                 <div class="list-group-item list-group-item-danger">
                     @Html.TimeSpanWithDate(date.Key)
                     <ul class="fa-ul">
+                        <li><i class="fa fa-li fa-university"></i>@Html.RoomList(date.Key.Rooms, false, false), @Html.RoomList(date.Key.VirtualRooms, showLinks: true)</li>
+                        <li><i class="fa fa-li fa-user-md"></i>@Html.LecturerList(date.Key.Hosts, false)</li>
                         @if (!string.IsNullOrEmpty(date.Key.Title))
                         {
-                            <li><i class="fa fa-li fa-info-circle"></i>@date.Key.Title</li>
+                            <li><i class="fa fa-li fa-info-circle"></i><strong>@date.Key.Title</strong></li>
                         }
                         @foreach (var cd in date.Value)
                         {

@@ -690,6 +690,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public bool KeepOwnership { get; set; }
+
+        public string Code { get; set; }
     }
 
     /// <summary>

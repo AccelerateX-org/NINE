@@ -22,13 +22,20 @@
     <script>
 
         Dropzone.options.formDrop = {
-            acceptedFiles: '.png,.jpg,.gif,image/*,.pdf',
+            acceptedFiles: '.png,.jpg,.gif,image/*',
             capture: 'camera',
             maxFiles: @dropSize,
             parallelUploads: 1,
-            dictDefaultMessage: 'Ablagebereich für Dateien: max. @dropSize Dateien' 
+            dictDefaultMessage: 'Ablagebereich für Dateien: max. @dropSize Dateien'
+            /*,
+            init: function() {
+                this.on("complete", function(file) { alert("Added file." + file.name); });
+            }
+            */
         };
 
+
+        
 
         $('#dlgDeleteMaterial').on('show.bs.modal',
             function(event) {

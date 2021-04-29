@@ -56,6 +56,9 @@
                         <a class="nav-link text-center" href="@Url.Action("Export", new {id = Model.Id})"><i class="fas fa-file-archive fa-fw"></i><br />Material löschen</a>
                     </li>
 
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-danger" href="@Url.Action("Clear", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Leeren</a>
+                    </li>
 
                     @*
                     <li class="nav-item">
@@ -69,9 +72,6 @@
             </li>
                     *@
                     @*
-            <li class="nav-item">
-                <a class="nav-link text-center text-danger" href="@Url.Action("Delete", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i><br />Löschen</a>
-            </li>
                     *@
                 }
 

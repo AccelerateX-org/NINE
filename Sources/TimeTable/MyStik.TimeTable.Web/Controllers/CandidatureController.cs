@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ImageMagick;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
@@ -211,6 +212,36 @@ namespace MyStik.TimeTable.Web.Controllers
             if (file == null || stage == null)
                 return null;
 
+            var maxSize = 1920;
+
+            var images = new ImageMagick.MagickImageCollection(file.InputStream);
+            if (images.Count < 1)
+            {
+                return null;
+            }
+
+
+            var width_org = images[0].Width;
+            var height_org = images[0].Height;
+
+
+            foreach (var image in images)
+            {
+                if (image.Width > maxSize || image.Height > maxSize)
+                {
+                    image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+                }
+            }
+
+
+            var width = images[0].Width;
+            var height = images[0].Height;
+
+            var bytes = images.ToByteArray();
+            var length = bytes.Length;
+            var length_org = file.ContentLength;
+            var ratio = length / (double)length_org;
+
             var material = new CandidatureStageMaterial
             {
                 Stage = stage,
@@ -222,13 +253,15 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Category = "Material",
                 FileType = file.ContentType,
-                BinaryData = new byte[file.ContentLength],
+                BinaryData = bytes,
                 Created = DateTime.Now,
                 Name = string.Empty,
-                Description = string.Empty
+                Description =
+                    $"Original: [{width_org}x{height_org} ({length_org})], Gespeichert: [{width}x{height} ({length})], Verhältnis zu Original: [{ratio:P0}], Anzahl Ebenen: [{images.Count}]"
             };
 
-            file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
+//            file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
+
 
             Db.Storages.Add(storage);
 

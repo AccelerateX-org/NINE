@@ -19,6 +19,7 @@
     @if (!string.IsNullOrEmpty(Model.User.Email))
     {
         <a href="mailto:@Model.User.Email"> @Model.User.Email</a>
+        <div>(@Model.User.UserName)</div>
     }
 </td>
     <td>

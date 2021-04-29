@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using System.Web.ModelBinding
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.StudentSummaryModel
 @{
     ViewBag.Title = "Mein Studium";
@@ -41,6 +42,50 @@
 
 
 
+@if (Model.Thesis != null)
+{
+    if (Model.Thesis.DeliveryDate == null) // noch nicht abgegeben
+    {
+        if (Model.Thesis.IssueDate == null) // noch nicht angemeldet
+        {
+            if (Model.Thesis.Supervisors.Any(x => x.AcceptanceDate != null)) // Arbeit wurde angenommen
+            {
+                <div class="alert alert-danger">
+                    <h4>Meine Abschlussarbeit ist noch nicht angemeldet!</h4>
+                    <a class="btn btn-danger" href="@Url.Action("Issue", "Thesis")">Abschlussarbeit anmelden</a>
+                </div>
+            }
+
+        }
+        else
+        {
+            var diff = Model.Thesis.ExpirationDate.Value.Date - DateTime.Today;
+            var isProlonged = false;
+            if (Model.Thesis.RenewalDate != null)
+            {
+                isProlonged = true;
+                diff = Model.Thesis.RenewalDate.Value.Date - DateTime.Today;
+            }
+
+            if (isProlonged)
+            {
+                <div class="alert alert-danger">
+                    <h4>Abgabefrist meiner Abschlussarbeit (verlängert): @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</h4>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <h4>Abgabefrist meiner Abschlussarbeit: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</h4>
+                    <a class="btn btn-danger" href="@Url.Action("Issue", "Thesis")">Verlängerung beantragen</a>
+                </div>
+
+            }
+        }
+    }
+}
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -78,22 +123,22 @@
                             </a>
                             <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Teilnehmende">
                                 <i class="fas fa-pen"></i>
-                                    @if (course.Subscription != null)
+                                @if (course.Subscription != null)
+                                {
+                                    if (course.Subscription.OnWaitingList)
                                     {
-                                        if (course.Subscription.OnWaitingList)
-                                        {
-                                            <span class="badge badge-default">
+                                        <span class="badge badge-default">
 
-                                                <i class="fas fa-user-clock text-danger"></i> Status: Warteliste
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-default">
-                                                <i class="fas fa-user-check text-success"></i> Status: Teilnehmer:in
-                                            </span>
-                                        }
+                                            <i class="fas fa-user-clock text-danger"></i> Status: Warteliste
+                                        </span>
                                     }
+                                    else
+                                    {
+                                        <span class="badge badge-default">
+                                            <i class="fas fa-user-check text-success"></i> Status: Teilnehmer:in
+                                        </span>
+                                    }
+                                }
                             </a>
 
                             <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Informationen">
@@ -103,37 +148,37 @@
                     </div>
                 }
                 <div class="list-group-item  list-group-item-secondary">Meine Lehrenden in diesem Semester</div>
-                
+
                 @foreach (var lecturer in Model.Lecturers)
                 {
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    @lecturer.Lecturer.FullName
-                    @if (lecturer.Courses.Any())
-                    {
-                        @Html.Raw("(");
-                        foreach (var c in lecturer.Courses)
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        @lecturer.Lecturer.FullName
+                        @if (lecturer.Courses.Any())
                         {
-                            @Html.Raw(c.Course.ShortName);
-                            if (c != lecturer.Courses.Last())
+                            @Html.Raw("(");
+                            foreach (var c in lecturer.Courses)
                             {
-                                @Html.Raw(", ");
+                                @Html.Raw(c.Course.ShortName);
+                                if (c != lecturer.Courses.Last())
+                                {
+                                    @Html.Raw(", ");
+                                }
                             }
+                            @Html.Raw(")")
                         }
-                        @Html.Raw(")")
-                    }
 
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        @if (lecturer.OfficeHours.Any())
-                        {
-                            <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-outline-secondary btn-sm" title="Sprechstundentermine">
-                                <i class="fas fa-user-md"></i>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            @if (lecturer.OfficeHours.Any())
+                            {
+                                <a href="@Url.Action("Subscriptions", "OfficeHour")" class="btn btn-outline-secondary btn-sm" title="Sprechstundentermine">
+                                    <i class="fas fa-user-md"></i>
+                                </a>
+                            }
+                            <a href="@Url.Action("Member", "Organiser", new {id = lecturer.Lecturer.Id})" class="btn btn-outline-secondary btn-sm" title="Informationen">
+                                <i class="fas fa-info-circle"></i>
                             </a>
-                        }
-                        <a href="@Url.Action("Member", "Organiser", new {id = lecturer.Lecturer.Id})" class="btn btn-outline-secondary btn-sm" title="Informationen">
-                            <i class="fas fa-info-circle"></i>
-                        </a>
+                        </div>
                     </div>
-                </div>
 
                 }
             </div>

@@ -300,6 +300,64 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new {id = id});
         }
 
+        public ActionResult Clear(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+
+            var userRight = GetUserRight();
+
+
+            var isAdmin = userRight.IsOrgAdmin;
+            if (!isAdmin)
+                return View("_NoAccess");
+
+
+
+            foreach (var candidature in assessment.Candidatures.ToList())
+            {
+                foreach (var stage in candidature.Stages.ToList())
+                {
+                    foreach (var material in stage.Material.ToList())
+                    {
+                        if (material.Storage != null)
+                        {
+                            Db.Storages.Remove(material.Storage);
+                        }
+
+                        Db.CandidatureStageMaterial.Remove(material);
+                    }
+
+                    Db.CandidatureStages.Remove(stage);
+                }
+
+                Db.Candidatures.Remove(candidature);
+            }
+
+
+            /*
+            foreach (var stage in assessment.Stages.ToList())
+            {
+                foreach (var material in stage.Material.ToList())
+                {
+                    Db.Storages.Remove(material.Storage);
+                    Db.AssessmentStageMaterial.Remove(material);
+                }
+
+                Db.AssessmentStages.Remove(stage);
+            }
+
+            Db.Assessments.Remove(assessment);
+            */
+
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Admin");
+        }
+
+
         public ActionResult Delete(Guid id)
         {
             var user = GetCurrentUser();
@@ -347,6 +405,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Admin");
         }
+
 
 
 
@@ -1037,6 +1096,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult DeleteStage(Guid id)
         {
+            var userRight = GetUserRight();
+
+            var isAdmin = userRight.IsOrgAdmin;
+            if (!isAdmin)
+                return View("_NoAccess");
+
+
             var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == id);
 
             var assessment = stage.Assessment;
@@ -1048,6 +1114,18 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // kann gelöscht werden
+
+            foreach (var stageMaterial in stage.Material.ToList())
+            {
+                if (stageMaterial.Storage != null)
+                {
+                    Db.Storages.Remove(stageMaterial.Storage);
+                }
+
+                Db.AssessmentStageMaterial.Remove(stageMaterial);
+            }
+
+
             Db.AssessmentStages.Remove(stage);
             Db.SaveChanges();
 

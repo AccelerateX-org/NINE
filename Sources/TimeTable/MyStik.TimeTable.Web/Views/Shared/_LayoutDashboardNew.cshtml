@@ -15,6 +15,25 @@
     <link rel="stylesheet" href="@Url.Content("~/Assets/areas/admin/styles.css")" />
     @RenderSection("styles", required: false)
     <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/fillter/img/favicon.ico")" />
+
+    @if (!Request.IsLocal)
+    {
+        <!-- Matomo -->
+        <script type="text/javascript">
+            var _paq = window._paq = window._paq || [];
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                var u = "//shortcut.wi.hm.edu/analytics/";
+                _paq.push(['setTrackerUrl', u + 'matomo.php']);
+                _paq.push(['setSiteId', '1']);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript'; g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+            })();
+        </script>
+        <!-- End Matomo Code -->
+    }
 </head>
 <body style="background-color: #e1e1e1">
     @{
@@ -22,94 +41,21 @@
         var user = userService.GetUser(User.Identity.GetUserId());
     }
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
-    @*
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
+        @*
             <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
                 <i class="fas fa-home fa-2x"></i>
             </a>
         *@
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
-            {
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />Schwarzes Brett</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
-                </li>
-
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />Meine Lehre</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />Meine Forschung</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br />Meine Hochschule</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />Meine Verwaltung</a>
-                </li>
-            }
-        </ul>
-        @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
-        {
-            <form class="form-inline my-2 my-lg-0" role="search" action="@Url.Action("Index", "Search")">
-                @*
-                        <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
-                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
-                    *@
-                <div class="input-group mb-3">
-                    <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
-                    </div>
-                </div>
-            </form>
-        }
-        <ul class="navbar-nav">
-            @if (Request.IsAuthenticated)
-            {
-                <li class="nav-item active dropdown">
-                    <a class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle fa-fw"></i><br />@user.FullName
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("SendMeANotofication", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a>
-                        <a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a>
-                        <a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a>
-                    </div>
-                </li>
-            }
-            else
-            {
-                <li>
-                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light">@Resources.LoginButton</a>
-                </li>
-            }
-        </ul>
-    </div>
-</nav>
-
-@RenderSection("menue2nd", required: false)
-
-
-@*
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+                @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
+                {
                     <li class="nav-item active">
                         <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />Schwarzes Brett</a>
                     </li>
@@ -129,9 +75,82 @@
                     <li class="nav-item active">
                         <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />Meine Verwaltung</a>
                     </li>
+                }
+            </ul>
+            @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
+            {
+                <form class="form-inline my-2 my-lg-0" role="search" action="@Url.Action("Index", "Search")">
+                    @*
+                        <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+                    *@
+                    <div class="input-group mb-3">
+                        <input class="form-control mr-sm-2" type="search" name="searchText" placeholder="@Resources.SearchString..." aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            }
+            <ul class="navbar-nav">
+                @if (Request.IsAuthenticated)
+                {
+                    <li class="nav-item active dropdown">
+                        <a class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-fw"></i><br />@user.FullName
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("SendMeANotofication", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a>
+                            <a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a>
+                            <a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a>
+                        </div>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light">@Resources.LoginButton</a>
+                    </li>
+                }
             </ul>
         </div>
     </nav>
+
+    @RenderSection("menue2nd", required: false)
+
+
+    @*
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSubMNenu">
+                    <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />Schwarzes Brett</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br />Mein Studium</a>
+                            </li>
+
+                            <li class="nav-item active">
+                                <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />Meine Lehre</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />Meine Forschung</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br />Meine Hochschule</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />Meine Verwaltung</a>
+                            </li>
+                    </ul>
+                </div>
+            </nav>
     *@
 
 
@@ -193,22 +212,7 @@
     </script>
     @if (!Request.IsLocal)
     {
-        <!-- Matomo -->
-        <script type="text/javascript">
-            var _paq = _paq || [];
-            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function () {
-                var u = "//shortcut.wi.hm.edu/analytics/";
-                _paq.push(['setTrackerUrl', u + 'piwik.php']);
-                _paq.push(['setSiteId', '2']);
-                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-                g.type = 'text/javascript'; g.async = true; g.defer = true; g.src = u + 'piwik.js'; s.parentNode.insertBefore(g, s);
-            })();
-        </script>
-        <!-- End Matomo Code -->
+        <script type="text/javascript" src="https://acceleratex.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-l2el80/b/2/7ebd7d8b8f8cafb14c7b0966803e5701/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=de-DE&collectorId=a0e7d8dc"></script>
     }
-
 </body>
 </html>
