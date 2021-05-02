@@ -1,0 +1,88 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisStateModel
+@{
+    ViewBag.Title = "Abschlussarbeit";
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <h4 class="panel-heading">
+                    <i class="fa fa-file-o"></i> Antrag auf Verlängerung meiner Abschlussarbeit
+                </h4>
+                <div class="panel-body">
+
+                    <div class="alert alert-info">
+                        <strong>Ablauf</strong>
+                        <ul>
+                            <li>Es muss ein Antrag gestellt weerden. Diesem kann zugestimmt werden. Er kann auch abgelehnt werden. Es gelten die aktuellen Bestimmungen auf Basis der ASPO der HM und der SPO des jeweiligen Studiengangs.</li>
+                            <li>Der Antrag wird an den/die Betreuer:in gesendet.</li>
+                            <li>Bei Ablehnung passiert nichts. Die ursprüngliche Abgabefrist bleibt bestehen.</li>
+                            <li>Bei Annahme wird der Antrag an die Prüfungskommission gesendet.</li>
+                            <li>Bei Ablehnung passiert nichts. Die ursprüngliche Abgabefrist bleibt bestehen.</li>
+                            <li>Bei Annahme wird eine Fristverlängerung durch die Prüfungskommission festgelegt.</li>
+                            <li>Ihr aktuelles Abgabedatum ist: @Model.Thesis.ExpirationDate.Value.ToShortDateString()</li>
+                        </ul>
+                    </div>
+
+
+
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
+                    {
+                        @Html.ValidationSummary(false)
+                        @Html.HiddenFor(m => m.Thesis.Id)
+                        <div class="form-group">
+                            <label for="ProlongDate" class="col-sm-3 control-label">Gewünschtes Abgabedatum (heute oder später)</label>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.ProlongDate, new { @class = "form-control datepicker" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Prolongreason" class="col-sm-3 control-label">Begründung</label>
+                            <div class="col-sm-6">
+                                @Html.TextAreaFor(m => m.ProlongReason, new { @class = "form-control", rows = 10 })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Verlängerung beantragen</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">Abbrechen</a>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            $('.datepicker').datepicker({
+                orientation: "left",
+                autoclose: true,
+                format: "dd.mm.yyyy",
+                weekStart: 1,
+                calendarWeeks: true,
+                language: "de"
+            });
+        });
+    </script>
+}

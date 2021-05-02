@@ -37,6 +37,18 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = userRight;
             ViewBag.Organiser = org;
 
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null && x.ProlongRequestDate != null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
+                    x.DeliveryDate == null && // noch nich abgegeben
+                    x.IsCleared == null // noch nicht archiviert
+            ).ToList();
+
+            ViewBag.RequestCount = theses.Count;
+
+
+
             return View("Index");
         }
 
@@ -230,13 +242,23 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var userService = new UserInfoService();
 
+            /*
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
                     (x.IssueDate != null && x.IssueDate.Value <= DateTime.Today) && // angemeldet in der Vergangenheit
                     x.DeliveryDate == null && // noch nich abgegeben
                     x.IsCleared == null // noch nicht archiviert
             ).ToList();
+            */
 
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null && x.ProlongRequestDate !=null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
+                    x.DeliveryDate == null && // noch nich abgegeben
+                    x.IsCleared == null // noch nicht archiviert
+            ).ToList();
+
+               
             var model = new List<ThesisStateModel>();
 
             foreach (var thesis in theses)
@@ -446,6 +468,11 @@ namespace MyStik.TimeTable.Web.Controllers
             var org = GetMyOrganisation();
             var userRight = GetUserRight(org);
 
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             var user = GetUser(thesis.Student.UserId);
@@ -509,7 +536,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Graduates");
+            return RedirectToAction("Details", new { id = thesis.Id });
+            //return RedirectToAction("Graduates");
         }
 
 
@@ -604,7 +632,8 @@ namespace MyStik.TimeTable.Web.Controllers
             new MailController().ThesisConditionCheckResponseEMail(tm).Deliver();
 
 
-            return RedirectToAction("Announced");
+            return RedirectToAction("Details", new { id = thesis.Id });
+            //return RedirectToAction("Announced");
         }
 
 
@@ -627,7 +656,8 @@ namespace MyStik.TimeTable.Web.Controllers
             new MailController().ThesisConditionCheckResponseEMail(tm).Deliver();
 
 
-            return RedirectToAction("Announced");
+            return RedirectToAction("Details", new { id = thesis.Id });
+            //return RedirectToAction("Announced");
         }
 
         /// <summary>
@@ -845,7 +875,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             new MailController().ThesisSupervisorDeliveredEMail(model).Deliver();
 
-            return RedirectToAction("Running");
+            return RedirectToAction("Details", new { id = thesis.Id });
+            //return RedirectToAction("Running");
         }
 
         /// <summary>
@@ -926,7 +957,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             new MailController().ThesisMarkedEMail(model).Deliver();
 
-            return RedirectToAction("Done");
+            return RedirectToAction("Details", new { id = thesis.Id });
+            //return RedirectToAction("Done");
         }
 
 

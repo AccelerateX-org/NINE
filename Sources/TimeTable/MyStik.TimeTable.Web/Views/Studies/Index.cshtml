@@ -77,11 +77,18 @@
             {
                 <div class="alert alert-info">
                     <h4>Abgabefrist meiner Abschlussarbeit: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</h4>
-                    <a class="btn btn-danger" href="@Url.Action("Issue", "Thesis")">Verlängerung beantragen</a>
+                    <a class="btn btn-danger" href="@Url.Action("Prolong", "Thesis")">Verlängerung beantragen</a>
                 </div>
 
             }
         }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4>Die Abgabe meiner Abschlussarbeit wurde erfasst</h4>
+            <p>Die Abgabe wurde am @Model.Thesis.DeliveryDate.Value.ToShortDateString() erfasst.</p>
+        </div>
     }
 }
 

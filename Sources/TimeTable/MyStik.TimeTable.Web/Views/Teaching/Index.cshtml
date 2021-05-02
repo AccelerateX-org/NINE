@@ -163,18 +163,30 @@
                                     }
                                     else
                                     {
-                                        <li>
-                                            <span class="fa-li"><i class="fas fa-cogs"></i></span>
-                                            <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                                            @if (thesis.DaysToExpire == Int32.MaxValue)
-                                            {
-                                                <span class="badge badge-danger">Noch nicht angemeldet</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
-                                            }
-                                        </li>
+                                        if (thesis.Thesis.Supervisors.Any(x => x.AcceptanceDate == null))
+                                        {
+                                            <li>
+                                                <span class="fa-li"><i class="fas fa-question-circle"></i></span>
+                                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                                                    <span class="badge badge-danger">Betreuungsanfrage</span>
+                                            </li>
+                                        }
+                                        else
+                                        {
+
+                                            <li>
+                                                <span class="fa-li"><i class="fas fa-cogs"></i></span>
+                                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                                                @if (thesis.DaysToExpire == Int32.MaxValue)
+                                                {
+                                                    <span class="badge badge-danger">Noch nicht angemeldet</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
+                                                }
+                                            </li>
+                                        }
                                     }
                                 }
                                 else

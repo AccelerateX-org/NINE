@@ -4337,6 +4337,7 @@
     <Content Include="Views\Course\Participients.cshtml" />
     <Content Include="Views\Autonomy\Index.cshtml" />
     <Content Include="Views\Autonomy\_ViewStart.cshtml" />
+    <Content Include="Views\Thesis\Prolong.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

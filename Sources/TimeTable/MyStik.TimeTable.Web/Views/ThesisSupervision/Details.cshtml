@@ -312,11 +312,13 @@
                                             <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
                                             <li><i class="fa fa-li fa-cog"></i>Noch @Model.DaysToExpire Tage bis zur Abgabe</li>
                                         </ul>
+                                        @*
                                         if (Model.Position == 1)
                                         {
 
                                             <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe bestätigt</a>
                                         }
+                                            *@
                                     }
                                     else
                                     {
@@ -334,10 +336,12 @@
                                             }
                                         </ul>
 
+                                        @*
                                         if (Model.Position == 1)
                                         {
                                             <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
                                         }
+                                            *@
                                     }
                                 }
                                 else
@@ -375,14 +379,14 @@
                                     }
                                     else
                                     {
-                                        <p>Noch nicht bewertet</p>
+                                        <p>Noch nicht bewertet. Die Notenmeldung erfolgt per unterschriebenen Beleg. Erstprüfer:innen können diesen Beleg hier vorausgefüllt herunterladen.</p>
                                         @*
                             <a href="@Url.Action("Marking", new {id=Model.Thesis.Id})" class="btn btn-primary">Notenmeldung ausfüllen</a>
                                         *@
 
                                         if (Model.Position == 1)
                                         {
-                                            <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary">Notenmeldung anfordern</a>
+                                            <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary"><i class="fa fa-download"></i> Beleg zur Notenmeldung</a>
                                         }
                                     }
                                 }

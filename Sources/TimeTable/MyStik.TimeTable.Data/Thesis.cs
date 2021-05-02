@@ -129,6 +129,44 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool? IsAccepted { get; set; }
 
+
+        /// <summary>
+        /// Datum des Antrags auf verlängerung
+        /// </summary>
+        public DateTime? ProlongRequestDate { get; set; }
+
+
+        /// <summary>
+        /// Begründung der Verlängerung
+        /// </summary>
+        public string ProlongReason { get; set; }
+
+
+        /// <summary>
+        /// Gewünschtes Abgabedatum (Wunsch, muss nicht auch so bestätzigt werdem
+        /// </summary>
+        public DateTime? ProlongExtensionDate { get; set; }
+
+
+        /// <summary>
+        /// Zustimmung des Erstbetreuers
+        /// </summary>
+        public bool? ProlongSupervisorAccepted { get; set; }
+
+
+        /// <summary>
+        /// Zustimmung der Prüfungskommission
+        /// </summary>
+        public bool? ProlongExaminationBoardAccepted { get; set; }
+
+
+        /// <summary>
+        /// Begründung der Ablehnung
+        /// </summary>
+        public string ProlongRejection { get; set; }
+
+
+
         virtual public ICollection<Advisor> Advisors { get; set; }
 
         virtual public ICollection<Supervisor> Supervisors { get; set; }

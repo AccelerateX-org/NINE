@@ -39,7 +39,9 @@
                                 <ul class="fa-ul">
                                     @if (isNameOk)
                                     {
-                                        <li><i class="fa fa-user fa-li"></i>@Model.User.FullName <a href="@Url.Action("Index", "UserProfile")" class="btn btn-default btn-xs">ändern</a></li>
+                                        <li><i class="fa fa-user fa-li"></i>@Model.User.FullName 
+                                            <a href="@Url.Action("Index", "UserProfile")" class="btn btn-default btn-xs">ändern</a>
+                                            </li>
 
                                     }
                                     else
@@ -153,7 +155,8 @@
                                 </div>
                                 <div class="media-body">
                                     <h4 class="media-heading">Geplanten Bearbeitungszeitraum festlegen</h4>
-                                    <p>Der geplante Zeitraum dient der Information für den/die PrüferIn. Es kann, muss aber nicht identisch zum Datum der Anmeldung sein.</p>
+                                    <p>Der geplante Zeitraum dient ausschließlich zur Information für den/die PrüferIn im Zuge der Anfrage zur Betreuung der Arbeit. Dieser Zeitraum kann, muss aber nicht identisch sein zum Datum der Anmeldung bzw. der Abgabe.</p>
+                                    <p>Nach der Anmeldung kann der Zeitraum nicht mehr verändert werden.</p>
                                     @if (Model.Thesis.PlannedBegin != null && Model.Thesis.PlannedEnd != null && Model.Thesis.LastPlanChange != null)
                                     {
                                         <ul class="fa-ul">
@@ -200,11 +203,18 @@
                                     }
                                     else
                                     {
-                                        <p>Nur bei Arbeiten im Unternehmen erforderlich</p>
-                                        if (!isOk)
-                                         {
-                                             <a href="@Url.Action("Advisor", new {id=Model.Thesis.Id})" class="btn btn-primary">BetreuerIn angeben</a>
-                                         }
+                                        if (Model.Thesis.DeliveryDate == null)
+                                        {
+                                            <p>Nur bei Arbeiten im Unternehmen erforderlich</p>
+                                            if (!isOk)
+                                            {
+                                                <a href="@Url.Action("Advisor", new {id = Model.Thesis.Id})" class="btn btn-primary">BetreuerIn angeben</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p>Nur bei Arbeiten im Unternehmen erforderlich</p>
+                                        }
                                     }
                                 </div>
                             </div>
@@ -330,25 +340,31 @@
                                         <h4 class="media-heading">Arbeit angemeldet</h4>
                                         if (Model.Thesis.DeliveryDate == null)
                                         {
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
-                                            @if (Model.Thesis.RenewalDate != null)
-                                            {
-                                                <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                                                <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</li>
-                                            }
-                                            else
-                                            {
-                                                <li><i class="fa fa-calendar fa-li"></i>Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                                                <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
-                                            }
-                                        </ul>
-                                            <p>In einigen Fällen wird gefordert, dass zur Abgabe der Abschlussarbeit auch der Notenmeldebogen abgegeben werden soll.</p>
-                                            <p>Die Notenmeldung wird mit Angaben zu Thema und PrüferIn(nen) ausgefüllt und an die im Benutzerkonto angegeben E-Mail Adresse versendet.</p>
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                                                @if (Model.Thesis.RenewalDate != null)
+                                                {
+                                                    <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                                    <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><i class="fa fa-calendar fa-li"></i>Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                                                    <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+
+
+                                                    if (Model.Thesis.ProlongRequestDate != null)
+                                                    {
+                                                        <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung ist gestellt. Wunschtermin: @Model.Thesis.ProlongExtensionDate.Value.ToShortDateString()</li>
+                                                    }
+                                                }
+                                            </ul>
+                                            @*
                                             if (Model.Thesis.Supervisors.Any())
                                              {
-                                                 <a href="@Url.Action("MarkingEmpty", new {id = Model.Thesis.Id})" class="btn btn-primary">Notenmeldung anfordern</a>
+                                                 <a href="@Url.Action("Deliver")" class="btn btn-primary">Arbeit abgeben</a>
                                              }
+                                                *@
                                         }
                                         else
                                         {

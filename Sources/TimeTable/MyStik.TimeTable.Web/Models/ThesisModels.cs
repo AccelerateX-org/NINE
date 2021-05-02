@@ -276,6 +276,13 @@ namespace MyStik.TimeTable.Web.Models
 
         public string IssueDate { get; set; }
 
+
+        public string ProlongDate { get; set; }
+
+
+        public string ProlongReason { get; set; }
+
+
         public RequestState ConditionRequest
         {
             get

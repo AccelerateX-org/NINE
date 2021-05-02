@@ -57,18 +57,18 @@
         <div class="col-sm-1 col-md-2 col-lg-2">
             <div class="panel panel-default text-center">
                 <a href="@Url.Action("Issued")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-legal"></i></h4>
+                    <h4><i class="fa fa-2x fa-cogs"></i></h4>
                     <h5>angemeldet</h5>
-                    <p>laufende und zukünftige</p>
+                    <p>Arbeit angemeldet</p>
                 </a>
             </div>
         </div>
         <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
+            <div class="panel panel-danger text-center">
                 <a href="@Url.Action("Running")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-cogs"></i></h4>
-                    <h5>in Bearbeitung</h5>
-                    <p>nur laufende</p>
+                    <h4><i class="fa fa-2x fa-legal"></i></h4>
+                    <h5>Verlängerungsanträge</h5>
+                    <p>@ViewBag.RequestCount unbearbeitet</p>
                 </a>
             </div>
         </div>

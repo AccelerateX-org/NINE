@@ -396,6 +396,10 @@
     <Compile Include="Migrations\202005150844532_Autonomy_V1.Designer.cs">
       <DependentUpon>202005150844532_Autonomy_V1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105021532090_ThesisV6.cs" />
+    <Compile Include="Migrations\202105021532090_ThesisV6.Designer.cs">
+      <DependentUpon>202105021532090_ThesisV6.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -631,6 +635,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005150844532_Autonomy_V1.resx">
       <DependentUpon>202005150844532_Autonomy_V1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105021532090_ThesisV6.resx">
+      <DependentUpon>202105021532090_ThesisV6.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -365,6 +365,67 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult Prolong()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+            var model = new ThesisStateModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis,
+                ProlongDate = DateTime.Today.ToShortDateString(),
+                ProlongReason = "Grund für Verlängerung: "
+            };
+
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Prolong(ThesisStateModel model)
+        {
+            var date = DateTime.Parse(model.ProlongDate);
+
+            if (date < DateTime.Today)
+            {
+                var user = GetCurrentUser();
+                var student = StudentService.GetCurrentStudent(user);
+                var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+                var model2 = new ThesisStateModel
+                {
+                    User = user,
+                    Student = student,
+                    Thesis = thesis2,
+                    ProlongDate = DateTime.Today.ToShortDateString(),
+                    ProlongReason = "Grund für Verlängerung: "
+                };
+
+                ModelState.AddModelError("", "Das Datum muss in der Zukunft liegen");
+
+                return View(model2);
+            }
+
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+
+            thesis.ProlongRequestDate = DateTime.Now;
+            thesis.ProlongExtensionDate = DateTime.Parse(model.ProlongDate);
+            thesis.ProlongReason = model.ProlongReason;
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Index");
+        }
+
+
+
         public ActionResult Plan()
         {
             var user = GetCurrentUser();
