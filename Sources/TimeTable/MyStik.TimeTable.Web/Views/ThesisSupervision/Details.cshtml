@@ -312,13 +312,55 @@
                                             <li><i class="fa fa-calendar fa-li"></i>Abgabe am: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
                                             <li><i class="fa fa-li fa-cog"></i>Noch @Model.DaysToExpire Tage bis zur Abgabe</li>
                                         </ul>
-                                        @*
-                                        if (Model.Position == 1)
+
+                                        if (Model.Thesis.RenewalDate != null)
                                         {
 
-                                            <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe bestätigt</a>
                                         }
-                                            *@
+                                        else
+                                        {
+                                            if (Model.Thesis.ProlongRequestDate != null)
+                                            {
+                                                if (Model.Thesis.ProlongSupervisorAccepted == null)
+                                                {
+                                                    <p>Am @Model.Thesis.ProlongRequestDate.Value.ToShortDateString() wurde ein Antrag auf Verlängerung gestellt.</p>
+                                                    <a href="@Url.Action("AcceptProlongRequest", new {id=Model.Supervisor.Id})" class="btn btn-success">Verlängerungsantrag akzeptieren</a>
+                                                    <a href="@Url.Action("RejectProlongRequest", new {id=Model.Supervisor.Id})" class="btn btn-danger">Verlängerungsantrag ablehnen</a>
+                                                }
+                                                else
+                                                {
+                                                    if (Model.Thesis.ProlongSupervisorAccepted.Value == true)
+                                                    {
+                                                        <p>Dem Antrag auf Verlängerung vom @Model.Thesis.ProlongRequestDate.Value.ToShortDateString() wurde zugestimmt.</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Dem Antrag auf Verlängerung vom @Model.Thesis.ProlongRequestDate.Value.ToShortDateString() wurde abgelehnt.</p>
+                                                    }
+
+                                                    if (Model.Thesis.ProlongExaminationBoardAccepted == null)
+                                                    {
+                                                        <p>Die PK hat dem Antrag auf Verlängerung vom @Model.Thesis.ProlongRequestDate.Value.ToShortDateString() noch nicht bearbeitet.</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (Model.Thesis.ProlongExaminationBoardAccepted.Value == true)
+                                                        {
+                                                            <p>Die PK hat dem Antrag auf Verlängerung vom @Model.Thesis.ProlongRequestDate.Value.ToShortDateString() zugestimmt.</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p>Die PK hat den Antrag auf Verlängerung vom @Model.Thesis.ProlongRequestDate.Value.ToShortDateString() abgelehnt.</p>
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+
+                                            }
+                                        }
                                     }
                                     else
                                     {
@@ -337,11 +379,11 @@
                                         </ul>
 
                                         @*
-                                        if (Model.Position == 1)
-                                        {
-                                            <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
-                                        }
-                                            *@
+                if (Model.Position == 1)
+                {
+                    <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger">Abgabe stornieren</a>
+                }
+                                        *@
                                     }
                                 }
                                 else

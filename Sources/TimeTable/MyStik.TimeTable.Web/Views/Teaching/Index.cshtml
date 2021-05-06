@@ -183,7 +183,30 @@
                                                 }
                                                 else
                                                 {
-                                                    <span class="badge badge-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
+                                                    if (thesis.Thesis.RenewalDate != null)
+                                                    {
+                                                        <span class="badge badge-secondary">@thesis.DaysToExpire Tage bis zur Abgabe (verlängert)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (thesis.Thesis.ProlongRequestDate == null)
+                                                        {
+                                                            <span class="badge badge-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (thesis.Thesis.ProlongSupervisorAccepted == null)
+                                                            {
+                                                                <span class="badge badge-danger">Antrag auf Verlängerung - unbearbeitet</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge badge-secondary">Antrag auf Verlängerung akzeptiert - Bestätigung PKV steht noch aus</span>
+                                                            }
+                                                            
+                                                        }
+                                                    }
+
                                                 }
                                             </li>
                                         }

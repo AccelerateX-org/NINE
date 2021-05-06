@@ -244,8 +244,27 @@ namespace MyStik.TimeTable.Web.Controllers
                 Start = stage.OpeningDateTime.ToString(),
                 End = stage.ClosingDateTime.ToString(),
                 Publish = stage.ReportingDateTime.ToString(),
-                IsAvailable = stage.IsAvailable
+                IsAvailable = stage.IsAvailable,
+                FileTypes = stage.FileTypes,
+                MaxFileCount = stage.MaxFileCount,
+                NaxPxSize = stage.NaxPxSize
             };
+
+            if (string.IsNullOrEmpty(model.FileTypes))
+            {
+                model.FileTypes = ".png,.jpg,.gif,image/*";
+            }
+
+            if (model.MaxFileCount == 0)
+            {
+                model.MaxFileCount = 25;
+            }
+
+
+            if (model.NaxPxSize == 0)
+            {
+                model.NaxPxSize = 1920;
+            }
 
             return View(model);
         }
@@ -253,6 +272,23 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult EditStage(AssessmentStageCreateModel model)
         {
+            if (string.IsNullOrEmpty(model.FileTypes))
+            {
+                model.FileTypes = ".png,.jpg,.gif,image/*";
+            }
+
+            if (model.MaxFileCount == 0)
+            {
+                model.MaxFileCount = 25;
+            }
+
+            if (model.NaxPxSize == 0)
+            {
+                model.NaxPxSize = 1920;
+            }
+
+
+
             var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == model.StageId);
 
             stage.Name = model.Name;
@@ -261,6 +297,9 @@ namespace MyStik.TimeTable.Web.Controllers
             stage.ClosingDateTime = DateTime.Parse(model.End);
             stage.ReportingDateTime = DateTime.Parse(model.Publish);
             stage.IsAvailable = model.IsAvailable;
+            stage.FileTypes = model.FileTypes;
+            stage.MaxFileCount = model.MaxFileCount;
+            stage.NaxPxSize = model.NaxPxSize;
 
             Db.SaveChanges();
 
@@ -1065,7 +1104,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 Start = DateTime.Now.ToString(),
                 End = DateTime.Now.ToString(),
                 Publish = DateTime.Now.ToString(),
-                IsAvailable = false
+                IsAvailable = false,
+                FileTypes = ".png,.jpg,.gif,image/*",
+                MaxFileCount = 25,
+                NaxPxSize = 1920
             };
 
             return View(model);
@@ -1075,6 +1117,22 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult CreateStage(AssessmentStageCreateModel model)
         {
+            if (string.IsNullOrEmpty(model.FileTypes))
+            {
+                model.FileTypes = ".png,.jpg,.gif,image/*";
+            }
+
+            if (model.MaxFileCount == 0)
+            {
+                model.MaxFileCount = 25;
+            }
+
+            if (model.NaxPxSize == 0)
+            {
+                model.NaxPxSize = 1920;
+            }
+
+
             var assessment = Db.Assessments.SingleOrDefault(x => x.Id == model.AssessmentId);
 
             var stage = new AssessmentStage();
@@ -1086,6 +1144,9 @@ namespace MyStik.TimeTable.Web.Controllers
             stage.ClosingDateTime = DateTime.Parse(model.End);
             stage.ReportingDateTime = DateTime.Parse(model.Publish);
             stage.IsAvailable = model.IsAvailable;
+            stage.FileTypes = model.FileTypes;
+            stage.MaxFileCount = model.MaxFileCount;
+            stage.NaxPxSize = model.NaxPxSize;
 
             Db.AssessmentStages.Add(stage);
             Db.SaveChanges();

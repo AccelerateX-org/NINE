@@ -138,6 +138,24 @@ namespace MyStik.TimeTable.Web.Controllers
             if (round == null)
             {
                 var stage = Db.AssessmentStages.SingleOrDefault(x => x.Id == stageId);
+
+                if (string.IsNullOrEmpty(stage.FileTypes))
+                {
+                    stage.FileTypes = ".png,.jpg,.gif,image/*";
+                }
+
+                if (stage.MaxFileCount == 0)
+                {
+                    stage.MaxFileCount = 25;
+                }
+
+                if (stage.NaxPxSize == 0)
+                {
+                    stage.NaxPxSize = 1920;
+                }
+
+
+
                 round = new CandidatureStage
                 {
                     AssessmentStage = stage,
@@ -148,6 +166,26 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
 
             }
+            else
+            {
+                if (string.IsNullOrEmpty(round.AssessmentStage.FileTypes))
+                {
+                    round.AssessmentStage.FileTypes = ".png,.jpg,.gif,image/*";
+                }
+
+                if (round.AssessmentStage.MaxFileCount == 0)
+                {
+                    round.AssessmentStage.MaxFileCount = 25;
+                }
+
+                if (round.AssessmentStage.NaxPxSize == 0)
+                {
+                    round.AssessmentStage.NaxPxSize = 1920;
+                }
+
+                Db.SaveChanges();
+            }
+
 
             return View(round);
         }
@@ -212,62 +250,94 @@ namespace MyStik.TimeTable.Web.Controllers
             if (file == null || stage == null)
                 return null;
 
-            var maxSize = 1920;
-
-            var images = new ImageMagick.MagickImageCollection(file.InputStream);
-            if (images.Count < 1)
+            if (file.FileName.EndsWith(".pdf"))
             {
-                return null;
-            }
-
-
-            var width_org = images[0].Width;
-            var height_org = images[0].Height;
-
-
-            foreach (var image in images)
-            {
-                if (image.Width > maxSize || image.Height > maxSize)
+                var material = new CandidatureStageMaterial
                 {
-                    image.Resize(new MagickGeometry(widthAndHeight: maxSize));
-                }
+                    Stage = stage,
+                };
+
+                Db.CandidatureStageMaterial.Add(material);
+
+                var storage = new BinaryStorage
+                {
+                    Category = "Material",
+                    FileType = file.ContentType,
+                    BinaryData = new byte[file.ContentLength],
+                    Created = DateTime.Now,
+                    Name = string.Empty,
+                    Description = ""
+                };
+
+                file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
+
+                Db.Storages.Add(storage);
+
+                material.Storage = storage;
+
+                Db.SaveChanges();
             }
-
-
-            var width = images[0].Width;
-            var height = images[0].Height;
-
-            var bytes = images.ToByteArray();
-            var length = bytes.Length;
-            var length_org = file.ContentLength;
-            var ratio = length / (double)length_org;
-
-            var material = new CandidatureStageMaterial
+            else
             {
-                Stage = stage,
-            };
 
-            Db.CandidatureStageMaterial.Add(material);
 
-            var storage = new BinaryStorage
-            {
-                Category = "Material",
-                FileType = file.ContentType,
-                BinaryData = bytes,
-                Created = DateTime.Now,
-                Name = string.Empty,
-                Description =
-                    $"Original: [{width_org}x{height_org} ({length_org})], Gespeichert: [{width}x{height} ({length})], Verhältnis zu Original: [{ratio:P0}], Anzahl Ebenen: [{images.Count}]"
-            };
+
+                var images = new ImageMagick.MagickImageCollection(file.InputStream);
+                if (images.Count < 1)
+                {
+                    return null;
+                }
+
+                var maxSize = stage.AssessmentStage.NaxPxSize > 0 ? stage.AssessmentStage.NaxPxSize : 1920;
+
+                var width_org = images[0].Width;
+                var height_org = images[0].Height;
+
+
+                foreach (var image in images)
+                {
+                    if (image.Width > maxSize || image.Height > maxSize)
+                    {
+                        image.Resize(new MagickGeometry(widthAndHeight: maxSize));
+                    }
+                }
+
+
+                var width = images[0].Width;
+                var height = images[0].Height;
+
+                var bytes = images.ToByteArray();
+                var length = bytes.Length;
+                var length_org = file.ContentLength;
+                var ratio = length / (double) length_org;
+
+                var material = new CandidatureStageMaterial
+                {
+                    Stage = stage,
+                };
+
+                Db.CandidatureStageMaterial.Add(material);
+
+                var storage = new BinaryStorage
+                {
+                    Category = "Material",
+                    FileType = file.ContentType,
+                    BinaryData = bytes,
+                    Created = DateTime.Now,
+                    Name = string.Empty,
+                    Description =
+                        $"Original: [{width_org}x{height_org} ({length_org})], Gespeichert: [{width}x{height} ({length})], Verhältnis zu Original: [{ratio:P0}], Anzahl Ebenen: [{images.Count}]"
+                };
 
 //            file.InputStream.Read(storage.BinaryData, 0, file.ContentLength);
 
 
-            Db.Storages.Add(storage);
+                Db.Storages.Add(storage);
 
-            material.Storage = storage;
+                material.Storage = storage;
 
-            Db.SaveChanges();
+                Db.SaveChanges();
+            }
 
             return null;
         }

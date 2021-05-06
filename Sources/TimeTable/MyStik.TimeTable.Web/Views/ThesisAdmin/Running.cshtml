@@ -17,7 +17,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>Laufende Abschlussarbeiten</h4>
+                    <h4>Laufende Verlängerungsanträge für Abschlussarbeiten</h4>
                 </div>
                 <table id="tabThesis" class="table table-condensed">
                     <thead>
@@ -27,20 +27,21 @@
                             <th>Vorname</th>
                             <th>Matr.-Nr.</th>
                             <th>SG</th>
-                            <th>Name(n)</th>
-                            <th>Beginn</th>
-                            <th>Ende</th>
+                            <th>PrüferIn</th>
+                            <th>Anmeldung</th>
+                            <th>Abgabe</th>
+                            <th>Verlängerung</th>
                             <th>Tage</th>
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach (var thesis in Model)
-                    {
-                        var rowClass = "";
-                        if (thesis.DaysToExpire < 0)
+                        @foreach (var thesis in Model)
                         {
-                            rowClass = "danger";
-                        }
+                            var rowClass = "";
+                            if (thesis.DaysToExpire < 0)
+                            {
+                                rowClass = "danger";
+                            }
 
                         <tr id="@thesis.Thesis.Id" class="@rowClass">
                             <td></td>
@@ -67,7 +68,8 @@
                                 if (thesis.Thesis.RenewalDate != null)
                                 {
                                     <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
-                                    <td>@thesis.Thesis.RenewalDate.Value.ToShortDateString() (verlängert)</td>
+                                    <td>(@thesis.Thesis.ExpirationDate.Value.ToShortDateString())</td>
+                                    <td>@thesis.Thesis.RenewalDate.Value.ToShortDateString()</td>
                                     <td>@thesis.DaysToExpire</td>
 
                                 }
@@ -75,6 +77,43 @@
                                 {
                                     <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
                                     <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                    if (thesis.Thesis.ProlongRequestDate != null)
+                                    {
+                                        if (thesis.Thesis.ProlongExaminationBoardAccepted == null)
+                                        {
+                                            if (thesis.Thesis.ProlongSupervisorAccepted.HasValue)
+                                            {
+                                                if (thesis.Thesis.ProlongSupervisorAccepted.Value == true)
+                                                {
+                                                    <td>Betreuer:in hat zugestimmt</td>
+
+                                                }
+                                                else
+                                                {
+                                                    <td>Betreuer:in hat abgelehnt</td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td>Betreuer:in hat noch nicht entschieden</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (thesis.Thesis.ProlongExaminationBoardAccepted == true)
+                                            {
+                                                <td>PK hat zugestimmt - Verlängerung muss noch erfasst werden</td>
+                                            }
+                                            else
+                                            {
+                                                <td>PK hat abgelehnt</td>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
                                     <td>@thesis.DaysToExpire</td>
                                 }
                             }
@@ -83,9 +122,10 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
                             }
                         </tr>
-                    }
+                        }
                     </tbody>
                 </table>
             </div>

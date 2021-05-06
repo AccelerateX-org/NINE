@@ -3,12 +3,12 @@
 @{
     ViewBag.Title = "Aufnahmeverfahren";
 
-    var maxFiles = 25;
-    var maxDropSize = 25;
+    var maxFiles = Model.AssessmentStage.MaxFileCount;
+    var maxDropSize = maxFiles;
 
     var dropSize = Math.Min(maxDropSize, Math.Max(0, maxFiles - Model.Material.Count));
 
-
+    var fileTypes = Model.AssessmentStage.FileTypes;
 }
 
 @section styles {
@@ -22,7 +22,8 @@
     <script>
 
         Dropzone.options.formDrop = {
-            acceptedFiles: '.png,.jpg,.gif,image/*',
+            //acceptedFiles: '.png,.jpg,.gif,image/*',
+            acceptedFiles: '@fileTypes',
             capture: 'camera',
             maxFiles: @dropSize,
             parallelUploads: 1,
@@ -139,7 +140,8 @@
                         <li>Legen Sie die Dateien möglichst einzeln auf dem Ablagebereich ab oder klicken Sie auf den Ablagebereich.</li>
                         <li>Am Smartphone auf den Ablagebereich drücken und Bilder auswählen bze. fotografieren.</li>
                         <li>Insgesamt dürfen maximal <strong>@maxFiles Dateien</strong> hochgeladen werden.</li>
-                        <li>Es dürfen nur Dateien in den Formaten .png, .jpeg, .gif und .pdf hochgeladen werden.</li>
+                        <li>Es dürfen nur Dateien in den Formaten @fileTypes hochgeladen werden.</li>
+                        <li>Bilder mit einer Breite oder Höhe von mehr als @string.Format("{0}px", Model.AssessmentStage.NaxPxSize), werden automatisch auf die Größe von @string.Format("{0}px", Model.AssessmentStage.NaxPxSize) reduziert. Dies wird im Beschreibungstext angezeigt.</li>
                         <li>Titel und Beschreibungstext für die einzelnen Dateien können nachträglich ergänzt oder geändert werden.</li>
                     </ul>
                     <form id="formDrop" action="@Url.Action("UploadFile")" class="dropzone">

@@ -566,5 +566,62 @@ namespace MyStik.TimeTable.Web.Controllers
             return Json(new { result = "Redirect", url = Url.Action("Details", new { id = thesis.Id }) });
         }
 
+
+        public ActionResult AcceptProlongRequest(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var user = GetCurrentUser();
+            var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
+
+            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
+            var thesis = supervisor.Thesis;
+
+
+            thesis.ProlongSupervisorAccepted = true;
+            Db.SaveChanges();
+
+            // Mail an Studierenden
+            /*
+            var model = InitMailModel(thesis, user);
+            model.IsAccepted = true;
+
+            new MailController().ThesisSupervisionResponseEMail(model).Deliver();
+            */
+
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+        public ActionResult RejectProlongRequest(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var user = GetCurrentUser();
+            var member = GetMyMembership();
+            if (member == null)
+                return View("_NoAccess");
+
+            var supervisor = Db.Supervisors.SingleOrDefault(x => x.Id == id);
+            var thesis = supervisor.Thesis;
+
+            thesis.ProlongSupervisorAccepted = false;
+            Db.SaveChanges();
+
+            // Mail an Studierenden
+            /*
+            var model = InitMailModel(thesis, user);
+            model.IsAccepted = false;
+
+            new MailController().ThesisSupervisionResponseEMail(model).Deliver();
+            */
+
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+
     }
 }

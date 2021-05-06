@@ -59,6 +59,12 @@ namespace MyStik.TimeTable.Web.Models
         public string Publish { get; set; }
 
         public bool IsAvailable { get; set; }
+
+        public string FileTypes { get; set; }
+
+        public int MaxFileCount { get; set; }
+
+        public int NaxPxSize { get; set; }
     }
 
     public class AddCommitteeMemberModel

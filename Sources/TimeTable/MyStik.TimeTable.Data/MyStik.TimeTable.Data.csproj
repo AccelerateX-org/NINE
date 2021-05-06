@@ -400,6 +400,10 @@
     <Compile Include="Migrations\202105021532090_ThesisV6.Designer.cs">
       <DependentUpon>202105021532090_ThesisV6.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105051409293_AssessmentV3.cs" />
+    <Compile Include="Migrations\202105051409293_AssessmentV3.Designer.cs">
+      <DependentUpon>202105051409293_AssessmentV3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -638,6 +642,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105021532090_ThesisV6.resx">
       <DependentUpon>202105021532090_ThesisV6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105051409293_AssessmentV3.resx">
+      <DependentUpon>202105051409293_AssessmentV3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

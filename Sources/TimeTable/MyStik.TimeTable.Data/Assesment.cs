@@ -56,6 +56,27 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public DateTime? ReportingDateTime { get; set; }
 
+        /// <summary>
+        /// Dateitypen f+r download
+        /// Bilder: .png,.jpg,.gif
+        /// Generisch für Kamera: image/*
+        /// Pdf: .pdf
+        /// default: .png,.jpg,.gif,image/*
+        ///  </summary>
+        public string FileTypes { get; set; }
+
+        /// <summary>
+        /// Maximale Anzahl an Dateien
+        /// default: 10
+        /// </summary>
+        public int MaxFileCount { get; set; }
+
+        /// <summary>
+        /// Maximale Bildgröße
+        /// default: 1920px
+        /// </summary>
+        public int NaxPxSize { get; set; }
+
         public virtual Assessment Assessment { get; set; }
 
 

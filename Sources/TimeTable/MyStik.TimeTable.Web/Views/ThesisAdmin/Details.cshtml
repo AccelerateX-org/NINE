@@ -17,7 +17,7 @@
                         <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
                         <a href="mailto:@Model.User.Email" class="btn btn-default"><i class="fa fa-envelope"></i> E-Mail senden</a>
                         @*
-                            <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default">Notenmeldung anfordern</a>
+        <a href="@Url.Action("Marking", new {id = Model.Thesis.Id})" class="btn btn-default">Notenmeldung anfordern</a>
                         *@
                         @if (Model.Thesis.DeliveryDate != null)
                         {
@@ -40,6 +40,7 @@
                                 <a href="@Url.Action("Marked", new {id = Model.Thesis.Id})" class="btn btn-success">Note melden</a>
                                 <a href="#" class="btn btn-success disabled">Arbeit abgerechnet</a>
                             }
+                            <a href="@Url.Action("Storno", new {id = Model.Thesis.Id})" class="btn btn-danger"><i class="fa fa-times"></i> Abgabe stornieren</a>
                         }
                         else
                         {
@@ -344,15 +345,69 @@
                                                     <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
                                                 }
                                             }
-                                            
-                                            @if (Model.Thesis.ProlongRequestDate != null && Model.Thesis.RenewalDate == null)
+
+                                            @if (Model.Thesis.RenewalDate == null)
                                             {
-                                                <li><i class="fa fa-li fa-legal"></i>Es liegt ein Antrag auf Verlängerung bis @Model.Thesis.ProlongExtensionDate.Value.ToShortDateString() vor. Grund: @Model.Thesis.ProlongReason</li>
+                                                if (Model.Thesis.ProlongRequestDate != null)
+                                                {
+                                                    <li><i class="fa fa-li fa-legal"></i>Es liegt ein Antrag auf Verlängerung bis @Model.Thesis.ProlongExtensionDate.Value.ToShortDateString() vor. Grund: @Model.Thesis.ProlongReason</li>
+                                                    if (Model.Thesis.ProlongExaminationBoardAccepted == null)
+                                                    {
+                                                        if (Model.Thesis.ProlongSupervisorAccepted == null)
+                                                        {
+                                                            <li><i class="fa fa-li fa-legal"></i>Betreuer:in hat sich noch nicht geäußert.</li>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Model.Thesis.ProlongSupervisorAccepted.Value == true)
+                                                            {
+                                                                <li><i class="fa fa-li fa-legal"></i>Betreuer:in hat Antrag zugestimmt.</li>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <li><i class="fa fa-li fa-legal"></i>Betreuer:in hat Antrag abgelehnt.</li>
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (Model.Thesis.ProlongExaminationBoardAccepted == true)
+                                                        {
+                                                            <li><i class="fa fa-li fa-legal"></i>PK hat Antrag zugestimmt.</li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li><i class="fa fa-li fa-legal"></i>PK hat Antrag abgelehnt.</li>
+                                                        }
+                                                    }
+                                                }
+
                                             }
 
                                         </ul>
                                         <a href="@Url.Action("Delivered", new {id = Model.Thesis.Id})" class="btn btn-primary">Abgabe erfassen</a>
-                                        <a href="@Url.Action("Extend", new {id = Model.Thesis.Id})" class="btn btn-primary">Verlängerung erfassen</a>
+                                        if (Model.Thesis.RenewalDate == null)
+                                        {
+                                            if (Model.Thesis.ProlongRequestDate != null)
+                                            {
+                                                if (Model.Thesis.ProlongExaminationBoardAccepted == null)
+                                                {
+                                                    if (Model.Thesis.ProlongSupervisorAccepted.Value == true)
+                                                    {
+                                                        <a href="@Url.Action("AcceptProlongRequest", new {id = Model.Thesis.Id})" class="btn btn-success">Antrag auf Verlängerung zustimmen</a>
+                                                        <a href="@Url.Action("RejectProlongRequest", new {id = Model.Thesis.Id})" class="btn btn-danger">Antrag auf Verlängerung ablehnen</a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (Model.Thesis.ProlongExaminationBoardAccepted == true)
+                                                    {
+                                                        <a href="@Url.Action("Extend", new {id = Model.Thesis.Id})" class="btn btn-primary">Verlängerung erfassen</a>
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                     else
                                     {

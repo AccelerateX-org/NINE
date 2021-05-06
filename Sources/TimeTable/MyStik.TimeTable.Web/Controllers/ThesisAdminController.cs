@@ -892,6 +892,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
             thesis.DeliveryDate = null;
+            thesis.GradeDate = null;
+            thesis.IsCleared = null;
+
             Db.SaveChanges();
 
             // Mail an Studierenden
@@ -1032,6 +1035,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Extend(Guid id)
         {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
             var userService = new UserInfoService();
 
             var user = GetCurrentUser();
@@ -1116,6 +1127,47 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Issued");
+        }
+
+
+        public ActionResult AcceptProlongRequest(Guid id)
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            thesis.ProlongExaminationBoardAccepted = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+        public ActionResult RejectProlongRequest(Guid id)
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            thesis.ProlongExaminationBoardAccepted = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = thesis.Id });
         }
 
     }
