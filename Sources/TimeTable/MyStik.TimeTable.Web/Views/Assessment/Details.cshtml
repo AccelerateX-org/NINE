@@ -38,22 +38,26 @@
                         <li class="nav-item">
                             <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Stufe hinzufügen</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("UploadResults", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Ergebnisse</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="@Url.Action("UploadDates", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Termine</a>
+                        </li>
                     }
                 }
 
                 @if (isAdmin)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("UploadResults", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Ergebnisse</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("UploadDates", new {id = Model.Id})"><i class="fas fa-upload fa-fw"></i><br />Upload Termine</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link text-center" href="@Url.Action("Export", new {id = Model.Id})"><i class="fas fa-file-archive fa-fw"></i><br />Material löschen</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-danger" href="@Url.Action("ClearDates", new {id = Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Termine löschen</a>
                     </li>
 
                     <li class="nav-item">
@@ -142,6 +146,7 @@
                                 <div class="card-header">@Html.TimeSpanWithDate(s.OpeningDateTime.Value, s.ClosingDateTime.Value): @s.Name </div>
                                 <div class="card-body">
                                     <div class="card-text">@s.Description</div>
+                                    <div class="card-text">Upload möglich als @s.FileTypes</div>
                                     <div class="card-text">Bereitgestelltes Material</div>
                                     <ul class="fa-ul">
                                         @foreach (var m in s.Material)

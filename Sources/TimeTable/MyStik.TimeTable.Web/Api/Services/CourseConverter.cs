@@ -145,6 +145,23 @@ namespace MyStik.TimeTable.Web.Api.Services
                 courseDate.Rooms.Add(courseRoom);
             }
 
+            foreach (var virtualRoom in activityDate.VirtualRooms)
+            {
+                var vRoom = new VirtualRoomDto
+                {
+                    Name = virtualRoom.Room.Name,
+                    Url = virtualRoom.Room.AccessUrl
+                };
+
+                if (courseDate.VirtualRooms == null)
+                {
+                    courseDate.VirtualRooms = new List<VirtualRoomDto>();
+                }
+
+                courseDate.VirtualRooms.Add(vRoom);
+            }
+
+
             return courseDate;
         }
 

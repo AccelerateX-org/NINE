@@ -1,6 +1,7 @@
 ﻿@model MyStik.TimeTable.Data.Candidature
 @{
     ViewBag.Title = "Anschreiben";
+    var maxLength = 1500;
 }
 
 @Html.Partial("_Watermark")
@@ -11,7 +12,12 @@
             <div class="card-header">Anschreiben für Aufnahmeverfahren @Model.Assessment.Name</div>
             <div class="card-body">
                 <div class="alert alert-info">
-                    Bitte geben Sie hier keine sensiblen personenbezogene Daten ein, z.B. Adresse, Telefonnummer, Geburtsdatum oder -ort ein.
+                    <h5>Hinweuise</h5>
+                    <ul>
+                        <li>Bitte geben Sie hier keine sensiblen personenbezogene Daten ein, z.B. Adresse, Telefonnummer, Geburtsdatum oder -ort ein.</li>
+                        <li>Es können pro Eingabefeld max. @maxLength Zeichen eingegeben werden.</li>
+                    </ul>
+                    
                 </div>
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
@@ -19,13 +25,13 @@
                     <div class="form-group row">
                         <label for="Name" class="col-sm-2 col-form-label">Kurzbiografie in Stichpunkten</label>
                         <div class="col-sm-10">
-                            @Html.TextAreaFor(m => m.Characteristics, new {@class = "form-control", rows = 10, maxlength=1500})
+                            @Html.TextAreaFor(m => m.Characteristics, new {@class = "form-control", rows = 10, maxlength=maxLength})
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="Description" class="col-sm-2 col-form-label">Motivationsschreiben</label>
                         <div class="col-sm-10">
-                            @Html.TextAreaFor(m => m.Motivation, new {@class = "form-control", rows = 10, maxlength = 1500 })
+                            @Html.TextAreaFor(m => m.Motivation, new {@class = "form-control", rows = 10, maxlength = maxLength })
                         </div>
                     </div>
                     <div class="form-group row">

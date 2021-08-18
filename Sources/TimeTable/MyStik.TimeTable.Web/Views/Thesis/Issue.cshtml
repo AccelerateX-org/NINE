@@ -18,7 +18,7 @@
                     <i class="fa fa-file-o"></i> Anmeldung meiner Abschlussarbeit
                 </h4>
                 <div class="panel-body">
-                    
+
                     <div class="alert alert-info">
                         <strong>Wichtige Hinweise:</strong>
                         <ul>
@@ -26,7 +26,7 @@
                             <li>Die Bearbeitungsdauer für Abschlussarbeiten in Ihrem Studiengang <strong>@Model.Thesis.Student.Curriculum.ShortName</strong> beträgt <strong>@Model.GetWorkingPeriod() Monate</strong>.</li>
                         </ul>
                     </div>
-                    
+
 
 
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
@@ -59,18 +59,14 @@
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
 
     <script>
-        $(document).ready(function() {
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
+        $(document).ready(function () {
+
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
+
         });
     </script>
 }

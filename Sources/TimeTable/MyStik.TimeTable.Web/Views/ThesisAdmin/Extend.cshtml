@@ -56,22 +56,12 @@
 {
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
-        $(function () {
-
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
-
-
+        $(document).ready(function () {
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
         });
-
 
     </script>
 }

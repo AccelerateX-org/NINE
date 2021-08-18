@@ -80,6 +80,25 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        internal EmailResult ThesisSupervisionProlongRequestEMail(ThesisMailModel mailModel, ApplicationUser supervisorUser)
+        {
+            InitSenderTopic(MAIL_SECTION_THESIS);
+
+            // geht an Lehrenden
+            To.Add(supervisorUser.Email);
+            mailModel.User = supervisorUser;
+
+            // Kopie an Studierenden
+            CC.Add(mailModel.StudentUser.Email);
+
+            Subject = $"Anfrage auf Verlängerung einer Abschlussarbeit";
+
+
+            return Email("ThesisSupervisionProlongRequestEMail", mailModel);
+        }
+
+
+
         /// <summary>
         /// Antwort auf die Prüfung der Voraussetzungen
         /// </summary>
@@ -223,6 +242,56 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return Email("ThesisMarkedEMail", mailModel);
         }
+
+
+        public EmailResult ThesisSupervisorAcceptProlongEMail(ThesisMailModel mailModel)
+        {
+            InitSenderTopic(MAIL_SECTION_THESIS);
+
+            // geht nur an den Studierenden
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
+
+            // cc an Betreuer
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
+
+            // cc an Betreuer bzw.Admin, der erfasst hat
+            CC.Add(mailModel.ActionUser.Email);
+
+            Subject = $"Annahme Verlängerungsnantrag der Abschlussarbeit";
+
+
+            return Email("ThesisProlongAcceptedEMail", mailModel);
+        }
+
+
+        public EmailResult ThesisSupervisorRejectProlongEMail(ThesisMailModel mailModel)
+        {
+            InitSenderTopic(MAIL_SECTION_THESIS);
+
+            // geht nur an den Studierenden
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
+
+            // cc an Betreuer
+            foreach (var user in mailModel.SupervisorUsers)
+            {
+                CC.Add(user.Email);
+            }
+
+            // cc an Betreuer bzw.Admin, der erfasst hat
+            CC.Add(mailModel.ActionUser.Email);
+
+            Subject = $"Annahme Verlängerungsnantrag der Abschlussarbeit";
+
+
+            return Email("ThesisProlongRejectedEMail", mailModel);
+        }
+
+
 
     }
 }

@@ -208,6 +208,16 @@ namespace MyStik.TimeTable.Data
         public DbSet<CommitteeMember> CommitteeMember { get; set; }
 
 
+        public DbSet<ScriptDocument> ScriptDocuments { get; set; }
+
+        public DbSet<OrderPeriod> OrderPeriods { get; set; }
+
+        public DbSet<OrderBasket> OrderBaskets { get; set; }
+
+        public DbSet<ScriptOrder> ScriptOrders { get; set; }
+
+        public DbSet<ScriptPublishing> ScriptPublishings { get; set; }
+
 
         public TimeTableDbContext() : base()
         {

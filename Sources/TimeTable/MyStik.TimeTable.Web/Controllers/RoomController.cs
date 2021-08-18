@@ -510,8 +510,22 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var room = Db.Rooms.SingleOrDefault(r => r.Id == model.Room.Id);
 
-            if (room != null && room.Dates.Count == 0)
+            if (room != null)
             {
+                var dates = room.Dates.ToList();
+
+                foreach (var date in dates)
+                {
+                    date.Rooms.Remove(room);
+                }
+
+                foreach (var assign in room.Assignments.ToList())
+                {
+                    Db.RoomAssignments.Remove(assign);
+
+                }
+
+
                 Db.Rooms.Remove(room);
                 Db.SaveChanges();
             }

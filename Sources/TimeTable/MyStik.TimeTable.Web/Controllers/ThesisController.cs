@@ -5,6 +5,7 @@ using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
@@ -315,7 +316,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 IssueDate = DateTime.Today.ToShortDateString()
             };
 
-
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
             return View(model);
         }
@@ -377,9 +379,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 Student = student,
                 Thesis = thesis,
                 ProlongDate = DateTime.Today.ToShortDateString(),
-                ProlongReason = "Grund für Verlängerung: "
+                ProlongReason = ""
             };
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
 
             return View(model);
@@ -389,10 +393,10 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Prolong(ThesisStateModel model)
         {
             var date = DateTime.Parse(model.ProlongDate);
+            var user = GetCurrentUser();
 
             if (date < DateTime.Today)
             {
-                var user = GetCurrentUser();
                 var student = StudentService.GetCurrentStudent(user);
                 var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
 
@@ -402,13 +406,15 @@ namespace MyStik.TimeTable.Web.Controllers
                     Student = student,
                     Thesis = thesis2,
                     ProlongDate = DateTime.Today.ToShortDateString(),
-                    ProlongReason = "Grund für Verlängerung: "
+                    ProlongReason = model.ProlongReason
                 };
 
                 ModelState.AddModelError("", "Das Datum muss in der Zukunft liegen");
 
                 return View(model2);
             }
+
+
 
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
@@ -419,6 +425,27 @@ namespace MyStik.TimeTable.Web.Controllers
             thesis.ProlongReason = model.ProlongReason;
 
             Db.SaveChanges();
+
+
+            var userService = new UserInfoService();
+
+            foreach (var supervisor in thesis.Supervisors)
+            {
+
+                // der user des angefragten Lehrenden
+                var supervisorUser = userService.GetUser(supervisor.Member.UserId);
+
+                if (supervisorUser != null)
+                {
+                    var tm = InitMailModel(thesis, user);
+
+                    new MailController().ThesisSupervisionProlongRequestEMail(tm, supervisorUser).Deliver();
+                }
+            }
+
+
+
+
 
 
             return RedirectToAction("Index");
@@ -440,6 +467,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 IssueDate = DateTime.Today.ToShortDateString()
             };
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
 
             return View(model);

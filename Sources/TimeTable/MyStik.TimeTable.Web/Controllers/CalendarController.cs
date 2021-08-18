@@ -1143,9 +1143,24 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public FileResult File()
+        [AllowAnonymous]
+        public FileResult File(string userId, string date)
         {
-            var user = UserManager.FindByName(User.Identity.Name);
+            ApplicationUser user = null;
+
+            if (!string.IsNullOrEmpty(userId) && userId.StartsWith("#id#"))
+            {
+                var userName = userId.Remove(0, 4);
+                var email = string.Format("{0}@acceleratex.org", userName);
+
+                user = UserManager.FindByEmail(email);
+            }
+            else
+            {
+                user = UserManager.FindByName(User.Identity.Name);
+            }
+
+
 
             if (user != null)
             {

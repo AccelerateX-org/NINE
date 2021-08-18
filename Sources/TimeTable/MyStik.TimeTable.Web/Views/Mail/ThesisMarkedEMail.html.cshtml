@@ -16,3 +16,29 @@
 
 <a href="@Url.Action("Accept", "Alumni", new {id = Model.Thesis.Student.Id}, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
 
+@if (Model.Thesis.Student.Curriculum.Organiser.ShortName.Equals("FK 09"))
+{
+    <h5>Teilnahme an der Alumnibefragung</h5>
+    if (Model.Thesis.Student.Curriculum.ShortName.Equals("WI"))
+    {
+        <a href="https://evasys.cc.hm.edu/evasys/online.php?p=bachelor09a">Alumnibefragung für Bachelor WI</a>
+    }
+    if (Model.Thesis.Student.Curriculum.ShortName.Equals("AU"))
+    {
+        <a href="https://evasys.cc.hm.edu/evasys/online.php?p=bachelor09a">Alumnibefragung für Bachelor AU</a>
+    }
+    if (Model.Thesis.Student.Curriculum.ShortName.Equals("LM"))
+    {
+        <a href="https://evasys.cc.hm.edu/evasys/online.php?p=bachelor09a">Alumnibefragung für Bachelor LM</a>
+    }
+    if (Model.Thesis.Student.Curriculum.ShortName.Equals("WIM"))
+    {
+        <a href="https://evasys.cc.hm.edu/evasys/online.php?p=master09a">Alumnibefragung für konsekutiven Master WI</a>
+    }
+    if (Model.Thesis.Student.Curriculum.ShortName.Equals("MBA"))
+    {
+        <a href="https://evasys.cc.hm.edu/evasys/online.php?p=mbaeng09a">Alumnibefragung für MBA</a>
+    }
+
+
+}

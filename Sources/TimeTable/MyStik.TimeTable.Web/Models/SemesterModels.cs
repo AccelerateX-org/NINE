@@ -67,9 +67,23 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
+        public ActivityOrganiser Organiser { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Semester Semester { get; set; }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        public Semester PreviousSemester { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Semester NextSemester { get; set; }
+
+
     }
 
     /// <summary>

@@ -35,6 +35,9 @@
                     <a class="nav-link text-center" href="@Url.Action("Index", "CurriculumModule")"><i class="fas fa-cube fa-fw"></i><br />Module</a>
                 </li>
                 <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "ScriptPublishing")"><i class="fas fa-book fa-fw"></i><br />Skripte</a>
+                </li>
+                <li class="nav-item active">
                     <a class="nav-link text-center" href="@Url.Action("Index", "VirtualRoom")"><i class="fas fa-tv fa-fw"></i><br />virtuelle Räume</a>
                 </li>
                 <li class="nav-item active">
@@ -43,7 +46,7 @@
                 @if (member != null)
                 {
                     <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Member", "Organiser", new {id = member.Id})"><i class="fas fa-user fa-fw"></i><br/>Mein Profil</a>
+                        <a class="nav-link text-center" href="@Url.Action("Member", "Organiser", new {id = member.Id})"><i class="fas fa-user fa-fw"></i><br />Mein Profil</a>
                     </li>
                 }
             </ul>
@@ -106,6 +109,10 @@
                             <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
                                 <i class="fas fa-cogs"></i>
                             </a>
+                            @if (course.Course.ScriptPublishings.Any())
+                            {
+                                <div>Mit Skripten</div>
+                            }
                         </div>
                     </div>
                 }

@@ -96,12 +96,16 @@ namespace MyStik.TimeTable.Web.Services
             // Bei Studenten nach einer Eintragung suchen
             // das aktuelle Studium
             var student = db.Students.Where(x => !string.IsNullOrEmpty(x.UserId) && x.UserId.Equals(userId)).OrderByDescending(x => x.Created).FirstOrDefault();
-            if (student != null)
-                return student.Curriculum.Organiser;
 
 
             // Ist der Benutzer in einer Organisation?
             var memberOrg = GetFacultyMemberships(userId);
+
+            // nur Student, kein Member
+            if (student != null && !memberOrg.Any())
+                return student.Curriculum.Organiser;
+
+            // Member schlägt Studium
             if (memberOrg.Any())
                 return memberOrg.First().Organiser;
 

@@ -1809,6 +1809,60 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Schwarzes Brett.
+        /// </summary>
+        public static string NavMainBlackBoard {
+            get {
+                return ResourceManager.GetString("NavMainBlackBoard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string NavMainMyAdministration {
+            get {
+                return ResourceManager.GetString("NavMainMyAdministration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Forschung.
+        /// </summary>
+        public static string NavMainMyResearch {
+            get {
+                return ResourceManager.GetString("NavMainMyResearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mein Studium.
+        /// </summary>
+        public static string NavMainMyStudies {
+            get {
+                return ResourceManager.GetString("NavMainMyStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Lehre.
+        /// </summary>
+        public static string NavMainMyTeaching {
+            get {
+                return ResourceManager.GetString("NavMainMyTeaching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meine Hochschule.
+        /// </summary>
+        public static string NavMainMyUniversity {
+            get {
+                return ResourceManager.GetString("NavMainMyUniversity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Beginn.
         /// </summary>
         public static string NewBegin {

@@ -30,5 +30,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
 
+
+        public virtual ICollection<ScriptPublishing> ScriptPublishings { get; set; }
+
     }
 }

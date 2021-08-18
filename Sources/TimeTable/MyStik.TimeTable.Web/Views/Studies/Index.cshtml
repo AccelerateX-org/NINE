@@ -77,7 +77,10 @@
             {
                 <div class="alert alert-info">
                     <h4>Abgabefrist meiner Abschlussarbeit: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</h4>
-                    <a class="btn btn-danger" href="@Url.Action("Prolong", "Thesis")">Verlängerung beantragen</a>
+                    @if (diff.Days > 13)
+                    {
+                        <a class="btn btn-danger" href="@Url.Action("Prolong", "Thesis")">Verlängerung beantragen</a>
+                    }
                 </div>
 
             }

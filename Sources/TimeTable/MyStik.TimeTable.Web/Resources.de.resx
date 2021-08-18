@@ -1243,4 +1243,22 @@
   <data name="WPMLottery" xml:space="preserve">
     <value>WPM-Wahl</value>
   </data>
+  <data name="NavMainBlackBoard" xml:space="preserve">
+    <value>Schwarzes Brett</value>
+  </data>
+  <data name="NavMainMyStudies" xml:space="preserve">
+    <value>Mein Studium</value>
+  </data>
+  <data name="NavMainMyTeaching" xml:space="preserve">
+    <value>Meine Lehre</value>
+  </data>
+  <data name="NavMainMyResearch" xml:space="preserve">
+    <value>Meine Forschung</value>
+  </data>
+  <data name="NavMainMyUniversity" xml:space="preserve">
+    <value>Meine Hochschule</value>
+  </data>
+  <data name="NavMainMyAdministration" xml:space="preserve">
+    <value>Meine Verwaltung</value>
+  </data>
 </root>

@@ -868,6 +868,42 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult ClearDates(Guid id)
+        {
+            var user = GetCurrentUser();
+            var assessment = Db.Assessments.SingleOrDefault(x => x.Id == id);
+            var member = assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+
+            var userInfoService = new UserInfoService();
+            var officeHour = GetOfficeHour(assessment);
+
+            foreach (var candidature in assessment.Candidatures)
+            {
+                var candUser = userInfoService.GetUser(candidature.UserId);
+
+                var ohDate = candUser != null ?
+                    officeHour.Dates.FirstOrDefault(x =>
+                        x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(candUser.Id)))
+                    : null;
+
+                if (ohDate != null)
+                {
+                    Db.ActivityDates.Remove(ohDate);
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new {id = assessment.Id});
+        }
+
+
+
         public ActionResult UploadDates(Guid id)
         {
             var user = GetCurrentUser();
@@ -1207,5 +1243,42 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult SetAcceptance(Guid id)
+        {
+            var user = GetCurrentUser();
+            var candidature = Db.Candidatures.SingleOrDefault(x => x.Id == id);
+            var member = candidature.Assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+
+            candidature.IsAccepted = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Acceptance", new {id = candidature.Assessment.Id});
+        }
+
+        public ActionResult RejectAcceptance(Guid id)
+        {
+            var user = GetCurrentUser();
+            var candidature = Db.Candidatures.SingleOrDefault(x => x.Id == id);
+            var member = candidature.Assessment.Committee.Members.FirstOrDefault(x => !string.IsNullOrEmpty(x.Member.UserId) && x.Member.UserId.Equals(user.Id));
+            var userRight = GetUserRight();
+
+            if (!(userRight.Member.IsAdmin || member != null))
+                return View("_NoAccess");
+
+
+            candidature.IsAccepted = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Acceptance", new { id = candidature.Assessment.Id });
+        }
+
+
+
     }
 }

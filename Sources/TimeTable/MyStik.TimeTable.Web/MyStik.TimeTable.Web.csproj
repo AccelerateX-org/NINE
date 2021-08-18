@@ -297,6 +297,7 @@
     <Compile Include="Api\Controller\ActivityController.cs" />
     <Compile Include="Api\Controller\AssessmentsController.cs" />
     <Compile Include="Api\Controller\CampusController.cs" />
+    <Compile Include="Api\Controller\EdBotController.cs" />
     <Compile Include="Api\Controller\MvgController.cs" />
     <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="Api\DTOs\BaseDto.cs" />
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\MvgDto.cs" />
+    <Compile Include="Api\DTOs\ScheduleDto.cs" />
     <Compile Include="Api\DTOs\ZpCourseDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
     <Compile Include="Api\DTOs\CurriculumDto.cs" />
@@ -453,6 +455,7 @@
     <Compile Include="Controllers\RoomReportController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
+    <Compile Include="Controllers\ScriptPublishingController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\StudiesController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
@@ -580,6 +583,7 @@
     <Compile Include="Models\ReservationModels.cs" />
     <Compile Include="Models\RoomModels.cs" />
     <Compile Include="Models\RoomReportModels.cs" />
+    <Compile Include="Models\ScriptModels.cs" />
     <Compile Include="Models\SearchModels.cs" />
     <Compile Include="Models\SemesterModels.cs" />
     <Compile Include="Models\StudentsModels.cs" />
@@ -749,6 +753,7 @@
     <Content Include="Assets\fillter\img\selected.svg" />
     <Content Include="Assets\fillter\img\white.gif" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
+    <Content Include="Assets\fillter\scripts\datepicker.js" />
     <Content Include="Assets\global\css\components-md.css" />
     <Content Include="Assets\global\css\components-rounded.css" />
     <Content Include="Assets\global\css\components.css" />
@@ -4086,7 +4091,6 @@
     <Content Include="Views\ThesisSupervision\Index.cshtml" />
     <Content Include="Views\ThesisWorkflow\Issue.cshtml" />
     <Content Include="Views\Thesis\Admin.cshtml" />
-    <Content Include="Views\Thesis\Announce.cshtml" />
     <Content Include="Views\ThesisAdmin\Details.cshtml" />
     <Content Include="Views\Thesis\Issue.cshtml" />
     <Content Include="Views\Thesis\List.cshtml" />
@@ -4191,7 +4195,6 @@
     <Content Include="Views\Mail\ThesisSupervisionResponseEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorRemoveEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorAssignEMail.html.cshtml" />
-    <Content Include="Views\Thesis\AddSupervisors.cshtml" />
     <Content Include="Views\ThesisSupervision\ChangeTitle.cshtml" />
     <Content Include="Views\Emails\ThesisMarked.cshtml" />
     <Content Include="Views\Emails\ThesisMarked.Html.cshtml" />
@@ -4338,6 +4341,12 @@
     <Content Include="Views\Autonomy\Index.cshtml" />
     <Content Include="Views\Autonomy\_ViewStart.cshtml" />
     <Content Include="Views\Thesis\Prolong.cshtml" />
+    <Content Include="Views\Mail\ThesisSupervisionProlongRequestEMail.html.cshtml" />
+    <Content Include="Views\ScriptPublishing\_ViewStart.cshtml" />
+    <Content Include="Views\ScriptPublishing\Index.cshtml" />
+    <Content Include="Views\ScriptPublishing\Create.cshtml" />
+    <Content Include="Views\Mail\ThesisProlongAcceptedEMail.html.cshtml" />
+    <Content Include="Views\Mail\ThesisProlongRejectedEMail.html.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

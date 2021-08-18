@@ -577,23 +577,56 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             }
 
             foreach (var raum in _import.Raeume.Where(r => r.IsTouched))
+            {
+                var n = db.Rooms.Count(r => r.Number.Equals(raum.Nummer));
+                if (n == 1)
                 {
                     var room = db.Rooms.SingleOrDefault(r => r.Number.Equals(raum.Nummer));
                     if (room == null)
                     {
                         _import.AddErrorMessage("Import",
-                            $"Raum [{raum.Nummer}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet", false);
+                            $"Raum [{raum.Nummer}] existiert nicht in Datenbank. Raum wird bei Import automatisch angelegt und {org.ShortName} zugeordnet",
+                            false);
                     }
                     else
                     {
                         if (room.Assignments.All(a => a.Organiser.Id != org.Id))
                         {
                             _import.AddErrorMessage("Import",
-                                $"Raum [{raum.Nummer}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.", false);
+                                $"Raum [{raum.Nummer}] existiert hat aber keine Zuordnung zu {org.ShortName}. Zuordnung wird bei Import automatisch angelegt.",
+                                false);
                         }
                     }
-
                 }
+                else
+                {
+                    _import.AddErrorMessage("Import",
+                        $"Raum [{raum.Nummer}] gibt es {n} - mal.",
+                        true);
+
+                    var r2 = db.Rooms.Where(r => r.Number.Equals(raum.Nummer)).ToList();
+
+                    foreach (var r in r2)
+                    {
+                        if (r.Assignments.Any())
+                        {
+                            foreach (var a in r.Assignments.ToList())
+                            {
+                                _import.AddErrorMessage("Import",
+                                    $"Raum [{r.FullName}] für {a.Organiser.ShortName}.",
+                                    true);
+                            }
+                        }
+                        else
+                        {
+                            _import.AddErrorMessage("Import",
+                                $"Raum [{r.FullName}] ohne Zuordnung.",
+                                true);
+
+                        }
+                    }
+                }
+            }
         }
 
 

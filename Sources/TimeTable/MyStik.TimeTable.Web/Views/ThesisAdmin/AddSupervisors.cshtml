@@ -7,8 +7,6 @@
 @section styles
 {
     <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 
@@ -65,34 +63,11 @@
 
 @section Scripts {
     <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
 
     <script>
 
         $(document).ready(function () {
             $("#loading").hide();
-
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
-
-            $('.timepicker-24').timepicker({
-                autoclose: true,
-                minuteStep: 15,
-                showSeconds: false,
-                showMeridian: false
-            });
-
-            $('.timepicker').parent('.input-group').on('click', '.input-group-btn', function(e) {
-                e.preventDefault();
-                $(this).parent('.input-group').find('.timepicker').timepicker('showWidget');
-            });
 
 
             $('#DozId').autocomplete({

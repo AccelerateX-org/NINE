@@ -39,7 +39,7 @@
                 <div class="pull-left">
                     <ul class="list-inline">
                         <li><a href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a></li>
-                        <li><a href="@Url.Action("TermsOfUse", "Home")">Nutzungsbedingungen</a></li>
+                        <li><a href="@Url.Action("TermsOfUse", "Home")">@Resources.TermsOfUse</a></li>
                         <li><a href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a></li>
                     </ul>
                 </div>
@@ -55,6 +55,7 @@
                                 <img src="~/Assets/global/img/flags/gb.png" />
                             </a>
                         </li>
+                    @*
                         <li>
                             <a href="@Url.Action("SetCulture", "Home", new {culture = "fr"})">
                                 <img src="~/Assets/global/img/flags/fr.png" />
@@ -65,6 +66,7 @@
                                 <img src="~/Assets/global/img/flags/es.png" />
                             </a>
                         </li>
+                        *@
                     </ul>
                 </div>
             </div>

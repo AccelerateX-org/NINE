@@ -1782,6 +1782,16 @@
             
             </summary>
         </member>
+        <member name="T:MyStik.TimeTable.Web.Api.DTOs.VirtualRoomDto">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Api.DTOs.VirtualRoomDto.Url">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Api.DTOs.CourseSummaryDto">
             <summary>
             
@@ -6998,7 +7008,7 @@
             <param name="endDate"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.File">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CalendarController.File(System.String,System.String)">
             <summary>
             
             </summary>
@@ -10062,7 +10072,7 @@
             
             </summary>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.SemesterController.Index">
+        <member name="M:MyStik.TimeTable.Web.Controllers.SemesterController.Index(System.Nullable{System.Guid})">
             <summary>
             
             </summary>
@@ -18015,6 +18025,11 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ScriptCreatetModel.ScriptDoc">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Models.SearchViewModel">
             <summary>
             
@@ -18105,7 +18120,22 @@
             
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.SemesterViewModel.Organiser">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.SemesterViewModel.Semester">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.SemesterViewModel.PreviousSemester">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.SemesterViewModel.NextSemester">
             <summary>
             
             </summary>
@@ -20568,6 +20598,36 @@
         <member name="P:MyStik.TimeTable.Web.Resources.NameOfCoursesPlaceholder">
             <summary>
               Looks up a localized string similar to Name des Kurses.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.NavMainBlackBoard">
+            <summary>
+              Looks up a localized string similar to Schwarzes Brett.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyAdministration">
+            <summary>
+              Looks up a localized string similar to .
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyResearch">
+            <summary>
+              Looks up a localized string similar to Meine Forschung.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyStudies">
+            <summary>
+              Looks up a localized string similar to Mein Studium.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyTeaching">
+            <summary>
+              Looks up a localized string similar to Meine Lehre.
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyUniversity">
+            <summary>
+              Looks up a localized string similar to Meine Hochschule.
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Resources.NewBegin">

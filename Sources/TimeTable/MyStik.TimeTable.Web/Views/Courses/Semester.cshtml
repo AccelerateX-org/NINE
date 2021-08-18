@@ -44,19 +44,22 @@
                 <li class="nav-item active">
                     <a class="nav-link text-center" href="@Url.Action("Organiser", "Dictionary", new {semId = Model.Semester.Id, orgId=Model.Organiser.Id})"> <i class="fas fa-pen"></i><br />Vorlesungsverzeichnis</a>
                 </li>
-            @if (ViewBag.UserRight.IsCourseAdmin)
-            {
+                @if (ViewBag.UserRight.IsCourseAdmin)
+                {
 
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-bullhorn"></i><br/>Freigaben</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("SemesterReport", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-download"></i><br/>Semesterbericht</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="fas fa-forward"></i><br/>Das nächste Semester anlegen</a>
-                </li>
-            }
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Import", new {id = Model.Semester.Id})"> <i class="fas fa-upload"></i><br />Datenimport</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-bullhorn"></i><br />Freigaben</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("SemesterReport", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-download"></i><br />Semesterbericht</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="fas fa-forward"></i><br />Das nächste Semester anlegen</a>
+                    </li>
+                }
             </ul>
         </div>
     </nav>
@@ -94,13 +97,14 @@
             <tbody>
                 @foreach (var c in Model.Courses)
                 {
+                    var linkName = c.Course.ShortName ?? "Kein Kurzname";
                     <tr>
                         <td>
                             @if (c.Course.IsInternal)
                             {
                                 <i class="fa fa-lock"></i>
                             }
-                            @Html.ActionLink(c.Course.ShortName, "Index", "Course", new { id = c.Course.Id }, null)
+                            @Html.ActionLink(linkName, "Index", "Course", new { id = c.Course.Id }, null)
                         </td>
                         <td>
                             @if (c.Course.IsInternal)

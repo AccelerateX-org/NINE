@@ -1,0 +1,18 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+@if (!Model.AsSubstitute)
+{
+    <p>Der/die Studierende @Model.StudentUser.FirstName @Model.StudentUser.LastName hat einenen Antrag auf Verlängerung der Abschlussarbeit gestellt.</p>
+}
+else
+{
+    <p>
+        Freundliche Erinnerung von @Model.ActionUser.FirstName @Model.ActionUser.LastName:
+        Der/die Studierende @Model.StudentUser.FirstName @Model.StudentUser.LastName hat einenen Antrag auf Verlängerung der Abschlussarbeit gestellt
+    </p>
+}
+<a href="@Url.Action("Details", "ThesisSupervision", new {id = Model.Thesis.Id}, Request.Url.Scheme)">Zur Detailseite der Abschlussarbeit</a>

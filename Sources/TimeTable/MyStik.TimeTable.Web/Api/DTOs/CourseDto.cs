@@ -102,6 +102,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// </summary>
         public List<LecturerDto> Lecturer { get; set; }
 
+
+        public List<VirtualRoomDto> VirtualRooms { get; set; }
     }
 
     /// <summary>
@@ -154,6 +156,18 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public string Faculty { get; set; }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class VirtualRoomDto : NamedDto
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Url { get; set; }
     }
 
 

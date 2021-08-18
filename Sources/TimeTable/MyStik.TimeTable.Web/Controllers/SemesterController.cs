@@ -15,23 +15,22 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
-            ViewBag.SemesterList = Db.Semesters.OrderByDescending(s => s.StartCourses).Select(f => new SelectListItem
-            {
-                Text = f.Name,
-                Value = f.Name,
-            });
-
+            var semester = SemesterService.GetSemester(id);
             var org = GetMyOrganisation();
-
-
-            ViewBag.UserRight = GetUserRight(org);
 
             var model = new SemesterViewModel
             {
-                Semester = SemesterService.GetSemester(DateTime.Today)
+                Semester = semester,
+                Organiser = org,
             };
+
+            model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
+            model.NextSemester = SemesterService.GetNextSemester(semester);
+
+
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

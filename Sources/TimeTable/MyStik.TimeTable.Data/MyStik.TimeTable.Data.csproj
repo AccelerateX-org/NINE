@@ -404,6 +404,14 @@
     <Compile Include="Migrations\202105051409293_AssessmentV3.Designer.cs">
       <DependentUpon>202105051409293_AssessmentV3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202107281605256_ScriptShop_v01.cs" />
+    <Compile Include="Migrations\202107281605256_ScriptShop_v01.Designer.cs">
+      <DependentUpon>202107281605256_ScriptShop_v01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202107290817062_ScriptShop_v02.cs" />
+    <Compile Include="Migrations\202107290817062_ScriptShop_v02.Designer.cs">
+      <DependentUpon>202107290817062_ScriptShop_v02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -432,6 +440,7 @@
     <Compile Include="RoomAssignment.cs" />
     <Compile Include="RoomBooking.cs" />
     <Compile Include="RoomEquipment.cs" />
+    <Compile Include="Script.cs" />
     <Compile Include="Semester.cs" />
     <Compile Include="SemesterDate.cs" />
     <Compile Include="SemesterGroup.cs" />
@@ -645,6 +654,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105051409293_AssessmentV3.resx">
       <DependentUpon>202105051409293_AssessmentV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107281605256_ScriptShop_v01.resx">
+      <DependentUpon>202107281605256_ScriptShop_v01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107290817062_ScriptShop_v02.resx">
+      <DependentUpon>202107290817062_ScriptShop_v02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

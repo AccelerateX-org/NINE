@@ -20,9 +20,9 @@
     {
         <a href="mailto:@Model.User.Email"> @Model.User.Email</a>
         <div>(@Model.User.UserName)</div>
+        @*<div>[@Model.User.Id]</div>*@
     }
-</td>
-    <td>
+</td><td>
         @switch (Model.User.MemberState)
         {
             case MemberState.Student:

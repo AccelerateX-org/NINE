@@ -11,6 +11,7 @@ using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
+using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
@@ -36,8 +37,26 @@ namespace MyStik.TimeTable.Web.Api.Controller
         public IQueryable<CalendarDateDto> Day([FromBody] CalendarDayRequestModel model)
         {
             var converter = new CourseConverter(Db);
+
+            if (string.IsNullOrEmpty(model.userid))
+                return new List<CalendarDateDto>().AsQueryable();
+
             var userService = new UserInfoService();
-            var user = userService.GetUser(model.userid);
+
+            ApplicationUser user = null;
+
+            if (model.userid.StartsWith("#id#"))
+            {
+                var userName = model.userid.Remove(0, 4);
+                var email = string.Format("{0}@acceleratex.org", userName);
+
+                user = userService.GetUserByEmail(email);
+            }
+            else
+            {
+                user = userService.GetUser(model.userid);
+            }
+
 
             var from = model.date.Date;
             var until = from.AddDays(1);

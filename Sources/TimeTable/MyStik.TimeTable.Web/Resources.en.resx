@@ -1214,4 +1214,22 @@
   <data name="TermsOfUse" xml:space="preserve">
     <value>Terms of use</value>
   </data>
+  <data name="NavMainBlackBoard" xml:space="preserve">
+    <value>Blackboard</value>
+  </data>
+  <data name="NavMainMyStudies" xml:space="preserve">
+    <value>My Studies</value>
+  </data>
+  <data name="NavMainMyTeaching" xml:space="preserve">
+    <value>My Teaching</value>
+  </data>
+  <data name="NavMainMyResearch" xml:space="preserve">
+    <value>My Research</value>
+  </data>
+  <data name="NavMainMyUniversity" xml:space="preserve">
+    <value>My University</value>
+  </data>
+  <data name="NavMainMyAdministration" xml:space="preserve">
+    <value>My Administration</value>
+  </data>
 </root>

@@ -5,6 +5,7 @@ using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
@@ -907,6 +908,30 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new {id = thesis.Id});
         }
 
+        public ActionResult StornoMarked(Guid id)
+        {
+            var userService = new UserInfoService();
+
+            var user = GetCurrentUser();
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
+
+            thesis.DeliveryDate = null;
+            thesis.GradeDate = null;
+            thesis.IsCleared = null;
+
+            Db.SaveChanges();
+
+            // Mail an Studierenden
+            var model = InitMailModel(thesis, user);
+
+            new MailController().ThesisSupervisorDeliveryStornoEMail(model).Deliver();
+
+
+
+            return RedirectToAction("Details", new { id = thesis.Id });
+        }
+
+
 
         /// <summary>
         /// Notenmeldung erfolgt
@@ -1053,6 +1078,9 @@ namespace MyStik.TimeTable.Web.Controllers
             model.StudentUser = userService.GetUser(thesis.Student.UserId);
             model.NewDateEnd = thesis.ExpirationDate.Value.ToShortDateString();
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
             return View(model);
         }
 
@@ -1061,7 +1089,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
-            var date = DateTime.ParseExact(model.NewDateEnd, "dd.MM.yyyy", null);
+            var date = DateTime.Parse(model.NewDateEnd);
 
             if (date <= thesis.ExpirationDate.Value)
             {
@@ -1072,6 +1100,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 m.Thesis = thesis;
                 m.StudentUser = userService.GetUser(thesis.Student.UserId);
                 m.NewDateEnd = thesis.ExpirationDate.Value.ToShortDateString();
+
+
+                var culture = Thread.CurrentThread.CurrentUICulture;
+                ViewBag.Culture = culture;
 
                 return View(m);
             }
@@ -1147,6 +1179,12 @@ namespace MyStik.TimeTable.Web.Controllers
             thesis.ProlongExaminationBoardAccepted = true;
             Db.SaveChanges();
 
+            // Mail an Studierenden
+            var user = GetCurrentUser();
+            var model = InitMailModel(thesis, user);
+
+            new MailController().ThesisSupervisorAcceptProlongEMail(model).Deliver();
+
             return RedirectToAction("Details", new { id = thesis.Id });
         }
 
@@ -1166,6 +1204,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             thesis.ProlongExaminationBoardAccepted = false;
             Db.SaveChanges();
+
+
+            // Mail an Studierenden
+            var user = GetCurrentUser();
+            var model = InitMailModel(thesis, user);
+
+            new MailController().ThesisSupervisorRejectProlongEMail(model).Deliver();
+
 
             return RedirectToAction("Details", new { id = thesis.Id });
         }
