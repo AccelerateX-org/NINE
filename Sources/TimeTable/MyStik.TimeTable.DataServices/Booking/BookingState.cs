@@ -106,7 +106,14 @@ namespace MyStik.TimeTable.DataServices.Booking
             if (_myBookingList != null && _myBookingList.Capacity >= 0)
             {
                 IsUnrestricted = false;
-                AvailableSeats = _myBookingList.Capacity - _myBookingList.Participients.Count;
+                if (_myBookingList.Capacity == int.MaxValue)
+                {
+                    AvailableSeats = int.MaxValue;  // ohne Platzbescränkung ist die Anzahl der verfügbaren Plätze unerheblich
+                }
+                else
+                {
+                    AvailableSeats = _myBookingList.Capacity - _myBookingList.Participients.Count;
+                }
             }
         }
     }

@@ -20,6 +20,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public static readonly string MAIL_SECTION_MESSAGES = "Benachrichtigung";
         public static readonly string MAIL_SECTION_THESIS = "Abschlussarbeiten";
         public static readonly string MAIL_SECTION_SUBSCRIPTIONS = "Platzvergabe";
+        public static readonly string MAIL_SECTION_SCRIPTSHOP = "Skriptenbestellung";
 
         public static string InitFrom(string section)
         {

@@ -1,0 +1,30 @@
+﻿@model MyStik.TimeTable.Data.ScriptOrder
+@{
+    ViewBag.Title = "Bestellung stornieren";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Skriptbestellung stornieren
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    Hiermit möchte ich folgendes Skript verbindlich abbestellen
+                    <ul>
+                        <li>@Model.ScriptDocument.Title (@Model.ScriptDocument.Version)</li>
+                    </ul>
+                </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <a href="@Url.Action("CancelOrderConfirmed", new {id=Model.Id})" class="btn btn-outline-danger"><i class="fas fa-save"></i> Skriptbestellung stornieren</a>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="fas fa-times"> </i>Abbrechen</a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+

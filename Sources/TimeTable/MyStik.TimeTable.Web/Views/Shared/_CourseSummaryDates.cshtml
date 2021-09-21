@@ -46,8 +46,12 @@
             {
                 <div class="list-group-item">
                     <ul class="fa-ul">
-                        <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(date.Key)</li> 
-                        <li><i class="fa fa-li fa-university"></i>@Html.RoomList(date.Key.Rooms, false, false), @Html.RoomList(date.Key.VirtualRooms, showLinks:true)</li>
+                        <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(date.Key)</li>
+                        <li><i class="fa fa-li fa-university"></i>@Html.RoomList(date.Key.Rooms, false, false)</li>
+                        @if (date.Key.VirtualRooms.Any())
+                        {
+                            <li><i class="fa fa-li fa-tv"></i>@Html.RoomList(date.Key.VirtualRooms, true, false)</li>
+                        }
                         <li><i class="fa fa-li fa-user-md"></i>@Html.LecturerList(date.Key.Hosts, false)</li>
                         @if (!string.IsNullOrEmpty(date.Key.Title))
                         {
@@ -55,7 +59,7 @@
                                 <i class="fa fa-li fa-info-circle"></i><strong>@date.Key.Title</strong>
                                 @if (!string.IsNullOrEmpty(date.Key.Description))
                                 {
-                                    <br/>
+                                    <br />
                                     @date.Key.Description
                                 }
                             </li>

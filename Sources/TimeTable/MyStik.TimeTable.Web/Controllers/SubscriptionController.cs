@@ -250,6 +250,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var nextDate = DateTime.Today.AddDays(70);
 
             ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= nextDate).OrderByDescending(x => x.EndCourses)
+                .Take(8)
                 .Select(f => new SelectListItem
                     {
                         Text = f.Name,

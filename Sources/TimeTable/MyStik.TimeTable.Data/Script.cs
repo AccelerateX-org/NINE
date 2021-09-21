@@ -58,16 +58,48 @@ namespace MyStik.TimeTable.Data
         public Guid Id { get; set; }
 
 
+        /// <summary>
+        /// Titel 
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// Beschreibung
+        /// </summary>
         public string Description { get; set; }
 
+
+        /// <summary>
+        /// Semesterbezug, damit werden die Lehrveranstaltungen ausgewählt
+        /// </summary>
+        public virtual Semester Semester { get; set; }
+
+        /// <summary>
+        /// Bezug zum Veranstalter
+        /// Feingranulatioger wäre dann nur noch der Studiengang
+        /// </summary>
+        public virtual ActivityOrganiser Organiser { get; set; }
+
+
+        /// <summary>
+        /// Beginn des Bestellzeitraums
+        /// </summary>
         public DateTime Begin { get; set; }
+
+        /// <summary>
+        /// Ende des Bestellzeitraums
+        /// </summary>
         public DateTime End { get; set; }
 
         /// <summary>
         /// Datum der letzten Durchführung der Bestellung
+        /// Idee: nur eine Bestellung pro Bestellperiode sinnvoll
         /// </summary>
         public DateTime? LastProcessed { get; set; }
 
+        /// <summary>
+        /// Liste der Bestellungen
+        /// </summary>
         public virtual ICollection<OrderBasket> Baskets { get; set; }
     }
 
@@ -81,9 +113,17 @@ namespace MyStik.TimeTable.Data
         public virtual OrderPeriod OrderPeriod { get; set; }
 
         /// <summary>
-        /// Bestellnummer
+        /// Bestellnummer, wird bei der Bestellung generiert
         /// </summary>
         public int? OrderNumber { get; set; }
+
+        /// <summary>
+        /// Abgeholt / geliefert
+        /// </summary>
+        public bool? Delivered { get; set; }
+
+
+        public virtual ICollection<ScriptOrder> Orders { get; set; }
     }
 
     public class ScriptOrder
@@ -98,6 +138,7 @@ namespace MyStik.TimeTable.Data
         public virtual ScriptDocument ScriptDocument { get; set; }
 
 
+        public DateTime OrderedAt { get; set; }
     }
 
 

@@ -1,0 +1,87 @@
+﻿@model MyStik.TimeTable.Web.Models.ScriptOrderDetailsModel
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Skriptenbestellung</title>
+	<style>
+		body {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 11px;
+			line-height: 1.4;
+		}
+
+		table, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+
+		td {
+			padding: 3px;
+		}
+
+		.vordruck {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 12px;
+			line-height: 1.1;
+			margin-bottom: 5px;
+		}
+
+
+		.vordruck2 {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 9px;
+			line-height: 1.1;
+			margin-bottom: 5px;
+		}
+
+		.bestellnummer {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 25px;
+			font-weight: bolder;
+			line-height: 1.1;
+			margin-bottom: 5px;
+		}
+		
+
+
+	</style>
+</head>
+
+<body>
+<h1>Packlisten für Skriptbestellungen</h1>
+<h2>Bestellzeitraum "@Model.Period.Title" (@Model.Period.Begin.ToShortDateString() bis @Model.Period.End.ToShortDateString())</h2>
+<p>Pro Bestellung ist die Bestellnummer und die bestellten Skripte angegeben. An die Besteller:innen ist eine Mail mit "Abholschein" versendet worden. Der Abholschein enthält die Bestellnummer und die bestellten Skripte.</p>
+@foreach (var person in Model.Persons.OrderBy(x => x.Basket.OrderNumber))
+{
+	if (person.Basket.OrderNumber.HasValue)
+	{
+		<table style="width: 100%; margin-bottom: 20px">
+			<tr>
+				<td style="width: 33%; vertical-align: middle; text-align: center">
+					<div class="bestellnummer">
+						@person.Basket.OrderNumber.Value.ToString("00000")
+					</div>
+				</td>
+				<td style="width: 66%; vertical-align: text-top;">
+					<div class="vordruck2">
+						Bestellzeitraum "@Model.Period.Title" (@Model.Period.Begin.ToShortDateString() bis @Model.Period.End.ToShortDateString())
+					</div>
+					<hr/>
+					@foreach (var order in person.Basket.Orders)
+					{
+						<div class="vordruck">
+							@order.ScriptDocument.Title (@order.ScriptDocument.Version)
+						</div>
+					}
+				</td>
+			</tr>
+		</table>
+	}
+}
+</body>
+
+</html>

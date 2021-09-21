@@ -594,4 +594,15 @@ namespace MyStik.TimeTable.Web.Models
         public List<Room> Rooms { get; set; }
     }
 
+
+    public class StudyRoomViewModel
+    {
+        public ActivityOrganiser Organiser { get; set; }
+
+        public string Date { get; set; }
+
+        public string Time { get; set; }
+
+    }
+
 }

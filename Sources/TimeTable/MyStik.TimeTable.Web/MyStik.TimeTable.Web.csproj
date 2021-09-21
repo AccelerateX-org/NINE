@@ -441,6 +441,7 @@
     <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\LotteryController.cs" />
     <Compile Include="Controllers\MailControllerMisc.cs" />
+    <Compile Include="Controllers\MailControllerScript.cs" />
     <Compile Include="Controllers\MailControllerThesis.cs" />
     <Compile Include="Controllers\MailControllerAccount.cs" />
     <Compile Include="Controllers\MessagingController.cs" />
@@ -455,9 +456,13 @@
     <Compile Include="Controllers\RoomReportController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
+    <Compile Include="Controllers\ScriptOrdersController.cs" />
     <Compile Include="Controllers\ScriptPublishingController.cs" />
+    <Compile Include="Controllers\ScriptDocumentsController.cs" />
+    <Compile Include="Controllers\ScriptShopController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\StudiesController.cs" />
+    <Compile Include="Controllers\StudyRoomController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\ThesisAdminController.cs" />
     <Compile Include="Controllers\ThesisSupervisionController.cs" />
@@ -4347,6 +4352,27 @@
     <Content Include="Views\ScriptPublishing\Create.cshtml" />
     <Content Include="Views\Mail\ThesisProlongAcceptedEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisProlongRejectedEMail.html.cshtml" />
+    <Content Include="Views\ScriptDocuments\_ViewStart.cshtml" />
+    <Content Include="Views\ScriptDocuments\Index.cshtml" />
+    <Content Include="Views\ScriptOrders\Index.cshtml" />
+    <Content Include="Views\ScriptOrders\_ViewStart.cshtml" />
+    <Content Include="Views\ScriptOrders\Create.cshtml" />
+    <Content Include="Views\ScriptShop\History.cshtml" />
+    <Content Include="Views\ScriptShop\_ViewStart.cshtml" />
+    <Content Include="Views\ScriptShop\_FutureOrderPeriod.cshtml" />
+    <Content Include="Views\ScriptShop\_NoOrderPeriod.cshtml" />
+    <Content Include="Views\ScriptShop\Basket.cshtml" />
+    <Content Include="Views\ScriptShop\Order.cshtml" />
+    <Content Include="Views\ScriptShop\CancelOrder.cshtml" />
+    <Content Include="Views\ScriptOrders\Order.cshtml" />
+    <Content Include="Views\Shared\_ScriptOrderPrintOut.cshtml" />
+    <Content Include="Views\Mail\ScriptOrderTicketEMail.html.cshtml" />
+    <Content Include="Views\Mail\ScriptOrderNotificationEMail.html.cshtml" />
+    <Content Include="Views\ScriptShop\Index.cshtml" />
+    <Content Include="Views\ScriptPublishing\Edit.cshtml" />
+    <Content Include="Views\StudyRoom\_ViewStart.cshtml" />
+    <Content Include="Views\StudyRoom\Index.cshtml" />
+    <Content Include="Views\StudyRoom\_RoomList.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -101,6 +101,9 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<Room> Rooms { get; set; }
 
+
+        public List<OrderPeriod> OrderPeriods { get; set; }
+
     }
 
     public class SemesterGroupViewModel

@@ -6100,6 +6100,9 @@
             <summary>
             Hier werden Mails direkt versendet 
             </summary>
+            <summary>
+            Hier werden Mails direkt versendet 
+            </summary>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.MailController.Subscription(MyStik.TimeTable.Web.Models.SubscriptionMailModel)">
             <summary>
@@ -6148,6 +6151,14 @@
             Fachshcaft
             </summary>
             <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ScriptOrderTicket(MyStik.TimeTable.Web.Models.ScriptOrderMailModel)">
+            <summary>
+            Entfernung durch Dritten
+            </summary>
+            <param name="thesisState"></param>
+            <param name="supervisorUser"></param>
             <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisSupervisorRemoveEMail(MyStik.TimeTable.Web.Models.ThesisMailModel,MyStik.TimeTable.Web.Models.ApplicationUser)">

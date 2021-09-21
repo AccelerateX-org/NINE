@@ -316,4 +316,10 @@ namespace MyStik.TimeTable.Web.Models
 
         public DateTime SelectDate { get; set; }
     }
+
+
+    public class ScriptOrderMailModel : UserMailModel
+    {
+        public OrderBasket Basket { get; set; }
+    }
 }

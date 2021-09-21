@@ -27,14 +27,14 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="alert alert-danger" role="alert">
-            <h5>Achtung Experimentierphase:</h5>
-            <p>Aktuell wird die Möglichkeit aufgebaut, die Skriptbestellung über NINE zu organisieren. Die erste Funktion besteht in der Bereitstellung von Skripten. Hier wird gerade experimentiert.</p>
+        <div class="alert alert-info" role="alert">
+            <h5>Bereitstellung von Skripten für Skriptendruck</h5>
+            <p>Ein "Skriptenteam" organisiert für eine Fakultät den Druck und die Verteilung von Skripten in Papierform. Auf dieser Seite kann ich als Lehrende:r meine Skripte hochladen und Lehrveranstaltungen zuordnen. Folgende Hinweise:</p>
             <ul>
-                <li>Ein Skript kann angelegt / hochgeladen und Lehrveranstakltungen hinzugefügt werden</li>
-                <li>Ein Skript kann gelöscht werden (Wenn es keine Bestellungen gibt)</li>
-                <li>Ansichten für Studierende / Bestellungen gibt es noch nicht</li>
-                <li>Studierende haben keine Möglichkeiten, die Dokumente direkt herunterzuladen</li>
+                <li>Skripte können nur von Teilnehmer:innen einer Lehrveranstaltung bestellt werden.</li>
+                <li>Jedes Skript kann von einer Person nur einmal bestellt werden, auch wenn in mehreren Lehrveranstaltungen eingetragen und Skript dort publiziert ist (z.B. bei Parallelveranstaltungen).</li>
+                <li>Der Download der Dokumente erfolgt über das "Skriptenteam". Dieses benötigt einen NINE-Account. Studierende haben keine Möglichkeiten, die Dokumente direkt herunterzuladen</li>
+                <li>Die Möglichkeiten hier sind aktuell rudimentär und decken nur den "Normalfall" ab: Eine Lehrveranstaltung - ein Skript</li>
             </ul>
         </div>
 
@@ -74,6 +74,7 @@
                         <td>@doc.Orders.Count</td>
                         <td>
                             <a href="@Url.Action("GetDocument", "Storage", new {id = doc.Storage.Id})" class="btn btn-outline-primary">Download</a>
+                            <a href="@Url.Action("Edit", new {id = doc.Id})" class="btn btn-outline-primary">Titel / Version ändern</a>
                             @if (doc.Orders.Count == 0)
                             {
                                 <a href="@Url.Action("Delete", "ScriptPublishing", new {id = doc.Id})" class="btn btn-outline-danger">Löschen</a>

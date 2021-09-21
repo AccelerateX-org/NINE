@@ -1,0 +1,64 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Models
+@model MyStik.TimeTable.Web.Models.FreeRoomSummaryModel
+           
+<table id="tabRooms" class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Raum</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model.AvailableRooms)
+        {
+            if (room.CurrentDate == null)
+            {
+                if (room.NextDate == null)
+                {
+                    <tr>
+                        <td>@room.Room.Number</td>
+                        <td>bis Abends frei</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@room.Room.Number</td>
+                        <td>Frei bis @room.NextDate.Begin</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                if (room.NextDate == null)
+                {
+                    <tr>
+                        <td>@room.Room.Number</td>
+                        <td>Belegt bis @room.CurrentDate.End, danach frei</td>
+                    </tr>
+                }
+                else
+                {
+                    var dist = room.NextDate.Begin - room.CurrentDate.End;
+                    if (dist.Minutes <= 15)
+                    {
+                        <tr>
+                            <td>@room.Room.Number</td>
+                            <td>Belegt bis mindestens @room.NextDate.End</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@room.Room.Number</td>
+                            <td>Frei zwischen @room.CurrentDate.End und @room.NextDate.Begin</td>
+                        </tr>
+                    }
+
+                }
+            }
+        }
+    </tbody>
+</table>
+

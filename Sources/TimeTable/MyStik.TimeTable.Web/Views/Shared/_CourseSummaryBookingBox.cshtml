@@ -52,8 +52,15 @@
                                 }
                                 else
                                 {
-                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
-                                    <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste</li>
+                                    if (Model.BookingState.AvailableSeats == int.MaxValue)
+                                    {
+                                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Plätze verfügbar</li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind noch @Model.BookingState.AvailableSeats Plätze verfügbar</li>
+                                        <li><i class="fa fa-li fa-info-circle text-primary"></i>Aktuell sind @Model.BookingState.MyBookingList.WaitingList.Count Einträge auf der Warteliste</li>
+                                    }
                                 }
                             }
                         }

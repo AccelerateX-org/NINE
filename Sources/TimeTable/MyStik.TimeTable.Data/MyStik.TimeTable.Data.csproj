@@ -412,6 +412,14 @@
     <Compile Include="Migrations\202107290817062_ScriptShop_v02.Designer.cs">
       <DependentUpon>202107290817062_ScriptShop_v02.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202108191431085_ScriptShop_v03.cs" />
+    <Compile Include="Migrations\202108191431085_ScriptShop_v03.Designer.cs">
+      <DependentUpon>202108191431085_ScriptShop_v03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202108191601437_ScriptShop_v04.cs" />
+    <Compile Include="Migrations\202108191601437_ScriptShop_v04.Designer.cs">
+      <DependentUpon>202108191601437_ScriptShop_v04.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCourse.cs" />
@@ -660,6 +668,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202107290817062_ScriptShop_v02.resx">
       <DependentUpon>202107290817062_ScriptShop_v02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202108191431085_ScriptShop_v03.resx">
+      <DependentUpon>202108191431085_ScriptShop_v03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202108191601437_ScriptShop_v04.resx">
+      <DependentUpon>202108191601437_ScriptShop_v04.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

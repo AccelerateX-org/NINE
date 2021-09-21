@@ -236,6 +236,12 @@ namespace MyStik.TimeTable.Web.Services
             return room.Dates.FirstOrDefault(d => d.Begin <= now && d.End >= now);
         }
 
+        internal ActivityDate GetCurrentDate(Room room, DateTime now)
+        {
+            return room.Dates.FirstOrDefault(d => d.Begin <= now && d.End >= now);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -244,6 +250,12 @@ namespace MyStik.TimeTable.Web.Services
         internal ActivityDate GetNextDate(Room room)
         {
             var now = DateTime.Now;
+            return room.Dates.Where(d => d.Begin >= now).OrderBy(d => d.Begin).FirstOrDefault();
+        }
+
+
+        internal ActivityDate GetNextDate(Room room, DateTime now)
+        {
             return room.Dates.Where(d => d.Begin >= now).OrderBy(d => d.Begin).FirstOrDefault();
         }
 
@@ -377,6 +389,33 @@ namespace MyStik.TimeTable.Web.Services
 
             return roomList;
         }
+
+
+        public ICollection<RoomInfoModel> GetAvailableLearningRooms(Guid orgId, DateTime at)
+        {
+            // Alle Lernräume
+            var rooms = _db.Rooms.Where(room =>
+                room.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation) &&
+                room.IsForLearning).ToList();
+
+            var roomList = new List<RoomInfoModel>();
+
+            foreach (var room in rooms)
+            {
+                roomList.Add(new RoomInfoModel
+                {
+                    Room = room,
+                    CurrentDate = GetCurrentDate(room, at),
+                    NextDate = GetNextDate(room, at)
+                });
+            }
+
+            return roomList;
+
+
+        }
+
+
 
 
         internal bool NeedInternalConfirmation(Room room, string orgName)

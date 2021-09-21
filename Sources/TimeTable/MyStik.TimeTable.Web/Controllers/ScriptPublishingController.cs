@@ -148,6 +148,38 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult Edit(Guid id)
+        {
+
+            var doc = Db.ScriptDocuments.SingleOrDefault(x => x.Id == id);
+
+
+            return View(doc);
+        }
+
+
+        [HttpPost]
+        public ActionResult Edit(ScriptDocument model)
+        {
+            var doc = Db.ScriptDocuments.SingleOrDefault(x => x.Id == model.Id);
+
+            if (!string.IsNullOrEmpty(model.Title))
+            {
+                doc.Title = model.Title;
+            }
+
+            if (!string.IsNullOrEmpty(model.Version))
+            {
+                doc.Version = model.Version;
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+
         public ActionResult Delete(Guid id)
         {
 
