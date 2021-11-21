@@ -1,0 +1,10 @@
+﻿@model MyStik.TimeTable.Web.Models.ThesisMailModel
+
+@{
+    Layout = "~/Views/Mail/_UserTemplate.cshtml";
+}
+
+
+<p>Der/die Studierende @Model.StudentUser.FirstName @Model.StudentUser.LastName hat einen Verlängerungsantrag gestellt. Dieser wurde seitens des/der Betreuer:in akzeptiert.</p>
+
+<a href="@Url.Action("Details", "ThesisAdmin", new {id = Model.Thesis.Id}, Request.Url.Scheme)">Zur Detailseite der Abschlussarbeit</a>

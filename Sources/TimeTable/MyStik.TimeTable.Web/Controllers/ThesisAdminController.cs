@@ -986,53 +986,8 @@ namespace MyStik.TimeTable.Web.Controllers
             new MailController().ThesisMarkedEMail(model).Deliver();
 
             return RedirectToAction("Details", new { id = thesis.Id });
-            //return RedirectToAction("Done");
         }
 
-
-
-        public ActionResult Marking(Guid id)
-        {
-            var userService = new UserInfoService();
-            var user = GetCurrentUser();
-
-            var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
-
-            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
-            var tm = new ThesisStateModel()
-            {
-                Thesis = thesis,
-                Student = thesis.Student,
-                User = userService.GetUser(thesis.Student.UserId),
-                Mark = ""
-            };
-
-
-            // hier zunächst mit Postal - weil es so geht
-            var stream = new MemoryStream();
-
-            var email = new ThesisEmail("ThesisMarked");
-            email.To = user.Email;
-            email.From = MailController.InitSystemFrom();
-            email.Subject = "Notenmeldung Abschlussarbeit";
-            email.Thesis = tm;
-            email.Receiver = user;
-
-
-            var html = this.RenderViewToString("_ThesisPrintOut", email);
-            PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            //pdf.Save("document.pdf");
-            pdf.Save(stream, false);
-
-            // Stream zurücksetzen
-            stream.Position = 0;
-            email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
-            email.Send();
-
-
-            return RedirectToAction("Details", new {id = thesis.Id});
-
-        }
 
         private ThesisMailModel InitMailModel(Thesis t, ApplicationUser senderUser)
         {

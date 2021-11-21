@@ -30,7 +30,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CurriculumViewModel();
 
             model.Curriculum = curr;
-            model.Semester = SemesterService.GetSemester(DateTime.Today);
+            model.Semester = SemesterService.GetLatestSemester(curr.Organiser);
 
             var user = GetCurrentUser();
 

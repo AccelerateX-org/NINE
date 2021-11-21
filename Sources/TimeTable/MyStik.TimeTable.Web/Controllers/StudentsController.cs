@@ -1109,5 +1109,23 @@ namespace MyStik.TimeTable.Web.Controllers
             return new string(chars.ToArray());
         }
         */
+
+
+        public ActionResult Admin(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            
+            // nur aktive, d.h. noch kein Abschlussemester
+            var students = Db.Students.Where(x => x.Curriculum.Id == curr.Id && x.LastSemester == null).ToList();
+
+            var model = new StudentsByCurriculumViewModel();
+
+            model.Curriculum = curr;
+            model.Students = students;
+
+
+            return View(model);
+        }
+
     }
 }

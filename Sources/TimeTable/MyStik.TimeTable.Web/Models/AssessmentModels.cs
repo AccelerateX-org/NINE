@@ -71,6 +71,8 @@ namespace MyStik.TimeTable.Web.Models
     {
         public Assessment Assessment { get; set; }
 
+        public Committee Committee { get; set; }
+
         public Guid OrganiserId2 { get; set; }
     }
 

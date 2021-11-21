@@ -32,7 +32,9 @@
                     <th>Sem</th>
                     @foreach (var c in Model.Courses)
                     {
-                        <th>@c.CourseSummary.Course.ShortName</th>
+                        <th>
+                            @c.CourseSummary.Course.ShortName (@Html.GroupList(c.CourseSummary.Course.SemesterGroups), @Html.LecturerList(c.CourseSummary.Lecturers, false, false))
+                        </th>
                     }
                 </tr>
                 </thead>

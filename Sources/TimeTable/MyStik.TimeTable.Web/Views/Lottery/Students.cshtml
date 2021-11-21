@@ -8,6 +8,32 @@
     var userService = new UserInfoService();
 }
 
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabStudents').DataTable({
+                "paging": false
+            });
+        });
+    </script>
+}
+
+
+
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-study">
         <div class="container-fluid">
@@ -49,11 +75,12 @@
                 </div>
 
 
-                <table class="table table-condensed">
+                <table id="tabStudents" class="table table-condensed">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th><i class="fa fa-book"></i></th>
+                            <th><i class="fa fa-anchor"></i></th>
                             <th><i class="fa fa-calendar-plus-o"></i></th>
                             <th><i class="fa fa-group"></i></th>
                             <th><i class="fa fa-hourglass-half"></i></th>
@@ -65,33 +92,41 @@
                             var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
                             var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
 
-                        <tr>
-                            @if (student.Student == null)
-                            {
-                                <td colspan="3">@user.FullName</td>
-                            }
-                            else
-                            {
-                                <td>@user.FullName</td>
-                                <td>@student.Student.Curriculum.ShortName</td>
-                                <td>@student.Student.FirstSemester.Name</td>
-                            }
-
-                            <td>
-                                @foreach (var seat in student.Seats)
+                            <tr>
+                                @if (student.Student == null)
                                 {
-                                    <div>@seat.Course.ShortName</div>
+                                    <td colspan="4">@user.FullName</td>
                                 }
-                            </td>
-
-                            <td>
-                                @foreach (var seat in student.Lots)
+                                else
                                 {
-                                    <div>@seat.Course.ShortName</div>
+                                    <td>@user.FullName</td>
+                                    <td>@student.Student.Curriculum.ShortName</td>
+                                    if (student.Student.IsPartTime)
+                                    {
+                                        <td>TZ</td>
+                                    }
+                                    else
+                                    {
+                                        <td>VZ</td>
+                                    }
+                                    <td>@student.Student.FirstSemester.Name</td>
                                 }
-                            </td>
 
-                        </tr>
+                                <td>
+                                    @foreach (var seat in student.Seats)
+                                    {
+                                        <div>@seat.Course.ShortName</div>
+                                    }
+                                </td>
+
+                                <td>
+                                    @foreach (var seat in student.Lots)
+                                    {
+                                        <div>@seat.Course.ShortName</div>
+                                    }
+                                </td>
+
+                            </tr>
                         }
                     </tbody>
                 </table>

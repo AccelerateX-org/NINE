@@ -80,11 +80,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 });
             }
 
+            var userMember = model.Members.Where(x => x.User != null).ToList();
+            foreach (var member in userMember)
+            {
+                var n = userMember.Count(x => x.User.Email.Equals(member.User.Email));
+
+                if (n > 1)
+                {
+                    member.IsDouble = true;
+                }
+            }
+
+
+
+
             // Benutzerrechte
             ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
             ViewBag.ThisSemester = semester.Name;
             ViewBag.LastSemester = vorSemester.Name;
-
 
             return View(model);
         }

@@ -438,25 +438,13 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
-            // hier zunächst mit Postal - weil es so geht
             var stream = new MemoryStream();
-
-            var email = new ThesisEmail("ThesisMarked");
-            email.To = user.Email;
-            email.From = MailController.InitSystemFrom();
-            email.Subject = "Notenmeldung Abschlussarbeit";
-            email.Thesis = tm;
-            email.Receiver = user;
-
-            var html = this.RenderViewToString("_ThesisPrintOut", email);
-            PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            //pdf.Save("document.pdf");
+            var html = this.RenderViewToString("_ThesisPrintOut", tm);
+            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
             pdf.Save(stream, false);
 
             // Stream zurücksetzen
             stream.Position = 0;
-            //email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
-            //email.Send();
 
             return File(stream.GetBuffer(), "application/pdf", "Notenmeldung.pdf");
         }
@@ -483,6 +471,16 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             model.ActionUser = senderUser;
+
+            var pk = t.Student.Curriculum.Organiser.Autonomy?.Committees.FirstOrDefault(x => x.Name.Equals("PK"));
+
+            var pkv = pk?.Members.FirstOrDefault(x => x.HasChair);
+
+            if (pkv?.Member != null)
+            {
+                model.BoardUser = userService.GetUser(pkv.Member.UserId);
+            }
+
 
             return model;
         }
@@ -583,14 +581,13 @@ namespace MyStik.TimeTable.Web.Controllers
             thesis.ProlongSupervisorAccepted = true;
             Db.SaveChanges();
 
-            // Mail an Studierenden
-            /*
+            // Mail an PK-Vorsitzenden
             var model = InitMailModel(thesis, user);
-            model.IsAccepted = true;
 
-            new MailController().ThesisSupervisionResponseEMail(model).Deliver();
-            */
-
+            if (model.BoardUser != null)
+            {
+                new MailController().ThesisProlongRequestBoardEMail(model).Deliver();
+            }
 
             return RedirectToAction("Details", new { id = thesis.Id });
         }

@@ -1,4 +1,4 @@
-﻿@model MyStik.TimeTable.Web.Models.ThesisEmail
+﻿@model MyStik.TimeTable.Web.Models.ThesisStateModel
 <!DOCTYPE html>
 <html lang="de">
 
@@ -83,7 +83,7 @@
 		</tr>
 		<tr>
 			<td colspan="3" style="text-align: left;">
-				<h2>@Model.Thesis.User.LastName,  @Model.Thesis.User.FirstName</h2>
+				<h2>@Model.User.LastName,  @Model.User.FirstName</h2>
 			</td>
 		</tr>
 		<tr>
@@ -126,16 +126,16 @@
 		<tr>
 			<td colspan="3" style="vertical-align: text-top;">
 				<h2>Thema in Deutsch</h2>
-				<div>@Model.Thesis.Thesis.TitleDe</div>
+				<div>@Model.Thesis.TitleDe</div>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="3" style="vertical-align: text-top;">
 				<h2>Thema in Englisch</h2>
-				<div>@Model.Thesis.Thesis.TitleEn</div>
+				<div>@Model.Thesis.TitleEn</div>
 			</td>
 		</tr>
-		@if (Model.Thesis.Thesis.Supervisors.Count > 1)
+		@if (Model.Thesis.Supervisors.Count > 1)
 		{
 			<tr>
 				<td style="width: 33%;">
@@ -143,9 +143,9 @@
 				</td>
 				<td style="width: 33%;">
 					<div style="margin-top: 40px">
-						@if (Model.Thesis.PrimarySupervisor.Member != null)
+						@if (Model.PrimarySupervisor.Member != null)
 						{
-							<div> @Model.Thesis.PrimarySupervisor.Member.FullName </div>
+							<div> @Model.PrimarySupervisor.Member.FullName </div>
 						}
 					</div>
 				</td>
@@ -172,9 +172,9 @@
 				</td>
 				<td style="width: 33%;">
 					<div style="margin-top: 40px">
-						@if (Model.Thesis.SecondarySupervisor != null && Model.Thesis.SecondarySupervisor.Member != null)
+						@if (Model.SecondarySupervisor != null && Model.SecondarySupervisor.Member != null)
 						{
-							<div>@Model.Thesis.SecondarySupervisor.Member.FullName</div>
+							<div>@Model.SecondarySupervisor.Member.FullName</div>
 						}
 					</div>
 				</td>
@@ -202,7 +202,7 @@
 				</td>
 				<td style="width: 33%;">
 					<div style="margin-top: 40px">
-						@Model.Thesis.PrimarySupervisor.Member.FullName
+						@Model.PrimarySupervisor.Member.FullName
 					</div>
 				</td>
 				<td style="width: 33%">

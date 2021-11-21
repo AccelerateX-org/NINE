@@ -7,6 +7,9 @@
     ViewBag.Title = "Abschlussarbeit";
 
     var userService = new UserInfoService();
+
+    var pk = Model.Student.Curriculum.Organiser.Autonomy != null ?
+        Model.Student.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
 }
 
 <div class="container-fluid">
@@ -57,8 +60,19 @@
                                     {
                                         <li><i class="fa fa-barcode fa-li"></i>Matrikelnummer fehlt <a href="@Url.Action("ChangeNumber", "Subscription", new {id=Model.Student.Id})" class="btn btn-danger btn-xs">ergänzen</a></li>
                                     }
+                                    <li><i class="fa fa-graduation-cap fa-li"></i>Studiengang: @Model.Student.Curriculum.Name (@Model.Student.Curriculum.ShortName)</li>
                                 </ul>
-
+                                @if (pk != null)
+                                {
+                                    <div class="alert alert-info"> <strong>Prüfungskommission:</strong>
+                                        <ul>
+                                            @foreach (var p in pk.Members.Where(x => x.HasChair))
+                                            {
+                                                <li>@p.Member.FullName</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -361,16 +375,36 @@
                                                 }
                                             </ul>
 
-                                            if (Model.Thesis.RenewalDate == null && Model.Thesis.ProlongRequestDate == null && daysToExpiry > 13)
+                                            if (Model.Thesis.RenewalDate != null)
+                                            {
+                                                <a class="btn btn-danger" href="@Url.Action("ProlongAgain", "Thesis")">Weitere Verlängerung beantragen</a>
+                                            }
+
+                                            if (Model.Thesis.RenewalDate == null && Model.Thesis.ProlongRequestDate == null)
                                             {
                                                 <a class="btn btn-danger" href="@Url.Action("Prolong", "Thesis")">Verlängerung beantragen</a>
+                                                if (pk != null)
+                                                {
+                                                    <div class="alert alert-info">
+                                                        <strong>Prüfungskommission:</strong>
+                                                        <ul>
+                                                            @foreach (var p in pk.Members.Where(x => x.HasChair))
+                                                            {
+                                                                <li>@p.Member.FullName</li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+
+                                                }
+                                                if (daysToExpiry > 13)
+                                                {
+                                                    <div class="alert alert-info"><strong>Wichtiger Hinweis:</strong> nach ASPO muss eine Verlängerung bis spätestens 14 Tage vor Abgabefrist beantragt werden.</div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="alert alert-danger"><strong>Wichtiger Hinweis:</strong> Die offizielle Frist zur Beantragung einer Verlängerung ist abgelaufen.</div>
+                                                }
                                             }
-                                            @*
-                                            if (Model.Thesis.Supervisors.Any())
-                                             {
-                                                 <a href="@Url.Action("Deliver")" class="btn btn-primary">Arbeit abgeben</a>
-                                             }
-                                                *@
                                         }
                                         else
                                         {

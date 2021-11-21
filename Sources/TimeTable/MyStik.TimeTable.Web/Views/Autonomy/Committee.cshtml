@@ -1,0 +1,61 @@
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Data.Committee
+@{
+     ViewBag.Title = "Committee";
+    ViewBag.Title = "Aufnahmeverfahren";
+    var userInfoService = new UserInfoService();
+    var totalByteCount = 0;
+
+    var isAdmin = ViewBag.UserRights.Member.IsAdmin;
+    var isCommittee = isAdmin || (ViewBag.Member != null);
+    var hasChair = isAdmin || (ViewBag.Member != null && ViewBag.Member.HasChair);
+
+}
+
+<div class="card">
+    <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Mitglieder des Gremiums @Model.Name
+            </button>
+        </h2>
+    </div>
+
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body">
+            <ul class="fa-ul">
+                @foreach (var c in Model.Members)
+                {
+                    var sIcon = "fa-user";
+
+                    if (c.HasChair)
+                    {
+                        sIcon = "fa-chair";
+                    }
+
+                    <li>
+                        <i class="fas fa-li @sIcon"></i>@c.Member.FullName
+                        @if (hasChair)
+                        {
+                            if (c.HasChair)
+                            {
+                                <a class="btn btn-outline-danger" href="@Url.Action("RemoveChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz entfernen</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-outline-primary" href="@Url.Action("AddChair", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-chair fa-fw"></i> Vorsitz geben</a>
+                            }
+                            <a class="btn btn-outline-danger" href="@Url.Action("DeleteMember", new {asid = Model.Id, cmid = c.Id})"><i class="fas fa-trash-alt fa-fw"></i> Mitglied entfernen</a>
+
+                        }
+                    </li>
+                }
+            </ul>
+            @if (hasChair)
+            {
+                <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i> Mitglied hinzufügen</a>
+            }
+
+        </div>
+    </div>
+</div>

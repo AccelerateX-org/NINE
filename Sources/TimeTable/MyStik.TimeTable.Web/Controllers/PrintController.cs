@@ -113,6 +113,24 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult RoomLabel(Guid id)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var roomService = new RoomService();
+
+            var model = roomService.GetRoomSchedule(id, semester);
+
+            ViewBag.ShowCalendar = true;
+            ViewBag.ShowDateList = false;
+            ViewBag.IsMoSa = true;
+            ViewBag.DefaultDate = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.UseDates = true;
+
+            return View("RoomLabel", model);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

@@ -40,7 +40,9 @@
                 {
                     <tr>
                         <td>@course.ModuleCourse.Name</td>
-                        <td>@course.CourseSummary.Course.Name</td>
+                        <td>
+                            <a href="@Url.Action("Details", "Course", new {id = course.CourseSummary.Course.Id})">@course.CourseSummary.Course.Name</a>
+                        </td>
                         <td>@course.CourseSummary.Course.ShortName</td>
                         <td>@Html.GroupList(course.CourseSummary.Course.SemesterGroups)</td>
                         <td>@Html.DateList(course.CourseSummary.Dates)</td>

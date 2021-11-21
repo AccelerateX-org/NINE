@@ -59,6 +59,10 @@ namespace MyStik.TimeTable.Web.Models
         public int Count { get; set; }
     }
 
+
+
+
+
     public class LotteryDrawingReportEmail : BaseEmail
     {
         /// <summary>
@@ -219,5 +223,19 @@ namespace MyStik.TimeTable.Web.Models
 
         public string Body { get; set; }
     }
+
+    public class ThesisIssueSummaryEmail : BaseEmail
+    {
+        public ThesisIssueSummaryEmail() : base("ThesisIssuedSummary")
+        {
+            
+        }
+
+        public List<Thesis> Theses { get; set; }
+
+
+
+    }
+
 
 }

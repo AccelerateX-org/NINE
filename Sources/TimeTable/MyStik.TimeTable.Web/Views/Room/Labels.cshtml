@@ -38,6 +38,7 @@
                         <tr>
                             <th>Raumnummer</th>
                             <th>Name</th>
+                            <th>QR-Code only</th>
                             <th>Aktuelle Woche</th>
                             <th>Nächste Woche</th>
                             <th>Wochentage (Mo-Fr)</th>
@@ -54,6 +55,10 @@
                                 @room.Number
                             </td>
                             <td>@room.Name</td>
+                            <td><a href="@Url.Action("RoomLabel", "Print", new { id = room.Id })"
+                                   target="_blank">
+                                QR-Code only
+                            </a></td>
                             <td>
                                 <a href="@Url.Action("RoomScheduleCurrentWeek", "Print", new { id = room.Id })"
                                    target="_blank">

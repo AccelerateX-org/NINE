@@ -292,6 +292,23 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public EmailResult ThesisProlongRequestBoardEMail(ThesisMailModel mailModel)
+        {
+            InitSenderTopic(MAIL_SECTION_THESIS);
+
+            // geht nur an PK.Vorsitz
+            To.Add(mailModel.BoardUser.Email);
+            mailModel.User = mailModel.BoardUser;
+
+            // cc an Betreuer bzw.Admin, der erfasst hat
+            CC.Add(mailModel.ActionUser.Email);
+
+            Subject = $"Verlängerungsnantrag der Abschlussarbeit";
+
+
+            return Email("ThesisProlongRequestBoardEMail", mailModel);
+        }
+
 
     }
 }

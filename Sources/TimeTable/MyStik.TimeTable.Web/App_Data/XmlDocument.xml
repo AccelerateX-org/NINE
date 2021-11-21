@@ -11012,6 +11012,16 @@
             </summary>
             <param name="id"></param>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Jobs.ThesisJob.CheckIssueDates">
+            <summary>
+            Automatische Anmeldung aller Abschlussarbeiten
+            Wenn Job unterbrochen, dann kein Problem. Wird nu
+            Vorgehen
+            - Alle Arbeiten sammeln
+            - Jeden einzeln Anschreiben To: Student, cc: Betreuer
+            - Sammel E-Mail an SysAdmin (fürs erste)
+            </summary>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Migrations.UserProfile">
             <summary>
             
@@ -15959,6 +15969,11 @@
             Name, Adresse des Betreuers
             </summary>
         </member>
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.BoardUser">
+            <summary>
+            Der PKV
+            </summary>
+        </member>
         <member name="P:MyStik.TimeTable.Web.Models.ThesisMailModel.IsAccepted">
             <summary>
             IM Fall von....
@@ -17072,6 +17087,11 @@
         <member name="P:MyStik.TimeTable.Web.Models.MemberViewModel.ItsMe">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:MyStik.TimeTable.Web.Models.MemberViewModel.IsDouble">
+            <summary>
+            Doppelte Mailadresse vorhanden
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.MemberViewModel.IsActive">

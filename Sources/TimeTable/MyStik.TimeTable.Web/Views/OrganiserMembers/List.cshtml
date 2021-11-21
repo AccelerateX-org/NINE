@@ -84,7 +84,14 @@
                         {
                             <tr>
                                 <td></td>
-                                <td><i class="fa fa-check text-success"></i><span hidden="">1</span></td>
+                                @if (item.IsDouble)
+                                {
+                                    <td><i class="fa fa-check text-danger"></i><span hidden="">2</span>Doppelter Benutzername</td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-check text-success"></i><span hidden="">1</span></td>
+                                }
                                 <td>@item.Member.Title</td>
                                 <td>@item.User.FirstName</td>
                                 <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.User.LastName</a></td>

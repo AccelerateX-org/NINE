@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using Hangfire;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Controllers;
+using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
@@ -258,6 +260,16 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             user = UserManager.FindByName(userName);
 
             return user;
+        }
+
+
+        public ActionResult Jobs()
+        {
+            var jobs = new ThesisJob();
+
+            jobs.InitJob();
+
+            return RedirectToAction("Index");
         }
 
     }

@@ -90,6 +90,7 @@
                                 <td>@curr.Students.Count(x => x.LastSemester != null)</td>
                                 <td>@curr.Alumnae.Count</td>
                                 <td><a href="@Url.Action("List", new {id=curr.Curriculum.Id})" class="btn btn-primary">Adressliste</a></td>
+                                <td><a href="@Url.Action("Admin", new {id=curr.Curriculum.Id})" class="btn btn-primary">Verwaltung</a></td>
                             </tr>
                         }
                         </tbody>

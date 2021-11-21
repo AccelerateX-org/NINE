@@ -1,0 +1,55 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Semesterberichte " + Model.Organiser.ShortName;
+}
+
+@section styles
+{
+}
+
+@section scripts
+{
+}
+
+@section menue2nd
+{
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSubMNenu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Semester", new {id=Model.Semester.Id})"> <i class="fas fa-chevron-left"></i><br />Zurück</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+}
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Wer unterrichtet was?</h5>
+                    <p class="card-text">Lehrveranstaltungem mit Name, Anschrift der Lehrenden sowie Anzahl Eintragungen</p>
+                    <p class="card-text">geeignet für die Organisation der Lehrevaluation</p>
+                    <a href="@Url.Action("SemesterReport", new {id = Model.Semester.Id})" class="btn btn-outline-primary">Download .csv Datei</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Wer unterrichtet wann?</h5>
+                    <p class="card-text">Lehrveranstaltungem nach Tag und Lehrendem</p>
+                    <p class="card-text">geeignet für die Abrechnung von Dozenturen</p>
+                    <a href="@Url.Action("SemesterReport2", new {id = Model.Semester.Id})" class="btn btn-outline-primary">Download .csv Datei</a>
+                </div>
+            </div>
+        </div>
+    </div>

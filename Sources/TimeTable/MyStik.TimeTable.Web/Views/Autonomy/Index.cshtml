@@ -34,14 +34,10 @@
 
         <div class="collapse navbar-collapse" id="navbarSubMNenu">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("AdminGroups", "Courses", new {id = Model.Organiser.Id})"> <i class="fas fa-list"></i><br />Semestergruppen</a>
-                </li>
                 @if (ViewBag.UserRight.IsMemberAdmin)
                 {
-
                     <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Admin", "Courses", new {id = Model.Organiser.Id})"> <i class="fas fa-bullhorn"></i><br />Freigaben</a>
+                        <a class="nav-link text-center" href="@Url.Action("CreateCommittee", "Autonomy")"> <i class="fas fa-plus"></i><br />Hinzufügen</a>
                     </li>
                 }
             </ul>
@@ -63,6 +59,7 @@
                 <tr>
                     <th>Bezeichnung</th>
                     <th>Beschreibung</th>
+                    <th>Studiengang</th>
                     <th>Mitglieder</th>
                 </tr>
             </thead>
@@ -70,15 +67,22 @@
                 @foreach (var c in Model.Autonomy.Committees)
                 {
                     <tr>
-                        <td>@c.Name</td>
+                        <td><a href="@Url.Action("Committee", new {id=c.Id})">@c.Name</a></td>
                         <td>@c.Description</td>
+                        @if (c.Curriculum != null)
+                        {
+                            <td>@c.Curriculum.ShortName</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+
                         <td>@c.Members.Count</td>
                     </tr>
                 }
             </tbody>
         </table>
-
-
     </div>
 </div>
 

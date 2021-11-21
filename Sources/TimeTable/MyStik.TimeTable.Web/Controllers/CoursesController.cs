@@ -429,6 +429,23 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+        public ActionResult Reports(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var model = new OrganiserViewModel
+            {
+                Semester = semester,
+                Organiser = org,
+            };
+
+
+            return View(model);
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -489,6 +506,92 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
+
+
+        public FileResult SemesterReport2(Guid? id)
+        {
+            var semester = SemesterService.GetSemester(id);
+            var org = GetMyOrganisation();
+
+            var model = CreateSemesterReport(semester, org);
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+
+            writer.Write("Studiengang;Gruppe;Kürzel;Vorname;Nachname;Kurzname;Titel;Datum");
+            writer.Write(Environment.NewLine);
+
+
+            foreach (var course in model)
+            {
+                if (course.Course.Dates.Any())
+                {
+                    foreach (var date in course.Course.Dates)
+                    {
+                        if (course.User != null)
+                        {
+                            writer.Write("{0};{1};{2};{3};{4};{5};{6};{7}",
+                                course.Curriculum.ShortName, course.Group.FullName,
+                                course.Lecturer.ShortName,
+                                course.User.FirstName,
+                                course.User.LastName,
+                                course.Course.ShortName,
+                                course.Course.Name,
+                                date.Begin.Date.ToShortDateString());
+                        }
+                        else
+                        {
+                            writer.Write("{0};{1};{2};;;{3};{4};{5}",
+                                course.Curriculum.ShortName, course.Group.FullName,
+                                course.Lecturer.ShortName,
+                                course.Course.ShortName,
+                                course.Course.Name,
+                                date.Begin.Date.ToShortDateString());
+                        }
+
+                        writer.Write(Environment.NewLine);
+                    }
+                }
+                else
+                {
+                    if (course.User != null)
+                    {
+                        writer.Write("{0};{1};{2};{3};{4};{5};{6};Keine Termine",
+                            course.Curriculum.ShortName, course.Group.FullName,
+                            course.Lecturer.ShortName,
+                            course.User.FirstName,
+                            course.User.LastName,
+                            course.Course.ShortName,
+                            course.Course.Name);
+                    }
+                    else
+                    {
+                        writer.Write("{0};{1};{2};;;{3};{4};Keine Termine",
+                            course.Curriculum.ShortName, course.Group.FullName,
+                            course.Lecturer.ShortName,
+                            course.Course.ShortName,
+                            course.Course.Name);
+                    }
+
+                }
+            }
+
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Lehrangebot_");
+            sb.Append(semester.Name);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
+
 
 
         private List<SemesterCourseViewModel> CreateSemesterReport(Semester semester, ActivityOrganiser org)

@@ -299,6 +299,7 @@
     <Compile Include="Api\Controller\CampusController.cs" />
     <Compile Include="Api\Controller\EdBotController.cs" />
     <Compile Include="Api\Controller\MvgController.cs" />
+    <Compile Include="Api\Controller\TeachingController.cs" />
     <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
     <Compile Include="Api\Controller\CieHomeController.cs" />
@@ -521,6 +522,7 @@
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
     <Compile Include="Jobs\LotteryJob.cs" />
+    <Compile Include="Jobs\ThesisJob.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.Designer.cs">
       <DependentUpon>201501310845153_UserProfile.cs</DependentUpon>
@@ -648,7 +650,6 @@
     <Compile Include="Services\SubscriptionMailService.cs" />
     <Compile Include="Services\SubscriptionService.cs" />
     <Compile Include="Services\TeachingService.cs" />
-    <Compile Include="Services\ThesisMailService.cs" />
     <Compile Include="Services\UserInfoService.cs" />
     <Compile Include="Services\WpmService.cs" />
     <Compile Include="Startup.cs" />
@@ -4201,8 +4202,6 @@
     <Content Include="Views\Mail\ThesisSupervisorRemoveEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorAssignEMail.html.cshtml" />
     <Content Include="Views\ThesisSupervision\ChangeTitle.cshtml" />
-    <Content Include="Views\Emails\ThesisMarked.cshtml" />
-    <Content Include="Views\Emails\ThesisMarked.Html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorIssuedEMail.html.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisorTitleChangedEMail.html.cshtml" />
     <Content Include="Views\ThesisAdmin\Archived.cshtml" />
@@ -4373,6 +4372,15 @@
     <Content Include="Views\StudyRoom\_ViewStart.cshtml" />
     <Content Include="Views\StudyRoom\Index.cshtml" />
     <Content Include="Views\StudyRoom\_RoomList.cshtml" />
+    <Content Include="Views\Courses\Reports.cshtml" />
+    <Content Include="Views\Students\Admin.cshtml" />
+    <Content Include="Views\Print\RoomLabel.cshtml" />
+    <Content Include="Views\Autonomy\CreateCommittee.cshtml" />
+    <Content Include="Views\Autonomy\Committee.cshtml" />
+    <Content Include="Views\Autonomy\AddMember.cshtml" />
+    <Content Include="Views\Mail\ThesisProlongRequestBoardEMail.cshtml" />
+    <Content Include="Views\Emails\ThesisIssuedSummary.cshtml" />
+    <Content Include="Views\Emails\ThesisIssuedSummary.Html.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

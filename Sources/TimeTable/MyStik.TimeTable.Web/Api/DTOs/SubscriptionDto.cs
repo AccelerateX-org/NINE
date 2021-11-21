@@ -29,5 +29,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public string Message { get; set; }
+
+        public string Title { get; set; }
     }
 }

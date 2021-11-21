@@ -8,6 +8,33 @@
     var userService = new UserInfoService();
 }
 
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabStudents').DataTable({
+                "paging": false
+            });
+        });
+    </script>
+}
+
+
+
 <div class="panel panel-default">
     <div class="panel-body bg-fillter-study">
         <div class="container-fluid">
@@ -52,11 +79,12 @@
                 </div>
 
 
-                <table class="table table-condensed">
+                <table id="tabStudents" class="table table-condensed">
                     <thead>
                         <tr>
                             <th rowspan="2">Name</th>
                             <th rowspan="2"><i class="fa fa-book"></i></th>
+                            <th rowspan="2"><i class="fa fa-anchor"></i></th>
                             <th rowspan="2"><i class="fa fa-calendar-plus-o"></i></th>
                             <th rowspan="2"><i class="fa fa-bed text-primary"></i></th>
                             <th rowspan="2"><i class="fa fa-frown-o text-primary"></i></th>
@@ -77,72 +105,81 @@
                             var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
                             var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
 
-                        <tr>
-                            @if (student.Student == null)
-                            {
-                                <td colspan="3">@user.FullName</td>
-                            }
-                            else
-                            {
-                                if (user == null)
+                            <tr>
+                                @if (student.Student == null)
                                 {
-                                    <td>Kein Benutzerkonto</td>
+                                    <td colspan="4">@user.FullName</td>
                                 }
                                 else
                                 {
-                                    <td>@user.FullName</td>
+                                    if (user == null)
+                                    {
+                                        <td>Kein Benutzerkonto</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@user.FullName</td>
+                                    }
+                                    <td>@student.Student.Curriculum.ShortName</td>
+                                    if (student.Student.IsPartTime)
+                                    {
+                                        <td>TZ</td>
+                                    }
+                                    else
+                                    {
+                                        <td>VZ</td>
+                                    }
+                                    <td>@student.Student.FirstSemester.Name</td>
                                 }
-                                <td>@student.Student.Curriculum.ShortName</td>
-                                <td>@student.Student.FirstSemester.Name</td>
-                            }
-                            
-                            @if (student.LotteryGame != null)
-                            {
 
-                                if (seats < student.CoursesWanted)
-                                 {
-                                     <td class="warning">@student.CoursesWanted</td>
-                                 }
-                                 else if (seats > student.CoursesWanted)
-                                 {
-                                     <td class="danger">@student.CoursesWanted</td>
-                                 }
-                                 else
-                                 {
-                                     <td class="success">@student.CoursesWanted</td>
-                                 }
-
-                                if (student.AcceptDefault)
-                                 {
-                                     <td><i class="fa fa-random"></i></td>
-                                 }
-                                 else
-                                 {
-                                     <td><i class="fa fa-times text-danger"></i></td>
-                                }
-                            }
-                            else
-                            {
-                                <td></td>
-                                <td></td>
-                            }
-
-                            <td>
-                                @foreach (var seat in student.Seats)
+                                @if (student.LotteryGame != null)
                                 {
 
-                                    <div>@seat.Course.ShortName
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-clock-o"></i>@seat.Subscription.TimeStamp</li>
-                                            <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
-                                            @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
-                                            {
-                                                <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
-                                            }
-                                        </ul>
-                                    </div>
+                                    if (seats < student.CoursesWanted)
+                                    {
+                                        <td class="warning">@student.CoursesWanted</td>
+                                    }
+                                    else if (seats > student.CoursesWanted)
+                                    {
+                                        <td class="danger">@student.CoursesWanted</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="success">@student.CoursesWanted</td>
+                                    }
+
+                                    if (student.AcceptDefault)
+                                    {
+                                        <td><i class="fa fa-random"></i></td>
+                                    }
+                                    else
+                                    {
+                                        <td><i class="fa fa-times text-danger"></i></td>
+                                    }
                                 }
-                            </td>
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+
+                                <td>
+                                    @foreach (var seat in student.Seats)
+                                    {
+
+                                        <div>
+                                            @seat.Course.ShortName
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-li fa-clock-o"></i>@seat.Subscription.TimeStamp</li>
+                                                <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
+                                                @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
+                                                {
+                                                    <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </td>
 
                                 @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
                                 {
@@ -162,24 +199,25 @@
                                                 txtClass = "success";
                                             }
                                         }
-                                         <td class="@txtClass">
-                                             <div>@lot.Course.ShortName
-                                                 <ul class="fa-ul">
-                                                     <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
-                                                     @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
-                                                     {
-                                                         <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
-                                                     }
-                                                 </ul>
-                                             </div>
-                                         </td>
-                                     }
-                                     else
-                                     {
-                                         <td></td>
-                                     }
-                                 }
-                        </tr>
+                                        <td class="@txtClass">
+                                            <div>
+                                                @lot.Course.ShortName
+                                                <ul class="fa-ul">
+                                                    <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
+                                                    @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
+                                                    {
+                                                        <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                            </tr>
                         }
                     </tbody>
                 </table>

@@ -445,11 +445,91 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+            return RedirectToAction("Index");
+        }
+
+
+        public ActionResult ProlongAgain()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+            var model = new ThesisStateModel
+            {
+                User = user,
+                Student = student,
+                Thesis = thesis,
+                ProlongDate = DateTime.Today.ToShortDateString(),
+                ProlongReason = ""
+            };
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+
+            return View("Prolong", model);
+        }
+
+        [HttpPost]
+        public ActionResult ProlongAgain(ThesisStateModel model)
+        {
+            var date = DateTime.Parse(model.ProlongDate);
+            var user = GetCurrentUser();
+
+            if (date < DateTime.Today)
+            {
+                var student = StudentService.GetCurrentStudent(user);
+                var thesis2 = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+                var model2 = new ThesisStateModel
+                {
+                    User = user,
+                    Student = student,
+                    Thesis = thesis2,
+                    ProlongDate = DateTime.Today.ToShortDateString(),
+                    ProlongReason = model.ProlongReason
+                };
+
+                ModelState.AddModelError("", "Das Datum muss in der Zukunft liegen");
+
+                return View("Prolong", model2);
+            }
+
+
+
+
+            var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
+
+            thesis.RenewalDate = null;      // das bisherige Verlängerungsdatum löschen
+            thesis.ProlongRequestDate = DateTime.Now;
+            thesis.ProlongExtensionDate = DateTime.Parse(model.ProlongDate);
+            thesis.ProlongReason = model.ProlongReason;
+
+            Db.SaveChanges();
+
+
+            var userService = new UserInfoService();
+
+            foreach (var supervisor in thesis.Supervisors)
+            {
+
+                // der user des angefragten Lehrenden
+                var supervisorUser = userService.GetUser(supervisor.Member.UserId);
+
+                if (supervisorUser != null)
+                {
+                    var tm = InitMailModel(thesis, user);
+
+                    new MailController().ThesisSupervisionProlongRequestEMail(tm, supervisorUser).Deliver();
+                }
+            }
 
 
 
             return RedirectToAction("Index");
         }
+
 
 
 
@@ -597,14 +677,12 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult MarkingEmpty(Guid id)
+        public FileResult MarkingEmpty(Guid id)
         {
             var userService = new UserInfoService();
-            var user = GetCurrentUser();
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
-            // Mail mit Notenbeleg zum Ausdrucken an sich selbst senden
             var tm = new ThesisStateModel()
             {
                 Thesis = thesis,
@@ -613,28 +691,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Mark = ""
             };
 
-
-            // hier zunächst mit Postal - weil es so geht
             var stream = new MemoryStream();
-
-            var email = new ThesisEmail("ThesisMarked");
-            email.To = user.Email;
-            email.From = MailController.InitSystemFrom();
-            email.Subject = "Notenmeldung Abschlussarbeit";
-            email.Thesis = tm;
-            email.Receiver = user;
-
-            var html = this.RenderViewToString("_ThesisPrintOut", email);
-            PdfDocument pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            //pdf.Save("document.pdf");
+            var html = this.RenderViewToString("_ThesisPrintOut", tm);
+            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
             pdf.Save(stream, false);
 
             // Stream zurücksetzen
             stream.Position = 0;
-            email.Attach(new Attachment(stream, "Notenmeldung.pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
-            email.Send();
 
-            return RedirectToAction("Index");
+            return File(stream.GetBuffer(), "application/pdf", "Notenmeldung.pdf");
         }
 
 

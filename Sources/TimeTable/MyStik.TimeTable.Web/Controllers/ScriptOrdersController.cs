@@ -143,38 +143,44 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 try
                 {
-
-                    var orderMailModel = new ScriptOrderMailModel
+                    if (person.User != null)
                     {
-                        User = user,            // aktuell alles an mich
-                        Basket = person.Basket,
-                    };
 
-
-
-                    if (person.Basket.Orders.Any())
-                    {
-                            // Abholzettel
-                        new MailController().ScriptOrderTicket(orderMailModel).Deliver();
-
-                        deliveryModel.Deliveries.Add(new MailDeliveryReportModel
+                        var orderMailModel = new ScriptOrderMailModel
                         {
                             User = person.User,
-                            DeliverySuccessful = true,
+                            Basket = person.Basket,
+                        };
+
+
+
+                        if (person.Basket.Orders.Any())
+                        {
+                            // Abholzettel
+                            new MailController().ScriptOrderTicket(orderMailModel).Deliver();
+
+                            deliveryModel.Deliveries.Add(new MailDeliveryReportModel
+                            {
+                                User = person.User,
+                                DeliverySuccessful = true,
                             });
+                        }
+                        else
+                        {
+                            // Mitteilung
+                            new MailController().ScriptOrderNotification(orderMailModel).Deliver();
+
+                            deliveryModel.Deliveries.Add(new MailDeliveryReportModel
+                            {
+                                User = person.User,
+                                DeliverySuccessful = true,
+                            });
+                        }
                     }
                     else
                     {
-                        // Mitteilung
-                        new MailController().ScriptOrderNotification(orderMailModel).Deliver();
-
-                        deliveryModel.Deliveries.Add(new MailDeliveryReportModel
-                        {
-                            User = person.User,
-                            DeliverySuccessful = true,
-                        });
+                        // nix machen, auch kein Fehler
                     }
-
                 }
                 catch (Exception ex)
                 {

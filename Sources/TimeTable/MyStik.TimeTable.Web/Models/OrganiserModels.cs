@@ -149,6 +149,11 @@ namespace MyStik.TimeTable.Web.Models
         public bool ItsMe { get; set; }
 
         /// <summary>
+        /// Doppelte Mailadresse vorhanden
+        /// </summary>
+        public bool IsDouble { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public bool IsActive { get; set; }

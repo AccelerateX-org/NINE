@@ -272,6 +272,12 @@ namespace MyStik.TimeTable.Web.Models
         public List<ApplicationUser> SupervisorUsers { get; set; }
 
         /// <summary>
+        /// Der PKV
+        /// </summary>
+        public ApplicationUser BoardUser { get; set; }
+
+
+        /// <summary>
         /// IM Fall von....
         /// </summary>
         public bool IsAccepted { get; set; }
