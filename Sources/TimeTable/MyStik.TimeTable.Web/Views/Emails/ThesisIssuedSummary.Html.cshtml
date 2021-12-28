@@ -35,6 +35,10 @@ Content-Type: text/html; charset=utf-8
         <tr>
             <th>SG</th>
             <th>Beginn</th>
+            <th>Anmeldung</th>
+            <th>Abgabe</th>
+            <th>Verlängerung</th>
+            <th>Betreuer</th>
         </tr>
         </thead>
         <tbody>
@@ -42,7 +46,23 @@ Content-Type: text/html; charset=utf-8
             {
                 <tr>
                     <td>@t.Student.Curriculum.ShortName</td>
-                    <td>@t.PlannedBegin?.ToShortDateString()</td>
+                    <td>@t.PlannedBegin</td>
+                    <td>@t.IssueDate</td>
+                    <td>@t.DeliveryDate</td>
+                    <td>@t.RenewalDate</td>
+                    @if (t.Supervisors.Any())
+                    {
+                        <td>
+                            @foreach (var s in t.Supervisors)
+                            {
+                                <div>@s.Member.FullName</div>
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                 </tr>
             }
 

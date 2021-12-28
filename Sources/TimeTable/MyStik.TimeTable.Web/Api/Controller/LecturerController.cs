@@ -1,24 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.Contracts;
+using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
+using MyStik.TimeTable.Web.Areas.Admin.Controllers;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    public class LecturerSearchRequest
+    {
+        public string Organiser { get; set; }
+
+        public string Committee { get; set; }
+
+        public string Name { get; set; }
+    }
+
     /// <summary>
     /// 
     /// </summary>
+    [System.Web.Http.RoutePrefix("api/v2/lecturer")]
     public class LecturerController : ApiBaseController
     {
-        
+        [System.Web.Http.Route("search")]
+        [HttpPost]
+        public IQueryable<LecturerDto> Search([FromBody] LecturerSearchRequest request)
+        {
+            var lecturer = Db.Members.Where(x => x.Organiser.ShortName.Equals(request.Organiser)).ToList();
+
+            var response = new List<LecturerDto>();
+
+            foreach (var member in lecturer)
+            {
+                var dto = new LecturerDto
+                {
+                    Faculty = member.Organiser.ShortName,
+                    FirstName = member.FirstName,
+                    LastName = member.Name,
+                    ShortName = member.ShortName
+                };
+
+                response.Add(dto);
+            }
+
+            return response.AsQueryable();
+        }
+
+
+
         //Dozenteninfo APIs
         /// <summary>
         /// Abfrage aller Dozenten
         /// </summary>
         /// <returns>Liste aller verfügbaren Dozenten</returns>
+        [System.Web.Http.Route("")]
         public LecturersResponseExtended GetAllLecture()
         {
             var lecturerService = new LecturerInfoService();
@@ -220,5 +261,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
         {
             return null;
         }
+
     }
 }

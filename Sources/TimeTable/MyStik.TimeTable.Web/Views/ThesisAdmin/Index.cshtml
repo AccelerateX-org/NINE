@@ -65,10 +65,19 @@
         </div>
         <div class="col-sm-1 col-md-2 col-lg-2">
             <div class="panel panel-danger text-center">
-                <a href="@Url.Action("Running")" class="btn btn-default btn-block">
+                <a href="@Url.Action("ProlongRequests")" class="btn btn-default btn-block">
                     <h4><i class="fa fa-2x fa-legal"></i></h4>
                     <h5>Verlängerungsanträge</h5>
-                    <p>@ViewBag.RequestCount unbearbeitet</p>
+                    <p>@ViewBag.RequestCount unbearbeitet (Betreuer:in)</p>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1 col-md-2 col-lg-2">
+            <div class="panel panel-danger text-center">
+                <a href="@Url.Action("ProlongConfirmation")" class="btn btn-default btn-block">
+                    <h4><i class="fa fa-2x fa-legal"></i></h4>
+                    <h5>Verlängerungsanträge</h5>
+                    <p>@ViewBag.RequestCount unbearbeitet (PKV)</p>
                 </a>
             </div>
         </div>

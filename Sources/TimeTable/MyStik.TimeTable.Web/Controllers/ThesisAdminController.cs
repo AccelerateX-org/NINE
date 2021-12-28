@@ -231,7 +231,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Running()
+        public ActionResult ProlongRequests()
         {
             var org = GetMyOrganisation();
             var userRight = GetUserRight(org);
@@ -255,7 +255,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
                     (x.IssueDate != null && x.ProlongRequestDate !=null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
-                    x.DeliveryDate == null && // noch nich abgegeben
+                    x.DeliveryDate == null && // noch nicht abgegeben
                     x.IsCleared == null // noch nicht archiviert
             ).ToList();
 
@@ -278,9 +278,59 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Organiser = org;
 
 
-            return View(model);
+            return View("Running", model);
         }
 
+
+        public ActionResult ProlongConfirmation()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            /*
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null && x.IssueDate.Value <= DateTime.Today) && // angemeldet in der Vergangenheit
+                    x.DeliveryDate == null && // noch nich abgegeben
+                    x.IsCleared == null // noch nicht archiviert
+            ).ToList();
+            */
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
+                    (x.IssueDate != null && x.ProlongRequestDate != null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
+                    x.DeliveryDate == null && // noch nicht abgegeben
+                    x.IsCleared == null // noch nicht archiviert
+            ).ToList();
+
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View("Running", model);
+        }
 
 
 

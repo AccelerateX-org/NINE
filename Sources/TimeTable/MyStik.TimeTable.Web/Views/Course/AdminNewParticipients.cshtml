@@ -87,7 +87,7 @@
         </div>
     }
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4><i class="fa fa-group"></i> Eintragungen</h4>
@@ -100,6 +100,7 @@
                         <th>Vorname</th>
                         <th>SG</th>
                         <th>Sem</th>
+                        <th>TZ/VZ</th>
                         <th><i class="fa fa-pencil"></i></th>
                         <th><i class="fa fa-exclamation"></i></th>
                         <th><i class="fa fa-envelope"></i></th>
@@ -128,9 +129,19 @@
                             {
                                 <td>@student.Curriculum.ShortName</td>
                                 <td>@student.FirstSemester.Name</td>
+                                if (student.IsPartTime)
+                                {
+                                    <td>TZ</td>
+                                }
+                                else
+                                {
+                                    <td>VZ</td>
+                                }
+
                             }
                             else
                             {
+                                <td></td>
                                 <td></td>
                                 <td></td>
                             }
@@ -166,7 +177,7 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4><i class="fa fa-group"></i> Details</h4>
