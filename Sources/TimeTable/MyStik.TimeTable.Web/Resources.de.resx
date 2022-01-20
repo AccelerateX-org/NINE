@@ -368,16 +368,16 @@
     <value>Datei</value>
   </data>
   <data name="ForgotPasswordHeading" xml:space="preserve">
-    <value>Neues Passwort anfordern</value>
+    <value>Passwort vergessen</value>
   </data>
   <data name="ForgotPasswordLink" xml:space="preserve">
     <value>Passwort vergessen?</value>
   </data>
   <data name="ForgotPasswordMessage" xml:space="preserve">
-    <value>Link zum zurücksetzen des Passworts anfordern.</value>
+    <value>E-Mail mit Link zum zurücksetzen des Passworts anfordern.</value>
   </data>
   <data name="ForgotPasswordSubmitButton" xml:space="preserve">
-    <value>Link anfordern</value>
+    <value>E-Mail anfordern</value>
   </data>
   <data name="FreeFromString" xml:space="preserve">
     <value>Frei ab</value>

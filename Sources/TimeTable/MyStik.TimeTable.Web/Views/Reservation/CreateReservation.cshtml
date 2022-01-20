@@ -5,173 +5,151 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-rooms">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Neue Raumreservierung anlegen</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neue Raumreservierung anlegen</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-primary" href="@Url.Action("Index")"><i class="fa fa-arrow-left"></i> zurück</a>
+                        <a class="btn btn-outline-primary" id="saveAll" href="#"><i class="fa fa-save"></i> Reservierung anlegen</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-left"></i> zurück</a>
-                    <a class="btn btn-primary" id="saveAll" href="#"><i class="fa fa-save"></i> Reservierung anlegen</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Allgemeine Angaben</h4>
-                </div>
-                <div class="panel-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-8">
-                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Allgemeine Angaben</h5>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Description, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-8">
-                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Beschreibung des Kurses" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+                            <div class="card-body">
+                                <div class="mb-3 row">
+                                    @Html.LabelFor(model => model.Name, new { @class = "col-sm-4 col-form-label" })
+                                    <div class="col-sm-8">
+                                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    @Html.LabelFor(model => model.Description, new { @class = "col-sm-4 col-form-label" })
+                                    <div class="col-sm-8">
+                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Beschreibung des Kurses" })
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 col-form-label" })
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
 
-                                @Html.ValidationMessageFor(m => m.NewDate)
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
-                                @Html.ValidationMessageFor(m => m.NewBegin)
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
-                                @Html.ValidationMessageFor(m => m.NewEnd)
-                            </div>
-                        </div>
-                        <div>
-                            <label>
-                                <input id="IsDaily" name="IsDaily" type="checkbox" value="false" />
-                                Termine bis zum Datum täglich generieren
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.DailyEnd, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.DailyEnd, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+                                        @Html.ValidationMessageFor(m => m.NewDate)
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 col-form-label" })
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
+                                        @Html.ValidationMessageFor(m => m.NewBegin)
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 col-form-label" })
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
+                                        @Html.ValidationMessageFor(m => m.NewEnd)
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-md-4">
+                                        <input id="IsDaily" name="IsDaily" type="checkbox" value="false" />
+                                        Termine bis zum Datum täglich generieren
+                                    </label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.DailyEnd, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
 
-                                @Html.ValidationMessageFor(m => m.DailyEnd)
-                            </div>
-                        </div>
-                        <div>
-                            <label>
-                                <input id="IsWeekly" name="IsWeekly" type="checkbox" value="false" />
-                                Alle täglichen Termine bis zum Datum auf Wochenbasis generieren
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.WeeklyEnd, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(model => model.WeeklyEnd, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
+                                        @Html.ValidationMessageFor(m => m.DailyEnd)
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-md-4">
+                                        <input id="IsWeekly" name="IsWeekly" type="checkbox" value="false" />
+                                        Alle täglichen Termine bis zum Datum auf Wochenbasis generieren
+                                    </label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.WeeklyEnd, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
 
-                                @Html.ValidationMessageFor(m => m.WeeklyEnd)
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DozTable">Lehrende (Veranstalter)</label>
-                            <div class="col-sm-9">
-                                <div id="DozTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th>Fakultät</th>
-                                                <th>Name</th>
-                                                <th>
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
-                                                </th>
-                                                <th>
-                                                    <input type="text" class="form-control  input-sm" id="DozId">
-                                                </th>
-                                                <th>
-                                                </th>
-                                            </tr>
+                                        @Html.ValidationMessageFor(m => m.WeeklyEnd)
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label" for="DozTable">Lehrende (Veranstalter)</label>
+                                    <div class="col-sm-8">
+                                        <div id="DozTable">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Fakultät</th>
+                                                    <th>Name</th>
+                                                    <th>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control form-select" })
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control" id="DozId">
+                                                    </th>
+                                                    <th>
+                                                    </th>
+                                                </tr>
 
-                                        </thead>
-                                        <tbody id="dozList"></tbody>
-                                    </table>
+                                                </thead>
+                                                <tbody id="dozList"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Räume</h4>
-                </div>
-                <div class="panel-body">
-                    <div id="roomTable">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Nummer</th>
-                                    <th>Plätze</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
-                                {
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Räume</h5>
+                            </div>
+                            <div id="roomTable">
+                                <table class="table table-condensed">
+                                    <thead>
                                     <tr>
-                                        <td><input id="@room.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
-                                        <td>@room.Number</td>
-                                        <td>@room.Capacity</td>
-                                        <td id="state_@room.Id">unbekannt</td>
+                                        <th></th>
+                                        <th>Nummer</th>
+                                        <th>Plätze</th>
+                                        <th>Status</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var room in Model.Rooms.OrderBy(r => r.Number))
+                                    {
+                                        <tr>
+                                            <td><input id="@room.Id" type="checkbox" onclick=" toggleDateCheck(this) " value=""></td>
+                                            <td>@room.Number</td>
+                                            <td>@room.Capacity</td>
+                                            <td id="state_@room.Id">unbekannt</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -181,14 +159,19 @@
 </div>
 
 
-@section Scripts {
 
-    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
 
-    <script>
+
+
+
+        @section Scripts {
+            
+            <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+            <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+            <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+            <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+
+            <script>
 
         $(function () {
             $("#Description").cleditor();
@@ -216,8 +199,11 @@
 
 
             $('#DozId').autocomplete({
-                source: function(request, response) {
+                source: function (request, response) {
+
                     var org = $("#OrganiserId option:selected").val();
+
+                    console.log(request.term);
 
                     $.ajax({
                         url: '@Url.Action("LecturerList", "Curriculum")',
@@ -230,6 +216,9 @@
                         },
 
                         success: function (data, success, xhr) {
+
+                            console.log(data);
+
                             response($.map(data, function(item) {
 
                                 return {
@@ -253,8 +242,8 @@
                     $("#dozList").append("<tr id=\""
                         + ui.item.text + "\"><td>"
                         + orgText + "</td><td>"
-                        + ui.item.value + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
-                        + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+                        + ui.item.value + "</td><td><button class=\"btn btn-outline-primary\" onclick=\"deleteRow('"
+                        + ui.item.text + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
                 },
             });
@@ -411,5 +400,5 @@
         }
 
 
-    </script>
-}
+            </script>
+        }

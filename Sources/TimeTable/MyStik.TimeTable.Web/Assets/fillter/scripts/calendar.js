@@ -3,8 +3,46 @@
     if (idCal == null || idCal === "")
         idCal = "calendar";
 
-    var height = 640;
+    var calendarEl = document.getElementById(idCal);
 
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        headerToolbar: {
+            start: 'title',
+            center: '',
+            end: 'prev,next,today,dayGridMonth,timeGridWeek,dayGridDay'
+        },
+        weekNumbers: true,
+        allDaySlot: false,
+        locale: 'de',
+        dayHeaderFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
+        slotDuration: "00:30:00",
+        slotMinTime: "08:00:00",
+        slotMaxTime: "22:00:00",
+        slotEventOverlap: false,
+        contentHeight: "auto",
+        eventContent: function (arg) {
+            var italicEl = document.createElement('div');
+
+            if (arg.event.extendedProps.htmlContent) {
+                italicEl.innerHTML = "<div>" + arg.timeText + "</div>" + arg.event.extendedProps.htmlContent;
+            } else {
+                italicEl.innerHTML = "";
+            }
+
+            var arrayOfDomNodes = [italicEl];
+            return { domNodes: arrayOfDomNodes };
+        },
+        eventClick: function (calEvent, jsEvent, view) {
+            calEvent.jsEvent.preventDefault(); // don't let the browser navigate
+            onShowEventInfo(calEvent.event.extendedProps.courseId);
+        },
+    });
+    calendar.render();
+    return calendar;
+
+
+    /*
     $('#' + idCal).fullCalendar('destroy'); // destroy the calendar
     $('#' + idCal).fullCalendar({
         weekNumbers: true,
@@ -36,6 +74,7 @@
                 $('#loading').hide();
         },
     });
+    */
 }
 
 
@@ -45,9 +84,46 @@ function initWeekCalendar(idCal, defaultDate) {
     if (idCal == null || idCal === "")
         idCal = "calendar";
 
-    var height = 630;
+    var calendarEl = document.getElementById(idCal);
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        headerToolbar: {
+            start: '',
+            center: '',
+            end: ''
+        },
+        allDaySlot: false,
+        locale: 'de',
+        dayHeaderFormat: { weekday: 'long' },
+        slotDuration: "00:30:00",
+        slotMinTime: "08:00:00",
+        slotMaxTime: "22:00:00",
+        slotEventOverlap: false,
+        contentHeight: "auto",
+        displayEventTime: true,
+        eventContent: function (arg) {
+            var italicEl = document.createElement('div');
+
+            if (arg.event.extendedProps.htmlContent) {
+                italicEl.innerHTML = "<div>"+arg.timeText+"</div>" + arg.event.extendedProps.htmlContent;
+            } else {
+                italicEl.innerHTML = "";
+            }
+
+            var arrayOfDomNodes = [italicEl];
+            return { domNodes: arrayOfDomNodes };
+        },
+        eventClick: function (calEvent, jsEvent, view) {
+            calEvent.jsEvent.preventDefault(); // don't let the browser navigate
+            onShowEventInfo(calEvent.event.extendedProps.courseId);
+        },
+    });
+    calendar.render();
+    return calendar;
 
 
+    /*
     $('#' + idCal).fullCalendar('destroy'); // destroy the calendar
     $('#' + idCal).fullCalendar({
         weekNumbers: false,
@@ -80,6 +156,7 @@ function initWeekCalendar(idCal, defaultDate) {
                 $('#loading').hide();
         },
     });
+    */
 }
 
 

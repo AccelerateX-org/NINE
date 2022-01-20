@@ -5,6 +5,7 @@
 }
 
 
+
 <div class="row" style="margin-bottom: 20px">
     <div class="col-sm-6 col-md-3">
         <div class="card border-secondary">
@@ -16,6 +17,7 @@
             </div>
             <div class="list-group">
                 <a href="@Url.Action("Index", "Reservation")" class="list-group-item list-group-item-action">Raumreservierungen</a>
+                <a href="@Url.Action("Index", "Dictionary")" class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
                 <a href="@Url.Action("Semester", "Courses")" class="list-group-item list-group-item-action">Lehrveranstaltungen</a>
                 <a href="@Url.Action("Index", "Events")" class="list-group-item list-group-item-action">Veranstaltungen</a>
                 <a href="@Url.Action("Today", "Activity")" class="list-group-item list-group-item-action">Tagesprogramm</a>
@@ -55,9 +57,10 @@
                 <a href="@Url.Action("Index", "Students")" class="list-group-item list-group-item-action">Studierende</a>
                 <a href="@Url.Action("Index", "Alumni")" class="list-group-item list-group-item-action">Alumni</a>
                 <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Externe Partner</a>
-                <a href="@Url.Action("Index", "Autonomy")" class="list-group-item list-group-item-action">Gremien</a>
-                <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Studiengänge</a>
-                <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Räume</a>
+                <a href="@Url.Action("Index", "Autonomy")" class="list-group-item list-group-item-action text-warning">Gremien</a>
+                <a href="@Url.Action("Index", "Curricula")" class="list-group-item list-group-item-action text-danger">Studiengänge</a>
+                <a href="@Url.Action("Index", "Rooms")" class="list-group-item list-group-item-action text-success">Räume</a>
+                <a href="@Url.Action("Index", "Catalogs")" class="list-group-item list-group-item-action">Modulkataloge</a>
             </div>
         </div>
     </div>
@@ -71,6 +74,7 @@
             </div>
             <div class="list-group">
                 <a href="@Url.Action("Index", "Messaging")#" class="list-group-item list-group-item-action">Mailverteiler</a>
+                <a href="@Url.Action("Index", "Newsletter")#" class="list-group-item list-group-item-action">Newsletter</a>
                 <a href="@Url.Action("Index", "Advertisements")" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
                 <a href="#" class="list-group-item list-group-item-action">Infoscreens</a>
                 <a href="@Url.Action("Admins", "Organiser")" class="list-group-item list-group-item-action">Rechte & Rollen</a>

@@ -6,21 +6,21 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
+    <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <h4 class="panel-heading">
-                    <i class="fa fa-cog"></i> Einstellungen für das Verfahrens der Platzvergabe für das Wahlverfahren "@Model.Name"
-                </h4>
-                <div class="panel-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+            <div class="card">
+                <div class="card-header">
+                    <h4>
+                        <i class="fa fa-cog"></i> Einstellungen für das Verfahrens der Platzvergabe für das Wahlverfahren "@Model.Name"
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal", role = "form"}
                         ))
                     {
                         @Html.AntiForgeryToken()
@@ -72,12 +72,12 @@
                             <div class="col-md-6">
                                 <h5>Beginn des Eintragungszeitraums</h5>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.IsAvailableFrom, new { @class = "col-md-6 control-label" })
+                                    @Html.LabelFor(model => model.IsAvailableFrom, new {@class = "col-md-6 control-label"})
                                     <div class="col-sm-3">
-                                        @Html.TextBoxFor(model => model.IsAvailableFrom, new { @class = "form-control datepicker" })
+                                        @Html.TextBoxFor(model => model.IsAvailableFrom, new {@class = "form-control datepicker"})
                                     </div>
                                     <div class="col-sm-3">
-                                        @Html.TextBoxFor(model => model.IsAvailableFromTime, new { @class = "form-control timepicker timepicker-24" })
+                                        @Html.TextBoxFor(model => model.IsAvailableFromTime, new {@class = "form-control timepicker timepicker-24"})
                                     </div>
                                 </div>
                                 <div class="alert alert-info">
@@ -90,15 +90,15 @@
                             <div class="col-md-6">
                                 <h5>Anzahl der Lehrveranstaltungen, die Studierende auswählen können</h5>
                                 <div class="form-group">
-                                    @Html.LabelFor(m => m.MinSubscription, new { @class = "col-md-6 control-label" })
+                                    @Html.LabelFor(m => m.MinSubscription, new {@class = "col-md-6 control-label"})
                                     <div class="col-md-3">
-                                        @Html.TextBoxFor(m => m.MinSubscription, new { @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.MinSubscription, new {@class = "form-control"})
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(m => m.MaxSubscription, new { @class = "col-md-6 control-label" })
+                                    @Html.LabelFor(m => m.MaxSubscription, new {@class = "col-md-6 control-label"})
                                     <div class="col-md-3">
-                                        @Html.TextBoxFor(m => m.MaxSubscription, new { @class = "form-control" })
+                                        @Html.TextBoxFor(m => m.MaxSubscription, new {@class = "form-control"})
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         @Html.CheckBoxFor(item => item.AllowManualSubscription)
-                                        @Html.LabelFor(item => item.AllowManualSubscription, new { @class = "control-label" })
+                                        @Html.LabelFor(item => item.AllowManualSubscription, new {@class = "control-label"})
                                         <ul>
                                             <li>Lehrende können Studierende jederzeit von der Warteliste auf die Teilnehmerliste übenehmen.</li>
                                             <li>Bei Windhundverfahren können alle Eintragungen übernommen werden.</li>
@@ -126,7 +126,7 @@
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         @Html.CheckBoxFor(item => item.LoIneeded)
-                                        @Html.LabelFor(item => item.LoIneeded, new { @class = "control-label" })
+                                        @Html.LabelFor(item => item.LoIneeded, new {@class = "control-label"})
                                         <ul>
                                             <li>Studierende können Motivationsschreiben erstellen.</li>
                                             <li>Als Unterstützung für Lehrenden bei der Voreinschreibung gedacht.</li>
@@ -140,7 +140,7 @@
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         @Html.CheckBoxFor(item => item.UseJinx)
-                                        @Html.LabelFor(item => item.UseJinx, new { @class = "control-label" })
+                                        @Html.LabelFor(item => item.UseJinx, new {@class = "control-label"})
                                         <ul>
                                             <li>An: Studierende können Pechvogelregel wählen</li>
                                             <li>Aus: Pechvogelregel kommt generell nicht zur Anwendung</li>
@@ -152,7 +152,7 @@
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         @Html.CheckBoxFor(item => item.UseLock)
-                                        @Html.LabelFor(item => item.UseLock, new { @class = "control-label" })
+                                        @Html.LabelFor(item => item.UseLock, new {@class = "control-label"})
                                         <ul>
                                             <li>An: Studierende können zugeloste Plätze nicht zurückgeben</li>
                                             <li>Aus: Studierende können zueloste Plätze zurückgeben, d.h. ihre Wahl nachträglich ändern.</li>
@@ -167,7 +167,7 @@
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
-                                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">Abbrechen</a>
+                                        <a href="@Url.Action("Details", new {id = Model.Lottery.Id})" class="btn btn-default">Abbrechen</a>
                                     </div>
                                 </div>
                             </div>
@@ -179,15 +179,13 @@
             </div>
         </div>
     </div>
-</div>
-
 
 
 
 @section Scripts {
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
 
     <script>
 

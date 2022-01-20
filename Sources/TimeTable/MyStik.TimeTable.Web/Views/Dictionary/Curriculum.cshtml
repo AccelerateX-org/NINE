@@ -4,39 +4,39 @@
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
     {
-        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
         containerType = "container";
     }
 
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-book"></i> 
-                        <a href="@Url.Action("Index")">Vorlesungsverzeichnis</a> / 
-                        <a href="@Url.Action("Semester", new { semId = Model.Semester.Id })">@Model.Semester.Name</a> / 
-                        <a href="@Url.Action("Organiser", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })">@Model.Organiser.ShortName</a> / 
-                        @Model.Curriculum.ShortName
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @foreach (var group in Model.Curriculum.CurriculumGroups.OrderBy(x => x.Name))
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <a href="@Url.Action("Index")">Vorlesungsverzeichnis</a> /
+                    <a href="@Url.Action("Semester", new { semId = Model.Semester.Id })">@Model.Semester.Name</a> /
+                    <a href="@Url.Action("Organiser", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })">@Model.Organiser.ShortName</a> /
+                    @Model.Curriculum.ShortName
+                </h4>
+            </div>
+            <div class="list-group">
+                @foreach (var group in Model.Curriculum.CurriculumGroups.OrderBy(x => x.Name))
+                {
+                    foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
                     {
-                        foreach (var capGroup in group.CapacityGroups.OrderBy(x => x.Name))
+                        if (capGroup.SemesterGroups.Any(x => x.Semester.Id == Model.Semester.Id))
                         {
-                            if (capGroup.SemesterGroups.Any(x => x.Semester.Id == Model.Semester.Id))
-                            {
-                                <a href="@Url.Action("Group", new {semId = Model.Semester.Id, groupId = capGroup.Id})" class="list-group-item">
-                                    <h5 class="list-group-item-heading">@capGroup.FullName</h5>
-                                </a>
-                            }
+                            <a href="@Url.Action("Group", new {semId = Model.Semester.Id, groupId = capGroup.Id})" class="list-group-item">
+                                <h5 class="list-group-item-heading">@capGroup.FullName</h5>
+                            </a>
                         }
                     }
-                </div>
+                }
             </div>
         </div>
     </div>

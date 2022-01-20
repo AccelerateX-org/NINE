@@ -5,46 +5,29 @@
     ViewBag.Title = "Raumdetails";
 }
 
-@section styles
-{
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
-}
 
 @{
-    var assignment = Model.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);    
+    var assignment = Model.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-rooms">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <p>
-                        <i class="fa fa-cubes"></i> @Model.Capacity
-                        @foreach (var roomAssignment in Model.Assignments.OrderBy(x => x.Organiser.ShortName))
-                        {
-                            @(roomAssignment.InternalNeedConfirmation ? Html.FacultyLabel(roomAssignment.Organiser, "fa-lock") : Html.FacultyLabel(roomAssignment.Organiser, "fa-unlock"))
-                        }
-                        
-                    </p>
-                    <h2>@Model.FullName</h2>
-                </div>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-md-12">
+        <h4>
+            @Model.FullName <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+        </h4>
+        <hr/>
     </div>
 </div>
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Organiser", "Rooms", new {id=ViewBag.Organiser.Id})" class="btn btn-default active">
-                                <i class="fa fa-arrow-left"></i> zurück
-                            </a>
-                        </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Organiser", "Rooms", new {id=ViewBag.Organiser.Id})" class="btn btn-outline-primary">
+                            <i class="fa fa-arrow-left"></i> zurück
+                        </a>
                         @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
                         {
                             <div class="form-group">
@@ -85,46 +68,58 @@
                         }
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-calendar"></i> Belegung
-                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h4>
-                </div>
-                <div class="panel-body">
-                    <div id="calendar">
-
-                    </div>
+                <div class="list-group-item">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+@section styles
+{
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
+}
+
 
 @section scripts
 {
+    <!--
     <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    -->
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
     <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script type="text/javascript">
 
-        $(document).ready(function () {
-            $('#loading').hide();
+    $(document).ready(function () {
+        $('#loading').hide();
 
-            initDayCalendar("calendar");
+        var myCalendar = initDayCalendar("calendar");
 
+        myCalendar.addEventSource(
+            {
+                url: '@Url.Action("CourseEventsByRoom", "Calendar")',
+                method: 'POST',
+                extraParams: {
+                    roomId: "@Model.Id",
+                    showPersonalDates: false
+                },
+                success: function (data, success, xhr) {
+                    $('#loading').hide();
+                },
+                failure: function (data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            }
+        );
+
+
+        @*
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
@@ -136,6 +131,7 @@
                         showPersonalDates: false
                     }
                 });
+            *@
         });
 
         function onShowEventInfo(id) {

@@ -5,7 +5,7 @@
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
     {
-        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
         containerType = "container";
     }
 
@@ -13,49 +13,75 @@
 }
 
 
-<div class="row" style="margin-top: 20px">
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-award"></i> Studiengänge
-                @if (ViewBag.UserRight.IsCurriculumAdmin)
-                {
-                    <a href="@Url.Action("Create")" class="btn btn-default">Studiengang anlegen</a>
-                }
+                <h4>
+                    <i class="bi-trophy"></i> Studiengänge
+                </h4>
             </div>
-            <div class="accordion" id="accordionCurricula">
-                @foreach (var org in Model.OrderBy(x => x.ShortName))
-                {
-                    var headId = "h" + org.Id;
-                    var collapseId = "c" + org.Id;
-
-                    <div class="card">
-                        <div class="card-header" id="@headId">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#@collapseId" aria-expanded="true" aria-controls="@collapseId">
-                                    @Html.FacultyLabel(org) @org.Name
-                                </button>
-                            </h2>
-                        </div>
-
-                        <div id="@collapseId" class="collapse" aria-labelledby="@headId" data-parent="#accordionCurricula">
-                            <div class="card-body">
-                                <div class="list-group">
-                                    @foreach (var curr in org.Curricula.OrderBy(x => x.Name))
-                                    {
-                                        <a href="@Url.Action("Index", "Curriculum", new { id=curr.Id})" class="list-group-item  list-group-item-action">
-                                            @curr.Name (@curr.ShortName)
-                                        </a>
-                                    }
-                                </div>
-                            </div>
-                        </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <a href="@Url.Action("Create")" class="btn btn-outline-primary">Studiengang anlegen</a>
+                        }
                     </div>
-                }
+                </div>
             </div>
+            <table id="tabCurricula" class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Fakultät</th>
+                        <th>Bezeichnung</th>
+                        <th>Abschluss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var org in Model.OrderBy(x => x.ShortName))
+                    {
+
+                        foreach (var curr in org.Curricula.OrderBy(x => x.Name))
+                        {
+                            <tr>
+                                <td>@Html.FacultyLabel(org)</td>
+                                <td>@org.Name</td>
+                                <td>
+                                    <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})">
+                                        @curr.Name (@curr.ShortName)
+                                    </a>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 
 
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabCurricula').DataTable({
+                "paging": false
+            });
+        })
+
+    </script>
+}

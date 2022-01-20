@@ -7,8 +7,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -92,68 +91,68 @@
                 </div>
                 <table id="tabAdv" class="table table-condensed">
                     <thead>
-                    <tr>
-                        <th>Titel</th>
-                        <th>Angelegt</th>
-                        <th>Ablauf</th>
-                        <th>Kontakt</th>
-                        <th>Bezug</th>
-                        <th>Info</th>
-                    </tr>
+                        <tr>
+                            <th>Titel</th>
+                            <th>Angelegt</th>
+                            <th>Ablauf</th>
+                            <th>Kontakt</th>
+                            <th>Bezug</th>
+                            <th>Info</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @foreach (var adv in Model)
-                    {
-                        <tr>
-                            @if (string.IsNullOrEmpty(adv.Title))
-                            {
-                                <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">(ohne Titel)</a></td>
-                            }
-                            else
-                            {
-                                <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">@adv.Title</a></td>
-                            }
-                            <td>@adv.Created.ToShortDateString()</td>
-                            <td>@adv.VisibleUntil.ToShortDateString()</td>
-                            <td>@adv.Owner.FullName</td>
-                            <td>
-                                @if (adv.ForInternship)
+                        @foreach (var adv in Model)
+                        {
+                            <tr>
+                                @if (string.IsNullOrEmpty(adv.Title))
                                 {
-                                    <i class="fa fa-wrench"></i>
+                                    <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">(ohne Titel)</a></td>
                                 }
-                                @if (adv.ForThesis)
+                                else
                                 {
-                                    <i class="fa fa-graduation-cap"></i>
+                                    <td><a href="@Url.Action("Details", "Advertisements", new {id = adv.Id})">@adv.Title</a></td>
                                 }
-                                @if (adv.ForStayAbroad)
-                                {
-                                    <i class="fa fa-globe"></i>
-                                }
-                                @if (adv.ForAdvancement)
-                                {
-                                    <i class="fa fa-money"></i>
-                                }
-                                @if (adv.ForCompetition)
-                                {
-                                    <i class="fa fa-trophy"></i>
-                                }
-                                @if (adv.ForTutor)
-                                {
-                                    <i class="fa fa-flask"></i>
-                                }
-                                @if (adv.ForWorkingStudent)
-                                {
-                                    <i class="fa fa-industry"></i>
-                                }
-                            </td>
-                            <td>
-                                @if (adv.Attachment != null)
-                                {
-                                    <a href="@Url.Action("ShowFile", new {id = adv.Attachment.Id})" target="_blank"><i class="fa fa-file-pdf-o"></i> (@adv.Attachment.AccessCount)</a>
-                                }
-                            </td>
-                        </tr>
-                    }
+                                <td>@adv.Created.ToShortDateString()</td>
+                                <td>@adv.VisibleUntil.ToShortDateString()</td>
+                                <td>@adv.Owner.FullName</td>
+                                <td>
+                                    @if (adv.ForInternship)
+                                    {
+                                        <i class="fa fa-wrench"></i>
+                                    }
+                                    @if (adv.ForThesis)
+                                    {
+                                        <i class="fa fa-graduation-cap"></i>
+                                    }
+                                    @if (adv.ForStayAbroad)
+                                    {
+                                        <i class="fa fa-globe"></i>
+                                    }
+                                    @if (adv.ForAdvancement)
+                                    {
+                                        <i class="fa fa-money"></i>
+                                    }
+                                    @if (adv.ForCompetition)
+                                    {
+                                        <i class="fa fa-trophy"></i>
+                                    }
+                                    @if (adv.ForTutor)
+                                    {
+                                        <i class="fa fa-flask"></i>
+                                    }
+                                    @if (adv.ForWorkingStudent)
+                                    {
+                                        <i class="fa fa-industry"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if (adv.Attachment != null)
+                                    {
+                                        <a href="@Url.Action("ShowFile", new {id = adv.Attachment.Id})" target="_blank"><i class="fa fa-file-pdf-o"></i> (@adv.Attachment.AccessCount)</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -164,10 +163,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
@@ -178,7 +174,7 @@
                     "targets": [1, 2]
                 }],
                 "order": [[0, 'asc']]
-            });        
+            });
         });
     </script>
 }

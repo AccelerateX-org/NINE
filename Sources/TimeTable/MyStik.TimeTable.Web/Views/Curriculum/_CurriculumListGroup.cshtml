@@ -1,0 +1,7 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
+
+@foreach (var group in Model.Where(x => !x.IsDeprecated).OrderBy(x => x.Name))
+{
+    var currId = "curr_" + group.Id;
+    <div id="@currId" class="list-group-item list-group-item-action" onclick="selectCurr('@group.Id')">@group.Name (@group.ShortName)</div>
+}

@@ -7,8 +7,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -67,52 +66,52 @@
                 </div>
                 <table id="tabMembers" class="table table-condensed table-striped">
                     <thead>
-                    <tr>
-                        <th>#</th>
-                        <th><i class="fa fa-user"></i></th>
-                        <th>Titel</th>
-                        <th>Vorname</th>
-                        <th>Name</th>
-                        <th>Rolle</th>
-                        <th>ID</th>
-                    </tr>
+                        <tr>
+                            <th>#</th>
+                            <th><i class="fa fa-user"></i></th>
+                            <th>Titel</th>
+                            <th>Vorname</th>
+                            <th>Name</th>
+                            <th>Rolle</th>
+                            <th>ID</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @foreach (var item in Model.Members)
-                    {
-                        if (item.User != null)
+                        @foreach (var item in Model.Members)
                         {
-                            <tr>
-                                <td></td>
-                                @if (item.IsDouble)
-                                {
-                                    <td><i class="fa fa-check text-danger"></i><span hidden="">2</span>Doppelter Benutzername</td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-check text-success"></i><span hidden="">1</span></td>
-                                }
-                                <td>@item.Member.Title</td>
-                                <td>@item.User.FirstName</td>
-                                <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.User.LastName</a></td>
-                                <td>@item.Member.Role</td>
-                                <td>@item.Member.ShortName</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <td></td>
-                                <td><i class="fa fa-times text-danger"></i><span hidden="">0</span></td>
-                                <td>@item.Member.Title</td>
-                                <td><i>@item.Member.FirstName</i></td>
-                                <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.Member.Name</a></td>
-                                <td>@item.Member.Role</td>
-                                <td>@item.Member.ShortName</td>
+                            if (item.User != null)
+                            {
+                                <tr>
+                                    <td></td>
+                                    @if (item.IsDouble)
+                                    {
+                                        <td><i class="fa fa-check text-danger"></i><span hidden="">2</span>Doppelter Benutzername</td>
+                                    }
+                                    else
+                                    {
+                                        <td><i class="fa fa-check text-success"></i><span hidden="">1</span></td>
+                                    }
+                                    <td>@item.Member.Title</td>
+                                    <td>@item.User.FirstName</td>
+                                    <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.User.LastName</a></td>
+                                    <td>@item.Member.Role</td>
+                                    <td>@item.Member.ShortName</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td><i class="fa fa-times text-danger"></i><span hidden="">0</span></td>
+                                    <td>@item.Member.Title</td>
+                                    <td><i>@item.Member.FirstName</i></td>
+                                    <td><a href="@Url.Action("MemberAdmin", "Organiser", new {id=item.Member.Id})">  @item.Member.Name</a></td>
+                                    <td>@item.Member.Role</td>
+                                    <td>@item.Member.ShortName</td>
 
-                            </tr>
+                                </tr>
+                            }
                         }
-                    }
                     </tbody>
                 </table>
             </div>
@@ -124,18 +123,16 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         var t = $('#tabMembers').DataTable({
             "paging": false,
             "columnDefs": [{
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                }],
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
             "order": [[4, 'asc']]
         });
 

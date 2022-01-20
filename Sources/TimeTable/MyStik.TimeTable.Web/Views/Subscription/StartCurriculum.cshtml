@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewBag.Title = "Neuen Studiengang beginnen";
+}
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h4>Wichtige Hinweise:</h4>
+                    <p>Mit Beginn eines neuen Studiengangs wird ein bisheriger Studiengang beendet. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+                    <p>Die Angabe des Studiengangs hat im Wesentlichen organisatorische Gründe, z.B. für</p>
+                    <ul>
+                        <li>den zielgerichteten Versand von E-Mails</li>
+                        <li>die Aufteilung, den Zugang zu platzbeschränkten Lehveranstaltungen (Labore, Wahlkurse)</li>
+                    </ul>
+                    <p>Die Angabe hier ist kein Ersatz für eine Immatrikulation. Bitte erst einen Studiengang wählen, wenn eine gültige Immatrikulation und/oder Zusage eines Studienplatzes vorliegt.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col">
+        <div class="card">
+            <div class="card-header">1. Fakultät wählen</div>
+            <div class="list-group">
+                @foreach (var org in ViewBag.Faculties)
+                {
+                    var orgId = "org_" + @org.Value;
+                    <a id="@orgId" class="list-group-item list-group-item-action" onclick="selectOrg('@org.Value')">@org.Text</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">2. Studiengang wählen <span id="currLoading"><i class="fas fa-spinner fa-spin fa-2x"></i></span></div>
+            <div id="listCurr" class="list-group">
+                
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">3. Semester Studienbeginn wählen <span id="semLoading"><i class="fas fa-spinner fa-spin fa-2x"></i></span>
+            </div>
+            <div id="listSem" class="list-group">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <button id="btnSave" class="btn btn-outline-primary">Neuen Studiengang beginnen</button>
+    </div>
+</div>
+
+
+@section scripts
+{
+
+    <script type="text/javascript">
+
+        var _orgId = "";
+        var _currId = "";
+        var _semId = "";
+
+        $(document).ready(function() {
+            $('#btnSave').attr("disabled", "disabled");
+        });
+
+        function selectOrg(orgId) {
+            $('#btnSave').attr("disabled", "disabled");
+            $('#listSem').html("");
+            $("#currLoading").show();
+
+            _orgId = orgId;
+
+            $('[id^=org_]').removeClass("active");
+
+            $('#org_' + orgId).addClass("active");
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("CurriculaList3", "Curriculum")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#currLoading").hide();
+                        $('#listCurr').html(data);
+                    }
+                });
+
+        }
+
+        function selectCurr(currId) {
+
+            $('#btnSave').attr("disabled", "disabled");
+            $('#listSem').html("");
+            $("#semLoading").show();
+
+            $('[id^=curr_]').removeClass("active");
+
+            $('#curr_' + currId).addClass("active");
+            _currId = currId;
+
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("SemesterList3", "Curriculum")',
+                    data: {
+                        orgId: _orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#semLoading").hide();
+                        $('#listSem').html(data);
+                    }
+                });
+
+
+        }
+
+        function selectSem(semId) {
+
+            $('[id^=sem_]').removeClass("active");
+
+            $('#sem_' + semId).addClass("active");
+            _semId = semId;
+
+            $('#btnSave').prop("disabled", false);
+        }
+
+    </script>
+}
+
+

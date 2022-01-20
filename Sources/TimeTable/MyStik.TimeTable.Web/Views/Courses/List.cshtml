@@ -6,8 +6,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -89,7 +88,7 @@
                                         {
                                             <i class="fa fa-lock"></i>
                                         }
-                                        @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new {id = c.Course.Id}, null)
+                                        @Html.ActionLink(c.Course.Name + " (" + c.Course.ShortName + ")", "Index", "Course", new { id = c.Course.Id }, null)
                                     </td>
                                     <td>
                                         @Html.GroupList(c.Course.SemesterGroups, true)
@@ -115,9 +114,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

@@ -1,5 +1,6 @@
 ﻿@model ICollection<MyStik.TimeTable.Data.Curriculum>
 
+<option value="@Guid.Empty.ToString()" selected="">Studiengang wählen</option>
 @foreach (var group in Model)
 {
     <option value="@group.Id">@group.Name</option>

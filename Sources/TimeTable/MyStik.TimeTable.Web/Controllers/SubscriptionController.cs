@@ -226,27 +226,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CurriculumSubscriptionViewModel
             {
-                OrgId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id ?? Guid.Empty,
-                CurrId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Id ?? Guid.Empty,
-                SemId = semester.Id
+                //OrgId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id ?? Guid.Empty,
+                //CurrId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Id ?? Guid.Empty,
+                //SemId = semester.Id
             };
 
             var orgs = Db.Organisers.Where(x => x.IsFaculty && x.Curricula.Any()).OrderBy(f => f.ShortName).ToList();
             var org = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Organiser ?? orgs.FirstOrDefault();
 
-            ViewBag.Faculties = orgs.Select(f => new SelectListItem
+
+            var orgSelect = new List<SelectListItem>
+            {
+                new SelectListItem {Text = "Fakultät wählen", Value = Guid.Empty.ToString()}
+            };
+            orgSelect.AddRange(orgs.Select(f => new SelectListItem
             {
                 Text = f.Name,
                 Value = f.Id.ToString(),
-            });
+            }));
+            orgSelect.First().Selected = true;
 
+            ViewBag.Faculties = orgSelect;
 
-            ViewBag.Curricula = org.Curricula.OrderBy(f => f.ShortName).Select(f => new SelectListItem
-            {
-                Text = f.Name,
-                Value = f.Id.ToString(),
-            });
+            ViewBag.Curricula = new List<SelectListItem>();
 
+            /*
             var nextDate = DateTime.Today.AddDays(70);
 
             ViewBag.Semesters = Db.Semesters.Where(x => x.StartCourses <= nextDate).OrderByDescending(x => x.EndCourses)
@@ -257,7 +261,26 @@ namespace MyStik.TimeTable.Web.Controllers
                         Value = f.Id.ToString(),
                     }
                 );
+            */
 
+            var currentSemester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(currentSemester);
+
+            // vom NextSemester 8 zurück
+
+            var semesters = Db.Semesters.Where(x => x.StartCourses <= nextSemester.StartCourses)
+                .OrderByDescending(x => x.EndCourses)
+                .Take(8).ToList();
+
+            var semSelect = new List<SelectListItem>();
+            semSelect.Add(new SelectListItem {Text="Semester wählen", Value = Guid.Empty.ToString()});
+            semSelect.AddRange(semesters.Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.Id.ToString(),
+            }));
+            semSelect.First().Selected = true;
+            ViewBag.Semesters = semSelect;
 
             return View("Change", model);
         }

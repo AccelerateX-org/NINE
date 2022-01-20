@@ -6,8 +6,7 @@
 
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
-
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
 <div class="container-fluid">
@@ -37,38 +36,58 @@
 
     </div>
 
-@section scripts
+    @section scripts
 {
-    <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
-    <script src="~/Assets/fillter/scripts/calendar.js"></script>
+        <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+        <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+        <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
-    <script type="text/javascript">
+        <script type="text/javascript">
 
-        $(document).ready(function() {
+    $(document).ready(function() {
+        updateCalendar(false);
+    });
+
+    function onToogleWaiting() {
+        if ($('#btnWaiting').hasClass("active")) {
+            $('#btnWaiting').removeClass("active");
+            $('#btnWaiting').removeClass("btn-warning");
+            $('#btnWaiting').addClass("btn-default");
             updateCalendar(false);
-        });
-
-        function onToogleWaiting() {
-            if ($('#btnWaiting').hasClass("active")) {
-                $('#btnWaiting').removeClass("active");
-                $('#btnWaiting').removeClass("btn-warning");
-                $('#btnWaiting').addClass("btn-default");
-                updateCalendar(false);
-            } else {
-                $('#btnWaiting').addClass("active");
-                $('#btnWaiting').removeClass("btn-default");
-                $('#btnWaiting').addClass("btn-warning");
-                updateCalendar(true);
-            }
+        } else {
+            $('#btnWaiting').addClass("active");
+            $('#btnWaiting').removeClass("btn-default");
+            $('#btnWaiting').addClass("btn-warning");
+            updateCalendar(true);
         }
+    }
 
-        function updateCalendar(showWL) {
-            $('#loading').show();
+    function updateCalendar(showWL) {
+        $('#loading').show();
 
-            initWeekCalendar("calendar");
+        var myCalendar = initWeekCalendar("calendar");
 
+
+        myCalendar.addEventSource(
+            {
+                url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
+                method: 'POST',
+                extraParams: {
+                    semId: '@Model.Semester.Id',
+                    showWaiting: showWL
+                },
+                success: function (data, success, xhr) {
+                    $('#calendarList').html(data);
+                    $('#calendarList').show();
+                    $('#loading').hide();
+                },
+                failure: function (data, type, ex) {
+                    alert("Fehler beim laden der Daten." + ex);
+                    $('#loading').hide();
+                }
+            }
+        );
+        @*
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
@@ -89,6 +108,7 @@
                         $('#loading').hide();
                     }
                 });
+            *q
         }
 
         function onShowEventInfo(id) {
@@ -159,5 +179,5 @@
             updateCalendar();
         }
 
-    </script>
-}
+        </script>
+    }

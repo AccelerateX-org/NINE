@@ -436,6 +436,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_CurriculumSelectList", model);
         }
 
+        [HttpPost]
+        public PartialViewResult CurriculaList3(Guid orgId)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            var currs = org.Curricula.ToList();
+
+            var model = currs
+                .OrderBy(g => g.ShortName)
+                .ToList();
+
+            return PartialView("_CurriculumListGroup", model);
+        }
+
 
         /// <summary>
         /// 
@@ -552,6 +566,27 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_SemesterSelectList", model);
         }
+
+        [HttpPost]
+        public PartialViewResult SemesterList3(Guid orgId)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            List<Semester> semesters;
+
+            // aktuelles Semester
+            var currentSemester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(currentSemester);
+
+            // vom NextSemester 8 zurück
+
+            semesters = Db.Semesters.Where(x => x.StartCourses <= nextSemester.StartCourses)
+                .OrderByDescending(x => x.EndCourses)
+                .Take(8).ToList();
+
+            return PartialView("_SemesterListGroup", semesters);
+        }
+
 
         /// <summary>
         /// 

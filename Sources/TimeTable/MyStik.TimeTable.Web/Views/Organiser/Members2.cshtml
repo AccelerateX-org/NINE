@@ -6,8 +6,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -53,20 +52,20 @@
                 <div class="portlet-body">
                     <table id="tabMembers" class="table table-condensed table-striped">
                         <thead>
-                        <tr>
-                            <th><i class="fa fa-user"></i></th>
-                            <th>Kurzname</th>
-                            <th>Name</th>
-                            <th>Rolle</th>
-                            @if (ViewBag.UserRight.IsOrgMember)
-                            {
-                                <th>Beschreibung</th>
-                                <th>@ViewBag.ThisSemester</th>
-                                <th>@ViewBag.LastSemester</th>
-                                <th>@ViewBag.LastYear</th>
-                            }
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th><i class="fa fa-user"></i></th>
+                                <th>Kurzname</th>
+                                <th>Name</th>
+                                <th>Rolle</th>
+                                @if (ViewBag.UserRight.IsOrgMember)
+                                {
+                                    <th>Beschreibung</th>
+                                    <th>@ViewBag.ThisSemester</th>
+                                    <th>@ViewBag.LastSemester</th>
+                                    <th>@ViewBag.LastYear</th>
+                                }
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.Members)
@@ -84,13 +83,13 @@
                                     @if (string.IsNullOrEmpty(item.Member.Name))
                                     {
                                         <td>
-                                            @Html.ActionLink("N.N.", "Member", new {orgId = Model.Organiser.ShortName, shortName = item.Member.ShortName})
+                                            @Html.ActionLink("N.N.", "Member", new { orgId = Model.Organiser.ShortName, shortName = item.Member.ShortName })
                                         </td>
                                     }
                                     else
                                     {
                                         <td>
-                                            @Html.ActionLink(item.Member.Name, "Member", new {orgId = Model.Organiser.ShortName, shortName = item.Member.ShortName})
+                                            @Html.ActionLink(item.Member.Name, "Member", new { orgId = Model.Organiser.ShortName, shortName = item.Member.ShortName })
                                         </td>
                                     }
                                     <td>@item.Member.Role</td>
@@ -129,8 +128,8 @@
 
                                             if (ViewBag.UserRight.IsMemberAdmin)
                                             {
-                                                @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMember", "Organiser", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
-                                                @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new {id = item.Member.Id}, new {@class = "btn btn-default btn-xs"})
+                                                @Html.ActionButton("fa-pencil text-primary", "Ändern", "EditMember", "Organiser", new { id = item.Member.Id }, new { @class = "btn btn-default btn-xs" })
+                                                @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new { id = item.Member.Id }, new { @class = "btn btn-default btn-xs" })
                                             }
                                         }
                                     </td>
@@ -163,11 +162,11 @@
                 <div class="portlet-body">
                     <table class="table table-condensed ">
                         <thead>
-                        <tr>
-                            <th>Rolle</th>
-                            <th>Beschreibung</th>
-                            <th>Name</th>
-                        </tr>
+                            <tr>
+                                <th>Rolle</th>
+                                <th>Beschreibung</th>
+                                <th>Name</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <tr>
@@ -187,23 +186,23 @@
                                     }
                                 </td>
                             </tr>
-                        <tr>
-                            <td><strong>Personen</strong></td>
-                            <td>Anlegen, Ändern, Löschen von Personen innerhalb eines Veranstalters (z.B. Fakultät)</td>
-                            <td>
-                                @foreach (var member in Model.Members.Where(m => m.Member.IsMemberAdmin))
-                                {
-                                    if (member.User != null)
+                            <tr>
+                                <td><strong>Personen</strong></td>
+                                <td>Anlegen, Ändern, Löschen von Personen innerhalb eines Veranstalters (z.B. Fakultät)</td>
+                                <td>
+                                    @foreach (var member in Model.Members.Where(m => m.Member.IsMemberAdmin))
                                     {
-                                        <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        if (member.User != null)
+                                        {
+                                            <div>@member.Member.ShortName (@member.User.FullName)</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@member.Member.ShortName (-)</div>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <div>@member.Member.ShortName (-)</div>
-                                    }
-                                }
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                             <tr>
                                 <td><strong>Lehrveranstaltungen</strong></td>
                                 <td>Anlegen, Ändern, Löschen von Lehrveranstaltungen für Dritte, z.B. Import von Stundenplandaten</td>
@@ -250,9 +249,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

@@ -7,8 +7,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -33,29 +32,29 @@
                     <tbody>
                         @foreach (var thesis in Model.Thesis)
                         {
-                        <tr id="@thesis.Thesis.Id">
-                            <td></td>
-                            @if (thesis.User != null)
-                            {
-                                <td>@thesis.User.FirstName</td>
-                                <td>@thesis.User.LastName</td>
-                            }
-                            else
-                            {
+                            <tr id="@thesis.Thesis.Id">
                                 <td></td>
-                                <td></td>
-                            }
-                            <td>@thesis.Student.Curriculum.ShortName</td>
-                            @if (thesis.Thesis.DeliveryDate.HasValue)
-                            {
-                                <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                            <td>@thesis.Thesis.TitleDe</td>
-                        </tr>
+                                @if (thesis.User != null)
+                                {
+                                    <td>@thesis.User.FirstName</td>
+                                    <td>@thesis.User.LastName</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+                                <td>@thesis.Student.Curriculum.ShortName</td>
+                                @if (thesis.Thesis.DeliveryDate.HasValue)
+                                {
+                                    <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@thesis.Thesis.TitleDe</td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -69,10 +68,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

@@ -6,185 +6,159 @@
 
 @section styles
 {
-<link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
 
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-rooms">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>@Model.Course.Name</h4>
-                </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neuen Termin anlegen für @Model.Course.Name</h4>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="list-group">
+                <div class="list-group-item">
                     <div class="btn-group">
-                        <a class="btn btn-default" href="@Url.Action("Details", new {id = Model.Course.Id})"><i class="fa fa-arrow-left"></i> zurück</a>
-                        <a class="btn btn-primary" id="saveAll" href="javascript:createDate()"><i class="fa fa-save"></i> Termin anlegen</a>
+                        <a class="btn btn-outline-primary" href="@Url.Action("Details", new {id = Model.Course.Id})"><i class="fa fa-arrow-left"></i> zurück</a>
+                        <a class="btn btn-outline-primary" id="saveAll" href="javascript:createDate()"><i class="fa fa-save"></i> Termin anlegen</a>
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-calendar"></i>
-                        <span class="caption-subject bold uppercase"> Angaben für neuen Termin</span>
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-horizontal">
-                                @Html.HiddenFor(m => m.CourseId)
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="DozTable">Dozent(en)</label>
-                                    <div class="col-sm-9">
-                                        <div id="DozTable">
-                                            <table class="table table-condensed">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Fakultät</th>
-                                                        <th>Name</th>
-                                                        <th>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>
-                                                            @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
-                                                        </th>
-                                                        <th>
-                                                            <input type="text" class="form-control  input-sm" id="DozId">
-                                                        </th>
-                                                        <th>
-                                                        </th>
-                                                    </tr>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div>
+                            @Html.HiddenFor(m => m.CourseId)
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label" for="DozTable">Dozent(en)</label>
+                                <div class="col-sm-9">
+                                    <div id="DozTable">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fakultät</th>
+                                                    <th>Name</th>
+                                                    <th>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control  input-sm" id="DozId">
+                                                    </th>
+                                                    <th>
+                                                    </th>
+                                                </tr>
 
-                                                </thead>
-                                                <tbody id="dozList"></tbody>
-                                            </table>
-                                        </div>
+                                            </thead>
+                                            <tbody id="dozList"></tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="DateTable">Termin(e)</label>
-                                    <div class="col-sm-9">
-                                        <div id="DateTable">
-                                            <table class="table table-condensed">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Datum / Erster Termin</th>
-                                                        <th>Von</th>
-                                                        <th>Bis</th>
-                                                        <th>Wdh</th>
-                                                        <th>Letzer Termin</th>
-                                                        <th>Turnus</th>
-                                                        <th></th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>
-                                                            <input type="text" class="form-control input-sm datepicker" id="DateDay">
-                                                        </th>
-                                                        <th>
-                                                            <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateBegin">
-                                                        </th>
-                                                        <th>
-                                                            <input type="text" class="form-control input-sm timepicker timepicker-24" id="DateEnd">
-                                                        </th>
-                                                        <th>
-                                                            <input type="checkbox" class="form-control input-sm" id="DateWdh" value="">
-                                                        </th>
-                                                        <th>
-                                                            <input type="text" class="form-control input-sm datepicker" id="DateLastDay">
-                                                        </th>
-                                                        <th>
-                                                            <select class="form-control" id="frequency">
-                                                                <option value="1">täglich</option>
-                                                                <option value="7">wöchentlich</option>
-                                                                <option value="14">14-tägig</option>
-                                                            </select>
-                                                        </th>
-                                                        <th>
-                                                            <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="dateList"></tbody>
-                                            </table>
-                                        </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label" for="DateTable">Termin(e)</label>
+                                <div class="col-sm-9">
+                                    <div id="DateTable">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Datum / Erster Termin</th>
+                                                    <th>Von</th>
+                                                    <th>Bis</th>
+                                                    <th>Turnus</th>
+                                                    <th>Letzer Termin</th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <input type="text" class="form-control datepicker" id="DateDay">
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control timepicker timepicker-24" id="DateBegin">
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control timepicker timepicker-24" id="DateEnd">
+                                                    </th>
+                                                    <th>
+                                                        <select class="form-control form-select" id="frequency">
+                                                            <option value="0">einmalig</option>
+                                                            <option value="1">täglich</option>
+                                                            <option value="7">wöchentlich</option>
+                                                            <option value="14">14-tägig</option>
+                                                        </select>
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control datepicker" id="DateLastDay">
+                                                    </th>
+                                                    <th>
+                                                        <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="dateList"></tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="DozTable">Raum/Räume</label>
-                                    <div class="col-sm-9">
-                                        <div id="RoomTable">
-                                            <table class="table table-condensed">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Fakultät</th>
-                                                        <th>Raumnummer</th>
-                                                        <th>Status</th>
-                                                        <th></th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>
-                                                            @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
-                                                        </th>
-                                                        <th>
-                                                            <input type="text" class="form-control  input-sm" id="RoomId">
-                                                        </th>
-                                                        <th></th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="roomList"></tbody>
-                                            </table>
-                                        </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label" for="DozTable">Raum/Räume</label>
+                                <div class="col-sm-9">
+                                    <div id="RoomTable">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fakultät</th>
+                                                    <th>Raumnummer</th>
+                                                    <th>Status</th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
+                                                    </th>
+                                                    <th>
+                                                        <input type="text" class="form-control  input-sm" id="RoomId">
+                                                    </th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="roomList"></tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="ConflictTable">Konflikte</label>
-                                    <div class="col-sm-9">
-                                        <div id="ConflictTable"></div>
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label" for="ConflictTable">Konflikte</label>
+                                <div class="col-sm-9">
+                                    <div id="ConflictTable"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="alert alert-info">
-                                <p><strong>Hinweise zur Eingabe der Termine</strong></p>
-                                <ul>
-                                    <li>Es können mehrere Terminangaben gemacht werden.</li>
-                                    <li>Terminangaben werden nur übernommen, wenn sie mit dem "+" hinzugefügt wurden.</li>
-                                    <li>Für Einzeltermine genügen die Angaben zu Datum, Von und Bis.</li>
-                                    <li>Bei Wiederholungen <strong>muss</strong> der letzte Termin und der Turnus angegeben werden.</li>
-                                </ul>
-                            </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-info">
+                            <p><strong>Hinweise zur Eingabe der Termine</strong></p>
+                            <ul>
+                                <li>Es können mehrere Terminangaben gemacht werden.</li>
+                                <li>Terminangaben werden nur übernommen, wenn sie mit dem "+" hinzugefügt wurden.</li>
+                                <li>Für Einzeltermine genügen die Angaben zu Datum, Von und Bis.</li>
+                                <li>Bei Wiederholungen <strong>muss</strong> der letzte Termin und der Turnus angegeben werden.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
+
 
 
 
@@ -192,9 +166,9 @@
 
 
 @section Scripts {
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
 
     <script>
 
@@ -320,14 +294,8 @@
             var dayText = $("#DateDay").val();
             var beginText = $("#DateBegin").val();
             var endText = $("#DateEnd").val();
-            var isWdh = $("#DateWdh").is(':checked');
             var lastDayText = $("#DateLastDay").val();
             var frequencyText = $("#frequency option:selected").val();
-
-            if (isWdh === false) {
-                lastDayText = '';
-                frequencyText = '';
-            }
 
             var id = 'id' + (new Date()).getTime();
 
@@ -335,17 +303,15 @@
                 + "\" data-date-day=\"" + dayText
                 + "\" data-date-begin=\"" + beginText
                 + "\" data-date-end=\"" + endText
-                + "\" data-date-iswdh=\"" + isWdh
-                + "\" data-date-lastday=\"" + lastDayText
                 + "\" data-date-frequency=\"" + frequencyText
+                + "\" data-date-lastday=\"" + lastDayText
                 + "\"><td>"
                 + dayText + "</td><td>"
                 + beginText + "</td><td>"
                 + endText + "</td><td>"
-                + isWdh + "</td><td>"
-                + lastDayText + "</td><td>"
-                + frequencyText + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
-                + id + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+                + frequencyText + "</td><td>"
+                + lastDayText + "</td><td><button class=\"btn btn-outline-primary btn-sm\" onclick=\"deleteRow('"
+                + id + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
 
             checkRoomStates();
@@ -415,8 +381,8 @@
                     $("#dozList").append("<tr id=\""
                         + ui.item.text + "\"><td>"
                         + orgText + "</td><td>"
-                        + ui.item.value + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
-                        + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+                        + ui.item.value + "</td><td><button class=\"btn btn-outline-primary\" onclick=\"deleteRow('"
+                        + ui.item.text + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
                 },
             });
@@ -461,8 +427,8 @@
                         + ui.item.text + "\"><td>"
                         + orgText + "</td><td>"
                         + ui.item.value + "</td><td id=\"state_"
-                        + ui.item.text + "\">unbekannt</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
-                        + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+                        + ui.item.text + "\">unbekannt</td><td><button class=\"btn btn-outline-primary\" onclick=\"deleteRow('"
+                        + ui.item.text + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
                     checkRoomState(ui.item.text);
                 }
@@ -534,7 +500,7 @@
                             $("#state_" + roomId).html("verfügbar");
                         } else {
                             $("#" + roomId).addClass("danger");
-                            $("#state_" + roomId).html("<button class=\"btn btn-default\" onclick=\"showConflicts('"
+                            $("#state_" + roomId).html("<button class=\"btn btn-outline-primary\" onclick=\"showConflicts('"
                                 + roomId
                                 + "')\">Konflikte <span class=\"badge\">" + data + "</span></button>");
                         }
@@ -557,7 +523,8 @@
                     dateList[i] = elem.data("date-day") + "#"
                     + elem.data("date-begin") + "#"
                     + elem.data("date-end") + "#"
-                    + elem.data("date-iswdh");
+                    + elem.data("date-lastday") + "#"
+                    + elem.data("date-frequency");
                 }
 
                 $.ajax(
@@ -613,8 +580,6 @@
                         elem.data("date-begin") +
                         "#" +
                         elem.data("date-end") +
-                        "#" +
-                        elem.data("date-iswdh") +
                         "#" +
                         elem.data("date-lastday") +
                         "#" +

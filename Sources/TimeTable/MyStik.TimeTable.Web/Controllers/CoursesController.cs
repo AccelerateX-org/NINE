@@ -669,11 +669,21 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult CreateSemester()
+        public ActionResult CreateSemester(Guid? id)
         {
             var org = GetMyOrganisation();
 
-            var nextSemester = SemesterService.GetNextSemester(DateTime.Today);
+            Semester nextSemester = null;
+            if (id != null)
+            {
+                var semester = SemesterService.GetSemester(id);
+                nextSemester = SemesterService.GetNextSemester(semester);
+            }
+            else
+            {
+                nextSemester = SemesterService.GetNextSemester(DateTime.Today);
+            }
+
 
 
             return RedirectToAction("InitGroups", new {id = nextSemester.Id});

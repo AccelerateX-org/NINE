@@ -3,18 +3,6 @@
     ViewBag.Title = "Neues Skript";
 }
 
-@section styles
-{
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css")" />
-}
-
-
-
-@section Scripts {
-
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js")"></script>
-}
-
 
 <div class="row">
     <div class="col-md-12">
@@ -30,10 +18,10 @@
                 @using (Html.BeginForm(null, null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
                 {
                     @Html.HiddenFor(m => m.SemesterId)
-                    <div class="form-group row">
+                    <div class="row mb-3">
                         <label for="Title" class="col-sm-6 col-form-label">Titel (eindeutige Bezeichnung, z.B. "Technische Mechanik", "Grundlagen der Informatik - Aufgabensammlung")</label>
                         <div class="col-sm-6">
-                            @Html.TextBoxFor(m => m.Title, new {@class = "form-control"})
+                            <input class="form-control" type="file" id="Title" name="Title">
                         </div>
                     </div>
                     <div class="form-group row">

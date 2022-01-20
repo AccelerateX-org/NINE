@@ -6,50 +6,37 @@
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
     {
-        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
         containerType = "container";
     }
 
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
-
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-book"></i> Vorlesungsverzeichnis nach Semestern</h4>
-                </div>
-                <div class="list-group">
-                    @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Vorlesungsverzeichnis nach Semestern</h4>
+            </div>
+            <div class="list-group">
+                @foreach (var sem in Model.ActiveSemester)
+                {
+                    if (sem.Organisers.Any())
                     {
-                        <div class="list-group-item">
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("Create", "Course")" class="btn btn-default"><i class="fa fa-plus"></i> LV anlegen</a>
-                            </div>
-                        </div>
-                    }
+                        <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item list-group-item-action">
+                            <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
+                            <p class="list-group-item-text">
+                                @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
+                                {
+                                    @Html.FacultyLabel(organiser)
+                                }
 
-                    @foreach (var sem in Model.ActiveSemester)
-                    {
-                        if (sem.Organisers.Any())
-                        {
-                            <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item">
-                                <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
-                                <p class="list-group-item-text">
-                                    @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
-                                    {
-                                        @Html.FacultyLabel(organiser)
-                                    }
-
-                                </p>
-                            </a>
-                        }
+                            </p>
+                        </a>
                     }
-                </div>
+                }
             </div>
         </div>
     </div>
 </div>
-

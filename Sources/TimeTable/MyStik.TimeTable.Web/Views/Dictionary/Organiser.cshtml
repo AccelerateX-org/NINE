@@ -4,35 +4,35 @@
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
     {
-        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
         containerType = "container";
     }
 
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-book"></i> 
-                        <a href="@Url.Action("Index")">Vorlesungsverzeichnis</a> /
-                        <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
-                        @Model.Organiser.ShortName
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @foreach (var curr in Model.Curricula)
-                    {
-                        <a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = curr.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
-                        </a>
-                    }
-                </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <a href="@Url.Action("Index")">Vorlesungsverzeichnis</a> /
+                    <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
+                    @Model.Organiser.ShortName
+                </h4>
+            </div>
+            <div class="list-group">
+                @foreach (var curr in Model.Curricula)
+                {
+                    <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = curr.Id})" class="list-group-item">
+                        <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
+                    </a>
+                }
             </div>
         </div>
     </div>
 </div>
+
 

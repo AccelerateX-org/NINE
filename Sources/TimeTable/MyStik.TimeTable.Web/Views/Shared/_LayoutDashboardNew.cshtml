@@ -10,9 +10,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>nine | @ViewBag.Title</title>
-    <link rel="stylesheet" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Assets/libs/fontawesome/css/all.min.css")" />
-    <link rel="stylesheet" href="@Url.Content("~/Assets/areas/admin/styles.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/jquery/jquery-ui.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/bootstrap-icons.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/fontawesome/css/all.min.css")" />
+    @*
+        <link rel="stylesheet" href="@Url.Content("~/Assets/areas/admin/styles.css")" />
+    *@
     @RenderSection("styles", required: false)
     <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/fillter/img/favicon.ico")" />
 
@@ -41,39 +45,38 @@
         var user = userService.GetUser(User.Identity.GetUserId());
     }
 
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
-        @*
-            <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
-                <i class="fas fa-home fa-2x"></i>
-            </a>
-        *@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: #3c4146;">
+    <div class="container-fluid">
+        <a class="navbar-brand nav-link text-center" href="@Url.Action("Index", "Home")">
+            <i class="fas fa-home fa-2x"></i>
+        </a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
                 {
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />@Resources.NavMainBlackBoard</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br/>@Resources.NavMainBlackBoard</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br />@Resources.NavMainMyStudies</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Studies")"><i class="fas fa-user-graduate fa-fw"></i><br/>@Resources.NavMainMyStudies</a>
                     </li>
 
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br />@Resources.NavMainMyTeaching</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Teaching")"><i class="fas fa-chalkboard-teacher fa-fw"></i><br/>@Resources.NavMainMyTeaching</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />@Resources.NavMainMyResearch</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br/>@Resources.NavMainMyResearch</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br />@Resources.NavMainMyUniversity</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br/>@Resources.NavMainMyUniversity</a>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center " href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />@Resources.NavMainMyAdministration</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br/>@Resources.NavMainMyAdministration</a>
                     </li>
                 }
             </ul>
@@ -96,14 +99,15 @@
                 @if (Request.IsAuthenticated)
                 {
                     <li class="nav-item active dropdown">
-                        <a class="nav-link dropdown-toggle text-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-user-circle fa-fw"></i><br />@user.FullName
+                        <a class="nav-link dropdown-toggle text-center text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-fw"></i><br/>@user.FullName
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="@Url.Action("SendMeANotofication", "Notification")"><i class="fas fa-envelope fa-fw"></i> Send me a notification</a></li>
                             <li><a class="dropdown-item" href="@Url.Action("Index", "UserProfile")"><i class="fas fa-cogs fa-fw"></i> @Resources.MySettings</a></li>
                             <li><a class="dropdown-item" href="@Url.Action("Index", "Manage")"><i class="fas fa-user-secret fa-fw"></i> @Resources.MyUserProfile</a></li>
-                            <li><div class="dropdown-divider"></div></li>
+                            <li>
+                                <div class="dropdown-divider"></div></li>
                             <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><i class="fas fa-power-off fa-fw"></i> @Resources.LogOut</a></li>
                         </ul>
                     </li>
@@ -116,11 +120,12 @@
                 }
             </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     @RenderSection("menue2nd", required: false)
 
-    <div class="container-fluid" style="margin-top: 20px">
+    <div class="container-fluid" style="margin-top:100px">
         @RenderBody()
     </div>
 
@@ -132,10 +137,10 @@
             <a class="p-2" href="@Url.Action("Imprint", "Home")">@Resources.ImprintLink</a>
 
             <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "de"})">
-                <img src="~/Assets/global/img/flags/de.png" />
+                <img src="~/Assets/img/flags/de.png" />
             </a>
             <a class="p-2" href="@Url.Action("SetCulture", "Home", new {culture = "en"})">
-                <img src="~/Assets/global/img/flags/gb.png" />
+                <img src="~/Assets/img/flags/gb.png" />
             </a>
         </div>
     </div>
@@ -148,10 +153,11 @@
 
 
 
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/jquery/jquery.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/jquery/jquery-ui.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/popper/umd/popper.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.min.js")"></script>
 
-    <script src="@Url.Content("~/Assets/libs/jquery/jquery.min.js")"></script>
-    <script src="@Url.Content("~/Assets/libs/popper/umd/popper.min.js")"></script>
-    <script src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.min.js")"></script>
     @RenderSection("scripts", required: false)
 
     <script type="text/javascript">

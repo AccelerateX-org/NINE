@@ -1,16 +1,15 @@
 ﻿
 @{
-    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Erster Besuch";
 }
 
-<div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
+<div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 80px">
     <div class="col-md-12">
         <h4 class="text-center">Informationen für...</h4>
     </div>
 </div>
 
-<div class="row justify-content-md-center" style="margin-bottom: 20px">
+<div class="row justify-content-md-center" style="margin-bottom: 80px">
     <div class="col-sm-6 col-md-4">
         <div class="card border-secondary">
             <div class="card-body">
@@ -18,9 +17,13 @@
                     <i class="fas fa-2x fa-user-astronaut"></i><br />
                     Studieninteressierte
                 </h5>
-                <a href="@Url.Action("Index", "Assessment")" class="btn btn-outline-primary btn-block">
-                    An Aufnahmeverfahren teilnehmen
-                </a>
+                <div class="d-grid gap-2">
+
+                    <a href="@Url.Action("Index", "Assessment")" class="btn btn-outline-primary">
+                        An Aufnahmeverfahren teilnehmen
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
@@ -31,9 +34,13 @@
                     <i class="fas fa-2x fa-user-graduate"></i><br />
                     Studierende
                 </h5>
-                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-primary btn-block">
-                    Studiengang festlegen
-                </a>
+                <div class="d-grid gap-2">
+
+                    <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-primary">
+                        Studiengang festlegen
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
@@ -44,9 +51,13 @@
                     <i class="fas fa-2x fa-chalkboard-teacher"></i><br />
                     Lehrende
                 </h5>
-                <a href="@Url.Action("Apply", "Teaching")" class="btn btn-outline-primary btn-block">
-                    Bei Fakultät melden
-                </a>
+                <div class="d-grid gap-2">
+
+                    <a href="@Url.Action("Apply", "Teaching")" class="btn btn-outline-primary">
+                        Bei Fakultät melden
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>

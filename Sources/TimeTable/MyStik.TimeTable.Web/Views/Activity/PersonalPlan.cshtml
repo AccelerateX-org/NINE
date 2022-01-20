@@ -6,8 +6,7 @@
 
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
-
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
 <div class="container-fluid">
@@ -40,9 +39,8 @@
 
 @section scripts
 {
-    <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
     <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script type="text/javascript">
@@ -55,8 +53,25 @@
         function showDayCalendar() {
             $('#loading').show();
 
-            initDayCalendar("calendar");
+            var myCalendar = initDayCalendar("calendar");
 
+            myCalendar.addEventSource(
+                {
+                    url: '@Url.Action("ActivityPlan", "Calendar")',
+                    method: 'POST',
+                    extraParams: {
+                    },
+                    success: function (data, success, xhr) {
+                        $('#loading').hide();
+                    },
+                    failure: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                }
+            );
+
+            @*
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
@@ -71,6 +86,8 @@
                         $('#loading').hide();
                     }
                 });
+            *@
+
         }
 
 

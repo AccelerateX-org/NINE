@@ -6,8 +6,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -47,52 +46,52 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach (var room in Model)
-                    {
+                        @foreach (var room in Model)
+                        {
 
-                        var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);
+                            var assignment = room.Assignments.FirstOrDefault(x => x.Organiser.Id == ViewBag.Organiser.Id);
 
 
 
-                        <tr>
-                            <td>
-                                <a href="@Url.Action("Details", "Room", new {id = room.Id})">@room.Number</a>
-                            </td>
-                            <td>@room.Name</td>
-                            <td>@room.Description</td>
-                            <td>@room.Capacity</td>
-                            <td>@room.Dates.Count</td>
-                            <td>
-                                @if (room.IsForLearning)
-                                {
-                                    <i class="fa fa-check text-success"></i>
-                                }
-                                else
-                                {
-                                    <i class="fa fa-times text-danger"></i>
-                                }
-                            </td>
-                            <td>
-                                @if (room.HasAccessControl)
-                                {
-                                    <i class="fa fa-check text-success"></i>
-                                }
-                            </td>
-                            <td>
-                                @if (room.Assignments.Any())
-                                {
-                                    foreach (var roomAssignment in room.Assignments.OrderBy(x => x.Organiser.ShortName))
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("Details", "Room", new {id = room.Id})">@room.Number</a>
+                                </td>
+                                <td>@room.Name</td>
+                                <td>@room.Description</td>
+                                <td>@room.Capacity</td>
+                                <td>@room.Dates.Count</td>
+                                <td>
+                                    @if (room.IsForLearning)
                                     {
-                                        @(roomAssignment.InternalNeedConfirmation ? Html.FacultyLabel(roomAssignment.Organiser, "fa-lock") : Html.FacultyLabel(roomAssignment.Organiser, "fa-unlock"))
+                                        <i class="fa fa-check text-success"></i>
                                     }
-                                }
-                                else
-                                {
-                                    <div>keine Zuordnung</div>
-                                }
-                            </td>
-                        </tr>
-                    }
+                                    else
+                                    {
+                                        <i class="fa fa-times text-danger"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if (room.HasAccessControl)
+                                    {
+                                        <i class="fa fa-check text-success"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if (room.Assignments.Any())
+                                    {
+                                        foreach (var roomAssignment in room.Assignments.OrderBy(x => x.Organiser.ShortName))
+                                        {
+                                            @(roomAssignment.InternalNeedConfirmation ? Html.FacultyLabel(roomAssignment.Organiser, "fa-lock") : Html.FacultyLabel(roomAssignment.Organiser, "fa-unlock"))
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>keine Zuordnung</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -103,9 +102,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

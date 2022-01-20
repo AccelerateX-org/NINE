@@ -491,16 +491,15 @@ namespace MyStik.TimeTable.Web.Controllers
                     var day = DateTime.Parse(elems[0]);
                     var begin = TimeSpan.Parse(elems[1]);
                     var end = TimeSpan.Parse(elems[2]);
-                    var isWdh = bool.Parse(elems[3]);
+                    var frequency = int.Parse(elems[4]);
 
 
                     ICollection<DateTime> dayList;
                     // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
                     // sonst nimm nur den Einzeltag
-                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
+                    if (frequency > 0 && !string.IsNullOrEmpty(elems[3]))
                     {
-                        var lastDay = DateTime.Parse(elems[4]);
-                        var frequency = int.Parse(elems[5]);
+                        var lastDay = DateTime.Parse(elems[3]);
                         dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
                     else

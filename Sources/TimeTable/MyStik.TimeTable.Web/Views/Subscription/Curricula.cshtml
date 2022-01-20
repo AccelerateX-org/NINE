@@ -1,122 +1,185 @@
-﻿@model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
+﻿@using Org.BouncyCastle.Asn1
+@model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
 @{
     ViewBag.Title = "Studiengänge";
+    var allStudents = Model.OrderBy(x => x.Student.FirstSemester.StartCourses).ToList();
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-graduation-cap"></i> Meine Studiengänge</h4>
-                </div>
-                
-                <div class="alert alert-info">
-                    <h4>Hinweise:</h4>
-                    <p>Die Angabe des Studiengangs hat im Wesentlichen organisatorische Gründe, z.B. für</p>
-                    <ul>
-                        <li>den zielgerichteten Versand von E-Mails</li>
-                        <li>die Aufteilung, den Zugang zu platzbeschränkten Lehveranstaltungen (Labore, Wahlkurse)</li>
-                    </ul>
-                    <h1>Die Angabe hier ist kein Ersatz für eine Immatrikulation. Bitte erst einen Studiengang wählen, wenn eine gültige Immatrikulation und/oder Zusage eines Studienplatzes vorliegt.</h1>
-                </div>
-
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <a href="@Url.Action("StartCurriculum")" class="btn btn-danger">Neuen Studiengang beginnen</a>
-                    </div>
-                    @foreach (var student in Model.OrderByDescending(x => x.Student.FirstSemester.StartCourses))
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Mein virtuelles Studienbuch</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var student in allStudents)
                     {
-                        if (student.Student.LastSemester == null)
+                        var isActive = student.Student.LastSemester == null;
+                        var cardBordeer = "";
+                        var cardText = "text-muted";
+                        if (isActive)
                         {
-                            <div class="list-group-item">
-                                <h5 class="list-group-item-heading">
-                                    seit @student.Student.FirstSemester.Name: @student.Student.Curriculum.Name
-                                </h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
-                                        <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
-                                        @if (!string.IsNullOrEmpty(student.Student.Number))
-                                        {
-                                            <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
-                                        }
-                                        else
-                                        {
-                                            <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
-                                        }
-                                        @if (student.Student.IsPartTime)
-                                        {
-                                            <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
-                                        }
-                                        @if (student.Student.IsDual)
-                                        {
-                                            <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
-                                        }
-                                    </ul>
-                                </div>
-                                <div>
-                                    <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-default">Matrikelnummer ändern</a>
-                                    <a href="@Url.Action("ChangeCurriculum", new {id = student.Student.Id})" class="btn btn-default">Studiengang ändern</a>
-                                </div>
-                            </div>
+                            cardBordeer = "border-primary";
+                            cardText = "";
                         }
-                        else
-                        {
-                            <div class="list-group-item">
-                                <h5 class="list-group-item-heading">
-                                    @student.Student.FirstSemester.Name bis @student.Student.LastSemester.Name: @student.Student.Curriculum.Name
-                                </h5>
-                                <div class="list-group-item-text">
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
-                                        <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
-                                        @if (!string.IsNullOrEmpty(student.Student.Number))
-                                        {
-                                            <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
-                                        }
-                                        else
-                                        {
-                                            <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
-                                        }
-                                        @if (student.Student.IsPartTime)
-                                        {
-                                            <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
-                                        }
-                                        @if (student.Student.IsDual)
-                                        {
-                                            <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
-                                        }
-                                        @if (student.Alumni != null)
-                                        {
-                                            <li><i class="fa fa-li fa-graduation-cap"></i>Bin Alumni dieses Studiengangs</li>
-                                        }
-                                        else
-                                        {
-                                            <li><i class="fa fa-li fa-graduation-cap"></i>Bin kein Alumni dieses Studiengangs</li>
-                                        }
-                                    </ul>
-                                </div>
-                                <div>
-                                    @if (student.Student.LastSemester != null)
+                        <div class="col">
+                            <div class="card @cardBordeer @cardText">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        @student.Student.Curriculum.Name
+                                    </h5>
+                                    @if (isActive)
+                                    {
+                                        <h6 class="card-subtitle">seit @student.Student.FirstSemester.Name</h6>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="card-subtitle">@student.Student.FirstSemester.Name bis @student.Student.LastSemester.Name</h6>
+
+                                    }
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <div><i class="fas fa-barcode"></i> Matrikelnummer:</div>
+                                        </div>
+                                        <div class="col-6"> @student.Student.Number</div>
+                                    </div>
+                                    @if (isActive)
+                                    {
+                                        <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-outline-primary">Matrikelnummer ändern</a>
+                                    }
+                                    else
                                     {
                                         if (student.Alumni == null)
                                         {
-                                            <a href="@Url.Action("Accept", "Alumni", new {id = student.Student.Id})" class="btn btn-default">Alumni werden</a>
+                                            <a href="@Url.Action("Accept", "Alumni", new {id = student.Student.Id})" class="btn btn-outline-primary">Alumni werden</a>
                                         }
                                         else
                                         {
-                                            <a href="@Url.Action("Deny", "Alumni", new {id = student.Alumni.Id})" class="btn btn-default">Alumni löschen</a>
+                                            <a href="@Url.Action("Deny", "Alumni", new {id = student.Alumni.Id})" class="btn btn-outline-primary">Alumni löschen</a>
                                         }
                                     }
                                 </div>
                             </div>
-                        }
+                        </div>
                     }
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body>">
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="@Url.Action("StartCurriculum")" class="btn btn-outline-primary">Neuen Studiengang beginnen</a>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mt-3">
+                                    Sollten die Angaben hier falsch sein, wenden Sie sich bitte an Ihre zuständige Studiengangsbetreuung, z.B. Sekretariat, Studiengangsassistenz in der jeweiligen Fakultät.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
+
+
+@*
+
+    <div class="list-group">
+        <div class="list-group-item">
+        </div>
+        @foreach (var student in Model.OrderByDescending(x => x.Student.FirstSemester.StartCourses))
+        {
+            if (student.Student.LastSemester == null)
+            {
+                <div class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        seit @student.Student.FirstSemester.Name: @student.Student.Curriculum.Name
+                    </h5>
+                    <div class="list-group-item-text">
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
+                            <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
+                            @if (!string.IsNullOrEmpty(student.Student.Number))
+                            {
+                                <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
+                            }
+                            else
+                            {
+                                <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                            }
+                            @if (student.Student.IsPartTime)
+                            {
+                                <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                            }
+                            @if (student.Student.IsDual)
+                            {
+                                <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                            }
+                        </ul>
+                    </div>
+                    <div>
+                        <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-default">Matrikelnummer ändern</a>
+                        <a href="@Url.Action("ChangeCurriculum", new {id = student.Student.Id})" class="btn btn-default">Studiengang ändern</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="list-group-item">
+                    <h5 class="list-group-item-heading">
+                        @student.Student.FirstSemester.Name bis @student.Student.LastSemester.Name: @student.Student.Curriculum.Name
+                    </h5>
+                    <div class="list-group-item-text">
+                        <ul class="fa-ul">
+                            <li><i class="fa fa-li fa-clock-o"></i>angelegt am: @student.Student.Created</li>
+                            <li><i class="fa fa-li fa-university"></i>@student.Student.Curriculum.Organiser.Name (@student.Student.Curriculum.Organiser.ShortName)</li>
+                            @if (!string.IsNullOrEmpty(student.Student.Number))
+                            {
+                                <li><i class="fa fa-li fa-barcode"></i>Matrikelnummer: @student.Student.Number</li>
+                            }
+                            else
+                            {
+                                <li><i class="fa fa-li fa-barcode"></i>keine Matrikelnummer angegeben</li>
+                            }
+                            @if (student.Student.IsPartTime)
+                            {
+                                <li><i class="fa fa-li fa-code-fork"></i>in Teilzeit</li>
+                            }
+                            @if (student.Student.IsDual)
+                            {
+                                <li><i class="fa fa-li fa-industry"></i>als duales Studium</li>
+                            }
+                            @if (student.Alumni != null)
+                            {
+                                <li><i class="fa fa-li fa-graduation-cap"></i>Bin Alumni dieses Studiengangs</li>
+                            }
+                            else
+                            {
+                                <li><i class="fa fa-li fa-graduation-cap"></i>Bin kein Alumni dieses Studiengangs</li>
+                            }
+                        </ul>
+                    </div>
+                    <div>
+                        @if (student.Student.LastSemester != null)
+                        {
+                            if (student.Alumni == null)
+                            {
+                                <a href="@Url.Action("Accept", "Alumni", new {id = student.Student.Id})" class="btn btn-default">Alumni werden</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Deny", "Alumni", new {id = student.Alumni.Id})" class="btn btn-default">Alumni löschen</a>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+*@

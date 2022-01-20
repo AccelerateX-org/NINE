@@ -7,44 +7,62 @@
 
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
-    <div class="container-fluid">
-        <div class="row" style="margin-top: 20px">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>
-                            @Html.FacultyLabel(Model.Lecturer.Organiser) @Model.Lecturer.FullName
-                            <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <div id="calendar"></div>
-                    </div>
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>
+                        @Html.FacultyLabel(Model.Lecturer.Organiser) @Model.Lecturer.FullName
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 
 
-        @section scripts
+@section scripts
 {
-            <script src="~/Assets/global/plugins/moment.min.js"></script>
-            <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-            <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
-            <script src="~/Assets/fillter/scripts/calendar.js"></script>
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
-            <script type="text/javascript">
+    <script type="text/javascript">
 
         $(document).ready(function () {
             $('#loading').hide();
 
-            initDayCalendar("calendar");
+            var myCalendar = initDayCalendar("calendar");
 
+            myCalendar.addEventSource(
+                {
+                    url: '@Url.Action("CourseEventsByLecturer", "Calendar")',
+                    method: 'POST',
+                    extraParams: {
+                        dozId: "@Model.Lecturer.Id",
+                        showPersonalDates: true
+                    },
+                    success: function (data, success, xhr) {
+                        $('#loading').hide();
+                    },
+                    failure: function (data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                }
+            );
+
+            @*
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
@@ -56,6 +74,8 @@
                         showPersonalDates: true
                     }
                 });
+                *@
+
                 });
 
         function onShowEventInfo(id) {
@@ -66,5 +86,5 @@
         }
 
 
-            </script>
-        }
+    </script>
+}

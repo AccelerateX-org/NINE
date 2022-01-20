@@ -10,9 +10,7 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -40,31 +38,31 @@
                     <tbody>
                         @foreach (var course in Model.Courses)
                         {
-                        <tr>
-                            <td>@course.Course.Owners.First().Member.FullName</td>
-                            <td>@course.Course.Dates.Count</td>
-                            @if (course.Course.Dates.Any())
-                            {
-                                <td>@course.Course.Dates.First().Begin.ToShortDateString()</td>
-                                <td>@course.Course.Dates.Last().Begin.ToShortDateString()</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                                <td></td>
-                            }
-                            <td>@Html.GroupListExtended(course.Course.SemesterGroups)</td>
-                            @if (string.IsNullOrEmpty(course.Course.Name))
-                            {
-                                <td><a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">[***Ohne Namen***]</a></td>
+                            <tr>
+                                <td>@course.Course.Owners.First().Member.FullName</td>
+                                <td>@course.Course.Dates.Count</td>
+                                @if (course.Course.Dates.Any())
+                                {
+                                    <td>@course.Course.Dates.First().Begin.ToShortDateString()</td>
+                                    <td>@course.Course.Dates.Last().Begin.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+                                <td>@Html.GroupListExtended(course.Course.SemesterGroups)</td>
+                                @if (string.IsNullOrEmpty(course.Course.Name))
+                                {
+                                    <td><a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">[***Ohne Namen***]</a></td>
 
-                            }
-                            else
-                            {
-                                <td><a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">@course.Course.Name</a></td>
-                            }
-                            <td>@course.Course.ShortName</td>
-                        </tr>
+                                }
+                                else
+                                {
+                                    <td><a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">@course.Course.Name</a></td>
+                                }
+                                <td>@course.Course.ShortName</td>
+                            </tr>
                         }
 
                     </tbody>
@@ -78,10 +76,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

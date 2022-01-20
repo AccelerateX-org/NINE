@@ -6,8 +6,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -27,77 +26,77 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <h4 class="panel-heading">
-                        Aktivität
+                    Aktivität
                 </h4>
                 <div class="panel-body">
                     <table id="tabMembers" class="table table-condensed table-striped">
                         <thead>
-                        <tr>
-                            <th><i class="fa fa-user"></i></th>
-                            <th>Name</th>
-                            <th>Kurzname</th>
-                            <th>Rolle</th>
-                            <th>@ViewBag.ThisSemester</th>
-                            <th>@ViewBag.LastSemester</th>
-                            <th>@ViewBag.LastYear</th>
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th><i class="fa fa-user"></i></th>
+                                <th>Name</th>
+                                <th>Kurzname</th>
+                                <th>Rolle</th>
+                                <th>@ViewBag.ThisSemester</th>
+                                <th>@ViewBag.LastSemester</th>
+                                <th>@ViewBag.LastYear</th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach (var item in Model.Members)
-                        {
-                            <tr>
-                                @if (!string.IsNullOrEmpty(item.Member.UserId))
-                                {
-                                    <td><i class="fa fa-user"></i></td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (string.IsNullOrEmpty(item.Member.Name))
-                                {
+                            @foreach (var item in Model.Members)
+                            {
+                                <tr>
+                                    @if (!string.IsNullOrEmpty(item.Member.UserId))
+                                    {
+                                        <td><i class="fa fa-user"></i></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (string.IsNullOrEmpty(item.Member.Name))
+                                    {
+                                        <td>
+                                            @Html.ActionLink("N.N.", "Member", "Organiser", new { id = item.Member.Id }, null)
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <a href="@Url.Action("Member", "Organiser", new {id = item.Member.Id})">@item.Member.Name</a>
+                                        </td>
+                                    }
+                                    <td>@item.Member.ShortName</td>
+                                    <td>@item.Member.Role</td>
+                                    @if (item.IsActive)
+                                    {
+                                        <td class="text-success"><strong>X</strong></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (item.WasActiveLastSemester)
+                                    {
+                                        <td class="text-success"><strong>X</strong></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (item.WasActiveLastYear)
+                                    {
+                                        <td class="text-success"><strong>X</strong></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
                                     <td>
-                                        @Html.ActionLink("N.N.", "Member", "Organiser", new {id = item.Member.Id}, null)
+                                        @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new { id = item.Member.Id }, new { @class = "btn btn-default btn-xs" })
                                     </td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        <a href="@Url.Action("Member", "Organiser", new {id = item.Member.Id})">@item.Member.Name</a>
-                                    </td>
-                                }
-                                <td>@item.Member.ShortName</td>
-                                <td>@item.Member.Role</td>
-                                @if (item.IsActive)
-                                {
-                                    <td class="text-success"><strong>X</strong></td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (item.WasActiveLastSemester)
-                                {
-                                    <td class="text-success"><strong>X</strong></td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (item.WasActiveLastYear)
-                                {
-                                    <td class="text-success"><strong>X</strong></td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                <td>
-                                    @Html.ActionButton("fa-trash-o text-danger", "Löschen", "DeleteMember", "Organiser", new { id = item.Member.Id }, new { @class = "btn btn-default btn-xs" })
-                                </td>
-                            </tr>
-                        }
+                                </tr>
+                            }
 
                         </tbody>
 
@@ -111,9 +110,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

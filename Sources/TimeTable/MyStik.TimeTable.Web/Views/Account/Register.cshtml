@@ -1,17 +1,16 @@
 ﻿@model MyStik.TimeTable.Web.Models.RegisterViewModel
 @{
-    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
     ViewBag.Title = Resources.RegisterTabHeading;
 }
 
-<div class="container" style="margin-top: 20px">
-    <div class="row">
-        <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"> @Resources.RegisterHeading </h4>
+<div class="container" style="margin-top: 80px">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4> @Resources.RegisterHeading </h4>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="alert alert-info ">
                         <strong>Wichtige Information für Studierende:</strong>
                         <ul>
@@ -29,49 +28,43 @@
                     {
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, Resources.RegisterValidationSummaryMessage, new { @class = "alert alert-danger" })
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = Resources.RegisterEmailPlaceholder })
-                            </div>
-                            @Html.ValidationMessageFor(m => m.Email)
+
+                        <div class="input-group mb-1">
+                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-envelope fa-fw"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = Resources.RegisterEmailPlaceholder })
                         </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Resources.RegisterPasswordPlaceholder })
-                            </div>
+
+                        <div class="input-group mb-1">
+                            <span class="input-group-text" id="basic-addon2"><i class="fas fa-key fa-fw"></i></span>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Resources.RegisterPasswordPlaceholder })
                             @Html.ValidationMessageFor(m => m.Password)
                         </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = Resources.RegisterPasswordAgainPlaceholder })
-                            </div>
+
+                        <div class="input-group mb-1">
+                            <span class="input-group-text" id="basic-addon3"><i class="fas fa-key fa-fw"></i></span>
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = Resources.RegisterPasswordAgainPlaceholder })
                             @Html.ValidationMessageFor(m => m.ConfirmPassword)
                         </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-fw"></i></span>
-                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder })
-                            </div>
+
+                        <div class="input-group mb-1">
+                            <span class="input-group-text" id="basic-addon4"><i class="fas fa-user fa-fw"></i></span>
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder })
                             @Html.ValidationMessageFor(m => m.FirstName)
                         </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-fw"></i></span>
-                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = Resources.RegisterLastNamePlaceholder })
-                            </div>
+
+                        <div class="input-group mb-1">
+                            <span class="input-group-text" id="basic-addon4"><i class="fas fa-user fa-fw"></i></span>
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = Resources.RegisterLastNamePlaceholder })
                             @Html.ValidationMessageFor(m => m.LastName)
                         </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required><label for="DatenschutzGelesen">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
-                            </div>
-                            @Html.ValidationMessageFor(m => m.DatenschutzGelesen)
+
+                        <div class="form-check">
+                            <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required>
+                            <label for="DatenschutzGelesen" class="form-check-label">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-block">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-outline-primary">
                                 @Resources.RegisterSubmitButton
                             </button>
                         </div>

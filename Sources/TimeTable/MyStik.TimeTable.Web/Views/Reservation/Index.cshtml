@@ -7,102 +7,86 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-rooms">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Raumreservierungen @Model.Organiser.ShortName</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Raumreservierungen (@Model.Organiser.ShortName)</h4>
-                </div>
-                <div class="panel-body">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Raumreservierungen (@Model.Organiser.ShortName)</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-default"><i class="fa fa-arrow-left"></i> zurück</a>
-                    </div>
-
-                    @if (ViewBag.UserRight.IsRoomAdmin)
-                    {
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("CreateReservation")" class="btn btn-primary"><i class="fa fa-plus"></i> Neue Reservierung anlegen</a>
-                        </div>
-                    }
-                    <table id="tabReservation" class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th>Titel</th>
-                            <th>Beschreibung</th>
-                            <th>Angelegt von</th>
-                            <th>Angelegt für</th>
-                            <th>Erster Termin</th>
-                            <th>Letzter Termin</th>
-                            <th>Räume</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var res in Model.Reservations)
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> zurück</a>
+                        @if (ViewBag.UserRight.IsRoomAdmin)
                         {
-                            var rName = string.IsNullOrEmpty(res.Reservation.Name) ? "(ohne Bezeichnung)" : res.Reservation.Name;
-                            <tr>
-                                <td><a href="@Url.Action("Details", new {id = res.Reservation.Id})">@rName</a></td>
-                                <td>@Html.Raw(res.Reservation.Description)</td>
-                                @if (res.Owner != null)
-                                {
-                                    <td>@res.Owner.FirstName @res.Owner.LastName</td>
-                                }
-                                else
-                                {
-                                    <td>unbekannt</td>
-                                }
-                                <td>@Html.LecturerList(res.Hosts)</td>
-                                @if (res.FirstDate != null)
-                                {
-                                    <td>@Html.TimeSpanWithDate(res.FirstDate)</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (res.LastDate != null)
-                                {
-                                    <td>@Html.TimeSpanWithDate(res.LastDate)</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                <td>@Html.RoomList(res.Rooms)</td>
-                            </tr>
+                            <a href="@Url.Action("CreateReservation")" class="btn btn-outline-primary"><i class="fas fa-plus"></i> Neue Reservierung anlegen</a>
                         }
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
             </div>
+
+            <table id="tabReservation" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Angelegt von</th>
+                    <th>Angelegt für</th>
+                    <th>Erster Termin</th>
+                    <th>Letzter Termin</th>
+                    <th>Räume</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var res in Model.Reservations)
+                {
+                    var rName = string.IsNullOrEmpty(res.Reservation.Name) ? "(ohne Bezeichnung)" : res.Reservation.Name;
+                    <tr>
+                        <td><a href="@Url.Action("Details", new {id = res.Reservation.Id})">@rName</a></td>
+                        <td>@Html.Raw(res.Reservation.Description)</td>
+                        @if (res.Owner != null)
+                        {
+                            <td>@res.Owner.FirstName @res.Owner.LastName</td>
+                        }
+                        else
+                        {
+                            <td>unbekannt</td>
+                        }
+                        <td>@Html.LecturerList(res.Hosts)</td>
+                        @if (res.FirstDate != null)
+                        {
+                            <td>@Html.TimeSpanWithDate(res.FirstDate)</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        @if (res.LastDate != null)
+                        {
+                            <td>@Html.TimeSpanWithDate(res.LastDate)</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>@Html.RoomList(res.Rooms)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

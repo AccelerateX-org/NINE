@@ -7,8 +7,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -33,50 +32,50 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach (var thesis in Model)
-                    {
+                        @foreach (var thesis in Model)
+                        {
 
-                        <tr id="@thesis.Internship.Id">
-                            <td></td>
-                            @if (thesis.User != null)
-                            {
-                                <td>@thesis.User.LastName</td>
-                                <td>@thesis.User.FirstName</td>
-                            }
-                            else
-                            {
-                                <td>kein Benutzerkonto</td>
+                            <tr id="@thesis.Internship.Id">
                                 <td></td>
-                            }
-                            <td>@thesis.Student.Number</td>
-                            <td>@thesis.Student.Curriculum.ShortName</td>
-                            @if (thesis.Internship.PlannedBegin.HasValue)
-                            {
-                                <td>@thesis.Internship.PlannedBegin.Value.ToShortDateString()</td>
-                            }
-                            else
-                            {
-                                <td><i class="fa fa-times text-danger"></i></td>
-                            }
-                            @if (thesis.Internship.PlannedEnd.HasValue)
-                            {
-                                <td>@thesis.Internship.PlannedEnd.Value.ToShortDateString()</td>
-                            }
-                            else
-                            {
-                                <td><i class="fa fa-times text-danger"></i></td>
-                            }
-                            @if (thesis.Internship.Advisors.Any())
-                            {
-                                var advisor = thesis.Internship.Advisors.First();
-                                <td>@advisor.CorporateName</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                        </tr>
-                    }
+                                @if (thesis.User != null)
+                                {
+                                    <td>@thesis.User.LastName</td>
+                                    <td>@thesis.User.FirstName</td>
+                                }
+                                else
+                                {
+                                    <td>kein Benutzerkonto</td>
+                                    <td></td>
+                                }
+                                <td>@thesis.Student.Number</td>
+                                <td>@thesis.Student.Curriculum.ShortName</td>
+                                @if (thesis.Internship.PlannedBegin.HasValue)
+                                {
+                                    <td>@thesis.Internship.PlannedBegin.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-times text-danger"></i></td>
+                                }
+                                @if (thesis.Internship.PlannedEnd.HasValue)
+                                {
+                                    <td>@thesis.Internship.PlannedEnd.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-times text-danger"></i></td>
+                                }
+                                @if (thesis.Internship.Advisors.Any())
+                                {
+                                    var advisor = thesis.Internship.Advisors.First();
+                                    <td>@advisor.CorporateName</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -90,10 +89,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/sorting/date-de.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function() {

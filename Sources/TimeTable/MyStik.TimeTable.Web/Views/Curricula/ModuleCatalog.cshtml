@@ -5,8 +5,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -69,58 +68,57 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var module in Model.Modules)
-                                {
+                                    @foreach (var module in Model.Modules)
+                                    {
 
-                                    <tr>
+                                        <tr>
 
-                                        <td><a href="@Url.Action("ModuleDetails", new {id = module.Id})">@module.Name</a></td>
-                                        <td>@module.ShortName</td>
-                                        <td>@foreach (var group2 in module.Groups)
-                                            {
-                                                @group2.Name
-                                                if (group2 != module.Groups.Last())
+                                            <td><a href="@Url.Action("ModuleDetails", new {id = module.Id})">@module.Name</a></td>
+                                            <td>@module.ShortName</td>
+                                            <td>
+                                                @foreach (var group2 in module.Groups)
                                                 {
-                                                    @Html.Raw(", ")
-                                                    ;
+                                                    @group2.Name
+                                                    if (group2 != module.Groups.Last())
+                                                    {
+                                                        @Html.Raw(", ")
+                                                        ;
+                                                    }
                                                 }
-                                            }
-                                        </td>
-                                        <td>
-                                            @foreach (var lv in module.ModuleCourses)
-                                            {
-                                                @lv.ExternalId
-                                                if (lv != module.ModuleCourses.Last())
+                                            </td>
+                                            <td>
+                                                @foreach (var lv in module.ModuleCourses)
                                                 {
-                                                    @Html.Raw(", ")
-                                                    ;
+                                                    @lv.ExternalId
+                                                    if (lv != module.ModuleCourses.Last())
+                                                    {
+                                                        @Html.Raw(", ")
+                                                        ;
+                                                    }
                                                 }
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (ViewBag.HasEditRights)
-                                            {
+                                            </td>
+                                            <td>
+                                                @if (ViewBag.HasEditRights)
+                                                {
 
-                                            }
-                                        </td>
-                                    </tr>
-                                }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
     </div>
+</div>
 
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

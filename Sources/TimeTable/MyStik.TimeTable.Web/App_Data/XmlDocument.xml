@@ -5399,7 +5399,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CoursesController.CreateSemester">
+        <member name="M:MyStik.TimeTable.Web.Controllers.CoursesController.CreateSemester(System.Nullable{System.Guid})">
             <summary>
             
             </summary>
@@ -12022,11 +12022,6 @@
         <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.htmlToolbarInfo">
             <summary>
             
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.CalendarEventModel.htmlContent">
-            <summary>
-            Inhalt
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Models.CalenderDateEventViewModel">

@@ -5,8 +5,7 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
 
 
@@ -24,23 +23,23 @@
 
 @if (ViewBag.UserRight.IsEventAdmin)
 {
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
+    <div class="panel panel-default panel-menu">
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-inline">
                             <div class="form-group">
                                 <a href="@Url.Action("CreateEvent", "Event")" class="btn btn-default">
                                     <i class="fa fa-plus"></i> Veranstaltung anlegen
                                 </a>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 }
 
 
@@ -60,11 +59,11 @@
                 <div class="portlet-body">
                     <table id="tabEvents" class="table table-striped table-bordered table-condensed">
                         <thead>
-                        <tr>
-                            <th>Nächster Termin</th>
-                            <th>@Resources.Description</th>
-                            <th>@Resources.VisibleForString</th>
-                        </tr>
+                            <tr>
+                                <th>Nächster Termin</th>
+                                <th>@Resources.Description</th>
+                                <th>@Resources.VisibleForString</th>
+                            </tr>
                         </thead>
                         <tbody>
                             @foreach (var c in Model.Events)
@@ -81,7 +80,7 @@
                                         <td></td>
                                     }
                                     <td>
-                                        @Html.ActionLink(c.Event.Name + " (" + c.Event.ShortName + ")", "Details", "Event", new {id = c.Event.Id}, null)
+                                        @Html.ActionLink(c.Event.Name + " (" + c.Event.ShortName + ")", "Details", "Event", new { id = c.Event.Id }, null)
                                     </td>
                                     <td>
                                         @if (c.Event.SemesterGroups.Count > 3)
@@ -93,7 +92,7 @@
                                                 if (group.CurriculumGroup != null)
                                                 {
                                                     var label = group.FullName;
-                                                    @Html.ActionLink(label, "Group", "Semester", new {id = group.Id}, null)
+                                                    @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
                                                     if (group != groups.Last())
                                                     {
                                                         @Html.Raw(", ")
@@ -110,7 +109,7 @@
                                                 if (group.CurriculumGroup != null)
                                                 {
                                                     var label = group.FullName;
-                                                    @Html.ActionLink(label, "Group", "Semester", new {id = group.Id}, null)
+                                                    @Html.ActionLink(label, "Group", "Semester", new { id = group.Id }, null)
                                                     if (group != c.Event.SemesterGroups.Last())
                                                     {
                                                         @Html.Raw(", ")
@@ -131,9 +130,7 @@
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/global/scripts/datatable.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {

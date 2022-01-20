@@ -11,6 +11,11 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CalendarEventModel
     {
+        public CalendarEventModel()
+        {
+//            extendendProps = new CalendarEventPropModel();
+        }
+
         /// <summary>
         /// Uniquely identifies the given event. Different instances of repeating events should all have the same id.
         /// </summary>
@@ -88,12 +93,19 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public string htmlToolbarInfo { get; set; }
 
-        /// <summary>
-        /// Inhalt
-        /// </summary>
+
         public string htmlContent { get; set; }
 
         public string courseId { get; set; }
+
+
+//        public CalendarEventPropModel extendendProps { get; set; }
+        
+    }
+
+    public class CalendarEventPropModel
+    {
+
     }
 
     /// <summary>

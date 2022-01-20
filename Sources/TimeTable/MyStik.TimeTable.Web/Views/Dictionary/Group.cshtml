@@ -4,83 +4,84 @@
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
     {
-        Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
         containerType = "container";
     }
 
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
-<div class="@containerType">
-
-    <div class="row" style="margin-top: 20px">
-        <div id="panelCalendar" class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-book"></i>
-                        <a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a> /
-                        <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
-                        <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
-                        <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /
-                        @Model.CapacityGroup.FullName
-                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h4>
+<div class="row">
+    <div id="panelCalendar" class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a> /
+                    <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
+                    <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
+                    <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /
+                    @Model.CapacityGroup.FullName
+                    <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                </h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a id="btnWeek" href="javascript:showWeekCalendar()" class="btn btn-default active"><i class="fas fa-calendar"></i> Wochenkalender</a>
+                        <a id="btnDay" href="javascript:showDayCalendar()" class="btn btn-default"><i class="fas fa-calendar"></i> Tageskalender</a>
+                        <a id="btnList" href="javascript:showList()" class="btn btn-default"><i class="fas fa-list"></i> Liste</a>
+                    </div>
+                    <div id="btnShowPersonalDates" class="btn-group" role="group">
+                        <a href="javascript:showPersonalDates()" class="btn btn-default"><i class="fa fa-pencil"></i> Persönliche Termine einblenden</a>
+                    </div>
+                    <div id="btnHidePersonalDates" class="btn-group" role="group">
+                        <a href="javascript:hidePersonalDates()" class="btn btn-default"><i class="fa fa-pencil"></i> Persönliche Termine ausblenden</a>
+                        <div class="btn btn-success"><i class="fa fa-group"></i> Teilnehmer</div>
+                        <div class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Warteliste</div>
+                    </div>
                 </div>
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <div class="btn-group" role="group">
-                            <a id="btnWeek" href="javascript:showWeekCalendar()" class="btn btn-default active"><i class="fa fa-calendar-o"></i> Wochenkalender</a>
-                            <a id="btnDay" href="javascript:showDayCalendar()" class="btn btn-default"><i class="fa fa-calendar"></i> Tageskalender</a>
-                            <a id="btnList" href="javascript:showList()" class="btn btn-default"><i class="fa fa-list"></i> Liste</a>
-                        </div>
-                        <div id="btnShowPersonalDates" class="btn-group" role="group">
-                            <a href="javascript:showPersonalDates()"  class="btn btn-default"><i class="fa fa-pencil"></i> Persönliche Termine einblenden</a>
-                        </div>
-                        <div id="btnHidePersonalDates" class="btn-group" role="group" hidden="">
-                            <a href="javascript:hidePersonalDates()" class="btn btn-default"><i class="fa fa-pencil"></i> Persönliche Termine ausblenden</a>
-                            <div class="btn btn-success"><i class="fa fa-group"></i> Teilnehmer</div>
-                            <div class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Warteliste</div>
-                        </div>
-                    </div>
-                    <div class="list-group-item">
-                        <div id="calendar"></div>
-                    </div>
+                <div class="list-group-item">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
-        <div id="panelDetails" class="col-md-4" hidden>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
-                </div>
+    </div>
+    <div id="panelDetails" class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>Lade Details <span id="loading2"><i class="fas fa-spinner fa-spin text-muted"></i></span></h4>
             </div>
         </div>
     </div>
 </div>
 
 
+
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
 
 @section scripts
 {
-        <script src="~/Assets/global/plugins/moment.min.js"></script>
-        <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-        <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+<!--
+<script src="~/Assets/global/plugins/moment.min.js"></script>
+    -->
+        <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+        <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
         <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script>
 
         var myId;
         var showPDs = false;
+        var myCalendar = null;
 
         $(document).ready(function() {
             $("#btnHidePersonalDates").hide();
             showWeekCalendar();
+            onCloseDetails();
         });
 
         function showPersonalDates() {
@@ -105,25 +106,30 @@
             $('#loading').show();
             var group = '@Model.SemesterGroup.Id';
             $('#calendar').html('');
-            initWeekCalendar("calendar");
+            myCalendar = initWeekCalendar("calendar");
 
-            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupWeekPlan", "Calendar")');
-            $('#calendar').fullCalendar('addEventSource',
+
+            @*
+                $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupWeekPlan", "Calendar")');
+                *@
+
+            myCalendar.addEventSource(
                 {
                     url: '@Url.Action("GroupWeekPlan", "Calendar")',
-                    type: 'POST',
-                    data: {
+                    method: 'POST',
+                    extraParams: {
                         semGroupId: group,
                         showPersonalDates: showPDs
                     },
                     success: function (data, success, xhr) {
                         $('#loading').hide();
                     },
-                    error: function (data, type, ex) {
+                    failure: function (data, type, ex) {
                         alert("Fehler beim laden der Daten." + ex);
                         $('#loading').hide();
                     }
-                });
+                }
+                );
 
         }
 
@@ -136,14 +142,17 @@
             $('#loading').show();
             var group = '@Model.SemesterGroup.Id';
             $('#calendar').html('');
-            initDayCalendar("calendar");
+            myCalendar = initDayCalendar("calendar");
 
+            @*
             $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupDayPlan", "Calendar")');
-            $('#calendar').fullCalendar('addEventSource',
+                *@
+
+            myCalendar.addEventSource(
                 {
                     url: '@Url.Action("GroupDayPlan", "Calendar")',
-                    type: 'POST',
-                    data: {
+                    method: 'POST',
+                    extraParams: {
                         semGroupId: group,
                         topicId: null,
                         showPersonalDates: showPDs
@@ -151,11 +160,12 @@
                     success: function (data, success, xhr) {
                         $('#loading').hide();
                     },
-                    error: function (data, type, ex) {
+                    failure: function (data, type, ex) {
                         alert("Fehler beim laden der Daten." + ex);
                         $('#loading').hide();
                     }
-                });
+                }
+            );
         }
 
 
@@ -189,10 +199,13 @@
 
 
         function onShowEventInfo(id) {
+
             $('#panelCalendar').removeClass('col-md-12');
             $('#panelCalendar').addClass('col-md-8');
-            $("#panelDetails").html('<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>');
+            $("#panelDetails").html('<div class="card"><div class="card-header"><h4>Lade Details <span id="loading2"><i class="fas fa-spinner fa-spin text-muted"></i></span></h4></div></div>');
             $('#panelDetails').show();
+            myCalendar.updateSize();
+
             myId = id;
 
             $.ajax(
@@ -202,7 +215,8 @@
                     data: {
                         Id: id
                     },
-                    success: function(data, success, xhr) {
+                    success: function (data, success, xhr) {
+                        console.log(data);
                         $("#panelDetails").html(data);
                     }
                 });
@@ -214,6 +228,8 @@
             $('#panelCalendar').addClass('col-md-12');
             $('#panelDetails').html('');
             $('#panelDetails').hide();
+            myCalendar.updateSize();
+
 
             // update nur, wenn auch gebucht wurde
             //showCalendar();

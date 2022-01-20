@@ -145,7 +145,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         [Required]
         [StringLength(100, ErrorMessageResourceType=typeof(Resources),
-                           ErrorMessageResourceName = "RegisterPasswordLengthErrorMessage", MinimumLength = 6)]
+                           ErrorMessageResourceName = "RegisterPasswordLengthErrorMessage", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "Password", ResourceType =typeof(Resources))]
         public string Password { get; set; }

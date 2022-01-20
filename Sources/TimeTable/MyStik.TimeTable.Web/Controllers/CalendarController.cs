@@ -1391,10 +1391,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     var calBegin = calDay.Add(day.Begin);
                     var calEnd = calDay.Add(day.End);
 
-                    events.Add(new CalendarEventModel
+
+                    var calEvent = new CalendarEventModel
                     {
                         id = course.Id.ToString(),
-                        courseId = course.Id.ToString(),
                         title = string.Empty,
                         allDay = false,
                         start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
@@ -1402,8 +1402,12 @@ namespace MyStik.TimeTable.Web.Controllers
                         textColor = "#000",
                         backgroundColor = bckColor,
                         borderColor = "#000",
-                        htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel),
-                    });
+                        courseId = course.Id.ToString(),
+                        htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel)
+                    };
+
+
+                    events.Add(calEvent);
                 }
             }
 

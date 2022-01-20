@@ -1,25 +1,26 @@
 ﻿
 @{
+    /**/
+
     ViewBag.Title = "PersonalSchedule";
 }
 
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
 
 <h2>Vorlesungsplan (@ViewBag.Name) - Semester @ViewBag.Semester.Name</h2>
 
-        <div id="calendar">
-        </div>
+<div id="calendar">
+</div>
 
 
 @section scripts
 {
-    <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
     <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script type="text/javascript">

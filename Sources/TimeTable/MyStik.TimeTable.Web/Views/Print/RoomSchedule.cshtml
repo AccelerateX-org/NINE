@@ -32,8 +32,8 @@
 
 @section styles
 {
-    <link href="~/Assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
-    
+    <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
+
     <style>
         .table-condensed-print > thead > tr > th,
         .table-condensed-print > tbody > tr > th,
@@ -43,7 +43,6 @@
         .table-condensed-print > tfoot > tr > td {
             padding: 2px;
         }
-
     </style>
 }
 
@@ -53,7 +52,7 @@
         <h6>Stand: @now.ToString("dd.MM.yyyy HH:mm:ss")</h6>
     </div>
     <div class="col-sm-6">
-        <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 60px; width: auto"/></span>
+        <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 60px; width: auto" /></span>
     </div>
 </div>
 
@@ -71,21 +70,21 @@
 
         <table class="table table-condensed-print table-striped" style="font-family: arial; font-size: @dateListFontSize">
             <tbody>
-            @foreach (var date in Model.SingleDates.OrderBy(x => x.Begin))
-            {
-                if (date.Begin.DayOfWeek != DayOfWeek.Saturday && date.Begin.DayOfWeek != DayOfWeek.Sunday && date.Begin > now)
+                @foreach (var date in Model.SingleDates.OrderBy(x => x.Begin))
                 {
-                    <tr>
-                        <td>@date.Begin.Date.ToShortDateString()</td>
-                        <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
-                        <td>@date.Begin.ToString("HH:mm")</td>
-                        <td>@date.End.ToString("HH:mm")</td>
-                        <td>@date.Activity.ShortName.Truncate(6)</td>
-                        <td>@date.Activity.Name.Truncate(50)</td>
-                        <td>@Html.LecturerList(date.Hosts, false)</td>
-                    </tr>
+                    if (date.Begin.DayOfWeek != DayOfWeek.Saturday && date.Begin.DayOfWeek != DayOfWeek.Sunday && date.Begin > now)
+                    {
+                        <tr>
+                            <td>@date.Begin.Date.ToShortDateString()</td>
+                            <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
+                            <td>@date.Begin.ToString("HH:mm")</td>
+                            <td>@date.End.ToString("HH:mm")</td>
+                            <td>@date.Activity.ShortName.Truncate(6)</td>
+                            <td>@date.Activity.Name.Truncate(50)</td>
+                            <td>@Html.LecturerList(date.Hosts, false)</td>
+                        </tr>
+                    }
                 }
-            }
             </tbody>
         </table>
     </div>
@@ -94,9 +93,8 @@
 
 @section scripts
 {
-    <script src="~/Assets/global/plugins/moment.min.js"></script>
-    <script src="~/Assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src='~/Assets/global/plugins/fullcalendar/lang/de.js'></script>
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
     <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script type="text/javascript">
@@ -105,10 +103,10 @@
             $('#loading').hide();
 
             initPrintCalendar(@calendarHeight, @Json.Encode(ViewBag.IsMoSa));
-            
+
             $('#calendar').fullCalendar('removeEvents');
 
-            $('#calendar').fullCalendar('addEventSource', 
+            $('#calendar').fullCalendar('addEventSource',
             {
                 url: '@Url.Action("RoomPrintPlan", "Calendar")',
                 type: 'POST',
@@ -117,7 +115,7 @@
                     semId: '@Model.Semester.Id'
                 }
             });
-            
+
         });
 
     </script>

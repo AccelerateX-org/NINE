@@ -1,0 +1,7 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Semester>
+
+@foreach (var group in Model)
+{
+    var semId = "sem_" + group.Id;
+    <div id="@semId" class="list-group-item list-group-item-action" onclick="selectSem('@group.Id')">@group.Name</div>
+}
