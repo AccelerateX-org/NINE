@@ -3859,7 +3859,7 @@
     <Content Include="Views\Autonomy\CreateCommittee.cshtml" />
     <Content Include="Views\Autonomy\Committee.cshtml" />
     <Content Include="Views\Autonomy\AddMember.cshtml" />
-    <Content Include="Views\Mail\ThesisProlongRequestBoardEMail.cshtml" />
+    <Content Include="Views\Mail\ThesisProlongRequestBoardEMail.html.cshtml" />
     <Content Include="Views\Emails\ThesisIssuedSummary.cshtml" />
     <Content Include="Views\Emails\ThesisIssuedSummary.Html.cshtml" />
     <Content Include="Views\Shared\_LayoutDummy.cshtml" />
@@ -3868,6 +3868,8 @@
     <Content Include="Views\Curriculum\_SemesterListGroup.cshtml" />
     <Content Include="Views\Studies\IndexNew.cshtml" />
     <Content Include="Views\Catalogs\Index.cshtml" />
+    <Content Include="Views\Curriculum\ModulePlan.cshtml" />
+    <Content Include="Views\ThesisAdmin\ProlongRequests.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -11,120 +11,119 @@
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Arbeiten in Planung, d.h. Voraussetzungen erfüllt, aber noch nicht angemeldet</h4>
-                </div>
-                <table id="tabThesis" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Matr.-Nr.</th>
-                            <th>SG</th>
-                            <th>Thema de/en</th>
-                            <th>Geplaner Beginn</th>
-                            <th>Geplanes Ende</th>
-                            <th>Unternehmen</th>
-                            <th>PrüferIn</th>
-                            <th>Angenommen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var thesis in Model)
-                        {
-
-                            <tr id="@thesis.Thesis.Id">
-                                <td></td>
-                                @if (thesis.User != null)
-                                {
-                                    <td>@thesis.User.LastName</td>
-                                    <td>@thesis.User.FirstName</td>
-                                }
-                                else
-                                {
-                                    <td>kein Benutzerkonto</td>
-                                    <td></td>
-                                }
-                                <td>@thesis.Student.Number</td>
-                                <td>@thesis.Student.Curriculum.ShortName</td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(thesis.Thesis.TitleDe))
-                                    {
-                                        <i class="fa fa-check text-success"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="fa fa-times text-danger"></i>
-                                    }
-                                    <span> / </span>
-                                    @if (!string.IsNullOrEmpty(thesis.Thesis.TitleEn))
-                                    {
-                                        <i class="fa fa-check text-success"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="fa fa-times text-danger"></i>
-                                    }
-                                </td>
-                                @if (thesis.Thesis.PlannedBegin.HasValue)
-                                {
-                                    <td>@thesis.Thesis.PlannedBegin.Value.ToShortDateString()</td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-times text-danger"></i></td>
-                                }
-                                @if (thesis.Thesis.PlannedEnd.HasValue)
-                                {
-                                    <td>@thesis.Thesis.PlannedEnd.Value.ToShortDateString()</td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-times text-danger"></i></td>
-                                }
-                                @if (thesis.Thesis.Advisors.Any())
-                                {
-                                    var advisor = thesis.Thesis.Advisors.First();
-                                    <td>@advisor.CorporateName</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-
-
-                                @if (thesis.Thesis.Supervisors.Any())
-                                {
-                                    var sup = thesis.Thesis.Supervisors.First();
-
-                                    <td>@sup.Member.FullName</td>
-                                    if (sup.AcceptanceDate != null)
-                                    {
-                                        <td>@sup.AcceptanceDate.Value.ToShortDateString()</td>
-                                    }
-                                    else
-                                    {
-                                        <td>noch nicht bestätigt</td>
-                                    }
-                                }
-                                else
-                                {
-                                    <td></td>
-                                    <td></td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Arbeiten in Planung, d.h. Voraussetzungen erfüllt, aber noch nicht angemeldet</h4>
             </div>
+            <table id="tabThesis" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>Matr.-Nr.</th>
+                    <th>SG</th>
+                    <th>Thema de/en</th>
+                    <th>Geplaner Beginn</th>
+                    <th>Geplanes Ende</th>
+                    <th>Unternehmen</th>
+                    <th>Betreuende</th>
+                    <th>Angenommen</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var thesis in Model)
+                {
+
+                    <tr id="@thesis.Thesis.Id">
+                        <td></td>
+                        @if (thesis.User != null)
+                        {
+                            <td>@thesis.User.LastName</td>
+                            <td>@thesis.User.FirstName</td>
+                        }
+                        else
+                        {
+                            <td>kein Benutzerkonto</td>
+                            <td></td>
+                        }
+                        <td>@thesis.Student.Number</td>
+                        <td>@thesis.Student.Curriculum.ShortName</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(thesis.Thesis.TitleDe))
+                            {
+                                <i class="fa fa-check text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-times text-danger"></i>
+                            }
+                            <span> / </span>
+                            @if (!string.IsNullOrEmpty(thesis.Thesis.TitleEn))
+                            {
+                                <i class="fa fa-check text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-times text-danger"></i>
+                            }
+                        </td>
+                        @if (thesis.Thesis.PlannedBegin.HasValue)
+                        {
+                            <td>@thesis.Thesis.PlannedBegin.Value.ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td><i class="fa fa-times text-danger"></i></td>
+                        }
+                        @if (thesis.Thesis.PlannedEnd.HasValue)
+                        {
+                            <td>@thesis.Thesis.PlannedEnd.Value.ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td><i class="fa fa-times text-danger"></i></td>
+                        }
+                        @if (thesis.Thesis.Advisors.Any())
+                        {
+                            var advisor = thesis.Thesis.Advisors.First();
+                            <td>@advisor.CorporateName</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+
+
+                        @if (thesis.Thesis.Supervisors.Any())
+                        {
+                            var sup = thesis.Thesis.Supervisors.First();
+
+                            <td>@sup.Member.FullName</td>
+                            if (sup.AcceptanceDate != null)
+                            {
+                                <td>@sup.AcceptanceDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td>noch nicht bestätigt</td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 
 

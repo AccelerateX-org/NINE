@@ -95,4 +95,32 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+
+    public class CurriculumModulePlan
+    {
+        public string faculty { get; set; }
+        public string name { get; set; }
+
+        public ICollection<CurriculumModulePlanSection> sections { get; set; }
+    }
+
+    public class CurriculumModulePlanSection
+    {
+        public int order { get; set; }
+
+        public string name { get; set; }
+
+        public ICollection<CurriculumModulePlanSlot> slots { get; set; }
+    }
+
+    public class CurriculumModulePlanSlot
+    {
+        public int position { get; set; }
+
+        public string tag { get; set; }
+        public int ects { get; set; }
+    }
+
+
+
 }

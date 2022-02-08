@@ -11,37 +11,35 @@
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Aufstellung der Abschlussarbeiten nach Semestern (Stichtag ist das Datum der jeweiligen Notenmeldung)</h4>
-                </div>
-                <table id="tabThesis" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Studiengang</th>
-                            @foreach (var s in Model.Semester)
-                            {
-                                <th>@s.Name</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var c in Model.Curricula)
-                        {
-                            <tr id="@c.Id">
-                                <td>@c.Name (@c.ShortName)</td>
-                                @foreach (var s in Model.Semester)
-                                {
-                                    <td>@Model.Matrix[s][c]</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Aufstellung der Abschlussarbeiten nach Semestern (Stichtag ist das Datum der jeweiligen Notenmeldung)</h4>
             </div>
+            <table id="tabThesis" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>Studiengang</th>
+                    @foreach (var s in Model.Semester)
+                    {
+                        <th>@s.Name</th>
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var c in Model.Curricula)
+                {
+                    <tr id="@c.Id">
+                        <td>@c.Name (@c.ShortName)</td>
+                        @foreach (var s in Model.Semester)
+                        {
+                            <td>@Model.Matrix[s][c]</td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

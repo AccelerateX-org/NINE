@@ -11,101 +11,100 @@
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Absolventen - gemeldete Noten</h4>
-                </div>
-                <table id="tabThesis" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th colspan="6">Studierende(r)</th>
-                            <th colspan="1">BetreuerInnen</th>
-                            <th colspan="2">Status</th>
-                        </tr>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Matr.-Nr.</th>
-                            <th>SG</th>
-                            <th>SPO</th>
-                            <th>Name(n)</th>
-                            <th>Abgabe</th>
-                            <th>Notenmeldung</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var thesis in Model)
-                        {
-                            <tr id="@thesis.Thesis.Id">
-                                <td></td>
-                                @if (thesis.User != null)
-                                {
-                                    <td>@thesis.User.LastName</td>
-                                    <td>@thesis.User.FirstName</td>
-                                }
-                                else
-                                {
-                                    <td>kein Benutzerkonto</td>
-                                    <td></td>
-                                }
-                                <td>@thesis.Student.Number</td>
-                                <td>@thesis.Student.Curriculum.ShortName</td>
-                                @if (thesis.Thesis.RequestDate.HasValue)
-                                {
-                                    if (thesis.Thesis.IsPassed.HasValue)
-                                    {
-                                        if (thesis.Thesis.IsPassed.Value)
-                                        {
-                                            <td><i class="fa fa-check text-success"></i><span hidden>1</span></td>
-                                        }
-                                        else
-                                        {
-                                            <td><i class="fa fa-times text-danger"></i><span hidden>-1</span></td>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <td><i class="fa fa-cog fa-spin"></i><span hidden>0</span></td>
-                                    }
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                <td>
-                                    @foreach (var supervisor in thesis.Thesis.Supervisors)
-                                    {
-                                        <div>@supervisor.Member.Name</div>
-                                    }
-                                </td>
-                                @if (thesis.Thesis.DeliveryDate != null)
-                                {
-                                    <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (thesis.Thesis.GradeDate != null)
-                                {
-                                    <td>@thesis.Thesis.GradeDate.Value.ToShortDateString()</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Absolventen - gemeldete Noten</h4>
             </div>
+            <table id="tabThesis" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th colspan="6">Studierende(r)</th>
+                    <th colspan="1">BetreuerInnen</th>
+                    <th colspan="2">Status</th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>Matr.-Nr.</th>
+                    <th>SG</th>
+                    <th>SPO</th>
+                    <th>Name(n)</th>
+                    <th>Abgabe</th>
+                    <th>Notenmeldung</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var thesis in Model)
+                {
+                    <tr id="@thesis.Thesis.Id">
+                        <td></td>
+                        @if (thesis.User != null)
+                        {
+                            <td>@thesis.User.LastName</td>
+                            <td>@thesis.User.FirstName</td>
+                        }
+                        else
+                        {
+                            <td>kein Benutzerkonto</td>
+                            <td></td>
+                        }
+                        <td>@thesis.Student.Number</td>
+                        <td>@thesis.Student.Curriculum.ShortName</td>
+                        @if (thesis.Thesis.RequestDate.HasValue)
+                        {
+                            if (thesis.Thesis.IsPassed.HasValue)
+                            {
+                                if (thesis.Thesis.IsPassed.Value)
+                                {
+                                    <td><i class="fa fa-check text-success"></i><span hidden>1</span></td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-times text-danger"></i><span hidden>-1</span></td>
+                                }
+                            }
+                            else
+                            {
+                                <td><i class="fa fa-cog fa-spin"></i><span hidden>0</span></td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>
+                            @foreach (var supervisor in thesis.Thesis.Supervisors)
+                            {
+                                <div>@supervisor.Member.Name</div>
+                            }
+                        </td>
+                        @if (thesis.Thesis.DeliveryDate != null)
+                        {
+                            <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        @if (thesis.Thesis.GradeDate != null)
+                        {
+                            <td>@thesis.Thesis.GradeDate.Value.ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 
 

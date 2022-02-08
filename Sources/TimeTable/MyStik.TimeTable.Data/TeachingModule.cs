@@ -10,10 +10,13 @@ namespace MyStik.TimeTable.Data
 
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
         public int ECTS { get; set; }
 
+        public virtual Semester Semester { get; set; }
 
 
-
+        public virtual TeachingBuildingBlock TeachingBuildingBlock { get; set; }
     }
 }

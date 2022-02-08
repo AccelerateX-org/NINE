@@ -7,74 +7,31 @@
 
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Import Struktur Studiengang</h1>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="bi-trophy"></i> Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                </h4>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Schritt 2 von 3: Auswahl der Datei</span>
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    @using (Html.BeginForm("Import", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
-                    {
+            <div class="card-body">
+                @using (Html.BeginForm("Import", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
                     <fieldset>
                         @Html.HiddenFor(m => m.Curriculum.Id)
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Veranstalter</label>
+                        <div class="mb-3 row">
+                            <label for="formFile" class="col-sm-2 col-form-label">Datei</label>
                             <div class="col-md-10">
-                                <input type="text" name="orgName" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Studiengang</label>
-                            <div class="col-md-10">
-                                <input type="text" name="currName" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">CSV-Datei</label>
-                            <div class="col-md-10">
-                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <div class="input-group input-large">
-                                        <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                            <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                            <span class="fileinput-filename"> </span>
-                                        </div>
-                                        <span class="input-group-addon btn default btn-file">
-                                            <span class="fileinput-new"> Select file </span>
-                                            <span class="fileinput-exists"> Change </span>
-                                            <input type="file" name="AttachmentStructure" id="Attachment1">
-                                        </span>
-                                        <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                    </div>
-                                </div>
+                                <input class="form-control" type="file" id="formFile" name="AttachmentStructure">
                             </div>
                         </div>
 
-
-                        <div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
-                                <input type="submit" value="Weiter" class="btn btn-default" />
-                            </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi-upload"></i> Import</button>
                         </div>
                     </fieldset>
-                    }
-                </div>
+                }
             </div>
         </div>
     </div>

@@ -178,7 +178,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-            return View("IndexNew", model);
+            return View("Index", model);
 
         }
     }

@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 namespace MyStik.TimeTable.Data
 {
     /// <summary>
-    /// Das Modul aus dem Modulkatalog
+    /// Ein unabhängiges Modul
+    /// Es hat keinen fachlichen Schlüssel, sondern steht für sich alleine
+    /// Fachliche Schlüssel im Katalog und/oder den Zuordnungen zu einem Slot
+    /// in einem Curriculum
     /// </summary>
     public class TeachingBuildingBlock
     {
@@ -17,8 +20,9 @@ namespace MyStik.TimeTable.Data
         {
             Lecturers = new HashSet<Lecturer>();
             TeachingUnits = new HashSet<TeachingUnit>();
-            ExaminationUnits = new HashSet<ExaminationUnit>();
-            CurriculumModules = new HashSet<ModuleAccreditation>();
+            TeachingAssessments = new HashSet<TeachingAssessment>();
+            Modules = new HashSet<TeachingModule>();
+            Publishings = new HashSet<ModulePublishing>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -40,19 +44,26 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<Lecturer> Lecturers { get; set; }
 
         /// <summary>
-        /// Alle  Unterrichtseinheiten
+        /// Alle  Unterrichtseinheiten = Fächer (Subjects)
         /// </summary>
         public virtual ICollection<TeachingUnit> TeachingUnits { get; set; }
 
-        /// <summary>
-        /// Alle Prüfungen
-        /// </summary>
-        public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
+
+        public virtual ICollection<TeachingAssessment> TeachingAssessments { get; set; }
 
         /// <summary>
         /// Zuordnung zu Studiengängen
         /// </summary>
-        public virtual ICollection<ModuleAccreditation> CurriculumModules { get; set; }
+        // public virtual ICollection<ModuleAccreditation> CurriculumModules { get; set; }
+
+
+        /// <summary>
+        /// Umsetzung der Module auf Semesterebene
+        /// </summary>
+        public virtual ICollection<TeachingModule> Modules { get; set; }
+
+
+        public virtual ICollection<ModulePublishing> Publishings { get; set; }
 
     }
 }

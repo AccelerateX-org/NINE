@@ -15,37 +15,33 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4>Archivierte Abschlussarbeiten</h4>
+                <h4>Verlängerungsanträge - offene Anfragen an PKVs</h4>
             </div>
             <table id="tabThesis" class="table table-condensed">
                 <thead>
-                <tr>
-                    <th colspan="6">Studierende(r)</th>
-                    <th colspan="1">BetreuerInnen</th>
-                    <th colspan="3">Bearbeitungszeitraum</th>
-                    <th colspan="2">Abgabe</th>
-                    <th colspan="1">Bemerkung</th>
-                </tr>
                 <tr>
                     <th>#</th>
                     <th>Name</th>
                     <th>Vorname</th>
                     <th>Matr.-Nr.</th>
                     <th>SG</th>
-                    <th>SPO</th>
-                    <th>Name(n)</th>
-                    <th>Beginn</th>
-                    <th>Ende</th>
-                    <th>Tage</th>
-                    <th>erfolgt</th>
-                    <th>bewertet</th>
-                    <th>Nachricht</th>
+                    <th>PK</th>
+                    <th>Betreuende</th>
+                    <th>Ursprüngliche Abgabe</th>
+                    <th>Verlängerung bis</th>
+                    <th>Status Verlängerung</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var thesis in Model)
                 {
-                    <tr id="@thesis.Thesis.Id">
+                    var rowClass = "";
+                    if (thesis.DaysToExpire < 0)
+                    {
+                        rowClass = "danger";
+                    }
+
+                    <tr id="@thesis.Thesis.Id" class="@rowClass">
                         <td></td>
                         @if (thesis.User != null)
                         {
@@ -59,27 +55,23 @@
                         }
                         <td>@thesis.Student.Number</td>
                         <td>@thesis.Student.Curriculum.ShortName</td>
-                        @if (thesis.Thesis.RequestDate.HasValue)
+                        @if (thesis.PK != null)
                         {
-                            if (thesis.Thesis.IsPassed.HasValue)
+                            if (thesis.PK.Members.Any(x => x.HasChair))
                             {
-                                if (thesis.Thesis.IsPassed.Value)
+                                foreach (var pkv in thesis.PK.Members.Where(x => x.HasChair))
                                 {
-                                    <td><i class="fa fa-check text-success"></i><span hidden>1</span></td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-times text-danger"></i><span hidden>-1</span></td>
+                                    <td>@pkv.Member.FullName</td>
                                 }
                             }
                             else
                             {
-                                <td><i class="fa fa-cog fa-spin"></i><span hidden>0</span></td>
+                                <td>Kein PKV</td>
                             }
                         }
                         else
                         {
-                            <td></td>
+                            <td>Keine PK</td>
                         }
                         <td>
                             @foreach (var supervisor in thesis.Thesis.Supervisors)
@@ -89,49 +81,62 @@
                         </td>
                         @if (thesis.Thesis.IssueDate != null)
                         {
-                            <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
-                            <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
-                            <td>0</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        }
-                        @if (thesis.Thesis.DeliveryDate != null)
-                        {
-                            <td>@thesis.Thesis.DeliveryDate.Value.ToShortDateString()</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        @if (thesis.Thesis.GradeDate != null)
-                        {
-                            <td>@thesis.Thesis.GradeDate.Value.ToShortDateString()</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        <td>
-                            @if (thesis.ConditionRequest != RequestState.Accepted)
+                            if (thesis.Thesis.RenewalDate != null)
                             {
-                                if (thesis.ConditionRequest == RequestState.Rejected)
+                                <td>(@thesis.Thesis.ExpirationDate.Value.ToShortDateString())</td>
+                                <td>@thesis.Thesis.RenewalDate.Value.ToShortDateString()</td>
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                if (thesis.Thesis.ProlongRequestDate != null)
                                 {
-                                    <div>Voraussetzungen nicht erfüllt</div>
+                                    <td>@thesis.Thesis.ProlongExtensionDate.Value.ToShortDateString()</td>
+                                    if (thesis.Thesis.ProlongExaminationBoardAccepted == null)
+                                    {
+                                        if (thesis.Thesis.ProlongSupervisorAccepted.HasValue)
+                                        {
+                                            if (thesis.Thesis.ProlongSupervisorAccepted.Value == true)
+                                            {
+                                                <td>Betreuer:in hat zugestimmt</td>
+
+                                            }
+                                            else
+                                            {
+                                                <td>Betreuer:in hat abgelehnt</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>Betreuer:in hat noch nicht entschieden</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (thesis.Thesis.ProlongExaminationBoardAccepted == true)
+                                        {
+                                            <td>PK hat zugestimmt - Verlängerung muss noch erfasst werden</td>
+                                        }
+                                        else
+                                        {
+                                            <td>PK hat abgelehnt</td>
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    <div>Prüfung der Voraussetzungen nicht abgeschlossen</div>
+                                    <td></td>
+                                    <td></td>
                                 }
                             }
-                            @if (thesis.Thesis.Supervisors.All(s => s.AcceptanceDate == null))
-                            {
-                                <div>Bestätigung der Betreuer steht noch aus</div>
-                            }
-                        </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
                     </tr>
                 }
                 </tbody>
@@ -160,7 +165,7 @@
                     },
                     {
                         "type": "de_date",
-                        "targets": [7, 8, 10, 11]
+                        "targets": [6, 7]
                     }],
                 "order": [[1, 'asc']]
             });

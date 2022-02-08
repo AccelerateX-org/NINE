@@ -22,6 +22,19 @@ namespace MyStik.TimeTable.Data
         public string Title { get; set; }
 
         /// <summary>
+        /// Kennzeichnung der Alternative
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
+        /// So ist jetzt das Konzept
+        /// 1 Kurs kann nur noch zu einem Fach eines Moduls gehören
+        /// Das Modul selbst kann vielen Studiengängen zugeordnet werden
+        /// </summary>
+        public virtual  TeachingUnit TeachingUnit { get; set; }
+
+
+        /// <summary>
         /// Liste aller Modul-LVs zu der dieser Kurs gehört
         /// können theoretische mehrere sein, z.B. Pflicht und WPM
         /// Das wird jetzt überflüssig
@@ -32,6 +45,7 @@ namespace MyStik.TimeTable.Data
 
 
         public virtual ICollection<ScriptPublishing> ScriptPublishings { get; set; }
+
 
     }
 }

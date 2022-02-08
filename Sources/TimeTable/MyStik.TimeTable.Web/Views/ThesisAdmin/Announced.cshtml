@@ -11,12 +11,14 @@
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Angekündigte Abschlussarbeiten - Prüfung der Voraussetzungen</h4>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Angekündigte Abschlussarbeiten - Prüfung der Voraussetzungen</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
                     <div>
                         Liste enthält alle Anträge, die noch nicht geprüft wurden oder deren Prüfung negativ ausgefallen ist.
                     </div>
@@ -28,106 +30,107 @@
                         </ul>
                     </div>
                 </div>
-                <table id="tabThesis" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Matr.-Nr.</th>
-                            <th>SG</th>
-                            <th>Datum Anfrage</th>
-                            <th>Datum Antwort</th>
-                            <th>Status</th>
-                            <th>Bemerkung Prüfungsamt</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var thesis in Model)
+            </div>
+            <table id="tabThesis" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>Matr.-Nr.</th>
+                    <th>SG</th>
+                    <th>Datum Anfrage</th>
+                    <th>Datum Antwort</th>
+                    <th>Status</th>
+                    <th>Bemerkung Prüfungsamt</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var thesis in Model)
+                {
+
+                    <tr id="@thesis.Thesis.Id">
+                        <td></td>
+                        @if (thesis.User != null)
                         {
+                            <td>@thesis.User.LastName</td>
+                            <td>@thesis.User.FirstName</td>
+                        }
+                        else
+                        {
+                            <td>kein Benutzerkonto</td>
+                            <td></td>
+                        }
+                        <td>@thesis.Student.Number</td>
+                        <td>@thesis.Student.Curriculum.ShortName</td>
+                        @if (thesis.Thesis.RequestDate != null)
+                        {
+                            <td>@thesis.Thesis.RequestDate.Value.ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td>Fehler - kein Anfragedatum</td>
+                        }
 
-                            <tr id="@thesis.Thesis.Id">
-                                <td></td>
-                                @if (thesis.User != null)
+                        @if (thesis.Thesis.ResponseDate.HasValue)
+                        {
+                            <td>@thesis.Thesis.ResponseDate.Value.ToShortDateString()</td>
+                            if (thesis.Thesis.IsPassed.HasValue)
+                            {
+                                if (thesis.Thesis.IsPassed.Value)
                                 {
-                                    <td>@thesis.User.LastName</td>
-                                    <td>@thesis.User.FirstName</td>
-                                }
-                                else
-                                {
-                                    <td>kein Benutzerkonto</td>
-                                    <td></td>
-                                }
-                                <td>@thesis.Student.Number</td>
-                                <td>@thesis.Student.Curriculum.ShortName</td>
-                                @if (thesis.Thesis.RequestDate != null)
-                                {
-                                    <td>@thesis.Thesis.RequestDate.Value.ToShortDateString()</td>
-                                }
-                                else
-                                {
-                                    <td>Fehler - kein Anfragedatum</td>
-                                }
-
-                                @if (thesis.Thesis.ResponseDate.HasValue)
-                                {
-                                    <td>@thesis.Thesis.ResponseDate.Value.ToShortDateString()</td>
-                                    if (thesis.Thesis.IsPassed.HasValue)
+                                    if (thesis.Thesis.RequestAuthority != null)
                                     {
-                                        if (thesis.Thesis.IsPassed.Value)
-                                        {
-                                            if (thesis.Thesis.RequestAuthority != null)
-                                            {
-                                                <td>Voraussetzungen erfüllt - geprüft von (@thesis.Thesis.RequestAuthority.FullName)</td>
-                                                <td></td>
-                                            }
-                                            else
-                                            {
-                                                <td>Selbstauskunft - unbearbeitet</td>
-                                                <td></td>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <td>Voraussetzungen nicht erfüllt</td>
-                                            <td>@thesis.Thesis.RequestMessage</td>
-                                        }
+                                        <td>Voraussetzungen erfüllt - geprüft von (@thesis.Thesis.RequestAuthority.FullName)</td>
+                                        <td></td>
                                     }
                                     else
                                     {
-                                        <td>Altfall: Studierende wollte Voraussetzungen prüfen lassen</td>
+                                        <td>Selbstauskunft - unbearbeitet</td>
                                         <td></td>
                                     }
                                 }
                                 else
                                 {
-                                    <td></td>
-                                    <td>Fehler - kein Antwortdatum</td>
-                                    <td></td>
+                                    <td>Voraussetzungen nicht erfüllt</td>
+                                    <td>@thesis.Thesis.RequestMessage</td>
                                 }
-
-                                <td>
-                                    <ul>
-                                        @if (thesis.Thesis.IssueDate.HasValue)
-                                        {
-                                            <li>Angemeldet: @thesis.Thesis.IssueDate.Value.ToShortDateString()</li>
-                                        }
-                                        @if (thesis.Thesis.AcceptanceDate.HasValue)
-                                        {
-                                            <li>Betreuung angenommen: @thesis.Thesis.AcceptanceDate.Value.ToShortDateString()</li>
-                                        }
-                                    </ul>
-                                </td>
-
-                            </tr>
+                            }
+                            else
+                            {
+                                <td>Altfall: Studierende wollte Voraussetzungen prüfen lassen</td>
+                                <td></td>
+                            }
                         }
-                    </tbody>
-                </table>
-            </div>
+                        else
+                        {
+                            <td></td>
+                            <td>Fehler - kein Antwortdatum</td>
+                            <td></td>
+                        }
+
+                        <td>
+                            <ul>
+                                @if (thesis.Thesis.IssueDate.HasValue)
+                                {
+                                    <li>Angemeldet: @thesis.Thesis.IssueDate.Value.ToShortDateString()</li>
+                                }
+                                @if (thesis.Thesis.AcceptanceDate.HasValue)
+                                {
+                                    <li>Betreuung angenommen: @thesis.Thesis.AcceptanceDate.Value.ToShortDateString()</li>
+                                }
+                            </ul>
+                        </td>
+
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 
 

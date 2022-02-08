@@ -11,126 +11,125 @@
 }
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Laufende Verlängerungsanträge für Abschlussarbeiten</h4>
-                </div>
-                <table id="tabThesis" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>Matr.-Nr.</th>
-                            <th>SG</th>
-                            <th>PrüferIn</th>
-                            <th>Anmeldung</th>
-                            <th>Abgabe</th>
-                            <th>Verlängerung</th>
-                            <th>Tage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var thesis in Model)
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Verlängerungsanträge - offeme Amfragen an Betreuende</h4>
+            </div>
+            <table id="tabThesis" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>Matr.-Nr.</th>
+                    <th>SG</th>
+                    <th>Betreuende</th>
+                    <th>Anmeldung</th>
+                    <th>Abgabe</th>
+                    <th>Verlängerung</th>
+                    <th>Tage</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var thesis in Model)
+                {
+                    var rowClass = "";
+                    if (thesis.DaysToExpire < 0)
+                    {
+                        rowClass = "danger";
+                    }
+
+                    <tr id="@thesis.Thesis.Id" class="@rowClass">
+                        <td></td>
+                        @if (thesis.User != null)
                         {
-                            var rowClass = "";
-                            if (thesis.DaysToExpire < 0)
+                            <td>@thesis.User.LastName</td>
+                            <td>@thesis.User.FirstName</td>
+                        }
+                        else
+                        {
+                            <td>kein Benutzerkonto</td>
+                            <td></td>
+                        }
+                        <td>@thesis.Student.Number</td>
+                        <td>@thesis.Student.Curriculum.ShortName</td>
+                        <td>
+                            @foreach (var supervisor in thesis.Thesis.Supervisors)
                             {
-                                rowClass = "danger";
+                                <div>@supervisor.Member.Name</div>
                             }
+                        </td>
+                        @if (thesis.Thesis.IssueDate != null)
+                        {
+                            if (thesis.Thesis.RenewalDate != null)
+                            {
+                                <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
+                                <td>(@thesis.Thesis.ExpirationDate.Value.ToShortDateString())</td>
+                                <td>@thesis.Thesis.RenewalDate.Value.ToShortDateString()</td>
+                                <td>@thesis.DaysToExpire</td>
 
-                            <tr id="@thesis.Thesis.Id" class="@rowClass">
-                                <td></td>
-                                @if (thesis.User != null)
+                            }
+                            else
+                            {
+                                <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
+                                <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
+                                if (thesis.Thesis.ProlongRequestDate != null)
                                 {
-                                    <td>@thesis.User.LastName</td>
-                                    <td>@thesis.User.FirstName</td>
-                                }
-                                else
-                                {
-                                    <td>kein Benutzerkonto</td>
-                                    <td></td>
-                                }
-                                <td>@thesis.Student.Number</td>
-                                <td>@thesis.Student.Curriculum.ShortName</td>
-                                <td>
-                                    @foreach (var supervisor in thesis.Thesis.Supervisors)
+                                    if (thesis.Thesis.ProlongExaminationBoardAccepted == null)
                                     {
-                                        <div>@supervisor.Member.Name</div>
-                                    }
-                                </td>
-                                @if (thesis.Thesis.IssueDate != null)
-                                {
-                                    if (thesis.Thesis.RenewalDate != null)
-                                    {
-                                        <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
-                                        <td>(@thesis.Thesis.ExpirationDate.Value.ToShortDateString())</td>
-                                        <td>@thesis.Thesis.RenewalDate.Value.ToShortDateString()</td>
-                                        <td>@thesis.DaysToExpire</td>
-
-                                    }
-                                    else
-                                    {
-                                        <td>@thesis.Thesis.IssueDate.Value.ToShortDateString()</td>
-                                        <td>@thesis.Thesis.ExpirationDate.Value.ToShortDateString()</td>
-                                        if (thesis.Thesis.ProlongRequestDate != null)
+                                        if (thesis.Thesis.ProlongSupervisorAccepted.HasValue)
                                         {
-                                            if (thesis.Thesis.ProlongExaminationBoardAccepted == null)
+                                            if (thesis.Thesis.ProlongSupervisorAccepted.Value == true)
                                             {
-                                                if (thesis.Thesis.ProlongSupervisorAccepted.HasValue)
-                                                {
-                                                    if (thesis.Thesis.ProlongSupervisorAccepted.Value == true)
-                                                    {
-                                                        <td>Betreuer:in hat zugestimmt</td>
+                                                <td>Betreuer:in hat zugestimmt</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Betreuer:in hat abgelehnt</td>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <td>Betreuer:in hat noch nicht entschieden</td>
-                                                }
                                             }
                                             else
                                             {
-                                                if (thesis.Thesis.ProlongExaminationBoardAccepted == true)
-                                                {
-                                                    <td>PK hat zugestimmt - Verlängerung muss noch erfasst werden</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>PK hat abgelehnt</td>
-                                                }
+                                                <td>Betreuer:in hat abgelehnt</td>
                                             }
                                         }
                                         else
                                         {
-                                            <td></td>
+                                            <td>Betreuer:in hat noch nicht entschieden</td>
                                         }
-                                        <td>@thesis.DaysToExpire</td>
+                                    }
+                                    else
+                                    {
+                                        if (thesis.Thesis.ProlongExaminationBoardAccepted == true)
+                                        {
+                                            <td>PK hat zugestimmt - Verlängerung muss noch erfasst werden</td>
+                                        }
+                                        else
+                                        {
+                                            <td>PK hat abgelehnt</td>
+                                        }
                                     }
                                 }
                                 else
                                 {
                                     <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
                                 }
-                            </tr>
+                                <td>@thesis.DaysToExpire</td>
+                            }
                         }
-                    </tbody>
-                </table>
-            </div>
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 
 

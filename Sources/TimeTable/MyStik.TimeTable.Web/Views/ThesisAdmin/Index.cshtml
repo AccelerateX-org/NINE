@@ -5,144 +5,106 @@
 
 
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-lg-offset-2 col-md-12">
-            <h4>Abschlussarbeiten @ViewBag.Organiser.ShortName</h4>
-        </div>
-    </div>
-    
-    <div class="row" style="margin-top: 10px">
-        <div class="col-lg-offset-2 col-md-12">
-            <h5>Workflow Schritte Prüfungsamt</h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Announced")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-bullhorn"></i></h4>
-                    <h5>angekündigt</h5>
-                    <p>Unbearbeitete Anträge</p>
-                </a>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Abschlussarbeiten @ViewBag.Organiser.ShortName</h4>
             </div>
-        </div>
-        <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Approved")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-search"></i></h4>
-                    <h5>geprüft</h5>
-                    <p>Voraussetzungen erfüllt</p>
-                </a>
-            </div>
-        </div>
-    </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Workflowschritte Prüfungsamt</h5>
+                            </div>
+                            <a href="@Url.Action("Announced")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">angekündigt</h5>
+                                </div>
+                                <p class="mb-1">Studierende haben Arbeit angelegt und bitten um Überpfüung der Voraussetzungen</p>
+                            </a>
+                            <a href="@Url.Action("Approved")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">geprüft</h5>
+                                </div>
+                                <p class="mb-1">Voraussetzungen geprüft oder durch Selbstauskunft</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Workflowschritte Studierende</h5>
+                            </div>
+                            <a href="@Url.Action("Plannend")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">geplant</h5>
+                                </div>
+                                <p class="mb-1">Studierende haben Betreuung angefragt, aber noch keine Bestätigung</p>
+                            </a>
+                            <a href="@Url.Action("Issued")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">angemeldet</h5>
+                                </div>
+                                <p class="mb-1">Arbeiten sind angemeldet</p>
+                            </a>
+                            <a href="@Url.Action("ProlongRequests")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Verlängerungsanträge</h5>
+                                </div>
+                                <p class="mb-1">Offene Anfragen an Betreuende</p>
+                            </a>
+                            <a href="@Url.Action("ProlongConfirmation")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Verlängerungsanträge</h5>
+                                </div>
+                                <p class="mb-1">Offene Entscheidung durch PKVs</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Workflowschritte Prüfende</h5>
+                            </div>
+                            <a href="@Url.Action("Done")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">abgegeben</h5>
+                                </div>
+                                <p class="mb-1">derzeit in Bewertung</p>
+                            </a>
+                            <a href="@Url.Action("Graduates")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">gemeldet</h5>
+                                </div>
+                                <p class="mb-1">Noten wurden gemeldet</p>
+                            </a>
+                            <a href="@Url.Action("Archived")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">abgerechnet</h5>
+                                </div>
+                                <p class="mb-1">Archiv der Arbeiten</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Workflowschritte Verwaltung</h5>
+                            </div>
+                            <a href="@Url.Action("Statistics")" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Auswertungen</h5>
+                                </div>
+                                <p class="mb-1">Statistiken</p>
+                            </a>
+                        </div>
+                    </div>
 
+                </div>
 
-    <div class="row" style="margin-top: 10px">
-        <div class="col-lg-offset-2 col-md-12">
-            <h5>Workflow Schritte Studierende(r)</h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Plannend")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-group"></i></h4>
-                    <h5>in Planung</h5>
-                    <p>Suche Betreuung etc.</p>
-                </a>
             </div>
         </div>
-        <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Issued")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-cogs"></i></h4>
-                    <h5>angemeldet</h5>
-                    <p>Arbeit angemeldet</p>
-                </a>
-            </div>
-        </div>
-        <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-danger text-center">
-                <a href="@Url.Action("ProlongRequests")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-legal"></i></h4>
-                    <h5>Verlängerungsanträge</h5>
-                    <p>@ViewBag.RequestCount unbearbeitet (Betreuer:in)</p>
-                </a>
-            </div>
-        </div>
-        <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-danger text-center">
-                <a href="@Url.Action("ProlongConfirmation")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-legal"></i></h4>
-                    <h5>Verlängerungsanträge</h5>
-                    <p>@ViewBag.RequestCount unbearbeitet (PKV)</p>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row" style="margin-top: 10px">
-        <div class="col-lg-offset-2 col-md-12">
-            <h5>Workflow Schritte PrüferIn</h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Done")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-truck"></i></h4>
-                    <h5>abgegebene Arbeiten</h5>
-                    <p>derzeit in Bewertung</p>
-                </a>
-            </div>
-        </div>
-        <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Graduates")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-graduation-cap"></i></h4>
-                    <h5>abgeschlossene Arbeiten</h5>
-                    <p>Noten wurden gemeldet</p>
-                </a>
-            </div>
-        </div>
-        <div class="col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Archived")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-archive"></i></h4>
-                    <h5>abgerechnete Arbeiten</h5>
-                    <p>Archiv</p>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row" style="margin-top: 10px">
-        <div class="col-lg-offset-2 col-md-12">
-            <h5>Auswertungen und Verwaltung</h5>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-offset-2 col-sm-1 col-md-2 col-lg-2">
-            <div class="panel panel-default text-center">
-                <a href="@Url.Action("Statistics")" class="btn btn-default btn-block">
-                    <h4><i class="fa fa-2x fa-bar-chart"></i></h4>
-                    <h5>Statistik</h5>
-                </a>
-            </div>
-        </div>
-
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-

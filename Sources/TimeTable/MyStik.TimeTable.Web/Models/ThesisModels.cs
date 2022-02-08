@@ -282,6 +282,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public string ProlongReason { get; set; }
 
+        public Committee PK { get; set; }
+
 
         public RequestState ConditionRequest
         {

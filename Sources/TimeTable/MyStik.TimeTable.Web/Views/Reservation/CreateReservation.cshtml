@@ -176,6 +176,7 @@
         $(function () {
             $("#Description").cleditor();
 
+            /*
             $('.datepicker').datepicker({
                 orientation: "left",
                 autoclose: true,
@@ -184,6 +185,10 @@
                 calendarWeeks: true,
                 language: "de"
             });
+            */
+
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
+
 
             $('.timepicker-24').timepicker({
                 autoclose: true,

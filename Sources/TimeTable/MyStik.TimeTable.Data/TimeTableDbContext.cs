@@ -219,6 +219,22 @@ namespace MyStik.TimeTable.Data
         public DbSet<ScriptPublishing> ScriptPublishings { get; set; }
 
 
+        public DbSet<SubjectAccreditation> SubjectAccreditations { get; set; }
+        public DbSet<CurriculumSection> CurriculumSections { get; set; }
+        public DbSet<CurriculumSlot> CurriculumSlots { get; set; }
+        public DbSet<TeachingAssessment> TeachingAssessments { get; set; }
+
+        public DbSet<ModuleCatalog> ModuleCatalogs { get; set; }
+        public DbSet<ModulePublishing> ModulePublishings { get; set; }
+
+        public DbSet<ItemLabel> ItemLabels { get; set; }
+        public DbSet<ItemLabelSet> ItemLabelSets { get; set; }
+
+        public DbSet<CurriculumScope> CurriculumScopes { get; set; }
+
+        public DbSet<StudentChannel> StudentChannels { get; set; }
+
+
         public TimeTableDbContext() : base()
         {
         }

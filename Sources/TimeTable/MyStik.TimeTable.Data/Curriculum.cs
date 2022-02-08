@@ -14,6 +14,7 @@ namespace MyStik.TimeTable.Data
             CurriculumGroups = new HashSet<CurriculumGroup>();
             Chapters = new HashSet<CurriculumChapter>();
             Packages = new HashSet<CurriculumPackage>();
+            Sections = new HashSet<CurriculumSection>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -109,6 +110,11 @@ namespace MyStik.TimeTable.Data
         /// Die Module nach SPO
         /// Falls nötig nur die abstrakten Bezeichnungen
         /// </summary>
-        public virtual ICollection<CertificateModule> Modules { get; set; }
+        // public virtual ICollection<CertificateModule> Modules { get; set; }
+
+
+        public virtual ICollection<CurriculumSection> Sections { get; set; }
+
+        public virtual ICollection<CurriculumScope> Scopes { get; set; }
     }
 }

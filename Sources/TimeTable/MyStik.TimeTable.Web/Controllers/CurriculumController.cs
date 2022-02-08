@@ -10,6 +10,7 @@ using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.IO.Horst;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using Newtonsoft.Json;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -60,6 +61,39 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+
+        public ActionResult ModulePlan(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+            model.Semester = SemesterService.GetLatestSemester(curr.Organiser);
+
+            var user = GetCurrentUser();
+
+            if (user.MemberState == MemberState.Staff)
+            {
+                model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
+                    s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)));
+            }
+            else
+            {
+                model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
+                    s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && g.IsAvailable)));
+            }
+
+
+
+            // hier muss überprüft werden, ob der aktuelle Benutzer
+            // der Fakultät des Studiengangs angehört oder nicht
+            ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
+
+            return View(model);
+        }
+
 
 
         /// <summary>
@@ -1073,77 +1107,56 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Import(CurriculumImportModel model, string orgName, string currName)
+        public ActionResult Import(CurriculumImportModel model)
         {
             string tempFile = Path.GetTempFileName();
 
             // Speichern der Config-Dateien
             model.AttachmentStructure?.SaveAs(tempFile);
 
-            var org = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(orgName));
-            var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(currName));
-
-            var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
-
-            var i = 0;
-
-            foreach (var line in lines)
+            CurriculumModulePlan plan = null;
+            using (StreamReader file = System.IO.File.OpenText(tempFile))
             {
-                if (i > 0)
+                JsonSerializer serializer = new JsonSerializer();
+                plan = (CurriculumModulePlan)serializer.Deserialize(file, typeof(CurriculumModulePlan));
+            }
+
+            if (plan == null)
+                return View();
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            if (curr.Sections.Any())
+                return View();
+
+            foreach (var section in plan.sections)
+            {
+                var currSection = new CurriculumSection
                 {
-                    var words = line.Split(';');
-                    var moduleName = words[0].Trim();
-                    var weight = double.TryParse(words[1], out var result) ? result : 1;
-                    var subjectName = words[2].Trim();
-                    var subjectTerm = int.TryParse(words[3], out var result2) ? result2 : 0;
-                    var subjectEcts = double.TryParse(words[4], out var result3) ? result3 : 0;
-                    var optionNumber = words[5].Trim();
-                    var optionTags = words[6].Trim();
+                    Name = section.name,
+                    Order = section.order,
+                    Curriculum = curr
+                };
 
-                    var module = curr.Modules.SingleOrDefault(x => x.Name.Equals(moduleName));
-                    if (module == null)
+                foreach (var slot in section.slots)
+                {
+                    var currSlot = new CurriculumSlot
                     {
-                        module = new CertificateModule
-                        {
-                            Name = moduleName,
-                            Weight = weight
-                        };
-                        curr.Modules.Add(module);
-                    }
+                        ECTS = slot.ects,
+                        POsition = slot.position,
+                        Tag = slot.tag,
+                        CurriculumSection = currSection
+                    };
 
-                    var subject = module.Subjects.FirstOrDefault(x => x.Name.Equals(subjectName));
-                    if (subject == null)
-                    {
-                        subject = new CertificateSubject
-                        {
-                            Name = subjectName,
-                            Term = subjectTerm,
-                            Ects = subjectEcts
-                        };
-                        module.Subjects.Add(subject);
-                    }
-
-                    var option = subject.ContentModules.SingleOrDefault(x => x.Number.Equals(optionNumber));
-                    if (option == null)
-                    {
-                        option = new ModuleAccreditation
-                        {
-                            Number = optionNumber,
-                            IsMandatory = true,
-                        };
-
-                        subject.ContentModules.Add(option);
-                    }
+                    Db.CurriculumSlots.Add(currSlot);
                 }
 
-                i++;
+                Db.CurriculumSections.Add(currSection);
             }
 
 
             Db.SaveChanges();
 
-
-            return RedirectToAction("Index", new {id = model.Curriculum.Id});
+            return RedirectToAction("ModulePlan", new {id = model.Curriculum.Id});
         }
 
 

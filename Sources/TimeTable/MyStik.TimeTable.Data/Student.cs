@@ -9,6 +9,7 @@ namespace MyStik.TimeTable.Data
         public Student()
         {
             Development = new HashSet<SemesterGroup>();
+            Channels = new HashSet<StudentChannel>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -40,5 +41,20 @@ namespace MyStik.TimeTable.Data
         public DateTime Created { get; set; } 
 
         public virtual ICollection<SemesterGroup> Development { get; set; }
+
+        public virtual ICollection<StudentChannel> Channels { get; set; }
+
+    }
+
+    public class StudentChannel
+    {
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual Student Student { get; set; }
+
+        public virtual ItemLabel Label { get; set; }
     }
 }

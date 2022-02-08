@@ -243,18 +243,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var userService = new UserInfoService();
 
-            /*
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.IssueDate != null && x.IssueDate.Value <= DateTime.Today) && // angemeldet in der Vergangenheit
-                    x.DeliveryDate == null && // noch nich abgegeben
-                    x.IsCleared == null // noch nicht archiviert
-            ).ToList();
-            */
-
-            var theses = Db.Theses.Where(x =>
-                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.IssueDate != null && x.ProlongRequestDate !=null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
+                    (x.IssueDate != null && x.ProlongRequestDate !=null && x.RenewalDate == null && x.ProlongSupervisorAccepted == null) && // angemeldet, Verlängerung angefragt, Betreuer hat noch nicht geantwortet
                     x.DeliveryDate == null && // noch nicht abgegeben
                     x.IsCleared == null // noch nicht archiviert
             ).ToList();
@@ -294,18 +285,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var userService = new UserInfoService();
 
-            /*
-            var theses = Db.Theses.Where(x =>
-                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.IssueDate != null && x.IssueDate.Value <= DateTime.Today) && // angemeldet in der Vergangenheit
-                    x.DeliveryDate == null && // noch nich abgegeben
-                    x.IsCleared == null // noch nicht archiviert
-            ).ToList();
-            */
 
             var theses = Db.Theses.Where(x =>
                     x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.IssueDate != null && x.ProlongRequestDate != null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
+                    (x.IssueDate != null && x.ProlongRequestDate != null && x.RenewalDate == null && 
+                        x.ProlongSupervisorAccepted.HasValue && x.ProlongSupervisorAccepted.Value == true) && // angemeldet, Verlängerung angefragt, Betreuer hat zugestimmt, aber noch kein Datum gesetzt
                     x.DeliveryDate == null && // noch nicht abgegeben
                     x.IsCleared == null // noch nicht archiviert
             ).ToList();
@@ -315,11 +299,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var thesis in theses)
             {
+                var pk = thesis.Student.Curriculum.Organiser.Autonomy != null ?
+                    thesis.Student.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")) : null;
+
+
+
                 var tm = new ThesisStateModel
                 {
                     Thesis = thesis,
                     Student = thesis.Student,
-                    User = userService.GetUser(thesis.Student.UserId)
+                    User = userService.GetUser(thesis.Student.UserId),
+                    PK = pk
                 };
 
                 model.Add(tm);
@@ -329,7 +319,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Organiser = org;
 
 
-            return View("Running", model);
+            return View("ProlongRequests", model);
         }
 
 
@@ -1081,7 +1071,14 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new ThesisExtendViewModel();
             model.Thesis = thesis;
             model.StudentUser = userService.GetUser(thesis.Student.UserId);
-            model.NewDateEnd = thesis.ExpirationDate.Value.ToShortDateString();
+            if (thesis.ProlongExtensionDate != null)
+            {
+                model.NewDateEnd = thesis.ProlongExtensionDate.Value.ToShortDateString();
+            }
+            else
+            {
+                model.NewDateEnd = thesis.ExpirationDate.Value.ToShortDateString();
+            }
 
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;

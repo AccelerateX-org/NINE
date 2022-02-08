@@ -2,7 +2,6 @@
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.CurriculumViewModel
 @{
-    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Studiengang";
 }
 
@@ -69,12 +68,22 @@
                 </div>
 
             </div>
+            <a href="@Url.Action("ModulePlan", "Curriculum", new {id = Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
+                <i class="bi-map"></i> Modulplan
+            </a>
             <a href="#" class="list-group-item  list-group-item-action disabled">
-                <i class="fas fa-fw fa-book"></i> Modulhandbuch
+                <i class="bi-bookshelf"></i> Modulhandbuch @Model.Semester.Name
             </a>
             <a href="@Url.Action("Curriculum", "Dictionary", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})" class="list-group-item  list-group-item-action">
-                <i class="fas fa-fw fa-microphone"></i> Vorlesungsverzeichnis @Model.Semester.Name
+                <i class="bi-mic"></i> Vorlesungsverzeichnis @Model.Semester.Name
             </a>
+            <a href="#" class="list-group-item  list-group-item-action disabled">
+                <i class="bi-mortarboard"></i> Prüfungen @Model.Semester.Name
+            </a>
+            <a href="#" class="list-group-item  list-group-item-action disabled">
+                <i class="bi-people"></i> Prüfungskommission
+            </a>
+
             @if (Model.Assessments.Any())
             {
                 <a href="@Url.Action("Index", "Assessment")" class="list-group-item  list-group-item-action">

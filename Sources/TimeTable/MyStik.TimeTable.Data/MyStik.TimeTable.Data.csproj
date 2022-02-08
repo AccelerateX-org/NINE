@@ -119,6 +119,8 @@
     <Compile Include="CurriculumPackage.cs" />
     <Compile Include="CurriculumProgram.cs" />
     <Compile Include="CurriculumRequirement.cs" />
+    <Compile Include="CurriculumScope.cs" />
+    <Compile Include="CurriculumSection.cs" />
     <Compile Include="CurriculumTopic.cs" />
     <Compile Include="CurriculumVariation.cs" />
     <Compile Include="Degree.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Examiner.cs" />
     <Compile Include="ExamPaper.cs" />
     <Compile Include="Internship.cs" />
+    <Compile Include="ItemLabel.cs" />
     <Compile Include="Lecturer.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Course.cs" />
@@ -420,8 +423,17 @@
     <Compile Include="Migrations\202108191601437_ScriptShop_v04.Designer.cs">
       <DependentUpon>202108191601437_ScriptShop_v04.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202201230951440_ModuleCatalogV1.cs" />
+    <Compile Include="Migrations\202201230951440_ModuleCatalogV1.Designer.cs">
+      <DependentUpon>202201230951440_ModuleCatalogV1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202201231504099_ModuleCatalogV2.cs" />
+    <Compile Include="Migrations\202201231504099_ModuleCatalogV2.Designer.cs">
+      <DependentUpon>202201231504099_ModuleCatalogV2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
+    <Compile Include="ModuleCatalog.cs" />
     <Compile Include="ModuleCourse.cs" />
     <Compile Include="ModuleExam.cs" />
     <Compile Include="ModuleMapping.cs" />
@@ -458,11 +470,13 @@
     <Compile Include="SemesterTopic.cs" />
     <Compile Include="Student.cs" />
     <Compile Include="StudentExam.cs" />
+    <Compile Include="SubjectAccreditation.cs" />
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionDrawing.cs" />
     <Compile Include="Supervision.cs" />
     <Compile Include="Supervisor.cs" />
     <Compile Include="Tag.cs" />
+    <Compile Include="TeachingAssessment.cs" />
     <Compile Include="TeachingBuildingBlock.cs" />
     <Compile Include="TeachingForm.cs" />
     <Compile Include="TeachingModule.cs" />
@@ -674,6 +688,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202108191601437_ScriptShop_v04.resx">
       <DependentUpon>202108191601437_ScriptShop_v04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201230951440_ModuleCatalogV1.resx">
+      <DependentUpon>202201230951440_ModuleCatalogV1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201231504099_ModuleCatalogV2.resx">
+      <DependentUpon>202201231504099_ModuleCatalogV2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

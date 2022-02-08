@@ -25,6 +25,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var dto = new CertificateModuleDto();
 
+            /*
             var module = _db.CertificateModules.SingleOrDefault(x => x.Id == id);
 
             dto.Id = module.Id;
@@ -38,6 +39,7 @@ namespace MyStik.TimeTable.Web.Api.Services
                     dto.Subjects.Add(ConvertAccreditatedModule(accreditation.Id));
                 }
             }
+            */
 
             return dto;
         }
@@ -49,6 +51,7 @@ namespace MyStik.TimeTable.Web.Api.Services
         {
             var dto = new AccreditatedModuleDto();
 
+            /*
             var module = _db.Accreditations.SingleOrDefault(x => x.Id == id);
 
             dto.Id = module.Id;
@@ -136,6 +139,7 @@ namespace MyStik.TimeTable.Web.Api.Services
             {
                 dto.Name = "Keine Modulbeschreibung vorhandem";
             }
+            */
 
             return dto;
         }

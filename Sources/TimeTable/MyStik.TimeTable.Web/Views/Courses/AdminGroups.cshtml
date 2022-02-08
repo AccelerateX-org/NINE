@@ -40,22 +40,22 @@
                 <li class="nav-item active">
                     <a class="nav-link text-center" href="@Url.Action("Semester", new {id=Model.Semester.Id})"> <i class="fas fa-chevron-left"></i><br />Zurück</a>
                 </li>
-            @if (ViewBag.UserRight.IsCourseAdmin)
-            {
+                @if (ViewBag.UserRight.IsCourseAdmin)
+                {
 
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Import")"> <i class="fas fa-upload"></i><br/>Import</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("CreateCurrentSemester", "Courses")"> <i class="fas fa-recycle"></i><br/>Das aktuelle Semester auffüllen</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("RemoveUnused", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-trash"></i><br/>Alle ungenutzen Löschen</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Analyse", "Courses")"> <i class="fas fa-radiation"></i><br/>Administration</a>
-                </li>
-            }
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Index", "Import")"> <i class="fas fa-upload"></i><br />Import</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-recycle"></i><br />Das aktuelle Semester auffüllen</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("RemoveUnused", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-trash"></i><br />Alle ungenutzen Löschen</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link text-center" href="@Url.Action("Analyse", "Courses")"> <i class="fas fa-radiation"></i><br />Administration</a>
+                    </li>
+                }
             </ul>
         </div>
     </nav>

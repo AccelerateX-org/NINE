@@ -505,6 +505,9 @@ namespace MyStik.TimeTable.Web.Controllers
             thesis.ProlongRequestDate = DateTime.Now;
             thesis.ProlongExtensionDate = DateTime.Parse(model.ProlongDate);
             thesis.ProlongReason = model.ProlongReason;
+            thesis.ProlongSupervisorAccepted = null;
+            thesis.ProlongExaminationBoardAccepted = null;
+            thesis.ProlongRejection = string.Empty;
 
             Db.SaveChanges();
 

@@ -7,33 +7,22 @@ using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
-    public class TeachingUnit
+    public class TeachingAssessment
     {
-        public TeachingUnit()
-        {
-            Accreditations = new HashSet<SubjectAccreditation>();
-        }
-
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Kennzeichnung der Alternative
+        /// Bezeichnung, keine fachliche Auswirkung
         /// </summary>
-        public string Tag { get; set; }
-
         public string Name { get; set; }
-
-
-        public string Description { get; set; }
-
-        public double SWS { get; set; }
-
-        public virtual TeachingForm Form { get; set; }
-
 
         public virtual TeachingBuildingBlock Module { get; set; }
 
-        public virtual ICollection<SubjectAccreditation> Accreditations { get; set; }
+        /// <summary>
+        /// Alle Prüfungen
+        /// </summary>
+        public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
+
     }
 }

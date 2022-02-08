@@ -37,8 +37,13 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Das zugehörige Module
+        /// veraltet
         /// </summary>
         public virtual TeachingBuildingBlock Module { get; set; }
+
+
+        public virtual TeachingAssessment Assessment { get; set; }
+
 
         public virtual ICollection<ExaminationAid> ExaminationAids { get; set; }
     }

@@ -35,14 +35,14 @@
                 <li class="nav-item active">
                     <a class="nav-link text-center" href="@Url.Action("Curricula", "Subscription")"><i class="fas fa-book fa-fw"></i><br />Studienbuch</a>
                 </li>
-            <li class="nav-item active">
-                <a class="nav-link text-center" href="@Url.Action("Index", "ScriptShop")"><i class="fas fa-file-pdf fa-fw"></i><br />Skripte</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link text-center" href="@Url.Action("Index", "StudyRoom")"><i class="fas fa-flask fa-fw"></i><br />Freie Räume</a>
-            </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "ScriptShop")"><i class="fas fa-file-pdf fa-fw"></i><br />Skripte</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-center" href="@Url.Action("Index", "StudyRoom")"><i class="fas fa-flask fa-fw"></i><br />Freie Räume</a>
+                </li>
 
-            
+
 
         </div>
     </nav>
@@ -63,6 +63,14 @@
                     <a class="btn btn-danger" href="@Url.Action("Issue", "Thesis")">Abschlussarbeit anmelden</a>
                 </div>
             }
+            else
+            {
+                <div class="alert alert-info">
+                    <h4>Habe in NINE schon eine Abschlussarbeit angelegt, aber noch nicht offiziell damit begonnen.</h4>
+                    <a class="btn btn-danger" href="@Url.Action("Index", "Thesis")">Aktueller Status und Details</a>
+                </div>
+
+            }
 
         }
         else
@@ -79,16 +87,14 @@
             {
                 <div class="alert alert-danger">
                     <h4>Abgabefrist meiner Abschlussarbeit (verlängert): @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</h4>
+                    <a class="btn btn-danger" href="@Url.Action("Index", "Thesis")">Details</a>
                 </div>
             }
             else
             {
                 <div class="alert alert-info">
                     <h4>Abgabefrist meiner Abschlussarbeit: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</h4>
-                    @if (diff.Days > 13)
-                    {
-                        <a class="btn btn-danger" href="@Url.Action("Prolong", "Thesis")">Verlängerung beantragen</a>
-                    }
+                    <a class="btn btn-danger" href="@Url.Action("Index", "Thesis")">Details</a>
                 </div>
 
             }
