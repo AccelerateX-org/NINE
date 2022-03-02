@@ -28,45 +28,27 @@
     </script>
 }
 
-@section menue2nd
-{
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSubMNenu">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Semester", new {id=Model.Semester.Id})"> <i class="fas fa-chevron-left"></i><br />Zurück</a>
-                </li>
-                @if (ViewBag.UserRight.IsCourseAdmin)
-                {
-
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Index", "Import")"> <i class="fas fa-upload"></i><br />Import</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-recycle"></i><br />Das aktuelle Semester auffüllen</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("RemoveUnused", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-trash"></i><br />Alle ungenutzen Löschen</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link text-center" href="@Url.Action("Analyse", "Courses")"> <i class="fas fa-radiation"></i><br />Administration</a>
-                    </li>
-                }
-            </ul>
-        </div>
-    </nav>
-}
-
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h4>
                     Semestergruppen der @Model.Organiser.ShortName im @Model.Semester.Name
                 </h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                            <a class="nav-link text-center" href="@Url.Action("Semester", new {id=Model.Semester.Id})"> <i class="fas fa-chevron-left"></i><br />Zurück</a>
+                        @if (ViewBag.UserRight.IsCourseAdmin)
+                        {
+
+                                <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Import")"> <i class="fas fa-upload"></i><br />Import</a>
+                                <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateSemester", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-recycle"></i><br />Das aktuelle Semester auffüllen</a>
+                                <a class="btn btn-outline-primary text-center" href="@Url.Action("RemoveUnused", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-trash"></i><br />Alle ungenutzen Löschen</a>
+                                <a class="btn btn-outline-primary text-center" href="@Url.Action("Analyse", "Courses")"> <i class="fas fa-radiation"></i><br />Administration</a>
+                        }
+                    </div>
+                </div>
             </div>
             <table id="tabGroups" class="table table-sm">
                 <thead>

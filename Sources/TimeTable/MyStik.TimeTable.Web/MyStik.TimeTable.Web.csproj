@@ -3827,7 +3827,6 @@
     <Content Include="Views\Autonomy\_ViewStart.cshtml" />
     <Content Include="Views\Thesis\Prolong.cshtml" />
     <Content Include="Views\Mail\ThesisSupervisionProlongRequestEMail.html.cshtml" />
-    <Content Include="Views\ScriptPublishing\_ViewStart.cshtml" />
     <Content Include="Views\ScriptPublishing\Index.cshtml" />
     <Content Include="Views\ScriptPublishing\Create.cshtml" />
     <Content Include="Views\Mail\ThesisProlongAcceptedEMail.html.cshtml" />
@@ -3870,6 +3869,7 @@
     <Content Include="Views\Catalogs\Index.cshtml" />
     <Content Include="Views\Curriculum\ModulePlan.cshtml" />
     <Content Include="Views\ThesisAdmin\ProlongRequests.cshtml" />
+    <Content Include="Views\ScriptPublishing\Add.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

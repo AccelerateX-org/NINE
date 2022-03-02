@@ -18,10 +18,8 @@
     {
         <span class="badge badge-success">Keine Terminkollisionen</span>
     }
-    <h5 class="list-group-item-heading">
-        <a href="#@linkDates" data-toggle="collapse">Termine</a>
-    </h5>
-    <div class="list-group collapse" id="@linkDates">
+    <h5>Termine</h5>
+    <div class="list-group" id="@linkDates">
         @foreach (var date in Model.ConflictingDates.OrderBy(x => x.Key.Begin))
         {
             if (date.Value.Any())

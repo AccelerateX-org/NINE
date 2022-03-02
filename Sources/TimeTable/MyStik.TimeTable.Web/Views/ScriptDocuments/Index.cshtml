@@ -25,23 +25,6 @@
 }
 
 
-@section menue2nd
-{
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSubMNenu">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "ScriptOrders")"> <i class="fas fa-list"></i><br />Bestellungen</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-}
-
 
 <div class="col-md-12">
     <div class="card">
@@ -50,6 +33,14 @@
                 Skripte
             </h4>
         </div>
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="btn-group">
+                    <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "ScriptOrders")"> <i class="fas fa-list"></i><br />Bestellungen</a>
+                </div>
+            </div>
+        </div>
+
         <table id="tabCourses" class="table table-striped table-bordered table-condensed">
             <thead>
                 <tr>

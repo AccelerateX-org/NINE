@@ -5,49 +5,6 @@
     ViewBag.Title = "Mein Studium";
 }
 
-@section menue2nd
-{
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;margin-top:80px">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSubMNenu">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Thesis")"><i class="fas fa-graduation-cap fa-fw"></i><br />Abschlussarbeit</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Dictionary")"><i class="fas fa-pen fa-fw"></i><br />Vorlesungsverzeichnis</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "Lottery", new {id=Model.Semester.Id})"><i class="fas fa-random fa-fw"></i><br />Wahlverfahren</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Curricula", "Subscription")"><i class="fas fa-book fa-fw"></i><br />Studienbuch</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "ScriptShop")"><i class="fas fa-file-pdf fa-fw"></i><br />Skripte</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Index", "StudyRoom")"><i class="fas fa-flask fa-fw"></i><br />Freie Räume</a>
-                </li>
-
-
-
-        </div>
-    </nav>
-}
-
 
 
 @if (Model.Thesis != null)
@@ -127,6 +84,22 @@
                 </h4>
             </div>
             <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Thesis")"><i class="fas fa-graduation-cap fa-fw"></i><br />Abschlussarbeit</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Dictionary")"><i class="fas fa-pen fa-fw"></i><br />Vorlesungsverzeichnis</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Lottery", new {id=Model.Semester.Id})"><i class="fas fa-random fa-fw"></i><br />Wahlverfahren</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Curricula", "Subscription")"><i class="fas fa-book fa-fw"></i><br />Studienbuch</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "ScriptShop")"><i class="fas fa-file-pdf fa-fw"></i><br />Skripte</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "StudyRoom")"><i class="fas fa-flask fa-fw"></i><br />Freie Räume</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group">
                 <div class="list-group-item  list-group-item-secondary">Meine Eintragungen in Lehrveranstaltungen</div>
                 @foreach (var course in Model.Courses)
                 {
@@ -137,12 +110,12 @@
                                 @if (course.CurrentDate != null)
                                 {
                                     <i class="fas fa-calendar-day"></i>
-                                    <span class="badge badge-danger">@Html.TimeSpanWithDate(course.CurrentDate)</span>
+                                    <span class="badge bg-danger">@Html.TimeSpanWithDate(course.CurrentDate)</span>
                                 }
                                 else
                                 {
                                     <i class="fas fa-calendar-check"></i>
-                                    <span class="badge badge-default"><i class="fas fa-check text-success"></i> keine weiteren Termine</span>
+                                    <span class="badge bg-secondary"><i class="fas fa-check text-success"></i> keine weiteren Termine</span>
                                 }
                             </a>
                             <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Teilnehmende">
@@ -151,14 +124,14 @@
                                 {
                                     if (course.Subscription.OnWaitingList)
                                     {
-                                        <span class="badge badge-default">
+                                        <span class="badge bg-secondary">
 
                                             <i class="fas fa-user-clock text-danger"></i> Status: Warteliste
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge badge-default">
+                                        <span class="badge bg-secondary">
                                             <i class="fas fa-user-check text-success"></i> Status: Teilnehmer:in
                                         </span>
                                     }

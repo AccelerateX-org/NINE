@@ -362,5 +362,29 @@ namespace MyStik.TimeTable.Web.Controllers
 
         }
 
+
+        public ActionResult Delete(Guid id)
+        {
+            var period = Db.OrderPeriods.SingleOrDefault(x => x.Id == id);
+
+            var sem = period.Semester;
+
+
+            foreach (var basket in period.Baskets.ToList())
+            {
+                foreach (var scriptOrder in basket.Orders.ToList())
+                {
+                    Db.ScriptOrders.Remove(scriptOrder);
+                }
+
+                Db.OrderBaskets.Remove(basket);
+            }
+
+            Db.OrderPeriods.Remove(period);
+            Db.SaveChanges();
+
+            return RedirectToAction("Index", new {id = sem.Id});
+        }
+
     }
 }

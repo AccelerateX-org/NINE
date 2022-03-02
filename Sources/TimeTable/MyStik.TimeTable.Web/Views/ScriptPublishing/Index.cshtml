@@ -31,6 +31,9 @@
             <h5>Bereitstellung von Skripten für Skriptendruck</h5>
             <p>Ein "Skriptenteam" organisiert für eine Fakultät den Druck und die Verteilung von Skripten in Papierform. Auf dieser Seite kann ich als Lehrende:r meine Skripte hochladen und Lehrveranstaltungen zuordnen. Folgende Hinweise:</p>
             <ul>
+                <li>Ein Skript wird identifiziert über die pdf-Datei. Einmal bestellt kann es nicht mehr gelöscht werden. Grund: Verhinderung von Mehrfachbestellungen ein und desselben Skripts.</li>
+                <li>Titel und Version können jederzeit geändert werden.</li>
+                <li>Ein Skript kann mehrere Seemster verwendet werden. Es muss jeweils für die zugehörigen Lehrveranstaltungen publiziert werden.</li>
                 <li>Skripte können nur von Teilnehmer:innen einer Lehrveranstaltung bestellt werden.</li>
                 <li>Jedes Skript kann von einer Person nur einmal bestellt werden, auch wenn in mehreren Lehrveranstaltungen eingetragen und Skript dort publiziert ist (z.B. bei Parallelveranstaltungen).</li>
                 <li>Der Download der Dokumente erfolgt über das "Skriptenteam". Dieses benötigt einen NINE-Account. Studierende haben keine Möglichkeiten, die Dokumente direkt herunterzuladen</li>
@@ -75,6 +78,7 @@
                         <td>
                             <a href="@Url.Action("GetDocument", "Storage", new {id = doc.Storage.Id})" class="btn btn-outline-primary">Download</a>
                             <a href="@Url.Action("Edit", new {id = doc.Id})" class="btn btn-outline-primary">Titel / Version ändern</a>
+                            <a href="@Url.Action("Add", new {id = doc.Id})" class="btn btn-outline-primary">Für weitere Lehrveranstaltung publizieren</a>
                             @if (doc.Orders.Count == 0)
                             {
                                 <a href="@Url.Action("Delete", "ScriptPublishing", new {id = doc.Id})" class="btn btn-outline-danger">Löschen</a>

@@ -3,22 +3,14 @@
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 
 @{
-    var containerType = "container-fluid";
-    if (!Request.IsAuthenticated)
-    {
-        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
-        containerType = "container";
-    }
-
     ViewBag.Title = "Lehrende";
 }
 
 
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
+    <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     <h4>
                         <i class="fa fa-user-md"></i>
                         <a href="@Url.Action("Index")">Lehrende</a> /
@@ -46,5 +38,4 @@
             </div>
         </div>
     </div>
-</div>
 

@@ -201,5 +201,109 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
+        public ActionResult Add(Guid id)
+        {
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+            var members = MemberService.GetFacultyMemberships(user.Id);
+
+
+            var semester = SemesterService.GetNewestSemester(org);
+
+            var TeachingService = new TeachingService(Db);
+            var userService = new UserInfoService();
+
+
+            var activities = TeachingService.GetActivities(semester, user, members);
+
+            var coursesNames = activities.Courses.GroupBy(x => x.Course.Name).Distinct();
+
+
+            var modules = new List<SelectListItem>();
+
+            foreach (var coursesName in coursesNames)
+            {
+                modules.Add(new SelectListItem
+                {
+                    Text = coursesName.Key,
+                    Value = coursesName.Key
+                });
+            }
+
+            var doc = Db.ScriptDocuments.SingleOrDefault(x => x.Id == id);
+
+
+            var model = new ScriptCreatetModel();
+            model.Semester = semester;
+            model.SemesterId = semester.Id;
+            model.DocId = doc.Id;
+
+            ViewBag.Modules = modules;
+
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Add(ScriptCreatetModel model)
+        {
+            var courseSummaryService = new CourseService(Db);
+
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+            var members = MemberService.GetFacultyMemberships(user.Id);
+            var member = GetMyMembership();
+
+            var semester = SemesterService.GetSemester(model.SemesterId);
+
+            var courseName = model.Module;
+
+            // Alle Kurse aus dem Semester und der Fakultät mit dem Namenm
+            var courses = Db.Activities.OfType<Course>().Where(x => x.Name.Equals(courseName) &&
+                                                                    x.SemesterGroups.Any(g =>
+                                                                        g.Semester.Id == semester.Id &&
+                                                                        g.CapacityGroup.CurriculumGroup.Curriculum
+                                                                            .Organiser.Id == org.Id)).ToList();
+
+            var doc = Db.ScriptDocuments.SingleOrDefault(x => x.Id == model.DocId);
+
+
+            // filltern nach Dozent
+            foreach (var course in courses)
+            {
+                var addLink = true;
+                if (!model.AllCourses)
+                {
+
+                    var summary = courseSummaryService.GetCourseSummary(course);
+                    var isLecturerInCourse = summary.Lecturers.Any(m => m.Id == member.Id);
+                    addLink = isLecturerInCourse;
+                }
+
+                if (addLink)
+                {
+                    var pub = new ScriptPublishing
+                    {
+                        Course = course,
+                        Published = DateTime.Now,
+                        ScriptDocument = doc
+                    };
+
+                    Db.ScriptPublishings.Add(pub);
+                }
+
+            }
+
+
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Index");
+        }
+
+
     }
 }

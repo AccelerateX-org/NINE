@@ -7,23 +7,6 @@
     ViewBag.Title = "Semester  der " + Model.Organiser.ShortName;
 }
 
-@section menue2nd
-{
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSubMNenu">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="fas fa-plus"></i><br />Das nächste Semester anlegen</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-}
-
 <div class="col-md-12">
     <div class="card">
         <div class="card-header">
@@ -32,6 +15,11 @@
             </h4>
         </div>
         <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="fas fa-plus"></i><br />Das nächste Semester anlegen</a>
+                    </div>
+                </div>
 
 
 

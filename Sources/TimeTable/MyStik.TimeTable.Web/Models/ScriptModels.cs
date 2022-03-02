@@ -27,6 +27,9 @@ namespace MyStik.TimeTable.Web.Models
         public Semester Semester { get; set; }
 
         public Guid SemesterId { get; set; }
+
+        public Guid DocId { get; set; }
+
     }
 
 

@@ -27,42 +27,28 @@
     </script>
 }
 
-@section menue2nd
-{
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #595f64;">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSubMNenu" aria-controls="navbarSubMNenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSubMNenu">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("ExecuteOrder", new {id = Model.Period.Id})"> <i class="fas fa-cogs"></i><br />Bestllnummern vergeben</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("SendMails", new {id = Model.Period.Id})"> <i class="fas fa-envelope"></i><br />Abholzettel versenden</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("OrderDocument", new {id = Model.Period.Id})"> <i class="fas fa-download"></i><br />Packlisten</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("OrderQuantity", new {id = Model.Period.Id})"> <i class="fas fa-download"></i><br />Bestellmengen</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-}
-
-
 
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h4>
-                    Bestellung nach Personen
+                    @Model.Period.Title -  Bestellung nach Personen
                 </h4>
             </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", new {id = Model.Period.Semester.Id})"> <i class="fas fa-chevron-left"></i><br />Zurück</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("ExecuteOrder", new {id = Model.Period.Id})"> <i class="fas fa-cogs"></i><br />Bestllnummern vergeben</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("SendMails", new {id = Model.Period.Id})"> <i class="fas fa-envelope"></i><br />Abholzettel versenden</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("OrderDocument", new {id = Model.Period.Id})"> <i class="fas fa-download"></i><br />Packlisten</a>
+                        <a class="btn btn-outline-primary text-center" href="@Url.Action("OrderQuantity", new {id = Model.Period.Id})"> <i class="fas fa-download"></i><br />Bestellmengen</a>
+                        <a class="btn btn-outline-danger text-center" href="@Url.Action("Delete", new {id = Model.Period.Id})"> <i class="fas fa-trash"></i><br />Löschen</a>
+                    </div>
+                </div>
+            </div>
+
             <table id="tabPersons" class="table table-striped table-bordered table-condensed">
                 <thead>
                     <tr>
