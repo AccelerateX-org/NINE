@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.Ajax.Utilities;
@@ -892,6 +893,10 @@ namespace MyStik.TimeTable.Web.Controllers
             SetTimeSelections();
             SetRestrictionSelections();
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+
             return View(model);
         }
 
@@ -1279,6 +1284,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 Date = summary.Date
             };
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+
             return View(model);
         }
 
@@ -1407,7 +1416,9 @@ namespace MyStik.TimeTable.Web.Controllers
             SetRestrictionSelections();
 
             ViewBag.UserRight = GetUserRight(org);
-            
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
 
             return View(model);
@@ -1491,6 +1502,9 @@ namespace MyStik.TimeTable.Web.Controllers
             SetRestrictionSelections();
 
             ViewBag.UserRight = GetUserRight(org);
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
 
             return View(model);

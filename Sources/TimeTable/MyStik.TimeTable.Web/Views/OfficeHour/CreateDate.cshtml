@@ -5,8 +5,8 @@
 
 @section styles
 {
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 <div class="panel panel-default">
@@ -30,77 +30,77 @@
                 <div class="panel-body">
                     @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                     {
-                    <fieldset>
-                        @Html.ValidationSummary()
-                        @Html.HiddenFor(model => model.OfficeHourId)
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Datum</label>
-                            <div class="col-sm-2">
-                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker" })
+                        <fieldset>
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(model => model.OfficeHourId)
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Datum</label>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker" })
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Beginn</label>
-                            <div class="col-sm-2">
-                                @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Beginn</label>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Ende</label>
-                            <div class="col-sm-2">
-                                @Html.TextBoxFor(model => model.EndTime, new { @class = "form-control timepicker timepicker-24" })
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Ende</label>
+                                <div class="col-sm-2">
+                                    @Html.TextBoxFor(model => model.EndTime, new { @class = "form-control timepicker timepicker-24" })
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-offset-4">
-                                @Html.CheckBoxFor(model => model.IsWeekly)
-                                Termine wöchentlich generieren bis  @Html.TextBoxFor(model => model.NewDateEnd, new { @class = "form-control datepicker" })
-                            </label>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Eintragung für Studierende bis</label>
-                            <div class="col-sm-6">
-                                @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>)ViewBag.Limits, new { @class = "form-control" })
+                            <div class="form-group">
+                                <label class="col-sm-offset-4">
+                                    @Html.CheckBoxFor(model => model.IsWeekly)
+                                    Termine wöchentlich generieren bis  @Html.TextBoxFor(model => model.NewDateEnd, new { @class = "form-control datepicker" })
+                                </label>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Anzahl Plätze</label>
-                            <div class="col-sm-6">
-                                @Html.DropDownListFor(model => model.Capacity, (IEnumerable<SelectListItem>)ViewBag.Capacities, new { @class = "form-control" })
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-offset-4">
-                                @Html.CheckBoxFor(model => model.UseSlots)
-                                Slotsystem verwenden (Anzahl Plätze wird dann automatisch auf 1 gesetzt)
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.SlotDuration, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.DropDownListFor(model => model.SlotDuration, (IEnumerable<SelectListItem>)ViewBag.SlotDurations, new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.SpareSlots, new { @class = "col-sm-4 control-label" })
-                            <div class="col-sm-6">
-                                @Html.DropDownListFor(model => model.SpareSlots, (IEnumerable<SelectListItem>)ViewBag.SpareSlots, new { @class = "form-control" })
-                            </div>
-                        </div>
 
 
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-md-6">
-                                <input type="submit" value="Termin(e) anlegen" class="btn btn-default" />
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Eintragung für Studierende bis</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>)ViewBag.Limits, new { @class = "form-control" })
+                                </div>
                             </div>
-                        </div>
-                    </fieldset>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Anzahl Plätze</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.Capacity, (IEnumerable<SelectListItem>)ViewBag.Capacities, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-offset-4">
+                                    @Html.CheckBoxFor(model => model.UseSlots)
+                                    Slotsystem verwenden (Anzahl Plätze wird dann automatisch auf 1 gesetzt)
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SlotDuration, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.SlotDuration, (IEnumerable<SelectListItem>)ViewBag.SlotDurations, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SpareSlots, new { @class = "col-sm-4 control-label" })
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(model => model.SpareSlots, (IEnumerable<SelectListItem>)ViewBag.SpareSlots, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-md-6">
+                                    <input type="submit" value="Termin(e) anlegen" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </fieldset>
                     }
                 </div>
             </div>
@@ -114,21 +114,15 @@
 
 @section scripts
 {
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
         $(function () {
 
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
 
 
             $('.timepicker-24').timepicker({

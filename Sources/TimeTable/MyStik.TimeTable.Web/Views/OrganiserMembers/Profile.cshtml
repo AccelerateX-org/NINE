@@ -6,7 +6,7 @@
 
 @section styles
 {
-    <link href="@Styles.Url("~/Assets/global/plugins/cleditor/jquery.cleditor.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
 }
 
 <div class="panel panel-default">
@@ -87,7 +87,7 @@
 
 @section Scripts {
 
-    <script src="@Url.Content("~/Assets/global/plugins/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
     <script>
         $(function () {
             $("#Description").cleditor();

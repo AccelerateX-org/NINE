@@ -5,9 +5,8 @@
 
 @section styles
 {
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
-
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 
@@ -28,7 +27,7 @@
                     <h4>Datum und Zeitraum ändern</h4>
                 </div>
                 <div class="panel-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new {@class = "form-horizontal"}))
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
                     {
                         <fieldset>
                             @Html.ValidationSummary()
@@ -36,25 +35,25 @@
                             @Html.HiddenFor(m => m.ActivityDateId)
                             <div class="form form-horizontal">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.NewDate, new {@class = "col-sm-4 control-label"})
+                                    @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-4 control-label" })
                                     <div class="col-sm-6">
-                                        @Html.TextBoxFor(model => model.NewDate, new {@class = "form-control datepicker"})
+                                        @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker" })
 
                                         @Html.ValidationMessageFor(m => m.NewDate)
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.NewBegin, new {@class = "col-sm-4 control-label"})
+                                    @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-4 control-label" })
                                     <div class="col-sm-6">
-                                        @Html.TextBoxFor(model => model.NewBegin, new {@class = "form-control timepicker timepicker-24"})
+                                        @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24" })
 
                                         @Html.ValidationMessageFor(m => m.NewBegin)
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.NewEnd, new {@class = "col-sm-4 control-label"})
+                                    @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-4 control-label" })
                                     <div class="col-sm-6">
-                                        @Html.TextBoxFor(model => model.NewEnd, new {@class = "form-control timepicker timepicker-24"})
+                                        @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24" })
 
                                         @Html.ValidationMessageFor(m => m.NewEnd)
                                     </div>
@@ -81,21 +80,15 @@
 
 @section Scripts {
 
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
 
         $(function () {
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
 
             $('.timepicker-24').timepicker({
                 autoclose: true,

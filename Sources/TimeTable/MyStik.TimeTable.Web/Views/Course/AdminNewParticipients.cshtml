@@ -14,183 +14,152 @@
 
 @Html.Partial("_CourseSummaryHeader", Model.Summary)
 
+@if (Model.Course.IsInternal)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
+            </div>
+        </div>
+    </div>
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Course.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
+}
+
+@if (Model.Summary.Lottery != null && !ViewBag.UserRight.IsCourseAdmin)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4><i class="fa fa-random"></i> Wahlverfahren</h4>
+                <p>Die Lehrveranstaltung gehört zum Wahlverfahren "@Model.Summary.Lottery.Name". Folgende Einschränkungen:</p>
+                <ul>
+                    <li>Kein Austragen</li>
+                    <li>Kein Setzen auf Warteliste</li>
+                    <li>Setzen auf Teilnehmerliste nur für Prio 1</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Eintragungen</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary">
+                            <i class="fas fa-chevron-left"></i> Zurück
+                        </a>
                         @if ((!Model.Summary.Course.IsInternal && Model.Summary.Lottery == null) || ViewBag.UserRight.IsCourseAdmin)
                         {
-                            <div class="form-group dropdown">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-check"></i> Alle Eintragungen <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-user"></i> ... auf Teilnehmerliste setzen</a></li>
-                                    <li><a href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-hourglass"></i> ... auf Warteliste setzen</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-times"></i> ... austragen</a></li>
-                                </ul>
-                            </div>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-user"></i> Alle auf Teilnehmerliste setzen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-hourglass"></i> Alle auf Warteliste setzen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-times"></i> Alle austragen</a>
                         }
                         @if (ViewBag.UserRight.IsCourseAdmin)
                         {
-                            <div class="form-group">
-                                <a href="@Url.Action("RawAdmin", new {id = Model.Course.Id})" class="btn btn-default">
-                                    <i class="fa fa-cogs"></i> Low Level Admin
-                                </a>
-                            </div>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("RawAdmin", new {id = Model.Course.Id})" class="btn btn-default">
+                                <i class="fa fa-cogs"></i> Low Level Admin
+                            </a>
                         }
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            <table id="tabParticipient" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Vorname</th>
+                    <th>SG</th>
+                    <th>Sem</th>
+                    <th>TZ/VZ</th>
+                    <th><i class="fa fa-pencil"></i></th>
+                    <th><i class="fa fa-exclamation"></i></th>
+                    <th><i class="fa fa-envelope"></i></th>
+                    <th>Eingetragen</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var sub in Model.Course.Occurrence.Subscriptions)
+                {
+                    var user = userService.GetUser(sub.UserId);
+                    var student = studentService.GetCurrentStudent(sub.UserId);
 
-
-
-<div class="container-fluid">
-    @if (Model.Course.IsInternal)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
-                </div>
-            </div>
-        </div>
-
-    }
-
-    @if (Model.Summary.Lottery != null && !ViewBag.UserRight.IsCourseAdmin)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    <h4><i class="fa fa-random"></i> Wahlverfahren</h4>
-                    <p>Die Lehrveranstaltung gehört zum Wahlverfahren "@Model.Summary.Lottery.Name". Folgende Einschränkungen:</p>
-                    <ul>
-                        <li>Kein Austragen</li>
-                        <li>Kein Setzen auf Warteliste</li>
-                        <li>Setzen auf Teilnehmerliste nur für Prio 1</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    }
-    <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-group"></i> Eintragungen</h4>
-                </div>
-                <table id="tabParticipient" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Vorname</th>
-                            <th>SG</th>
-                            <th>Sem</th>
-                            <th>TZ/VZ</th>
-                            <th><i class="fa fa-pencil"></i></th>
-                            <th><i class="fa fa-exclamation"></i></th>
-                            <th><i class="fa fa-envelope"></i></th>
-                            <th>Eingetragen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var sub in Model.Course.Occurrence.Subscriptions)
+                    <tr id="@sub.Id">
+                        <td></td>
+                        @if (user != null)
                         {
-                            var user = userService.GetUser(sub.UserId);
-                            var student = studentService.GetCurrentStudent(sub.UserId);
-
-                            <tr id="@sub.Id">
-                                <td></td>
-                                @if (user != null)
-                                {
-                                    <td>@user.LastName</td>
-                                    <td>@user.FirstName</td>
-                                }
-                                else
-                                {
-                                    <td>unbekannt</td>
-                                    <td>kein Benutzerkonto vorhanden</td>
-                                }
-                                @if (student != null)
-                                {
-                                    <td>@student.Curriculum.ShortName</td>
-                                    <td>@student.FirstSemester.Name</td>
-                                    if (student.IsPartTime)
-                                    {
-                                        <td>TZ</td>
-                                    }
-                                    else
-                                    {
-                                        <td>VZ</td>
-                                    }
-
-                                }
-                                else
-                                {
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                }
-                                @if (sub.OnWaitingList)
-                                {
-                                    <td><span hidden="">0</span><i class="fa fa-hourglass-half"></i></td>
-                                }
-                                else
-                                {
-                                    <td><span hidden="">1</span><i class="fa fa-group"></i></td>
-                                }
-                                @if (sub.Priority.HasValue)
-                                {
-                                    <td>@sub.Priority.Value</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                @if (string.IsNullOrEmpty(sub.SubscriberRemark))
-                                {
-                                    <td></td>
-
-                                }
-                                else
-                                {
-                                    <td><span hidden="">1</span><i class="fa fa-envelope"></i></td>
-                                }
-                                <td>@sub.TimeStamp</td>
-                            </tr>
+                            <td>@user.LastName</td>
+                            <td>@user.FirstName</td>
                         }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-group"></i> Details</h4>
-                </div>
-                <div class="panel-body">
-                    <div id="subDetail">
-                        <h5>Keine Eintragung selektiert</h5>
-                    </div>
-                </div>
-            </div>
+                        else
+                        {
+                            <td>unbekannt</td>
+                            <td>kein Benutzerkonto vorhanden</td>
+                        }
+                        @if (student != null)
+                        {
+                            <td>@student.Curriculum.ShortName</td>
+                            <td>@student.FirstSemester.Name</td>
+                            if (student.IsPartTime)
+                            {
+                                <td>TZ</td>
+                            }
+                            else
+                            {
+                                <td>VZ</td>
+                            }
+
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                        @if (sub.OnWaitingList)
+                        {
+                            <td><span hidden="">0</span><i class="fa fa-hourglass-half"></i></td>
+                        }
+                        else
+                        {
+                            <td><span hidden="">1</span><i class="fa fa-group"></i></td>
+                        }
+                        @if (sub.Priority.HasValue)
+                        {
+                            <td>@sub.Priority.Value</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        @if (string.IsNullOrEmpty(sub.SubscriberRemark))
+                        {
+                            <td></td>
+
+                        }
+                        else
+                        {
+                            <td><span hidden="">1</span><i class="fa fa-envelope"></i></td>
+                        }
+                        <td>@sub.TimeStamp</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+
 
 @section styles
 {
@@ -213,8 +182,8 @@
                     "targets": 0
                 },
                 {
-                    "type": "de_datetime",
-                    "targets": 8
+                    "type": "de_date",
+                    "targets": 9
                 }],
                 "order": [[1, 'asc']]
             });
@@ -234,6 +203,10 @@
                     $(this).addClass('selected');
 
                     var id = $(this).attr('id');
+                    if (id != null) {
+                        window.location.href = "@Url.Action("ParticipiantDetails", "Course")/" + id;
+                    }
+
                     $.ajax(
                         {
                             type: "POST",

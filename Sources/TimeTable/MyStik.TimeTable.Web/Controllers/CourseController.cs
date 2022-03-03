@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using log4net;
@@ -684,6 +685,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = c.Id.ToString(),
             });
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+
 
             return View(model);
         }
@@ -694,7 +699,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult MoveDate(CourseMoveDateModel model)
+        public ActionResult MoveDate(CourseMoveDateModel model)
         {
             var logger = LogManager.GetLogger("Course");
 
@@ -704,7 +709,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 return PartialView("_SaveError"); // muss noch gemacht werden
 
             // Berechnung der neuen Zeiten
-            var day = DateTime.ParseExact(model.NewDate, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var day = DateTime.Parse(model.NewDate);
             var from = DateTime.Parse(model.NewBegin);
             var to = DateTime.Parse(model.NewEnd);
 
@@ -763,7 +768,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 NotificationService nservice = new NotificationService();
                 nservice.CreateSingleNotification(changeObject.Id.ToString());
             }
-            return PartialView("_SaveSuccess");
+            return RedirectToAction("AdminNewDates", new {id= activityDate.Activity.Id});
         }
 
         /// <summary>
@@ -2161,8 +2166,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="dateId"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult CancelDate2(Guid dateId)
+        public ActionResult CancelDate2(Guid dateId)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
 
@@ -2182,7 +2186,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = userRights;
 
 
-            return PartialView("_DateTable", course);
+            return RedirectToAction("AdminNewDates", new {id=course.Id});
         }
 
         /// <summary>
@@ -2241,7 +2245,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="dateId"></param>
         /// <returns></returns>
-        [HttpPost]
         public ActionResult ReactivateDate2(Guid dateId)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
@@ -2257,7 +2260,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = userRights;
 
 
-            return PartialView("_DateTable", course);
+            return RedirectToAction("AdminNewDates", new {id=course.Id});
 
         }
 
@@ -2300,11 +2303,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="dateId"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult DeleteDateConfirm(Guid dateId)
+        public ActionResult DeleteDateConfirm(Guid dateId)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
-            return PartialView("_DlgConfirmDeleteDate", date);
+            return View("ConfirmDeleteDate", date);
         }
 
         /// <summary>
@@ -2312,8 +2314,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="dateId"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult DeleteDateConfirmed(Guid dateId)
+        public ActionResult DeleteDateConfirmed(Guid dateId)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
             var activity = date.Activity as Course;
@@ -2324,7 +2325,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = userRights;
 
 
-            return PartialView("_DateTable", activity);
+            return RedirectToAction("AdminNewDates", new {id = activity.Id});
         }
 
         /// <summary>
@@ -2593,8 +2594,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="dateId"></param>
         /// <returns></returns>
 
-        [HttpPost]
-        public PartialViewResult ChangeDateInformation(Guid dateId)
+        public ActionResult ChangeDateInformation(Guid dateId)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == dateId);
 
@@ -2607,7 +2607,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Date = date
             };
 
-            return PartialView("_DlgEditInformation", model);
+            return View("EditInformation", model);
         }
 
         /// <summary>
@@ -2616,7 +2616,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult ChangeDateInformationConfirmed(CourseDateInformationModel model)
+        public ActionResult ChangeDateInformationConfirmed(CourseDateInformationModel model)
         {
             var date = Db.ActivityDates.SingleOrDefault(d => d.Id == model.DateId);
             var course = date.Activity as Course;
@@ -2630,7 +2630,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var userRights = GetUserRight(User.Identity.Name, course);
             ViewBag.UserRight = userRights;
 
-            return PartialView("_DateTable", course);
+            return RedirectToAction("AdminNewDates", new {id=course.Id});
         }
 
 
@@ -3647,5 +3647,71 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("RawAdmin", new {id = courseId});
         }
 
+
+        public ActionResult ParticipiantDetails(Guid id)
+        {
+            var studentService = new StudentService(Db);
+            var courseService = new CourseService(Db);
+
+
+            var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
+
+            var course = Db.Activities.OfType<Course>()
+                .SingleOrDefault(x => x.Occurrence.Id == subscription.Occurrence.Id);
+
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            if (course.Semester != null)
+            {
+                semester = course.Semester;
+            }
+            else
+            {
+                if (course.SemesterGroups.Any())
+                {
+                    semester = course.SemesterGroups.First().Semester;
+                }
+            }
+
+            var user = UserManager.FindById(subscription.UserId);
+            var student = studentService.GetCurrentStudent(subscription.UserId);
+
+
+            var model = new UserCoursePlanViewModel
+            {
+                User = user,
+                Student = student,
+                Subscription = subscription,
+                Semester = semester,
+                Course = course,
+                Summary = courseService.GetCourseSummary(course),
+            };
+
+
+            var courses =
+                Db.Activities.OfType<Course>()
+                    .Where(c => c.Occurrence.Subscriptions.Any(s => s.UserId.Equals(subscription.UserId)) &&
+                                c.SemesterGroups.Any((g => g.Semester.Id == semester.Id)))
+                    .OrderBy(c => c.Name)
+                    .ToList();
+
+            var courseSerive = new CourseService(Db);
+
+            foreach (var c in courses)
+            {
+                var summary = courseSerive.GetCourseSummary(c);
+
+                model.CourseSubscriptions.Add(new UserCourseSubscriptionViewModel
+                {
+                    CourseSummary = summary,
+                    Subscription = subscription
+                });
+
+            }
+
+            ViewBag.UserRight = GetUserRight();
+
+
+            return View(model);
+        }
     }
 }

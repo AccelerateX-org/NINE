@@ -6,9 +6,8 @@
 
 @section styles
 {
-<link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
 }
 
@@ -100,17 +99,17 @@
                                         </thead>
                                         <tbody id="dozList">
                                             @foreach (var doz in Model.Date.Hosts)
-                        {
-                            <tr id="@doz.Id">
-                                <td>@doz.Organiser.ShortName</td>
-                                <td>@doz.Name</td>
-                                <td>
-                                    <button class="btn btn-default btn-sm" onclick="deleteRow('@doz.Id')">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </td>
-                            </tr>
-    }
+                                            {
+                                                <tr id="@doz.Id">
+                                                    <td>@doz.Organiser.ShortName</td>
+                                                    <td>@doz.Name</td>
+                                                    <td>
+                                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@doz.Id')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -142,20 +141,20 @@
                                         </thead>
                                         <tbody id="roomList">
                                             @foreach (var room in Model.Date.Rooms)
-                        {
-                            <tr id="@room.Id">
-                                <td></td>
-                                <td>@room.FullName</td>
-                                <td id="state_@room.Id">
-                                    unbekannt
-                                </td>
-                                <td>
-                                    <button class="btn btn-default btn-sm" onclick="deleteRow('@room.Id')">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
-                                </td>
-                            </tr>
-    }
+                                            {
+                                                <tr id="@room.Id">
+                                                    <td></td>
+                                                    <td>@room.FullName</td>
+                                                    <td id="state_@room.Id">
+                                                        unbekannt
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@room.Id')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -165,8 +164,8 @@
 
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
-                                <a class="btn btn-default" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="fa fa-arrow-left"></i> abbrechen</a>
-                                <button class="btn btn-default" onclick="moveDate()"><i class="fa fa-save"></i> speichern</button>
+                                <a class="btn btn-outline-primary" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="fas fa-chevron-left"></i> abbrechen</a>
+                                <button class="btn btn-outline-primary" onclick="moveDate()"><i class="fas fa-save"></i> speichern</button>
                                 <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                             </div>
                         </div>
@@ -200,9 +199,10 @@
 
 @section Scripts {
 
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
 
@@ -213,13 +213,8 @@
         checkRoomStates();
         $("#loading").hide();
 
-        $('.datepicker').datepicker({
-            orientation: "left",
-            autoclose: true,
-            format: "dd.mm.yyyy",
-            weekStart: 1,
-            calendarWeeks: true,
-            language: "de"
+        $(document).ready(function() {
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
         });
 
         $('.timepicker-24').timepicker({
@@ -272,8 +267,8 @@
                 $("#dozList").append("<tr id=\""
                     + ui.item.text + "\"><td>"
                     + orgText + "</td><td>"
-                    + ui.item.value + "</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
-                    + ui.item.text + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+                    + ui.item.value + "</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
+                    + ui.item.text + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
             }
         });
@@ -511,8 +506,8 @@
         $("#roomList").append("<tr id=\""
             + roomId + "\"><td></td><td>"
             + roomNumber + "</td><td id=\"state_"
-            + roomId + "\">unbekannt</td><td><button class=\"btn btn-default btn-sm\" onclick=\"deleteRow('"
-            + roomId + "');\"><i class=\"fa fa-trash-o\"></i></button></td></tr>");
+            + roomId + "\">unbekannt</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
+            + roomId + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
         checkRoomState(roomId);
 

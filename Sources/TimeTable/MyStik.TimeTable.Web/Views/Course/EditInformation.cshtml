@@ -1,0 +1,42 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseDateInformationModel
+           
+<div class="row">
+    <div class="card">
+        <div class="modal-header">
+            <h4>Information zu Termin @Model.Date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE")) @Html.TimeSpan(Model.Date) </h4>
+        </div>
+        @using (Html.BeginForm("ChangeDateInformationConfirmed", "Course", FormMethod.Post, new { @class = "", role = "form" }))
+        {
+            <div>
+                    @Html.HiddenFor(m => m.DateId)
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Title, new { @class = "col-md-3 control-label" })
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Titel des Termins" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.DateDescription, new { @class = "col-md-3 control-label" })
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(m => m.DateDescription, new { @class = "form-control", placeholder = "Beschreibung des Termins", rows="9" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ShortInfo, new { @class = "col-md-3 control-label" })
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(m => m.ShortInfo, new { @class = "form-control", placeholder = "Kurzinfo (erscheint in Kalenderansicht)" })
+                        </div>
+                    </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-default"><i class="fa fa-save text-primary"></i> SPEICHERN</button>
+                <a class="btn btn-default" href="@Url.Action("AdminNewDates", "Course", new {id=Model.Date.Activity.Id})">Abbrechen</a>
+            </div>
+        }
+    </div>
+</div>
+
+

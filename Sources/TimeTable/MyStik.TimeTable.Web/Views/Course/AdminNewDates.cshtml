@@ -9,76 +9,54 @@
 @Html.Partial("_CourseSummaryHeader", Model.Summary)
 
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Course.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                        @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
-                        {
-                            <div id="dropDownMenu" class="form-group dropdown">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-check"></i> ausgewählte Termine <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li id="cancelAll"><a href="#"><i class="fa fa-times"></i> absagen</a></li>
-                                    <li id="refreshAll"><a href="#"><i class="fa fa-refresh"></i> reaktivieren</a></li>
-                                    <li id="moveAll"><a href="#"><i class="fa fa-calendar"></i> verschieben</a></li>
-                                    <li id="deleteAll"><a href="#"><i class="fa fa-trash-o"></i> löschen</a></li>
-                                    <li class="divider"></li>
-                                    <li id="addRoom"><a href="#"><i class="fa fa-building"></i> Raum hinzufügen</a></li>
-                                    <li id="removeRooms"><a href="#"><i class="fa fa-building-o"></i> Räume entfernen</a></li>
-                                    <li class="divider"></li>
-                                    <li id="addHost"><a href="#"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a></li>
-                                    <li id="removeHosts"><a href="#"><i class="fa fa-user-times"></i> Dozenten entfernen</a></li>
-                                    <li class="divider"></li>
-                                    <li id="addVirtualRoom"><a href="#"><i class="fa fa-tv"></i> virtuellen Raum hinzufügen</a></li>
-                                    <li id="removeVirtualRooms"><a href="#"><i class="fa fa-tv"></i> virtuelle Räume entfernen</a></li>
-                                </ul>
-                            </div>
-                            <div class="form-group">
-                                <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-default">
-                                    <i class="fa fa-plus-circle"></i> Termin anlegen
-                                </a>
-                            </div>
-                        }
-                    </div>
-                </div>
+@if (Model.Course.IsInternal)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
             </div>
         </div>
     </div>
-</div>
+
+}
 
 
-
-<div class="container-fluid">
-    @if (Model.Course.IsInternal)
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
-                </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Termine</h4>
             </div>
-        </div>
-
-    }
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-calendar"></i> Termine</h4>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
+                    <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
+                        <i class="fa fa-plus-circle"></i> Termin anlegen
+                    </a>
                 </div>
-                <div id="dateTable">
-                    @Html.Partial("_DateTable", Model.Course)
+                <div id="dropDownMenu" class="list-group-item">
+                    @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                    {
+                        <div class="btn-group">
+                            <a id="cancelAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-times"></i> absagen</a>
+                            <a id="refreshAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-refresh"></i> reaktivieren</a>
+                            <a id="moveAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-calendar"></i> verschieben</a>
+                            <a id="deleteAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-trash-o"></i> löschen</a>
+                            <a id="addRoom" href="#" class="btn btn-outline-secondary"><i class="fa fa-building"></i> Raum hinzufügen</a>
+                            <a id="removeRooms" href="#" class="btn btn-outline-secondary"><i class="fa fa-building-o"></i> Räume entfernen</a>
+                            <a id="addHost" href="#" class="btn btn-outline-secondary"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a>
+                            <a id="removeHosts" href="#" class="btn btn-outline-secondary"><i class="fa fa-user-times"></i> Dozenten entfernen</a>
+                            <a id="addVirtualRoom" href="#" class="btn btn-outline-secondary"><i class="fa fa-tv"></i> virtuellen Raum hinzufügen</a>
+                            <a id="removeVirtualRooms" href="#" class="btn btn-outline-secondary"><i class="fa fa-tv"></i> virtuelle Räume entfernen</a>
+                        </div>
+
+                    }
                 </div>
+
+            </div>
+            <div id="dateTable">
+                @Html.Partial("_DateTable", Model.Course)
             </div>
         </div>
     </div>
@@ -222,8 +200,6 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-
 }
 
 

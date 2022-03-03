@@ -1,0 +1,18 @@
+﻿@using System.Globalization
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Data.ActivityDate
+<!-- Modal -->
+<div class="row">
+    <div class="card">
+        <div class="card-header">
+            <h4>Löschen bestätigen</h4>
+            <div class="modal-body">
+                <p>Soll der Termin am @Model.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE")) @Html.TimeSpan(Model) gelöscht werden?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="@Url.Action("DeleteDateConfirmed", "Course", new {dateId=Model.Id})">Löschen</a>
+                <a href="@Url.Action("AdminNewDates", "Course", new {id = Model.Activity.Id})" class="btn btn-default">Abbrechen</a>
+            </div>
+        </div>
+    </div>
+</div>
