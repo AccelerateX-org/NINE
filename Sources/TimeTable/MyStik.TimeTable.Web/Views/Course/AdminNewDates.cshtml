@@ -30,30 +30,31 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
-                    <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
-                        <i class="fa fa-plus-circle"></i> Termin anlegen
-                    </a>
-                </div>
-                <div id="dropDownMenu" class="list-group-item">
-                    @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
-                    {
-                        <div class="btn-group">
-                            <a id="cancelAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-times"></i> absagen</a>
-                            <a id="refreshAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-refresh"></i> reaktivieren</a>
-                            <a id="moveAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-calendar"></i> verschieben</a>
-                            <a id="deleteAll" href="#" class="btn btn-outline-secondary"><i class="fa fa-trash-o"></i> löschen</a>
-                            <a id="addRoom" href="#" class="btn btn-outline-secondary"><i class="fa fa-building"></i> Raum hinzufügen</a>
-                            <a id="removeRooms" href="#" class="btn btn-outline-secondary"><i class="fa fa-building-o"></i> Räume entfernen</a>
-                            <a id="addHost" href="#" class="btn btn-outline-secondary"><i class="fa fa-user-plus"></i> Dozent hinzufügen</a>
-                            <a id="removeHosts" href="#" class="btn btn-outline-secondary"><i class="fa fa-user-times"></i> Dozenten entfernen</a>
-                            <a id="addVirtualRoom" href="#" class="btn btn-outline-secondary"><i class="fa fa-tv"></i> virtuellen Raum hinzufügen</a>
-                            <a id="removeVirtualRooms" href="#" class="btn btn-outline-secondary"><i class="fa fa-tv"></i> virtuelle Räume entfernen</a>
+                    <div  class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2">
+
+                            <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
+                            <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
+                                <i class="fa fa-plus-circle"></i> Termin anlegen
+                            </a>
                         </div>
-
-                    }
+                        @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                        {
+                            <div id="dropDownMenu" class="btn-group me-2" role="group">
+                                <a id="cancelAll" href="#" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="absagen"><i class="bi-x"></i></a>
+                                <a id="refreshAll" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="reaktivieren"><i class="bi-recycle"></i> </a>
+                                <a id="moveAll" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="verschieben"><i class="bi-calendar-x"></i> </a>
+                                <a id="deleteAll" href="#" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="löschen"><i class="bi-trash"></i></a>
+                                <a id="addRoom" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Raum hinzufügen"><i class="bi-building"></i><i class="bi-plus"></i></a>
+                                <a id="removeRooms" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Räume entfernen"><i class="bi-building"></i><i class="bi-x"></i></a>
+                                <a id="addHost" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Lehrenden hinzufügen"><i class="bi-person-plus"></i></a>
+                                <a id="removeHosts" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Lehrende entfernen"><i class="bi-person-x"></i></a>
+                                <a id="addVirtualRoom" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="virtuellen Raum hinzufügen"><i class="bi-tv"></i><i class="bi-plus"></i></a>
+                                <a id="removeVirtualRooms" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="virtuelle Räume entfernen"><i class="bi-tv"></i><i class="bi-x"></i></a>
+                            </div>
+                        }
+                    </div>
                 </div>
-
             </div>
             <div id="dateTable">
                 @Html.Partial("_DateTable", Model.Course)
@@ -88,8 +89,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel2">Raum hinzufügen</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form form-horizontal">
@@ -103,8 +104,8 @@
                 <input id="hiddenRoomId" type="text" hidden />
             </div>
             <div class="modal-footer">
-                <button id="btnAddRoom" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button id="btnAddRoom" type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fas fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -114,8 +115,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel5">Virtuellen Raum hinzufügen</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form form-horizontal">
@@ -129,8 +130,8 @@
                 <input id="hiddenVirtualRoomId" type="text" hidden />
             </div>
             <div class="modal-footer">
-                <button id="btnAddVirtualRoom" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button id="btnAddVirtualRoom" type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fas fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -141,7 +142,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <h4 class="modal-title" id="myModalLabel3">Termine verschieben</h4>
             </div>
             <div class="modal-body">
@@ -161,8 +162,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnMoveDates" type="button" class="btn btn-danger" data-dismiss="modal">Verschieben</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button id="btnMoveDates" type="button" class="btn btn-primary" data-bs-dismiss="modal">Verschieben</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -172,8 +173,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel4">Dozent hinzufügen</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form form-horizontal">
@@ -187,8 +188,8 @@
                 <input id="hiddenDozId" type="text" hidden />
             </div>
             <div class="modal-footer">
-                <button id="btnAddHost" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-plus"></i> Hinzufügen</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                <button id="btnAddHost" type="button" class="btn btn-primary" data-bs-dismiss="modal"><i class="fas fa-plus"></i> Hinzufügen</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -210,6 +211,10 @@
         var nChecked = 0;
 
         $(document).ready(function() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
 
                 //$("tr[history]").hide();
                 $('#dropDownMenu').hide();

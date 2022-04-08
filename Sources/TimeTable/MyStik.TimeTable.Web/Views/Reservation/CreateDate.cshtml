@@ -6,8 +6,8 @@
 
 @section styles
 {
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
 
 }
@@ -169,6 +169,7 @@
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
 
@@ -321,14 +322,8 @@
         $(document).ready(function () {
             $("#loading").hide();
 
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
+
 
             $('.timepicker-24').timepicker({
                 autoclose: true,

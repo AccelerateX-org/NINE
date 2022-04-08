@@ -51,6 +51,7 @@
                 <div class="btn-group">
                     <a class="btn btn-outline-primary text-center" href="@Url.Action("AdminGroups", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-list"></i><br />Semestergruppen</a>
                     <a class="btn btn-outline-primary text-center" href="@Url.Action("Organiser", "Dictionary", new {semId = Model.Semester.Id, orgId=Model.Organiser.Id})"> <i class="fas fa-pen"></i><br />Vorlesungsverzeichnis</a>
+                    <a class="btn btn-outline-primary text-center" href="@Url.Action("Create", "Course")"><i class="fas fa-plus fa-fw"></i><br />Lehrveranstaltung anlegen</a>
                     @if (ViewBag.UserRight.IsCourseAdmin)
                     {
 

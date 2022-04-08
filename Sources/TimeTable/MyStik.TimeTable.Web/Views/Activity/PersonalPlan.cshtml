@@ -27,9 +27,9 @@
                 </div>
             </div>
         </div>
-        <div id="panelDetails" class="col-md-4" hidden>
-            <div class="panel panel-default">
-                <div class="panel-heading">
+        <div id="panelDetails" class="col-md-4">
+            <div class="card">
+                <div class="card-header">
                     <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
                 </div>
             </div>
@@ -45,48 +45,48 @@
 
     <script type="text/javascript">
 
+        var myId;
+        var myCalendar = null;
+
+
         $(document).ready(function() {
             showDayCalendar();
 
         });
 
         function showDayCalendar() {
-            $('#loading').show();
+            try {
 
-            var myCalendar = initDayCalendar("calendar");
+                $('#loading').show();
 
-            myCalendar.addEventSource(
-                {
-                    url: '@Url.Action("ActivityPlan", "Calendar")',
-                    method: 'POST',
-                    extraParams: {
-                    },
-                    success: function (data, success, xhr) {
-                        $('#loading').hide();
-                    },
-                    failure: function (data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
+                myCalendar = initDayCalendar("calendar");
+
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("ActivityPlan", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                        },
+                        success: function (data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function (data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
                     }
-                }
-            );
+                );
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
 
-            @*
-            $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
 
-            $('#calendar').fullCalendar('addEventSource',
-                {
-                    url: '@Url.Action("ActivityPlan", "Calendar")',
-                    type: 'POST',
-                    success: function (data, success, xhr) {
-                        $('#loading').hide();
-                    },
-                    error: function (data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
-                    }
-                });
-            *@
 
         }
 
@@ -96,6 +96,8 @@
             $('#panelCalendar').addClass('col-md-8');
             $("#panelDetails").html('<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>');
             $('#panelDetails').show();
+            myCalendar.updateSize();
+
             myId = id;
 
             $.ajax(

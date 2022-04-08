@@ -291,15 +291,23 @@ namespace MyStik.TimeTable.Web.Controllers
             return Email("ThesisProlongRejectedEMail", mailModel);
         }
 
-
+        /// <summary>
+        /// Betreuer hat Verlängerung zugestimmt
+        /// Mail an Studierenden mit cc an PKV
+        /// </summary>
+        /// <param name="mailModel"></param>
+        /// <returns></returns>
         public EmailResult ThesisProlongRequestBoardEMail(ThesisMailModel mailModel)
         {
             InitSenderTopic(MAIL_SECTION_THESIS);
 
-            // geht nur an PK.Vorsitz
-            To.Add(mailModel.BoardUser.Email);
-            mailModel.User = mailModel.BoardUser;
+            // geht nur an den Studierenden
+            To.Add(mailModel.StudentUser.Email);
+            mailModel.User = mailModel.StudentUser;
 
+
+            // geht in cc an PK.Vorsitz
+            CC.Add(mailModel.BoardUser.Email);
             // cc an Betreuer bzw.Admin, der erfasst hat
             CC.Add(mailModel.ActionUser.Email);
 

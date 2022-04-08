@@ -1683,8 +1683,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="id"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult RemoveSubscription(Guid id, string userId)
+        public ActionResult RemoveSubscription(Guid id, string userId)
         {
             var occurrence = Db.Occurrences.SingleOrDefault(oc => oc.Id == id);
 
@@ -1716,21 +1715,21 @@ namespace MyStik.TimeTable.Web.Controllers
                     var date = Db.ActivityDates.SingleOrDefault(x => x.Occurrence.Id == id);
                     if (date != null)
                     {
-                        return PartialView("_RemoveSubscriptionDate", date);
+                        return RedirectToAction("DateDetails", "Lecturer", new { id = date.Id });
                     }
                     else
                     {
                         var slot = Db.ActivitySlots.SingleOrDefault(x => x.Occurrence.Id == id);
                         if (slot != null)
                         {
-                            return PartialView("_RemoveSubscriptionSlot", slot);
+                            return RedirectToAction("DateDetails", "Lecturer", new { id = slot.ActivityDate.Id });
                         }
                     }
 
                 }
             }
 
-            return PartialView("_RemoveSubscription");
+            return null;
         }
 
         /// <summary>
@@ -1915,8 +1914,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult LockSlot(Guid id)
+        public ActionResult LockSlot(Guid id)
         {
             var occurrence = Db.ActivitySlots.SingleOrDefault(occ => occ.Id == id);
 
@@ -1927,7 +1925,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            return PartialView("_LockedSlot", occurrence);
+            return RedirectToAction("DateDetails", "Lecturer", new {id = occurrence.ActivityDate.Id});
         }
 
         /// <summary>
@@ -1935,8 +1933,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult UnLockSlot(Guid id)
+        public ActionResult UnLockSlot(Guid id)
         {
             var occurrence = Db.ActivitySlots.SingleOrDefault(occ => occ.Id == id);
 
@@ -1946,7 +1943,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return PartialView("_LockedSlot", occurrence);
+
+            return RedirectToAction("DateDetails", "Lecturer", new { id = occurrence.ActivityDate.Id });
         }
 
 

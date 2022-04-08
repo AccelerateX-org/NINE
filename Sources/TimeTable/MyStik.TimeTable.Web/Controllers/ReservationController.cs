@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
@@ -108,6 +109,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
 
             return View(model);
@@ -451,6 +455,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
             });
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
             return View(model);
         }

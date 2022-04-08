@@ -6192,6 +6192,14 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.MailController.ThesisProlongRequestBoardEMail(MyStik.TimeTable.Web.Models.ThesisMailModel)">
+            <summary>
+            Betreuer hat Verlängerung zugestimmt
+            Mail an Studierenden mit cc an PKV
+            </summary>
+            <param name="mailModel"></param>
+            <returns></returns>
+        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.MailController.VerfiyEMail(MyStik.TimeTable.Web.Models.ConfirmEmailMailModel)">
             <summary>
             Validierung einer E-Mail Adresse

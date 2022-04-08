@@ -2,29 +2,36 @@
 @model MyStik.TimeTable.Data.ActivitySlot
     
 <div id="@Model.Occurrence.Id">
-@if (Model.Occurrence.IsAvailable)
+    @if (Model.Occurrence.IsAvailable)
     {
-        @Ajax.ActionButton("fa-lock", "Sperren", "LockSlot", "OfficeHour",
-            new {Id = Model.Id},
-            new AjaxOptions()
-            {
-                HttpMethod = "Post",
-                InsertionMode = InsertionMode.Replace,
-                UpdateTargetId = Model.Occurrence.Id.ToString()
-            },
-            new {@class = "btn btn-default btn-xs"})
+        <a href="@Url.Action("LockSlot", "OfficeHour", new {id=Model.Id})" class="btn btn-outline-secondary"><i class="bi-lock"></i> sperren</a>
+        @*
+            @Ajax.ActionButton("fa-lock", "Sperren", "LockSlot", "OfficeHour",
+                new {Id = Model.Id},
+                new AjaxOptions()
+                {
+                    HttpMethod = "Post",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = Model.Occurrence.Id.ToString()
+                },
+                new {@class = "btn btn-default btn-xs"})
+        *@
     }
     else
     {
-        @Ajax.ActionButton("fa-unlock", "Freigeben", "UnLockSlot", "OfficeHour",
-            new { Id = Model.Id },
-            new AjaxOptions()
-            {
-                HttpMethod = "Post",
-                InsertionMode = InsertionMode.Replace,
-                UpdateTargetId = Model.Occurrence.Id.ToString()
-            },
-            new { @class = "btn btn-default btn-xs" })
+        <a href="@Url.Action("UnLockSlot", "OfficeHour", new {id=Model.Id})" class="btn btn-outline-secondary"><i class="bi-unlock"></i> freigeben</a>
+        @*
+            @Ajax.ActionButton("fa-unlock", "Freigeben", "UnLockSlot", "OfficeHour",
+                new { Id = Model.Id },
+                new AjaxOptions()
+                {
+                    HttpMethod = "Post",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = Model.Occurrence.Id.ToString()
+                },
+                new { @class = "btn btn-default btn-xs" })
+        *@
     }
 </div>
+
 

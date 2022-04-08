@@ -27,7 +27,14 @@
 
 @if (ViewBag.ShowLinks != null && ViewBag.ShowLinks == true)
 {
-    <a class="list-group-item @listGroupItemClass" href="@Url.Action("Details", "Course", new {id=Model.Course.Id})">
+    <a class="list-group-item @listGroupItemClass" href="@Url.Action("Details", "Course", new {id = Model.Course.Id})">
+        @if (ViewBag.ShowTitle != null && ViewBag.ShowTitle == true)
+        {
+            <h5 class="list-group-item-heading">
+                @Html.FacultyLabel(Model.Course.Organiser)
+                @Model.Course.Name (@Model.Course.ShortName)
+            </h5>
+        }
         <ul class="fa-ul">
             <li>
                 <i class="fa-li fa fa-user-md"></i>
@@ -62,6 +69,13 @@
 else
 {
     <div class="list-group-item @listGroupItemClass">
+        @if (ViewBag.ShowTitle != null && ViewBag.ShowTitle == true)
+        {
+            <h5 class="list-group-item-heading">
+                @Html.FacultyLabel(Model.Course.Organiser)
+                @Model.Course.Name (@Model.Course.ShortName)
+            </h5>
+        }
         <ul class="fa-ul">
             <li>
                 <i class="fa-li fa fa-user-md"></i>
@@ -78,7 +92,7 @@ else
                 @if (Model.Dates.Count == 1)
                 {
                     <i class="fa-li fa fa-calendar"></i>
-                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: true), @Html.RoomList(Model.VirtualRooms, showLinks:true)]</span>
+                    <span>immer @Html.Date(Model.Dates.First()) in [@Html.RoomList(Model.Rooms, showLinks: true), @Html.RoomList(Model.VirtualRooms, showLinks: true)]</span>
                 }
                 else
                 {

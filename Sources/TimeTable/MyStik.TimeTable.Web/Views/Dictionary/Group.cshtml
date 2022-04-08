@@ -65,12 +65,12 @@
 
 @section scripts
 {
-<!--
-<script src="~/Assets/global/plugins/moment.min.js"></script>
+    <!--
+    <script src="~/Assets/global/plugins/moment.min.js"></script>
     -->
-        <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
-        <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
-        <script src="~/Assets/fillter/scripts/calendar.js"></script>
+    <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
+    <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
+    <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
     <script>
 
@@ -99,73 +99,95 @@
         }
 
         function showWeekCalendar() {
-            $("#btnWeek").addClass("active");
-            $("#btnDay").removeClass("active");
-            $("#btnList").removeClass("active");
+            try {
+                $("#btnWeek").addClass("active");
+                $("#btnDay").removeClass("active");
+                $("#btnList").removeClass("active");
 
-            $('#loading').show();
-            var group = '@Model.SemesterGroup.Id';
-            $('#calendar').html('');
-            myCalendar = initWeekCalendar("calendar");
+                $('#loading').show();
+                var group = '@Model.SemesterGroup.Id';
+                $('#calendar').html('');
+                myCalendar = initWeekCalendar("calendar");
 
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("GroupWeekPlan", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semGroupId: group,
+                            showPersonalDates: showPDs
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            strMessage =
+                                "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                            strMessage += "<p>Grund: " + ex + data + type + "</p>";
+                            strMessage += "</div>";
 
-            @*
-                $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupWeekPlan", "Calendar")');
-                *@
-
-            myCalendar.addEventSource(
-                {
-                    url: '@Url.Action("GroupWeekPlan", "Calendar")',
-                    method: 'POST',
-                    extraParams: {
-                        semGroupId: group,
-                        showPersonalDates: showPDs
-                    },
-                    success: function (data, success, xhr) {
-                        $('#loading').hide();
-                    },
-                    failure: function (data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
+                            $('#calendar').html(strMessage);
+                            //alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
                     }
-                }
                 );
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
 
         }
 
         function showDayCalendar() {
-            $("#btnWeek").removeClass("active");
-            $("#btnDay").addClass("active");
-            $("#btnList").removeClass("active");
+            try
+            {
+                $("#btnWeek").removeClass("active");
+                $("#btnDay").addClass("active");
+                $("#btnList").removeClass("active");
 
 
-            $('#loading').show();
-            var group = '@Model.SemesterGroup.Id';
-            $('#calendar').html('');
-            myCalendar = initDayCalendar("calendar");
+                $('#loading').show();
+                var group = '@Model.SemesterGroup.Id';
+                $('#calendar').html('');
+                myCalendar = initDayCalendar("calendar");
 
-            @*
-            $('#calendar').fullCalendar('removeEventSource', '@Url.Action("GroupDayPlan", "Calendar")');
-                *@
-
-            myCalendar.addEventSource(
-                {
-                    url: '@Url.Action("GroupDayPlan", "Calendar")',
-                    method: 'POST',
-                    extraParams: {
-                        semGroupId: group,
-                        topicId: null,
-                        showPersonalDates: showPDs
-                    },
-                    success: function (data, success, xhr) {
-                        $('#loading').hide();
-                    },
-                    failure: function (data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
+                myCalendar.addEventSource(
+                    {
+                        url: '@Url.Action("GroupDayPlan", "Calendar")',
+                        method: 'POST',
+                        extraParams: {
+                            semGroupId: group,
+                            topicId: null,
+                            showPersonalDates: showPDs
+                        },
+                        success: function(data, success, xhr) {
+                            $('#loading').hide();
+                        },
+                        failure: function(data, type, ex) {
+                            alert("Fehler beim laden der Daten." + ex);
+                            $('#loading').hide();
+                        }
                     }
-                }
-            );
+                    );
+
+            } catch (err) {
+                var strMessage =
+                    "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                strMessage += "<p>Grund: " + err + "</p>";
+                strMessage += "<p>Abhilfe: Taste F5 drücken (PC/Laptop) und/oder den Browser neu starten (mobile)</p>";
+                strMessage += "</div>";
+
+                $('#calendar').html(strMessage);
+                $('#loading').hide();
+            }
+
         }
 
 
@@ -215,7 +237,7 @@
                     data: {
                         Id: id
                     },
-                    success: function (data, success, xhr) {
+                    success: function(data, success, xhr) {
                         console.log(data);
                         $("#panelDetails").html(data);
                     }
@@ -282,4 +304,4 @@
 
 
     </script>
-    }
+}

@@ -88,6 +88,10 @@
                                             <td>@sub.TimeStamp</td>
                                             <td>@sub.SubscriberRemark</td>
                                             <td>
+                                                <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = slot.Occurrence.Id, userId = sub.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
+
+
+                                                @*
                                                 @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
                                                     new {id = slot.Occurrence.Id, userId = sub.UserId},
                                                     new AjaxOptions()
@@ -97,7 +101,7 @@
                                                         UpdateTargetId = slot.Id.ToString(),
                                                     },
                                                     new {@class = "btn btn-default btn-xs"})
-
+                                                    *@
                                             </td>
                                         </tr>
                                     }
@@ -151,16 +155,20 @@
                                         <td>@subscription.TimeStamp</td>
                                         <td>@subscription.SubscriberRemark</td>
                                         <td>
-                                            @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
-                                                new {id = Model.Date.Occurrence.Id, userId = subscription.UserId},
-                                                new AjaxOptions()
-                                                {
-                                                    HttpMethod = "Post",
-                                                    InsertionMode = InsertionMode.Replace,
-                                                    UpdateTargetId = subscription.Id.ToString(),
-                                                },
-                                                new {@class = "btn btn-default btn-xs"})
+                                            <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = Model.Date.Occurrence.Id, userId = subscription.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
 
+                                            @*
+
+                                                @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
+                                                    new {id = Model.Date.Occurrence.Id, userId = subscription.UserId},
+                                                    new AjaxOptions()
+                                                    {
+                                                        HttpMethod = "Post",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        UpdateTargetId = subscription.Id.ToString(),
+                                                    },
+                                                    new {@class = "btn btn-default btn-xs"})
+                                            *@
                                         </td>
                                     </tr>
                                 }
@@ -181,23 +189,23 @@
                     @if (Model.Date.Begin >= DateTime.Now)
                     {
                         if (!Model.Subscriptions.Any())
-                         {
-                             <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
-                                 <i class="fa fa-trash-o"></i> löschen
-                             </a>
-                         }
+                        {
+                            <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
+                                <i class="fa fa-trash-o"></i> löschen
+                            </a>
+                        }
                         if (Model.Date.Occurrence.IsCanceled)
-                         {
-                             <a href="@Url.Action("ReactivateDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
-                                 <i class="fa fa-recycle"></i> reaktivieren
-                             </a>
-                         }
-                         else
-                         {
-                             <a href="@Url.Action("CancelDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
-                                 <i class="fa fa-times"></i> absagen
-                             </a>
-                         }
+                        {
+                            <a href="@Url.Action("ReactivateDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
+                                <i class="fa fa-recycle"></i> reaktivieren
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("CancelDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
+                                <i class="fa fa-times"></i> absagen
+                            </a>
+                        }
                         <a href="@Url.Action("EditDate", "Lecturer", new {id = Model.Date.Id})" class="list-group-item">
                             <i class="fa fa-info-circle"></i> Infotext ändern
                         </a>
@@ -213,7 +221,7 @@
                     </a>
                     <a href="@Url.Action("OfficeHourDate", "Print", new {id = Model.Date.Occurrence.Id})"
                        onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1');return false;"
-                       class="list-group-item"><i class="fa fa-print"></i> drucken</a>
+                       class="list-group-item"><i class="fa fa-print"></i>drucken</a>
                 </div>
             </div>
 
@@ -224,3 +232,25 @@
 
 
 
+@section Scripts {
+
+    <script>
+        function deleteRow(id, userId, rowId) {
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("RemoveSubscription", "OfficeHour")',
+                    data: {
+                        id: id,
+                        userId: userId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#" + rowId).remove();
+                    }
+                });
+
+
+        }
+
+    </script>
+}

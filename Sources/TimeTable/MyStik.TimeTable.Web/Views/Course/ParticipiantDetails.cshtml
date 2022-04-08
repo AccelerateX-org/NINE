@@ -59,7 +59,7 @@
                     <div class="btn-group btn-group-justified" role="group" aria-label="...">
                         @if (Model.User != null)
                         {
-                            <a href="mailto:@Model.User.Email" class="btn btn-default"><i class="fa fa-envelope-o"></i> E-Mail schreiben</a>
+                            <a href="mailto:@Model.User.Email" class="btn btn-outline-primary"><i class="bi-envelope"></i> E-Mail schreiben</a>
 
                             if (!Model.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                             {
@@ -68,14 +68,14 @@
                                     if ((!hasLottery || ViewBag.UserRight.IsCourseAdmin) ||
                                         (hasLottery && hasPrio1))
                                     {
-                                        <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-default"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
+                                        <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-outline-success"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
                                     }
                                 }
                                 else
                                 {
                                     if (!hasLottery || ViewBag.UserRight.IsCourseAdmin)
                                     {
-                                        <a href="@Url.Action("SetOnWaitingList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-warning"><i class="fa fa-hourglass-half"></i> Auf Warteliste setzen</a>
+                                        <a href="@Url.Action("SetOnWaitingList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-outline-warning"><i class="fa fa-hourglass-half"></i> Auf Warteliste setzen</a>
                                     }
                                 }
                             }

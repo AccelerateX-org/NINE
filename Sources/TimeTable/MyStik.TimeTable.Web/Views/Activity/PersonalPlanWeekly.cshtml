@@ -12,10 +12,10 @@
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
         <div id="panelCalendar" class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     <h4>
-                        <i class="fa fa-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
+                        <i class="bi-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </h4>
                 </div>
@@ -26,158 +26,154 @@
                 </div>
             </div>
         </div>
-        <div id="panelDetails" class="col-md-4" hidden>
-            <div class="panel panel-default">
-                <div class="panel-heading">
+        <div id="panelDetails" class="col-md-4">
+            <div class="card">
+                <div class="card-header">
                     <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
                 </div>
             </div>
         </div>
-
     </div>
+</div>
+
 
     @section scripts
-{
+    {
         <script src="~/Assets/libs/fullcalendar/main.min.js"></script>
         <script src="~/Assets/libs/fullcalendar/locales/de.js"></script>
         <script src="~/Assets/fillter/scripts/calendar.js"></script>
 
         <script type="text/javascript">
 
-    $(document).ready(function() {
-        updateCalendar(false);
-    });
+            var myId;
+            var myCalendar = null;
 
-    function onToogleWaiting() {
-        if ($('#btnWaiting').hasClass("active")) {
-            $('#btnWaiting').removeClass("active");
-            $('#btnWaiting').removeClass("btn-warning");
-            $('#btnWaiting').addClass("btn-default");
-            updateCalendar(false);
-        } else {
-            $('#btnWaiting').addClass("active");
-            $('#btnWaiting').removeClass("btn-default");
-            $('#btnWaiting').addClass("btn-warning");
-            updateCalendar(true);
-        }
-    }
+            $(document).ready(function() {
+                updateCalendar(false);
+            });
 
-    function updateCalendar(showWL) {
-        $('#loading').show();
-
-        var myCalendar = initWeekCalendar("calendar");
-
-
-        myCalendar.addEventSource(
-            {
-                url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
-                method: 'POST',
-                extraParams: {
-                    semId: '@Model.Semester.Id',
-                    showWaiting: showWL
-                },
-                success: function (data, success, xhr) {
-                    $('#calendarList').html(data);
-                    $('#calendarList').show();
-                    $('#loading').hide();
-                },
-                failure: function (data, type, ex) {
-                    alert("Fehler beim laden der Daten." + ex);
-                    $('#loading').hide();
+            function onToogleWaiting() {
+                if ($('#btnWaiting').hasClass("active")) {
+                    $('#btnWaiting').removeClass("active");
+                    $('#btnWaiting').removeClass("btn-warning");
+                    $('#btnWaiting').addClass("btn-default");
+                    updateCalendar(false);
+                } else {
+                    $('#btnWaiting').addClass("active");
+                    $('#btnWaiting').removeClass("btn-default");
+                    $('#btnWaiting').addClass("btn-warning");
+                    updateCalendar(true);
                 }
             }
-        );
-        @*
-            $('#calendar').fullCalendar('removeEvents');
 
-            $('#calendar').fullCalendar('addEventSource',
-                {
-                    url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
-                    type: 'POST',
-                    data: {
-                        semId: '@Model.Semester.Id',
-                        showWaiting: showWL
-                    },
-                    success: function(data, success, xhr) {
-                        $('#calendarList').html(data);
-                        $('#calendarList').show();
-                        $('#loading').hide();
-                    },
-                    error: function(data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
-                    }
-                });
-            *@
-        }
+            function updateCalendar(showWL) {
+                try {
+                    $('#loading').show();
 
-        function onShowEventInfo(id) {
-            $('#panelCalendar').removeClass('col-md-12');
-            $('#panelCalendar').addClass('col-md-8');
-            $("#panelDetails").html('<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>');
-            $('#panelDetails').show();
-            myId = id;
+                    myCalendar = initWeekCalendar("calendar");
 
-            $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("SelectCourse", "Dictionary")',
-                    data: {
-                        Id: id
-                    },
-                    success: function(data, success, xhr) {
-                        $("#panelDetails").html(data);
-                    }
-                });
 
-        }
+                    myCalendar.addEventSource(
+                        {
+                            url: '@Url.Action("PersonalPlanWeekly", "Calendar")',
+                            method: 'POST',
+                            extraParams: {
+                                semId: '@Model.Semester.Id',
+                                showWaiting: showWL
+                            },
+                            success: function(data, success, xhr) {
+                                $('#calendarList').html(data);
+                                $('#calendarList').show();
+                                $('#loading').hide();
+                            },
+                            failure: function(data, type, ex) {
+                                alert("Fehler beim laden der Daten." + ex);
+                                $('#loading').hide();
+                            }
+                        }
+                    );
+                } catch (err) {
+                    var strMessage =
+                        "<div class=\"alert alert-danger\"><h4>Fehler beim Laden der Daten</h4>";
+                    strMessage += "<p>Grund: " + err + "</p>";
+                    strMessage += "<p>Abhilfe: Den Brwoser Cache leeren, z.B. mit der Tastenkombination CTRL + F5 bzw. Strg + F5</p>";
+                    strMessage += "</div>";
 
-        function onCloseDetails() {
-            $('#panelCalendar').removeClass('col-md-8');
-            $('#panelCalendar').addClass('col-md-12');
-            $('#panelDetails').html('');
-            $('#panelDetails').hide();
+                    $('#calendar').html(strMessage);
+                    $('#loading').hide();
+                }
 
-            // update nur, wenn auch gebucht wurde
-            //showCalendar();
+            }
 
-            /* wäre schön, gehtaber nicht
-             am Ende ist es das UpdateEvent, das die Anzeige nicht ändert
-            //alert(myId);
-            var event = $("#calendar").fullCalendar('clientEvents', myId)[0];
-            alert(event.title);
+            function onShowEventInfo(id) {
+                $('#panelCalendar').removeClass('col-md-12');
+                $('#panelCalendar').addClass('col-md-8');
+                $("#panelDetails").html('<div class="card"><div class="card-header"><h4>Lade Details <span id="loading2"><i class="fas fa-spinner fa-spin text-muted"></i></span></h4></div></div>');
+                $('#panelDetails').show();
+                myCalendar.updateSize();
 
-            //event._borderColor = "#000";
-            event.title = "Hallo";
+                myId = id;
 
-            $("#calendar").fullcalendar('updateEvent', event);
-            */
-        }
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("SelectCourse", "Dictionary")',
+                        data: {
+                            Id: id
+                        },
+                        success: function(data, success, xhr) {
+                            $("#panelDetails").html(data);
+                        }
+                    });
 
-        function onSubscribe(e) {
-            //alert('#'+e);
-            $('#bookingBox').addClass('disabled');
-            $('#bookingBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+            }
 
-            $.ajax(
-                {
-                    type: "POST",
-                    url: '@Url.Action("Subscribe", "Dictionary")',
-                    data: {
-                        Id: e
-                    },
-                    success: function(data, success, xhr) {
-                        $('#bookingBox').html(data);
-                        $('#bookingBox').removeClass('disabled');
-                        refreshCalendar();
-                    }
-                });
+            function onCloseDetails() {
+                $('#panelCalendar').removeClass('col-md-8');
+                $('#panelCalendar').addClass('col-md-12');
+                $('#panelDetails').html('');
+                $('#panelDetails').hide();
 
-        }
+                // update nur, wenn auch gebucht wurde
+                //showCalendar();
 
-        function refreshCalendar() {
-            updateCalendar();
-        }
+                /* wäre schön, gehtaber nicht
+                 am Ende ist es das UpdateEvent, das die Anzeige nicht ändert
+                //alert(myId);
+                var event = $("#calendar").fullCalendar('clientEvents', myId)[0];
+                alert(event.title);
+    
+                //event._borderColor = "#000";
+                event.title = "Hallo";
+    
+                $("#calendar").fullcalendar('updateEvent', event);
+                */
+            }
+
+            function onSubscribe(e) {
+                //alert('#'+e);
+                $('#bookingBox').addClass('disabled');
+                $('#bookingBox').html('<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>');
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("Subscribe", "Dictionary")',
+                        data: {
+                            Id: e
+                        },
+                        success: function(data, success, xhr) {
+                            $('#bookingBox').html(data);
+                            $('#bookingBox').removeClass('disabled');
+                            refreshCalendar();
+                        }
+                    });
+
+            }
+
+            function refreshCalendar() {
+                updateCalendar();
+            }
 
         </script>
     }

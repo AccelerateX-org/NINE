@@ -24,6 +24,9 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class CalendarController : BaseController
     {
+        private string _calDateFormatCalendar = "yyyy-MM-ddTHH:mm:ss";
+
+
         public ActionResult Index()
         {
 
@@ -187,8 +190,8 @@ namespace MyStik.TimeTable.Web.Controllers
                             courseId = date.Activity.Id.ToString(),
                             title = string.Empty,
                             allDay = false,
-                            start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            start = date.Date.Begin.ToString(_calDateFormatCalendar),
+                            end = date.Date.End.ToString(_calDateFormatCalendar),
                             textColor = date.TextColor,
                             backgroundColor = date.BackgroundColor,
                             borderColor = "#ff0000",
@@ -203,8 +206,8 @@ namespace MyStik.TimeTable.Web.Controllers
                             courseId = date.Activity.Id.ToString(),
                             title = string.Empty,
                             allDay = false,
-                            start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            start = date.Date.Begin.ToString(_calDateFormatCalendar),
+                            end = date.Date.End.ToString(_calDateFormatCalendar),
                             textColor = date.TextColor,
                             backgroundColor = date.BackgroundColor,
                             borderColor = "#000",
@@ -653,8 +656,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         title = string.Empty,
                         allDay = false,
-                        start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                        end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        start = calBegin.ToString(_calDateFormatCalendar),
+                        end = calEnd.ToString(_calDateFormatCalendar),
                         textColor = "#000",
                         backgroundColor = "#fff",
                         borderColor = "#000",
@@ -675,8 +678,8 @@ namespace MyStik.TimeTable.Web.Controllers
                         {
                             title = string.Empty,
                             allDay = false,
-                            start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            start = calBegin.ToString(_calDateFormatCalendar),
+                            end = calEnd.ToString(_calDateFormatCalendar),
                             textColor = "#000",
                             backgroundColor = "#fff",
                             borderColor = "#000",
@@ -805,8 +808,8 @@ namespace MyStik.TimeTable.Web.Controllers
                         courseId = course.Id.ToString(),
                         title = string.Empty,
                         allDay = false,
-                        start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                        end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        start = calBegin.ToString(_calDateFormatCalendar),
+                        end = calEnd.ToString(_calDateFormatCalendar),
                         textColor = "#000",
                         backgroundColor = color,
                         borderColor = "#000",
@@ -860,8 +863,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     title = sb.ToString(),
                     allDay = false,
-                    start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                    end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    start = date.Date.Begin.ToString(_calDateFormatCalendar),
+                    end = date.Date.End.ToString(_calDateFormatCalendar),
                     textColor = date.TextColor,
                     backgroundColor = date.BackgroundColor,
                     borderColor = "#000",
@@ -956,8 +959,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         title = sb.ToString(),
                         allDay = false,
-                        start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                        end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        start = calBegin.ToString(_calDateFormatCalendar),
+                        end = calEnd.ToString(_calDateFormatCalendar),
                         textColor = "#000",
                         backgroundColor = "#fff",
                         borderColor = "#000",
@@ -1058,8 +1061,8 @@ namespace MyStik.TimeTable.Web.Controllers
                         {
                             title = sb.ToString(),
                             allDay = false,
-                            start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            start = calBegin.ToString(_calDateFormatCalendar),
+                            end = calEnd.ToString(_calDateFormatCalendar),
                             textColor = "#000",
                             backgroundColor = "#fff",
                             borderColor = "#000",
@@ -1308,112 +1311,119 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public JsonResult GroupWeekPlan(string start, string end, Guid? semGroupId, bool showPersonalDates)
         {
-            var startDate = GetDateTime(start);
-            var endDate = GetDateTime(end);
-
-            var courseService = new CourseService(Db);
-
-            var events = new List<CalendarEventModel>();
-
-            // start und end sind "echte" Daten, d.h. eine Woche
-
-            // Am Schluss muss alles in "Wochentage" umgerechnet werden
-
-            // Alle Events abstrakt nah Wochentag
-            var semesterGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
-            var semester = semesterGroup.Semester;
-            var member = GetMyMembership();
-            var user = GetCurrentUser();
-
-            var courses = new List<Course>();
-
-
-            // Alle Vorlesungen, der Semestergruppe
-            var mylecture =
-                Db.Activities.OfType<Course>()
-                    .Where(c => c.SemesterGroups.Any(g => g.Id == semGroupId))
-                    .ToList();
-            courses.AddRange(mylecture);
-
-
-            if (user != null && showPersonalDates)
+            try
             {
-                var activities = Db.Activities.OfType<Course>().Where(a =>
-                    a.SemesterGroups.Any(s => s.Semester.Id == semester.Id) &&
-                    a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
 
-                foreach (var course in activities)
+
+                var startDate = GetDateTime(start);
+                var endDate = GetDateTime(end);
+
+                var courseService = new CourseService(Db);
+
+                var events = new List<CalendarEventModel>();
+
+                // start und end sind "echte" Daten, d.h. eine Woche
+
+                // Am Schluss muss alles in "Wochentage" umgerechnet werden
+
+                // Alle Events abstrakt nah Wochentag
+                var semesterGroup = Db.SemesterGroups.SingleOrDefault(x => x.Id == semGroupId);
+                var semester = semesterGroup.Semester;
+                var member = GetMyMembership();
+                var user = GetCurrentUser();
+
+                var courses = new List<Course>();
+
+
+                // Alle Vorlesungen, der Semestergruppe
+                var mylecture =
+                    Db.Activities.OfType<Course>()
+                        .Where(c => c.SemesterGroups.Any(g => g.Id == semGroupId))
+                        .ToList();
+                courses.AddRange(mylecture);
+
+
+                if (user != null && showPersonalDates)
                 {
-                    if (!courses.Contains(course))
+                    var activities = Db.Activities.OfType<Course>().Where(a =>
+                        a.SemesterGroups.Any(s => s.Semester.Id == semester.Id) &&
+                        a.Occurrence.Subscriptions.Any(u => u.UserId.Equals(user.Id))).ToList();
+
+                    foreach (var course in activities)
                     {
-                        courses.Add(course);
-                    }
-                }
-            }
-
-
-
-            foreach (var course in courses)
-            {
-                var days = (from occ in course.Dates
-                            select
-                                new
-                                {
-                                    Day = occ.Begin.DayOfWeek,
-                                    Begin = occ.Begin.TimeOfDay,
-                                    End = occ.End.TimeOfDay,
-                                }).Distinct().ToList();
-
-                var eventViewModel = new CalenderCourseEventViewModel();
-                eventViewModel.CourseSummary = courseService.GetCourseSummary(course);
-
-                var bckColor = "#fff";
-                if (showPersonalDates)
-                {
-                    var state = ActivityService.GetActivityState(course.Occurrence, user);
-                    if (state.Subscription != null)
-                    {
-                        if (state.Subscription.OnWaitingList)
+                        if (!courses.Contains(course))
                         {
-                            bckColor = "#c89f23";
-                        }
-                        else
-                        {
-                            bckColor = "#37918b";
+                            courses.Add(course);
                         }
                     }
                 }
 
 
-                foreach (var day in days)
+
+                foreach (var course in courses)
                 {
-                    var calDay = startDate.AddDays((int)day.Day - (int)startDate.DayOfWeek);
-                    var calBegin = calDay.Add(day.Begin);
-                    var calEnd = calDay.Add(day.End);
+                    var days = (from occ in course.Dates
+                        select
+                            new
+                            {
+                                Day = occ.Begin.DayOfWeek,
+                                Begin = occ.Begin.TimeOfDay,
+                                End = occ.End.TimeOfDay,
+                            }).Distinct().ToList();
 
+                    var eventViewModel = new CalenderCourseEventViewModel();
+                    eventViewModel.CourseSummary = courseService.GetCourseSummary(course);
 
-                    var calEvent = new CalendarEventModel
+                    var bckColor = "#fff";
+                    if (showPersonalDates)
                     {
-                        id = course.Id.ToString(),
-                        title = string.Empty,
-                        allDay = false,
-                        start = calBegin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                        end = calEnd.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                        textColor = "#000",
-                        backgroundColor = bckColor,
-                        borderColor = "#000",
-                        courseId = course.Id.ToString(),
-                        htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel)
-                    };
+                        var state = ActivityService.GetActivityState(course.Occurrence, user);
+                        if (state.Subscription != null)
+                        {
+                            if (state.Subscription.OnWaitingList)
+                            {
+                                bckColor = "#c89f23";
+                            }
+                            else
+                            {
+                                bckColor = "#37918b";
+                            }
+                        }
+                    }
 
 
-                    events.Add(calEvent);
+                    foreach (var day in days)
+                    {
+                        var calDay = startDate.AddDays((int) day.Day - (int) startDate.DayOfWeek);
+                        var calBegin = calDay.Add(day.Begin);
+                        var calEnd = calDay.Add(day.End);
+
+
+                        var calEvent = new CalendarEventModel
+                        {
+                            id = course.Id.ToString(),
+                            title = string.Empty,
+                            allDay = false,
+                            start = calBegin.ToString(_calDateFormatCalendar),
+                            end = calEnd.ToString(_calDateFormatCalendar),
+                            textColor = "#000",
+                            backgroundColor = bckColor,
+                            borderColor = "#000",
+                            courseId = course.Id.ToString(),
+                            htmlContent = this.RenderViewToString("_CalendarCourseEventContent", eventViewModel)
+                        };
+
+
+                        events.Add(calEvent);
+                    }
                 }
+
+                return Json(events);
             }
-
-
-
-            return Json(events);
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
 
@@ -1531,8 +1541,8 @@ namespace MyStik.TimeTable.Web.Controllers
                         {
                             title = sb.ToString(),
                             allDay = false,
-                            start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            start = date.Date.Begin.ToString(_calDateFormatCalendar),
+                            end = date.Date.End.ToString(_calDateFormatCalendar),
                             textColor = date.TextColor,
                             backgroundColor = date.BackgroundColor,
                             borderColor = "#ff0000",
@@ -1547,8 +1557,8 @@ namespace MyStik.TimeTable.Web.Controllers
                             courseId = date.Activity.Id.ToString(),
                             title = sb.ToString(),
                             allDay = false,
-                            start = date.Date.Begin.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                            end = date.Date.End.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                            start = date.Date.Begin.ToString(_calDateFormatCalendar),
+                            end = date.Date.End.ToString(_calDateFormatCalendar),
                             textColor = date.TextColor,
                             backgroundColor = date.BackgroundColor,
                             borderColor = "#000",

@@ -12,6 +12,10 @@
     <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 
     <style>
+        .container {
+            max-width: 720px;
+        }
+
         .table-condensed-print > thead > tr > th,
         .table-condensed-print > tbody > tr > th,
         .table-condensed-print > tfoot > tr > th,
@@ -29,12 +33,13 @@
         <h6>Stand: @now.ToString("dd.MM.yyyy HH:mm:ss")</h6>
     </div>
     <div class="col-sm-6">
-        <span class="pull-right"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 60px; width: auto" /></span>
+        <div class="top-0 end-0"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 120px; width: auto" /></div>
     </div>
 </div>
 
 <div class="row">
-    <div id="calendar" style="font-family: arial; font-size: @calenderFontSize">
+    <div class="col-md-12">
+        <div id="calendar" style="font-family: arial; font-size: @calenderFontSize"></div>
     </div>
 </div>
 
@@ -51,8 +56,17 @@
         $(document).ready(function() {
             $('#loading').hide();
 
-            initPrintCalendar(@calendarHeight, @Json.Encode(ViewBag.IsMoSa), '@ViewBag.DefaultDate');
+            var myCalendar = initPrintCalendar(@calendarHeight, @Json.Encode(ViewBag.IsMoSa), '@ViewBag.DefaultDate');
 
+            myCalendar.addEventSource(
+                {
+                    url: '@Url.Action("RoomPrintPlanWeek", "Calendar", new { roomId = Model.Room.Id })',
+                    method: 'POST',
+                }
+            );
+
+
+            @*
             $('#calendar').fullCalendar('removeEvents');
 
             $('#calendar').fullCalendar('addEventSource',
@@ -60,7 +74,7 @@
                 url: '@Url.Action("RoomPrintPlanWeek", "Calendar", new { roomId = Model.Room.Id })',
                 type: 'POST'
             });
-
+                *@
         });
 
     </script>
