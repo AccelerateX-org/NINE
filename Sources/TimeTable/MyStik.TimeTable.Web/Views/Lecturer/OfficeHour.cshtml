@@ -43,12 +43,12 @@
                 @foreach (var member in Model.Memberships)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-center" href="@Url.Action("Create", "OfficeHour", new {semId=ViewBag.ThisSemester.Id, memberId = member.Id} )"><i class="fas fa-plus fa-fw"></i><br />Sprechstunde @ViewBag.ThisSemester.Name als @member.ShortName (für @member.Organiser.ShortName) anlegen</a>
+                        <a class="nav-link text-center" href="@Url.Action("Create", "OfficeHour", new {semId=ViewBag.ThisSemester.Id, memberId = member.Id} )"><i class="bi-folder-plus fa-fw"></i><br />Sprechstunde @ViewBag.ThisSemester.Name als @member.ShortName (für @member.Organiser.ShortName) anlegen</a>
                     </li>
                     if (ViewBag.NextSemester != null)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-center" href="@Url.Action("Create", "OfficeHour", new {semId = ViewBag.NextSemester.Id, memberId = member.Id})"><i class="fas fa-plus fa-fw"></i><br/>Sprechstunde @ViewBag.NextSemester.Name als @member.ShortName (für @member.Organiser.ShortName) anlegen</a>
+                            <a class="nav-link text-center" href="@Url.Action("Create", "OfficeHour", new {semId = ViewBag.NextSemester.Id, memberId = member.Id})"><i class="bi-folder-plus fa-fw"></i><br/>Sprechstunde @ViewBag.NextSemester.Name als @member.ShortName (für @member.Organiser.ShortName) anlegen</a>
                         </li>
                     }
                 }

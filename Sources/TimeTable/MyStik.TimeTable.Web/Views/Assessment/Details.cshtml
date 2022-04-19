@@ -36,7 +36,7 @@
                             <a class="nav-link text-center" href="@Url.Action("Edit", new {id = Model.Id})"><i class="fas fa-cog fa-fw"></i><br />Einstellungen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Stufe hinzufügen</a>
+                            <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="bi-folder-plus fa-fw"></i><br />Stufe hinzufügen</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-center" href="@Url.Action("DownloadCand", new {id = Model.Id})"><i class="fas fa-download fa-fw"></i><br />Download Liste</a>
@@ -72,7 +72,7 @@
                 <a class="nav-link text-center" href="@Url.Action("Candidates", new {id = Model.Id})"><i class="fas fa-gavel fa-fw"></i><br />Bewertung</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i><br />Neue Stufe</a>
+                <a class="nav-link text-center" href="@Url.Action("CreateStage", new {id = Model.Id})"><i class="bi-folder-plus fa-fw"></i><br />Neue Stufe</a>
             </li>
                     *@
                     @*
@@ -124,7 +124,7 @@
                         </ul>
                         @if (hasChair)
                         {
-                            <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="fas fa-plus fa-fw"></i> Mitglied hinzufügen</a>
+                            <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
                         }
 
                     </div>

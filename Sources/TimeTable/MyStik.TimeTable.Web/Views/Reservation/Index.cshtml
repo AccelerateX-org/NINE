@@ -20,10 +20,10 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group" role="group">
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> zurück</a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
                         @if (ViewBag.UserRight.IsRoomAdmin)
                         {
-                            <a href="@Url.Action("CreateReservation")" class="btn btn-outline-primary"><i class="fas fa-plus"></i> Neue Reservierung anlegen</a>
+                            <a href="@Url.Action("CreateReservation")" class="btn btn-outline-primary"><i class="bi-folder-plus"></i> Neue Reservierung anlegen</a>
                         }
                     </div>
                 </div>

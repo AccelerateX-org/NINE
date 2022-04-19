@@ -18,11 +18,11 @@
                     <div class="btn-group">
                         @if (ViewBag.Organiser != null)
                         {
-                            <a class="btn btn-outline-primary text-center" href="@Url.Action("Organiser", "Lecturer", new {id = ViewBag.Organiser.Id})"><i class="fas fa-plus fa-fw"></i><br />Neuen Termin buchen</a>
+                            <a class="btn btn-outline-primary text-center" href="@Url.Action("Organiser", "Lecturer", new {id = ViewBag.Organiser.Id})"><i class="bi-folder-plus fa-fw"></i><br />Neuen Termin buchen</a>
                         }
                         else
                         {
-                            <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Lecturer")"><i class="fas fa-plus fa-fw"></i><br />Neuen Termin buchen</a>
+                            <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Lecturer")"><i class="bi-folder-plus fa-fw"></i><br />Neuen Termin buchen</a>
                         }
                     </div>
                 </div>
