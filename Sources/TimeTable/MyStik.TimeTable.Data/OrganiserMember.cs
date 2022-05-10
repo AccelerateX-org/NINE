@@ -122,17 +122,18 @@ namespace MyStik.TimeTable.Data
             get
             {
                 var sb = new StringBuilder();
-                if (!string.IsNullOrEmpty(Title))
-                {
-                    sb.AppendFormat("{0} ", Title);
-                }
+
+                sb.Append(Name);
 
                 if (!string.IsNullOrEmpty(FirstName))
                 {
-                    sb.AppendFormat("{0} ", FirstName);
+                    sb.AppendFormat(", {0} ", FirstName);
                 }
 
-                sb.Append(Name);
+                if (!string.IsNullOrEmpty(Title))
+                {
+                    sb.AppendFormat(" ({0})", Title);
+                }
 
                 return sb.ToString();
             }

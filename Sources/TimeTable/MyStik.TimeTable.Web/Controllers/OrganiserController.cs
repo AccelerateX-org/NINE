@@ -503,6 +503,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     MemberId = id,
                     Role = member.Role,
                     Name = member.Name,
+                    FirstName = member.FirstName,
+                    Title = member.Title,
                     ShortName = member.ShortName,
                     IsAssociated = member.IsAssociated,
                 };
@@ -589,10 +591,12 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 member.Role = model.Role;
                 member.Name = model.Name;
+                member.FirstName = model.FirstName;
+                member.Title = model.Title;
 
                 Db.SaveChanges();
                 // Redirect zu den Members
-                return RedirectToAction("Index", "OrganiserMembers");
+                return RedirectToAction("Organiser", "Lecturer", new {id = member.Organiser.Id});
             }
 
             return RedirectToAction("Index", "OrganiserMembers");

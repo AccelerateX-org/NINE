@@ -90,10 +90,10 @@
     @if (User.IsInRole("SysAdmin"))
     {
         <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fa fa-gears"></i> <span class="caret"></span>
+            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="bi-gear"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-right">
+            <ul class="dropdown-menu">
                 <li>
                     @Ajax.ActionButton("fa-graduation-cap", "Student", "MakeStudent", "User",
                         new {id = Model.User.Id},

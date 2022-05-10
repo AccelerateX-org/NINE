@@ -74,85 +74,85 @@
             </div>
             <table id="tabParticipient" class="table table-condensed">
                 <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Vorname</th>
-                    <th>SG</th>
-                    <th>Sem</th>
-                    <th>TZ/VZ</th>
-                    <th><i class="fa fa-pencil"></i></th>
-                    <th><i class="fa fa-exclamation"></i></th>
-                    <th><i class="fa fa-envelope"></i></th>
-                    <th>Eingetragen</th>
-                </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        <th>SG</th>
+                        <th>Sem</th>
+                        <th>TZ/VZ</th>
+                        <th><i class="fa fa-pencil"></i></th>
+                        <th><i class="fa fa-exclamation"></i></th>
+                        <th><i class="fa fa-envelope"></i></th>
+                        <th>Eingetragen</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var sub in Model.Course.Occurrence.Subscriptions)
-                {
-                    var user = userService.GetUser(sub.UserId);
-                    var student = studentService.GetCurrentStudent(sub.UserId);
+                    @foreach (var sub in Model.Course.Occurrence.Subscriptions)
+                    {
+                        var user = userService.GetUser(sub.UserId);
+                        var student = studentService.GetCurrentStudent(sub.UserId);
 
-                    <tr id="@sub.Id">
-                        <td></td>
-                        @if (user != null)
-                        {
-                            <td>@user.LastName</td>
-                            <td>@user.FirstName</td>
-                        }
-                        else
-                        {
-                            <td>unbekannt</td>
-                            <td>kein Benutzerkonto vorhanden</td>
-                        }
-                        @if (student != null)
-                        {
-                            <td>@student.Curriculum.ShortName</td>
-                            <td>@student.FirstSemester.Name</td>
-                            if (student.IsPartTime)
+                        <tr id="@sub.Id">
+                            <td></td>
+                            @if (user != null)
                             {
-                                <td>TZ</td>
+                                <td>@user.LastName</td>
+                                <td>@user.FirstName</td>
                             }
                             else
                             {
-                                <td>VZ</td>
+                                <td>unbekannt</td>
+                                <td>kein Benutzerkonto vorhanden</td>
                             }
+                            @if (student != null)
+                            {
+                                <td>@student.Curriculum.ShortName</td>
+                                <td>@student.FirstSemester.Name</td>
+                                if (student.IsPartTime)
+                                {
+                                    <td>TZ</td>
+                                }
+                                else
+                                {
+                                    <td>VZ</td>
+                                }
 
-                        }
-                        else
-                        {
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        }
-                        @if (sub.OnWaitingList)
-                        {
-                            <td><span hidden="">0</span><i class="fa fa-hourglass-half"></i></td>
-                        }
-                        else
-                        {
-                            <td><span hidden="">1</span><i class="fa fa-group"></i></td>
-                        }
-                        @if (sub.Priority.HasValue)
-                        {
-                            <td>@sub.Priority.Value</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        @if (string.IsNullOrEmpty(sub.SubscriberRemark))
-                        {
-                            <td></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            }
+                            @if (sub.OnWaitingList)
+                            {
+                                <td><span hidden="">0</span><i class="fa fa-hourglass-half"></i></td>
+                            }
+                            else
+                            {
+                                <td><span hidden="">1</span><i class="fa fa-group"></i></td>
+                            }
+                            @if (sub.Priority.HasValue)
+                            {
+                                <td>@sub.Priority.Value</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            @if (string.IsNullOrEmpty(sub.SubscriberRemark))
+                            {
+                                <td></td>
 
-                        }
-                        else
-                        {
-                            <td><span hidden="">1</span><i class="fa fa-envelope"></i></td>
-                        }
-                        <td>@sub.TimeStamp</td>
-                    </tr>
-                }
+                            }
+                            else
+                            {
+                                <td><span hidden="">1</span><i class="fa fa-envelope"></i></td>
+                            }
+                            <td>@sub.TimeStamp</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -170,20 +170,24 @@
 @section scripts
 {
     <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript""></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function() {
 
+            $.fn.dataTable.moment('DD.MM.YYYY HH:mm:ss');
+            //$.fn.dataTable.moment('HH:mm');
+
             var t = $('#tabParticipient').DataTable({
+                language: {
+                    search: 'suchen'
+                },
                 "paging": false,
                 "columnDefs": [{
                     "searchable": false,
                     "orderable": false,
                     "targets": 0
-                },
-                {
-                    "type": "de_date",
-                    "targets": 9
                 }],
                 "order": [[1, 'asc']]
             });
@@ -206,21 +210,8 @@
                     if (id != null) {
                         window.location.href = "@Url.Action("ParticipiantDetails", "Course")/" + id;
                     }
-
-                    $.ajax(
-                        {
-                            type: "POST",
-                            url: '@Url.Action("SubscriptionProfile")',
-                            data: {
-                                id: id
-                            },
-                            success: function (data, success, xhr) {
-                                $("#subDetail").html(data);
-                            }
-                        });
                 }
             } );
-
 
         })
     </script>

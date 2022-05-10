@@ -23,12 +23,12 @@
 
 @Html.Partial("_Watermark")
 
-<div class="row" style="margin-top: 20px">
+<div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">@user.FullName</h4>
-                <p id="loading">Bilder werden geladen – einen Augenblick bitte!</p>
+                <p id="loading">Bilder werden geladen – einen Augenblick bitte!</p>
                 <div class="row">
                     <div class="col-5">
                         <h5 class="card-title">Kurzbiografie</h5>
@@ -49,7 +49,7 @@
                         <div class="card">
                             @if (user.BinaryData != null && user.BinaryData.Length > 0)
                             {
-                                <img src="@Url.Action("GetProfileImage", new {id = Model.Id})" class="card-img-top" />
+                                <img src="@Url.Action("GetProfileImage", new {id = Model.Id})" class="card-img-top"/>
                             }
                             else
                             {
@@ -108,7 +108,7 @@
                                     if (m.Storage.FileType.Contains("pdf"))
                                     {
                                         <a href="@Url.Action("GetRessource", "Storage", new {id = m.Storage.Id})" target="_blank">
-                                                    pdf-Datei
+                                            pdf-Datei
                                         </a>
                                     }
                                 }

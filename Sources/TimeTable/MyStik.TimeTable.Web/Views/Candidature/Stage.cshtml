@@ -41,7 +41,7 @@
         $('#dlgDeleteMaterial').on('show.bs.modal',
             function(event) {
                 var button = $(event.relatedTarget) // Button that triggered the modal
-                var matId = button.data('materialid') // Extract info from data-* attributes
+                var matId = button.data('bs-materialid') // Extract info from data-* attributes
                 var modal = $(this);
                 $('#hiddenDeleteMatId').val(matId);
             });
@@ -69,9 +69,9 @@
         $('#dlgEditMaterial').on('show.bs.modal',
             function(event) {
                 var button = $(event.relatedTarget) // Button that triggered the modal
-                var matId = button.data('materialid') // Extract info from data-* attributes
-                var matTitle = button.data('materialtitle') // Extract info from data-* attributes
-                var matDesc = button.data('materialdesc') // Extract info from data-* attributes
+                var matId = button.data('bs-materialid') // Extract info from data-* attributes
+                var matTitle = button.data('bs-materialtitle') // Extract info from data-* attributes
+                var matDesc = button.data('bs-materialdesc') // Extract info from data-* attributes
                 var modal = $(this);
                 $('#hiddenEditMatId').val(matId);
                 $('#matTitle').val(matTitle);
@@ -178,9 +178,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel1">Material löschen</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Soll dieses Material wirklich gelöscht werden?</p>
@@ -189,7 +187,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="btnDeleteMaterial" type="button" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Löschen</button>
-                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Abbrechen</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Abbrechen</button>
                 </div>
             </div>
         </div>
@@ -200,9 +198,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalLabel2">Material ändern</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form>
@@ -219,7 +215,7 @@
             </div>
             <div class="modal-footer">
                 <button id="btnEditMaterial" type="button" class="btn btn-outline-primary"><i class="fas fa-save"></i> Speichern</button>
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Abbrechen</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Abbrechen</button>
             </div>
         </div>
     </div>

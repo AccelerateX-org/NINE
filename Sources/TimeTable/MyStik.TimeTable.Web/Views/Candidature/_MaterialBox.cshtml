@@ -39,13 +39,13 @@
             </ul>
 
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#dlgEditMaterial"
-                        data-materialid="@Model.Id"
-                        data-materialtitle="@Model.Storage.Name"
-                        data-materialdesc="@Model.Storage.Description">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#dlgEditMaterial"
+                        data-bs-materialid="@Model.Id"
+                        data-bs-materialtitle="@Model.Storage.Name"
+                        data-bs-materialdesc="@Model.Storage.Description">
                     <i class="fas fa-edit"></i> Ändern
                 </button>
-                <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#dlgDeleteMaterial" data-materialid="@Model.Id">
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#dlgDeleteMaterial" data-bs-materialid="@Model.Id">
                     <i class="fas fa-trash-alt"></i> Löschen
                 </button>
             </div>
@@ -62,7 +62,7 @@ else
             <button type="button" class="btn btn-outline-primary disabled">
                 <i class="fas fa-edit"></i> Ändern
             </button>
-            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#dlgDeleteMaterial" data-materialid="@Model.Id">
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#dlgDeleteMaterial" data-bs-materialid="@Model.Id">
                 <i class="fas fa-trash-alt"></i> Löschen
             </button>
         </div>

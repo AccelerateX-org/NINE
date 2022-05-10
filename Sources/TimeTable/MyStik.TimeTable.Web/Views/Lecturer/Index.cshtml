@@ -2,38 +2,30 @@
 @model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
 
 @{
-    var containerType = "container-fluid";
-    if (!Request.IsAuthenticated)
-    {
-        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
-        containerType = "container";
-    }
-
     ViewBag.Title = "Lehrende";
 }
 
 
-<div class="@containerType">
-    <div class="row" style="margin-top: 20px">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><i class="fa fa-user-md"></i> Lehrende</h4>
-                </div>
+<div class="row"  style="margin-bottom: 20px">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi-person-rolodex"></i> Lehrende</h4>
+            </div>
+            <div class="list-group">
                 <div class="list-group">
-                    <div class="list-group">
-                        @foreach (var org in Model.OrderBy(x => x.ShortName))
-                        {
-                            <a href="@Url.Action("Organiser", new { id=org.Id})" class="list-group-item">
-                                <h5 class="list-group-item-heading">@Html.FacultyLabel(org) @org.Name</h5>
-                            </a>
-                        }
-                    </div>
+                    @foreach (var org in Model.OrderBy(x => x.ShortName))
+                    {
+                        <a href="@Url.Action("Organiser", new { id=org.Id})" class="list-group-item list-group-item-action">
+                            <h5>@Html.FacultyLabel(org) @org.Name</h5>
+                        </a>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 

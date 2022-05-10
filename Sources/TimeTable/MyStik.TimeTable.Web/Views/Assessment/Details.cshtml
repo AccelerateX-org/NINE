@@ -82,27 +82,26 @@
             </ul>
         </div>
         
-        <div class="accordion" id="accordionExample">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Kommittee
-                        </button>
-                    </h2>
-                </div>
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Kommittee
+                    </button>
+                </h2>
+            </div>
 
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <ul class="fa-ul">
-                            @foreach (var c in Model.Committee.Members)
-                            {
-                                var sIcon = "fa-user";
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul class="fa-ul">
+                        @foreach (var c in Model.Committee.Members)
+                        {
+                            var sIcon = "fa-user";
                                 
-                                if (c.HasChair)
-                                {
-                                    sIcon = "fa-chair";
-                                }
+                            if (c.HasChair)
+                            {
+                                sIcon = "fa-chair";
+                            }
                                 
                             <li>
                                 <i class="fas fa-li @sIcon"></i>@c.Member.FullName
@@ -120,91 +119,92 @@
 
                                 }
                             </li>
-                            }
-                        </ul>
-                        @if (hasChair)
-                        {
-                            <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
                         }
+                    </ul>
+                    @if (hasChair)
+                    {
+                        <a class="btn btn-outline-primary" href="@Url.Action("AddMember", new {id = Model.Id})"><i class="bi-folder-plus fa-fw"></i> Mitglied hinzufügen</a>
+                    }
 
-                    </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Zeitplan / Ablauf / Stufen
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    @foreach (var s in Model.Stages.OrderBy(x => x.OpeningDateTime))
-                    {
-                        <div class="card-body">
-                            <div class="card">
-                                <div class="card-header">@Html.TimeSpanWithDate(s.OpeningDateTime.Value, s.ClosingDateTime.Value): @s.Name </div>
-                                <div class="card-body">
-                                    <div class="card-text">@s.Description</div>
-                                    <div class="card-text">Upload möglich als @s.FileTypes</div>
-                                    <div class="card-text">Bereitgestelltes Material</div>
-                                    <ul class="fa-ul">
-                                        @foreach (var m in s.Material)
-                                        {
-                                            <li>
-                                                <i class="fa-li fas fa-file-pdf"></i>
-                                                <a href="@Url.Action("ShowFile", "Advertisements", new {id = m.Storage.Id})" target="_blank">@m.Storage.Name</a>
-                                            </li>
-                                        }
-                                    </ul>
-                                    @if (hasChair)
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Zeitplan / Ablauf / Stufen
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseTwo" class="" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                @foreach (var s in Model.Stages.OrderBy(x => x.OpeningDateTime))
+                {
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="card-header">@Html.TimeSpanWithDate(s.OpeningDateTime.Value, s.ClosingDateTime.Value): @s.Name </div>
+                            <div class="card-body">
+                                <div class="card-text">@s.Description</div>
+                                <div class="card-text">Upload möglich als @s.FileTypes</div>
+                                <div class="card-text">Bereitgestelltes Material</div>
+                                <ul class="fa-ul">
+                                    @foreach (var m in s.Material)
                                     {
-
-                                        <a href="@Url.Action("EditStage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Ändern</a>
-                                        <a href="@Url.Action("Stage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-upload"></i> Material hochladen</a>
+                                        <li>
+                                            <i class="fa-li fas fa-file-pdf"></i>
+                                            <a href="@Url.Action("ShowFile", "Advertisements", new {id = m.Storage.Id})" target="_blank">@m.Storage.Name</a>
+                                        </li>
                                     }
-                                    @if (isAdmin)
+                                </ul>
+                                @if (hasChair)
+                                {
+
+                                    <a href="@Url.Action("EditStage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-edit"></i> Ändern</a>
+                                    <a href="@Url.Action("Stage", new {id = s.Id})" class="btn btn-outline-primary"><i class="fas fa-upload"></i> Material hochladen</a>
+                                }
+                                @if (isAdmin)
+                                {
+                                    if (Model.Candidatures.Any(x => x.Stages.Any(y => y.AssessmentStage.Id == s.Id)))
                                     {
-                                        if (Model.Candidatures.Any(x => x.Stages.Any(y => y.AssessmentStage.Id == s.Id)))
-                                        {
-                                            <a href="#" class="btn btn-outline-danger disabled"><i class="fas fa-trash-alt"></i> Löschen</a>
+                                        <a href="#" class="btn btn-outline-danger disabled"><i class="fas fa-trash-alt"></i> Löschen</a>
 
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("DeleteStage", new {id = s.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Löschen</a>
-                                        }
                                     }
-                                </div>
+                                    else
+                                    {
+                                        <a href="@Url.Action("DeleteStage", new {id = s.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Löschen</a>
+                                    }
+                                }
                             </div>
                         </div>
+                    </div>
 
 
-                    }
-                </div>
+                }
             </div>
-            <div class="card">
-                <div class="card-header" id="headingThree">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Auswertungen / Statistiken zu TeilnehmerInnen
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <ul>
-                            <li>Anzahl TeilnehmerInnen: @Model.Candidatures.Count</li>
-                        </ul>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Auswertungen / Statistiken zu TeilnehmerInnen
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseThree" class="" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ul>
+                        <li>Anzahl TeilnehmerInnen: @Model.Candidatures.Count</li>
+                    </ul>
                     @*
                         @if (isAdmin)
                         {
                             <a class="btn btn-outline-danger" href="@Url.Action("ClearCandidates", new {id = Model.Id})"><i class="fas fa-trash-alt fa-fw"></i> Alle TeilnehmerInnen löschen</a>
                         }
                         *@
-                    </div>
                 </div>
             </div>
-        </div>        
-    </div>
+        </div>
+    </div>        
 </div>
+
+

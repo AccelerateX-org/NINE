@@ -201,7 +201,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        [Display(Name = "Benutzername")]
+        [Display(Name = "Benutzername (Account / E-Mail Adresse)")]
         public string UserName { get; set; }
 
         /// <summary>
@@ -229,6 +229,15 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Name")]
         [Required]
         public string Name { get; set; }
+
+        [Display(Name = "Vorname")]
+        [Required]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Titel")]
+        [Required]
+        public string Title { get; set; }
+
 
         /// <summary>
         /// 

@@ -1,41 +1,103 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @using MyStik.TimeTable.Web.Models
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 
 @{
     ViewBag.Title = "Lehrende";
+
+
+    List<OrganiserMember> memberList = null;
+    if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsMemberAdmin)
+    {
+        memberList = Model.Organiser.Members
+            .OrderBy(x => x.Name)
+            .ToList();
+    }
+    else
+    {
+        memberList = Model.Organiser.Members
+            .Where(x => !string.IsNullOrEmpty(x.UserId))
+            .OrderBy(x => x.Name)
+            .ToList();
+    }
 }
 
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <i class="fa fa-user-md"></i>
-                        <a href="@Url.Action("Index")">Lehrende</a> /
-                        @Model.Organiser.ShortName
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsMemberAdmin)
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        var t = $('#tabMembers').DataTable({
+            "paging": false
+        });
+
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="bi-person-rolodex"></i>
+                    <a href="@Url.Action("Index")">Lehrende</a> /
+                    @Model.Organiser.ShortName
+                </h4>
+            </div>
+            <div class="card-body">
+                <table id="tabMembers" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsMemberAdmin)
+                        {
+                            <th>Kurzname</th>
+                        }
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var member in memberList)
                     {
-                        <div class="list-group-item">
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("Today", "OrganiserMembers")" class="btn btn-default"><i class="fa fa-coffee"></i> Heute da</a>
-                                <a href="@Url.Action("List", "OrganiserMembers")" class="btn btn-default"><i class="fa fa-cogs"></i> Verwaltung</a>
-                                <a href="@Url.Action("Index", "OrganiserMembers")" class="btn btn-default"><i class="fa fa-cogs"></i> Alte Adminseite</a>
-                            </div>
-                        </div>
+                        <tr>
+                            @if (string.IsNullOrEmpty(member.UserId))
+                            {
+                                <td>@member.FullName <i>(Kein Benutzerkonto)</i> </td>
+                            }
+                            else
+                            {
+                                <td>@member.FullName</td>
+                            }
+                            @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsMemberAdmin)
+                            {
+                                <td>@member.ShortName</td>
+                            }
+                            <td>
+                                <a href="@Url.Action("Member", "Organiser", new {id = member.Id})" class="btn btn-outline-secondary">
+                                    <i class="bi-person-badge"></i>
+                                </a>
+                                @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsMemberAdmin)
+                                {
+                                    <a href="@Url.Action("MemberAdmin", "Organiser", new {id = member.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-gear"></i>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
                     }
-                    @foreach (var member in Model.Organiser.Members.OrderBy(x => x.Name))
-                    {
-                        <a href="@Url.Action("Member", "Organiser", new {id = member.Id})" class="list-group-item">
-                            <h5 class="list-group-item-heading">@member.FullName</h5>
-                        </a>
-                    }
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 

@@ -2861,6 +2861,7 @@
     <Content Include="Assets\libs\moment\locale\zh-mo.js" />
     <Content Include="Assets\libs\moment\locale\zh-tw.js" />
     <Content Include="Assets\libs\moment\moment.js" />
+    <Content Include="Assets\libs\moment\moment.min.js" />
     <Content Include="Assets\libs\popper\umd\enums.js" />
     <Content Include="Assets\libs\popper\umd\enums.min.js" />
     <Content Include="Assets\libs\popper\umd\popper-base.js" />

@@ -42,206 +42,185 @@
             <p>Alle Angaben hier sind ohne Gewähr!!!</p>
             <p>Informationen zum Ablauf des Verfahrens werden ausschließlich über das Bewerbungssystem <a href="https://www.hm.edu/studieninteressiert/bewerbung/bachelor_bewerbung/index.de.html" target="_blank"> primus</a>s kommuniziert.</p>
         </div>
-        <div class="accordion" id="accordionExample">
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Anschreiben verfassen
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <ul class="fa-ul">
-                            @if (string.IsNullOrEmpty(Model.Characteristics))
-                            {
-                                <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch keine Kurzbiografie verfasst</li>
-                            }
-                            else
-                            {
-                                <li><i class="fas fa-li fa-check text-success"></i>Kurzbiografie ist verfasst</li>
-
-                            }
-                            @if (string.IsNullOrEmpty(Model.Motivation))
-                            {
-                                <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch kein Motivationsschreiben verfasst</li>
-                            }
-                            else
-                            {
-                                <li><i class="fas fa-li fa-check text-success"></i>Motivationsschreiben ist verfasst</li>
-                            }
-                        </ul>
-                        <a href="@Url.Action("TextInput", new {Model.Id})" class="btn btn-outline-primary">Texte eingeben / ändern</a>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h4>Anschreiben verfassen</h4>
             </div>
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Profilbild hochladen
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body">
-                        @if (user.BinaryData == null || user.BinaryData.Length == 0)
-                        {
-                            <p>Wir wollen uns ein Bild machen. Das Hochladen ist freiwillig. Wer das nicht möchte oder Fragen hat wendet sich bitte an ...</p>
-                            <form id="formDrop" action="@Url.Action("UploadProfileImage")" class="dropzone">
-                            </form>
-                            <a href="@Url.Action("MyRoom", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladenes Bild anzeigen</a>
-                        }
-                        else
-                        {
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="card">
-                                        <img src="@Url.Action("GetProfileImage")" class="card-img-top"/>
-                                        <h5 class="card-title">Mein Profilbild</h5>
-                                    </div>
-                                </div>
-                                <div class="col-md-10">
-                                    <p>Profilbild ändern / löschen</p>
-                                    <form id="formDrop" action="@Url.Action("UploadProfileImage")" class="dropzone"></form>
-                                    <a href="@Url.Action("MyRoom", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladenes Bild anzeigen</a>
-                                    <a href="@Url.Action("DeleteProfileImage", new {id = Model.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Profilbild löschen</a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
+            <div class="card-body">
+                <ul class="fa-ul">
+                    @if (string.IsNullOrEmpty(Model.Characteristics))
+                    {
+                        <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch keine Kurzbiografie verfasst</li>
+                    }
+                    else
+                    {
+                        <li><i class="fas fa-li fa-check text-success"></i>Kurzbiografie ist verfasst</li>
+
+                    }
+                    @if (string.IsNullOrEmpty(Model.Motivation))
+                    {
+                        <li><i class="fas fa-li fa-pen-nib"></i>Bisher noch kein Motivationsschreiben verfasst</li>
+                    }
+                    else
+                    {
+                        <li><i class="fas fa-li fa-check text-success"></i>Motivationsschreiben ist verfasst</li>
+                    }
+                </ul>
+                <a href="@Url.Action("TextInput", new {Model.Id})" class="btn btn-outline-primary">Texte eingeben / ändern</a>
             </div>
+        </div>
 
-            @foreach (var stage in Model.Assessment.Stages.OrderBy(x => x.OpeningDateTime.Value))
-            {
-                var showStage = stage.IsAvailable || (!stage.IsAvailable && Model.IsAccepted.HasValue && Model.IsAccepted.Value);
-
-
-                if (showStage)
+        <div class="card">
+            <div class="card-header">
+                <h4>Profilbild hochladen</h4>
+            </div>
+            <div class="card-body">
+                @if (user.BinaryData == null || user.BinaryData.Length == 0)
                 {
-                    var now = DateTime.Now;
-                    var isOn = stage.OpeningDateTime <= now && now <= stage.ClosingDateTime.Value.AddMinutes(45);
-                    var isFuture = now < stage.OpeningDateTime;
-
-
-                    var round = Model.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
-
-
-
-
-                    var headId = "h" + stage.Id.ToString();
-                    var bodyId = "b" + stage.Id.ToString();
-
-                    var colapseState = isFuture ? "disabled" : "";
-
-                    <div class="card">
-                        <div class="card-header" id="@headId">
-                            <h2 class="mb-0">
-                                @if (isFuture)
-                                {
-                                    <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
-                                        ab @stage.OpeningDateTime.Value
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-link btn-block text-left collapsed @colapseState" type="button" data-toggle="collapse" data-target="#@bodyId" aria-expanded="false" aria-controls="@bodyId">
-                                        @stage.Name (@stage.OpeningDateTime.Value - @stage.ClosingDateTime.Value)
-                                    </button>
-                                }
-                            </h2>
-                        </div>
-                        <div id="@bodyId" class="collapse" aria-labelledby="@headId" data-parent="#accordionExample">
-                            <div class="card-body">
-                                <p class="card-text">@stage.Description</p>
-                                <ul class="fa-ul">
-                                    @if (isFuture)
-                                    {
-                                        <li><i class="fas fa-li fa-calendar-alt"></i>beginnt am @stage.OpeningDateTime</li>
-                                    }
-                                    else
-                                    {
-                                        if (isOn)
-                                        {
-                                            <li><i class="fas fa-li fa-calendar-alt"></i>läuft noch bis @stage.ClosingDateTime</li>
-                                            if (stage.Material.Any())
-                                            {
-                                                <li><i class="fas fa-li fa-download"></i>Unterlagen
-                                                    <ul>
-                                                        @foreach (var stageMaterial in stage.Material)
-                                                        {
-                                                            <li>
-                                                                <a href="@Url.Action("ShowFile", "Advertisements", new {id = stageMaterial.Storage.Id})" target="_blank">@stageMaterial.Storage.Name</a>
-                                                            </li>
-                                                        }
-                                                    </ul>
-                                                </li>
-                                            }
-
-                                            if (round != null)
-                                            {
-                                                <li><i class="fas fa-li fa-file-upload"></i>Bisher @round.Material.Count Dokumente hochgeladen</li>
-                                            }
-                                            else
-                                            {
-                                                <li><i class="fas fa-li fa-file-upload"></i>Bisher noch nichts hochgeladen</li>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <li><i class="fas fa-li fa-calendar-alt"></i>seit @stage.ClosingDateTime abgeschlossen</li>
-
-                                            if (round != null)
-                                            {
-                                                <li><i class="fas fa-li fa-file-upload"></i>Es wurden @round.Material.Count Dokumente hochgeladen</li>
-                                            }
-                                            else
-                                            {
-                                                <li><i class="fas fa-li fa-file-upload"></i>Es wurde nichts hochgeladen</li>
-                                            }
-
-                                        }
-                                    }
-                                </ul>
-                                @if (isOn)
-                                {
-                                    <a href="@Url.Action("Stage", new {stageId = stage.Id, candId = Model.Id})" class="btn btn-outline-primary">Dateien hochladen</a>
-                                }
-                                @if (!isFuture)
-                                {
-                                @*
-                                    <a href="@Url.Action("StageRepot", new {id = stage.Id})" class="btn btn-outline-secondary">Bericht anzeigen</a>
-                                    *@
-                                }
+                    <p>Wir wollen uns ein Bild machen. Das Hochladen ist freiwillig. Wer das nicht möchte oder Fragen hat wendet sich bitte an ...</p>
+                    <form id="formDrop" action="@Url.Action("UploadProfileImage")" class="dropzone">
+                    </form>
+                    <a href="@Url.Action("MyRoom", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladenes Bild anzeigen</a>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="card">
+                                <img src="@Url.Action("GetProfileImage")" class="card-img-top"/>
+                                <h5 class="card-title">Mein Profilbild</h5>
                             </div>
+                        </div>
+                        <div class="col-md-10">
+                            <p>Profilbild ändern / löschen</p>
+                            <form id="formDrop" action="@Url.Action("UploadProfileImage")" class="dropzone"></form>
+                            <a href="@Url.Action("MyRoom", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladenes Bild anzeigen</a>
+                            <a href="@Url.Action("DeleteProfileImage", new {id = Model.Id})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Profilbild löschen</a>
                         </div>
                     </div>
                 }
-            }
-            
-            @if (ViewBag.OfficeHourDate != null)
-            {
-                <div class="card">
-                    <div class="card-header" id="headingDate">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseDate" aria-expanded="true" aria-controls="collapseDate">
-                                Termin Eignungsgespräch: @Html.TimeSpanWithDate(ViewBag.OfficeHourDate as ActivityDate) 
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="collapseDate" class="collapse" aria-labelledby="headingDate" data-parent="#accordionExample">
-                        <div class="card-body">
+            </div>
+        </div>
 
-                        </div>
+
+        @foreach (var stage in Model.Assessment.Stages.OrderBy(x => x.OpeningDateTime.Value))
+        {
+            var showStage = stage.IsAvailable || (!stage.IsAvailable && Model.IsAccepted.HasValue && Model.IsAccepted.Value);
+
+
+            if (showStage)
+            {
+                var now = DateTime.Now;
+                var isOn = stage.OpeningDateTime <= now && now <= stage.ClosingDateTime.Value.AddMinutes(45);
+                var isFuture = now < stage.OpeningDateTime;
+
+
+                var round = Model.Stages.FirstOrDefault(x => x.AssessmentStage.Id == stage.Id);
+
+
+
+
+                var headId = "h" + stage.Id.ToString();
+                var bodyId = "b" + stage.Id.ToString();
+
+                var colapseState = isFuture ? "disabled" : "";
+
+                <div class="card">
+                    <div class="card-header" id="@headId">
+                        @if (isFuture)
+                        {
+                            <h4>
+                                ab @stage.OpeningDateTime.Value
+                            </h4>
+                        }
+                        else
+                        {
+                            <h4>
+                                @stage.Name (@stage.OpeningDateTime.Value - @stage.ClosingDateTime.Value)
+                            </h4>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@stage.Description</p>
+                        <ul class="fa-ul">
+                            @if (isFuture)
+                            {
+                                <li><i class="fas fa-li fa-calendar-alt"></i>beginnt am @stage.OpeningDateTime</li>
+                            }
+                            else
+                            {
+                                if (isOn)
+                                {
+                                    <li><i class="fas fa-li fa-calendar-alt"></i>läuft noch bis @stage.ClosingDateTime</li>
+                                    if (stage.Material.Any())
+                                    {
+                                        <li><i class="fas fa-li fa-download"></i>Unterlagen
+                                            <ul>
+                                                @foreach (var stageMaterial in stage.Material)
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("ShowFile", "Advertisements", new {id = stageMaterial.Storage.Id})" target="_blank">@stageMaterial.Storage.Name</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+
+                                    if (round != null)
+                                    {
+                                        <li><i class="fas fa-li fa-file-upload"></i>Bisher @round.Material.Count Dokumente hochgeladen</li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fas fa-li fa-file-upload"></i>Bisher noch nichts hochgeladen</li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li><i class="fas fa-li fa-calendar-alt"></i>seit @stage.ClosingDateTime abgeschlossen</li>
+
+                                    if (round != null)
+                                    {
+                                        <li><i class="fas fa-li fa-file-upload"></i>Es wurden @round.Material.Count Dokumente hochgeladen</li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fas fa-li fa-file-upload"></i>Es wurde nichts hochgeladen</li>
+                                    }
+
+                                }
+                            }
+                        </ul>
+                        @if (isOn)
+                        {
+                            <a href="@Url.Action("Stage", new {stageId = stage.Id, candId = Model.Id})" class="btn btn-outline-primary">Dateien hochladen</a>
+                        }
+                        @if (!isFuture)
+                        {
+                                @*
+                                    <a href="@Url.Action("StageRepot", new {id = stage.Id})" class="btn btn-outline-secondary">Bericht anzeigen</a>
+                                    *@
+                        }
                     </div>
                 </div>
-
             }
+        }
             
+        @if (ViewBag.OfficeHourDate != null)
+        {
+            <div class="card">
+                <div class="card-header" id="headingDate">
+                    <h4>
+                        Termin Eignungsgespräch: @Html.TimeSpanWithDate(ViewBag.OfficeHourDate as ActivityDate) 
+                    </h4>
+                </div>
+                <div class="card-body">
 
-        </div>
+                </div>
+            </div>
+
+        }
     </div>
 </div>
+
 

@@ -47,6 +47,18 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    @Html.LabelFor(item => item.FirstName, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(item => item.FirstName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(item => item.Title, new { @class = "col-md-4 control-label" })
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(item => item.Title, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
                     @Html.LabelFor(item => item.ShortName, new { @class = "col-md-4 control-label" })
                     <div class="col-md-8">
                         @Html.TextBoxFor(item => item.ShortName, new { @class = "form-control" })
