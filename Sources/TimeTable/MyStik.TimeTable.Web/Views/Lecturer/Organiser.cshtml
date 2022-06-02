@@ -54,6 +54,12 @@
                 </h4>
             </div>
             <div class="card-body">
+                @if (ViewBag.UserRights.IsMemberAdmin)
+                {
+                    <a href="@Url.Action("CreateMember", "Organiser", new {id = Model.Organiser.Id})" class="btn btn-outline-primary">
+                        <i class="fa fa-plus-circle"></i> Lehrenden anlegen
+                    </a>
+                }
                 <table id="tabMembers" class="table table-striped">
                     <thead>
                     <tr>

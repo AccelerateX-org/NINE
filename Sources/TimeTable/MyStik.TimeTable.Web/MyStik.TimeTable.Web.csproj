@@ -4007,6 +4007,7 @@
     <Content Include="Views\Course\ConfirmDeleteDate.cshtml" />
     <Content Include="Views\Course\EditInformation.cshtml" />
     <Content Include="Views\Course\ParticipiantDetails.cshtml" />
+    <Content Include="Views\Course\Card.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

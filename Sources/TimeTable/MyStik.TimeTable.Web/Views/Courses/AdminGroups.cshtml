@@ -43,7 +43,7 @@
                         {
 
                                 <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Import")"> <i class="fas fa-upload"></i><br />Import</a>
-                                <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateSemester", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-recycle"></i><br />Das aktuelle Semester auffüllen</a>
+                                <a class="btn btn-outline-primary text-center" href="@Url.Action("InitGroups", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-recycle"></i><br />Das aktuelle Semester auffüllen</a>
                                 <a class="btn btn-outline-primary text-center" href="@Url.Action("RemoveUnused", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-trash"></i><br />Alle ungenutzen Löschen</a>
                                 <a class="btn btn-outline-primary text-center" href="@Url.Action("Analyse", "Courses")"> <i class="fas fa-radiation"></i><br />Administration</a>
                         }
