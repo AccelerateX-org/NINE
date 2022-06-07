@@ -20641,7 +20641,7 @@
         </member>
         <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyAdministration">
             <summary>
-              Looks up a localized string similar to .
+              Looks up a localized string similar to Meine Verwaltung.
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Resources.NavMainMyResearch">

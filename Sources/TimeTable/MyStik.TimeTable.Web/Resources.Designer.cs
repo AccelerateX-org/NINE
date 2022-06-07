@@ -1818,7 +1818,7 @@ namespace MyStik.TimeTable.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Meine Verwaltung.
         /// </summary>
         public static string NavMainMyAdministration {
             get {
