@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Mvc;
-using Lib.Net.Http.WebPush;
+//using Lib.Net.Http.WebPush;
 using MyStik.TimeTable.Web.Areas.Admin.Controllers;
 using MyStik.TimeTable.Web.Models;
 using Newtonsoft.Json;
@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 {
     public sealed class MyPushSubscription
     {
-        public PushSubscription subscription { get; set; }
+        // public PushSubscription subscription { get; set; }
 
         public string userid { get; set; }
 
@@ -69,8 +69,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         [System.Web.Mvc.HttpPost]
         public IHttpActionResult Subscribe([FromBody] SubscriptionRequest model)
         {
-            var deviceId = model.Subscription.Endpoint;
-            var deviceDesc = JsonConvert.SerializeObject(model.Subscription);
+            var deviceId = ""; //model.Subscription.Endpoint;
+            var deviceDesc = ""; //JsonConvert.SerializeObject(model.Subscription);
             var userid = model.UserId;
 
             var userDb = new ApplicationDbContext();
