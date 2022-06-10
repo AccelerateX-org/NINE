@@ -914,11 +914,7 @@
             <param name="Date"></param>
             <returns></returns>
         </member>
-        <member name="T:MyStik.TimeTable.Web.Api.Controller.ApiBaseController">
-            <summary>
-            
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "T:MyStik.TimeTable.Web.Api.Controller.ApiBaseController" -->
         <member name="F:MyStik.TimeTable.Web.Api.Controller.ApiBaseController.Db">
             <summary>
             
@@ -1026,6 +1022,11 @@
         <member name="M:MyStik.TimeTable.Web.Api.Controller.CampusController.Dispose(System.Boolean)">
             <summary>
             
+            </summary>
+        </member>
+        <member name="T:MyStik.TimeTable.Web.Api.Controller.SuperHeroController">
+            <summary>
+            SuperHero
             </summary>
         </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.ZpaCourseController">

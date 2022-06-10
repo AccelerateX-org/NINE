@@ -29,16 +29,26 @@ namespace MyStik.TimeTable.Web
         /// <param name="app"></param>
         public void Configuration(IAppBuilder app)
         {
+            AreaRegistration.RegisterAllAreas();
+
             app.MapSignalR();
             ConfigureAuth(app);
             ConfigureOAuth(app);
 
             HttpConfiguration = new HttpConfiguration();
-            WebApiConfig.Register(HttpConfiguration);
+            //WebApiConfig.Register(HttpConfiguration);
+
+
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+
+            HttpConfiguration.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+
             app.UseWebApi(HttpConfiguration);
 
-            AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

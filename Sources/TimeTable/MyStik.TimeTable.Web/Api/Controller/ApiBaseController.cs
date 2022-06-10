@@ -8,7 +8,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 {
     /// <summary>
     /// 
-    /// </summary>
+    /// </summary
     public class ApiBaseController : ApiController
     {
         /// <summary>

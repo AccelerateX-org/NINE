@@ -21,17 +21,21 @@ namespace MyStik.TimeTable.Web
             // Web API routes
             config.MapHttpAttributeRoutes();
 
+            /*
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { action = "Index", id = RouteParameter.Optional }
-            );
-
-            config.Routes.MapHttpRoute(
-                name: "RestApi",
-                routeTemplate: "api2/{controller}/{action}/{id}",
+                routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            */
+
+            /*
+            config.Routes.MapHttpRoute(
+                name: "RestApi",
+                routeTemplate: "api/v2/{controller}/{action}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+            */
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
