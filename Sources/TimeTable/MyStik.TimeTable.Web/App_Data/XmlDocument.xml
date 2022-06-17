@@ -1326,68 +1326,6 @@
             <param name="UserId"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.OccupanciesController.ByOrg(MyStik.TimeTable.Web.Api.Controller.OccupancyRequestModel)">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Api.Controller.RoomController">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRoomsNow(System.String)">
-            <summary>
-            Gibt alle freien Räume eines Tages ab dem Abfragezeitpunkt wieder,die mindestens 30min frei sind
-            </summary>
-            <returns>Liste der freien Räume</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRooms(System.String,System.String,System.String,System.String)">
-            <summary>
-            Abfrage aller Räume die in einen festgelegeten Zeitraum frei sind,d.h. sie sollen von "from" bis "until" frei sein!
-            </summary>
-            <param name="FromDay">Startdatum des Zeitraums im Format dd.MM.yyyy</param>
-            <param name="UntilDay">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
-            <param name="FromTime">Startzeitpunkt am Startdatum des Zeitraums im Format hh:mm</param>
-            <param name="UntilTime">Endzeitpunkt am Enddatum im Format hh:mm</param>
-            <returns>Liste aller Räume, die den gewünschten Zeitraum frei sind</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRoomsSpanOfWeek(System.String,System.String)">
-            <summary>
-            Abfrage aller freien Räume (min X-min(span)frei) für eine Woche(ein tag der Woche dann mo-fr freie räume mit min 30min)
-            </summary>
-            <param name="Span">Die Zeitspanne, die der Raum mindestens frei sein soll</param>
-            <param name="OneDateOfWeek">irgendein Tag der gewünschten Woche</param>
-            <returns>Liste der Räume für alle Tage einer Woche, die den Zeitraum frei sind</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetFreeRoomsDaySpan(System.String,System.String)">
-            <summary>
-            Abfrage aller Räume die an einem gewählten Tag eine gewählte TimeSpan frei sind
-            </summary>
-            <param name="Span">Die Zeitspanne, die der Raum mindestens frei sein soll</param>
-            <param name="Day">Der gewünschte Tag im Format dd.MM.yyyy</param>
-            <returns>Liste der Räume, die am übergeben Tag mindestens Span frei sind</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetAllRooms">
-            <summary>
-            Abfrage aller verfügbaren Räume
-            </summary>
-            <returns>Liste aller Räume</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetRoomsStartWith(System.String)">
-            <summary>
-            Abfrage aller Räume die mit einem "StartsWith"-string beginnen
-            </summary>
-            <param name="StartsWith">String mit dem der Raum beginnen soll, d.h. z.B. R für alle R1.021 usw.</param>
-            <returns>Liste aller Räume die mit dem übergebenen String anfangen</returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomController.GetRoomActivities(System.String)">
-            <summary>
-            Abfrage aller Termine, die in einem Raum stattfinden
-            </summary>
-            <param name="RoomId">Id des Raums</param>
-            <returns>Liste aller Termine, die im gewählten Raum stattfinden</returns>
-        </member>
         <member name="T:MyStik.TimeTable.Web.Api.Controller.RoomsController">
             <summary>
             Anfrage von Rauminformationen
@@ -1397,6 +1335,13 @@
             <summary>
             
             </summary>
+        </member>
+        <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.Search(MyStik.TimeTable.Web.Api.Controller.RoomSearchRequest)">
+            <summary>
+            Suche nach Räumen
+            </summary>
+            <param name="number">Nummer des Raumes</param>
+            <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Api.Controller.RoomsController.GetRoomLabel(System.String,System.String)">
             <summary>

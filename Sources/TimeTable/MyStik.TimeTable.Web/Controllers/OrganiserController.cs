@@ -726,6 +726,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 OrganiserId = org.Id
             };
 
+            ViewBag.Organiser = org;
+
             return View(model);
         }
 
@@ -755,6 +757,8 @@ namespace MyStik.TimeTable.Web.Controllers
                     Role = model.Role,
                     ShortName = model.ShortName,
                     Name = model.Name,
+                    FirstName = model.FirstName,
+                    Title = model.Title,
                     IsAssociated = model.IsAssociated,
                 };
 
@@ -778,8 +782,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
                 // Redirect zu den Members
-                return RedirectToAction("Index", "OrganiserMembers");
-
+                return RedirectToAction("Organiser", "Lecturer", new { id = member.Organiser.Id });
             }
 
             return RedirectToAction("Index", "OrganiserMembers");

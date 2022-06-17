@@ -109,7 +109,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     /// <summary>
     /// 
     /// </summary>
-    public class RoomDto : BaseDto
+    public class RoomDto : NamedDto
     {
         /// <summary>
         /// 

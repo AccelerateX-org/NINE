@@ -402,9 +402,7 @@
     <Compile Include="Api\Controller\LoginController.cs" />
     <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\NotificationController.cs" />
-    <Compile Include="Api\Controller\OccupanciesController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
-    <Compile Include="Api\Controller\RoomController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
     <Compile Include="Api\Controller\CalendarController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />

@@ -36,18 +36,11 @@ namespace MyStik.TimeTable.Web
             ConfigureOAuth(app);
 
             HttpConfiguration = new HttpConfiguration();
-            //WebApiConfig.Register(HttpConfiguration);
-
+            WebApiConfig.Register(HttpConfiguration);
 
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
-
-            HttpConfiguration.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
-
             app.UseWebApi(HttpConfiguration);
+
 
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
