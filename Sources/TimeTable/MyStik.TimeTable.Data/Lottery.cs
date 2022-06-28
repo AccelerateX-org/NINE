@@ -128,6 +128,17 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool UseLapCount { get; set; }
 
+        /// <summary>
+        /// TZ Studierende drüfen nicht teilnehmen
+        /// </summary>
+        public bool blockPartTime { get; set; }
+
+        /// <summary>
+        /// VZ Studierende dürfen nicht teilnehmen
+        /// </summary>
+        public bool blockFullTime { get; set; }
+
+
         public virtual LotteryBundle LotteryBundle { get; set; }
 
         /// <summary>

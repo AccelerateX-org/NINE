@@ -261,7 +261,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // cc an Betreuer bzw.Admin, der erfasst hat
             CC.Add(mailModel.ActionUser.Email);
 
-            Subject = $"Annahme Verlängerungsnantrag der Abschlussarbeit";
+            Subject = $"Annahme Verlängerungsantrag der Abschlussarbeit";
 
 
             return Email("ThesisProlongAcceptedEMail", mailModel);
@@ -285,7 +285,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // cc an Betreuer bzw.Admin, der erfasst hat
             CC.Add(mailModel.ActionUser.Email);
 
-            Subject = $"Annahme Verlängerungsnantrag der Abschlussarbeit";
+            Subject = $"Annahme Verlängerungsantrag der Abschlussarbeit";
 
 
             return Email("ThesisProlongRejectedEMail", mailModel);
@@ -311,7 +311,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // cc an Betreuer bzw.Admin, der erfasst hat
             CC.Add(mailModel.ActionUser.Email);
 
-            Subject = $"Verlängerungsnantrag der Abschlussarbeit";
+            Subject = $"Verlängerungsantrag der Abschlussarbeit";
 
 
             return Email("ThesisProlongRequestBoardEMail", mailModel);

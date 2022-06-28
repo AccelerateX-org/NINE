@@ -22,6 +22,7 @@ namespace MyStik.TimeTable.Data
             //Courses = new List<Course>();
             CapacityCourses = new List<CapacityCourse>();
             Nexus = new HashSet<CourseModuleNexus>();
+            Opportunities = new HashSet<SubjectOpportunity>();
         }
 
 
@@ -71,5 +72,22 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
 
+        public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
+    }
+
+
+    public class SubjectOpportunity
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual Semester Semester { get; set; }
+
+
+        public virtual ModuleCourse Subject { get; set; }
+
+
+        public virtual Course Course { get; set; }
     }
 }

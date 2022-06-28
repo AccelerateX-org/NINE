@@ -342,6 +342,8 @@ namespace MyStik.TimeTable.Web.Controllers
             model.LoIneeded = lottery.LoINeeded;
             model.UseJinx = !lottery.IsScheduled;
             model.UseLock = lottery.UseLapCount;
+            model.AllowPartTime = !lottery.blockPartTime;
+            model.AllowFullTime = !lottery.blockFullTime;
 
 
             return View(model);
@@ -368,6 +370,8 @@ namespace MyStik.TimeTable.Web.Controllers
             lottery.LoINeeded = model.LoIneeded;
             lottery.IsScheduled = !model.UseJinx;
             lottery.UseLapCount = model.UseLock;
+            lottery.blockPartTime = !model.AllowPartTime;
+            lottery.blockFullTime = !model.AllowFullTime;
 
 
             Db.SaveChanges();

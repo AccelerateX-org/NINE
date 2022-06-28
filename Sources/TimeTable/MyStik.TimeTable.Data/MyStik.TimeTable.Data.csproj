@@ -466,6 +466,10 @@
     <Compile Include="Migrations\202201231504099_ModuleCatalogV2.Designer.cs">
       <DependentUpon>202201231504099_ModuleCatalogV2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202206281831361_ModuleCatalogV3.cs" />
+    <Compile Include="Migrations\202206281831361_ModuleCatalogV3.designer.cs">
+      <DependentUpon>202206281831361_ModuleCatalogV3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCatalog.cs" />
@@ -729,6 +733,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202201231504099_ModuleCatalogV2.resx">
       <DependentUpon>202201231504099_ModuleCatalogV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202206281831361_ModuleCatalogV3.resx">
+      <DependentUpon>202206281831361_ModuleCatalogV3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

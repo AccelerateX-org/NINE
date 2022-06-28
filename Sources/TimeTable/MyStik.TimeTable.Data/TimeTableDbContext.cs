@@ -234,6 +234,10 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<StudentChannel> StudentChannels { get; set; }
 
+        public DbSet<CurriculumModuleCatalog> CurriculumModuleCatalogs { get; set; }
+
+        public DbSet<SubjectOpportunity> SubjectOpportunities { get; set; }
+
 
         public TimeTableDbContext() : base()
         {

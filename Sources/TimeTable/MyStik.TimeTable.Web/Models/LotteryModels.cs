@@ -155,8 +155,13 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Zeitpunkt der täglichen Verteilung")]
         public string DrawingTime { get; set; }
 
-
         public int ProcessType { get; set; }
+
+        [Display(Name = "Studierende in Teilzeit zulassen")]
+        public bool AllowPartTime { get; set; }
+
+        [Display(Name = "Studierende in Vollzeit zulassen")]
+        public bool AllowFullTime { get; set; }
 
     }
 

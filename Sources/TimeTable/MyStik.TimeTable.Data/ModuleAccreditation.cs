@@ -44,5 +44,8 @@ namespace MyStik.TimeTable.Data
         /// VERALTET
         /// </summary>
         public virtual CurriculumCriteria Criteria { get; set; }
+
+
+        public virtual CurriculumSlot Slot { get; set; }
     }
 }

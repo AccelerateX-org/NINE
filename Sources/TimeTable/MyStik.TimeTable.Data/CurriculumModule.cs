@@ -4,6 +4,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    public class CurriculumModuleCatalog
+    {
+        public CurriculumModuleCatalog()
+        {
+            Modules = new HashSet<CurriculumModule>();
+        }
+
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public virtual ActivityOrganiser Organiser { get; set; }
+
+        public virtual ICollection<CurriculumModule> Modules { get; set; }
+
+    }
+
     /// <summary>
     /// Das Fach
     /// </summary>
@@ -65,53 +84,8 @@ namespace MyStik.TimeTable.Data
         public virtual OrganiserMember MV { get; set; }
 
 
-        
-        /*
-        /// <summary>
-        /// Dozent
-        /// </summary>
-        public int Lecturer { get; set; }
+        public virtual CurriculumModuleCatalog Catalog { get; set; }
 
-        /// <summary>
-        /// Sprache der Veranstaltung
-        /// </summary>
-        public int Language { get; set; }
-
-        /// <summary>
-        /// Lehrform
-        /// </summary>
-        public int SWS { get; set; }
-
-        /// <summary>
-        /// Arbeitsaufwand
-        /// </summary>
-        public int Work { get; set; }
-
-        /// <summary>
-        /// Voraussetzungen für Modul
-        /// </summary>
-        public int Requirements { get; set; }
-
-        /// <summary>
-        /// Lernziele/Kompetenzen
-        /// </summary>
-        public int Skills { get; set; }
-
-        /// <summary>
-        /// Verbindliche Lehrinhalte
-        /// </summary>
-        public int Topic { get; set; }
-
-        /// <summary>
-        /// Studien-/ Prüfungsleistungen
-        /// </summary>
-        public int Leistung { get; set; }
-
-        /// <summary>
-        /// Literatur
-        /// </summary>
-        public int Books { get; set; }
-        */
 
         /// <summary>
         /// Liste der akkreditierten Module

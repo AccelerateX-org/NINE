@@ -68,5 +68,9 @@ namespace MyStik.TimeTable.Data
 
         // Die Accreditierungen
         public virtual ICollection<SubjectAccreditation> Accreditations { get; set; }
+
+
+        public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }
+
     }
 }
