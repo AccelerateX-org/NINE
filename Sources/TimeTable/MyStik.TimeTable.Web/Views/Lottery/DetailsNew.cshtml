@@ -94,8 +94,8 @@
                                 </ul>
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default"><i class="fa fa-list"></i> Detailinformationen</button>
-                                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i> Stundenplansicht</button>
+                                <button type="button" class="btn btn-outline-primary"><i class="fa fa-list"></i> Detailinformationen</button>
+                                <button type="button" class="btn btn-outline-primary"><i class="fa fa-calendar"></i> Stundenplansicht</button>
                             </div>
                         </div>
                     }
@@ -163,8 +163,6 @@
 
                             if (hasAccess)
                             {
-
-
                                 if (!Model.Lottery.IsFixed)
                                 {
                                     <div class="list-group-item">
@@ -216,7 +214,7 @@
                                         @if (Model.Lottery.IsActiveFrom.Value <= DateTime.Now)
                                         {
                                             <div class="btn-group" role="group">
-                                                <a href="@Url.Action("ChangeSelection", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-pencil"></i> Meine Auswahl ändern</a>
+                                                <a href="@Url.Action("ChangeSelection", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-pencil"></i> Meine Auswahl ändern</a>
                                             </div>
                                         }
                                         else
@@ -317,7 +315,7 @@
                                                 <div class="list-group-item-text">
                                                     Habe mein Kontingent ausgeschöpft. Muss mich entweder aus einer Lehrveranstlatung austragen oder ein größeres Kontingent beantragen.
                                                 </div>
-                                                <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-times"></i> Aus Lehrveranstaltungen austragen</a>
+                                                <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="bi-x-circle"></i> Aus Lehrveranstaltungen austragen</a>
                                             </div>
                                         }
                                         else
@@ -341,8 +339,8 @@
                                                     </ul>
                                                 </div>
                                                 <div class="btn-group" role="group">
-                                                    <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-pencil"></i> Auswahl starten / ändern</a>
-                                                    <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-default"><i class="fa fa-times"></i> Aus Lehrveranstaltungen austragen</a>
+                                                    <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-pen"></i> Auswahl starten / ändern</a>
+                                                    <a href="@Url.Action("DeleteCourses", new {id = Model.Lottery.Id})" class="btn btn-danger"><i class="bi-x-circle"></i> Aus Lehrveranstaltungen austragen</a>
                                                 </div>
                                             </div>
                                         }
@@ -351,25 +349,25 @@
                             }
                             else
                             {
-                                <div class="list-group-item list-group-item-danger">
-                                    <p>Das Wahlverfahren steht aktuell nicht zur Verfügung</p>
-                                </div>
+                                if (Model.Lottery.blockFullTime)
+                                {
+                                    <div class="list-group-item list-group-item-danger">
+                                        <p>Das Wahlverfahren steht aktuell für Studierende in Vollzeit nicht zur Verfügung</p>
+                                    </div>
+                                }
+                                if (Model.Lottery.blockPartTime)
+                                {
+                                    <div class="list-group-item list-group-item-danger">
+                                        <p>Das Wahlverfahren steht aktuell für Studierende in Teilzeit nicht zur Verfügung</p>
+                                    </div>
+                                }
                             }
                         }
                         else
                         {
-                            if (Model.Lottery.blockFullTime)
-                            {
-                                <div class="list-group-item list-group-item-danger">
-                                    <p>Das Wahlverfahren steht aktuell für Studierende in Vollzeit nicht zur Verfügung</p>
-                                </div>
-                            }
-                            if (Model.Lottery.blockPartTime)
-                            {
-                                <div class="list-group-item list-group-item-danger">
-                                    <p>Das Wahlverfahren steht aktuell für Studierende in Teilzeit nicht zur Verfügung</p>
-                                </div>
-                            }
+                            <div class="list-group-item list-group-item-danger">
+                                <p>Das Wahlverfahren steht aktuell nicht zur Verfügung</p>
+                            </div>
                         }
                     }
                     else
@@ -377,7 +375,7 @@
                         <div class="list-group-item list-group-item-danger">
                             <p>
                                 Ohne Angabe meines Studiengangs kann ich hier nichts auswählen.
-                                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-default">Angabe Studiengang</a>
+                                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-primary">Angabe Studiengang</a>
                             </p>
                         </div>
 

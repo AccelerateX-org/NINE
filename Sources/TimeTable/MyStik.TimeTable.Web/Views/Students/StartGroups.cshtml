@@ -6,102 +6,73 @@
     var nSem = Model.Semesters.Count;
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Studierende nach Studiengängen (@Model.Organiser.ShortName)</h1>
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h4>Studierende nach Studiengängen und Semester (@Model.Organiser.ShortName)</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-primary">
+                        <i class="bi-arrow-left"></i> Zurück
+                    </a>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Index")" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Auswertung nach Studiengängen</h4>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th colspan="1">Studiengang</th>
-                                <th colspan="@nSem + 1">Aktive Studierende nach Semester</th>
-                                <th colspan="2">Abgeschlossene</th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th>Name</th>
-                                @foreach (var sem in Model.Semesters)
-                                {
-                                    <th>@sem.Name</th>
-                                }
-                                <th>älter</th>
-                                <th>Gesamt</th>
-                                <th>Alumnae</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var curr in Model.StudentsByCurriculum)
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th colspan="1">Studiengang</th>
+                    <th colspan="@nSem + 1">Aktive Studierende nach Semester</th>
+                    <th colspan="2">Abgeschlossene</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    @foreach (var sem in Model.Semesters)
+                    {
+                        <th>@sem.Name</th>
+                    }
+                    <th>älter</th>
+                    <th>Gesamt</th>
+                    <th>Alumnae</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var curr in Model.StudentsByCurriculum)
+                {
+                    var nActive = 0;
+                    var nAll = @curr.Students.Count(x => x.LastSemester == null);
+                    <tr>
+                        <td>@curr.Curriculum.ShortName</td>
+                        @if (curr.Curriculum.IsDeprecated)
                         {
-                            var nActive = 0;
-                            var nAll = @curr.Students.Count(x => x.LastSemester == null);
-                            <tr>
-                                <td>@curr.Curriculum.ShortName</td>
-                                @if (curr.Curriculum.IsDeprecated)
-                                {
-                                    <i class="fa fa-ban text-danger"></i>
-                                }
-                                @foreach (var sem in Model.Semesters)
-                                {
-                                    var nStud = @curr.Students.Count(x => x.LastSemester == null && x.FirstSemester.Id == sem.Id);
-                                    nActive += nStud;
-                                    <td>@nStud</td>
-                                }
-                                @{
-                                    var nOld = nAll - nActive;
-                                }
-                                <td>@nOld</td>
-                                <td>@curr.Students.Count(x => x.LastSemester != null)</td>
-                                <td>@curr.Alumnae.Count</td>
-                                <td><a href="@Url.Action("List", new {id=curr.Curriculum.Id})" class="btn btn-primary">Adressliste</a></td>
-                                <td><a href="@Url.Action("Admin", new {id=curr.Curriculum.Id})" class="btn btn-primary">Verwaltung</a></td>
-                            </tr>
+                            <i class="fa fa-ban text-danger"></i>
                         }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                        @foreach (var sem in Model.Semesters)
+                        {
+                            var nStud = @curr.Students.Count(x => x.LastSemester == null && x.FirstSemester.Id == sem.Id);
+                            nActive += nStud;
+                            <td>@nStud</td>
+                        }
+                        @{
+                            var nOld = nAll - nActive;
+                        }
+                        <td>@nOld</td>
+                        <td>@curr.Students.Count(x => x.LastSemester != null)</td>
+                        <td>@curr.Alumnae.Count</td>
+                        <td><a href="@Url.Action("List", new {id = curr.Curriculum.Id})" class="btn btn-outline-primary">Adressliste</a></td>
+                        <td><a href="@Url.Action("Admin", new {id = curr.Curriculum.Id})" class="btn btn-outline-primary">Verwaltung</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
         </div>
     </div>
-
 </div>
-
 
 
 

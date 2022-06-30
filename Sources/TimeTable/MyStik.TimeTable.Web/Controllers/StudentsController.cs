@@ -1127,5 +1127,28 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+
+        public ActionResult SwitchToFullTime(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+
+            student.IsPartTime = false;
+            Db.SaveChanges();
+
+            return RedirectToAction("Admin", new {id = student.Curriculum.Id});
+        }
+
+        public ActionResult SwitchToPartTime(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
+
+
+            student.IsPartTime = true;
+            Db.SaveChanges();
+
+            return RedirectToAction("Admin", new { id = student.Curriculum.Id });
+        }
+
     }
 }

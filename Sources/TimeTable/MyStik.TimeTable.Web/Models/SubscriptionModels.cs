@@ -218,8 +218,14 @@ namespace MyStik.TimeTable.Web.Models
         public Guid CurrId { get; set; }
 
 
-        [Display(Name = "Teilzeit (Angabe freiwillig)")]
+        [Display(Name = "Vollzeit")]
+        public bool IsFullTime { get; set; }
+
+
+        [Display(Name = "Teilzeit")]
         public bool IsPartTime { get; set; }
+
+
 
         [Display(Name = "Duales Studium (Angabe frewillig)")]
         public bool IsDual { get; set; }

@@ -15,50 +15,68 @@
                     {
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-                        <fieldset>
-                            <div class="mb-3 row">
-                                @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 col-form-label" })
-                                <div class="col-sm-8">
-                                    @Html.DropDownListFor(model => model.OrgId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-select", onchange = "onFacultyChanged()" })
-                                </div>
-                            </div>
-                            <div id="currLoading" class="mb-3 row">
-                                <span><i class="fas fa-spinner fa-spin fa-2x"></i></span>
-                            </div>
-                            <div id="currBox" class="mb-3 row">
-                                @Html.LabelFor(model => model.CurrId, new { @class = "col-sm-4 col-form-label" })
-                                <div id="selectCurr" class="col-sm-8">
-                                    @Html.DropDownListFor(model => model.CurrId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-select", onchange = "onCurriculumChanged()" })
-                                </div>
-                            </div>
-                            <div id="semBox" class="mb-3 row">
-                                @Html.LabelFor(model => model.SemId, new { @class = "col-sm-4 col-form-label" })
-                                <div class="col-sm-8">
-                                    @Html.DropDownListFor(model => model.SemId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-select", onchange = "onSemesterChanged()" })
-                                </div>
-                            </div>
-                            @*
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Zusatzinformationen</label>
-                            <div class="col-sm-4">
-                                @Html.CheckBoxFor(item => item.IsPartTime)
-                                @Html.LabelFor(item => item.IsPartTime, new { @class = "control-label" })
+                    <fieldset>
+                        <div class="mb-3 row">
+                            @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(model => model.OrgId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-select", onchange = "onFacultyChanged()" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-4 col-sm-4">
-                                @Html.CheckBoxFor(item => item.IsDual)
-                                @Html.LabelFor(item => item.IsDual, new { @class = "control-label" })
+                        <div id="currLoading" class="mb-3 row">
+                            <span><i class="fas fa-spinner fa-spin fa-2x"></i></span>
+                        </div>
+                        <div id="currBox" class="mb-3 row">
+                            @Html.LabelFor(model => model.CurrId, new { @class = "col-sm-4 col-form-label" })
+                            <div id="selectCurr" class="col-sm-8">
+                                @Html.DropDownListFor(model => model.CurrId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-select", onchange = "onCurriculumChanged()" })
                             </div>
                         </div>
-                            *@
-                            <div class="row">
-                                <div class="d-grid gap-2 d-md-block">
-                                    <button id="btnSave" type="submit" class="btn btn-outline-primary"><i class="fas fa-save"></i> Speichern</button>
-                                    <a href="@Url.Action("Curricula")" class="btn btn-outline-secondary">Abbrechen</a>
+                        <div id="semBox" class="mb-3 row">
+                            @Html.LabelFor(model => model.SemId, new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                @Html.DropDownListFor(model => model.SemId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-select", onchange = "onSemesterChanged()" })
+                            </div>
+                        </div>
+                        <div id="propBox" class="mb-3 row">
+                            <label class="col-sm-4 col-form-label">Ich studiere in ...</label>
+                            <div class="col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="IsFullTime" id="IsFullTime" value="True" checked>
+                                    <label class="form-check-label" for="IsFullTime">
+                                        ... Vollzeit
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="IsFullTime" id="IsFullTime" value="False">
+                                    <label class="form-check-label" for="IsFullTime">
+                                        ... Teilzeit
+                                    </label>
                                 </div>
                             </div>
-                        </fieldset>
+                        </div>
+
+                        @*
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Zusatzinformationen</label>
+            <div class="col-sm-4">
+                @Html.CheckBoxFor(item => item.IsPartTime)
+                @Html.LabelFor(item => item.IsPartTime, new { @class = "control-label" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-4">
+                @Html.CheckBoxFor(item => item.IsDual)
+                @Html.LabelFor(item => item.IsDual, new { @class = "control-label" })
+            </div>
+        </div>
+                        *@
+                        <div class="row">
+                            <div class="d-grid gap-2 d-md-block">
+                                <button id="btnSave" type="submit" class="btn btn-outline-primary"><i class="fas fa-save"></i> Speichern</button>
+                                <a href="@Url.Action("Curricula")" class="btn btn-outline-secondary">Abbrechen</a>
+                            </div>
+                        </div>
+                    </fieldset>
                     }
                 </div>
             </div>
@@ -75,6 +93,7 @@
             //onFacultyChanged();
             $('#currBox').hide();
             $('#semBox').hide();
+            $('#propBox').hide();
             $('#currLoading').hide();
             $('#btnSave').prop("disabled", true);
 
@@ -87,6 +106,7 @@
             $('#currLoading').show();
             $('#currBox').hide();
             $('#semBox').hide();
+            $('#propBox').hide();
 
             $.ajax(
                 {
@@ -105,6 +125,7 @@
 
         function onCurriculumChanged() {
             $('#semBox').show();
+            $('#propBox').show();
         }
 
         function onSemesterChanged() {

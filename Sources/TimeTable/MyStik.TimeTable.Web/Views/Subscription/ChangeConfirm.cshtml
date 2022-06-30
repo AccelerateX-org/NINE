@@ -7,44 +7,63 @@
 <div class="container-fluid">
     <div class="row" style="margin-top: 20px">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     <h4>Bestätigung Studiengang</h4>
                 </div>
-                <div class="panel-body">
-                    @using (Html.BeginForm("StartCurriculum", null, FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+                <div class="card-body">
+                    @using (Html.BeginForm("StartCurriculum", null, FormMethod.Post, new { @role = "form" }))
                     {
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
                         @Html.HiddenFor(model => model.CurrId)
                         @Html.HiddenFor(model => model.SemId)
                         @Html.HiddenFor(model => model.IsDual)
+                        @Html.HiddenFor(model => model.IsFullTime)
                         @Html.HiddenFor(model => model.IsPartTime)
 
 
 
-                        <fieldset>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 control-label" })
+                    <fieldset>
+                        <div class="mb-3 row">
+                            @Html.LabelFor(model => model.OrgId, new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext">@Model.Organiser.ShortName</p>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            @Html.LabelFor(model => model.Curriculum, new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext">@Model.Curriculum.Name</p>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            @Html.LabelFor(model => model.Semester, new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                <p class="form-control-plaintext">@Model.Semester.Name</p>
+                            </div>
+                        </div>
+                        @if (Model.IsFullTime)
+                        {
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Ich studiere in ...</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">@Model.Organiser.ShortName</p>
+                                    <p class="form-control-plaintext">Vollzeit</p>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.Curriculum, new { @class = "col-sm-4 control-label" })
+                        }
+                        else
+                        {
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label">Ich studiere in ...</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">@Model.Curriculum.Name</p>
+                                    <p class="form-control-plaintext">Teilzeit</p>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.Semester, new { @class = "col-sm-4 control-label" })
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">@Model.Semester.Name</p>
-                                </div>
-                            </div>
+                        }
 
-                            <button type="submit" class="col-sm-offset-4 btn btn-primary"><i class="fa fa-save"></i> Bestätigen</button>
-                            <a href="@Url.Action("Curricula")" class="btn btn-default">Abbrechen</a>
-                        </fieldset>
+                        <button type="submit" class="btn btn-primary"><i class="bi-check-circle"></i> Bestätigen</button>
+                        <a href="@Url.Action("Curricula")" class="btn btn-outline-secondary"><i class="bi-x-circle"></i> Abbrechen</a>
+                    </fieldset>
                     }
 
 

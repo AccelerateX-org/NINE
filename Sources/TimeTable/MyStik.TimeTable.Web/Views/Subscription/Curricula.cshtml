@@ -41,10 +41,24 @@
                                     }
                                     <div class="row mb-3">
                                         <div class="col-6">
-                                            <div><i class="fas fa-barcode"></i> Matrikelnummer:</div>
+                                            <div><i class="bi-upc"></i> Matrikelnummer:</div>
                                         </div>
                                         <div class="col-6"> @student.Student.Number</div>
                                     </div>
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <div><i class="bi-gear-wide-connected"></i> Umfang:</div>
+                                        </div>
+                                        @if (student.Student.IsPartTime)
+                                        {
+                                            <div class="col-6">Teilzeit</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-6">Vollzeit</div>
+                                        }
+                                    </div>
+
                                     @if (isActive)
                                     {
                                         <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-outline-primary">Matrikelnummer ändern</a>

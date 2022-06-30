@@ -226,9 +226,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var model = new CurriculumSubscriptionViewModel
             {
-                //OrgId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id ?? Guid.Empty,
-                //CurrId = semesterSubscription?.CapacityGroup.CurriculumGroup.Curriculum.Id ?? Guid.Empty,
-                //SemId = semester.Id
+                IsFullTime = true
             };
 
             var orgs = Db.Organisers.Where(x => x.IsFaculty && x.Curricula.Any()).OrderBy(f => f.ShortName).ToList();
@@ -327,7 +325,7 @@ namespace MyStik.TimeTable.Web.Controllers
             student.FirstSemester = semester;
             student.Curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
             student.IsDual = model.IsDual;
-            student.IsPartTime = model.IsPartTime;
+            student.IsPartTime = !model.IsFullTime;
             student.HasCompleted = false;
 
             Db.SaveChanges();

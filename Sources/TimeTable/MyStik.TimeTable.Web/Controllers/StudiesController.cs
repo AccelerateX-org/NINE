@@ -181,5 +181,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View("Index", model);
 
         }
+
+        public ActionResult Apply()
+        {
+            return View();
+        }
     }
-}
+    }

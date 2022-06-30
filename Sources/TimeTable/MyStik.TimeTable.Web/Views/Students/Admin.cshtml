@@ -27,102 +27,88 @@
 }
 
 
-
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Studierende im Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName) der @Model.Curriculum.Organiser.ShortName</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("StartGroups")" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Alle aktive Studierenden</h4>
-                </div>
-                <div class="panel-body">
-                    <table id="tabStudents" class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Vorname</th>
-                                <th>Matrikelnummer</th>
-                                <th>TZ/VZ</th>
-                                <th>Studienbeginn</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var student in Model.Students)
-                            {
-                                var user = userService.GetUser(student.UserId);
 
-                                <tr>
-                                    @if (user != null)
-                                    {
-                                        <td>@user.LastName</td>
-                                        <td>@user.FirstName</td>
-                                    }
-                                    else
-                                    {
-                                        <td>unbekannt</td>
-                                        <td></td>
-                                    }
-                                    <td>@student.Number</td>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Studierende im Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName) der @Model.Curriculum.Organiser.ShortName</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <a href="@Url.Action("StartGroups")" class="btn btn-outline-primary">
+                            <i class="bi-arrow-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+                <table id="tabStudents" class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Vorname</th>
+                            <th>Matrikelnummer</th>
+                            <th>TZ/VZ</th>
+                            <th>Studienbeginn</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model.Students)
+                        {
+                            var user = userService.GetUser(student.UserId);
+
+                            <tr>
+                                @if (user != null)
+                                {
+                                    <td>@user.LastName</td>
+                                    <td>@user.FirstName</td>
+                                }
+                                else
+                                {
+                                    <td>unbekannt</td>
+                                    <td></td>
+                                }
+                                <td>@student.Number</td>
+                                @if (student.IsPartTime)
+                                {
+                                    <td>TZ</td>
+                                }
+                                else
+                                {
+                                    <td>VZ</td>
+                                }
+                                <td>@student.FirstSemester.Name</td>
+                                @if (user != null)
+                                {
+                                <td>
                                     @if (student.IsPartTime)
                                     {
-                                        <td>TZ</td>
+                                        <a href="@Url.Action("SwitchToFullTime", new {id = student.Id})" class="btn btn-outline-primary">Zu Vollzeit wechseln</a>
                                     }
                                     else
                                     {
-                                        <td>VZ</td>
+                                        <a href="@Url.Action("SwitchToPartTime", new {id = student.Id})" class="btn btn-outline-primary">Zu Teilzeit wechseln</a>
                                     }
-                                    <td>@student.FirstSemester.Name</td>
-                                    @if (user != null)
-                                    {
-                                        <td><a href="@Url.Action("Details", new {id = student.UserId})" class="btn btn-primary" target="_blank">Verwaltung</a></td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                    <a href="@Url.Action("Details", new {id = student.UserId})" class="btn btn-outline-primary" target="_blank">Verwaltung</a>
+                                </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
             </div>
         </div>
     </div>
 
-</div>
+
+
+
+
 
 
 
