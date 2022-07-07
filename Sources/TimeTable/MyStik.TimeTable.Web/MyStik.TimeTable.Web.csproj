@@ -521,10 +521,7 @@
     <Compile Include="Controllers\CoursePlanController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
     <Compile Include="Controllers\CurriculaController.cs" />
-    <Compile Include="Controllers\CurriculumCriteriaController.cs" />
     <Compile Include="Controllers\CurriculumModuleController.cs" />
-    <Compile Include="Controllers\CurriculumPackageController.cs" />
-    <Compile Include="Controllers\CurriculumRequirementController.cs" />
     <Compile Include="Controllers\DictionaryController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\ExamController.cs" />
@@ -543,7 +540,6 @@
     <Compile Include="Controllers\MoneyBanksController.cs" />
     <Compile Include="Controllers\NoticeBoardController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
-    <Compile Include="Controllers\PackageOptionController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\PrintController.cs" />
     <Compile Include="Controllers\ResearchController.cs" />
@@ -4121,6 +4117,7 @@
     <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.6.0.min.map" />
     <Content Include="Views\Studies\Apply.cshtml" />
+    <Content Include="Views\ScriptPublishing\Details.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -219,10 +219,10 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
             // wieder pro Studiengang
             foreach (var curriculum in curricula)
             {
-                var module = GetModule(db, curriculum, scheduleCourse);
+                //var module = GetModule(db, curriculum, scheduleCourse);
 
                 var nexus = new CourseModuleNexus();
-                nexus.Requirement = module;
+                //nexus.Requirement = module;
                 nexus.Course = course;
                 // nexus.ModuleCourse = // fehlt noch
 
@@ -780,7 +780,7 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
             return null;
         }
 
-
+        /*
         private CurriculumRequirement GetModule(TimeTableDbContext db, TimeTable.Data.Curriculum curriculum, CieCourse scheduleCourse)
         {
             var pck = curriculum.Packages.FirstOrDefault();
@@ -825,6 +825,7 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
 
             return module;
         }
+        */
     }
 }
 

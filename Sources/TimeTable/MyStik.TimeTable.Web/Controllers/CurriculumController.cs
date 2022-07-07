@@ -7,10 +7,8 @@ using System.Web.Mvc;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.IO.Horst;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using Newtonsoft.Json;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -140,13 +138,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
-            var criteria = Db.Criterias.Where(x => x.Requirement.Option.Package.Curriculum.Id == cur.Id)
-                .GroupBy(x => x.Term).ToList();
-
             var model = new CurriculumTermViewModel
             {
                 Curriculum = cur,
-                Terms = criteria
             };
 
 
@@ -183,13 +177,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
             ViewBag.UserRight = GetUserRight(org);
-
-            return View(model);
-        }
-
-        public ActionResult Requirement(Guid id)
-        {
-            var model = Db.Requirements.SingleOrDefault(x => x.Id == id);
 
             return View(model);
         }
@@ -1115,11 +1102,13 @@ namespace MyStik.TimeTable.Web.Controllers
             model.AttachmentStructure?.SaveAs(tempFile);
 
             CurriculumModulePlan plan = null;
+            /*
             using (StreamReader file = System.IO.File.OpenText(tempFile))
             {
-                JsonSerializer serializer = new JsonSerializer();
+                var serializer = new Newtonsoft.JsonSerializer();
                 plan = (CurriculumModulePlan)serializer.Deserialize(file, typeof(CurriculumModulePlan));
             }
+            */
 
             if (plan == null)
                 return View();
@@ -1160,79 +1149,8 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public JsonResult Export(Guid id)
-        {
-            var service = new ExportService(Db);
-
-            var prog = service.GetProgram(id, 33);
-
-            return Json(prog, JsonRequestBehavior.AllowGet);
-        }
 
 
-        public ActionResult Delete(Guid id)
-        {
-            var cur2 = Db.Curricula.SingleOrDefault(x => x.Id == id);
-
-            var modules = new List<CurriculumModule>();
-
-            foreach (var pck2 in cur2.Packages.ToList())
-            {
-                foreach (var option2 in pck2.Options.ToList())
-                {
-                    foreach (var req2 in option2.Requirements.ToList())
-                    {
-                        foreach (var crit2 in req2.Criterias.ToList())
-                        {
-                            foreach (var acc2 in crit2.Accreditations.ToList())
-                            {
-                                if (!modules.Contains(acc2.Module))
-                                {
-                                    modules.Add(acc2.Module);
-                                }
-
-                                Db.Accreditations.Remove(acc2);
-                            }
-
-                            Db.Criterias.Remove(crit2);
-                        }
-
-                        Db.Requirements.Remove(req2);
-                    }
-
-                    Db.PackageOptions.Remove(option2);
-                }
-
-                Db.CurriculumPackages.Remove(pck2);
-            }
-
-            // jetzt noch die Module
-            foreach (var module in modules)
-            {
-                if (!module.Accreditations.Any())
-                {
-                    foreach (var course in module.ModuleCourses.ToList())
-                    {
-                        Db.ModuleCourses.Remove(course);
-                    }
-
-                    foreach (var exam in module.ModuleExams.ToList())
-                    {
-                        Db.ModuleExams.Remove(exam);
-                    }
-
-                    Db.CurriculumModules.Remove(module);
-                }
-
-            }
-
-            Db.SaveChanges();
-
-
-
-
-            return RedirectToAction("Index", new {id = id});
-        }
 
         public ActionResult Transfer(Guid id)
         {
@@ -1437,7 +1355,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Accreditation = accreditation
             };
 
-            model.Modules = Db.TeachingBuildingBlocks.ToList();
+            //model.Modules = Db.TeachingBuildingBlocks.ToList();
 
             return View(model);
         }
@@ -1445,10 +1363,14 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult SelectModule(Guid accid, Guid modId)
         {
             var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == accid);
+
+            /*
             var teachingBuildingBlock = Db.TeachingBuildingBlocks.SingleOrDefault(x => x.Id == modId);
 
             accreditation.TeachingBuildingBlock = teachingBuildingBlock;
             Db.SaveChanges();
+            */
+
 
             return RedirectToAction("AdminContentModule", new {id = accreditation.Id});
         }

@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.Data
         public Guid Id { get; set; }
 
 
-        public virtual TeachingBuildingBlock Module { get; set; }
+        //public virtual TeachingBuildingBlock Module { get; set; }
 
         public virtual OrganiserMember Member { get; set; }
 

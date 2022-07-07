@@ -30,7 +30,7 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <div  class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group me-2">
 
                             <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
@@ -66,6 +66,8 @@
 
 
 <div id="modalDelete"></div>
+<div id="modalEditInfo"></div>
+
 
 <div class="modal fade" id="confirmDeleteAllDates" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -209,12 +211,17 @@
 
     <script>
         var nChecked = 0;
+//        var myModalEditInfo = null;
 
-        $(document).ready(function() {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                })
+        $(document).ready(function () {
+
+//            myModalEditInfo = new bootstrap.Modal(document.getElementById('modalEditInfo'), null);
+
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
 
                 //$("tr[history]").hide();
                 $('#dropDownMenu').hide();
@@ -736,19 +743,24 @@
         }
 
         function showConfirmDeleteDate() {
-            $('#confirmDeleteDate').modal("show");
+            //var myModalEditInfo = new bootstrap.Modal(document.getElementById('modalDelete'), null);
+            //myModalEditInfo.show();
         }
 
         function hideConfirmDeleteDate() {
-            $('#confirmDeleteDate').modal("hide");
+            //var myModalEditInfo = new bootstrap.Modal(document.getElementById('modalDelete'), null);
+            //myModalEditInfo.hide();
         }
 
         function showEditDateInformation() {
-            $('#confirmDeleteDate').modal("show");
+            //var myModalEditInfo = new bootstrap.Modal(document.getElementById('modalEditInfo'), null);
+
+            //myModalEditInfo.show();
         }
 
         function hideEditDateInformation() {
-            $('#confirmDeleteDate').modal("hide");
+            //var myModalEditInfo = new bootstrap.Modal(document.getElementById('modalEditInfo'), null);
+            //myModalEditInfo.hide();
         }
 
 

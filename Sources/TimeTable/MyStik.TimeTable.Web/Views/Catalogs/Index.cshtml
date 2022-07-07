@@ -1,6 +1,20 @@
-﻿
+﻿@using MyStik.TimeTable.Data
+
 @{
     ViewBag.Title = "Modulekataloge";
+
+
+    var db = new TimeTableDbContext();
+
+    foreach (var accreditation in db.Accreditations.ToList())
+    {
+        db.Accreditations.Remove(accreditation);
+
+    }
+    db.SaveChanges();
+
+
+
 }
 
 <div class="row">
@@ -16,8 +30,39 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <div>Scopes: @db.CurriculumScopes.Count()</div>
+                <div>Sections: @db.CurriculumSections.Count()</div>
+                <div>Criterias: @db.Criterias.Count()</div>
+                <div>Nexus: @db.CourseNexus.Count()</div>
+                <div>ModuleAccreditions: @db.Accreditations.Count()</div>
+                <div>CertificateModels: @db.CertificateModules.Count()</div>
+                <div>CertificateSubjects: @db.CertificateSubjects.Count()</div>
+            </div>
             <table id="tabCatalogs">
-
+                @foreach (var acc in db.Accreditations.ToList())
+                {
+                <tr>
+                    <td>@acc.ShortName</td>
+                    <td>@acc.Number</td>
+                    @if (acc.Module != null)
+                    {
+                        <td>@acc.Module.ShortName</td>
+                    }
+                    else
+                    {
+                        <td>Kein Modul</td>
+                    }
+                    @if (acc.CertificateSubject != null)
+                    {
+                        <td>@acc.CertificateSubject.Name</td>
+                    }
+                    else
+                    {
+                        <td>Kein Subject</td>
+                    }
+                </tr>
+                }
             </table>
         </div>
     </div>

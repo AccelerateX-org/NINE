@@ -225,15 +225,6 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
             AddExamForm("ModA", "Modularbeit", "§ 24 ASPO");
             AddExamForm("praP", "Praktische Prüfung", "§ 25 ASPO");
 
-            AddTeachingForm("SU", "Seminaristischer Unterricht", 
-                "Seminaristischer Unterricht (SU) vermittelt einen wissenschaftlichen Überblick und Vertiefungen und richtet sich in der Regel an eine Studiengruppe.", 40);
-            AddTeachingForm("Ü", "Übungen", "Übungen (Ü) dienen der Anwendung des Gelernten.", 20);
-            AddTeachingForm("S", "Seminar",
-                "Seminare (S) dienen der vertiefenden Behandlung ausgewählter fachwissenschaftlicher Fragestellungen und richten sich oftmals an Teilgruppen von Studiengruppen.", 15);
-            AddTeachingForm("Pra", "Praktika", 
-                "Praktika (Pra) zeichnen sich bei der Anwendung des Gelernten durch den besonderen Einsatz von fachspezifischen technischen, künstlerischen, physischen, methodischen oder anderen Mitteln aus.", 15);
-            AddTeachingForm("Proj", "Projekt", 
-                "In Projekten (Proj) werden konkrete Aufgabenstellungen problem- oder forschungsorientiert durch die Studierenden bearbeitet.", 15);
 
             return RedirectToAction("Index", "Dashboard");
         }
@@ -258,32 +249,6 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 form.Description = description;
             }
 
-            Db.SaveChanges();
-        }
-
-        private void AddTeachingForm(string shortName, string name, string description, int capacity)
-        {
-            var form = Db.TeachingForms.SingleOrDefault(x => x.ShortName.Equals(shortName));
-
-            if (form == null)
-            {
-                form = new TeachingForm
-                {
-                    Name = name,
-                    ShortName = shortName,
-                    Description = description,
-                    Capacity = capacity
-                };
-                Db.TeachingForms.Add(form);
-            }
-            else
-            {
-                form.Name = name;
-                form.Description = description;
-                form.Capacity = capacity;
-            }
-
-            Db.SaveChanges();
         }
 
     }

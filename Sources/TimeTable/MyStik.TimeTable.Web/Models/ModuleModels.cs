@@ -75,12 +75,12 @@ namespace MyStik.TimeTable.Web.Models
     {
         public ModuleAssignViewModel()
         {
-            Modules = new List<TeachingBuildingBlock>();
+            //Modules = new List<TeachingBuildingBlock>();
         }
 
         public ModuleAccreditation Accreditation { get; set; }
 
-        public List<TeachingBuildingBlock> Modules { get; set; }
+        //public List<TeachingBuildingBlock> Modules { get; set; }
     }
 
 }

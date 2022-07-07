@@ -271,7 +271,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
-
+        /*
         [HttpPost]
         public ActionResult CreateFromCourse(ModuleCreateViewModel model)
         {
@@ -350,7 +350,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Admin", "Course", new {id = course.Id});
         }
+        */
 
+        /*
         [HttpPost]
         public PartialViewResult OptionList(Guid pckId)
         {
@@ -372,8 +374,9 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.Requirements.SingleOrDefault(x => x.Id == moduleId);
             return PartialView("_ModuleSummary", model);
         }
+        */
 
-
+        /*
         public ActionResult SelectForCourse(Guid courseId, Guid currId)
         {
             var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
@@ -415,7 +418,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+        */
 
+        /*
         [HttpPost]
         public JsonResult SelectModuleForCourse(Guid courseId, Guid moduleId)
         {
@@ -452,6 +457,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return Json(new { result = "Redirect", url = Url.Action("Admin", "Course", new { id = course.Id}) });
         }
-
+        */
     }
 }

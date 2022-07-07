@@ -5600,13 +5600,6 @@
             <param name="critId"></param>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculaController.Criteria(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CurriculaController.LinkModule(System.Guid)">
             <summary>
             
@@ -5628,72 +5621,6 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
-        </member>
-        <member name="T:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Index(System.Guid)">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Details(System.Nullable{System.Guid})">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Create(System.Nullable{System.Guid})">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Create(MyStik.TimeTable.Data.CurriculumCriteria)">
-            <summary>
-            
-            </summary>
-            <param name="curriculumCriteria"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Edit(System.Nullable{System.Guid})">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Edit(MyStik.TimeTable.Data.CurriculumCriteria)">
-            <summary>
-            
-            </summary>
-            <param name="curriculumCriteria"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Delete(System.Nullable{System.Guid})">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.DeleteConfirmed(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumCriteriaController.Dispose(System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="disposing"></param>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.DictionaryController.SelectCourse(System.Guid)">
             <summary>
@@ -13488,11 +13415,6 @@
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.SelectModuleViewModel.Criteria">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="P:MyStik.TimeTable.Web.Models.SelectModuleViewModel.Modules">
             <summary>
             
@@ -14610,11 +14532,6 @@
             </summary>
         </member>
         <member name="P:MyStik.TimeTable.Web.Models.ThesisCriteriaListModel.Curriculum">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:MyStik.TimeTable.Web.Models.ThesisCriteriaListModel.Criteria">
             <summary>
             
             </summary>

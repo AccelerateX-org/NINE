@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Data
         /// 1 Kurs kann nur noch zu einem Fach eines Moduls gehören
         /// Das Modul selbst kann vielen Studiengängen zugeordnet werden
         /// </summary>
-        public virtual  TeachingUnit TeachingUnit { get; set; }
+        //public virtual  TeachingUnit TeachingUnit { get; set; }
 
 
         /// <summary>

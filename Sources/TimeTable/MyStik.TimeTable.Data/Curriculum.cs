@@ -13,7 +13,7 @@ namespace MyStik.TimeTable.Data
         {
             CurriculumGroups = new HashSet<CurriculumGroup>();
             Chapters = new HashSet<CurriculumChapter>();
-            Packages = new HashSet<CurriculumPackage>();
+            //Packages = new HashSet<CurriculumPackage>();
             Sections = new HashSet<CurriculumSection>();
         }
 
@@ -87,10 +87,6 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<CurriculumGroup> CurriculumGroups { get; set; }
 
-        /// <summary>
-        /// Werden diese noch benötigt?
-        /// </summary>
-        // public virtual ICollection<GroupAlias> GroupAliases { get; set; }
 
         /// <summary>
         /// Inhaltliche Struktur
@@ -104,17 +100,12 @@ namespace MyStik.TimeTable.Data
         /// Pflicht, WPM, Absarbeit
         /// veraltet
         /// </summary>
-        public virtual ICollection<CurriculumPackage> Packages { get; set; }
+        //public virtual ICollection<CurriculumPackage> Packages { get; set; }
 
-        /// <summary>
-        /// Die Module nach SPO
-        /// Falls nötig nur die abstrakten Bezeichnungen
-        /// </summary>
-        // public virtual ICollection<CertificateModule> Modules { get; set; }
 
 
         public virtual ICollection<CurriculumSection> Sections { get; set; }
 
-        public virtual ICollection<CurriculumScope> Scopes { get; set; }
+        //public virtual ICollection<CurriculumScope> Scopes { get; set; }
     }
 }

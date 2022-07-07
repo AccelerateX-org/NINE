@@ -652,14 +652,20 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Semester = semester,
                 Organiser = org,
+                Courses = Db.Activities.OfType<Course>().Where(x =>
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)).ToList(),
+
                 FreezedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.IsInternal),
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.IsInternal),
+
                 UnFreezedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.IsInternal),
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.IsInternal),
+
                 LockedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.Occurrence.IsAvailable),
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && !x.Occurrence.IsAvailable),
+
                 UnLockedCourses = Db.Activities.OfType<Course>().Count(x => 
-                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.Occurrence.IsAvailable)
+                    x.SemesterGroups.Any(g => g.Semester.Id == semester.Id && g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) && x.Occurrence.IsAvailable)
             };
 
             return View(model);

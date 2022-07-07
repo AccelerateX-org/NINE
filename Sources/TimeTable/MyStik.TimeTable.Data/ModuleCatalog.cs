@@ -35,6 +35,6 @@ namespace MyStik.TimeTable.Data
         public virtual ModuleCatalog Catalog { get; set; }
 
 
-        public virtual TeachingBuildingBlock Module { get; set; }
+        //public virtual TeachingBuildingBlock Module { get; set; }
     }
 }

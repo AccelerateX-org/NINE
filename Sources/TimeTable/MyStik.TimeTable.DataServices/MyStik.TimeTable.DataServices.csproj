@@ -120,14 +120,6 @@
     <Compile Include="IO\GpUntis\FileReader.cs" />
     <Compile Include="IO\GpUntis\ImportOptions.cs" />
     <Compile Include="IO\GpUntis\SemesterImport.cs" />
-    <Compile Include="IO\Horst\Data\StudyProgram.cs" />
-    <Compile Include="IO\Horst\Data\StudyProgramExam.cs" />
-    <Compile Include="IO\Horst\Data\StudyProgramModule.cs" />
-    <Compile Include="IO\Horst\Data\StudyProgramRuleSet.cs" />
-    <Compile Include="IO\Horst\ExportService.cs" />
-    <Compile Include="IO\Horst\Rules\ICurriculumRule.cs" />
-    <Compile Include="IO\Horst\Rules\RuleEvaluation.cs" />
-    <Compile Include="IO\Horst\Rules\RuleWIRise.cs" />
     <Compile Include="InfrastructureData.cs" />
     <Compile Include="InfrastructureDataService.cs" />
     <Compile Include="IO\Json\Data\DateLecturer.cs" />

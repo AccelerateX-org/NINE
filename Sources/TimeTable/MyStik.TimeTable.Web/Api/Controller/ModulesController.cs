@@ -38,12 +38,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
                 return NotFound();
             }
 
-            // unvollständige Modulbeschreibungen werden gelten als nicht gefunden
-            if (module.Subjects.Any(x => x.ContentModules.Any(y => y.TeachingBuildingBlock == null)))
-            {
-                return NotFound();
-            }
-
             var converter = new ModuleConverter(Db);
             var dto = converter.ConvertCertificateModule(id);
 

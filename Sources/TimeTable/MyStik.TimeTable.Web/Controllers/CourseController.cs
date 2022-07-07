@@ -3622,10 +3622,12 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             // ein Modul finden
+            /*
             if (course.Nexus.Any())
             {
                 model.Module = course.Nexus.First().Requirement;
             }
+            */
 
 
             return View(model);

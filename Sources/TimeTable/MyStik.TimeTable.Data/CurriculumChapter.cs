@@ -9,7 +9,7 @@ namespace MyStik.TimeTable.Data
         public CurriculumChapter()
         {
             Topics = new HashSet<CurriculumTopic>();
-            Criteria = new HashSet<CurriculumCriteria>();
+            //Criteria = new HashSet<CurriculumCriteria>();
         }
 
 
@@ -29,7 +29,7 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<CurriculumTopic> Topics { get; set; }
 
 
-        public virtual ICollection<CurriculumCriteria> Criteria { get; set; }
+        //public virtual ICollection<CurriculumCriteria> Criteria { get; set; }
 
     }
 }

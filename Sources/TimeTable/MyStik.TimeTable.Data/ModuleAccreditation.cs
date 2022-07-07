@@ -28,7 +28,7 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public bool IsMandatory { get; set; }
 
-        public virtual TeachingBuildingBlock TeachingBuildingBlock { get; set; }
+        //public virtual TeachingBuildingBlock TeachingBuildingBlock { get; set; }
 
         public virtual CertificateSubject CertificateSubject { get; set; }
 

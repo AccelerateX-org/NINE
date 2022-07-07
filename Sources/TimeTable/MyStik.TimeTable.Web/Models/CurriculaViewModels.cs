@@ -245,7 +245,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public CurriculumCriteria Criteria { get; set; }
+        //public CurriculumCriteria Criteria { get; set; }
 
         /// <summary>
         /// 

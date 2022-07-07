@@ -913,12 +913,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult AccreditateModule(Guid moduleId, Guid critId)
         {
-            var crit = Db.Criterias.SingleOrDefault(x => x.Id == critId);
+            //var crit = Db.Criterias.SingleOrDefault(x => x.Id == critId);
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
 
             var accr = new ModuleAccreditation
             {
-                Criteria = crit,
+                //Criteria = crit,
                 Module = module
             };
 
@@ -926,7 +926,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Details", new {id = crit.Id});
+            return RedirectToAction("Details", new {id = critId });
         }
 
         /// <summary>
@@ -934,12 +934,14 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /*
         public ActionResult Criteria(Guid id)
         {
             var model = Db.Criterias.SingleOrDefault(x => x.Id == id);
 
             return View(model);
         }
+        */
 
         /// <summary>
         /// 

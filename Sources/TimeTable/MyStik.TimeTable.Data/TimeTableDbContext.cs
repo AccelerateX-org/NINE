@@ -67,16 +67,6 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<CurriculumTopic> CurriculumTopics { get; set; }
 
-        public DbSet<CurriculumVariation> CurriculumVariations { get; set; }
-
-        public DbSet<CriteriaSample> CriteriaSamples { get; set; }
-
-        public DbSet<CurriculumPackage> CurriculumPackages { get; set; }
-
-        public DbSet<PackageOption> PackageOptions { get; set; }
-
-        public DbSet<CurriculumRequirement> Requirements { get; set; }
-
         public DbSet<SemesterTopic> SemesterTopics { get; set; }
 
         public DbSet<ModuleExam> ModuleExams { get; set; }
@@ -139,7 +129,7 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<ModuleAccreditation> Accreditations { get; set; }
 
-        public DbSet<CriteriaRule> Rules { get; set; }
+        //public DbSet<CriteriaRule> Rules { get; set; }
 
         public DbSet<ThesisAnnouncement> ThesisAnnouncements { get; set; }
 
@@ -167,9 +157,6 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<CertificateModule> CertificateModules { get; set; }
         public DbSet<CertificateSubject> CertificateSubjects { get; set; }
-        public DbSet<TeachingBuildingBlock> TeachingBuildingBlocks { get; set; }
-        public DbSet<TeachingForm> TeachingForms { get; set; }
-        public DbSet<TeachingUnit> TeachingUnits { get; set; }
         public DbSet<ExaminationForm> ExaminationForms { get; set; }
         public DbSet<ExaminationUnit> ExaminationUnits { get; set; }
         public DbSet<ExaminationAid> ExaminationAids { get; set; }
@@ -222,7 +209,6 @@ namespace MyStik.TimeTable.Data
         public DbSet<SubjectAccreditation> SubjectAccreditations { get; set; }
         public DbSet<CurriculumSection> CurriculumSections { get; set; }
         public DbSet<CurriculumSlot> CurriculumSlots { get; set; }
-        public DbSet<TeachingAssessment> TeachingAssessments { get; set; }
 
         public DbSet<ModuleCatalog> ModuleCatalogs { get; set; }
         public DbSet<ModulePublishing> ModulePublishings { get; set; }

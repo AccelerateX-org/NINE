@@ -117,7 +117,7 @@ namespace MyStik.TimeTable.Web.Models
         public Curriculum Curriculum { get; set; }
 
 
-        public ICollection<IGrouping<int, CurriculumCriteria>> Terms { get; set; }
+        //public ICollection<IGrouping<int, CurriculumCriteria>> Terms { get; set; }
 
     }
 

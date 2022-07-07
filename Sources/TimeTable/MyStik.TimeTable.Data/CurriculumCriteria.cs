@@ -14,7 +14,7 @@ namespace MyStik.TimeTable.Data
         public CurriculumCriteria()
         {
             Accreditations = new HashSet<ModuleAccreditation>();    
-            Rules = new HashSet<CriteriaRule>();
+            //Rules = new HashSet<CriteriaRule>();
             Groups = new HashSet<CurriculumGroup>();
         }
 
@@ -31,7 +31,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Die zugehörige Anforderung
         /// </summary>
-        public virtual CurriculumRequirement Requirement { get; set; }
+        //public virtual CurriculumRequirement Requirement { get; set; }
 
         /// <summary>
         /// Bezeichnung, z.B. Grundstudium
@@ -90,7 +90,8 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Das sind die zeitlichen Regeln, hier steckt die Verknüpfung zu den Gruppen
         /// </summary>
-        public virtual ICollection<CriteriaRule> Rules { get; set; } 
+        //public virtual ICollection<CriteriaRule> Rules { get; set; } 
 
     }
+
 }

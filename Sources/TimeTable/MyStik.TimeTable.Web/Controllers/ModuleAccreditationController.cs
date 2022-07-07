@@ -13,6 +13,7 @@ namespace MyStik.TimeTable.Web.Controllers
     public class ModuleAccreditationController : BaseController
     {
         // GET: ModuleAccreditation
+        /*
         public ActionResult Index(Guid id)
         {
             var crit = Db.Criterias.SingleOrDefault(x => x.Id == id);
@@ -20,6 +21,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+        */
 
         // GET: ModuleAccreditation/Details/5
         public ActionResult Details(Guid? id)

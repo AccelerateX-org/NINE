@@ -22,6 +22,14 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult Details(Guid id)
+        {
+            var model = Db.ScriptDocuments.SingleOrDefault(x => x.Id == id);
+
+            return View(model);
+        }
+
+
         public ActionResult Create()
         {
             var user = GetCurrentUser();
@@ -302,6 +310,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Withdraw(Guid id)
+        {
+            var pub = Db.ScriptPublishings.SingleOrDefault(x => x.Id == id);
+
+
+            var doc = pub.ScriptDocument;
+
+
+            Db.ScriptPublishings.Remove(pub);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new {id = doc.Id});
         }
 
 

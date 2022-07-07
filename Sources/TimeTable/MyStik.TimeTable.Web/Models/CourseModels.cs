@@ -751,7 +751,7 @@ namespace MyStik.TimeTable.Web.Models
         public Lottery Lottery { get; set; }
 
 
-        public CurriculumRequirement Module { get; set; }
+        //public CurriculumRequirement Module { get; set; }
 
 
         /// <summary>

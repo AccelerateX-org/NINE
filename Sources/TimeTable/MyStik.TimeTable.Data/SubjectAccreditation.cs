@@ -21,9 +21,5 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Tag { get; set; }
 
-        /// <summary>
-        /// Ein Slot kann mehrere Fächer umfassen
-        /// </summary>
-        public virtual  ICollection<TeachingUnit> Subjects { get; set; }
     }
 }

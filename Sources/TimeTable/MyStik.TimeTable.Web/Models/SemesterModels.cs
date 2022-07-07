@@ -307,6 +307,8 @@ namespace MyStik.TimeTable.Web.Models
         public int FreezedCourses { get; set; }
 
         public int UnFreezedCourses { get; set; }
+
+        public List<Course> Courses { get; set; }
     }
 
 }

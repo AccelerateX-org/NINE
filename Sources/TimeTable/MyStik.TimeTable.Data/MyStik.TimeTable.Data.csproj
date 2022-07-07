@@ -149,15 +149,11 @@
     <Compile Include="ContentChannel.cs" />
     <Compile Include="CorporateContact.cs" />
     <Compile Include="CourseModuleNexus.cs" />
-    <Compile Include="CriteriaSample.cs" />
     <Compile Include="CurriculumChapter.cs" />
-    <Compile Include="CurriculumPackage.cs" />
     <Compile Include="CurriculumProgram.cs" />
-    <Compile Include="CurriculumRequirement.cs" />
     <Compile Include="CurriculumScope.cs" />
     <Compile Include="CurriculumSection.cs" />
     <Compile Include="CurriculumTopic.cs" />
-    <Compile Include="CurriculumVariation.cs" />
     <Compile Include="Degree.cs" />
     <Compile Include="Department.cs" />
     <Compile Include="Exam.cs" />
@@ -172,7 +168,6 @@
     <Compile Include="Level.cs" />
     <Compile Include="Course.cs" />
     <Compile Include="CoursePlan.cs" />
-    <Compile Include="CriteriaRule.cs" />
     <Compile Include="CurriculumCriteria.cs" />
     <Compile Include="CurriculumGroup.cs" />
     <Compile Include="CurriculumModule.cs" />
@@ -470,6 +465,14 @@
     <Compile Include="Migrations\202206281831361_ModuleCatalogV3.designer.cs">
       <DependentUpon>202206281831361_ModuleCatalogV3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202207071429550_ConsolidationStep01.cs" />
+    <Compile Include="Migrations\202207071429550_ConsolidationStep01.designer.cs">
+      <DependentUpon>202207071429550_ConsolidationStep01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207071622314_ConsolidationStep02.cs" />
+    <Compile Include="Migrations\202207071622314_ConsolidationStep02.designer.cs">
+      <DependentUpon>202207071622314_ConsolidationStep02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleCatalog.cs" />
@@ -487,7 +490,6 @@
     <Compile Include="OfficeHour.cs" />
     <Compile Include="Organisation.cs" />
     <Compile Include="OrganiserMember.cs" />
-    <Compile Include="PackageOption.cs" />
     <Compile Include="PersonalContact.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="$(SolutionDir)\SolutionInfo.cs" Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
@@ -515,11 +517,6 @@
     <Compile Include="Supervision.cs" />
     <Compile Include="Supervisor.cs" />
     <Compile Include="Tag.cs" />
-    <Compile Include="TeachingAssessment.cs" />
-    <Compile Include="TeachingBuildingBlock.cs" />
-    <Compile Include="TeachingForm.cs" />
-    <Compile Include="TeachingModule.cs" />
-    <Compile Include="TeachingUnit.cs" />
     <Compile Include="Thesis.cs" />
     <Compile Include="ThesisAnnouncement.cs" />
     <Compile Include="ThesisFeedback.cs" />
@@ -736,6 +733,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202206281831361_ModuleCatalogV3.resx">
       <DependentUpon>202206281831361_ModuleCatalogV3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207071429550_ConsolidationStep01.resx">
+      <DependentUpon>202207071429550_ConsolidationStep01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207071622314_ConsolidationStep02.resx">
+      <DependentUpon>202207071622314_ConsolidationStep02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

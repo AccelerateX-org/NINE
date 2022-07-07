@@ -16,7 +16,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Das Modul (oberhalb der Akkreditierung)
         /// </summary>
-        public virtual CurriculumRequirement Requirement { get; set; }
+        //public virtual CurriculumRequirement Requirement { get; set; }
 
         /// <summary>
         /// Die konkrete Lehrveranstaltung

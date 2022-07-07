@@ -10,7 +10,7 @@ namespace MyStik.TimeTable.Data
         {
             //SemesterGroups = new HashSet<SemesterGroup>();
             CapacityGroups = new HashSet<CapacityGroup>();
-            Criterias = new HashSet<CurriculumCriteria>();
+            //Criterias = new HashSet<CurriculumCriteria>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -52,12 +52,12 @@ namespace MyStik.TimeTable.Data
         // public virtual ICollection<SemesterGroup> SemesterGroups { get; set; }
 
 
-        public virtual ICollection<CurriculumCriteria> Criterias { get; set; }
+        //public virtual ICollection<CurriculumCriteria> Criterias { get; set; }
 
         /// <summary>
         /// Liste der regeln
         /// </summary>
-        public virtual ICollection<CriteriaRule> Rules { get; set; }
+        //public virtual ICollection<CriteriaRule> Rules { get; set; }
 
     }
 }

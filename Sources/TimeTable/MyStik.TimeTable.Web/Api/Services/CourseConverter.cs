@@ -272,6 +272,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
                 var curr = new CurriculumDto();
 
+                /*
                 curr.Name = nexus.Requirement.Option.Package.Curriculum.Name;
                 curr.ShortName = nexus.Requirement.Option.Package.Curriculum.ShortName;
 
@@ -285,7 +286,7 @@ namespace MyStik.TimeTable.Web.Api.Services
                 module.Ects = nexus.Requirement.ECTS;
                 module.UsCredits = nexus.Requirement.USCredits;
                 module.Sws = nexus.Requirement.SWS;
-
+                */
 
                 if (dto.Modules == null)
                 {
