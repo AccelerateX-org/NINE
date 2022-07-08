@@ -38,7 +38,7 @@ namespace MyStik.TimeTable.Data
     {
         public CurriculumSlot()
         {
-            Accreditations = new HashSet<SubjectAccreditation>();
+            //Accreditations = new HashSet<SubjectAccreditation>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -49,7 +49,7 @@ namespace MyStik.TimeTable.Data
         /// Anordnung innerhalb der Section
         /// keine inhaltliche Bedeutung, nur für Generierung "gewohnter" Anzeigen
         /// </summary>
-        public int POsition { get; set; }
+        public int Position { get; set; }
 
         /// <summary>
         /// Ettikett, innherlab eines Curriculums eindeutig
@@ -67,7 +67,7 @@ namespace MyStik.TimeTable.Data
 
 
         // Die Accreditierungen
-        public virtual ICollection<SubjectAccreditation> Accreditations { get; set; }
+        //public virtual ICollection<SubjectAccreditation> Accreditations { get; set; }
 
 
         public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }

@@ -13,8 +13,8 @@ namespace MyStik.TimeTable.Data
         {
             CurriculumGroups = new HashSet<CurriculumGroup>();
             Chapters = new HashSet<CurriculumChapter>();
-            //Packages = new HashSet<CurriculumPackage>();
             Sections = new HashSet<CurriculumSection>();
+            Opportunities = new HashSet<CurriculumOpportunity>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,7 +22,15 @@ namespace MyStik.TimeTable.Data
 
         public string Name { get; set; }
 
+        /// <summary>
+        /// der gebräuchliche Kurzname
+        /// </summary>
         public string ShortName { get; set; }
+
+        /// <summary>
+        /// der technische Kurzname
+        /// </summary>
+        public string Tag { get; set; }
 
         /// <summary>
         /// Als Teilzeitmodell einsetzbar
@@ -62,9 +70,14 @@ namespace MyStik.TimeTable.Data
         public string Version { get; set; }
 
         /// <summary>
+        /// geforderte ECTS
+        /// </summary>
+        public double EctsTarget { get; set; }
+
+        /// <summary>
         /// Gültig ab Semester
         /// </summary>
-        public virtual Semester ValidSince { get; set; }
+        // public virtual Semester ValidSince { get; set; }
 
         /// <summary>
         /// Der Abschluss
@@ -95,17 +108,23 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<CurriculumChapter> Chapters { get; set; }
 
 
-        /// <summary>
-        /// Pakete
-        /// Pflicht, WPM, Absarbeit
-        /// veraltet
-        /// </summary>
-        //public virtual ICollection<CurriculumPackage> Packages { get; set; }
-
-
 
         public virtual ICollection<CurriculumSection> Sections { get; set; }
 
-        //public virtual ICollection<CurriculumScope> Scopes { get; set; }
+        public virtual ICollection<CurriculumOpportunity> Opportunities { get; set; }
+
+    }
+
+    public class CurriculumOpportunity
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual Curriculum Curriculum { get; set; }
+
+        public virtual Semester Semester { get; set; }
+
+        public bool IsPublished { get; set; }
     }
 }

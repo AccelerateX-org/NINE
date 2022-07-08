@@ -233,6 +233,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
                     // member ist Modulverantwortlicher
+                    /*
                     var modules = Db.CurriculumModules.Where(x =>
                         x.MV.Id == member.Id && 
                         x.ModuleCourses.Any(c => c.Nexus.Any(n => n.Course.Id == activity.Id))).ToList();
@@ -241,6 +242,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         userRight.IsHost = true;
                     }
+                    */
                 }
                 else
                 {

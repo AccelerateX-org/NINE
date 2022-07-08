@@ -265,28 +265,13 @@ namespace MyStik.TimeTable.Web.Api.Services
                 dto.Appointments.Add(courseDate);
             }
 
-
+            /*
             foreach (var nexus in course.Nexus)
             {
                 var module = new ModuleDto();
 
                 var curr = new CurriculumDto();
 
-                /*
-                curr.Name = nexus.Requirement.Option.Package.Curriculum.Name;
-                curr.ShortName = nexus.Requirement.Option.Package.Curriculum.ShortName;
-
-                curr.Organiser = new OrganiserDto();
-                curr.Organiser.Name = nexus.Requirement.Option.Package.Curriculum.Organiser.Name;
-                curr.Organiser.ShortName = nexus.Requirement.Option.Package.Curriculum.Organiser.ShortName;
-                curr.Organiser.Color = nexus.Requirement.Option.Package.Curriculum.Organiser.HtmlColor;
-
-                module.Id = nexus.Requirement.Id;
-                module.Curriculum = curr;
-                module.Ects = nexus.Requirement.ECTS;
-                module.UsCredits = nexus.Requirement.USCredits;
-                module.Sws = nexus.Requirement.SWS;
-                */
 
                 if (dto.Modules == null)
                 {
@@ -295,7 +280,7 @@ namespace MyStik.TimeTable.Web.Api.Services
 
                 dto.Modules.Add(module);
             }
-
+            */
 
 
             return dto;

@@ -140,18 +140,12 @@
     <Compile Include="BookingConfirmation.cs" />
     <Compile Include="Building.cs" />
     <Compile Include="Candidature.cs" />
-    <Compile Include="CapacityCourse.cs" />
     <Compile Include="CapacityGroup.cs" />
-    <Compile Include="CertificateModule.cs" />
-    <Compile Include="CertificateSubject.cs" />
     <Compile Include="Committee.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="ContentChannel.cs" />
     <Compile Include="CorporateContact.cs" />
-    <Compile Include="CourseModuleNexus.cs" />
     <Compile Include="CurriculumChapter.cs" />
-    <Compile Include="CurriculumProgram.cs" />
-    <Compile Include="CurriculumScope.cs" />
     <Compile Include="CurriculumSection.cs" />
     <Compile Include="CurriculumTopic.cs" />
     <Compile Include="Degree.cs" />
@@ -164,7 +158,6 @@
     <Compile Include="ExamPaper.cs" />
     <Compile Include="Internship.cs" />
     <Compile Include="ItemLabel.cs" />
-    <Compile Include="Lecturer.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Course.cs" />
     <Compile Include="CoursePlan.cs" />
@@ -473,9 +466,16 @@
     <Compile Include="Migrations\202207071622314_ConsolidationStep02.designer.cs">
       <DependentUpon>202207071622314_ConsolidationStep02.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202207081029419_ConsolidationStep04.cs" />
+    <Compile Include="Migrations\202207081029419_ConsolidationStep04.designer.cs">
+      <DependentUpon>202207081029419_ConsolidationStep04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207081045557_ConsolidatinStep05.cs" />
+    <Compile Include="Migrations\202207081045557_ConsolidatinStep05.designer.cs">
+      <DependentUpon>202207081045557_ConsolidatinStep05.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
-    <Compile Include="ModuleCatalog.cs" />
     <Compile Include="ModuleCourse.cs" />
     <Compile Include="ModuleExam.cs" />
     <Compile Include="ModuleMapping.cs" />
@@ -511,7 +511,6 @@
     <Compile Include="SemesterTopic.cs" />
     <Compile Include="Student.cs" />
     <Compile Include="StudentExam.cs" />
-    <Compile Include="SubjectAccreditation.cs" />
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionDrawing.cs" />
     <Compile Include="Supervision.cs" />
@@ -739,6 +738,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202207071622314_ConsolidationStep02.resx">
       <DependentUpon>202207071622314_ConsolidationStep02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207081029419_ConsolidationStep04.resx">
+      <DependentUpon>202207081029419_ConsolidationStep04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207081045557_ConsolidatinStep05.resx">
+      <DependentUpon>202207081045557_ConsolidatinStep05.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

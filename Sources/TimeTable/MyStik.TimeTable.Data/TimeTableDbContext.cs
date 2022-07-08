@@ -45,9 +45,6 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<ContentChannel> ContentChannels { get; set; }
 
-        public DbSet<CurriculumProgram> CurriculumPrograms { get; set; }
-
-        public DbSet<CurriculumAccreditation> CurriculumAccreditations { get; set; }
 
         public DbSet<Curriculum> Curricula { get; set; }
         
@@ -59,9 +56,6 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<ModuleCourse> ModuleCourses { get; set; }
 
-        public DbSet<CourseModuleNexus> CourseNexus { get; set; }
-
-        public DbSet<CapacityCourse> CapacityCourses { get; set; }
 
         public  DbSet<CurriculumChapter> CurriculumChapters { get; set; }
 
@@ -73,6 +67,8 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<SemesterGroup> SemesterGroups { get; set; }
 
+        public DbSet<CurriculumOpportunity> CurriculumOpportunities { get; set; }
+        
         public  DbSet<Degree> Degrees { get; set; }
 
         public DbSet<GroupAlias> GroupAliases { get; set; }
@@ -129,7 +125,6 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<ModuleAccreditation> Accreditations { get; set; }
 
-        //public DbSet<CriteriaRule> Rules { get; set; }
 
         public DbSet<ThesisAnnouncement> ThesisAnnouncements { get; set; }
 
@@ -155,12 +150,9 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<Tag> Tags { get; set; }
 
-        public DbSet<CertificateModule> CertificateModules { get; set; }
-        public DbSet<CertificateSubject> CertificateSubjects { get; set; }
         public DbSet<ExaminationForm> ExaminationForms { get; set; }
         public DbSet<ExaminationUnit> ExaminationUnits { get; set; }
         public DbSet<ExaminationAid> ExaminationAids { get; set; }
-        public DbSet<Lecturer> Lecturers { get; set; }
 
         public DbSet<Organisation> Organisations { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -206,17 +198,13 @@ namespace MyStik.TimeTable.Data
         public DbSet<ScriptPublishing> ScriptPublishings { get; set; }
 
 
-        public DbSet<SubjectAccreditation> SubjectAccreditations { get; set; }
         public DbSet<CurriculumSection> CurriculumSections { get; set; }
         public DbSet<CurriculumSlot> CurriculumSlots { get; set; }
 
-        public DbSet<ModuleCatalog> ModuleCatalogs { get; set; }
-        public DbSet<ModulePublishing> ModulePublishings { get; set; }
 
         public DbSet<ItemLabel> ItemLabels { get; set; }
         public DbSet<ItemLabelSet> ItemLabelSets { get; set; }
 
-        public DbSet<CurriculumScope> CurriculumScopes { get; set; }
 
         public DbSet<StudentChannel> StudentChannels { get; set; }
 

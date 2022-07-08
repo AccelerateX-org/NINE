@@ -150,6 +150,7 @@ namespace MyStik.TimeTable.DataServices
                 _db.ActivityOwners.Remove(activityOwner);
             }
 
+            /*
             if (activity is Course)
             {
                 var course = activity as Course;
@@ -159,7 +160,7 @@ namespace MyStik.TimeTable.DataServices
                     _db.CourseNexus.Remove(nexus);
                 }
             }
-
+            */
 
             _db.Activities.Remove(activity);
 

@@ -29,6 +29,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return new List<NamedDto>().AsQueryable();
         }
 
+        /*
         [Route("{id}")]
         [ResponseType(typeof(AccreditatedModuleDto))]
         public async Task<IHttpActionResult> GetModule(Guid id)
@@ -43,7 +44,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return Ok(dto);
         }
-
+        */
 
     }
 }

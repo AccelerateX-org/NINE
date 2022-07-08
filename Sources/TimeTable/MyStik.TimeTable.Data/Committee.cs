@@ -66,14 +66,20 @@ namespace MyStik.TimeTable.Data
         public virtual Committee Committee { get; set; }
 
         /// <summary>
-        /// Aktuell nur Member
+        /// Aktuell nur Member => veraltet, umhängen und dann löschen
         /// </summary>
         public virtual OrganiserMember Member { get; set; }
 
         /// <summary>
-        /// Oder ein Student
+        /// Oder ein Student => veraltet => löschen
         /// </summary>
         public virtual Student Student { get; set; }
+
+        /// <summary>
+        /// Besser ale Stduent und Member
+        /// den realen Status muss man eh anders festlegen
+        /// </summary>
+        public string UserId { get; set; }
 
     }
 }

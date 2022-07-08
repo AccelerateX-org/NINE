@@ -30,7 +30,7 @@ namespace MyStik.TimeTable.Data
 
         //public virtual TeachingBuildingBlock TeachingBuildingBlock { get; set; }
 
-        public virtual CertificateSubject CertificateSubject { get; set; }
+        //public virtual CertificateSubject CertificateSubject { get; set; }
 
         /// <summary>
         /// Die akkreditierte Modul

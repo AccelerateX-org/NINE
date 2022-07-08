@@ -62,6 +62,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return new List<NamedDto>().AsQueryable();
         }
 
+        /*
         [Route("{name}/{version}/scheme")]
         public IQueryable<CurriculumSchemeSemesterDto> GetCurriculumPlan(string name, string version)
         {
@@ -106,7 +107,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return list.AsQueryable();
         }
-
+        */
     }
 }
 

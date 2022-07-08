@@ -986,6 +986,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var list = new List<ModuleParticipantModel>();
 
+            /*
             foreach (var moduleCourse in module.ModuleCourses)
             {
                 var courses =
@@ -1010,6 +1011,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
             }
+            */
 
             var userList = new List<ApplicationUser>();
 

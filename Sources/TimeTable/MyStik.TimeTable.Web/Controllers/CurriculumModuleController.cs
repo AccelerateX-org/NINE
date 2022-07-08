@@ -152,6 +152,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var moduleCourse in model.ModuleCourses.ToList())
             {
+                /*
                 foreach (var nexus in moduleCourse.Nexus.ToList())
                 {
                     Db.CourseNexus.Remove(nexus);
@@ -161,6 +162,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     Db.CapacityCourses.Remove(capacityCourse);
                 }
+                */
 
 
                 Db.ModuleCourses.Remove(moduleCourse);
@@ -212,6 +214,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
+            /*
             foreach (var moduleCourse in module.ModuleCourses)
             {
                 var courses =
@@ -231,6 +234,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     model.Courses.Add(semCourse);
                 }
             }
+            */
 
             return View(model);
         }
@@ -248,6 +252,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
+            /*
             foreach (var moduleCourse in module.ModuleCourses)
             {
                 var courses =
@@ -268,6 +273,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     model.Courses.Add(semCourse);
                 }
             }
+            */
 
 
             return View(model);
@@ -290,6 +296,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = moduleCourse.Module;
 
             var model = new List<ModuleSemesterCourseModel>();
+            /*
             foreach (var course in courses)
             {
                 // suchen, ob schon im Modul vorhanden, egal unter welchem Lehrformat
@@ -308,6 +315,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     model.Add(semCourse);
                 }
             }
+            */
 
 
 
@@ -324,6 +332,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             // die bestehende Liste aller Nexi
+            /*
             var oldNexusList = new List<CourseModuleNexus>();
             foreach (var moduleCourse in module.ModuleCourses)
             {
@@ -332,7 +341,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     oldNexusList.Add(courseNexus);
                 }
             }
-
+            */
 
             foreach (var tempId in courseIds)
             {
@@ -342,20 +351,21 @@ namespace MyStik.TimeTable.Web.Controllers
                 var courseId = Guid.Parse(tempId.Substring(0, n));
                 var moduleCourseId = Guid.Parse(tempId.Substring(n + 2));
 
-                var nexus = oldNexusList.FirstOrDefault(x =>
-                    x.ModuleCourse.Id == moduleCourseId && x.Course.Id == courseId);
+                //var nexus = oldNexusList.FirstOrDefault(x =>
+                //    x.ModuleCourse.Id == moduleCourseId && x.Course.Id == courseId);
+
 
                 // schon drin => aus der Liste löschen
+                /*
                 if (nexus != null)
                 {
-                    oldNexusList.Remove(nexus);
+                    //oldNexusList.Remove(nexus);
                 }
                 else
                 {
                     // das ist neu => hinzufügen
                     var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
                     var moduleCourse = Db.ModuleCourses.SingleOrDefault(x => x.Id == moduleCourseId);
-
 
                     nexus = new CourseModuleNexus
                     {
@@ -365,13 +375,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     Db.CourseNexus.Add(nexus);
                 }
+                */
             }
 
             // die in der oldList verbliebenen Einträge kommen raus
+            /*
             foreach (var oldNexus in oldNexusList)
             {
                 Db.CourseNexus.Remove(oldNexus);
             }
+            */
 
             Db.SaveChanges();
 
@@ -392,6 +405,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
+            /*
             foreach (var moduleCourse in module.ModuleCourses)
             {
                 var courses =
@@ -434,6 +448,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
             }
+            */
 
             // die user und students ergänzen
             foreach (var participant in model.Participants)
@@ -464,7 +479,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Semester = semester
             };
 
-
+            /*
             foreach (var moduleCourse in module.ModuleCourses)
             {
                 var courses =
@@ -508,6 +523,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
 
             }
+            */
 
             // die user und students ergänzen
             foreach (var participant in model.Participants)

@@ -9,6 +9,7 @@ namespace MyStik.TimeTable.Data
         public Semester()
         {
             this.Dates = new HashSet<SemesterDate>();
+            Opportunities = new HashSet<CurriculumOpportunity>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -36,5 +37,8 @@ namespace MyStik.TimeTable.Data
         /// Termine im Semester, z.B. vorlesungsfreie Zeit
         /// </summary>
         public virtual ICollection<SemesterDate> Dates { get; set; }
+
+        public virtual ICollection<CurriculumOpportunity> Opportunities { get; set; }
+
     }
 }

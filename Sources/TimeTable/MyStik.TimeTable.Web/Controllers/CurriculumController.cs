@@ -1131,7 +1131,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     var currSlot = new CurriculumSlot
                     {
                         ECTS = slot.ects,
-                        POsition = slot.position,
+                        Position = slot.position,
                         Tag = slot.tag,
                         CurriculumSection = currSection
                     };
@@ -1214,6 +1214,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(curr);
         }
 
+        /*
         public ActionResult AdminSubject(Guid id)
         {
             var subject = Db.CertificateSubjects.SingleOrDefault(x => x.Id == id);
@@ -1344,6 +1345,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+        */
 
 
         public ActionResult AssignModule(Guid id)
@@ -1360,20 +1362,15 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        /*
         public ActionResult SelectModule(Guid accid, Guid modId)
         {
             var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == accid);
 
-            /*
-            var teachingBuildingBlock = Db.TeachingBuildingBlocks.SingleOrDefault(x => x.Id == modId);
-
-            accreditation.TeachingBuildingBlock = teachingBuildingBlock;
-            Db.SaveChanges();
-            */
-
 
             return RedirectToAction("AdminContentModule", new {id = accreditation.Id});
         }
+        */
 
         public ActionResult Repair(Guid id)
         {

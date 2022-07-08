@@ -20,8 +20,8 @@ namespace MyStik.TimeTable.Data
         public ModuleCourse()
         {
             //Courses = new List<Course>();
-            CapacityCourses = new List<CapacityCourse>();
-            Nexus = new HashSet<CourseModuleNexus>();
+            //CapacityCourses = new List<CapacityCourse>();
+            //Nexus = new HashSet<CourseModuleNexus>();
             Opportunities = new HashSet<SubjectOpportunity>();
         }
 
@@ -51,6 +51,9 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ExternalId { get; set; }
 
+
+        public string Tag { get; set; }
+
         /// <summary>
         /// Das zugehörige Modul
         /// </summary>
@@ -68,9 +71,9 @@ namespace MyStik.TimeTable.Data
         /// Unterteilung in Parallelgruppen
         /// immmer mindestens 1
         /// </summary>
-        public virtual ICollection<CapacityCourse> CapacityCourses { get; set; }
+        // public virtual ICollection<CapacityCourse> CapacityCourses { get; set; }
 
-        public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
+        //public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
 
         public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
     }

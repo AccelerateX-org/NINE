@@ -76,6 +76,7 @@ namespace MyStik.TimeTable.Web.Services
                 };
 
 
+                /*
                 foreach (var moduleCourse in module.ModuleCourses)
                 {
                     var semCourses =
@@ -88,6 +89,7 @@ namespace MyStik.TimeTable.Web.Services
                         mModel.Courses.Add(summary);
                     }
                 }
+                */
 
                 model.Modules.Add(mModel);
             }

@@ -443,6 +443,7 @@ namespace MyStik.TimeTable.Web.Controllers
             //var modulListe = new List<CurriculumModule>();
             // Liste aller Module im 1. Semester des Studiengangs WI
             // Alle Module, die einer Curriculumsgruppe mit dem Namen "1" und dem Curriculum mit Kurzname "WI" zugeordnet sind
+            /*
             var modulListeSem1 = Db.CurriculumModules.Where(m =>
                 m.Groups.Any(g =>
                     g.Name.Equals("1") && g.Curriculum.ShortName.Equals("WI")))
@@ -505,10 +506,10 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Semester5 = modulListeSem5;
             model.Semester6 = modulListeSem6;
             model.Semester7 = modulListeSem7;
-
+            */
 
             // Übergabe des mit Daten gefüllten Models an den View
-            return View(model);
+            return View();
 
         
         }

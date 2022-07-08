@@ -217,9 +217,13 @@
             </div>
 
 
-            <div class="list-group-item  list-group-item-secondary">Module</div>
-
-            @foreach (var module in Model.CurrentSemester.Modules)
+        <div class="list-group-item  list-group-item-secondary">Module</div>
+        <div class="alert alert-info">
+            Hier wird gerade umgebaut - diese Funktion steht aktuell nicht zur Verfügung.
+        </div>
+            
+        @*
+        @foreach (var module in Model.CurrentSemester.Modules)
             {
                 <div class="list-group-item d-flex justify-content-between align-items-center">
                     @module.Module.ShortName: @module.Module.Name (@module.Courses.Count Lehrveranstaltungen)
@@ -234,7 +238,7 @@
                     </div>
                 </div>
             }
-
+            *@
 
         </div>
         </div>

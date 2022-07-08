@@ -13,6 +13,7 @@ namespace MyStik.TimeTable.Data
             this.RoomAssignments = new HashSet<RoomAssignment>();
             this.Curricula = new HashSet<Curriculum>();
             this.SubOrganisers = new HashSet<ActivityOrganiser>();
+            ModuleCatalogs = new HashSet<CurriculumModuleCatalog>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -53,6 +54,8 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<OrganiserMember> Members { get; set; }
     
         public virtual ICollection<RoomAssignment> RoomAssignments { get; set; }
+
+        public virtual ICollection<CurriculumModuleCatalog> ModuleCatalogs { get; set; }
 
         public virtual ICollection<Infoscreen> Infoscreens { get; set; }
 

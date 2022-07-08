@@ -32,7 +32,7 @@ namespace MyStik.TimeTable.Data
         {
             ModuleCourses = new HashSet<ModuleCourse>();
             ModuleExams = new HashSet<ModuleExam>();
-            Groups = new HashSet<CurriculumGroup>();
+            //Groups = new HashSet<CurriculumGroup>();
             Accreditations = new HashSet<ModuleAccreditation>();
         }
 
@@ -55,27 +55,29 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ShortName { get; set; }
 
+        public string Tag { get; set; }
+
         /// <summary>
         /// Anzahl der Credits für das Modul
         /// </summary>
-        public int ECTS { get; set; }
+        //public int ECTS { get; set; }
 
         /// <summary>
         /// Inhaltsbeschreibung (Elemente, beliebig strukturiert, HTML formatiert)
         /// </summary>
-        public string Description { get; set; }
+        //public string Description { get; set; }
 
-        public string PreRequisites { get; set; }
+        //public string PreRequisites { get; set; }
 
-        public string Competences { get; set; }
+        //public string Competences { get; set; }
 
-        public string Literature { get; set; }
+        //public string Literature { get; set; }
 
         /// <summary>
         /// Zugehörige Studiengruppe
         /// Überflüssig!
         /// </summary>
-        public virtual ICollection<CurriculumGroup> Groups { get; set; }
+        //public virtual ICollection<CurriculumGroup> Groups { get; set; }
 
 
         /// <summary>

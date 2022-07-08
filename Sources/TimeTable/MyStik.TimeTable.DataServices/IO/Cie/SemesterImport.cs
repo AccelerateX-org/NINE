@@ -217,6 +217,7 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
 
             // jetzt die Module
             // wieder pro Studiengang
+            /*
             foreach (var curriculum in curricula)
             {
                 //var module = GetModule(db, curriculum, scheduleCourse);
@@ -230,6 +231,7 @@ namespace MyStik.TimeTable.DataServices.IO.Cie
 
                 db.CourseNexus.Add(nexus);
             }
+            */
             db.SaveChanges();
 
 

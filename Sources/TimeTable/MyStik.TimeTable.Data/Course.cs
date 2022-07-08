@@ -7,7 +7,7 @@ namespace MyStik.TimeTable.Data
     {
         public Course()
         {
-            Nexus = new HashSet<CourseModuleNexus>();
+            //Nexus = new HashSet<CourseModuleNexus>();
         }
 
         [Display(Name="Link zu Moodle-Kurs")]
@@ -41,7 +41,7 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         // public virtual ICollection<ModuleCourse> ModuleCourses { get; set; }
 
-        public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
+        //public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
 
 
         public virtual ICollection<ScriptPublishing> ScriptPublishings { get; set; }
