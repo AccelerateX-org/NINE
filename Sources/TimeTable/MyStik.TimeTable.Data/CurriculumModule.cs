@@ -17,6 +17,10 @@ namespace MyStik.TimeTable.Data
 
         public string Name { get; set; }
 
+        public string Tag { get; set; }
+
+        public string Description { get; set; }
+
         public virtual ActivityOrganiser Organiser { get; set; }
 
         public virtual ICollection<CurriculumModule> Modules { get; set; }
@@ -30,10 +34,10 @@ namespace MyStik.TimeTable.Data
     {
         public CurriculumModule ()
         {
-            ModuleCourses = new HashSet<ModuleCourse>();
+            ModuleSubjects = new HashSet<ModuleSubject>();
             ModuleExams = new HashSet<ModuleExam>();
-            //Groups = new HashSet<CurriculumGroup>();
             Accreditations = new HashSet<ModuleAccreditation>();
+            Descriptions = new HashSet<ModuleDescription>();
         }
 
 
@@ -42,6 +46,7 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Fachlicher Schlüssel (keine Beschränkung auf Identität)
+        /// deprecrated
         /// </summary>
         public string ModuleId { get; set; }
 
@@ -55,29 +60,10 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ShortName { get; set; }
 
+        /// <summary>
+        /// Fachlicher Schlüssel
+        /// </summary>
         public string Tag { get; set; }
-
-        /// <summary>
-        /// Anzahl der Credits für das Modul
-        /// </summary>
-        //public int ECTS { get; set; }
-
-        /// <summary>
-        /// Inhaltsbeschreibung (Elemente, beliebig strukturiert, HTML formatiert)
-        /// </summary>
-        //public string Description { get; set; }
-
-        //public string PreRequisites { get; set; }
-
-        //public string Competences { get; set; }
-
-        //public string Literature { get; set; }
-
-        /// <summary>
-        /// Zugehörige Studiengruppe
-        /// Überflüssig!
-        /// </summary>
-        //public virtual ICollection<CurriculumGroup> Groups { get; set; }
 
 
         /// <summary>
@@ -90,9 +76,9 @@ namespace MyStik.TimeTable.Data
 
 
         /// <summary>
-        /// Liste der akkreditierten Module
+        /// Liste der Fächer
         /// </summary>
-        public virtual ICollection<ModuleCourse> ModuleCourses { get; set; }
+        public virtual ICollection<ModuleSubject> ModuleSubjects { get; set; }
 
         /// <summary>
         /// Liste aller Modulprüfungen
@@ -102,6 +88,25 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Alle Akkreditierungen des Moduls
         /// </summary>
-       public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
+        public virtual ICollection<ModuleAccreditation> Accreditations { get; set; }
+
+        public virtual ICollection<ModuleDescription> Descriptions { get; set; }
+    }
+
+
+    public class ModuleDescription
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual CurriculumModule Module { get; set; }
+
+        public virtual Semester Semester { get; set; }
+
+        public string Description { get; set; }
+
+
+
     }
 }

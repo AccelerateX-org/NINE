@@ -3,10 +3,10 @@
 
 @foreach (var course in Model)
 {
-    var rowId = course.CourseSummary.Course.Id + "--" + course.ModuleCourse.Id;
+    var rowId = course.CourseSummary.Course.Id + "--" + course.ModuleSubject.Id;
 
     <tr id="@rowId">
-        <td>@course.ModuleCourse.Name</td>
+        <td>@course.ModuleSubject.Name</td>
         <td>@course.CourseSummary.Course.Name</td>
         <td>@course.CourseSummary.Course.ShortName</td>
         <td>@Html.GroupList(course.CourseSummary.Course.SemesterGroups)</td>

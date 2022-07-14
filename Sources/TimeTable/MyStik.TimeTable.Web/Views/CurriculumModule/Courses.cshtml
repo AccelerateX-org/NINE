@@ -39,7 +39,7 @@
                 @foreach (var course in Model.Courses)
                 {
                     <tr>
-                        <td>@course.ModuleCourse.Name</td>
+                        <td>@course.ModuleSubject.Name</td>
                         <td>
                             <a href="@Url.Action("Details", "Course", new {id = course.CourseSummary.Course.Id})">@course.CourseSummary.Course.Name</a>
                         </td>

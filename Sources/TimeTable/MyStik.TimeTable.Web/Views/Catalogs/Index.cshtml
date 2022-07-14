@@ -1,4 +1,6 @@
-﻿@using MyStik.TimeTable.Data
+﻿@model MyStik.TimeTable.Web.Models.OrganiserViewModel
+@using MyStik.TimeTable.Data
+
 
 @{
     ViewBag.Title = "Modulekataloge";
@@ -22,18 +24,64 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Modulkataloge FK09</h4>
+                <h4>Modulkataloge @Model.Organiser.ShortName</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a href="#" class="btn btn-outline-primary"><i class="bi-plus-square"></i></a>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+
+                            <a href="@Url.Action("Import", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-primary">
+                                <i class="bi-upload"></i> Import
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
             <div>
             </div>
             <table id="tabCatalogs">
+                <thead>
+                <tr>
+                    <th>Katalog Name</th>
+                    <th>Katalog ID</th>
+                    <th>Module Name</th>
+                    <th>Module ID</th>
+                    <th>Modulverantwortung</th>
+                    <th>Fächer</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cat in Model.Organiser.ModuleCatalogs)
+                    {
+                        foreach (var module in cat.Modules)
+                        {
+                            <tr>
+                                <td>@cat.Name</td>
+                                <td>@cat.Tag</td>
+                                <td>@module.Name</td>
+                                <td>@module.Tag</td>
+                                @if (module.MV != null)
+                                {
+                                    <td>@module.MV.FullName</td>
+                                }
+                                else
+                                {
+                                    <td>vakant</td>
+                                }
+                                <td>
+                                    @foreach (var subject in module.ModuleSubjects)
+                                    {
+                                        <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
+                                    }
+                                </td>
+                                
+                            </tr>
+                            
+                        }
+                    }
+                </tbody>
             </table>
         </div>
     </div>

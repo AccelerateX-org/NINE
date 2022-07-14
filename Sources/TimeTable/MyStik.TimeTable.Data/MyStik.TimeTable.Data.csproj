@@ -474,9 +474,17 @@
     <Compile Include="Migrations\202207081045557_ConsolidatinStep05.designer.cs">
       <DependentUpon>202207081045557_ConsolidatinStep05.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202207140616054_ModuleCatalogV4.cs" />
+    <Compile Include="Migrations\202207140616054_ModuleCatalogV4.designer.cs">
+      <DependentUpon>202207140616054_ModuleCatalogV4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207140851408_MouleCatalogV5.cs" />
+    <Compile Include="Migrations\202207140851408_MouleCatalogV5.designer.cs">
+      <DependentUpon>202207140851408_MouleCatalogV5.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
-    <Compile Include="ModuleCourse.cs" />
+    <Compile Include="ModuleSubject.cs" />
     <Compile Include="ModuleExam.cs" />
     <Compile Include="ModuleMapping.cs" />
     <Compile Include="ModuleTrial.cs" />
@@ -744,6 +752,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202207081045557_ConsolidatinStep05.resx">
       <DependentUpon>202207081045557_ConsolidatinStep05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207140616054_ModuleCatalogV4.resx">
+      <DependentUpon>202207140616054_ModuleCatalogV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207140851408_MouleCatalogV5.resx">
+      <DependentUpon>202207140851408_MouleCatalogV5.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -72,6 +72,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return Db.CurriculumGroups.SingleOrDefault(g => g.Curriculum.ShortName.Equals(curr) && g.Name.Equals(name));
         }
 
+        /*
         private void AddModule(CurriculumModule module)
         {
             if (Db.CurriculumModules.Any(m => m.ModuleId.Equals(module.ModuleId)))
@@ -79,7 +80,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.CurriculumModules.Add(module);
             Db.SaveChanges();
         }
-
+        */
 
 
         

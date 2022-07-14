@@ -15,9 +15,9 @@ namespace MyStik.TimeTable.Data
     /// <summary>
     /// Lehrveranstaltung eines Moduls
     /// </summary>
-    public class ModuleCourse
+    public class ModuleSubject
     {
-        public ModuleCourse()
+        public ModuleSubject()
         {
             //Courses = new List<Course>();
             //CapacityCourses = new List<CapacityCourse>();
@@ -37,8 +37,14 @@ namespace MyStik.TimeTable.Data
 
         /// <summary>
         /// Typ der Lehrveranstaltung
+        /// deprecrated
         /// </summary>
         public CourseType CourseType { get; set; }
+
+        /// <summary>
+        /// Lehrformat
+        /// </summary>
+        public virtual TeachingFormat TeachingFormat { get; set; }
 
         /// <summary>
         /// Anteil der SWS am Gesamtpaket
@@ -60,21 +66,6 @@ namespace MyStik.TimeTable.Data
         public virtual CurriculumModule Module { get; set; }
 
         
-        /// <summary>
-        /// Alle real stattfindenden Kurse
-        /// Die Semesterzuordnung steckt im Kurs an sich über die Zuordnung
-        /// zu den Semestergruppen. Muss daher hier nicht extra gemacht werden
-        /// </summary>
-        // public virtual ICollection<Course> Courses { get; set; }
-
-        /// <summary>
-        /// Unterteilung in Parallelgruppen
-        /// immmer mindestens 1
-        /// </summary>
-        // public virtual ICollection<CapacityCourse> CapacityCourses { get; set; }
-
-        //public virtual ICollection<CourseModuleNexus> Nexus { get; set; }
-
         public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
     }
 
@@ -88,9 +79,30 @@ namespace MyStik.TimeTable.Data
         public virtual Semester Semester { get; set; }
 
 
-        public virtual ModuleCourse Subject { get; set; }
+        public virtual ModuleSubject Subject { get; set; }
 
 
         public virtual Course Course { get; set; }
+    }
+
+    public class TeachingFormat
+    {
+        public TeachingFormat()
+        {
+            Subjects = new List<ModuleSubject>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Tag { get; set; }
+
+        public string Description { get; set; }
+
+        public int CWN { get; set; }
+
+        public ICollection<ModuleSubject> Subjects { get; set; }
     }
 }

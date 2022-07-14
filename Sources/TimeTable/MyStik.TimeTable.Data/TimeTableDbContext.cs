@@ -54,7 +54,7 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<CurriculumModule> CurriculumModules { get; set; }
 
-        public DbSet<ModuleCourse> ModuleCourses { get; set; }
+        public DbSet<ModuleSubject> ModuleCourses { get; set; }
 
 
         public  DbSet<CurriculumChapter> CurriculumChapters { get; set; }
@@ -211,6 +211,10 @@ namespace MyStik.TimeTable.Data
         public DbSet<CurriculumModuleCatalog> CurriculumModuleCatalogs { get; set; }
 
         public DbSet<SubjectOpportunity> SubjectOpportunities { get; set; }
+
+        public DbSet<TeachingFormat> TeachingFormats { get; set; }
+
+        public DbSet<ModuleDescription> ModuleDescriptions { get; set; }
 
 
         public TimeTableDbContext() : base()

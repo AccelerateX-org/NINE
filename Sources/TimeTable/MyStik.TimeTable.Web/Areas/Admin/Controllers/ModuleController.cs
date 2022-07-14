@@ -54,7 +54,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 
             foreach (var module in allModules)
             {
-                var courses = module.ModuleCourses.ToList();
+                var courses = module.ModuleSubjects.ToList();
                 foreach (var moduleCourse in courses)
                 {
                     /*

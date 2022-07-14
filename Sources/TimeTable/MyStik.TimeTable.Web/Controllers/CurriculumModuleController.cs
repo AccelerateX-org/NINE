@@ -72,7 +72,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
-            var primaryCourse = new ModuleCourse
+            var primaryCourse = new ModuleSubject()
             {
                 Name = primaryTechingUnit,
                 Module = module
@@ -82,7 +82,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (model.HasPractice)
             {
-                var secCourse = new ModuleCourse
+                var secCourse = new ModuleSubject
                 {
                     Name = "Übung",
                     Module = module
@@ -92,7 +92,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (model.HasTutorium)
             {
-                var secCourse = new ModuleCourse
+                var secCourse = new ModuleSubject
                 {
                     Name = "Tutorium",
                     Module = module
@@ -103,7 +103,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (model.HasLaboratory)
             {
-                var secCourse = new ModuleCourse
+                var secCourse = new ModuleSubject
                 {
                     Name = "Laborpraktikum",
                     Module = module
@@ -150,7 +150,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
-            foreach (var moduleCourse in model.ModuleCourses.ToList())
+            foreach (var moduleCourse in model.ModuleSubjects.ToList())
             {
                 /*
                 foreach (var nexus in moduleCourse.Nexus.ToList())

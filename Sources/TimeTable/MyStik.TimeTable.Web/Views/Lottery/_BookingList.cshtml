@@ -54,7 +54,7 @@
                         }
                         @if (course.CourseSummary.ConflictingDates.Any(x => x.Value.Any()))
                         {
-                            <span class="badge badge-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
+                            <span class="badge bg-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
                         }
                     </li>
                     <li><i class="fa-li fa fa-book"></i>@Html.GroupList(course.Course.Occurrence)</li>
@@ -77,11 +77,11 @@
                                         {
                                             if (course.BookingState.MyBookingList.WaitingList.Count > 0)
                                             {
-                                                <span class="badge badge-danger">@course.BookingState.MyBookingList.WaitingList.Count Einträge auf Warteliste</span>
+                                                <span class="badge bg-danger">@course.BookingState.MyBookingList.WaitingList.Count Einträge auf Warteliste</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-danger">ausgebucht</span>
+                                                <span class="badge bg-danger">ausgebucht</span>
                                             }
                                         }
                                     </li>
@@ -116,11 +116,11 @@
                                         {
                                             if (course.BookingState.MyBookingList.WaitingList.Count > 0)
                                             {
-                                                <span class="badge badge-danger">@course.BookingState.MyBookingList.WaitingList.Count Einträge auf Warteliste</span>
+                                                <span class="badge bg-danger">@course.BookingState.MyBookingList.WaitingList.Count Einträge auf Warteliste</span>
                                             }
                                             else
                                             {
-                                                <span class="badge badge-danger">ausgebucht</span>
+                                                <span class="badge bg-danger">ausgebucht</span>
                                             }
                                         }
                                     </li>

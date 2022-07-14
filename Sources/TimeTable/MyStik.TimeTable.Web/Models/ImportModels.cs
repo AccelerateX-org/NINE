@@ -22,4 +22,13 @@ namespace MyStik.TimeTable.Web.Models
         public HttpPostedFileBase AttachmentStructure { get; set; }
 
     }
+
+    public class OrganiserImportModel
+    {
+        public ActivityOrganiser Organiser { get; set; }
+
+        public HttpPostedFileBase AttachmentStructure { get; set; }
+
+    }
+
 }

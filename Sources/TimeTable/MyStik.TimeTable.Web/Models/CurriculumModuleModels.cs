@@ -64,7 +64,7 @@ namespace MyStik.TimeTable.Web.Models
 
     public class ModuleSemesterCourseModel
     {
-        public ModuleCourse ModuleCourse { get; set; }
+        public ModuleSubject ModuleSubject { get; set; }
 
         public CourseSummaryModel CourseSummary { get; set; }
 
@@ -119,8 +119,80 @@ namespace MyStik.TimeTable.Web.Models
 
         public string tag { get; set; }
         public int ects { get; set; }
+
+        public string name { get; set; }
     }
 
 
+    public class CurriculumModuleCatalogImportModel
+    {
+        public string name { get; set; }
+
+        public string tag { get; set; }
+
+        public List<CurriculumModuleImportModel> modules { get; set; }
+    }
+
+    public class CurriculumModuleImportModel
+    {
+        public string name { get; set; }
+
+        public string tag { get; set; }
+
+        public string responsible { get; set; }
+
+        public List<CurriculumSubjectImportModel> subjects { get; set; }
+
+    }
+
+
+    public class CurriculumSubjectImportModel
+    {
+        public string name { get; set; }
+
+        public string tag { get; set; }
+
+        public string type { get; set; }
+
+        public int sws { get; set; }
+
+    }
+
+
+    public class AccreditationImportModel
+    {
+        public string curriculum { get; set; }
+
+        public string version { get; set; }
+
+        public List<ModuleAccreditationImportModel> accreditions { get; set; }
+    }
+
+    public class ModuleAccreditationImportModel
+    {
+        public string slot { get; set; }
+
+        public string module { get; set; }
+    }
+
+
+
+    public class OpportunityImportModel
+    {
+        public string curriculum { get; set; }
+
+        public string version { get; set; }
+
+        public string semester { get; set; }
+
+        public List<CourseOpportunityImportModel> opportunities { get; set; }
+    }
+
+    public class CourseOpportunityImportModel
+    {
+        public string subject { get; set; }
+
+        public string course { get; set; }
+    }
 
 }

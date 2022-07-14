@@ -38,7 +38,7 @@ namespace MyStik.TimeTable.Data
     {
         public CurriculumSlot()
         {
-            //Accreditations = new HashSet<SubjectAccreditation>();
+            ModuleAccreditations = new HashSet<ModuleAccreditation>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -57,6 +57,9 @@ namespace MyStik.TimeTable.Data
         public string Tag { get; set; }
 
 
+        public string Name { get; set; }
+
+
         /// <summary>
         /// Das Volumen ausgedrückt in ECTS
         /// </summary>
@@ -65,9 +68,6 @@ namespace MyStik.TimeTable.Data
 
         public virtual CurriculumSection CurriculumSection { get; set; }
 
-
-        // Die Accreditierungen
-        //public virtual ICollection<SubjectAccreditation> Accreditations { get; set; }
 
 
         public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }

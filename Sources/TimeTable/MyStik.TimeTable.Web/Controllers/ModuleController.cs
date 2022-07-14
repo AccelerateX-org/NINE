@@ -86,7 +86,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var module in modules)
             {
-                foreach (var moduleCourse in module.ModuleCourses)
+                foreach (var moduleCourse in module.ModuleSubjects)
                 {
                     // Holzhammer, müsste feiner gehen
                     // Die ExternalId ist die Untis Nummer
@@ -186,7 +186,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var curriculumModule in allModules)
             {
-                var allCourses = curriculumModule.ModuleCourses.ToList();
+                var allCourses = curriculumModule.ModuleSubjects.ToList();
 
                 foreach (var moduleCourse in allCourses)
                 {

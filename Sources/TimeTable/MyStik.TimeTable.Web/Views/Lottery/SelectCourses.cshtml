@@ -175,7 +175,7 @@
                                             }
                                             @if (course.CourseSummary.ConflictingDates.Any(x => x.Value.Any()))
                                             {
-                                                <span class="badge badge-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
+                                                <span class="badge bg-danger">@course.CourseSummary.ConflictingDates.Count(x => x.Value.Any()) Terminkollisionen</span>
                                             }
                                         </li>
                                         <li><i class="fa-li fa fa-book"></i>@Html.GroupList(course.Course.Occurrence)</li>
@@ -188,7 +188,7 @@
                                                 {
                                                     if (ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.Id == Model.Student.Curriculum.Id)
                                                     {
-                                                        <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge badge-warning">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span></li>
+                                                        <li><i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze <span class="badge bg-primary">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge bg-warning text-dark">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span></li>
                                                     }
                                                     else
                                                     {
@@ -211,7 +211,7 @@
                                                     if (ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.Id == Model.Student.Curriculum.Id)
                                                     {
                                                         <li>
-                                                            <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge badge-warning">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
+                                                            <i class="fa fa-li fa-book"></i>@ocg.SemesterGroups.First().CapacityGroup.CurriculumGroup.Curriculum.ShortName: @ocg.Capacity Plätze <span class="badge bg-primary">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge bg-warning text-dark">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
                                                         </li>
                                                     }
                                                     else
@@ -235,7 +235,7 @@
                                                     else
                                                     {
                                                         <li>
-                                                            <i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @course.CourseSummary.Course.Occurrence.Capacity Plätze - <span class="badge">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge badge-warning">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
+                                                            <i class="fa-li fa fa-bed"></i> Platzkontingent studiengangsübergreifend: @course.CourseSummary.Course.Occurrence.Capacity Plätze - <span class="badge bg-primary">noch @course.BookingState.MyBookingList.FreeSeats freie Plätze</span><span class="badge bg-warning text-dark">@course.BookingState.MyBookingList.WaitingListWithPrio(1).Count Einträge mit Prio 1</span>
                                                         </li>
                                                     }
                                                 }

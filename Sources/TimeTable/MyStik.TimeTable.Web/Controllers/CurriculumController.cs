@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using System.Windows.Forms;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
+using Newtonsoft.Json;
+using RazorEngine.Compilation.ImpromptuInterface.InvokeExt;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -1027,28 +1030,6 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult ImportModuleCatalog(Guid id)
-        {
-            // Zurück zur Startseite
-            return RedirectToAction("Criterias", new {id = id});
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult DeleteModuleCatalog(Guid id)
-        {
-            // Zurück zur Startseite
-            return RedirectToAction("Criterias", new {id = id});
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public ActionResult Edit(Guid id)
         {
             var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
@@ -1102,13 +1083,13 @@ namespace MyStik.TimeTable.Web.Controllers
             model.AttachmentStructure?.SaveAs(tempFile);
 
             CurriculumModulePlan plan = null;
-            /*
+            
             using (StreamReader file = System.IO.File.OpenText(tempFile))
             {
-                var serializer = new Newtonsoft.JsonSerializer();
+                var serializer = new JsonSerializer();
                 plan = (CurriculumModulePlan)serializer.Deserialize(file, typeof(CurriculumModulePlan));
             }
-            */
+            
 
             if (plan == null)
                 return View();
@@ -1133,6 +1114,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         ECTS = slot.ects,
                         Position = slot.position,
                         Tag = slot.tag,
+                        Name = slot.name,
                         CurriculumSection = currSection
                     };
 
@@ -1147,6 +1129,198 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("ModulePlan", new {id = model.Curriculum.Id});
         }
+
+        public ActionResult DeleteModulePlan(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+
+            foreach (var section in cur.Sections.ToList())
+            {
+                foreach (var slot in section.Slots.ToList())
+                {
+                    foreach (var accreditation in slot.ModuleAccreditations.ToList())
+                    {
+                        Db.Accreditations.Remove(accreditation);
+                    }
+
+                    Db.CurriculumSlots.Remove(slot);
+                }
+
+                Db.CurriculumSections.Remove(section);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("ModulePlan", new { id = cur.Id });
+        }
+
+
+
+        public ActionResult Accreditation(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Curriculum = cur
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Accreditation(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            AccreditationImportModel plan = null;
+
+            using (StreamReader file = System.IO.File.OpenText(tempFile))
+            {
+                var serializer = new JsonSerializer();
+                plan = (AccreditationImportModel)serializer.Deserialize(file, typeof(AccreditationImportModel));
+            }
+
+
+            if (plan == null)
+                return View();
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            foreach (var accreditation in plan.accreditions)
+            {
+                var slot = Db.CurriculumSlots.FirstOrDefault(x =>
+                    x.Tag.Equals(accreditation.slot) &&
+                    x.CurriculumSection.Curriculum.Id == curr.Id
+                );
+                if (slot == null) continue;
+
+                var catWords = accreditation.module.Split(':');
+                if (catWords.Length != 3) continue;
+
+                var catalogName = catWords[0];
+                var moduleName = catWords[2];
+
+
+                var module = Db.CurriculumModules.FirstOrDefault(x => 
+                    x.Tag.Equals(moduleName) &&
+                    x.Catalog.Tag.Equals(catalogName) &&
+                    x.Catalog.Organiser.Id == curr.Organiser.Id
+                    );
+
+                if (module == null) continue;
+
+
+                var moduleAccredition = new ModuleAccreditation
+                {
+                    Slot = slot,
+                    Module = module,
+                    
+                };
+
+                Db.Accreditations.Add(moduleAccredition);
+
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("ModulePlan", new { id = model.Curriculum.Id });
+        }
+
+
+        public ActionResult Opportunities(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Curriculum = cur
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Opportunities(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            OpportunityImportModel plan = null;
+
+            using (StreamReader file = System.IO.File.OpenText(tempFile))
+            {
+                var serializer = new JsonSerializer();
+                plan = (OpportunityImportModel)serializer.Deserialize(file, typeof(OpportunityImportModel));
+            }
+
+
+            if (plan == null)
+                return View();
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var sem = Db.Semesters.SingleOrDefault(x => x.Name.Equals(plan.semester));
+
+            foreach (var accreditation in plan.opportunities)
+            {
+                var catWords = accreditation.subject.Split(':');
+                if (catWords.Length != 5) continue;
+
+                var catalogName = catWords[0];
+                var moduleName = catWords[2];
+                var subjectName = catWords[4];
+
+
+                var module = Db.ModuleCourses.FirstOrDefault(x =>
+                    x.Tag.Equals(subjectName) &&
+                    x.Module.Tag.Equals(moduleName) &&
+                    x.Module.Catalog.Tag.Equals(catalogName) &&
+                    x.Module.Catalog.Organiser.Id == curr.Organiser.Id
+                    );
+
+                if (module == null) continue;
+
+                var courses = Db.Activities.OfType<Course>().Where(x => 
+                    x.ShortName.Equals(accreditation.course) &&
+                    x.SemesterGroups.Any(g => 
+                        g.Semester.Id == sem.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
+                    ).ToList();
+
+                foreach (var course in courses)
+                {
+                    var subjectOpportunity = module.Opportunities.FirstOrDefault(x =>
+                        x.Course.Id == course.Id && 
+                        x.Semester.Id == sem.Id && 
+                        x.Subject.Id == module.Id);
+
+                    if (subjectOpportunity == null)
+                    {
+                        subjectOpportunity = new SubjectOpportunity
+                        {
+                            Course = course,
+                            Subject = module,
+                            Semester = sem
+                        };
+
+                        Db.SubjectOpportunities.Add(subjectOpportunity);
+                    }
+                }
+
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("ModulePlan", new { id = model.Curriculum.Id });
+        }
+
+
 
 
 
@@ -1362,40 +1536,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /*
-        public ActionResult SelectModule(Guid accid, Guid modId)
-        {
-            var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == accid);
-
-
-            return RedirectToAction("AdminContentModule", new {id = accreditation.Id});
-        }
-        */
-
-        public ActionResult Repair(Guid id)
-        {
-            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
-
-            foreach (var chapter in curriculum.Chapters.ToList())
-            {
-                foreach (var topic in chapter.Topics.ToList())
-                {
-                    foreach (var semesterTopic in topic.SemesterTopics.ToList())
-                    {
-                        Db.SemesterTopics.Remove(semesterTopic);
-                    }
-
-                    Db.CurriculumTopics.Remove(topic);
-                }
-
-                Db.CurriculumChapters.Remove(chapter);
-            }
-
-            Db.SaveChanges();
-
-            return RedirectToAction("Index", new {id = id});
-        }
-
 
         public ActionResult Students(Guid id)
         {
@@ -1410,5 +1550,14 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult SlotDetails(Guid id)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
+
+
+            return View(slot);
+        }
+
     }
 }
