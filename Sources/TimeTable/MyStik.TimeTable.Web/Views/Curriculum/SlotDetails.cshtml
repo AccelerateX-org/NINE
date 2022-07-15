@@ -18,30 +18,27 @@
                 </div>
             </div>
             <div class="card-body">
-                <h4 class="card-title">@Model.Tag: @Model.Name</h4>
+                <h4 class="card-title">SPO-Slot @Model.Tag: @Model.Name <span class="badge bg-secondary">@Model.ECTS ECTS</span></h4>
                 <h5 class="card-subtitle">@Model.CurriculumSection.Name | @Model.CurriculumSection.Curriculum.Name (@Model.CurriculumSection.Curriculum.ShortName)</h5>
-                <ul>
-                    <li>ECTS: @Model.ECTS</li>
-                </ul>
             </div>
             <div class="list-group">
                 @foreach (var module in Model.ModuleAccreditations)
                 {
-                    <div class="list-group-item list-group-item-action">
-                        <h5>@module.Module.Name (@module.Module.Tag)</h5>
-                            @foreach (var subject in module.Module.ModuleSubjects)
-                            {
-                                <h6>@subject.Name (@subject.Tag)</h6>
-                                <ul>
-                                    <li>Lehrformat: @subject.TeachingFormat.Tag</li>
-                                    <li>SWS: @subject.SWS</li>
-                                </ul>
-                            }
-                            <div class="btn-group btn-group-sm d-flex justify-content-center" role="group" aria-label="Basic outlined example">
-                                <button type="button" class="btn btn-outline-secondary"><i class="bi-book"></i></button>
-                                <button type="button" class="btn btn-outline-secondary">SoSe 2022</button>
-                                <button type="button" class="btn btn-outline-secondary">WiSe 2022</button>
-                            </div>
+                    <div class="list-group-item">
+                        <h5>
+                            Modul: @module.Module.Name (@module.Module.Tag)
+                        </h5>
+                        @foreach (var subject in module.Module.ModuleSubjects)
+                        {
+                            <div class="ms-3">@subject.Name (@subject.Tag)  <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span>  <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                        }
+                        <a class="btn btn-outline-secondary mt-3" href="@Url.Action("Details", "ModuleDescription", new {
+                                                                       modId = module.Module.Id,
+                                                                       semId = ViewBag.CurrentSemester.Id,
+                                                                       slotId = Model.Id
+                                                                   })">
+                            <i class="bi-book"></i> Modulbeschreibung @ViewBag.CurrentSemester.Name
+                        </a>
                     </div>
                 }
             </div>

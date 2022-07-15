@@ -1278,8 +1278,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
                 var module = Db.ModuleCourses.FirstOrDefault(x =>
-                    x.Tag.Equals(subjectName) &&
-                    x.Module.Tag.Equals(moduleName) &&
+                    x.Tag.Equals(subjectName) && x.Module != null &&
+                    x.Module.Tag.Equals(moduleName) && x.Module.Catalog != null &&
                     x.Module.Catalog.Tag.Equals(catalogName) &&
                     x.Module.Catalog.Organiser.Id == curr.Organiser.Id
                     );
@@ -1555,6 +1555,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
 
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
             return View(slot);
         }

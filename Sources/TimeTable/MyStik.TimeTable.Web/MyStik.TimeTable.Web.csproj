@@ -537,6 +537,7 @@
     <Compile Include="Controllers\MessagingController.cs" />
     <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
+    <Compile Include="Controllers\ModuleDescriptionController.cs" />
     <Compile Include="Controllers\MoneyBanksController.cs" />
     <Compile Include="Controllers\NoticeBoardController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -4122,6 +4123,8 @@
     <Content Include="Views\Curriculum\Accreditation.cshtml" />
     <Content Include="Views\Curriculum\SlotDetails.cshtml" />
     <Content Include="Views\Curriculum\Opportunities.cshtml" />
+    <Content Include="Views\ModuleDescription\Details.cshtml" />
+    <Content Include="Views\ModuleDescription\Edit.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

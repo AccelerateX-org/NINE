@@ -1,0 +1,88 @@
+﻿@model MyStik.TimeTable.Data.ModuleDescription
+@{
+    ViewBag.Title = "Details";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action(ViewBag.BackNavigation_Action, ViewBag.BackNavigation_Controller, new {id = ViewBag.BackNavigation_Id})" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Zurück
+                        </a>
+                        <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
+                            <i class="bi-pen"></i> Ändern
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                <h5 class="card-subtitle">Gehört zu Modulkatalog: @Model.Module.Catalog.Name (@Model.Module.Catalog.Organiser.ShortName)</h5>
+                <p>Stand: @Model.Semester.Name</p>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Modulverantwortliche(r)</div>
+                        </div>
+                        <div class="col-8">
+                            <div>@Model.Module.MV.FullName</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Fächer / Lehrveranstaltungen</div>
+                        </div>
+                        <div class="col-8">
+                            @foreach (var subject in Model.Module.ModuleSubjects.ToList())
+                            {
+                                var courses = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+
+                                <div>@subject.Name (@subject.Tag)  <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span>  <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+
+                                foreach (var course in courses)
+                                {
+                                    <div class="ms-3">
+                                        <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">
+                                            @course.Course.Name (@course.Course.ShortName)
+                                        </a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Zugehörigkeit zu Curriculum</div>
+                        </div>
+                        <div class="col-8">
+                            @foreach (var acc in Model.Module.Accreditations)
+                            {
+                                <div>@acc.Slot.CurriculumSection.Curriculum.Name | @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Beschreibung</div>
+                        </div>
+                        <div class="col-8">
+                            <div>@Html.Raw(Model.Description)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

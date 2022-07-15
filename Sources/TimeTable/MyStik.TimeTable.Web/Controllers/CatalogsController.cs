@@ -23,6 +23,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.UserRight = GetUserRight(org);
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
             return View(model);
         }

@@ -1,0 +1,101 @@
+﻿@model MyStik.TimeTable.Web.Controllers.ModuleDescriptionEditModel
+@{
+    ViewBag.Title = "Details";
+}
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Modul @Model.ModuleDescription.Module.Tag: @Model.ModuleDescription.Module.Name</h4>
+                <h5 class="card-subtitle">Gehört zu Modulkatalog: @Model.ModuleDescription.Module.Catalog.Name (@Model.ModuleDescription.Module.Catalog.Organiser.ShortName)</h5>
+                <p>Stand: @Model.ModuleDescription.Semester.Name</p>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Modulverantwortliche(r)</div>
+                        </div>
+                        <div class="col-8">
+                            <div>@Model.ModuleDescription.Module.MV.FullName</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Fächer</div>
+                        </div>
+                        <div class="col-8">
+                            @foreach (var subject in Model.ModuleDescription.Module.ModuleSubjects.ToList())
+                            {
+                                var courses = subject.Opportunities.Where(x => x.Semester.Id == Model.ModuleDescription.Semester.Id).ToList();
+
+                                <div>@subject.Name (@subject.Tag)  <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span>  <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+
+                                foreach (var course in courses)
+                                {
+                                    <div>@course.Course.Name (@course.Course.ShortName)</div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Zugehörigkeit zu Curriculum</div>
+                        </div>
+                        <div class="col-8">
+                            @foreach (var acc in Model.ModuleDescription.Module.Accreditations)
+                            {
+                                <div>@acc.Slot.CurriculumSection.Curriculum.Name | @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Beschreibung</div>
+                        </div>
+                        <div class="col-8">
+                            @using (Html.BeginForm(null, null, FormMethod.Post))
+                            {
+                                @Html.HiddenFor(m => m.ModuleDescription.Id)
+                                <div class="mb-3">
+                                    @Html.TextAreaFor(m => m.DescriptionText, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("#DescriptionText").cleditor();
+        });
+
+    </script>
+
+}

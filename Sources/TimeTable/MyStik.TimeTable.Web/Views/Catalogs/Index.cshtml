@@ -8,15 +8,6 @@
 
     var db = new TimeTableDbContext();
 
-    /*
-    foreach (var accreditation in db.Accreditations.ToList())
-    {
-        db.Accreditations.Remove(accreditation);
-
-    }
-    db.SaveChanges();
-    */
-
 
 }
 
@@ -39,8 +30,6 @@
                     </div>
                 </div>
             </div>
-            <div>
-            </div>
             <table id="tabCatalogs">
                 <thead>
                 <tr>
@@ -53,34 +42,38 @@
                 </tr>
                 </thead>
                 <tbody>
-                    @foreach (var cat in Model.Organiser.ModuleCatalogs)
+                @foreach (var cat in Model.Organiser.ModuleCatalogs)
+                {
+                    foreach (var module in cat.Modules)
                     {
-                        foreach (var module in cat.Modules)
-                        {
-                            <tr>
-                                <td>@cat.Name</td>
-                                <td>@cat.Tag</td>
-                                <td>@module.Name</td>
-                                <td>@module.Tag</td>
-                                @if (module.MV != null)
+                        <tr>
+                            <td>@cat.Name</td>
+                            <td>@cat.Tag</td>
+                            <td>
+                                <a href="@Url.Action("Details", "ModuleDescription", new {modId = module.Id, semId = ViewBag.CurrentSemester.Id})">
+                                    @module.Name
+                                </a>
+                            </td>
+                            <td>@module.Tag</td>
+                            @if (module.MV != null)
+                            {
+                                <td>@module.MV.FullName</td>
+                            }
+                            else
+                            {
+                                <td>vakant</td>
+                            }
+                            <td>
+                                @foreach (var subject in module.ModuleSubjects)
                                 {
-                                    <td>@module.MV.FullName</td>
+                                    <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
                                 }
-                                else
-                                {
-                                    <td>vakant</td>
-                                }
-                                <td>
-                                    @foreach (var subject in module.ModuleSubjects)
-                                    {
-                                        <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
-                                    }
-                                </td>
+                            </td>
                                 
-                            </tr>
+                        </tr>
                             
-                        }
                     }
+                }
                 </tbody>
             </table>
         </div>
