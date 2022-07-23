@@ -173,6 +173,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Accreditations.Remove(accreditation);
             }
 
+            /*
             foreach (var exam in model.ModuleExams.ToList())
             {
                 foreach (var member in exam.Examiners.ToList())
@@ -182,6 +183,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.ModuleExams.Remove(exam);
             }
+            */
 
             var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
             foreach (var mapping in mappings)

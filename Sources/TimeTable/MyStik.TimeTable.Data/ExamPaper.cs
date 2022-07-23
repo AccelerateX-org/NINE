@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public class ExamPaper
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -51,4 +52,5 @@ namespace MyStik.TimeTable.Data
         public virtual StudentExam Exam { get; set; }
 
     }
+    */
 }

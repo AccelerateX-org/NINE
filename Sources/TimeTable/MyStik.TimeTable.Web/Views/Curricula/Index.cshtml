@@ -56,7 +56,7 @@
                                 <td>@Html.FacultyLabel(org)</td>
                                 <td>@org.Name</td>
                                 <td>
-                                    <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})">
+                                    <a href="@Url.Action("Details", "Curriculum", new {id = curr.Id})">
                                         @curr.Name (@curr.ShortName)
                                     </a>
                                 </td>

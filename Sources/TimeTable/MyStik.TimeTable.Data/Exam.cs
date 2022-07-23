@@ -2,6 +2,7 @@
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public class Exam : Activity
     {
         /// <summary>
@@ -15,4 +16,5 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<StudentExam> StudentExams { get; set; }
     }
+    */
 }

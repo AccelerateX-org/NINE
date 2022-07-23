@@ -24,7 +24,7 @@ namespace MyStik.TimeTable.Web.Models
 
     public class ThesisOfferViewModel
     {
-        public Exam Thesis { get; set; }
+        //public Exam Thesis { get; set; }
 
         public OrganiserMember Lecturer { get; set; }
 
@@ -45,7 +45,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public Exam Thesis { get; set; }
+        //public Exam Thesis { get; set; }
 
         public List<ThesisRequestModel> Requests { get; private set; }
 
@@ -62,7 +62,7 @@ namespace MyStik.TimeTable.Web.Models
 
     public class ThesisExamModel
     {
-        public StudentExam Exam { get; set; }
+        //public StudentExam Exam { get; set; }
 
         public OccurrenceSubscription Subscription { get; set; }
 
@@ -175,6 +175,7 @@ namespace MyStik.TimeTable.Web.Models
         public string End { get; set; }
     }
 
+    /*
     public class ThesisRejectModel
     {
         public Exam Thesis { get; set; }
@@ -184,6 +185,7 @@ namespace MyStik.TimeTable.Web.Models
         public ApplicationUser User { get; set; }
 
     }
+    */
 
     public class ThesisAcceptModel
     {

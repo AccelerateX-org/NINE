@@ -85,20 +85,21 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var module = cat.Modules.FirstOrDefault(x => x.Tag.Equals(catalogModule.tag));
 
-                // nur weitermachen, wenn es noch kein Modul mit dem Tag gibt
-                if (module != null) continue;
 
                 var member = org.Members.FirstOrDefault(x => x.ShortName.Equals(catalogModule.responsible));
 
-                module = new CurriculumModule
+                if (module == null)
                 {
-                    Name = catalogModule.name,
-                    Tag = catalogModule.tag,
-                    MV = member,
-                    Catalog = cat,
-                };
+                    module = new CurriculumModule
+                    {
+                        Name = catalogModule.name,
+                        Tag = catalogModule.tag,
+                        MV = member,
+                        Catalog = cat,
+                    };
+                }
 
-                    // die Fächer
+                // die Fächer
                 foreach (var moduleSubject in catalogModule.subjects)
                 {
                     var teachingFormat = Db.TeachingFormats.SingleOrDefault(x => x.Tag.Equals(moduleSubject.type));
@@ -113,18 +114,75 @@ namespace MyStik.TimeTable.Web.Controllers
                         Db.TeachingFormats.Add(teachingFormat);
                     }
 
+                    var subject = module.ModuleSubjects.FirstOrDefault(x => x.Tag.Equals(moduleSubject.tag));
 
-                    var subject = new ModuleSubject
+                    if (subject == null)
                     {
-                        Name = moduleSubject.name,
-                        Tag = moduleSubject.tag,
-                        SWS = moduleSubject.sws,
-                        TeachingFormat = teachingFormat,
-                        Module = module
-                    };
+                        subject = new ModuleSubject
+                        {
+                            Name = moduleSubject.name,
+                            Tag = moduleSubject.tag,
+                            SWS = moduleSubject.sws,
+                            TeachingFormat = teachingFormat,
+                            Module = module
+                        };
 
-                    Db.ModuleCourses.Add(subject);
+                        Db.ModuleCourses.Add(subject);
+                    }
                 }
+
+                // die Prüfungsformen
+                foreach (var moduleExam in catalogModule.exams)
+                {
+                    var exam = module.ExaminationOptions.FirstOrDefault(x => x.Name.Equals(moduleExam.name));
+
+                    if (exam == null)
+                    {
+                        exam = new ExaminationOption
+                        {
+                            Name = moduleExam.name,
+                            Module = module
+                        };
+
+                        Db.ExaminationOptions.Add(exam);
+                    }
+
+                    foreach (var examFraction in moduleExam.fractions)
+                    {
+                        var examinationForm =
+                            Db.ExaminationForms.FirstOrDefault(x => x.ShortName.Equals(examFraction.tag));
+
+                        if (examinationForm == null)
+                        {
+                            examinationForm = new ExaminationForm
+                            {
+                                ShortName = examFraction.tag
+                            };
+                            Db.ExaminationForms.Add(examinationForm);
+                        }
+
+                        var fraction =
+                            exam.Fractions.FirstOrDefault(x => x.Form.ShortName.Equals(examinationForm.ShortName));
+
+                        if (fraction == null)
+                        {
+                            fraction = new ExaminationFraction
+                            {
+                                Form = examinationForm,
+                                ExaminationOption = exam,
+                                MinDuration = examFraction.minDuration,
+                                MaxDuration = examFraction.maxDuration,
+                                Weight = examFraction.weight
+                            };
+
+                            Db.ExaminationFractions.Add(fraction);
+                        }
+
+                    }
+
+                }
+
+
 
                 Db.CurriculumModules.Add(module);
 

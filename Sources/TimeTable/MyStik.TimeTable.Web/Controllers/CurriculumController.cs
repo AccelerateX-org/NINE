@@ -64,14 +64,17 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult ModulePlan(Guid id)
+
+        public ActionResult Details(Guid id)
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
             var model = new CurriculumViewModel();
 
             model.Curriculum = curr;
-            model.Semester = SemesterService.GetLatestSemester(curr.Organiser);
+            model.Semester = GetSemesterFromFilter();
+
+            ViewBag.NextSemester = SemesterService.GetNextSemester(model.Semester);
 
             var user = GetCurrentUser();
 
@@ -87,6 +90,13 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
 
+            var assessments = Db.Assessments.Where(x =>
+                x.Curriculum.Id == curr.Id &&
+                x.Stages.Any(s => s.ClosingDateTime != null && s.ClosingDateTime.Value >= DateTime.Today)).ToList();
+
+            model.Assessments = assessments;
+
+
 
             // hier muss überprüft werden, ob der aktuelle Benutzer
             // der Fakultät des Studiengangs angehört oder nicht
@@ -94,6 +104,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+
 
 
 
@@ -942,18 +954,6 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="currId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult Details(Guid currId)
-        {
-            var model = Db.Curricula.SingleOrDefault(c => c.Id == currId);
-
-            return PartialView("_CurriculumDetails", model);
-        }
 
         /// <summary>
         /// 

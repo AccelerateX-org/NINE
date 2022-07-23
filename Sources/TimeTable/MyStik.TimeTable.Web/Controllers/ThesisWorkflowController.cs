@@ -115,6 +115,7 @@ namespace MyStik.TimeTable.Web.Controllers
             // Die Prüfung finden
             var semester = SemesterService.GetSemester(DateTime.Today);
 
+            /*
             // das Exam finden => das ist die Aktivität
             // gibt es bei mir schon ein Exam mit diesem Studierenden als Prüfling?
             var exam = Db.Activities.OfType<Exam>().SingleOrDefault(x => x.Owners.Any(y => y.Member.Id == member.Id) && x.StudentExams.Any(y => y.Examinee.Id == student.Id));
@@ -145,7 +146,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
             }
-
+            */
 
 
 

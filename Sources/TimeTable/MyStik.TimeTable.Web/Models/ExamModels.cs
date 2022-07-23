@@ -20,7 +20,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public StudentExam Exam { get; set; }
+        //public StudentExam Exam { get; set; }
 
         /// <summary>
         /// 

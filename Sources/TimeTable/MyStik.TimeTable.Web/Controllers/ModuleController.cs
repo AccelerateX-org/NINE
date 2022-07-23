@@ -224,6 +224,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
             var member = GetMyMembership();
 
+            /*
             var exam = new ModuleExam();
             exam.Examiners.Add(member);
 
@@ -243,6 +244,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.ModuleExams.Add(exam);
 
             Db.ModuleExams.Add(exam);
+            */
             Db.SaveChanges();
 
             return RedirectToAction("Details", new {id = id});

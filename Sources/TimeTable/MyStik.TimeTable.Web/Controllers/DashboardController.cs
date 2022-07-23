@@ -376,6 +376,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             List<ActivitySummary> model = new List<ActivitySummary>();
 
+            /*
             var lectureActivities =
                 //Db.Activities.OfType<Exam>().ToList();
                 
@@ -390,6 +391,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 model.Add(summary);
             }
+            */
 
             return model;
         }

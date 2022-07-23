@@ -31,6 +31,14 @@ namespace MyStik.TimeTable.Web.Controllers
                 return RedirectToAction("Index", "Home", new {area = "Admin"});
 
 
+            if (Session["SemesterName"] == null)
+            {
+                var sem = SemesterService.GetSemester(DateTime.Today);
+                Session["SemesterName"] = sem.Name;
+                Session["SemesterId"] = sem.Id;
+            }
+
+
             // Verteiler nach Rolle
             var user = GetCurrentUser();
             var student = GetCurrentStudent(user.Id);
@@ -291,6 +299,38 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             return View(model);
+        }
+
+
+        public ActionResult SelectFilter(string returnUrl)
+        {
+            var semName = Session["SemesterName"].ToString();
+
+            ViewBag.CurrentSemnester = SemesterService.GetSemester(semName);
+            ViewBag.ReturnUrl = returnUrl;
+
+            var currentSemester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(currentSemester);
+
+            // vom NextSemester 8 zurück
+
+            var semesters = Db.Semesters.Where(x => x.StartCourses <= nextSemester.StartCourses)
+                .OrderByDescending(x => x.EndCourses)
+                .Take(5).ToList();
+
+
+            return View(semesters);
+        }
+
+
+        public ActionResult SelectFilterConfirmed(Guid semId, string returnUrl)
+        {
+            var semester = SemesterService.GetSemester(semId);
+
+            Session["SemesterName"] = semester.Name;
+            Session["SemesterId"] = semester.Id;
+
+            return RedirectToLocal(returnUrl);
         }
 
     }

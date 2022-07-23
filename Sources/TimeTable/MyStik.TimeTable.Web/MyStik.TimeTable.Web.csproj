@@ -3412,7 +3412,6 @@
     <Content Include="Views\Dashboard\DashboardSysAdmin.cshtml" />
     <Content Include="Views\Home\ThankYou.cshtml" />
     <Content Include="Views\Untis\SelectFiles.cshtml" />
-    <Content Include="Views\Curriculum\_CurriculumDetails.cshtml" />
     <Content Include="Views\Curriculum\AddAlias.cshtml" />
     <Content Include="Views\Semester\_ImportState.cshtml" />
     <Content Include="Views\Lecturer\Calendar.cshtml" />
@@ -4108,7 +4107,7 @@
     <Content Include="Views\Curriculum\_SemesterListGroup.cshtml" />
     <Content Include="Views\Studies\IndexNew.cshtml" />
     <Content Include="Views\Catalogs\Index.cshtml" />
-    <Content Include="Views\Curriculum\ModulePlan.cshtml" />
+    <Content Include="Views\Curriculum\Details.cshtml" />
     <Content Include="Views\ThesisAdmin\ProlongRequests.cshtml" />
     <Content Include="Views\ScriptPublishing\Add.cshtml" />
     <Content Include="Views\Course\ConfirmDeleteDate.cshtml" />
@@ -4125,6 +4124,8 @@
     <Content Include="Views\Curriculum\Opportunities.cshtml" />
     <Content Include="Views\ModuleDescription\Details.cshtml" />
     <Content Include="Views\ModuleDescription\Edit.cshtml" />
+    <Content Include="Views\Home\SelectFilter.cshtml" />
+    <Content Include="Views\Course\DetailsNew.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

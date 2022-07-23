@@ -48,7 +48,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var userRights = GetUserRight(User.Identity.Name, model.Summary.Course);
             ViewBag.UserRight = userRights;
 
-            return View("Details", model);
+            return View("DetailsNew", model);
         }
 
         /// <summary>

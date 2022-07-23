@@ -143,6 +143,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<CurriculumSubjectImportModel> subjects { get; set; }
 
+        public List<CurriculumExamImportModel> exams { get; set; }
     }
 
 
@@ -193,6 +194,22 @@ namespace MyStik.TimeTable.Web.Models
         public string subject { get; set; }
 
         public string course { get; set; }
+    }
+
+    public class CurriculumExamImportModel
+    {
+        public string name { get; set; }
+
+        public List<CurriculumExamFractionImportModel> fractions { get; set; }
+    }
+
+    public class CurriculumExamFractionImportModel
+    {
+        public string tag { get; set; }
+        public double weight { get; set; }
+        public int minDuration { get; set; }
+        public int maxDuration { get; set; }
+        public double betterment { get; set; }
     }
 
 }

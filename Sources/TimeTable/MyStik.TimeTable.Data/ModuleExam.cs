@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public enum ExamType
     {
         SP,     // Schriftliche Prüfung
@@ -63,4 +64,7 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<Exam> Exams { get; set; }
 
     }
+    */
+
+
 }

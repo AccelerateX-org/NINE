@@ -9,32 +9,13 @@ namespace MyStik.TimeTable.Web.Controllers
 {
     public class ModuleDescriptionController : BaseController
     {
-        public ActionResult Details(Guid? modId, Guid? semId, Guid? slotId, Guid? id)
+        public ActionResult Details(Guid id)
         {
-            ModuleDescription desc = null;
-            Semester semester = null;
-            CurriculumModule module = null;
 
-            if (id.HasValue)
-            {
-                desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
-                semester = desc.Semester;
-                module = desc.Module;
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            var semester = GetSemesterFromFilter();
 
-                slotId = desc.Module.Accreditations.First().Slot.Id;
-            }
-            else
-            {
-                module = Db.CurriculumModules.SingleOrDefault(x => x.Id == modId);
-                semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
-
-                desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semId);
-
-                if (!slotId.HasValue)
-                {
-                    slotId = desc.Module.Accreditations.First().Slot.Id;
-                }
-            }
+            var desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
 
 
 
@@ -54,10 +35,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-
-            ViewBag.BackNavigation_Action = "SlotDetails";
-            ViewBag.BackNavigation_Controller = "Curriculum";
-            ViewBag.BackNavigation_Id = slotId;
+            ViewBag.UserRight = GetUserRight(GetMyOrganisation());
 
 
             return View(desc);
@@ -86,6 +64,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new {id = model.ModuleDescription.Id});
         }
+
+
+        public PartialViewResult ChangeSemester(Guid semId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            Session["SemesterId"] = semId.ToString();
+
+            return null;
+        }
+
+
     }
 
         public class ModuleDescriptionEditModel
@@ -95,4 +84,6 @@ namespace MyStik.TimeTable.Web.Controllers
         [AllowHtml]
         public string DescriptionText { get; set; }
     }
+
+
 }

@@ -8782,13 +8782,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.Details(System.Guid)">
-            <summary>
-            
-            </summary>
-            <param name="currId"></param>
-            <returns></returns>
-        </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.AddAlias(System.Guid)">
             <summary>
             
@@ -14502,11 +14495,6 @@
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.ThesisListViewModel.Exam">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="P:MyStik.TimeTable.Web.Models.ThesisListViewModel.User">
             <summary>
             
@@ -18613,7 +18601,7 @@
             
             </summary>
         </member>
-        <member name="P:MyStik.TimeTable.Web.Models.ThesisAdminModel.Thesis">
+        <member name="P:MyStik.TimeTable.Web.Models.ThesisAdminModel.Requests">
             <summary>
             
             </summary>

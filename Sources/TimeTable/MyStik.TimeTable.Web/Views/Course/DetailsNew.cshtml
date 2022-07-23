@@ -1,0 +1,124 @@
+﻿@using MyStik.TimeTable.Data.Migrations
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.CourseSelectModel
+
+@{
+    ViewBag.Title = "DetailsNew";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+
+                        <h4 class="card-title">Lehrveranstaltung @Model.Summary.Course.Name (@Model.Summary.Course.ShortName)</h4>
+                    </div>
+                    <div class="col-md-2">
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <div class="d-md-flex justify-content-md-end">
+                                <a href="@Url.Action("Admin",null, new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Verwaltung
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Modulzugehörigkeit</div>
+                        </div>
+                        <div class="col-8">
+                            @foreach (var opp in Model.Summary.Course.Opportunities)
+                            {
+                                <div>
+                                    @opp.Subject.Module.Name
+                                    @foreach (var acc in opp.Subject.Module.Accreditations)
+                                    {
+                                        <div>@acc.Slot.CurriculumSection.Curriculum.ShortName</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Zeit & Ort</div>
+                        </div>
+                        <div class="col-8">
+                            @if (Model.Summary.Dates.Count == 1)
+                            {
+                                <div>
+                                    <i class="fa-li fa fa-calendar"></i>
+                                    <span>immer @Html.Date(Model.Summary.Dates.First()) in [@Html.RoomList(Model.Summary.Rooms, showLinks: false), @Html.RoomList(Model.Summary.VirtualRooms, showLinks: false)]</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <i class="fa-li fa fa-calendar"></i>
+                                    <span>insgesamt @Model.Summary.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Infos</div>
+                        </div>
+                        <div class="col-8">
+                            <div>
+                                <a href="@Url.Action("Details", "Curriculum", new {id = Model.Summary.Course.Id})">
+                                    Kursbeschreibung
+                                </a>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("Details", "Curriculum", new {id = Model.Summary.Course.Id})">
+                                    Moodle Kurs
+                                </a>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("Details", "Curriculum", new {id = Model.Summary.Course.Id})">
+                                    Zoom Session
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Platzbeschränkung</div>
+                        </div>
+                        <div class="col-8">
+                            <div>Keine</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Eintragungen</div>
+                        </div>
+                        <div class="col-8">
+                            <div>Insgesamt @Model.Summary.Course.Occurrence.Subscriptions.Count Eintragungen</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

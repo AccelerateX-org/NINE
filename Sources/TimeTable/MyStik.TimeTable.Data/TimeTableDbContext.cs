@@ -63,7 +63,7 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<SemesterTopic> SemesterTopics { get; set; }
 
-        public DbSet<ModuleExam> ModuleExams { get; set; }
+        //public DbSet<ModuleExam> ModuleExams { get; set; }
 
         public DbSet<SemesterGroup> SemesterGroups { get; set; }
 
@@ -135,8 +135,8 @@ namespace MyStik.TimeTable.Data
         public DbSet<ThesisFeedback> ThesisFeedbacks { get; set; }
 
         public DbSet<Student> Students { get; set; }
-        public DbSet<StudentExam> StudentExams { get; set; }
-        public DbSet<ExamPaper> ExamPapers { get; set; }
+        //public DbSet<StudentExam> StudentExams { get; set; }
+        //public DbSet<ExamPaper> ExamPapers { get; set; }
 
         public DbSet<CorporateContact> CorporateContacts { get; set; }
 
@@ -149,6 +149,9 @@ namespace MyStik.TimeTable.Data
         public DbSet<AdvertisementInfo> AdvertisementInfos { get; set; }
 
         public DbSet<Tag> Tags { get; set; }
+
+        public DbSet<ExaminationOption> ExaminationOptions { get; set; }
+        public DbSet<ExaminationFraction> ExaminationFractions { get; set; }
 
         public DbSet<ExaminationForm> ExaminationForms { get; set; }
         public DbSet<ExaminationUnit> ExaminationUnits { get; set; }

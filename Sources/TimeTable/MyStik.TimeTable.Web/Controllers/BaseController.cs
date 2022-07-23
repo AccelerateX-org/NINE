@@ -430,6 +430,26 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        protected Semester GetSemesterFromFilter()
+        {
+            Semester semester = null;
+
+            if (Session["SemesterName"] != null)
+            {
+                var semName = Session["SemesterName"].ToString();
+                semester = SemesterService.GetSemester(semName);
+            }
+            else
+            {
+                semester = SemesterService.GetSemester(DateTime.Today);
+                Session["SemesterName"] = semester.Name;
+                Session["SemesterId"] = semester.Id;
+            }
+
+            return semester;
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

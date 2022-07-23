@@ -1,7 +1,43 @@
-﻿
+﻿@using MyStik.TimeTable.Data
+
 @{
     Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
     ViewBag.Title = "Startseite";
+
+    var db = new TimeTableDbContext();
+    /*
+    var exams = db.ModuleExams.ToList();
+    var exams2 = db.StudentExams.ToList();
+    var exams3 = db.Activities.OfType<Exam>().ToList();
+
+    foreach (var exam in exams3)
+    {
+        foreach (var owner in exam.Owners.ToList())
+        {
+            db.ActivityOwners.Remove(owner);
+        }
+
+
+        db.Activities.Remove(exam);
+    }
+
+    foreach (var exam in exams)
+    {
+        db.ModuleExams.Remove(exam);
+    }
+
+    foreach (var exam in exams2)
+    {
+        foreach (var paper in exam.ExamPapers.ToList())
+        {
+            db.ExamPapers.Remove(paper);
+        }
+
+        db.StudentExams.Remove(exam);
+    }
+
+    db.SaveChanges();
+    */
 }
 
 

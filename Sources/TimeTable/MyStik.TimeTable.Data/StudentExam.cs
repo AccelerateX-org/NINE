@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public enum ExamState
     {
         Registered,
@@ -63,4 +64,5 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public DateTime? End { get; set; }
     }
+    */
 }

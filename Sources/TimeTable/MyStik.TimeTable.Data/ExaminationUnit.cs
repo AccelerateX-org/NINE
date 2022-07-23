@@ -44,7 +44,56 @@ namespace MyStik.TimeTable.Data
 
         //public virtual TeachingAssessment Assessment { get; set; }
 
+        public virtual ModuleDescription ModuleDescription { get; set; }
+
 
         public virtual ICollection<ExaminationAid> ExaminationAids { get; set; }
+    }
+
+
+    public class ExaminationOption
+    {
+        public ExaminationOption()
+        {
+            Fractions = new List<ExaminationFraction>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public virtual ICollection<ExaminationFraction> Fractions { get; set; }
+
+        public virtual CurriculumModule Module { get; set; }
+    }
+
+    public class ExaminationFraction
+    {
+        public ExaminationFraction()
+        {
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Prüfungsform
+        /// </summary>
+        public ExaminationForm Form { get; set; }
+
+        /// <summary>
+        /// Prüfungsdauer in Minuten
+        /// </summary>
+        public int? MinDuration { get; set; }
+
+        public int? MaxDuration { get; set; }
+
+        /// <summary>
+        /// Gewichtung der Prüfungsleistung
+        /// </summary>
+        public double Weight { get; set; }
+
+        public virtual ExaminationOption ExaminationOption { get; set; }
     }
 }

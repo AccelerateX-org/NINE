@@ -150,6 +150,11 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 case SignInStatus.Success:
                     await UserManager.StoreLogInAsync(user.Id);
+                    var sem = SemesterService.GetSemester(DateTime.Today);
+
+                    Session["SemesterName"] = sem.Name;
+                    Session["SemesterId"] = sem.Id;
+
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

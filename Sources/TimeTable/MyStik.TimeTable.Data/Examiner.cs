@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public class Examiner
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,4 +21,5 @@ namespace MyStik.TimeTable.Data
         public string Role { get; set; }
 
     }
+    */
 }

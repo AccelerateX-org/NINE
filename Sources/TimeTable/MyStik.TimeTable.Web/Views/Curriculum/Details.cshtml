@@ -1,0 +1,137 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+
+@{
+    ViewBag.Title = "Modulplan";
+}
+
+@section styles
+{
+    <style>
+        .slot {
+            position: relative;
+            display: inline-block;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+    </style>
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10">
+                        <h4 class="card-title">@Model.Curriculum.Name (@Model.Curriculum.ShortName)</h4>
+                        <h5 class="card-subtitle">
+                            <a href="@Url.Action("Index", "Curricula")">HM</a>
+                            |
+                            <a href="@Url.Action("Index", "Curricula", new {id = Model.Curriculum.Organiser.Id})">
+                                @Model.Curriculum.Organiser.Name (@Model.Curriculum.Organiser.ShortName)
+                            </a>
+                        </h5>
+
+                    </div>
+                    <div class="col-md-2">
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <div class="d-md-flex justify-content-md-end">
+                                <a href="@Url.Action("Admin", "Curriculum", new {id = Model.Curriculum.Id})" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Verwaltung
+                                </a>
+                            </div>
+                            @*
+                            <a href="@Url.Action("Import", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                <i class="bi-upload"></i> Import
+                            </a>
+                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Löschen
+                            </a>
+                            <a href="@Url.Action("Accreditation", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                <i class="bi-upload"></i> Akkreditierung
+                            </a>
+                            <a href="@Url.Action("Opportunities", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                <i class="bi-upload"></i> Lehrangebot
+                            </a>
+                                *@
+                        }
+                    </div>
+                </div>
+                <hr/>
+                <h5>Allgemeine Informationen</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        @if (Model.Curriculum.Degree != null)
+                        {
+                            <div class="row">
+                                <div class="col-4">
+                                    Abschluss
+                                </div>
+                                <div class="col-8">
+                                    @Model.Curriculum.Degree.Name
+                                </div>
+                            </div>
+                        }
+                        <div class="row">
+                            <div class="col-4">
+                                ECTS
+                            </div>
+                            <div class="col-8">
+                                @Model.Curriculum.EctsTarget
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#">Stundenplan @Model.Semester.Name</a> |
+                                <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#">Ansprechpartner</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#">Aufnahmeverfahren / Anmeldung</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <h5>Aufbau</h5>
+                @foreach (var sec in Model.Curriculum.Sections)
+                {
+                    <div class="row">
+                        <div class="col-2">
+                            @sec.Name
+                        </div>
+                        <div class="col-10">
+                            <div style="width: 100%">
+                                @foreach (var slot in sec.Slots)
+                                {
+                                    var w = (int) (slot.ECTS / 32 * 100);
+
+                                    <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
+                                        <strong>@slot.Tag</strong>
+                                        <br/>
+                                        <small>@slot.Name</small>
+                                    </a>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
