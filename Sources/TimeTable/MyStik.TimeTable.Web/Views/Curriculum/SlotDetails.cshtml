@@ -25,11 +25,40 @@
                         <h5>
                             Modul: @module.Module.Name (@module.Module.Tag)
                         </h5>
-                        @foreach (var subject in module.Module.ModuleSubjects)
-                        {
-                            <div class="ms-3">@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
-                        }
+                        <div class="row">
+                            <div class="col-md-6">
+                                @foreach (var subject in module.Module.ModuleSubjects)
+                                {
+                                    <div class="ms-3">@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                                }
+
+                            </div>
+                            <div class="col-md-6">
+                                @foreach (var option in module.Module.ExaminationOptions)
+                                {
+                                    <div class="ms-3">
+                                        @option.Name:
+                                        @foreach (var fraction in option.Fractions)
+                                        {
+                                            if (fraction.MinDuration > 0)
+                                            {
+                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                                @str
+                                            }
+                                            else
+                                            {
+                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                                @str
+                                            }
+                                        }
+
+
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     </a>
+
                 }
             </div>
            

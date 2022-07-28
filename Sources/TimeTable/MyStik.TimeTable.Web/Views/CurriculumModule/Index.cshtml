@@ -12,14 +12,9 @@
             <div class="list-group">
                 @foreach (var module in Model)
                 {
-                    <a href="@Url.Action("Details", new {id = module.Id})" class="list-group-item list-group-item-action">@module.Name (@module.ShortName, @module.ModuleId)</a>
+                    <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})" class="list-group-item list-group-item-action">@module.Name (@module.ShortName, @module.ModuleId)</a>
                 }
             </div>
-            <ul class="nav bg-light text-dark">
-                <li class="nav-item active">
-                    <a class="nav-link text-center" href="@Url.Action("Create")"><i class="bi-folder-plus fa-fw"></i><br />Neues Modul</a>
-                </li>
-            </ul>
         </div>
     </div>
 </div>

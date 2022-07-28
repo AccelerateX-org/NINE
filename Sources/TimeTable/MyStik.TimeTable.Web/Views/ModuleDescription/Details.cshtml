@@ -12,21 +12,27 @@
                     <div class="col-md-10">
 
                         <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
-                        <h5 class="card-subtitle">Gehört zu Modulkatalog: 
-                            <a href="@Url.Action("Details", "Catalogs")">
-                                @Model.Module.Catalog.Name (@Model.Module.Catalog.Organiser.ShortName)
+                        @if (Model.Module.Catalog != null)
+                        {
+                            <h5 class="card-subtitle">Gehört zu Modulkatalog:
+                                <a href="@Url.Action("Index", "Catalogs")">
+                                    @Model.Module.Catalog.Name (@Model.Module.Catalog.Organiser.ShortName)
 
-                            </a>
-                        </h5>
+                                </a>
+                            </h5>
+                        }
                     </div>
                     <div class="col-md-2">
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <div class="d-md-flex justify-content-md-end">
-                                <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-pen"></i> Ändern
-                                </a>
-                            </div>
+                        <div class="d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
+                                <i class="bi-pen"></i> Ändern
+                            </a>
+                            <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Module.Id})" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Löschen
+                            </a>
+                        </div>
                         }
                     </div>
                 </div>
@@ -71,13 +77,20 @@
                             {
                                 var courses = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
 
-                                <div>@subject.Name (@subject.Tag)  <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span>  <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                                if (subject.TeachingFormat != null)
+                                {
+                                    <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                                }
+                                else
+                                {
+                                    <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">N.N.</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                                }
 
                                 foreach (var course in courses)
                                 {
                                     <div class="ms-3">
                                         <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">
-                                            @course.Course.Name (@course.Course.ShortName) bei Doz X
+                                            @course.Course.Name (@course.Course.ShortName)
                                         </a>
                                     </div>
                                 }
@@ -91,9 +104,26 @@
                             <div>Prüfungsformen / Prüfungen</div>
                         </div>
                         <div class="col-8">
-                            <div>schrP (ausgegraut, weil nicht im Modul eingesetzt)</div>
-                            <div>schrP (ausgegraut, weil nicht in Lehrveranstaltungen angeboten)</div>
-                            <div>ModA (40%) und Prä (60%) (wird in folgnden der LVs angeboten): abc bei Doz X</div>
+                            @foreach (var option in Model.Module.ExaminationOptions)
+                            {
+                            <div>
+                                @option.Name:
+                                @foreach (var fraction in option.Fractions)
+                                {
+                                    if (fraction.MinDuration > 0)
+                                    {
+                                        var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                        @str
+                                    }
+                                    else
+                                    {
+                                        var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                        @str
+                                    }
+                                }
+
+                            </div>
+                            }
                         </div>
                     </div>
                 </div>

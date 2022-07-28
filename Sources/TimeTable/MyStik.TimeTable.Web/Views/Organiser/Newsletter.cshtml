@@ -70,7 +70,7 @@
                                     @if (ViewBag.UserRight.IsNewsAdmin)
                                     {
                                         <a href="@Url.Action("Edit", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default"><i class="fa fa-gear"></i> Einstellungen</a>
-                                        <a href="@Url.Action("Members", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmer</a>
+                                        <a href="@Url.Action("Members", "Newsletter", new { id = ev.Newsletter.Id})" class="btn btn-default"><i class="fa fa-users"></i> Teilnehmer</a>
                                     }
                                 </td>
                             </tr>

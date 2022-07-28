@@ -48,7 +48,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var userRights = GetUserRight(User.Identity.Name, model.Summary.Course);
             ViewBag.UserRight = userRights;
 
-            return View("DetailsNew", model);
+            return View("Details", model);
         }
 
         /// <summary>
@@ -3657,6 +3657,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             var subscription = Db.Subscriptions.OfType<OccurrenceSubscription>().SingleOrDefault(x => x.Id == id);
+            var userId = subscription.UserId;
 
             var course = Db.Activities.OfType<Course>()
                 .SingleOrDefault(x => x.Occurrence.Id == subscription.Occurrence.Id);
@@ -3701,11 +3702,12 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var c in courses)
             {
                 var summary = courseSerive.GetCourseSummary(c);
+                var courseSubscription = c.Occurrence.Subscriptions.FirstOrDefault(x => x.UserId.Equals(userId));
 
                 model.CourseSubscriptions.Add(new UserCourseSubscriptionViewModel
                 {
                     CourseSummary = summary,
-                    Subscription = subscription
+                    Subscription = courseSubscription
                 });
 
             }

@@ -1,0 +1,47 @@
+﻿@using MyStik.TimeTable.Data
+@model ICollection<MyStik.TimeTable.Data.ScriptDocument>
+    @{
+        ViewBag.Title = "Inventory";
+        var semester = ViewBag.Semester;
+    }
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Alle Skripte im @ViewBag.Semester.Name
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    <th>Titel (Version)</th>
+                    <th>Datum Veröffentlichung</th>
+                    <th>Veröffentlicht für Lehrveranstaltungen</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var doc in Model)
+                {
+                    <tr>
+                        <td>@doc.Title (@doc.Version)</td>
+                        <td>@doc.Created.ToShortDateString()</td>
+                        <td>
+                            @foreach (var course in doc.Publishings)
+                            {
+                                if (course.Course.SemesterGroups.Any(x => x.Semester.Id == semester.Id))
+                                {
+                                    <div>@course.Course.Name</div>
+                                }
+                            }
+
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

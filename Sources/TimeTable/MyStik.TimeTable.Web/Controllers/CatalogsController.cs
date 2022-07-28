@@ -97,12 +97,14 @@ namespace MyStik.TimeTable.Web.Controllers
                         MV = member,
                         Catalog = cat,
                     };
+
+                    Db.CurriculumModules.Add(module);
                 }
 
                 // die Fächer
                 foreach (var moduleSubject in catalogModule.subjects)
                 {
-                    var teachingFormat = Db.TeachingFormats.SingleOrDefault(x => x.Tag.Equals(moduleSubject.type));
+                    var teachingFormat = Db.TeachingFormats.FirstOrDefault(x => x.Tag.Equals(moduleSubject.type));
                     if (teachingFormat == null)
                     {
                         teachingFormat = new TeachingFormat
@@ -112,6 +114,7 @@ namespace MyStik.TimeTable.Web.Controllers
                         };
 
                         Db.TeachingFormats.Add(teachingFormat);
+                        Db.SaveChanges();
                     }
 
                     var subject = module.ModuleSubjects.FirstOrDefault(x => x.Tag.Equals(moduleSubject.tag));
@@ -158,7 +161,9 @@ namespace MyStik.TimeTable.Web.Controllers
                             {
                                 ShortName = examFraction.tag
                             };
+
                             Db.ExaminationForms.Add(examinationForm);
+                            Db.SaveChanges();
                         }
 
                         var fraction =
@@ -181,11 +186,6 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
 
                 }
-
-
-
-                Db.CurriculumModules.Add(module);
-
             }
 
             Db.SaveChanges();

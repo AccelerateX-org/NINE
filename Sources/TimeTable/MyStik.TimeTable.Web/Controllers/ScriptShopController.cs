@@ -46,6 +46,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 historyModel.Baskets = baskets;
 
+                var currentSemester = SemesterService.GetSemester(DateTime.Today);
+                var nextSemester = SemesterService.GetNextSemester(currentSemester);
+
+                ViewBag.CurrentSemester = currentSemester;
+                ViewBag.NextSemester = nextSemester;
 
                 return View(historyModel);
             }
@@ -118,6 +123,22 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             return View("Basket", model);
+        }
+
+        public ActionResult Inventory(Guid id)
+        {
+            var semester = SemesterService.GetSemester(id);
+
+            var docs = Db.ScriptDocuments.Where(x => 
+                    x.Publishings.Any(p => 
+                        p.Course.SemesterGroups.Any(g => 
+                            g.Semester.Id == id)))
+                .ToList();
+
+
+            ViewBag.Semester = semester;
+
+            return View(docs);
         }
 
         public ActionResult Order(Guid id)

@@ -38,6 +38,12 @@
             <div class="card-header">
                 Was habe ich wann bestellt?
             </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a class="btn btn-outline-primary" href="@Url.Action("Inventory", new {id = ViewBag.CurrentSemester.Id })">Angebot @ViewBag.CurrentSemester.Name</a>
+                    <a class="btn btn-outline-primary" href="@Url.Action("Inventory", new {id = ViewBag.NextSemester.Id })">Angebot @ViewBag.NextSemester.Name</a>
+                </div>
+            </div>
             <table id="tabCourses" class="table table-striped table-bordered table-condensed">
                 <thead>
                 <tr>

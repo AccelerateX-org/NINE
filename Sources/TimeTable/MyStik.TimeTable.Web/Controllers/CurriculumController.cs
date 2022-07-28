@@ -1127,7 +1127,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("ModulePlan", new {id = model.Curriculum.Id});
+            return RedirectToAction("Details", new {id = model.Curriculum.Id});
         }
 
         public ActionResult DeleteModulePlan(Guid id)
@@ -1152,7 +1152,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("ModulePlan", new { id = cur.Id });
+            return RedirectToAction("Details", new { id = cur.Id });
         }
 
 
@@ -1228,7 +1228,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("ModulePlan", new { id = model.Curriculum.Id });
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
 
@@ -1317,7 +1317,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("ModulePlan", new { id = model.Curriculum.Id });
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
 

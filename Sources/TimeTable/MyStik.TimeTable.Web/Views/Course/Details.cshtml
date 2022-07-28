@@ -40,7 +40,7 @@
                                 </a>
                                 <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-download"></i> Listen</a>
                                 <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Termine</a>
-                                <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-group"></i> Teilnehmende</a>
+                                <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-users"></i> Teilnehmende</a>
                                 @if (Model.Summary.Course.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
                                 {
                                     <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-edit"></i> Beschreibung</a>

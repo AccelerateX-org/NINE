@@ -150,21 +150,18 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
+
+            foreach (var subject in model.ModuleSubjects.ToList())
+            {
+                foreach (var opportunity in subject.Opportunities.ToList())
+                {
+                    Db.SubjectOpportunities.Remove(opportunity);
+                }
+                Db.ModuleCourses.Remove(subject);
+            }
+
             foreach (var moduleCourse in model.ModuleSubjects.ToList())
             {
-                /*
-                foreach (var nexus in moduleCourse.Nexus.ToList())
-                {
-                    Db.CourseNexus.Remove(nexus);
-                }
-
-                foreach (var capacityCourse in moduleCourse.CapacityCourses.ToList())
-                {
-                    Db.CapacityCourses.Remove(capacityCourse);
-                }
-                */
-
-
                 Db.ModuleCourses.Remove(moduleCourse);
             }
 
@@ -173,17 +170,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Accreditations.Remove(accreditation);
             }
 
-            /*
-            foreach (var exam in model.ModuleExams.ToList())
-            {
-                foreach (var member in exam.Examiners.ToList())
-                {
-                    exam.Examiners.Remove(member);
-                }
-
-                Db.ModuleExams.Remove(exam);
-            }
-            */
 
             var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
             foreach (var mapping in mappings)

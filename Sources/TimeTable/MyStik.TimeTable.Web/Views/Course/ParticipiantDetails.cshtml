@@ -68,7 +68,7 @@
                                     if ((!hasLottery || ViewBag.UserRight.IsCourseAdmin) ||
                                         (hasLottery && hasPrio1))
                                     {
-                                        <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-outline-success"><i class="fa fa-group"></i> Auf Teilnehmerliste setzen</a>
+                                        <a href="@Url.Action("SetOnParticipiantList2", new {Id = Model.Subscription.Occurrence.Id, userId = Model.User.Id})" class="btn btn-outline-success"><i class="fa fa-users"></i> Auf Teilnehmerliste setzen</a>
                                     }
                                 }
                                 else
@@ -107,13 +107,13 @@
                                     @Html.LecturerList(item.CourseSummary.Lecturers)
                                 </td>
                                 <td>
-                                    @if (item.Subscription.OnWaitingList)
+                                    @if (@item.Subscription.OnWaitingList)
                                     {
                                         <i class="fa fa-hourglass-half"></i>
                                     }
                                     else
                                     {
-                                        <i class="fa fa-group"></i>
+                                        <i class="fa fa-users"></i>
                                     }
                                     @if (item.CourseSummary.Lottery != null)
                                     {

@@ -80,7 +80,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Prüfungsform
         /// </summary>
-        public ExaminationForm Form { get; set; }
+        public virtual ExaminationForm Form { get; set; }
 
         /// <summary>
         /// Prüfungsdauer in Minuten

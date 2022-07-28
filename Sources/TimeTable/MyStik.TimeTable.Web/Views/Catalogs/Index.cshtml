@@ -5,6 +5,65 @@
 @{
     ViewBag.Title = "Modulekataloge";
 
+    var db = new TimeTableDbContext();
+
+    /*
+    foreach (var module in db.CurriculumModules.ToList())
+    {
+        foreach (var desc in module.Descriptions.ToList())
+        {
+            db.ModuleDescriptions.Remove(desc);
+        }
+
+        foreach (var option in module.ExaminationOptions.ToList())
+        {
+            foreach (var fraction in option.Fractions.ToList())
+            {
+                db.ExaminationFractions.Remove(fraction);
+            }
+
+            db.ExaminationOptions.Remove(option);
+        }
+
+        foreach (var subject in module.ModuleSubjects.ToList())
+        {
+            foreach (var opportunity in subject.Opportunities.ToList())
+            {
+                db.SubjectOpportunities.Remove(opportunity);
+            }
+
+            db.ModuleCourses.Remove(subject);
+        }
+
+        foreach (var accreditation in module.Accreditations.ToList())
+        {
+            db.Accreditations.Remove(accreditation);
+        }
+
+        var mappings = db.ModuleMappings.Where(x => x.Module.Id == module.Id).ToList();
+
+        foreach (var mapping in mappings)
+        {
+            db.ModuleMappings.Remove(mapping);
+        }
+
+
+        db.CurriculumModules.Remove(module);
+    }
+
+    foreach (var teachingFormat in db.TeachingFormats.ToList())
+    {
+        db.TeachingFormats.Remove(teachingFormat);
+    }
+
+    foreach (var examinationForm in db.ExaminationForms.ToList())
+    {
+        db.ExaminationForms.Remove(examinationForm);
+    }
+
+
+    db.SaveChanges();
+    */
 }
 
 
@@ -14,6 +73,10 @@
         <div class="card">
             <div class="card-header">
                 <h4>Modulkataloge @Model.Organiser.ShortName</h4>
+                <ul>
+                    <li>Prüfungsformen: @db.ExaminationForms.Count()</li>
+                    <li>Lehrformate: @db.TeachingFormats.Count()</li>
+                </ul>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
@@ -37,6 +100,7 @@
                     <th>Module ID</th>
                     <th>Modulverantwortung</th>
                     <th>Fächer</th>
+                    <th>Prüfungen</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,7 +112,7 @@
                             <td>@cat.Name</td>
                             <td>@cat.Tag</td>
                             <td>
-                                <a href="@Url.Action("Details", "ModuleDescription", new {modId = module.Id, semId = ViewBag.CurrentSemester.Id})">
+                                <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
                                     @module.Name
                                 </a>
                             </td>
@@ -67,7 +131,26 @@
                                     <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
                                 }
                             </td>
-
+                            <td>
+                                @foreach (var exam in module.ExaminationOptions)
+                                {
+                                <div>
+                                    @foreach (var fraction in exam.Fractions)
+                                    {
+                                        if (fraction.Form != null)
+                                        {
+                                            var str = string.Format("{0} ({1:P}), ", fraction.Form.ShortName, fraction.Weight);
+                                            @str
+                                        }
+                                        else
+                                        {
+                                            var str = string.Format("nix ({0:P}), ", fraction.Weight);
+                                            @str
+                                        }
+                                    }
+                                </div>
+                                }
+                            </td>
                         </tr>
 
                     }
