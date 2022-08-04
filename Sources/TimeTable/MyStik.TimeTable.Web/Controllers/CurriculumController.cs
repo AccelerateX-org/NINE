@@ -1094,9 +1094,16 @@ namespace MyStik.TimeTable.Web.Controllers
             if (plan == null)
                 return View();
 
+            // Im Augenblick ist es ein Import für einen existierenden Studiengang
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
             if (curr.Sections.Any())
                 return View();
+
+            // Ergänzung von Tags
+            curr.Tag = plan.tag;
+            curr.Version = plan.version;
+            curr.Organiser.Tag = plan.institution;
+
 
             foreach (var section in plan.sections)
             {
@@ -1200,16 +1207,17 @@ namespace MyStik.TimeTable.Web.Controllers
                 if (slot == null) continue;
 
                 var catWords = accreditation.module.Split(':');
-                if (catWords.Length != 3) continue;
+                if (catWords.Length != 5) continue;
 
-                var catalogName = catWords[0];
-                var moduleName = catWords[2];
+                var institutionName = catWords[0];
+                var catalogName = catWords[2];
+                var moduleName = catWords[4];
 
 
                 var module = Db.CurriculumModules.FirstOrDefault(x => 
                     x.Tag.Equals(moduleName) &&
                     x.Catalog.Tag.Equals(catalogName) &&
-                    x.Catalog.Organiser.Id == curr.Organiser.Id
+                    x.Catalog.Organiser.Tag.Equals(institutionName)
                     );
 
                 if (module == null) continue;

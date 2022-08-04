@@ -486,6 +486,14 @@
     <Compile Include="Migrations\202207231637479_ModuleCatalogV6.designer.cs">
       <DependentUpon>202207231637479_ModuleCatalogV6.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202208041624015_ModuleCatalogV7.cs" />
+    <Compile Include="Migrations\202208041624015_ModuleCatalogV7.designer.cs">
+      <DependentUpon>202208041624015_ModuleCatalogV7.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208041711143_ModuleCatalogV8.cs" />
+    <Compile Include="Migrations\202208041711143_ModuleCatalogV8.designer.cs">
+      <DependentUpon>202208041711143_ModuleCatalogV8.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -765,6 +773,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202207231637479_ModuleCatalogV6.resx">
       <DependentUpon>202207231637479_ModuleCatalogV6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208041624015_ModuleCatalogV7.resx">
+      <DependentUpon>202208041624015_ModuleCatalogV7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208041711143_ModuleCatalogV8.resx">
+      <DependentUpon>202208041711143_ModuleCatalogV8.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

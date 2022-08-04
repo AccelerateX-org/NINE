@@ -23,6 +23,8 @@ namespace MyStik.TimeTable.Data
 
         public string ShortName { get; set; }
 
+        public string Tag { get; set; }
+
         /// <summary>
         /// Handelt es sich um eine studentische Organisation?
         /// </summary>

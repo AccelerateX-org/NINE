@@ -316,6 +316,12 @@ namespace MyStik.TimeTable.Web.Controllers
                 IssueDate = DateTime.Today.ToShortDateString()
             };
 
+            if (thesis.PlannedBegin != null && thesis.PlannedBegin.Value > DateTime.Today)
+            {
+                model.IssueDate = thesis.PlannedBegin.Value.ToShortDateString();
+            }
+
+
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;
 

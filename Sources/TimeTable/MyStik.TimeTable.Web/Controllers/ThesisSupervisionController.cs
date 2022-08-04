@@ -472,7 +472,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.ActionUser = senderUser;
 
-            var pk = t.Student.Curriculum.Organiser.Autonomy?.Committees.FirstOrDefault(x => x.Name.Equals("PK"));
+            var pk = t.Student.Curriculum.Organiser.Autonomy?.Committees.FirstOrDefault(x =>
+                    x.Name.Equals("PK") &&
+                    x.Curriculum != null &&
+                    x.Curriculum.Id == t.Student.Curriculum.Id);
+
 
             var pkv = pk?.Members.FirstOrDefault(x => x.HasChair);
 

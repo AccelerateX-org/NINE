@@ -42,7 +42,8 @@
                     <tr>
                         <th></th>
                         <th>Fakultät</th>
-                        <th>Bezeichnung</th>
+                        <th>ID</th>
+                        <th>Bezeichnung </th>
                         <th>Abschluss</th>
                     </tr>
                 </thead>
@@ -55,6 +56,7 @@
                             <tr>
                                 <td>@Html.FacultyLabel(org)</td>
                                 <td>@org.Name</td>
+                                <td>@curr.Tag</td>
                                 <td>
                                     <a href="@Url.Action("Details", "Curriculum", new {id = curr.Id})">
                                         @curr.Name (@curr.ShortName)

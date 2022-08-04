@@ -35,7 +35,6 @@ namespace MyStik.TimeTable.Data
         public CurriculumModule ()
         {
             ModuleSubjects = new HashSet<ModuleSubject>();
-            //ModuleExams = new HashSet<ModuleExam>();
             Accreditations = new HashSet<ModuleAccreditation>();
             Descriptions = new HashSet<ModuleDescription>();
             ExaminationOptions = new List<ExaminationOption>();
@@ -81,10 +80,6 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<ModuleSubject> ModuleSubjects { get; set; }
 
-        /// <summary>
-        /// Liste aller Modulprüfungen
-        /// </summary>
-        //public virtual ICollection<ModuleExam> ModuleExams { get; set; }
 
         public virtual ICollection<ExaminationOption> ExaminationOptions { get; set; }
 
@@ -112,7 +107,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Die Prüfung in diesem Semester
         /// </summary>
-        public ICollection<ExaminationUnit> ExaminationUnits { get; set; }
+        public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
 
     }
 }

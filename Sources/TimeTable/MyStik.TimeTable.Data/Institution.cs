@@ -14,6 +14,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Name { get; set; }
 
+        public string Tag { get; set; }
+
         /// <summary>
         /// E-Mail Domain
         /// </summary>

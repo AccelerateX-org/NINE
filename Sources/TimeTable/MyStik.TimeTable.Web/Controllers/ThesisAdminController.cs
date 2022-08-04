@@ -213,11 +213,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var thesis in theses)
             {
+                var pk = thesis.Student.Curriculum.Organiser.Autonomy != null ?
+                    thesis.Student.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x =>
+                        x.Name.Equals("PK") &&
+                        x.Curriculum != null &&
+                        x.Curriculum.Id == thesis.Student.Curriculum.Id) : null;
+
+
                 var tm = new ThesisStateModel
                 {
                     Thesis = thesis,
                     Student = thesis.Student,
-                    User = userService.GetUser(thesis.Student.UserId)
+                    User = userService.GetUser(thesis.Student.UserId),
+                    PK = pk
                 };
 
                 model.Add(tm);
@@ -255,11 +263,18 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var thesis in theses)
             {
+                var pk = thesis.Student.Curriculum.Organiser.Autonomy != null ?
+                    thesis.Student.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x =>
+                        x.Name.Equals("PK") &&
+                        x.Curriculum != null &&
+                        x.Curriculum.Id == thesis.Student.Curriculum.Id) : null;
+
                 var tm = new ThesisStateModel
                 {
                     Thesis = thesis,
                     Student = thesis.Student,
-                    User = userService.GetUser(thesis.Student.UserId)
+                    User = userService.GetUser(thesis.Student.UserId),
+                    PK = pk
                 };
 
                 model.Add(tm);

@@ -49,7 +49,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Anteil der SWS am Gesamtpaket
         /// </summary>
-        public int SWS { get; set; }
+        public double SWS { get; set; }
 
         /// <summary>
         /// Fachbezeichnung in externer Quelle, z.B. gpUntis

@@ -39,23 +39,28 @@
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <div class="d-md-flex justify-content-md-end">
-                                <a href="@Url.Action("Admin", "Curriculum", new {id = Model.Curriculum.Id})" 
-                                   class="btn btn-outline-primary">
-                                    <i class="bi-gear"></i> Verwaltung
+                                <a href="@Url.Action("GroupList", "Curricula", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="fas fa-fw fa-puzzle-piece"></i> Aufbau - Studiengruppen
+                                </a>
+                                <a href="@Url.Action("Students", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="fas fa-fw fa-users"></i> Studierende
+                                </a>
+                                <a href="@Url.Action("Edit", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="fa fa-fw fa-cog"></i> Allgemeine Einstellungen
+                                </a>
+                                <a href="@Url.Action("Import", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-upload"></i> Import
+                                </a>
+                                <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-danger">
+                                    <i class="bi-trash"></i> Löschen
+                                </a>
+                                <a href="@Url.Action("Accreditation", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-upload"></i> Akkreditierung
+                                </a>
+                                <a href="@Url.Action("Opportunities", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-upload"></i> Lehrangebot
                                 </a>
                             </div>
-                            <a href="@Url.Action("Import", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                <i class="bi-upload"></i> Import
-                            </a>
-                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Löschen
-                            </a>
-                            <a href="@Url.Action("Accreditation", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                <i class="bi-upload"></i> Akkreditierung
-                            </a>
-                            <a href="@Url.Action("Opportunities", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                <i class="bi-upload"></i> Lehrangebot
-                            </a>
                         }
                     </div>
                 </div>

@@ -25,6 +25,7 @@
                     <th>Vorname</th>
                     <th>Matr.-Nr.</th>
                     <th>SG</th>
+                    <th>PK</th>
                     <th>Betreuende</th>
                     <th>Anmeldung</th>
                     <th>Abgabe</th>
@@ -55,6 +56,24 @@
                         }
                         <td>@thesis.Student.Number</td>
                         <td>@thesis.Student.Curriculum.ShortName</td>
+                        @if (thesis.PK != null)
+                        {
+                            if (thesis.PK.Members.Any(x => x.HasChair))
+                            {
+                                foreach (var pkv in thesis.PK.Members.Where(x => x.HasChair))
+                                {
+                                    <td>@pkv.Member.FullName</td>
+                                }
+                            }
+                            else
+                            {
+                                <td>Kein PKV</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>Keine PK</td>
+                        }
                         <td>
                             @foreach (var supervisor in thesis.Thesis.Supervisors)
                             {

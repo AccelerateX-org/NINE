@@ -1376,6 +1376,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = c.Id.ToString(),
             });
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
             return View("CreateDate2", model);
         }
 
@@ -1412,7 +1415,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 foreach (var date in model.Dates)
                 {
                     string[] elems = date.Split('#');
-                    var day = DateTime.ParseExact(elems[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    var day = DateTime.Parse(elems[0]);
                     var begin = TimeSpan.Parse(elems[1]);
                     var end = TimeSpan.Parse(elems[2]);
                     var isWdh = bool.Parse(elems[3]);
@@ -1423,7 +1426,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     // sonst nimm nur den Einzeltag
                     if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        var lastDay = DateTime.ParseExact(elems[4], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                        var lastDay = DateTime.Parse(elems[4]);
                         var frequency = int.Parse(elems[5]);
                         dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
@@ -1492,6 +1495,10 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Organiser = GetMyOrganisation()
             };
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
 
             return View(model);
         }
@@ -1750,7 +1757,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 foreach (var date in model.Dates)
                 {
                     string[] elems = date.Split('#');
-                    var day = DateTime.ParseExact(elems[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    var day = DateTime.Parse(elems[0]);
                     var begin = TimeSpan.Parse(elems[1]);
                     var end = TimeSpan.Parse(elems[2]);
                     var isWdh = bool.Parse(elems[3]);
@@ -1761,7 +1768,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     // sonst nimm nur den Einzeltag
                     if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        var lastDay = DateTime.ParseExact(elems[4], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                        var lastDay = DateTime.Parse(elems[4]);
                         var frequency = int.Parse(elems[5]);
                         dayList = semesterService.GetDays(day, lastDay, frequency);
                     }

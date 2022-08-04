@@ -170,6 +170,21 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Accreditations.Remove(accreditation);
             }
 
+            foreach (var description in model.Descriptions.ToList())
+            {
+                foreach (var examinationUnit in description.ExaminationUnits.ToList())
+                {
+                    foreach (var aid in examinationUnit.ExaminationAids.ToList())
+                    {
+                        Db.ExaminationAids.Remove(aid);
+                    }
+
+                    Db.ExaminationUnits.Remove(examinationUnit);
+                }
+
+                Db.ModuleDescriptions.Remove(description);
+            }
+
 
             var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
             foreach (var mapping in mappings)

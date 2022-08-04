@@ -8,241 +8,217 @@
 
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h4>
-                    @if (Model.PrevSemester != null)
-                    {
-                        <a href="@Url.Action("Index", new {id=Model.PrevSemester.Id})" class="btn btn-outline-secondary btn-sm"><small><< @Model.PrevSemester.Name</small></a>
-                    }
-                    Übersicht für @Model.CurrentSemester.Semester.Name
-                    @if (Model.NextSemester != null)
-                    {
-                        <a href="@Url.Action("Index", new {id=Model.NextSemester.Id})" class="btn btn-outline-secondary btn-sm"><small>@Model.NextSemester.Name >></small></a>
-                    }
-                </h4>
-            </div>
-        <div class="list-group">
-            <div class="list-group-item">
-                <div class="btn-group">
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.CurrentSemester.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "Messaging")"><i class="fas fa-envelope fa-fw"></i><br />Mailverteiler</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("OfficeHour", "Lecturer")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Courses", "Lecturer")"><i class="fas fa-microphone fa-fw"></i><br />Lehrveranstaltungen</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "CurriculumModule")"><i class="fas fa-cube fa-fw"></i><br />Module</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "ScriptPublishing")"><i class="fas fa-book fa-fw"></i><br />Skripte</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "VirtualRoom")"><i class="fas fa-tv fa-fw"></i><br />virtuelle Räume</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "Advertisements")"><i class="fas fa-file-upload fa-fw"></i><br />virtueller Schaukasten</a>
-                    @if (member != null)
-                    {
-                            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Member", "Organiser", new {id = member.Id})"><i class="fas fa-user fa-fw"></i><br />Mein Profil</a>
-                    }
-
-                </div>
-            </div>
-            <div class="list-group-item  list-group-item-secondary">Lehrveranstaltungen</div>
-            @foreach (var course in Model.CurrentSemester.Courses)
+<div class="col-md-12">
+<div class="card">
+<div class="card-header">
+    <h4>
+        @if (Model.PrevSemester != null)
+        {
+            <a href="@Url.Action("Index", new {id=Model.PrevSemester.Id})" class="btn btn-outline-secondary btn-sm"><small><< @Model.PrevSemester.Name</small></a>
+        }
+        Übersicht für @Model.CurrentSemester.Semester.Name
+        @if (Model.NextSemester != null)
+        {
+            <a href="@Url.Action("Index", new {id=Model.NextSemester.Id})" class="btn btn-outline-secondary btn-sm"><small>@Model.NextSemester.Name >></small></a>
+        }
+    </h4>
+</div>
+<div class="list-group">
+    <div class="list-group-item">
+        <div class="btn-group">
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("PersonalPlan", "Activity")"><i class="fas fa-calendar-alt fa-fw"></i><br />Kalender</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.CurrentSemester.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "Messaging")"><i class="fas fa-envelope fa-fw"></i><br />Mailverteiler</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("OfficeHour", "Lecturer")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Courses", "Lecturer")"><i class="fas fa-microphone fa-fw"></i><br />Lehrveranstaltungen</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "CurriculumModule")"><i class="fas fa-cube fa-fw"></i><br />Module</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "ScriptPublishing")"><i class="fas fa-book fa-fw"></i><br />Skripte</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "VirtualRoom")"><i class="fas fa-tv fa-fw"></i><br />virtuelle Räume</a>
+            <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "Advertisements")"><i class="fas fa-file-upload fa-fw"></i><br />virtueller Schaukasten</a>
+            @if (member != null)
             {
-                var nWaiting = course.Course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
-                var nCount = course.Course.Occurrence.Subscriptions.Count;
-                var nPart = nCount - nWaiting;
-
-
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    @course.Course.ShortName: @course.Course.Name (@Html.GroupList(course.Course.SemesterGroups, showAvailability: false, showLink: false))
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="@Url.Action("AdminNewDates", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Termine">
-                            @if (course.CurrentDate != null)
-                            {
-                                <i class="fas fa-calendar-day"></i>
-                                <span class="badge bg-danger">@Html.TimeSpanWithDate(course.CurrentDate)</span>
-                            }
-                            else
-                            {
-                                <i class="fas fa-calendar-check"></i>
-                                <span class="badge bg-secondary"><i class="fas fa-check text-success"></i></span>
-                            }
-                        </a>
-                        <a href="@Url.Action("AdminNewParticipients", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Teilnehmende">
-                            <i class="fas fa-pen"></i>
-                            <span class="badge bg-secondary">
-                                <i class="fas fa-user-check text-success"></i> @nPart /
-                                <i class="fas fa-user-times text-danger"></i> @nWaiting
-                            </span>
-                        </a>
-                        <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = course.Course.Occurrence.Id})" class="btn btn-outline-secondary btn-sm" title="Mail senden">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                        <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
-                            <i class="fas fa-cogs"></i>
-                        </a>
-                        @if (course.Course.ScriptPublishings.Any())
-                        {
-                            <div>Mit Skripten</div>
-                        }
-                    </div>
-                </div>
+                <a class="btn btn-outline-secondary text-center" href="@Url.Action("Member", "Organiser", new {id = member.Id})"><i class="fas fa-user fa-fw"></i><br />Mein Profil</a>
             }
-            <div class="list-group-item  list-group-item-secondary">Sprechstunden</div>
 
-            @foreach (var oh in Model.CurrentSemester.OfficeHours)
-            {
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    @oh.OfficeHour.Name
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        @if (oh.Date != null)
+        </div>
+    </div>
+    <div class="list-group-item  list-group-item-secondary">Lehrveranstaltungen</div>
+    @foreach (var course in Model.CurrentSemester.Courses)
+    {
+        var nWaiting = course.Course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
+        var nCount = course.Course.Occurrence.Subscriptions.Count;
+        var nPart = nCount - nWaiting;
+
+
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            @course.Course.ShortName: @course.Course.Name (@Html.GroupList(course.Course.SemesterGroups, showAvailability: false, showLink: false))
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="@Url.Action("AdminNewDates", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Termine">
+                    @if (course.CurrentDate != null)
+                    {
+                        <i class="fas fa-calendar-day"></i>
+                        <span class="badge bg-danger">@Html.TimeSpanWithDate(course.CurrentDate)</span>
+                    }
+                    else
+                    {
+                        <i class="fas fa-calendar-check"></i>
+                        <span class="badge bg-secondary"><i class="fas fa-check text-success"></i></span>
+                    }
+                </a>
+                <a href="@Url.Action("AdminNewParticipients", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Teilnehmende">
+                    <i class="fas fa-pen"></i>
+                    <span class="badge bg-secondary">
+                        <i class="fas fa-user-check text-success"></i> @nPart /
+                        <i class="fas fa-user-times text-danger"></i> @nWaiting
+                    </span>
+                </a>
+                <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = course.Course.Occurrence.Id})" class="btn btn-outline-secondary btn-sm" title="Mail senden">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
+                    <i class="fas fa-cogs"></i>
+                </a>
+                @if (course.Course.ScriptPublishings.Any())
+                {
+                    <div>Mit Skripten</div>
+                }
+            </div>
+        </div>
+    }
+    <div class="list-group-item  list-group-item-secondary">Sprechstunden</div>
+
+    @foreach (var oh in Model.CurrentSemester.OfficeHours)
+    {
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            @oh.OfficeHour.Name
+            <div class="btn-group" role="group" aria-label="Basic example">
+                @if (oh.Date != null)
+                {
+                    <a href="@Url.Action("DateDetails", "Lecturer", new {id = oh.Date.Id})" class="btn btn-outline-secondary btn-sm" title="Aktueller Termin">
+                        <i class="fas fa-calendar-day"></i>
+                        <span class="badge bg-danger">@Html.TimeSpanWithDate(oh.Date)</span>
+                    </a>
+                }
+                else
+                {
+                    if (oh.OfficeHour.ByAgreement)
+                    {
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("OfficeHour", "Lecturer", new {id = oh.OfficeHour.Id})" class="btn btn-outline-secondary btn-sm" title="Termine">
+                            <i class="fas fa-calendar-check"></i>
+                            <span class="badge bg-secondary"><i class="fas fa-check text-success"></i></span>
+                        </a>
+                    }
+                }
+
+                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = oh.OfficeHour.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
+                    <i class="fas fa-cogs"></i>
+                </a>
+            </div>
+        </div>
+    }
+
+    <div class="list-group-item  list-group-item-secondary">Abschlussarbeiten</div>
+
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <ul class="fa-ul">
+                @foreach (var thesis in Model.ActiveTheses)
+                {
+                    if (thesis.User != null)
+                    {
+
+                        if (thesis.Thesis.DeliveryDate != null)
                         {
-                            <a href="@Url.Action("DateDetails", "Lecturer", new {id = oh.Date.Id})" class="btn btn-outline-secondary btn-sm" title="Aktueller Termin">
-                                <i class="fas fa-calendar-day"></i>
-                                <span class="badge bg-danger">@Html.TimeSpanWithDate(oh.Date)</span>
-                            </a>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-trophy"></i></span>
+                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                            </li>
                         }
                         else
                         {
-                            if (oh.OfficeHour.ByAgreement)
+                            if (thesis.Thesis.Supervisors.Any(x => x.AcceptanceDate == null))
                             {
+                                <li>
+                                    <span class="fa-li"><i class="fas fa-question-circle"></i></span>
+                                    <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                                    <span class="badge bg-danger">Betreuungsanfrage</span>
+                                </li>
                             }
                             else
                             {
-                                <a href="@Url.Action("OfficeHour", "Lecturer", new {id = oh.OfficeHour.Id})" class="btn btn-outline-secondary btn-sm" title="Termine">
-                                    <i class="fas fa-calendar-check"></i>
-                                    <span class="badge bg-secondary"><i class="fas fa-check text-success"></i></span>
-                                </a>
-                            }
-                        }
 
-                        <a href="@Url.Action("OfficeHour", "Lecturer", new {id = oh.OfficeHour.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
-                            <i class="fas fa-cogs"></i>
-                        </a>
-                    </div>
-                </div>
-            }
-
-            <div class="list-group-item  list-group-item-secondary">Abschlussarbeiten</div>
-
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <ul class="fa-ul">
-                        @foreach (var thesis in Model.ActiveTheses)
-                        {
-                            if (thesis.User != null)
-                            {
-
-                                if (thesis.Thesis.DeliveryDate != null)
-                                {
-                                    <li>
-                                        <span class="fa-li"><i class="fas fa-trophy"></i></span>
-                                        <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    if (thesis.Thesis.Supervisors.Any(x => x.AcceptanceDate == null))
+                                <li>
+                                    <span class="fa-li"><i class="fas fa-cogs"></i></span>
+                                    <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
+                                    @if (thesis.DaysToExpire == Int32.MaxValue)
                                     {
-                                        <li>
-                                            <span class="fa-li"><i class="fas fa-question-circle"></i></span>
-                                            <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                                            <span class="badge bg-danger">Betreuungsanfrage</span>
-                                        </li>
+                                        <span class="badge bg-danger">Noch nicht angemeldet</span>
                                     }
                                     else
                                     {
-
-                                        <li>
-                                            <span class="fa-li"><i class="fas fa-cogs"></i></span>
-                                            <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">@thesis.User.FullName (@thesis.Student.Curriculum.ShortName)</a>
-                                            @if (thesis.DaysToExpire == Int32.MaxValue)
+                                        if (thesis.Thesis.RenewalDate != null)
+                                        {
+                                            <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe (verlängert)</span>
+                                        }
+                                        else
+                                        {
+                                            if (thesis.Thesis.ProlongRequestDate == null)
                                             {
-                                                <span class="badge bg-danger">Noch nicht angemeldet</span>
+                                                <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
                                             }
                                             else
                                             {
-                                                if (thesis.Thesis.RenewalDate != null)
+                                                if (thesis.Thesis.ProlongSupervisorAccepted == null)
                                                 {
-                                                    <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe (verlängert)</span>
+                                                    <span class="badge bg-danger">Antrag auf Verlängerung - unbearbeitet</span>
                                                 }
                                                 else
                                                 {
-                                                    if (thesis.Thesis.ProlongRequestDate == null)
-                                                    {
-                                                        <span class="badge bg-secondary">@thesis.DaysToExpire Tage bis zur Abgabe</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        if (thesis.Thesis.ProlongSupervisorAccepted == null)
-                                                        {
-                                                            <span class="badge bg-danger">Antrag auf Verlängerung - unbearbeitet</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="badge bg-secondary">Antrag auf Verlängerung akzeptiert - Bestätigung PKV steht noch aus</span>
-                                                        }
-
-                                                    }
+                                                    <span class="badge bg-secondary">Antrag auf Verlängerung akzeptiert - Bestätigung PKV steht noch aus</span>
                                                 }
 
                                             }
-                                        </li>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (thesis.Thesis.DeliveryDate != null)
-                                {
-                                    <li>
-                                        <span class="fa-li"><i class="fas fa-trophy"></i></span>
-                                        <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">Unbekannt (@thesis.Student.Curriculum.ShortName)</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li>
-                                        <span class="fa-li"><i class="fas fa-cogs"></i></span>
-                                        <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">Unbekannt (@thesis.Student.Curriculum.ShortName)</a>
-                                        <span class="badge badge-secondary">@thesis.DaysToExpire</span>
-                                    </li>
-                                }
+                                        }
 
+                                    }
+                                </li>
                             }
                         }
-                    </ul>
-                </div>
-                <div class="btn-group float-right" role="group" aria-label="Basic example">
-                    <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm text-left"><i class="fas fa-list"></i> Übersicht</a>
-                    <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm text-left"><i class="fas fa-archive"></i> Abgerechnete</a>
-                </div>
-            </div>
+                    }
+                    else
+                    {
+                        if (thesis.Thesis.DeliveryDate != null)
+                        {
+                            <li>
+                                <span class="fa-li"><i class="fas fa-trophy"></i></span>
+                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">Unbekannt (@thesis.Student.Curriculum.ShortName)</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <span class="fa-li"><i class="fas fa-cogs"></i></span>
+                                <a href="@Url.Action("Details", "ThesisSupervision", new {id = thesis.Thesis.Id})">Unbekannt (@thesis.Student.Curriculum.ShortName)</a>
+                                <span class="badge badge-secondary">@thesis.DaysToExpire</span>
+                            </li>
+                        }
 
-
-        <div class="list-group-item  list-group-item-secondary">Module</div>
-        <div class="alert alert-info">
-            Hier wird gerade umgebaut - diese Funktion steht aktuell nicht zur Verfügung.
+                    }
+                }
+            </ul>
         </div>
-            
-        @*
-        @foreach (var module in Model.CurrentSemester.Modules)
-            {
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    @module.Module.ShortName: @module.Module.Name (@module.Courses.Count Lehrveranstaltungen)
-                    <div class="btn-group" role="group" aria-label="Basic example">
-
-                        <a href="@Url.Action("CurriculumModule", "Mailing", new {moduleId = module.Module.Id, semId = Model.CurrentSemester.Semester.Id})" class="btn btn-outline-secondary btn-sm" title="Mail senden">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                        <a href="@Url.Action("Details", "CurriculumModule", new {id = module.Module.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
-                            <i class="fas fa-cogs"></i>
-                        </a>
-                    </div>
-                </div>
-            }
-            *@
-
-        </div>
+        <div class="btn-group float-right" role="group" aria-label="Basic example">
+            <a href="@Url.Action("Index", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm text-left"><i class="fas fa-list"></i> Übersicht</a>
+            <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm text-left"><i class="fas fa-archive"></i> Abgerechnete</a>
         </div>
     </div>
 </div>
+</div>
+</div>
+</div>
+
 
 

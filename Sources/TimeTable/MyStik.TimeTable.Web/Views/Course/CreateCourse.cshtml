@@ -6,265 +6,263 @@
 
 @section styles
 {
-<link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
-<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
-
-
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
 
 <div class="row">
-<div class="col-md-12">
-<div class="card">
-<div class="card-header">
-    <h4> Neue Lehrveranstaltung anlegen</h4>
-</div>
-<div class="card-body">
-<div class="row">
     <div class="col-md-12">
-        <h5>Zuordnung zum Lehrveranstaltungsangebot</h5>
-        <div class="row">
-            <div class="col-md-2">
-                <div class="form-floating mb-3">
-                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-select" })
-                    <label for="SemesterId">Semester auswählen</label>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h4> Neue Lehrveranstaltung anlegen</h4>
             </div>
-            <div class="col-md-2">
-                <div class="form-floating mb-3">
-                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-select", onchange = "onOrganiserChanged()" })
-                    <label for="OrganiserId">Fakultät auswählen</label>
-                </div>
-            </div>
-            <div class="col-md-2">
-                @if (ViewBag.Curricula != null)
-                {
-                    <div class="form-floating mb-3">
-                        @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>) ViewBag.Curricula, new {@class = "form-select", onchange = "onCurriculumChanged()"})
-                        <label for="CurriculumId">Studiengang</label>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Zuordnung zum Lehrveranstaltungsangebot</h5>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-floating mb-3">
+                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-select" })
+                                    <label for="SemesterId">Semester auswählen</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-floating mb-3">
+                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-select", onchange = "onOrganiserChanged()" })
+                                    <label for="OrganiserId">Fakultät auswählen</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                @if (ViewBag.Curricula != null)
+                                {
+                                    <div class="form-floating mb-3">
+                                        @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-select", onchange = "onCurriculumChanged()" })
+                                        <label for="CurriculumId">Studiengang</label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>Keine Stundenplandaten</p>
+                                }
+                            </div>
+                            <div class="col-md-6">
+                                <div id="GroupTable">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Studiengruppe</th>
+                                                <th>Kapazitätsgruppe</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @if (ViewBag.CurrGroups != null)
+                                                    {
+                                                        @Html.DropDownListFor(m => m.CurrGroupId, (IEnumerable<SelectListItem>)ViewBag.CurrGroups, new { @class = "form-control  input-sm", onchange = "onCurriculumGroupChanged()" })
+                                                    }
+                                                </th>
+                                                <th>
+                                                    @if (ViewBag.CapGroups != null)
+                                                    {
+                                                        @Html.DropDownListFor(m => m.CapGroupId, (IEnumerable<SelectListItem>)ViewBag.CapGroups, new { @class = "form-control  input-sm" })
+                                                    }
+                                                </th>
+                                                <th>
+                                                    <button class="btn btn-primary btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="groupList"></tbody>
+                                    </table>
+                                </div>
+                                @if (ViewBag.Chapters != null && ViewBag.Topics != null)
+                                {
+                                    <div id="TopicTable">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Kapitel</th>
+                                                    <th>Thema</th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        @if (ViewBag.Chapters != null)
+                                                        {
+                                                            @Html.DropDownListFor(m => m.ChapterId, (IEnumerable<SelectListItem>)ViewBag.Chapters, new { @class = "form-control  input-sm", onchange = "onCurriculumChapterChanged()" })
+                                                        }
+                                                    </th>
+                                                    <th>
+                                                        @if (ViewBag.Topics != null)
+                                                        {
+                                                            @Html.DropDownListFor(m => m.TopicId, (IEnumerable<SelectListItem>)ViewBag.Topics, new { @class = "form-control  input-sm" })
+                                                        }
+                                                    </th>
+                                                    <th>
+                                                        <button class="btn btn-primary btn-sm" onclick="addTopic()"><i class="fa fa-plus-circle"></i></button>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="topicList"></tbody>
+                                        </table>
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     </div>
-                }
-                else
-                {
-                    <p>Keine Stundenplandaten</p>
-                }
-            </div>
-            <div class="col-md-6">
-                <div id="GroupTable">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Studiengruppe</th>
-                                <th>Kapazitätsgruppe</th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th>
-                                    @if (ViewBag.CurrGroups != null)
-                                    {
-                                        @Html.DropDownListFor(m => m.CurrGroupId, (IEnumerable<SelectListItem>)ViewBag.CurrGroups, new { @class = "form-control  input-sm", onchange = "onCurriculumGroupChanged()" })
-                                    }
-                                </th>
-                                <th>
-                                    @if (ViewBag.CapGroups != null)
-                                    {
-                                        @Html.DropDownListFor(m => m.CapGroupId, (IEnumerable<SelectListItem>)ViewBag.CapGroups, new { @class = "form-control  input-sm" })
-                                    }
-                                </th>
-                                <th>
-                                    <button class="btn btn-primary btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="groupList"></tbody>
-                    </table>
                 </div>
-                @if (ViewBag.Chapters != null && ViewBag.Topics != null)
-                {
-                    <div id="TopicTable">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Kapitel</th>
-                                    <th>Thema</th>
-                                    <th></th>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        @if (ViewBag.Chapters != null)
-                                        {
-                                            @Html.DropDownListFor(m => m.ChapterId, (IEnumerable<SelectListItem>)ViewBag.Chapters, new { @class = "form-control  input-sm", onchange = "onCurriculumChapterChanged()" })
-                                        }
-                                    </th>
-                                    <th>
-                                        @if (ViewBag.Topics != null)
-                                        {
-                                            @Html.DropDownListFor(m => m.TopicId, (IEnumerable<SelectListItem>)ViewBag.Topics, new { @class = "form-control  input-sm" })
-                                        }
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-primary btn-sm" onclick="addTopic()"><i class="fa fa-plus-circle"></i></button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="topicList"></tbody>
-                        </table>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Bezeichnung</h5>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="Name" name="name" placeholder="Bezeichnung der Lehrveranstaltung" />
+                                    <label for="Name">Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="ShortName" name="shortName" placeholder="Kurzbezeichnung" />
+                                    <label for="ShortName">Kurzname</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Dozent(en)</h5>
+                                <div id="DozTable">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Fakultät</th>
+                                                <th>Name</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control" })
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="form-control" id="DozId">
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+
+                                        </thead>
+                                        <tbody id="dozList"></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
-                }
-            </div>
-        </div>
-    </div>
-</div>
-    
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5>Termin(e)</h5>
+                        <div id="DateTable">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Datum / Erster Termin</th>
+                                        <th>Von</th>
+                                        <th>Bis</th>
+                                        <th>Wdh</th>
+                                        <th>Letzer Termin</th>
+                                        <th>Turnus</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <input type="text" class="form-control datepicker" id="DateDay">
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control timepicker timepicker-24" id="DateBegin">
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control timepicker timepicker-24" id="DateEnd">
+                                        </th>
+                                        <th>
+                                            <input type="checkbox" class="form-check-input" id="DateWdh" value="">
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control datepicker" id="DateLastDay">
+                                        </th>
+                                        <th>
+                                            <select class="form-control" id="frequency">
+                                                <option value="1">täglich</option>
+                                                <option value="7">wöchentlich</option>
+                                                <option value="14">14-tägig</option>
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dateList"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Raum/Räume</h5>
+                        <div id="RoomTable">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Fakultät</th>
+                                        <th>Raumnummer</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
+                                        </th>
+                                        <th>
+                                            <input type="text" class="form-control  input-sm" id="RoomId">
+                                        </th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roomList"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input id="cbKeepLists" class="form-check-input" type="checkbox">
+                            <label class="form-check-label" for="cbKeepLists">Auswahl für nächste Lehrveranstaltung beibehalten</label>
+                        </div>
+                    </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <h5>Bezeichnung</h5>
-        <div class="row">
-
-            <div class="col-md-4">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="Name" name="name" placeholder="Bezeichnung der Lehrveranstaltung" />
-                    <label for="Name">Name</label>
+                    <div class="col-md-6">
+                        <label class="col-sm-3 form-label" for="ConflictTable">Konflikte</label>
+                        <div class="col-sm-9">
+                            <div id="ConflictTable"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" onclick="createCourse()"><i class="bi-save"></i> Lehrveranstaltung anlegen</button>
+                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-2">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="ShortName" name="shortName" placeholder="Kurzbezeichnung" />
-                    <label for="ShortName">Kurzname</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <h5>Dozent(en)</h5>
-                <div id="DozTable">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Fakultät</th>
-                            <th>Name</th>
-                            <th>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>
-                                @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control" })
-                            </th>
-                            <th>
-                                <input type="text" class="form-control" id="DozId">
-                            </th>
-                            <th>
-                            </th>
-                        </tr>
-
-                        </thead>
-                        <tbody id="dozList"></tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-8">
-        <h5>Termin(e)</h5>
-        <div id="DateTable">
-            <table class="table table-condensed">
-                <thead>
-                <tr>
-                    <th>Datum / Erster Termin</th>
-                    <th>Von</th>
-                    <th>Bis</th>
-                    <th>Wdh</th>
-                    <th>Letzer Termin</th>
-                    <th>Turnus</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th>
-                        <input type="text" class="form-control datepicker" id="DateDay">
-                    </th>
-                    <th>
-                        <input type="text" class="form-control timepicker timepicker-24" id="DateBegin">
-                    </th>
-                    <th>
-                        <input type="text" class="form-control timepicker timepicker-24" id="DateEnd">
-                    </th>
-                    <th>
-                        <input type="checkbox" class="form-check-input" id="DateWdh" value="">
-                    </th>
-                    <th>
-                        <input type="text" class="form-control datepicker" id="DateLastDay">
-                    </th>
-                    <th>
-                        <select class="form-control" id="frequency">
-                            <option value="1">täglich</option>
-                            <option value="7">wöchentlich</option>
-                            <option value="14">14-tägig</option>
-                        </select>
-                    </th>
-                    <th>
-                        <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
-                    </th>
-                </tr>
-                </thead>
-                <tbody id="dateList"></tbody>
-            </table>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <h5>Raum/Räume</h5>
-        <div id="RoomTable">
-            <table class="table table-condensed">
-                <thead>
-                <tr>
-                    <th>Fakultät</th>
-                    <th>Raumnummer</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th>
-                        @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
-                    </th>
-                    <th>
-                        <input type="text" class="form-control  input-sm" id="RoomId">
-                    </th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody id="roomList"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-check">
-            <input id="cbKeepLists" class="form-check-input" type="checkbox">
-            <label class="form-check-label" for="cbKeepLists">Auswahl für nächste Lehrveranstaltung beibehalten</label>
         </div>
     </div>
 
-        <div class="col-md-6">
-            <label class="col-sm-3 form-label" for="ConflictTable">Konflikte</label>
-            <div class="col-sm-9">
-                <div id="ConflictTable"></div>
-            </div>
-        </div>
-    </div>
-<div class="row">
-    <div class="col-md-12">
-        <button class="btn btn-primary" onclick="createCourse()"><i class="bi-save"></i> Lehrveranstaltung anlegen</button>
-        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-    </div>
 </div>
-</div>
-</div>
-</div>
-
 
 
 <div class="row mt-3">
@@ -293,9 +291,10 @@
 
 
 @section Scripts {
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
 
