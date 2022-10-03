@@ -82,6 +82,9 @@ namespace MyStik.TimeTable.Data
 
         public virtual Occurrence Occurrence { get; set; }
 
+        public virtual ItemLabelSet LabelSet { get; set; }
+
+
         public virtual ICollection<BinaryStorage> Ressources { get; set; }
 
         public virtual ActivityOrganiser Organiser { get; set; }

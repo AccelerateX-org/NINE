@@ -27,7 +27,8 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             var model = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(g => g.ShortName).ToList();
-            ViewBag.UserRight = GetUserRight();
+            var userRight = GetUserRight();
+            ViewBag.UserRight = userRight;
             return View(model);
         }
 

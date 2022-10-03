@@ -309,113 +309,129 @@
 
 
     <div class="list-group-item">
-                @if (isIssued)
-                {
-                    <h4><i class="fas @mediaStyle"></i> Arbeit angemeldet</h4>
-                    if (Model.Thesis.DeliveryDate == null)
+        @if (isIssued)
+        {
+            <h4><i class="fas @mediaStyle"></i> Arbeit angemeldet</h4>
+            if (Model.Thesis.DeliveryDate == null)
+            {
+                <ul class="fa-ul">
+                    <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                    @if (Model.Thesis.RenewalDate != null)
                     {
-                    <ul class="fa-ul">
-                        <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
-                        @if (Model.Thesis.RenewalDate != null)
-                        {
-                            <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                            <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</li>
-                        }
-                        else
-                        {
-                            <li><i class="fa fa-calendar fa-li"></i>Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
-                            <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
+                        <li><i class="fa fa-calendar fa-li"></i>Ursprüngliche Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                        <li><i class="fa fa-calendar fa-li"></i>Verlängerung bis: @Model.Thesis.RenewalDate.Value.Date.ToShortDateString()</li>
+                    }
+                    else
+                    {
+                        <li><i class="fa fa-calendar fa-li"></i>Abgabe bis: @Model.Thesis.ExpirationDate.Value.Date.ToShortDateString()</li>
+                        <li><i class="fa fa-li fa-cog"></i>Noch @daysToExpiry Tage bis zur Abgabe</li>
 
 
-                            if (Model.Thesis.ProlongRequestDate != null)
+                        if (Model.Thesis.ProlongRequestDate != null)
+                        {
+                            if (Model.Thesis.ProlongSupervisorAccepted == null)
                             {
-                                if (Model.Thesis.ProlongSupervisorAccepted == null)
-                                {
-                                    <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung ist gestellt. Wunschtermin: @Model.Thesis.ProlongExtensionDate.Value.ToShortDateString()</li>
-                                }
-                                else
-                                {
-                                    if (Model.Thesis.ProlongSupervisorAccepted.Value == false)
-                                    {
-                                        <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung wurde seitens der Betreuenden abgelehnt.</li>
-                                    }
-                                    if (Model.Thesis.ProlongExaminationBoardAccepted.HasValue && Model.Thesis.ProlongExaminationBoardAccepted.Value == false)
-                                    {
-                                        <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung wurde seitens der PK abgelehnt.</li>
-                                    }
-
-                                }
-                            }
-                        }
-                    </ul>
-
-                        if (Model.Thesis.RenewalDate != null || 
-                            (Model.Thesis.ProlongSupervisorAccepted.HasValue && Model.Thesis.ProlongSupervisorAccepted.Value == false) ||
-                            (Model.Thesis.ProlongExaminationBoardAccepted.HasValue && Model.Thesis.ProlongExaminationBoardAccepted.Value == false))
-                        {
-                            <a class="btn btn-outline-danger" href="@Url.Action("ProlongAgain", "Thesis")">Weitere Verlängerung beantragen</a>
-                        }
-
-                        if (Model.Thesis.RenewalDate == null && Model.Thesis.ProlongRequestDate == null)
-                        {
-                            <a class="btn btn-outline-danger" href="@Url.Action("Prolong", "Thesis")">Verlängerung beantragen</a>
-                            if (pk != null)
-                            {
-                                <div class="alert alert-info">
-                                    <strong>Prüfungskommission:</strong>
-                                    <ul>
-                                        @foreach (var p in pk.Members.Where(x => x.HasChair))
-                                        {
-                                            <li>@p.Member.FullName</li>
-                                        }
-                                    </ul>
-                                </div>
-
-                            }
-                            if (daysToExpiry > 13)
-                            {
-                                <div class="alert alert-info"><strong>Wichtiger Hinweis:</strong> nach ASPO muss eine Verlängerung bis spätestens 14 Tage vor Abgabefrist beantragt werden.</div>
+                                <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung ist gestellt. Wunschtermin: @Model.Thesis.ProlongExtensionDate.Value.ToShortDateString()</li>
                             }
                             else
                             {
-                                <div class="alert alert-danger"><strong>Wichtiger Hinweis:</strong> Die offizielle Frist zur Beantragung einer Verlängerung ist abgelaufen.</div>
+                                if (Model.Thesis.ProlongSupervisorAccepted.Value == false)
+                                {
+                                    <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung wurde seitens der Betreuenden abgelehnt.</li>
+                                }
+                                if (Model.Thesis.ProlongExaminationBoardAccepted.HasValue && Model.Thesis.ProlongExaminationBoardAccepted.Value == false)
+                                {
+                                    <li><i class="fa fa-li fa-cog"></i>Antrag auf Verlängerung wurde seitens der PK abgelehnt.</li>
+                                }
+
                             }
                         }
                     }
-                    else
-                    {
-                        <ul class="fa-ul">
-                            <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
-                            <li><i class="fa fa-calendar fa-li"></i>Abgegeben am: @Model.Thesis.DeliveryDate.Value.Date.ToShortDateString()</li>
-                            @if (Model.Thesis.GradeDate != null)
-                            {
-                                <li><i class="fa fa-calendar fa-li"></i>Note gemeldet am: @Model.Thesis.GradeDate.Value.Date.ToShortDateString()</li>
-                            }
-                        </ul>
-                    }
-                }
-                else
+                </ul>
+
+                if (Model.Thesis.RenewalDate != null ||
+                    (Model.Thesis.ProlongSupervisorAccepted.HasValue && Model.Thesis.ProlongSupervisorAccepted.Value == false) ||
+                    (Model.Thesis.ProlongExaminationBoardAccepted.HasValue && Model.Thesis.ProlongExaminationBoardAccepted.Value == false))
                 {
-                    <h4><i class="fas @mediaStyle"></i> Arbeit anmelden</h4>
-                    if (hasSupervisor && hasTitle)
+                    <a class="btn btn-outline-danger" href="@Url.Action("ProlongAgain", "Thesis")">Weitere Verlängerung beantragen</a>
+                }
+
+                if (Model.Thesis.RenewalDate == null && Model.Thesis.ProlongRequestDate == null)
+                {
+                    if (Model.Thesis.PlannedBegin.HasValue && Model.Thesis.PlannedBegin.Value > DateTime.Today &&
+                        Model.Thesis.IssueDate.HasValue && Model.Thesis.IssueDate.Value < Model.Thesis.PlannedBegin.Value)
                     {
-                        <a href="@Url.Action("Issue")" class="btn btn-outline-primary">Anmelden</a>
+                        <a class="btn btn-outline-danger" href="@Url.Action("MoveIssue", "Thesis")">
+                            Anmeldung auf geplanten Beginn verschieben
+                        </a>
+                    }
+
+
+                    if (Model.Thesis.IssueDate.HasValue && Model.Thesis.IssueDate.Value <= DateTime.Today)
+                    {
+                        <a class="btn btn-outline-danger" href="@Url.Action("Prolong", "Thesis")">
+                            Verlängerung beantragen
+                        </a>
+                    }
+
+
+                    if (pk != null)
+                    {
+                        <div class="alert alert-info">
+                            <strong>Prüfungskommission:</strong>
+                            <ul>
+                                @foreach (var p in pk.Members.Where(x => x.HasChair))
+                                {
+                                    <li>@p.Member.FullName</li>
+                                }
+                            </ul>
+                        </div>
+
+                    }
+                    if (daysToExpiry > 13)
+                    {
+                        <div class="alert alert-info"><strong>Wichtiger Hinweis:</strong> nach ASPO muss eine Verlängerung bis spätestens 14 Tage vor Abgabefrist beantragt werden.</div>
                     }
                     else
                     {
-                        if (!hasSupervisor)
-                        {
-                            <p>Anmeldung erst dann möglich, wenn BetreuerIn zugesagt hat.</p>
-
-                        }
-                        if (!hasTitle)
-                        {
-                            <p>Anmeldung erst dann möglich, wenn das Thema festgelegt wurde.</p>
-                        }
+                        <div class="alert alert-danger"><strong>Wichtiger Hinweis:</strong> Die offizielle Frist zur Beantragung einer Verlängerung ist abgelaufen.</div>
                     }
+                }
+            }
+            else
+            {
+                <ul class="fa-ul">
+                    <li><i class="fa fa-calendar fa-li"></i>Angemeldet am: @Model.Thesis.IssueDate.Value.Date.ToShortDateString()</li>
+                    <li><i class="fa fa-calendar fa-li"></i>Abgegeben am: @Model.Thesis.DeliveryDate.Value.Date.ToShortDateString()</li>
+                    @if (Model.Thesis.GradeDate != null)
+                    {
+                        <li><i class="fa fa-calendar fa-li"></i>Note gemeldet am: @Model.Thesis.GradeDate.Value.Date.ToShortDateString()</li>
+                    }
+                </ul>
+            }
+        }
+        else
+        {
+            <h4><i class="fas @mediaStyle"></i> Arbeit anmelden</h4>
+            if (hasSupervisor && hasTitle)
+            {
+                <a href="@Url.Action("Issue")" class="btn btn-outline-primary">Anmelden</a>
+            }
+            else
+            {
+                if (!hasSupervisor)
+                {
+                    <p>Anmeldung erst dann möglich, wenn BetreuerIn zugesagt hat.</p>
 
                 }
-            </div>
+                if (!hasTitle)
+                {
+                    <p>Anmeldung erst dann möglich, wenn das Thema festgelegt wurde.</p>
+                }
+            }
+
+        }
+    </div>
 }
 </div>
 </div>

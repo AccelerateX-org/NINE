@@ -66,6 +66,9 @@ namespace MyStik.TimeTable.Data
         public double ECTS { get; set; }
 
 
+        public virtual ItemLabelSet LabelSet { get; set; }
+
+
         public virtual CurriculumSection CurriculumSection { get; set; }
 
 

@@ -303,9 +303,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
-            int period = 0;
-            bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
-            if (!success || period == 0)
+            var period = thesis.Student.Curriculum.ThesisDuration;
+            if (period == 0)
             {
                 period = 3;
             }

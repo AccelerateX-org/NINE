@@ -64,7 +64,9 @@ namespace MyStik.TimeTable.Web.Services
             var modules = new List<CurriculumModule>();
             foreach (var member in members)
             {
-                modules.AddRange(_db.CurriculumModules.Where(x => x.MV.Id == member.Id).ToList());
+                modules.AddRange(_db.CurriculumModules.Where(x => 
+                    x.ModuleResponsibilities.Any(m => 
+                        m.Member.Id == member.Id)).ToList());
             }
 
 

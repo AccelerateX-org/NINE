@@ -15,6 +15,7 @@ namespace MyStik.TimeTable.Data
             Chapters = new HashSet<CurriculumChapter>();
             Sections = new HashSet<CurriculumSection>();
             Opportunities = new HashSet<CurriculumOpportunity>();
+            
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -74,6 +75,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public double EctsTarget { get; set; }
 
+        public int ThesisDuration { get; set; }
+
         /// <summary>
         /// Gültig ab Semester
         /// </summary>
@@ -94,6 +97,11 @@ namespace MyStik.TimeTable.Data
         /// Studiengangleiter
         /// </summary>
         public virtual ActivityOrganiser Organiser { get; set; }
+
+        /// <summary>
+        /// Der Labelset definiert das, was es für den Studiengang gibt
+        /// </summary>
+        public virtual ItemLabelSet LabelSet { get; set; }
 
         /// <summary>
         /// Studiengruppen - integraler Bestandteil

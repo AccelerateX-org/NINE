@@ -5,66 +5,56 @@
     ViewBag.Title = "Sprechstundentermin";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>@Model.Host.Name - Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h1>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>@Model.Host.Name - Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    @Html.Raw(Model.Date.Activity.Description)
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Sprechstundentermin</h4>
-                </div>
-                <div class="panel-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
-                    {
-                        <fieldset>
-                            @Html.ValidationSummary()
-                            @Html.HiddenFor(model => model.Date.Id)
-                            @if (Model.Date.Slots.Any() && Model.AvailableSlots != null && Model.AvailableSlots.Any())
-                            {
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Verfügbare Slots</label>
-                                    <div class="col-sm-6">
-                                        <select name="SlotId" class="form-control">
-                                            @foreach (var slot in Model.AvailableSlots)
-                                            {
-                                                if (!slot.Occurrence.Subscriptions.Any() && slot.Occurrence.IsAvailable)
-                                                {
-                                                    <option value="@slot.Id">@Html.TimeSpan(slot)</option>
-                                                }
-                                            }
-                                        </select>
-                                    </div>
-                            </div>
-                            }
-                            <div class="form-group">
-                                <label class = "col-sm-4 control-label">Mein Anliegen (Angabe freiwillig)</label>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    <fieldset>
+                        @Html.ValidationSummary()
+                        @Html.HiddenFor(model => model.Date.Id)
+                        @if (Model.Date.Slots.Any() && Model.AvailableSlots != null && Model.AvailableSlots.Any())
+                        {
+                            <div class="mb-3">
+                                <label class="col-sm-4 form-label">Verfügbare Slots</label>
                                 <div class="col-sm-6">
-                                    @Html.TextAreaFor(m => m.Description, new {@class = "form-control", placeholder = "z.B. Anrechnung, Frage zu Lehrveranstaltung", rows = "10"})
+                                    <select name="SlotId" class="form-select">
+                                        @foreach (var slot in Model.AvailableSlots)
+                                        {
+                                            if (!slot.Occurrence.Subscriptions.Any() && slot.Occurrence.IsAvailable)
+                                            {
+                                                <option value="@slot.Id">@Html.TimeSpan(slot)</option>
+                                            }
+                                        }
+                                    </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-md-offset-4 col-md-6">
-                                    <input type="submit" value="Verbindlich eintragen" class="btn btn-primary" />
-                                </div>
+                        }
+                        <div class="mb-3">
+                            <label class="col-sm-4 form-label">Mein Anliegen (Angabe freiwillig)</label>
+                            <div class="col-sm-6">
+                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "z.B. Anrechnung, Frage zu Lehrveranstaltung", rows = "10" })
                             </div>
-                        </fieldset>
-                    }
+                        </div>
+                        <div class="mb-3">
+                            <div class="col-md-6">
+                                <input type="submit" value="Verbindlich eintragen" class="btn btn-outline-primary" />
+                            </div>
+                        </div>
+                    </fieldset>
+                }
 
-                </div>
+
             </div>
-
         </div>
     </div>
 </div>

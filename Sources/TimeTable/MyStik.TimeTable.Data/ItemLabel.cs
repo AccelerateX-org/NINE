@@ -28,7 +28,7 @@ namespace MyStik.TimeTable.Data
         /// gesetzt: Lokal
         /// null: global
         /// </summary>
-        public virtual ActivityOrganiser Organiser { get; set; }
+        //public virtual ActivityOrganiser Organiser { get; set; }
 
 
         public virtual ICollection<ItemLabelSet> LabelSets { get; set; }

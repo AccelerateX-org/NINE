@@ -64,7 +64,10 @@
                         if (dateMin != null && dateMax != null)
                         {
                             <div class="list-group-item d-flex justify-content-between align-items-center">
-                                @o.OfficeHour.Name
+                                <div>
+                                    <h5>@o.OfficeHour.Name</h5>
+                                    <p>@Html.Raw(o.OfficeHour.Description)</p>
+                                </div>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="@Url.Action("Details", "OfficeHour", new {id = o.OfficeHour.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
                                         <i class="fas fa-info-circle"></i> Details & Eintragung
@@ -75,7 +78,10 @@
                         else
                         {
                             <div class="list-group-item d-flex justify-content-between align-items-center">
-                                @o.OfficeHour.Name
+                                <div>
+                                    <h5>@o.OfficeHour.Name</h5>
+                                    <p>@Html.Raw(o.OfficeHour.Description)</p>
+                                </div>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="@Url.Action("Details", "OfficeHour", new {id = o.OfficeHour.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
                                         <i class="fas fa-info-circle"></i> Details & Eintragung

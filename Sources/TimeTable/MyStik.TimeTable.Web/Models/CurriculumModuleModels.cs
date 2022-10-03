@@ -105,6 +105,10 @@ namespace MyStik.TimeTable.Web.Models
         public string institution { get; set; }
         public string name { get; set; }
 
+        public int ectsTarget { get; set; }
+
+        public string level { get; set; }
+
 
         public ICollection<CurriculumModulePlanSection> sections { get; set; }
     }
@@ -126,6 +130,8 @@ namespace MyStik.TimeTable.Web.Models
         public double ects { get; set; }
 
         public string name { get; set; }
+
+        public string label { get; set; }
     }
 
 
@@ -144,7 +150,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public string tag { get; set; }
 
-        public string responsible { get; set; }
+        public List<ModuleResponsibleImportModel> responsible { get; set; }
 
         public List<CurriculumSubjectImportModel> subjects { get; set; }
 
@@ -217,4 +223,8 @@ namespace MyStik.TimeTable.Web.Models
         public double betterment { get; set; }
     }
 
+    public class ModuleResponsibleImportModel
+       {
+        public string tag { get; set; }
+    }
 }

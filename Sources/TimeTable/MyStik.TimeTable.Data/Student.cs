@@ -28,6 +28,9 @@ namespace MyStik.TimeTable.Data
         public virtual Curriculum Curriculum { get; set; }
 
 
+        public virtual ItemLabelSet LabelSet { get; set; }
+
+
         public virtual Semester FirstSemester { get; set; }
 
         public virtual Semester LastSemester { get; set; }

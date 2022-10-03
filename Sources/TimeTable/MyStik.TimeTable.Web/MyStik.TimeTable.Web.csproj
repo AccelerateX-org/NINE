@@ -4127,6 +4127,7 @@
     <Content Include="Views\Home\SelectFilter.cshtml" />
     <Content Include="Views\Course\DetailsNew.cshtml" />
     <Content Include="Views\ScriptShop\Inventory.cshtml" />
+    <Content Include="Views\ThesisAdmin\All.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

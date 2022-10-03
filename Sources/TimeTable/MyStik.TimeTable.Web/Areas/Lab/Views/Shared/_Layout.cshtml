@@ -100,7 +100,7 @@
 </div>
 
 
-@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { Area="", id = "logoutForm" }))
 {
     @Html.AntiForgeryToken()
 }

@@ -86,20 +86,32 @@ namespace MyStik.TimeTable.Web.Controllers
                 var module = cat.Modules.FirstOrDefault(x => x.Tag.Equals(catalogModule.tag));
 
 
-                var member = org.Members.FirstOrDefault(x => x.ShortName.Equals(catalogModule.responsible));
-
                 if (module == null)
                 {
                     module = new CurriculumModule
                     {
                         Name = catalogModule.name,
                         Tag = catalogModule.tag,
-                        MV = member,
                         Catalog = cat,
                     };
 
+
                     Db.CurriculumModules.Add(module);
                 }
+
+                // die Modulverantwortlichen
+                foreach (var moduleResp in catalogModule.responsible)
+                {
+                    var member = org.Members.FirstOrDefault(x => x.ShortName.Equals(moduleResp.tag));
+
+                    if (member != null)
+                    {
+                        var resp = new ModuleResponsibility {Member = member, Module = module};
+                        module.ModuleResponsibilities.Add(resp);
+                        Db.ModuleResponsibilities.Add(resp);
+                    }
+                }
+
 
                 // die Fächer
                 foreach (var moduleSubject in catalogModule.subjects)
@@ -194,6 +206,76 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        public ActionResult Delete()
+        {
+            var catalogs = Db.CurriculumModuleCatalogs.ToList();
+
+            foreach (var catalog in catalogs)
+            {
+                foreach (var model in catalog.Modules.ToList())
+                {
+                    foreach (var subject in model.ModuleSubjects.ToList())
+                    {
+                        foreach (var opportunity in subject.Opportunities.ToList())
+                        {
+                            Db.SubjectOpportunities.Remove(opportunity);
+                        }
+                        Db.ModuleCourses.Remove(subject);
+                    }
+
+                    foreach (var option in model.ExaminationOptions.ToList())
+                    {
+                        foreach (var fraction in option.Fractions.ToList())
+                        {
+                            Db.ExaminationFractions.Remove(fraction);
+                        }
+
+                        Db.ExaminationOptions.Remove(option);
+                    }
+
+                    foreach (var moduleCourse in model.ModuleSubjects.ToList())
+                    {
+                        Db.ModuleCourses.Remove(moduleCourse);
+                    }
+
+                    foreach (var accreditation in model.Accreditations.ToList())
+                    {
+                        Db.Accreditations.Remove(accreditation);
+                    }
+
+                    foreach (var description in model.Descriptions.ToList())
+                    {
+                        foreach (var examinationUnit in description.ExaminationUnits.ToList())
+                        {
+                            foreach (var aid in examinationUnit.ExaminationAids.ToList())
+                            {
+                                Db.ExaminationAids.Remove(aid);
+                            }
+
+                            Db.ExaminationUnits.Remove(examinationUnit);
+                        }
+
+                        Db.ModuleDescriptions.Remove(description);
+                    }
+
+
+                    var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
+                    foreach (var mapping in mappings)
+                    {
+                        mapping.Module = null;
+                    }
+
+                    Db.CurriculumModules.Remove(model);
+                }
+
+                Db.CurriculumModuleCatalogs.Remove(catalog);
+            }
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Index");
+        }
 
     }
 }

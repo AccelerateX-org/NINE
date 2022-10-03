@@ -45,7 +45,28 @@ namespace MyStik.TimeTable.Web.Jobs
             // noch nicht angemeldet
             // noch nicht abgegeben (zur Sicherheit der alten Fälle)
             var allThesis = db.Theses
-                .Where(x => x.PlannedBegin != null && x.PlannedBegin <= today && x.IssueDate == null && x.DeliveryDate == null).ToList();
+                .Where(x => 
+                    x.PlannedBegin != null && x.PlannedBegin <= today && 
+                    x.IssueDate == null && x.DeliveryDate == null &&
+                    x.Supervisors.Any(s => s.AcceptanceDate.HasValue))
+                .OrderBy(x => x.Student.Curriculum.ShortName)
+                .ThenBy(x => x.PlannedBegin.Value)
+                .ToList();
+
+            var allCurr = allThesis.Select(x => x.Student.Curriculum).Distinct();
+
+
+            var allCurrWithPk = allCurr.Where(x =>
+                x.Organiser.Autonomy != null && 
+                x.Organiser.Autonomy.Committees.Any(c =>
+                    c.Name.Equals("PK") &&
+                    c.Curriculum != null &&
+                    c.Curriculum.Id == x.Id))
+                .ToList();
+
+
+            var allThesisWithPk = allThesis.Where(x => allCurrWithPk.Contains(x.Student.Curriculum)).ToList();
+
 
 
             // Prepare Postal classes to work outside of ASP.NET request
@@ -64,7 +85,7 @@ namespace MyStik.TimeTable.Web.Jobs
                 From = smtpSection.From,
                 To = "olav.hinz@hm.edu",
                 Subject = "Abschlussarbeiten Automatische Anmeldungem",
-                Theses = allThesis
+                Theses = allThesisWithPk
             };
 
 

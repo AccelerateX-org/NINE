@@ -1035,7 +1035,6 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
             // Achtung: vertauschen der Anzeige für "IsDeprecated"
-
             model.IsDeprecated = !model.IsDeprecated;
 
             return View(model);
@@ -1054,6 +1053,7 @@ namespace MyStik.TimeTable.Web.Controllers
             cur.Name = model.Name;
             cur.ShortName = model.ShortName;
             cur.Version = model.Version;
+            cur.ThesisDuration = model.ThesisDuration;
 
             cur.IsDeprecated = !model.IsDeprecated;
 
@@ -1103,6 +1103,25 @@ namespace MyStik.TimeTable.Web.Controllers
             curr.Tag = plan.tag;
             curr.Version = plan.version;
             curr.Organiser.Tag = plan.institution;
+            curr.EctsTarget = plan.ectsTarget;
+
+            if (curr.Degree == null)
+            {
+                var deg = Db.Degrees.FirstOrDefault(x => x.Name.Equals(plan.level));
+
+                if (deg == null)
+                {
+                    deg = new Degree
+                    {
+                        Name = plan.level
+                    };
+
+                    Db.Degrees.Add(deg);
+                }
+
+                curr.Degree = deg;
+            }
+
 
 
             foreach (var section in plan.sections)
@@ -1124,6 +1143,41 @@ namespace MyStik.TimeTable.Web.Controllers
                         Name = slot.name,
                         CurriculumSection = currSection
                     };
+
+                    // das Label
+                    if (!string.IsNullOrEmpty(slot.label))
+                    {
+                        // Test, ob Studiengang schon Labelset hat
+                        var currLabelSet = curr.LabelSet;
+                        if (currLabelSet == null)
+                        {
+                            currLabelSet = new ItemLabelSet();
+                            curr.LabelSet = currLabelSet;
+                            Db.ItemLabelSets.Add(currLabelSet);
+                        }
+
+                        // gibt es das Label schon im Studiengang?
+                        var label = currLabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(slot.label));
+
+                        if (label == null)
+                        {
+                            label = new ItemLabel
+                            {
+                                Name = slot.label,
+                                HtmlColor = "#ff0000"
+                            };
+
+                            currLabelSet.ItemLabels.Add(label);
+
+                            Db.ItemLabels.Add(label);
+                        }
+
+                        // das Label dem Slot zuordnen
+                        var slotLabelSet = new ItemLabelSet();
+
+                        currSlot.LabelSet = slotLabelSet;
+                        slotLabelSet.ItemLabels.Add(label);
+                    }
 
                     Db.CurriculumSlots.Add(currSlot);
                 }

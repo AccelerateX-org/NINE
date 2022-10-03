@@ -494,6 +494,18 @@
     <Compile Include="Migrations\202208041711143_ModuleCatalogV8.designer.cs">
       <DependentUpon>202208041711143_ModuleCatalogV8.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202208051641138_LabelSetsV1.cs" />
+    <Compile Include="Migrations\202208051641138_LabelSetsV1.designer.cs">
+      <DependentUpon>202208051641138_LabelSetsV1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208120848358_ModuleCatalogV9.cs" />
+    <Compile Include="Migrations\202208120848358_ModuleCatalogV9.designer.cs">
+      <DependentUpon>202208120848358_ModuleCatalogV9.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208180830247_LabelSetV2.cs" />
+    <Compile Include="Migrations\202208180830247_LabelSetV2.designer.cs">
+      <DependentUpon>202208180830247_LabelSetV2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -779,6 +791,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202208041711143_ModuleCatalogV8.resx">
       <DependentUpon>202208041711143_ModuleCatalogV8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208051641138_LabelSetsV1.resx">
+      <DependentUpon>202208051641138_LabelSetsV1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208120848358_ModuleCatalogV9.resx">
+      <DependentUpon>202208120848358_ModuleCatalogV9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208180830247_LabelSetV2.resx">
+      <DependentUpon>202208180830247_LabelSetV2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

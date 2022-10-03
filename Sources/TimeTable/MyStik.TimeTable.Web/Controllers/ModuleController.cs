@@ -68,9 +68,6 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var member = GetMyMembership();
 
-            model.MV = member;
-            Db.CurriculumModules.Add(model);
-            Db.SaveChanges();
 
             return RedirectToAction("Details", new {id = model.Id});
         }

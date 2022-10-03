@@ -20,7 +20,11 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var member = GetMyMembership();
 
-            var model = Db.CurriculumModules.Where(x => x.MV.Id == member.Id).ToList();
+
+            var model = Db.CurriculumModules.Where(x =>
+                x.ModuleResponsibilities.Any(m =>
+                    m.Member.Id == member.Id)).ToList();
+
 
 
             return View(model);
@@ -53,65 +57,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Name = model.Name,
                 ShortName = model.ShortName,
                 ModuleId = model.ModuleId,
-                MV = member
             };
 
+            var resp = new ModuleResponsibility {Member = member, Module = module};
 
-            var primaryTechingUnit = "";
-            switch (model.LectureType)
-            {
-                case 1:
-                    primaryTechingUnit = "Seminaristischer Unterricht";
-                    break;
-                case 2:
-                    primaryTechingUnit = "Seminar";
-                    break;
-                case 3:
-                    primaryTechingUnit = "Vorlesung";
-                    break;
-            }
+            module.ModuleResponsibilities.Add(resp);
 
 
-            var primaryCourse = new ModuleSubject()
-            {
-                Name = primaryTechingUnit,
-                Module = module
-            };
-            Db.ModuleCourses.Add(primaryCourse);
 
-
-            if (model.HasPractice)
-            {
-                var secCourse = new ModuleSubject
-                {
-                    Name = "Übung",
-                    Module = module
-                };
-                Db.ModuleCourses.Add(secCourse);
-            }
-
-            if (model.HasTutorium)
-            {
-                var secCourse = new ModuleSubject
-                {
-                    Name = "Tutorium",
-                    Module = module
-                };
-                Db.ModuleCourses.Add(secCourse);
-            }
-
-
-            if (model.HasLaboratory)
-            {
-                var secCourse = new ModuleSubject
-                {
-                    Name = "Laborpraktikum",
-                    Module = module
-                };
-                Db.ModuleCourses.Add(secCourse);
-            }
-
-
+            Db.ModuleResponsibilities.Add(resp);
             Db.CurriculumModules.Add(module);
             Db.SaveChanges();
 
@@ -159,6 +113,17 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
                 Db.ModuleCourses.Remove(subject);
             }
+
+            foreach (var option in model.ExaminationOptions.ToList())
+            {
+                foreach (var fraction in option.Fractions.ToList())
+                {
+                    Db.ExaminationFractions.Remove(fraction);
+                }
+
+                Db.ExaminationOptions.Remove(option);
+            }
+
 
             foreach (var moduleCourse in model.ModuleSubjects.ToList())
             {

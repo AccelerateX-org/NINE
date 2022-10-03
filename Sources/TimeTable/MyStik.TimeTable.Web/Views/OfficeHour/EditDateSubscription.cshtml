@@ -5,50 +5,35 @@
     ViewBag.Title = "Sprechstundentermin";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>@Model.Host.Name - Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h1>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>@Model.Host.Name - Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h4>
             </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Sprechstundentermin</h4>
-                </div>
-                <div class="panel-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
-                    {
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
                     <fieldset>
                         @Html.ValidationSummary()
                         @Html.HiddenFor(model => model.Date.Id)
                         @Html.HiddenFor(model => model.Subscription.Id)
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 form-label" })
                             <div class="col-sm-6">
                                 @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Mein Anliegen", rows = "10" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-4 col-md-6">
-                                <input type="submit" value="speichern" class="btn btn-primary" />
+                        <div class="mb-3">
+                            <div class="col-md-6">
+                                <input type="submit" value="speichern" class="btn btn-outline-primary" />
                             </div>
                         </div>
                     </fieldset>
-                    }
-
-                </div>
+                }
             </div>
-
         </div>
     </div>
 </div>
+
+

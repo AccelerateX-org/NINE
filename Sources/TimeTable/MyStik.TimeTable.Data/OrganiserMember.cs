@@ -7,6 +7,12 @@ namespace MyStik.TimeTable.Data
 {
     public class OrganiserMember
     {
+        public OrganiserMember()
+        {
+            ModuleResponsibilities = new List<ModuleResponsibility>();
+        }
+
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -106,7 +112,7 @@ namespace MyStik.TimeTable.Data
         /// <summary>
         /// Liste aller Modulverantwortlichkeiten
         /// </summary>
-        public virtual ICollection<CurriculumModule> Modules { get; set; }
+        public virtual ICollection<ModuleResponsibility> ModuleResponsibilities { get; set; }
 
         public virtual ICollection<ActivityOwner> Ownerships { get; set; }
 

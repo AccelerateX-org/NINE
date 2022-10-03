@@ -204,16 +204,9 @@
                             if (Model.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
                             {
                                 <div class="btn-group pull-right" role="group">
-                                    @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                    @Html.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
                                         new {dateId = date.Id},
-                                        new AjaxOptions()
-                                        {
-                                            HttpMethod = "Post",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = "modalDelete",
-                                            OnSuccess = "showEditDateInformation()"
-                                        },
-                                        new {@class = "btn btn-default btn-xs"}
+                                        new {@class = "btn btn-outline-primary btn-sm" }
                                         )
                                 </div>
                             }
@@ -222,37 +215,23 @@
                             if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                             {
                                 <div class="btn-group pull-right" role="group">
-                                    @Ajax.ActionButton("fa-times text-warning", "absagen", "CancelDate2", "Course",
+                                    @Ajax.ActionButton("fa-times", "absagen", "CancelDate2", "Course",
                                         new {dateId = date.Id},
                                         new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
-                                        new {@class = "btn btn-default btn-xs"}
+                                        new {@class = "btn btn-outline-primary btn-sm"}
                                         )
 
-                                    @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new { id = date.Occurrence.Id }, new { @class = "btn btn-default btn-xs" })
+                                    @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new { id = date.Occurrence.Id }, new { @class = "btn btn-outline-primary btn-sm" })
 
 
-                                    @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                                    @Html.ActionButton("fa-info-circle", "Infos ändern", "ChangeDateInformation", "Course",
                                         new {dateId = date.Id},
-                                        new AjaxOptions()
-                                        {
-                                            HttpMethod = "Post",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = "modalEditInfo",
-                                            OnSuccess = "showEditDateInformation()"
-                                        },
-                                        new {@class = "btn btn-default btn-xs"}
+                                        new {@class = "btn btn-outline-primary btn-sm" }
                                         )
 
-                                    @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                    @Html.ActionButton("fa-trash", "löschen", "DeleteDateConfirm", "Course",
                                         new {dateId = date.Id},
-                                        new AjaxOptions()
-                                        {
-                                            HttpMethod = "Post",
-                                            InsertionMode = InsertionMode.Replace,
-                                            UpdateTargetId = "modalDelete",
-                                            OnSuccess = "showConfirmDeleteDate()"
-                                        },
-                                        new {@class = "btn btn-danger btn-xs"}
+                                        new {@class = "btn btn-outline-danger btn-sm" }
                                         )
 
                                 </div>
@@ -263,15 +242,9 @@
                         {
                             if (ViewBag.UserRight.IsCourseAdmin)
                             {
-                                @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                                @Html.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
                                     new { dateId = date.Id },
-                                    new AjaxOptions()
-                                    {
-                                        HttpMethod = "Post",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = "modalDelete",
-                                        OnSuccess = "showConfirmDeleteDate()"
-                                    },
+                                    
                                     new { @class = "btn btn-danger btn-sm" }
                                     )
                             }

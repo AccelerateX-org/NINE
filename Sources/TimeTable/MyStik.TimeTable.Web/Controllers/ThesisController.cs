@@ -355,9 +355,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
-            int period = 0;
-            bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
-            if (!success || period == 0)
+            var period = thesis.Student.Curriculum.ThesisDuration;
+            if (period == 0)
             {
                 period = 3;
             }
@@ -372,6 +371,22 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult MoveIssue()
+        {
+            var user = GetCurrentUser();
+            var student = StudentService.GetCurrentStudent(user);
+            var thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+
+            if (thesis.PlannedBegin.HasValue && thesis.IssueDate.HasValue &&
+                thesis.IssueDate.Value < thesis.PlannedBegin.Value &&
+                thesis.PlannedBegin.Value > DateTime.Today)
+            {
+                thesis.IssueDate = thesis.PlannedBegin;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
 
         public ActionResult Prolong()
         {
@@ -590,9 +605,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == model.Thesis.Id);
 
-            int period = 0;
-            bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
-            if (!success || period == 0)
+            var period = thesis.Student.Curriculum.ThesisDuration;
+            if (period == 0)
             {
                 period = 3;
             }

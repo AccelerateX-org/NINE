@@ -109,6 +109,22 @@
                 </div>
                 <hr/>
                 <h5>Aufbau</h5>
+                @if (Model.Curriculum.LabelSet != null)
+                {
+                    var i = 0;
+                    <div class="form-floating">
+                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
+                            <option selected>Open this select menu</option>
+                            @foreach (var label in Model.Curriculum.LabelSet.ItemLabels)
+                            {
+                                i++;
+                                <option value="@label.Name">@label.Name</option>
+
+                            }
+                        </select>
+                        <label for="floatingSelect">Studienrichtung</label>
+                    </div>
+                }
                 @foreach (var sec in Model.Curriculum.Sections)
                 {
                     <div class="row">
@@ -121,11 +137,26 @@
                                 {
                                     var w = (int) (slot.ECTS / 32 * 100);
 
-                                    <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
-                                        <strong>@slot.Tag</strong>
-                                        <br/>
-                                        <small>@slot.Name</small>
-                                    </a>
+                                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                                    {
+                                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
+                                            <strong>@slot.Tag</strong> 
+                                            @foreach (var label in slot.LabelSet.ItemLabels)
+                                            {
+                                                <span>@label.Name</span>
+                                            }
+                                            <br/>
+                                            <small>@slot.Name</small>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
+                                            <strong>@slot.Tag</strong>
+                                            <br/>
+                                            <small>@slot.Name</small>
+                                        </a>
+                                    }
                                 }
                             </div>
 
@@ -138,3 +169,11 @@
 </div>
 
 
+@section scripts
+{
+    <script>
+        function onLabelSelected(value) {
+            alert(value);
+        }
+    </script>
+}

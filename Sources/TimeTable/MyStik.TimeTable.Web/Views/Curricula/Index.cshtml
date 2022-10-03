@@ -10,6 +10,8 @@
     }
 
     ViewBag.Title = "Studiengänge";
+
+    var isMember = ViewBag.UserRight.IsOrgMember;
 }
 
 
@@ -24,7 +26,7 @@
         <div class="card">
             <div class="card-header">
                 <h4>
-                    <i class="bi-trophy"></i> Studiengänge
+                    <i class="bi-trophy"></i> Studiengänge / Studienangebote
                 </h4>
             </div>
             <div class="list-group">
@@ -32,7 +34,7 @@
                     <div class="btn-group">
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <a href="@Url.Action("Create")" class="btn btn-outline-primary">Studiengang anlegen</a>
+                            <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Studiengang anlegen</a>
                         }
                     </div>
                 </div>
@@ -42,28 +44,59 @@
                     <tr>
                         <th></th>
                         <th>Fakultät</th>
-                        <th>ID</th>
                         <th>Bezeichnung </th>
                         <th>Abschluss</th>
+                        <th>PKV</th>
+                        <th>Version</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var org in Model.OrderBy(x => x.ShortName))
                     {
-
                         foreach (var curr in org.Curricula.OrderBy(x => x.Name))
                         {
-                            <tr>
-                                <td>@Html.FacultyLabel(org)</td>
-                                <td>@org.Name</td>
-                                <td>@curr.Tag</td>
-                                <td>
-                                    <a href="@Url.Action("Details", "Curriculum", new {id = curr.Id})">
-                                        @curr.Name (@curr.ShortName)
-                                    </a>
-                                </td>
-                                <td></td>
-                            </tr>
+                            var pk = curr.Organiser.Autonomy != null ?
+                                curr.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")&&
+                                                                                                           x.Curriculum != null &&
+                                                                                                           x.Curriculum.Id == curr.Id) : null;
+
+                            var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
+
+                            var rowClass = "";
+                            if (curr.IsDeprecated)
+                            {
+                                rowClass = "table-secondary";
+                            }
+
+                            if (isMember || (!isMember && !curr.IsDeprecated))
+                            {
+                                <tr class="@rowClass">
+                                    <td>@Html.FacultyLabel(org)</td>
+                                    <td>@org.Name</td>
+                                    <td>
+                                        <a href="@Url.Action("Details", "Curriculum", new {id = curr.Id})">
+                                            @curr.Name (@curr.ShortName)
+                                        </a>
+                                    </td>
+                                    @if (curr.Degree != null)
+                                    {
+                                        <td>@curr.Degree.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (pkv != null)
+                                    {
+                                        <td>@pkv.Member.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>@curr.Tag (@curr.Version)</td>
+                                </tr>
+                            }
                         }
                     }
                 </tbody>

@@ -2816,10 +2816,13 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
-            var userRights = GetUserRight(User.Identity.Name, model.Course);
-            ViewBag.UserRight = userRights;
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
 
-            return View(model);
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new { id = id });
         }
 
         /// <summary>
@@ -2906,9 +2909,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 Summary = courseService.GetCourseSummary(course),
             };
 
-            ViewBag.UserRight = GetUserRight();
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
 
-            return View(model);
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new { id = id });
         }
 
         /// <summary>
@@ -3450,7 +3457,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
-            return View(model);
+            var userRight = GetUserRight(User.Identity.Name, model.Course);
+            ViewBag.UserRight = userRight;
+
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new { id = id });
         }
 
         /// <summary>
@@ -3552,7 +3565,10 @@ namespace MyStik.TimeTable.Web.Controllers
             var userRight = GetUserRight(User.Identity.Name, model.Course);
             ViewBag.UserRight = userRight;
 
-            return View(model);
+            if (userRight.IsHost || userRight.IsOwner || userRight.IsCourseAdmin)
+                return View(model);
+
+            return RedirectToAction("Details", new {id = id});
         }
 
         /// <summary>

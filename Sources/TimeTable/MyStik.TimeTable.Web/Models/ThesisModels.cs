@@ -465,9 +465,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public int GetWorkingPeriod()
         {
-            int period = 0;
-            bool success = int.TryParse(Thesis.Student.Curriculum.Version, out period);
-            if (!success || period == 0)
+            var period = Thesis.Student.Curriculum.ThesisDuration;
+            if (period == 0)
             {
                 period = 3;
             }

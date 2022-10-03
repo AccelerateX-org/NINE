@@ -10,23 +10,21 @@
 @Html.Partial("_CourseSummaryHeader", Model.Summary)
 
 
-<div class="container-fluid">
     <div class="row">
         <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="portlet-title">
+            <div class="card">
+                <div class="card-header">
                     <h4>
-                        <i class="fa fa-book"></i> Einordnung im Vorlesungsverzeichnis nach Semestergruppen
+                        Einordnung der Lehrveranstaltung im Vorlesungsverzeichnis nach Semestergruppen
                     </h4>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="form-horizontal">
                         @Html.HiddenFor(m => m.CourseId)
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="GroupTable">Semestergruppe(n)</label>
+                        <div class="mb-3">
                             <div class="col-sm-9">
                                 <div id="GroupTable">
-                                    <table class="table table-condensed">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>Fakultät</th>
@@ -38,19 +36,19 @@
                                             </tr>
                                             <tr>
                                                 <th>
-                                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-control  input-sm", onchange = "onFacultyChanged()" })
+                                                    @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Faculties, new { @class = "form-select", onchange = "onFacultyChanged()" })
                                                 </th>
                                                 <th>
-                                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-control  input-sm", onchange = "onSemesterChanged()" })
+                                                    @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semesters, new { @class = "form-select", onchange = "onSemesterChanged()" })
                                                 </th>
                                                 <th>
-                                                    @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-control  input-sm", onchange = "onCurriculumChanged()" })
+                                                    @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-select", onchange = "onCurriculumChanged()" })
                                                 </th>
                                                 <th>
-                                                    @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-control  input-sm" })
+                                                    @Html.DropDownListFor(m => m.GroupId, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @class = "form-select" })
                                                 </th>
                                                 <th>
-                                                    <button class="btn btn-default btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
+                                                    <button class="btn btn-outline-primary btn-sm" onclick="addGroup()"><i class="bi-plus"></i></button>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -70,9 +68,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <button class="btn btn-default" onclick="saveCourse()"><i class="fa fa-save"></i> speichern</button>
+                        <div class="mb-3">
+                            <div class="col-sm-9">
+                                <button class="btn btn-outline-primary" onclick="saveCourse()"><i class="bi-save"></i> speichern</button>
+                                <a class="btn btn-outline-primary" href="@Url.Action("Details", "Course", new {id=Model.Course.Id})"><i class="bi-x"></i> abbrechen</a>
                                 <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                             </div>
                         </div>
@@ -81,18 +80,17 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     <h4>Erläuterungen</h4>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <p>Die Lehrveranstaltung wird in die hier angegebenene Semestergruppen ins Vorlesungsverzeichnis eingetragen.</p>
                     <p>Die Seemstergruppen sagen nichts über die Zugehörigkeit der Lehrveranstaltung zu einem Studiengang etc. aus!</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 @section Scripts {
 

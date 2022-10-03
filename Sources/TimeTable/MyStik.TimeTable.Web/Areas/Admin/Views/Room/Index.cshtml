@@ -4,29 +4,34 @@
 }
 
 
-<div class="page-header">
-    <h1>
-        Raumverwaltung
-    </h1>
-</div>
 
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fa fa-plus"></i> Hinzufügen</a>
-                <a href="@Url.Action("UnAssigned")" class="btn btn-primary"><i class="fa fa-question"></i> Ohne Zuordnung</a>
-                <a href="@Url.Action("Transfer")" class="btn btn-primary"><i class="fa fa-magic"></i> Zusammenführen</a>
+        <div class="card">
+            <div class="card-header">
+                <h4>Räume</h4>
             </div>
-            <table class="table table-condensed">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Hinzufügen</a>
+                        <a href="@Url.Action("UnAssigned")" class="btn btn-outline-primary"><i class="bi-question"></i> Ohne Zuordnung</a>
+                        <a href="@Url.Action("Transfer")" class="btn btn-outline-primary"><i class="bi-magic"></i> Zusammenführen</a>
+                    </div>
+                </div>
+            </div>
+            <table class="table" id="tabRooms">
                 <thead>
                     <tr>
                         <th>Nummer</th>
                         <th>Name</th>
                         <th>Beschreibung</th>
                         <th>Kapazität</th>
-                        <th>Termine</th>
                         <th>Raumzuordnungen</th>
                         <th></th>
                     </tr>
@@ -39,7 +44,6 @@
                             <td>@room.Name</td>
                             <td>@room.Description</td>
                             <td>@room.Capacity</td>
-                            <td>@room.Dates.Count</td>
                             <td>
                                 @foreach (var org in room.Assignments)
                                 {
@@ -47,12 +51,14 @@
                                 }
                             </td>
                             <td>
-                                <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
-                                <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-xs btn-default"><i class="fa fa-link"></i></a>
-                                @if (!room.Assignments.Any())
-                                {
-                                    <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>
-                                }
+                                <div class="btn-group">
+                                    <a href="@Url.Action("Edit", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi-pen"></i></a>
+                                    <a href="@Url.Action("Links", new {id = room.Id})" class="btn btn-sm btn-outline-primary"><i class="bi-link"></i></a>
+                                    @if (!room.Assignments.Any())
+                                    {
+                                        <a href="@Url.Action("Delete", new {id = room.Id})" class="btn btn-sm btn-danger"><i class="bi-trash"></i></a>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }
@@ -62,3 +68,19 @@
     </div>
 </div>
 
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabRooms').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}

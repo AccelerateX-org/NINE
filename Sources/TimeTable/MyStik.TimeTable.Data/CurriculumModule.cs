@@ -38,6 +38,7 @@ namespace MyStik.TimeTable.Data
             Accreditations = new HashSet<ModuleAccreditation>();
             Descriptions = new HashSet<ModuleDescription>();
             ExaminationOptions = new List<ExaminationOption>();
+            ModuleResponsibilities = new List<ModuleResponsibility>();
         }
 
 
@@ -66,13 +67,10 @@ namespace MyStik.TimeTable.Data
         public string Tag { get; set; }
 
 
-        /// <summary>
-        /// Fachverantwortlicher
-        /// </summary>
-        public virtual OrganiserMember MV { get; set; }
-
 
         public virtual CurriculumModuleCatalog Catalog { get; set; }
+
+        public virtual ICollection<ModuleResponsibility> ModuleResponsibilities { get; set; }
 
 
         /// <summary>
@@ -108,6 +106,21 @@ namespace MyStik.TimeTable.Data
         /// Die Prüfung in diesem Semester
         /// </summary>
         public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
+
+    }
+
+    public class ModuleResponsibility
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual CurriculumModule Module { get; set; }
+
+        /// <summary>
+        /// Fachverantwortlicher
+        /// </summary>
+        public virtual OrganiserMember Member { get; set; }
 
     }
 }

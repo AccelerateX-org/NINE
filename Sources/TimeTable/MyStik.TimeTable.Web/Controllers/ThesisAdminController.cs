@@ -439,7 +439,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (!userRight.IsExamAdmin)
             {
-                return View("NoAccess");
+                return View("_NoAccess");
             }
 
             var userService = new UserInfoService();
@@ -469,6 +469,44 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult All()
+        {
+            var org = GetMyOrganisation();
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
+            var userService = new UserInfoService();
+
+            var theses = Db.Theses.Where(x =>
+                    x.Student.Curriculum.Organiser.Id == org.Id // Student zur Fakultät gehörend
+            ).ToList();
+
+            var model = new List<ThesisStateModel>();
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.Add(tm);
+            }
+
+            ViewBag.UserRight = userRight;
+            ViewBag.Organiser = org;
+
+
+            return View(model);
+        }
+
 
         public ActionResult Statistics()
         {
@@ -892,9 +930,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var thesis = Db.Theses.SingleOrDefault(x => x.Id == id);
 
-            int period = 0;
-            bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
-            if (!success || period == 0)
+            var period = thesis.Student.Curriculum.ThesisDuration;
+            if (period == 0)
             {
                 period = 3;
             }
@@ -1166,9 +1203,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var thesis in theses)
             {
-                int period = 0;
-                bool success = int.TryParse(thesis.Student.Curriculum.Version, out period);
-                if (!success || period == 0)
+                var period = thesis.Student.Curriculum.ThesisDuration;
+                if (period == 0)
                 {
                     period = 3;
                 }

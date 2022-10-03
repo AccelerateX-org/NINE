@@ -204,6 +204,9 @@ namespace MyStik.TimeTable.Data
         public DbSet<CurriculumSection> CurriculumSections { get; set; }
         public DbSet<CurriculumSlot> CurriculumSlots { get; set; }
 
+        public DbSet<ModuleResponsibility> ModuleResponsibilities { get; set; }
+
+        
 
         public DbSet<ItemLabel> ItemLabels { get; set; }
         public DbSet<ItemLabelSet> ItemLabelSets { get; set; }
