@@ -3,75 +3,89 @@
     ViewBag.Title = Resources.RegisterTabHeading;
 }
 
-<div class="container" style="margin-top: 80px">
-    <div class="row justify-content-center">
+
+@*
+
+    <div class="row justify-content-md-center" style="margin-bottom: 20px">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4> @Resources.RegisterHeading </h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info ">
-                        <strong>Wichtige Information für Studierende:</strong>
-                        <ul>
-                            <li>Grundsätzlich ist eine Registrierung mit einer beliebigen E-Mail Adresse möglich. Die Verwendung der HM-Adresse wird empfohlen.</li>
-                            <li>Prüfen Sie in diesem Fall zuerst, ob Ihr HM-Postfach bereits eingerichtet ist und Sie über den <a href="https://xmail.mwn.de" target="_blank"><strong>OWA</strong></a> darauf zugreifen können.</li>
-                        </ul>
-                        <strong>Anforderungen an ein sicheres Passwort:</strong>
-                        <ul>
-                            <li>Mindestens 8 Zeichen</li>
-                            <li>Jeweils mindestens 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Ziffer, 1 Sonderzeichen</li>
-                            <li><strong>Beispiel:</strong> Pas1234?</li>
-                        </ul>
+            <div class="alert alert-danger">
+                <h1>Störung des Mailversands</h1>
+                <p>Aktuell ist kein Versand von Mails möglich. Damit stehen Funktionen wie Registrieren, Passwort zurücksetzen nicht zur Verfügung. Ebeneso können keine Mails an Teilnehmer:innen von Lehrveranstaltungen, Newsletter, etc. versendet werden.</p>
+                <p>Es wird mit Hochdruck an einer Lösung gearbeitet.</p>
+                <p>Prof. Dr.-Ing. Olav Hinz</p>
+            </div>
+        </div>
+    </div>
+*@
+
+    <div class="container" style="margin-top: 80px">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4> @Resources.RegisterHeading </h4>
                     </div>
-                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(true, Resources.RegisterValidationSummaryMessage, new { @class = "alert alert-danger" })
-
-                        <div class="input-group mb-1">
-                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-envelope fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = Resources.RegisterEmailPlaceholder })
+                    <div class="card-body">
+                        <div class="alert alert-info ">
+                            <strong>Wichtige Information für Studierende:</strong>
+                            <ul>
+                                <li>Grundsätzlich ist eine Registrierung mit einer beliebigen E-Mail Adresse möglich. Die Verwendung der HM-Adresse wird empfohlen.</li>
+                                <li>Prüfen Sie in diesem Fall zuerst, ob Ihr HM-Postfach bereits eingerichtet ist und Sie über den <a href="https://xmail.mwn.de" target="_blank"><strong>OWA</strong></a> darauf zugreifen können.</li>
+                            </ul>
+                            <strong>Anforderungen an ein sicheres Passwort:</strong>
+                            <ul>
+                                <li>Mindestens 8 Zeichen</li>
+                                <li>Jeweils mindestens 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Ziffer, 1 Sonderzeichen</li>
+                                <li><strong>Beispiel:</strong> Pas1234?</li>
+                            </ul>
                         </div>
+                        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form", role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, Resources.RegisterValidationSummaryMessage, new { @class = "alert alert-danger" })
 
-                        <div class="input-group mb-1">
-                            <span class="input-group-text" id="basic-addon2"><i class="fas fa-key fa-fw"></i></span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Resources.RegisterPasswordPlaceholder })
-                            @Html.ValidationMessageFor(m => m.Password)
-                        </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-envelope fa-fw"></i></span>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = Resources.RegisterEmailPlaceholder })
+                            </div>
 
-                        <div class="input-group mb-1">
-                            <span class="input-group-text" id="basic-addon3"><i class="fas fa-key fa-fw"></i></span>
-                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = Resources.RegisterPasswordAgainPlaceholder })
-                            @Html.ValidationMessageFor(m => m.ConfirmPassword)
-                        </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon2"><i class="fas fa-key fa-fw"></i></span>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Resources.RegisterPasswordPlaceholder })
+                                @Html.ValidationMessageFor(m => m.Password)
+                            </div>
 
-                        <div class="input-group mb-1">
-                            <span class="input-group-text" id="basic-addon4"><i class="fas fa-user fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder })
-                            @Html.ValidationMessageFor(m => m.FirstName)
-                        </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon3"><i class="fas fa-key fa-fw"></i></span>
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = Resources.RegisterPasswordAgainPlaceholder })
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                            </div>
 
-                        <div class="input-group mb-1">
-                            <span class="input-group-text" id="basic-addon4"><i class="fas fa-user fa-fw"></i></span>
-                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = Resources.RegisterLastNamePlaceholder })
-                            @Html.ValidationMessageFor(m => m.LastName)
-                        </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon4"><i class="fas fa-user fa-fw"></i></span>
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder })
+                                @Html.ValidationMessageFor(m => m.FirstName)
+                            </div>
 
-                        <div class="form-check">
-                            <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required>
-                            <label for="DatenschutzGelesen" class="form-check-label">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
-                        </div>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text" id="basic-addon4"><i class="fas fa-user fa-fw"></i></span>
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = Resources.RegisterLastNamePlaceholder })
+                                @Html.ValidationMessageFor(m => m.LastName)
+                            </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-outline-primary">
-                                @Resources.RegisterSubmitButton
-                            </button>
-                        </div>
-                    }
+                            <div class="form-check">
+                                <input type="checkbox" id="DatenschutzGelesen" name="DatenschutzGelesen" value="zugestimmt" required>
+                                <label for="DatenschutzGelesen" class="form-check-label">Die Hinweise zum <a href="@Url.Action("PrivacyStatement", "Home")" title='' target="_blank">Datenschutz</a> habe ich gelesen!</label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    @Resources.RegisterSubmitButton
+                                </button>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-

@@ -58,7 +58,7 @@
                                 @if (!string.IsNullOrEmpty(date.Key.Description))
                                 {
                                     <br />
-                                    @date.Key.Description
+                                    @Html.Raw(date.Key.Description)
                                 }
                             </li>
                         }

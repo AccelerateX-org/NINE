@@ -1,6 +1,9 @@
-﻿@model MyStik.TimeTable.Web.Models.ScriptOrderDetailsModel
+﻿@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.ScriptOrderDetailsModel
 @{
     ViewBag.Title = "Details zu Bestellungen";
+
+    var userService = new UserInfoService();
 }
 
 @section styles
@@ -110,15 +113,26 @@
                     <tr>
                         <th>Titel</th>
                         <th>Version</th>
+                        <th>Autor</th>
                         <th>Besteller</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var doc in Model.Documents)
                     {
+                        var user = userService.GetUser(doc.Document.UserId);
+
                         <tr>
                             <td>@doc.Document.Title</td>
                             <td>@doc.Document.Version</td>
+                            @if (user != null)
+                            {
+                                <td>@user.FullName</td>
+                            }
+                            else
+                            {
+                                <td>unbekannt</td>
+                            }
                             <td>
                                 @foreach (var p in doc.Orderers)
                                 {

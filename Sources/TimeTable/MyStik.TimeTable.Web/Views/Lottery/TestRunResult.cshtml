@@ -8,78 +8,46 @@
     var userService = new UserInfoService();
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren @Model.Lottery.Name  - Studierende</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                            <a href="@Url.Action("RawData", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-download"></i> Rohdaten
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="row">
-    <div class="col-md-12">
-    </div>
-</div>
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Liste der Studierenden</h4>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Wahlverfahren @Model.Lottery.Name - Ergebnis der Ziehung nach Studierenden</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary">
+                        <i class="fa fa-arrow-left"></i> Zurück
+                    </a>
+                    <a href="@Url.Action("RawData", new {id=Model.Lottery.Id})" class="btn btn-outline-primary">
+                        <i class="fa fa-download"></i> Rohdaten
+                    </a>
                 </div>
-
-
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th rowspan="2">Name</th>
-                            <th rowspan="2"><i class="fa fa-book"></i></th>
-                            <th rowspan="2"><i class="fa fa-calendar-plus-o"></i></th>
-                            <th rowspan="2"><i class="fa fa-bed text-primary"></i></th>
-                            <th rowspan="2"><i class="fa fa-frown-o text-primary"></i></th>
-                            <th rowspan="2">Vor Losdurchgang bereits vorhandene Plätze</th>
-                            <th colspan="@Model.Lottery.MaxSubscription">Lose des Losdurchgangs (nach Priorität)</th>
-                        </tr>
-                        <tr>
-                            @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
-                            {
-                                <th>@i</th>
-                            }
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                        @foreach (var student in Model.Games)
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Name</th>
+                        <th rowspan="2"><i class="fa fa-book"></i></th>
+                        <th rowspan="2"><i class="fa fa-calendar-plus-o"></i></th>
+                        <th rowspan="2"><i class="fa fa-bed text-primary"></i></th>
+                        <th rowspan="2"><i class="fa fa-frown-o text-primary"></i></th>
+                        <th rowspan="2">Vor Losdurchgang bereits vorhandene Plätze</th>
+                        <th colspan="@Model.Lottery.MaxSubscription">Lose des Losdurchgangs (nach Priorität)</th>
+                    </tr>
+                    <tr>
+                        @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
                         {
-                            var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
-                            var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
+                            <th>@i</th>
+                        }
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var student in Model.Games)
+                    {
+                        var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
+                        var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
 
                         <tr>
                             @if (student.Student == null)
@@ -99,30 +67,30 @@
                                 <td>@student.Student.Curriculum.ShortName</td>
                                 <td>@student.Student.FirstSemester.Name</td>
                             }
-                            
+
                             @if (student.LotteryGame != null)
                             {
 
                                 if (seats < student.CoursesWanted)
-                                 {
-                                     <td class="warning">@student.CoursesWanted</td>
-                                 }
-                                 else if (seats > student.CoursesWanted)
-                                 {
-                                     <td class="danger">@student.CoursesWanted</td>
-                                 }
-                                 else
-                                 {
-                                     <td class="success">@student.CoursesWanted</td>
-                                 }
+                                {
+                                    <td class="table-warning">@student.CoursesWanted</td>
+                                }
+                                else if (seats > student.CoursesWanted)
+                                {
+                                    <td class="table-danger">@student.CoursesWanted</td>
+                                }
+                                else
+                                {
+                                    <td class="table-success">@student.CoursesWanted</td>
+                                }
 
                                 if (student.AcceptDefault)
-                                 {
-                                     <td><i class="fa fa-random"></i></td>
-                                 }
-                                 else
-                                 {
-                                     <td><i class="fa fa-times text-danger"></i></td>
+                                {
+                                    <td><i class="fa fa-random"></i></td>
+                                }
+                                else
+                                {
+                                    <td><i class="fa fa-times text-danger"></i></td>
                                 }
                             }
                             else
@@ -135,61 +103,63 @@
                                 @foreach (var seat in student.Seats)
                                 {
 
-                                    <div>@seat.Course.ShortName
+                                    <div>
+                                        @seat.Course.ShortName
+                                    <ul class="fa-ul">
+                                        <li><i class="fa fa-li fa-clock"></i>@seat.Subscription.TimeStamp</li>
+                                        <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
+                                        @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
+                                        {
+                                            <li><i class="fa fa-li fa-file"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                            </td>
+
+                            @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
+                            {
+                                var lot = student.Lots.FirstOrDefault(x => x.Priority == i);
+
+                                if (lot != null)
+                                {
+                                    var txtClass = "";
+                                    if (lot.IsTouched)
+                                    {
+                                        if (lot.Subscription.OnWaitingList)
+                                        {
+                                            txtClass = "table-warning";
+                                        }
+                                        else
+                                        {
+                                            txtClass = "table-success";
+                                        }
+                                    }
+                                    <td class="@txtClass">
+                                        <div>
+                                            @lot.Course.ShortName
                                         <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-clock-o"></i>@seat.Subscription.TimeStamp</li>
-                                            <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
-                                            @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
+                                            <li><i class="fa fa-li fa-clock"></i>@lot.Subscription.TimeStamp</li>
+                                            @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
                                             {
-                                                <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
+                                                <li><i class="fa fa-li fa-file"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
                                             }
                                         </ul>
                                     </div>
-                                }
-                            </td>
-
-                                @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
-                                {
-                                    var lot = student.Lots.FirstOrDefault(x => x.Priority == i);
-
-                                    if (lot != null)
-                                    {
-                                        var txtClass = "";
-                                        if (lot.IsTouched)
-                                        {
-                                            if (lot.Subscription.OnWaitingList)
-                                            {
-                                                txtClass = "warning";
-                                            }
-                                            else
-                                            {
-                                                txtClass = "success";
-                                            }
-                                        }
-                                         <td class="@txtClass">
-                                             <div>@lot.Course.ShortName
-                                                 <ul class="fa-ul">
-                                                     <li><i class="fa fa-li fa-clock-o"></i>@lot.Subscription.TimeStamp</li>
-                                                     @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
-                                                     {
-                                                         <li><i class="fa fa-li fa-file-text"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
-                                                     }
-                                                 </ul>
-                                             </div>
-                                         </td>
-                                     }
-                                     else
-                                     {
-                                         <td></td>
-                                     }
-                                 }
-                        </tr>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                         }
-                    </tbody>
-                </table>
-
-
-            </div>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+
+

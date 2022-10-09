@@ -6,16 +6,17 @@
 
 @section styles
 {
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 
 }
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="row">
-            <div class="col-md-12">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
                 <h4>@Model.Course.Name.ToUpper() (@Model.Course.ShortName.ToUpper())</h4>
                 <p>
                     @Model.Date.Begin.ToShortDateString() | @Html.TimeSpan(Model.Date)
@@ -36,169 +37,165 @@
                     }
                 </p>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-calendar"></i> Angaben zu Termin
-                    </h4>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a class="btn btn-outline-primary" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="bi-arrow-left"></i> zurück</a>
+                    <a class="btn btn-outline-primary" id="saveAll" href="javascript:moveDate()"><i class="bi-save"></i> Änderungen speichern</a>
                 </div>
-                <div class="panel-body">
-                    @Html.HiddenFor(m => m.ActivityDateId)
-                    <div class="form form-horizontal">
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.NewDate, new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-9">
-                                @Html.TextBoxFor(model => model.NewDate, new { @class = "form-control datepicker", onchange = "onDateChanged()" })
-                                @Html.ValidationMessageFor(m => m.NewDate)
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        @Html.HiddenFor(m => m.ActivityDateId)
+                        <div class="row mb-3">
+                            <h5>Datum, Zeitraum und Beschreibung</h5>
+                            <div class="col-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control datepicker" id="NewDate" name="NewDate" onchange="onDateChanged()" value="@Model.NewDate" />
+                                    <label for="NewDate">Datum</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control timepicker timepicker-24" id="NewBegin" name="NewBegin" onchange="onBeginChanged()" value="@Model.NewBegin" />
+                                    <label for="NewBegin">Beginn</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control timepicker timepicker-24" id="NewEnd" name="NewEnd" onchange="onEndChanged()" value="@Model.NewEnd" />
+                                    <label for="NewEnd">Ende</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.NewBegin, new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-9">
-                                @Html.TextBoxFor(model => model.NewBegin, new { @class = "form-control timepicker timepicker-24", onchange = "onBeginChanged()" })
-                                @Html.ValidationMessageFor(m => m.NewBegin)
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="Title" name="Title" value="@Model.Title" />
+                                    <label for="Title">Titel</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.NewEnd, new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-9">
-                                @Html.TextBoxFor(model => model.NewEnd, new { @class = "form-control timepicker timepicker-24", onchange = "onEndChanged()" })
-                                @Html.ValidationMessageFor(m => m.NewEnd)
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="ShortInfo" name="ShortInfo" value="@Model.ShortInfo" />
+                                    <label for="ShortInfo">Kurzinfo für Kalender</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="DozTable">Dozent(en)</label>
-                            <div class="col-sm-9">
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 10 })
+                                @Html.ValidationMessageFor(m => m.Description)
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5>Dozent(en)</h5>
                                 <div id="DozTable">
-                                    <table class="table table-condensed">
+                                    <table class="table">
                                         <thead>
-                                            <tr>
-                                                <th>Fakultät</th>
-                                                <th>Name</th>
-                                                <th></th>
-                                            </tr>
-                                            <tr>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm" })
-                                                </th>
-                                                <th>
-                                                    <input type="text" class="form-control  input-sm" id="DozId">
-                                                </th>
-                                                <th>
-                                                </th>
-                                            </tr>
+                                        <tr>
+                                            <th>Fakultät</th>
+                                            <th>Name</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.OrganiserId2, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control" })
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control" id="DozId">
+                                            </th>
+                                            <th>
+                                            </th>
+                                        </tr>
                                         </thead>
                                         <tbody id="dozList">
-                                            @foreach (var doz in Model.Date.Hosts)
-                                            {
-                                                <tr id="@doz.Id">
-                                                    <td>@doz.Organiser.ShortName</td>
-                                                    <td>@doz.Name</td>
-                                                    <td>
-                                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@doz.Id')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            }
+                                        @foreach (var doz in Model.Date.Hosts)
+                                        {
+                                            <tr id="@doz.Id">
+                                                <td>@doz.Organiser.ShortName</td>
+                                                <td>@doz.Name</td>
+                                                <td>
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteRow('@doz.Id')">
+                                                        <i class="bi-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" for="RoomTable">Raum/Räume</label>
-                            <div class="col-sm-9">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h5>Raum/Räume</h5>
                                 <div id="RoomTable">
-                                    <table class="table table-condensed">
+                                    <table class="table">
                                         <thead>
-                                            <tr>
-                                                <th>Fakultät</th>
-                                                <th>Raumnummer</th>
-                                                <th>Status</th>
-                                                <th></th>
-                                            </tr>
-                                            <tr>
-                                                <th>
-                                                    @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control  input-sm", disabled = "" })
-                                                </th>
-                                                <th>
-                                                    <input type="text" class="form-control  input-sm" id="RoomId">
-                                                </th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
+                                        <tr>
+                                            <th>Fakultät</th>
+                                            <th>Raumnummer</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-control", disabled = "" })
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control" id="RoomId">
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
                                         </thead>
                                         <tbody id="roomList">
-                                            @foreach (var room in Model.Date.Rooms)
-                                            {
-                                                <tr id="@room.Id">
-                                                    <td></td>
-                                                    <td>@room.FullName</td>
-                                                    <td id="state_@room.Id">
-                                                        unbekannt
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@room.Id')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            }
+                                        @foreach (var room in Model.Date.Rooms)
+                                        {
+                                            <tr id="@room.Id">
+                                                <td></td>
+                                                <td>@room.FullName</td>
+                                                <td id="state_@room.Id">
+                                                    unbekannt
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteRow('@room.Id')">
+                                                        <i class="bi-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
                                         </tbody>
                                     </table>
                                 </div>
+                                <h5>Raumkonflikte</h5>
+                                <div id="ConflictTable"></div>
                             </div>
                         </div>
-                        <div id="ConflictTable"></div>
-
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <a class="btn btn-outline-primary" href="@Url.Action("AdminNewDates", new {id = Model.Course.Id})"><i class="fas fa-chevron-left"></i> abbrechen</a>
-                                <button class="btn btn-outline-primary" onclick="moveDate()"><i class="fas fa-save"></i> speichern</button>
-                                <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                            </div>
-                        </div>
-
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div id="AvailableTable">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>
-                            <i class="fa fa-check"></i> Verfügbare Räume
-                            <a id="btnReload" href="" class="btn btn-default" onclick="reloadFreeRooms()"><i class="fa fa-refresh"></i> </a>
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <div id="roomTable">
-                        </div>
+                    <div class="col-md-4">
+                        <h4>Freie Räume <span><a href="javascript:reloadFreeRooms()" class="btn btn-outline-primary">Aktualisieren</a></span></h4>
+                        <div id="roomTable"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
 
 
 @section Scripts {
 
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js")"></script>
@@ -212,6 +209,9 @@
         isInit = true;
         checkRoomStates();
         $("#loading").hide();
+
+        $("#Description").cleditor();
+
 
         $(document).ready(function() {
             initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
@@ -267,7 +267,7 @@
                 $("#dozList").append("<tr id=\""
                     + ui.item.text + "\"><td>"
                     + orgText + "</td><td>"
-                    + ui.item.value + "</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
+                    + ui.item.value + "</td><td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRow('"
                     + ui.item.text + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
             }
@@ -313,7 +313,7 @@
             }
         });
 
-        reloadFreeRooms();
+        //reloadFreeRooms();
 
         isInit = false;
 
@@ -329,6 +329,10 @@
         var newEnd = $("#NewEnd").val();
         var dozList = new Array();
         var roomList = new Array();
+        var desc = $("#Description").val();
+        var title = $("#Title").val();
+        var shortInfo = $("#ShortInfo").val();
+
 
         var list = $("#DozTable > table > tbody > tr").get();
         var n = list.length;
@@ -358,7 +362,10 @@
                     NewBegin: newBegin,
                     NewEnd: newEnd,
                     RoomIds: roomList,
-                    DozIds: dozList
+                    DozIds: dozList,
+                    Description: desc,
+                    Title: title,
+                    ShortInfo: shortInfo
                 },
                 success: function(data, success, xhr) {
                     window.location.replace("@Url.Action("AdminNewDates", new {id = Model.Course.Id})");
@@ -375,21 +382,21 @@
         function onDateChanged() {
             if (!isInit) {
                 checkRoomStates();
-                reloadFreeRooms();
+                //reloadFreeRooms();
             }
         }
 
         function onBeginChanged() {
             if (!isInit) {
                 checkRoomStates();
-                reloadFreeRooms();
+                //reloadFreeRooms();
             }
         }
 
         function onEndChanged() {
             if (!isInit) {
                 checkRoomStates();
-                reloadFreeRooms();
+                //reloadFreeRooms();
             }
         }
 
@@ -440,7 +447,7 @@
                         $("#state_" + roomId).html("verfügbar");
                     } else {
                         $("#" + roomId).addClass("danger");
-                        $("#state_" + roomId).html("<button class=\"btn btn-default\" onclick=\"showConflicts('"
+                        $("#state_" + roomId).html("<button class=\"btn btn-outline-primary\" onclick=\"showConflicts('"
                             + roomId
                             + "')\">Konflikte <span class=\"badge\">" + data + "</span></button>");
                     }
@@ -506,7 +513,7 @@
         $("#roomList").append("<tr id=\""
             + roomId + "\"><td></td><td>"
             + roomNumber + "</td><td id=\"state_"
-            + roomId + "\">unbekannt</td><td><button class=\"btn btn-outline-danger btn-sm\" onclick=\"deleteRow('"
+            + roomId + "\">unbekannt</td><td><button class=\"btn btn-danger btn-sm\" onclick=\"deleteRow('"
             + roomId + "');\"><i class=\"fas fa-trash\"></i></button></td></tr>");
 
         checkRoomState(roomId);

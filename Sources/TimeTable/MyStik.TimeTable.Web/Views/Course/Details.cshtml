@@ -15,121 +15,121 @@
     </style>
 }
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>@Model.Summary.Course.Name (@Model.Summary.Course.ShortName)</h4>
-                </div>
-                <div class="list-group">
-                    @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>@Model.Summary.Course.Name (@Model.Summary.Course.ShortName)</h4>
+            </div>
+            <div class="list-group">
+                @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                {
+
+                    @Html.Partial("_CourseSummarySubscription", Model.Summary)
+                    if (Model.Summary.Course.IsInternal)
                     {
-
-                        @Html.Partial("_CourseSummarySubscription", Model.Summary)
-                        if (Model.Summary.Course.IsInternal)
-                        {
-                            <div class="list-group-item list-group-item-info">
-                                <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
-                            </div>
-                        }
-
-                        <div class="list-group-item">
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})" class="btn btn-default">
-                                    <i class="fa fa-envelope-o"></i> Mail senden
-                                </a>
-                                <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-download"></i> Listen</a>
-                                <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-calendar"></i> Termine</a>
-                                <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-users"></i> Teilnehmende</a>
-                                @if (Model.Summary.Course.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
-                                {
-                                    <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-edit"></i> Beschreibung</a>
-                                    <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-book"></i> Semestergruppen</a>
-                                    <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-tag"></i> Themengebiet ("Modul")</a>
-                                    <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-legal"></i> Zugangsbeschränkungen, Platzkontigente</a>
-                                }
-
-                                @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
-                                {
-                                    <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-edit"></i> Beschreibung</a>
-                                    <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-book"></i> Semestergruppen</a>
-                                    <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-tag"></i> Themengebiet ("Modul")</a>
-                                    <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-legal"></i> Zugangsbeschränkungen, Platzkontigente</a>
-                                    if (Model.Summary.Lottery == null)
-                                    {
-                                        if (Model.Summary.Course.Occurrence.IsAvailable)
-                                        {
-                                            <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-default"><i class="fa fa-lock"></i> Eintragung für Studierende sperren</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-default"><i class="fa fa-unlock"></i> Eintragung für Studierende ermöglichen</a>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Details", "Lottery", new {id = Model.Summary.Lottery.Id})" class="btn btn-default"><i class="fa fa-random"></i> Zeitplan ist in Wahlverfahren geregelt</a>
-                                    }
-                                    if (ViewBag.UserRight.IsCourseAdmin)
-                                    {
-                                        if (Model.Summary.Course.IsInternal)
-                                        {
-                                            <a href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-unlock"></i> Änderungen durch Lehrende erlauben</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})" class="btn btn-default"><i class="fa fa-unlock"></i> Änderungen durch Lehrende sperren</a>
-                                        }
-                                    }
-                                }
-
-                                @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
-                                {
-                                    <a href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})" class="btn btn-default">
-                                        <i class="fa fa-user-circle-o"></i> Besitzer
-                                    </a>
-                                    <a href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})" class="btn btn-danger">
-                                        <i class="fa fa-trash-o"></i> Löschen
-                                    </a>
-                                }
-
-
-                            </div>
+                        <div class="list-group-item list-group-item-info">
+                            <h5><i class="fa fa-lock"></i> Gesperrt - Aktuell können nur Administratoren Änderungen vornehmen.</h5>
                         </div>
                     }
 
-                </div>
-                <div>
-                    <nav>
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Zusammenfassung</button>
-                            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Beschreibung</button>
-                            <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Termine</button>
-                        </div>
-                    </nav>
-                    <div class="tab-content" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                            @Html.Partial("_CourseSummaryHead", Model.Summary)
-                            @Html.Partial("_CourseSummaryCapacity", Model.Summary)
-                            @if (Request.IsAuthenticated && ViewBag.UserRight.User.MemberState == MemberState.Student)
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary">
+                                <i class="bi-envelope"></i> Mail senden
+                            </a>
+                            <a href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-download"></i> Listen</a>
+                            <a href="@Url.Action("AdminNewDates", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-calendar"></i> Termine</a>
+                            <a href="@Url.Action("AdminNewParticipients", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-person"></i> Teilnehmende</a>
+                            @if (Model.Summary.Course.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
                             {
-                                @Html.Partial("_CourseSummaryBooking", Model)
+                                <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-pen"></i> Beschreibung</a>
+                                <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-book"></i> Semestergruppen</a>
+                                <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-tag"></i> Themengebiet ("Modul")</a>
+                                <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-exclamation-circle"></i> Zugangsbeschränkungen, Platzkontigente</a>
                             }
 
-                        </div>
-                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            @Html.Partial("_CourseSummaryDescription", Model.Summary)
-                        </div>
-                        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                            @Html.Partial("_CourseSummaryDates", Model.Summary)
+                            @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                <a href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-pen"></i> Beschreibung</a>
+                                <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-book"></i> Semestergruppen</a>
+                                <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-tag"></i> Themengebiet ("Modul")</a>
+                                <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-exclamation-circle"></i> Zugangsbeschränkungen, Platzkontigente</a>
+                                if (Model.Summary.Lottery == null)
+                                {
+                                    if (Model.Summary.Course.Occurrence.IsAvailable)
+                                    {
+                                        <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-lock"></i> Eintragung für Studierende sperren</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Eintragung für Studierende ermöglichen</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Details", "Lottery", new {id = Model.Summary.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-123"></i> Zeitplan ist in Wahlverfahren geregelt</a>
+                                }
+                                if (ViewBag.UserRight.IsCourseAdmin)
+                                {
+                                    if (Model.Summary.Course.IsInternal)
+                                    {
+                                        <a href="@Url.Action("UnFreeze", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Änderungen durch Lehrende erlauben</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Änderungen durch Lehrende sperren</a>
+                                    }
+                                }
+                            }
+
+                            @if (ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)
+                            {
+                                <a href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-person-bounding-box"></i> Besitzer
+                                </a>
+                                <a href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})" class="btn btn-danger">
+                                    <i class="bi-trash"></i> Löschen
+                                </a>
+                            }
+
+
                         </div>
                     </div>
-                </div>
+                }
 
             </div>
+            <div>
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Zusammenfassung</button>
+                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Beschreibung</button>
+                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Termine</button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        @Html.Partial("_CourseSummaryHead", Model.Summary)
+                        @Html.Partial("_CourseSummaryCapacity", Model.Summary)
+                        @if (Request.IsAuthenticated && ViewBag.UserRight.User.MemberState == MemberState.Student)
+                        {
+                            @Html.Partial("_CourseSummaryBooking", Model)
+                        }
+
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        @Html.Partial("_CourseSummaryDescription", Model.Summary)
+                    </div>
+                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                        @Html.Partial("_CourseSummaryDates", Model.Summary)
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
 
 @section scripts
 {

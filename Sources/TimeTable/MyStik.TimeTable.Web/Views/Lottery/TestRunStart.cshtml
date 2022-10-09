@@ -12,83 +12,55 @@
 
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren "@Model.Lottery.Name" - Testlauf</h1>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Wahlverfahren "@Model.Lottery.Name" - Testlauf</h4>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Drawing", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("InitTest", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-wrench"></i> Einstellungen
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("Download", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-download"></i> Rohdaten
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <a href="@Url.Action("TestDrawing", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-play"></i> Ausführen ohne Speichern
-                            </a>
-                        </div>
-
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("Drawing", new {id=Model.Lottery.Id})" class="btn btn-outline-primary">
+                        <i class="fa fa-arrow-left"></i> Zurück
+                    </a>
+                    <a href="@Url.Action("InitTest", new {id=Model.Lottery.Id})" class="btn btn-outline-primary">
+                        <i class="fa fa-wrench"></i> Einstellungen
+                    </a>
+                    <a href="@Url.Action("Download", new {id=Model.Lottery.Id})" class="btn btn-outline-primary">
+                        <i class="fa fa-download"></i> Rohdaten
+                    </a>
+                    <a href="@Url.Action("TestDrawing", new {id=Model.Lottery.Id})" class="btn btn-outline-danger">
+                        <i class="fa fa-play"></i> Ausführen ohne Speichern
+                    </a>
+                    @if (Request.IsLocal)
+                    {
                         <div class="form-group dropdown">
                             <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-random"></i> Testbenutzer <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="@Url.Action("InitTestUser", new {id = Model.Lottery.Id})">
+                                    <a href="@Url.Action("InitTestUser", new { id = Model.Lottery.Id })">
                                         <i class="fa fa-user-plus"></i> Testbenutzer anlegen
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("SubscribeTest", new {id = Model.Lottery.Id})">
+                                    <a href="@Url.Action("SubscribeTest", new { id = Model.Lottery.Id })">
                                         <i class="fa fa-pencil"></i> Testbenutzer eintragen
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("ClearTest", new {id = Model.Lottery.Id})">
+                                    <a href="@Url.Action("ClearTest", new { id = Model.Lottery.Id })">
                                         <i class="fa fa-user-times"></i> Testbenutzer austragen
                                     </a>
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                    }
+
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+                <div class="list-group-item">
                     <h4>Legende / Symbole</h4>
-                </div>
-                <div class="panel-body">
                     <div class="row">
                         <div class="col-md-3">
                             <ul class="fa-ul">
@@ -113,14 +85,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Liste der Buchungslisten (ggf. mehrere pro Lehrveranstaltung bei Platzvergabe nach Studiengängen)</h4>
             </div>
             <table class="table table-condensed">
                 <thead>
@@ -230,8 +194,7 @@
                 }
                 </tbody>
             </table>
-
         </div>
     </div>
-</div>
 
+</div>

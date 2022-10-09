@@ -335,6 +335,10 @@ namespace MyStik.TimeTable.Web.Controllers
             });
 
 
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+
             return View(model);
         }
 
@@ -407,11 +411,13 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Jetzt erst die Notification auslösen
+            /*
             if (changeObject != null)
             {
                 NotificationService nservice = new NotificationService();
                 nservice.CreateSingleNotification(changeObject.Id.ToString());
             }
+            */
 
             return Json(new { result = "Redirect", url = Url.Action("Details", new { id = activityDate.Activity.Id }) });
 

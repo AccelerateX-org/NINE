@@ -539,6 +539,20 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Beschreibung")]
         [AllowHtml]
         public string Description { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Titel")]
+        public string Title { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Display(Name = "Kurzinformation")]
+        public string ShortInfo { get; set; }
+
+
     }
 
     /// <summary>

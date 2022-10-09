@@ -15,7 +15,6 @@
             <th>Raumkonflikte</th>
             <th>Dozent</th>
             <th>Titel/Beschreibung</th>
-            <th>Kurzinfo</th>
             <th></th>
         </tr>
     </thead>
@@ -29,7 +28,7 @@
             }
             if (date.Occurrence.IsCanceled)
             {
-        <tr @histAttr>
+                <tr @histAttr>
             <td>
                 @if (date.End >= DateTime.Now)
                 {
@@ -39,23 +38,16 @@
             <td>@DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(date.Begin.DayOfWeek)</td>
             <td><del>@date.Begin.ToString("dd.MM.yyyy", new CultureInfo("de-DE"))</del></td>
             <td><del>@Html.TimeSpan(date)</del></td>
-            <td colspan="5">abgesagt</td>
+            <td colspan="4">abgesagt</td>
             <td>
                 @if (date.End >= DateTime.Now)
                 {
                     if (Model.IsInternal && !ViewBag.UserRight.IsCourseAdmin)
                      {
                          <div class="btn-group pull-right" role="group">
-                             @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
+                             @Html.ActionButton("fa-info-circle", "Infos ändern", "ChangeDateInformation", "Course",
                                  new {dateId = date.Id},
-                                 new AjaxOptions()
-                                 {
-                                     HttpMethod = "Post",
-                                     InsertionMode = InsertionMode.Replace,
-                                     UpdateTargetId = "modalDelete",
-                                     OnSuccess = "showEditDateInformation()"
-                                 },
-                                 new {@class = "btn btn-default btn-xs"}
+                                 new {@class = "btn btn-outline-primary btn-sm" }
                                  )
                          </div>
                      }
@@ -65,26 +57,14 @@
                     if (!Model.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                     {
                         <div class="btn-group pull-right" role="group">
-                            @Ajax.ActionButton("fa-refresh text-success", "reaktivieren", "ReactivateDate2", "Course",
+                            @Ajax.ActionButton("fa-recycle", "reaktivieren", "ReactivateDate2", "Course",
                                 new {dateId = date.Id},
                                 new AjaxOptions() {HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "dateTable"},
-                                new {@class = "btn btn-default btn-xs"}
-                                )
-
-                            @Ajax.ActionButton("fa-info-circle text-primary", "Infos ändern", "ChangeDateInformation", "Course",
-                                new {dateId = date.Id},
-                                new AjaxOptions()
-                                {
-                                    HttpMethod = "Post",
-                                    InsertionMode = InsertionMode.Replace,
-                                    UpdateTargetId = "modalDelete",
-                                    OnSuccess = "showEditDateInformation()"
-                                },
-                                new {@class = "btn btn-default btn-xs"}
+                                new {@class = "btn btn-outline-primary btn-sm"}
                                 )
 
 
-                            @Ajax.ActionButton("fa-trash-o", "löschen", "DeleteDateConfirm", "Course",
+                            @Ajax.ActionButton("fa-trash", "löschen", "DeleteDateConfirm", "Course",
                                 new {dateId = date.Id},
                                 new AjaxOptions()
                                 {
@@ -93,7 +73,7 @@
                                     UpdateTargetId = "modalDelete",
                                     OnSuccess = "showConfirmDeleteDate()"
                                 },
-                                new {@class = "btn btn-danger btn-xs"}
+                                new {@class = "btn btn-outline-danger btn-sm"}
                                 )
                         </div>
                     }
@@ -168,7 +148,7 @@
                                     }
                                     else
                                     {
-                                        <td>@conflict.Activity.Name (@Html.TimeSpan(conflict))</td>
+                                        <div>@conflict.Activity.Name (@Html.TimeSpan(conflict))</div>
                                     }
                                 }
                         </td>
@@ -179,25 +159,21 @@
                         <td></td>
                     }
                     <td>@Html.LecturerList(date.Hosts)</td>
-                    @if (string.IsNullOrEmpty(date.Title) && string.IsNullOrEmpty(date.Description))
-                    {
-                        <td>
-                        </td>
-                    }
-                    else
-                    {
-                        <td><strong>@date.Title</strong>
-                            <div>@date.Description</div>
-                        </td>
-                    }
-                    @if (string.IsNullOrEmpty(date.Occurrence.Information))
-                    {
-                        <td></td>
-                    }
-                    else
-                    {
-                        <td><i class="fa fa-info-circle text-primary"></i></td>
-                    }
+                    <td>
+                        @if (!string.IsNullOrEmpty(date.Title))
+                        {
+                            <div><strong>@date.Title</strong></div>
+                        }
+                        @if (!string.IsNullOrEmpty(date.Description))
+                        {
+
+                            <div>@Html.Raw(date.Description)</div>
+                        }
+                        @if (!string.IsNullOrEmpty(date.Occurrence.Information))
+                        {
+                            <div><i>@date.Occurrence.Information</i></div>
+                        }
+                    </td>
                     <td>
                         @if (date.End >= DateTime.Now)
                         {
@@ -221,13 +197,8 @@
                                         new {@class = "btn btn-outline-primary btn-sm"}
                                         )
 
-                                    @Html.ActionButton("fa-calendar", "verschieben", "MoveDate", "Course", new { id = date.Occurrence.Id }, new { @class = "btn btn-outline-primary btn-sm" })
+                                    @Html.ActionButton("fa-cogs", "ändern", "MoveDate", "Course", new { id = date.Occurrence.Id }, new { @class = "btn btn-outline-primary btn-sm" })
 
-
-                                    @Html.ActionButton("fa-info-circle", "Infos ändern", "ChangeDateInformation", "Course",
-                                        new {dateId = date.Id},
-                                        new {@class = "btn btn-outline-primary btn-sm" }
-                                        )
 
                                     @Html.ActionButton("fa-trash", "löschen", "DeleteDateConfirm", "Course",
                                         new {dateId = date.Id},

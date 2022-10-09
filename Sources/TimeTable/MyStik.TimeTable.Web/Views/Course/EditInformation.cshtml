@@ -1,7 +1,23 @@
 ﻿@using System.Globalization
 @using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.CourseDateInformationModel
-           
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+}
+@section Scripts {
+
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")"></script>
+
+    <script>
+        $(function () {
+            $("#DateDescription").cleditor();
+        })
+
+    </script>
+}
+
 <div class="row">
     <div class="card">
         <div class="modal-header">
@@ -10,26 +26,20 @@
         @using (Html.BeginForm("ChangeDateInformationConfirmed", "Course", FormMethod.Post, new { @class = "", role = "form" }))
         {
             <div>
-                    @Html.HiddenFor(m => m.DateId)
+                @Html.HiddenFor(m => m.DateId)
 
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Title, new { @class = "col-md-3 control-label" })
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Titel des Termins" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.DateDescription, new { @class = "col-md-3 control-label" })
-                        <div class="col-md-9">
-                            @Html.TextAreaFor(m => m.DateDescription, new { @class = "form-control", placeholder = "Beschreibung des Termins", rows="9" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.ShortInfo, new { @class = "col-md-3 control-label" })
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(m => m.ShortInfo, new { @class = "form-control", placeholder = "Kurzinfo (erscheint in Kalenderansicht)" })
-                        </div>
-                    </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Title, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Titel des Termins" })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.DateDescription, new { @class = "form-label" })
+                    @Html.TextAreaFor(m => m.DateDescription, new { @class = "form-control", placeholder = "Beschreibung des Termins", rows = "9" })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.ShortInfo, new { @class = "col-md-3 control-label" })
+                    @Html.TextBoxFor(m => m.ShortInfo, new { @class = "form-control", placeholder = "Kurzinfo (erscheint in Kalenderansicht)" })
+                </div>
             </div>
             <div>
                 <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> SPEICHERN</button>

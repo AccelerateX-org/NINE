@@ -56,6 +56,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Name = summary.Name;
                 model.Subject = $"[{summary.Name}]";
                 model.ReceiverCount = subscribers.Count;
+                model.Occurrence = occ;
+                model.UseParticipients = true;
+                model.UseWaitingList = true;
             }
 
             ViewBag.UserRight = GetUserRight();
@@ -90,14 +93,30 @@ namespace MyStik.TimeTable.Web.Controllers
                     var subscribers = summary.Subscriptions;
                     var users = new List<ApplicationUser>();
 
-                    foreach (var subscription in subscribers)
+                    if (model.UseParticipients)
                     {
-                        var user = UserManager.FindById(subscription.UserId);
-                        if (user != null)
+                        foreach (var subscription in subscribers.Where(x => x.OnWaitingList == false))
                         {
-                            users.Add(user);
+                            var user = UserManager.FindById(subscription.UserId);
+                            if (user != null)
+                            {
+                                users.Add(user);
+                            }
                         }
                     }
+
+                    if (model.UseWaitingList)
+                    {
+                        foreach (var subscription in subscribers.Where(x => x.OnWaitingList == true))
+                        {
+                            var user = UserManager.FindById(subscription.UserId);
+                            if (user != null)
+                            {
+                                users.Add(user);
+                            }
+                        }
+                    }
+
 
                     // Mail an Teilnehmer einer Veranstaltung
                     // durch selbstständiges Eintragen automatisch Erhalt von Mails gewährleisten

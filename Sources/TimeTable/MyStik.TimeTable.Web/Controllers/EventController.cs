@@ -1038,12 +1038,13 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Jetzt erst die Notification auslösen
+            /*
             if (changeObject != null)
             {
                 NotificationService nservice = new NotificationService();
                 nservice.CreateSingleNotification(changeObject.Id.ToString());
             }
-
+            */
 
             return PartialView("_SaveSuccess");
         }
@@ -1847,11 +1848,13 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Jetzt erst die Notification auslösen
+            /*
             foreach (var changeObject in changes)
             {
                 NotificationService nservice = new NotificationService();
                 nservice.CreateSingleNotification(changeObject.Id.ToString());
             }
+            */
 
             var userRights = GetUserRight(User.Identity.Name, course);
             ViewBag.UserRight = userRights;
@@ -1888,8 +1891,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         Db.SaveChanges();
 
-                        NotificationService nservice = new NotificationService();
-                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                        //NotificationService nservice = new NotificationService();
+                        //nservice.CreateSingleNotification(changeObject.Id.ToString());
                     }
 
                     date.Occurrence.IsCanceled = true;
@@ -1938,8 +1941,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         Db.SaveChanges();
 
-                        NotificationService nservice = new NotificationService();
-                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                        //NotificationService nservice = new NotificationService();
+                        //nservice.CreateSingleNotification(changeObject.Id.ToString());
                     }
 
 
@@ -2045,8 +2048,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         Db.SaveChanges();
 
-                        NotificationService nservice = new NotificationService();
-                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                        //NotificationService nservice = new NotificationService();
+                        //nservice.CreateSingleNotification(changeObject.Id.ToString());
                     }
 
                     date.Rooms.Clear();
@@ -2096,8 +2099,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                             Db.SaveChanges();
 
-                            NotificationService nservice = new NotificationService();
-                            nservice.CreateSingleNotification(changeObject.Id.ToString());
+                            //NotificationService nservice = new NotificationService();
+                            //nservice.CreateSingleNotification(changeObject.Id.ToString());
 
                         }
 
@@ -2291,8 +2294,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.SaveChanges();
 
-                NotificationService nservice = new NotificationService();
-                nservice.CreateSingleNotification(changeObject.Id.ToString());
+                //NotificationService nservice = new NotificationService();
+                //nservice.CreateSingleNotification(changeObject.Id.ToString());
 
             }
 
@@ -2327,8 +2330,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     Db.SaveChanges();
 
-                    NotificationService nservice = new NotificationService();
-                    nservice.CreateSingleNotification(changeObject.Id.ToString());
+                    // nservice = new NotificationService();
+                    //nservice.CreateSingleNotification(changeObject.Id.ToString());
                 }
 
 

@@ -677,6 +677,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 NewEnd = date.End.TimeOfDay.ToString(),
                 OrganiserId2 = course.Organiser.Id,
                 OrganiserId3 = course.Organiser.Id,
+                Title = date.Title,
+                Description = date.Description,
+                ShortInfo = date.Occurrence.Information,
             };
 
             ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
@@ -757,17 +760,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
+            activityDate.Description = model.Description;
+            activityDate.Title = model.Title;
+            activityDate.Occurrence.Information = model.ShortInfo;
+
             // Um die Anzahl der Transaktionen klein zu halten werden erst
             // an dieser Stelle alle Änderungen am Datum und 
             // dem ChangeObjekt gespeichert
             Db.SaveChanges();
 
             // Jetzt erst die Notification auslösen
+            /*
             if (changeObject != null)
             {
                 NotificationService nservice = new NotificationService();
                 nservice.CreateSingleNotification(changeObject.Id.ToString());
             }
+            */
+
             return RedirectToAction("AdminNewDates", new {id= activityDate.Activity.Id});
         }
 
@@ -822,11 +832,13 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             // Jetzt erst die Notification auslösen
+            /*
             foreach (var changeObject in changes)
             {
                 NotificationService nservice = new NotificationService();
                 nservice.CreateSingleNotification(changeObject.Id.ToString());
             }
+            */
 
             var userRights = GetUserRight(User.Identity.Name, course);
             ViewBag.UserRight = userRights;
@@ -2224,8 +2236,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         Db.SaveChanges();
 
-                        NotificationService nservice = new NotificationService();
-                        nservice.CreateSingleNotification(changeObject.Id.ToString());
+                        //NotificationService nservice = new NotificationService();
+                        //nservice.CreateSingleNotification(changeObject.Id.ToString());
                     }
 
                     date.Occurrence.IsCanceled = true;

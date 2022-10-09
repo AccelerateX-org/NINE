@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using System.Web.Mvc;
+using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -111,6 +112,11 @@ namespace MyStik.TimeTable.Web.Models
         public Guid CurrId { get; set; }
 
         public Guid ModuleId { get; set; }
+
+        public Occurrence Occurrence { get; set; }
+
+        public bool UseParticipients { get; set; }
+        public bool UseWaitingList { get; set; }
 
     }
 
