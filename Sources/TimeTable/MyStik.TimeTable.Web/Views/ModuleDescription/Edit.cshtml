@@ -25,7 +25,10 @@
                             <div>Modulverantwortliche(r)</div>
                         </div>
                         <div class="col-8">
-                            <div>@Model.ModuleDescription.Module.MV.FullName</div>
+                            @foreach (var mv in Model.ModuleDescription.Module.ModuleResponsibilities)
+                            {
+                                <div>@mv.Member.FullName</div>
+                            }
                         </div>
                     </div>
                 </div>

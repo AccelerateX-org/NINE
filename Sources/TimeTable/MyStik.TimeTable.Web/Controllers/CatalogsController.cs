@@ -214,6 +214,12 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 foreach (var model in catalog.Modules.ToList())
                 {
+
+                    foreach (var mv in model.ModuleResponsibilities.ToList())
+                    {
+                        Db.ModuleResponsibilities.Remove(mv);
+                    }
+
                     foreach (var subject in model.ModuleSubjects.ToList())
                     {
                         foreach (var opportunity in subject.Opportunities.ToList())

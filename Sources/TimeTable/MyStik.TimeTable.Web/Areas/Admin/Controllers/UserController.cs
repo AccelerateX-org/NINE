@@ -129,7 +129,7 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         [HttpPost]
         public PartialViewResult InactiveStudents()
         {
-            var border = DateTime.Today.AddDays(-180);
+            var border = DateTime.Today.AddDays(-360);
 
             var userList = _db.Users.Where(u => u.MemberState == MemberState.Student && u.LastLogin.HasValue && u.LastLogin < border).OrderBy(u => u.LastLogin.Value).ToList();
 

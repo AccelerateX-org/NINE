@@ -1332,18 +1332,19 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var accreditation in plan.opportunities)
             {
                 var catWords = accreditation.subject.Split(':');
-                if (catWords.Length != 5) continue;
+                if (catWords.Length != 7) continue;
 
-                var catalogName = catWords[0];
-                var moduleName = catWords[2];
-                var subjectName = catWords[4];
+                var orgName = catWords[0];
+                var catalogName = catWords[2];
+                var moduleName = catWords[4];
+                var subjectName = catWords[6];
 
 
                 var module = Db.ModuleCourses.FirstOrDefault(x =>
                     x.Tag.Equals(subjectName) && x.Module != null &&
                     x.Module.Tag.Equals(moduleName) && x.Module.Catalog != null &&
                     x.Module.Catalog.Tag.Equals(catalogName) &&
-                    x.Module.Catalog.Organiser.Id == curr.Organiser.Id
+                    x.Module.Catalog.Organiser.Tag.Equals(orgName)
                     );
 
                 if (module == null) continue;

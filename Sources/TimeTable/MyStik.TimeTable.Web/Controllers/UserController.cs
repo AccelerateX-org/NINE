@@ -321,20 +321,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var user in userList)
             {
+                /*
                 var semSub =
                     Db.Subscriptions.OfType<SemesterSubscription>()
                         .Where(s => s.UserId.Equals(user.Id))
                         .OrderByDescending(s => s.SemesterGroup.Semester.StartCourses).FirstOrDefault();
 
-
+                */
 
 
                 model.Add(new UserAdminViewModel
                 {
                     User = user,
-                    SubscriptionCount = string.IsNullOrEmpty(user.Id) ? -99 : Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
-                    Members = MemberService.GetMemberships(user.Id),
-                    SemesterGroup = semSub != null ? semSub.SemesterGroup : null
+                    // SubscriptionCount = string.IsNullOrEmpty(user.Id) ? -99 : Db.Subscriptions.Count(s => s.UserId.Equals(user.Id)),
+                    // Members = MemberService.GetMemberships(user.Id),
+                    // SemesterGroup = semSub != null ? semSub.SemesterGroup : null
                 });
             }
 
