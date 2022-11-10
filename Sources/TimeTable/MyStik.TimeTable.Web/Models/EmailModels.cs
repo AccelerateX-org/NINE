@@ -224,18 +224,26 @@ namespace MyStik.TimeTable.Web.Models
         public string Body { get; set; }
     }
 
-    public class ThesisIssueSummaryEmail : BaseEmail
+    public class ThesisAutoIssueSummaryEmail : BaseEmail
     {
-        public ThesisIssueSummaryEmail() : base("ThesisIssuedSummary")
+        public ThesisAutoIssueSummaryEmail() : base("ThesisAutoIssuedSummary")
         {
             
         }
 
         public List<Thesis> Theses { get; set; }
-
-
-
     }
 
+
+
+    public class ThesisAutoIssueEmail : BaseEmail
+    {
+        public ThesisAutoIssueEmail() : base("ThesisAutoIssued")
+        {
+
+        }
+
+        public Thesis Thesis { get; set; }
+    }
 
 }

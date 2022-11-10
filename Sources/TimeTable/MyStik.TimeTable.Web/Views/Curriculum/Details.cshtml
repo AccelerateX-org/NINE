@@ -140,7 +140,7 @@
                                     if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
                                     {
                                         <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
-                                            <strong>@slot.Tag</strong> 
+                                            <strong>@slot.Tag</strong> @slot.ModuleAccreditations.Count
                                             @foreach (var label in slot.LabelSet.ItemLabels)
                                             {
                                                 <span>@label.Name</span>
@@ -152,8 +152,8 @@
                                     else
                                     {
                                         <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
-                                            <strong>@slot.Tag</strong>
-                                            <br/>
+                                            <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
+                                            <br />
                                             <small>@slot.Name</small>
                                         </a>
                                     }

@@ -31,6 +31,12 @@
     <div class="col-sm-6">
         <h5>Belegungsplan Raum @Model.Room.Number</h5>
         <h6>Stand: @now.ToString("dd.MM.yyyy HH:mm:ss")</h6>
+        @if (ViewBag.Monday != null && ViewBag.Sunday != null)
+        {
+            <p>
+                @ViewBag.Monday.ToShortDateString() -@ViewBag.Sunday.ToShortDateString()
+            </p>
+        }
     </div>
     <div class="col-sm-6">
         <div class="top-0 end-0"><img src="@Url.Action("GetQrCode", new {id = Model.Room.Id})" style="height: 120px; width: auto" /></div>

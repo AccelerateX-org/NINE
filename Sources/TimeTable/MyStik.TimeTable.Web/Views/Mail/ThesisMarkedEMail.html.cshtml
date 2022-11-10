@@ -10,14 +10,13 @@
     @Model.Thesis.GradeDate.Value.ToShortDateString() ans Prüfungsamt gemeldet.<br />
     Bitte berücksichtigen Sie, dass mit dieser Meldung die Note noch nicht eingetragen ist und damit noch nicht im Notenblatt enthalten ist.
 </p>
-<h5>Alum-NINE</h5>
-<p>Wollen Sie auch nach dem Abschluss Ihres Studiums mit Ihrer Hochschule und Fakultät in Kontakt bleiben, z.B. für die Einladung zur Absolventenverabschiedung?</p>
-
-
-<a href="@Url.Action("Accept", "Alumni", new {id = Model.Thesis.Student.Id}, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
 
 @if (Model.Thesis.Student.Curriculum.Organiser.ShortName.Equals("FK 09"))
 {
+    <h5>Alum-NINE</h5>
+    <p>Wollen Sie auch nach dem Abschluss Ihres Studiums mit Ihrer Hochschule und Fakultät in Kontakt bleiben, z.B. für die Einladung zur Absolventenverabschiedung?</p>
+    <a href="@Url.Action("Accept", "Alumni", new { id = Model.Thesis.Student.Id }, Request.Url.Scheme)">Zur Anmeldung als Alumni</a>
+
     <h5>Teilnahme an der Alumnibefragung</h5>
     if (Model.Thesis.Student.Curriculum.ShortName.Equals("WI"))
     {
@@ -39,6 +38,13 @@
     {
         <a href="https://evasys.cc.hm.edu/evasys/online.php?p=mbaeng09a">Alumnibefragung für MBA</a>
     }
+}
 
 
+@if (Model.Thesis.Student.Curriculum.Organiser.ShortName.Equals("FK 10"))
+{
+    <p>
+        Wir würden uns freuen, mit Ihnen in Kontakt zu bleiben! 
+        Im Alumni-Newsletter erhalten Sie ein bis zwei Mal pro Semester Neuigkeiten aus der Fakultät und Infos zu Veranstaltungen und weiteren Vernetzungsmöglichkeiten: Zur <a href="https://tinyurl.com/fk10alumni">Anmeldung </a>
+    </p>
 }

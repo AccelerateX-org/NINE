@@ -101,16 +101,51 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var roomService = new RoomService();
 
-            var model = roomService.GetRoomSchedule(id, semester);
+            var today = DateTime.Today;
+            var monday = today.AddDays(-(int)today.DayOfWeek + 1);
+            var sunday = monday.AddDays(6);
+
+            var model = roomService.GetRoomSchedule(id, monday, sunday);
 
             ViewBag.ShowCalendar = true;
             ViewBag.ShowDateList = false;
             ViewBag.IsMoSa = true;
-            ViewBag.DefaultDate = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.DefaultDate = monday.ToString("yyyy-MM-dd");
             ViewBag.UseDates = true;
+            ViewBag.Monday = monday;
+            ViewBag.Sunday = sunday;
 
             return View("RoomScheduleWeek", model);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult RoomScheduleNextWeek(Guid id)
+        {
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var roomService = new RoomService();
+
+            var today = DateTime.Today;
+            var monday = today.AddDays(-(int)today.DayOfWeek + 8);
+            var sunday = monday.AddDays(6);
+
+            var model = roomService.GetRoomSchedule(id, monday, sunday);
+
+            ViewBag.ShowCalendar = true;
+            ViewBag.ShowDateList = false;
+            ViewBag.IsMoSa = true;
+            ViewBag.DefaultDate = monday.ToString("yyyy-MM-dd");
+            ViewBag.UseDates = true;
+            ViewBag.Monday = monday;
+            ViewBag.Sunday = sunday;
+
+            return View("RoomScheduleWeek", model);
+        }
+
 
 
         public ActionResult RoomLabel(Guid id)
@@ -131,27 +166,6 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult RoomScheduleNextWeek(Guid id)
-        {
-            var semester = SemesterService.GetSemester(DateTime.Today);
-
-            var roomService = new RoomService();
-
-            var model = roomService.GetRoomSchedule(id, semester);
-
-            ViewBag.ShowCalendar = true;
-            ViewBag.ShowDateList = false;
-            ViewBag.IsMoSa = true;
-            ViewBag.DefaultDate = DateTime.Today.AddDays(7).ToString("yyyy-MM-dd");
-            ViewBag.UseDates = true;
-
-            return View("RoomScheduleWeek", model);
-        }
 
 
 

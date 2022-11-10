@@ -24,6 +24,7 @@ namespace MyStik.TimeTable.Web.Jobs
         {
             // Morgens um 10:00
             RecurringJob.AddOrUpdate<ThesisJob>("Thesis.CheckAutoIssue", x => x.CheckIssueDates(), "0 10 * * *");
+
         }
 
 
@@ -80,7 +81,7 @@ namespace MyStik.TimeTable.Web.Jobs
             var smtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
 
             // Sammel
-            var emailTotal = new ThesisIssueSummaryEmail()
+            var emailTotal = new ThesisAutoIssueSummaryEmail()
             {
                 From = smtpSection.From,
                 To = "olav.hinz@hm.edu",

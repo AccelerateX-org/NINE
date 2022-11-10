@@ -74,6 +74,26 @@ namespace MyStik.TimeTable.Web.Controllers
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="opportunityId"></param>
+        /// <param name="targetSubjectId"></param>
+        /// <returns></returns>
+        public ActionResult MoveCourse2Subject(Guid opportunityId, Guid targetSubjectId)
+        {
+            var opportunity = Db.SubjectOpportunities.SingleOrDefault(x => x.Id == opportunityId);
+            var targetSubject = Db.ModuleCourses.SingleOrDefault(x => x.Id == targetSubjectId);
+
+            var module = opportunity.Subject.Module;
+
+            opportunity.Subject = targetSubject;
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Details", new { id = module.Id });
+        }
+
 
     }
 

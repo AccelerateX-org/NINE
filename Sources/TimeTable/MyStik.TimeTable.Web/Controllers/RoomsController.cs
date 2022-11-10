@@ -36,5 +36,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult Statistics()
+        {
+            return View();
+        }
     }
 }

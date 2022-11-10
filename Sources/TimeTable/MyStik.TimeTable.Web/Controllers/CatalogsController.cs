@@ -28,6 +28,17 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Details(Guid id)
+        {
+            var model = Db.CurriculumModuleCatalogs.FirstOrDefault(x => x.Id == id);
+
+
+            ViewBag.UserRight = GetUserRight(model.Organiser);
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+
+            return View(model);
+        }
+
 
         public ActionResult Import(Guid id)
         {

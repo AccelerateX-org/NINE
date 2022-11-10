@@ -27,7 +27,7 @@
     @Html.Partial("_CourseSummaryDates", Model.Summary)
     @Html.Partial("_CourseSummaryCapacity", Model.Summary)
 
-    @if (Request.IsAuthenticated && ViewBag.UserRight.User.MemberState == MemberState.Student)
+    @if (Request.IsAuthenticated && (ViewBag.UserRight.User.MemberState == MemberState.Student || ViewBag.UserRight.User.MemberState == MemberState.Staff))
     {
         @Html.Partial("_CourseSummaryBooking", Model)
     }

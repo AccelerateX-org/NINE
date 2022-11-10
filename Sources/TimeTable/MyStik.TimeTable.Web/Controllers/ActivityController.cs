@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
@@ -634,6 +635,10 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
 
             ViewBag.Organiser = org;
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
 
             return View();
         }

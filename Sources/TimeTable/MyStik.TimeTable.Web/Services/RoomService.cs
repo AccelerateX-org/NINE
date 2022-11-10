@@ -495,5 +495,65 @@ namespace MyStik.TimeTable.Web.Services
 
             return model;
         }
+
+
+        internal RoomScheduleModel GetRoomSchedule(Guid id, DateTime from, DateTime until)
+        {
+            var room = _db.Rooms.SingleOrDefault(r => r.Id == id);
+
+            var model = new RoomScheduleModel();
+            model.Room = room;
+            model.Semester = new SemesterService().GetSemester(from);
+
+            var allDates = room.Dates.Where(x => x.Begin >= from && x.End <= until.AddDays(1))
+                .OrderBy(x => x.Begin)
+                .ToList();
+            var ratio = 0;
+
+            while (allDates.Any())
+            {
+                var date = allDates.First();
+                var roomDateModel = new RoomDateSummaryModel
+                {
+                    Activity = date.Activity,
+                    DayOfWeek = date.Begin.DayOfWeek,
+                    Start = date.Begin,
+                    End = date.End,
+                    SlotCount = 1
+                };
+
+                roomDateModel.Dates.Add(date);
+
+                var dayBegin = date.Begin.AddDays(7);
+                var dayEnd = date.End.AddDays(7);
+
+                while (dayBegin <= until.AddDays(1))
+                {
+                    var matchingDates = allDates.Where(x =>
+                        x.Activity.Id == date.Activity.Id &&
+                        x.Begin == dayBegin && x.End == dayEnd).ToList();
+
+                    foreach (var matchingDate in matchingDates)
+                    {
+                        roomDateModel.Dates.Add(matchingDate);
+                        allDates.Remove(matchingDate);
+                    }
+
+
+                    dayBegin = dayBegin.AddDays(7);
+                    dayEnd = dayEnd.AddDays(7);
+                    roomDateModel.SlotCount++;
+                }
+
+                // regelmäßig oder nicht
+                // 1 Woche => alle regelmäßig
+                model.RegularDates.Add(roomDateModel);
+
+                allDates.Remove(date);
+            }
+
+            return model;
+        }
+
     }
 }

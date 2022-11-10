@@ -1,6 +1,8 @@
 ﻿@model MyStik.TimeTable.Data.ModuleDescription
 @{
     ViewBag.Title = "Details";
+
+    var subjects = Model.Module.ModuleSubjects.ToList();
 }
 
 
@@ -77,9 +79,9 @@
                             <div>Fächer / Lehrveranstaltungen</div>
                         </div>
                         <div class="col-8">
-                            @foreach (var subject in Model.Module.ModuleSubjects.ToList())
+                            @foreach (var subject in subjects)
                             {
-                                var courses = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+                                var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
 
                                 if (subject.TeachingFormat != null)
                                 {
@@ -90,11 +92,21 @@
                                     <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">N.N.</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
                                 }
 
-                                foreach (var course in courses)
+                                foreach (var opportunity in opportunities)
                                 {
                                     <div class="ms-3">
-                                        <a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">
-                                            @course.Course.Name (@course.Course.ShortName)
+                                        @foreach (var moveSubject in subjects)
+                                        {
+                                            if (moveSubject != subject)
+                                            {
+                                                <a href="@Url.Action("MoveCourse2Subject", null, new { opportunityId = opportunity.Id, targetSubjectId = moveSubject.Id })"
+                                                   class="btn btn-sm btn-outline-info">
+                                                    >> @moveSubject.Name (@moveSubject.Tag)
+                                                </a>
+                                            }
+                                        }
+                                        <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
+                                            @opportunity.Course.Name (@opportunity.Course.ShortName)
                                         </a>
                                     </div>
                                 }

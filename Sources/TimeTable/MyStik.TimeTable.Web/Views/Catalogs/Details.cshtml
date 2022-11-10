@@ -1,0 +1,133 @@
+﻿@model MyStik.TimeTable.Data.CurriculumModuleCatalog
+@using MyStik.TimeTable.Data
+
+
+@{
+    ViewBag.Title = "Modulekatalog";
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Modulkatalog @Model.Name</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Index", "Catalogs", new {id = Model.Organiser.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-upload"></i> Import
+                        </a>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+
+                            <a href="@Url.Action("ImportCatalog", "Catalogs", new {id = Model.Id})" class="btn btn-outline-primary">
+                                <i class="bi-upload"></i> Import
+                            </a>
+                            <a href="@Url.Action("DeleteCatalog", "Catalogs", new {id = Model.Id})" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Löschen
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <table id="tabCatalogs" class="table">
+                <thead>
+                    <tr>
+                        <th>Module Name</th>
+                        <th>Module ID</th>
+                        <th>Modulverantwortung</th>
+                        <th>Fächer</th>
+                        <th>Prüfungen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var module in Model.Modules)
+                        {
+                            var iExamOption = 0;
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
+                                        @module.Name
+                                    </a>
+                                </td>
+                                <td>@module.Tag</td>
+                                @if (module.ModuleResponsibilities.Any())
+                                {
+                                    <td>
+                                        @foreach (var mv in module.ModuleResponsibilities)
+                                        {
+                                            <div>@mv.Member.FullName</div>
+                                        }
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>vakant</td>
+                                }
+                                <td>
+                                    @foreach (var subject in module.ModuleSubjects)
+                                    {
+                                        <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var exam in module.ExaminationOptions)
+                                    {
+                                        iExamOption++;
+                                        <div>
+                                            Option @iExamOption:
+                                            @foreach (var fraction in exam.Fractions)
+                                            {
+                                                if (fraction.Form != null)
+                                                {
+                                                    var str = string.Format(" {0} ({1:P})", fraction.Form.ShortName, fraction.Weight);
+                                                    if (fraction != exam.Fractions.Last())
+                                                    {
+                                                        str += " und";
+                                                    }
+                                                    @str
+                                                }
+                                                else
+                                                {
+                                                    var str = string.Format(" nix ({0:P})", fraction.Weight);
+                                                    if (fraction != exam.Fractions.Last())
+                                                    {
+                                                        str += " und";
+                                                    }
+                                                    @str
+                                                }
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabCatalogs').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}

@@ -9,57 +9,34 @@
 
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-rooms">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Raumbelegungen @ViewBag.Organiser.ShortName 
-                        <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h1>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    Raumbelegungen @ViewBag.Organiser.ShortName
+                    <span id="loading" hidden=""><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                </h4>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label for="myDate">Datum</label>
-                            <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
-                        </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="col-2">
+                        <label for="myDate">Datum</label>
+                        <input type="text" id="myDate" class="form-control datepicker" placeholder="Datum auswählen..." value="@DateTime.Today.ToShortDateString()">
+                    </div>
+                    <div class="col-2">
                         @if (ViewBag.UserRight.IsRoomAdmin)
                         {
-                            <div class="form-group">
-                                <a href="javascript:getRoomData();" class="btn btn-default">
-                                    <i class="fa fa-download"></i> .csv Datei
-                                </a>
-                            </div>
+                            <a href="javascript:getRoomData();" class="btn btn-outline-primary">
+                                <i class="fa fa-download"></i> .csv Datei
+                            </a>
                         }
+
                     </div>
                 </div>
+
             </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container-fluid">
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Alle Räume @ViewBag.Organiser.ShortName</h4>
-                </div>
-                <div id="roomPlan"></div>
-            </div>
+            <div id="roomPlan"></div>
         </div>
     </div>
 </div>
@@ -67,8 +44,9 @@
 
 
 @section Scripts {
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     <script>
 
@@ -80,10 +58,10 @@
         $('.datepicker').datepicker({
             orientation: "right",
             autoclose: true,
-            format: "dd.mm.yyyy",
+            format: "@ViewBag.Culture.DateTimeFormat.ShortDatePattern",
             weekStart: 1,
             calendarWeeks: true,
-            language: "de"
+            language: "@ViewBag.Culture.Name"
         });
         $('.datepicker').datepicker()
             .on('changeDate',

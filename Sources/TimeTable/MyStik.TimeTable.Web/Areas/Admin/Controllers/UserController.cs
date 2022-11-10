@@ -131,7 +131,10 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
         {
             var border = DateTime.Today.AddDays(-360);
 
-            var userList = _db.Users.Where(u => u.MemberState == MemberState.Student && u.LastLogin.HasValue && u.LastLogin < border).OrderBy(u => u.LastLogin.Value).ToList();
+            var userList = _db.Users
+                .Where(u => u.MemberState == MemberState.Student && u.LastLogin.HasValue && u.LastLogin < border)
+                .Take(200)
+                .OrderBy(u => u.LastLogin.Value).ToList();
 
             var model = CreateUserList(userList);
 

@@ -4099,8 +4099,8 @@
     <Content Include="Views\Autonomy\Committee.cshtml" />
     <Content Include="Views\Autonomy\AddMember.cshtml" />
     <Content Include="Views\Mail\ThesisProlongRequestBoardEMail.html.cshtml" />
-    <Content Include="Views\Emails\ThesisIssuedSummary.cshtml" />
-    <Content Include="Views\Emails\ThesisIssuedSummary.Html.cshtml" />
+    <Content Include="Views\Emails\ThesisAutoIssuedSummary.cshtml" />
+    <Content Include="Views\Emails\ThesisAutoIssuedSummary.Html.cshtml" />
     <Content Include="Views\Shared\_LayoutDummy.cshtml" />
     <Content Include="Views\Subscription\StartCurriculum.cshtml" />
     <Content Include="Views\Curriculum\_CurriculumListGroup.cshtml" />
@@ -4128,6 +4128,10 @@
     <Content Include="Views\Course\DetailsNew.cshtml" />
     <Content Include="Views\ScriptShop\Inventory.cshtml" />
     <Content Include="Views\ThesisAdmin\All.cshtml" />
+    <Content Include="Views\Emails\ThesisAutoIssued.cshtml" />
+    <Content Include="Views\Emails\ThesisAutoIssued.Html.cshtml" />
+    <Content Include="Views\Catalogs\Details.cshtml" />
+    <Content Include="Views\Rooms\Statistics.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

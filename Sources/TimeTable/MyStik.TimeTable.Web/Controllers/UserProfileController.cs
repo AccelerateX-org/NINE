@@ -117,6 +117,10 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.CalendarToken = user.Id;
             ViewBag.CalendarPeriod = SemesterService.GetSemester(DateTime.Today).Name;
 
+            ViewBag.HasImage = false;
+            if (user.BinaryData != null && user.BinaryData.Length > 0)
+                ViewBag.HasImage = true;
+
 
             return View(model);
         }
@@ -288,6 +292,32 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public ActionResult GetProfileImage()
+        {
+            var user = GetCurrentUser();
+            return File(user.BinaryData, user.FileType);
+        }
+
+
+        public ActionResult DeleteProfileImage()
+        {
+            var _db = new ApplicationDbContext();
+
+            var user = _db.Users.SingleOrDefault(u => u.UserName.Equals(User.Identity.Name));
+
+            if (user != null)
+            {
+                user.BinaryData = null;
+                user.FileType = string.Empty;
+
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
 
 
 
