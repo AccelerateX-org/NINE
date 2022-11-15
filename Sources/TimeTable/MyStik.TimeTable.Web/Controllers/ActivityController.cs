@@ -651,7 +651,8 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult RoomPlan(string date)
         {
-            var day =  string.IsNullOrEmpty(date) ? DateTime.Today  : DateTime.ParseExact(date, "dd.MM.yyyy", null);
+            //var day =  string.IsNullOrEmpty(date) ? DateTime.Today  : DateTime.ParseExact(date, "dd.MM.yyyy", null);
+            var day = string.IsNullOrEmpty(date) ? DateTime.Today : DateTime.Parse(date);
             var nextDay = day.AddDays(1);
 
             var org = GetMyOrganisation();

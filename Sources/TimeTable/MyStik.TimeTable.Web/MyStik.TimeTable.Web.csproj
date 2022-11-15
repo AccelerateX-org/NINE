@@ -4132,6 +4132,9 @@
     <Content Include="Views\Emails\ThesisAutoIssued.Html.cshtml" />
     <Content Include="Views\Catalogs\Details.cshtml" />
     <Content Include="Views\Rooms\Statistics.cshtml" />
+    <Content Include="Views\Curriculum\Labels.cshtml" />
+    <Content Include="Views\Curriculum\_ModulePlan.cshtml" />
+    <Content Include="Views\Curriculum\_ModuleList.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

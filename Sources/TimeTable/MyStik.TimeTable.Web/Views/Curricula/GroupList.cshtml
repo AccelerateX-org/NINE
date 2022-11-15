@@ -23,6 +23,9 @@
                     <div class="panel panel-default">
                         <ul class="nav">
                             <li>
+                                <a href="@Url.Action("Admin", "Curriculum", new {id = Model.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> Zurück</a>
+                            </li>
+                            <li>
                                 <a href="@Url.Action("CreateGroup", new {id = Model.Id})" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Neue Studiengruppe</a>
                             </li>
                         </ul>

@@ -1,0 +1,71 @@
+﻿@model MyStik.TimeTable.Data.CurriculumSlot
+
+
+<div class="list-group">
+    @foreach (var module in Model.ModuleAccreditations)
+    {
+        var showModule = true;
+
+        if (module.LabelSet != null && module.LabelSet.ItemLabels.Any() && ViewBag.FilterLabel != null)
+        {
+            if (ViewBag.FilterLabel != null && ViewBag.FilterLabel.Name.Contains("::"))
+            {
+                var labelClass = ViewBag.FilterLabel.Name.Split(':')[0] + "::";
+                if (module.LabelSet.ItemLabels.Any(x => x.Name.StartsWith(labelClass)))
+                {
+                    if (module.LabelSet.ItemLabels.Any(x => x.Name.Equals(ViewBag.FilterLabel.Name)))
+                    {
+                        showModule = true;
+                    }
+                    else
+                    {
+                        showModule = false;
+                    }
+                }
+            }
+
+        }
+
+        if (showModule)
+        {
+            <a class="list-group-item list-group-item-action"
+               href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">
+                <h5>
+                    Modul: @module.Module.Name (@module.Module.Tag)
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        @foreach (var subject in module.Module.ModuleSubjects)
+                        {
+                            <div class="ms-3">@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                        }
+
+                    </div>
+                    <div class="col-md-6">
+                        @foreach (var option in module.Module.ExaminationOptions)
+                        {
+                            <div class="ms-3">
+                                @option.Name:
+                                @foreach (var fraction in option.Fractions)
+                                {
+                                    if (fraction.MinDuration > 0)
+                                    {
+                                        var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                        @str
+                                    }
+                                    else
+                                    {
+                                        var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                        @str
+                                    }
+                                }
+
+
+                            </div>
+                        }
+                    </div>
+                </div>
+            </a>
+        }
+    }
+</div>

@@ -2,6 +2,19 @@
 
 @{
     ViewBag.Title = "Modulplan";
+    var showFilter = false;
+    if (ViewBag.FilterLabels != null)
+    {
+        var numLabels = 0;
+        foreach (var label in ViewBag.FilterLabels)
+        {
+            numLabels++;
+        }
+        if (numLabels > 0)
+        {
+            showFilter = true;
+        }
+    }
 }
 
 @section styles
@@ -38,29 +51,11 @@
                     <div class="col-md-2">
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <div class="d-md-flex justify-content-md-end">
-                                <a href="@Url.Action("GroupList", "Curricula", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="fas fa-fw fa-puzzle-piece"></i> Aufbau - Studiengruppen
-                                </a>
-                                <a href="@Url.Action("Students", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="fas fa-fw fa-users"></i> Studierende
-                                </a>
-                                <a href="@Url.Action("Edit", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="fa fa-fw fa-cog"></i> Allgemeine Einstellungen
-                                </a>
-                                <a href="@Url.Action("Import", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-upload"></i> Import
-                                </a>
-                                <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Löschen
-                                </a>
-                                <a href="@Url.Action("Accreditation", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-upload"></i> Akkreditierung
-                                </a>
-                                <a href="@Url.Action("Opportunities", "Curriculum", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-upload"></i> Lehrangebot
-                                </a>
-                            </div>
+                        <div class="d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Admin", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                <i class="bi-gear"></i> Verwaltung
+                            </a>
+                        </div>
                         }
                     </div>
                 </div>
@@ -92,7 +87,10 @@
                         <div class="row">
                             <div class="col-12">
                                 <a href="#">Stundenplan @Model.Semester.Name</a> |
-                                <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
+                                @if (ViewBag.NextSemester != null)
+                                {
+                                    <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
+                                }
                             </div>
                         </div>
                         <div class="row">
@@ -102,66 +100,49 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <a href="#">Aufnahmeverfahren / Anmeldung</a>
+                                @if (Model.Assessments.Any())
+                                {
+                                    <a href="@Url.Action("Index", "Assessment")" class="">
+                                        Auswahlverfahren
+                                    </a>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
                 <hr/>
                 <h5>Aufbau</h5>
-                @if (Model.Curriculum.LabelSet != null)
+                @if (showFilter)
                 {
                     var i = 0;
                     <div class="form-floating">
-                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
-                            <option selected>Open this select menu</option>
-                            @foreach (var label in Model.Curriculum.LabelSet.ItemLabels)
+                        <select id="labelSelect" class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
+                            @foreach (var label in ViewBag.FilterLabels)
                             {
                                 i++;
-                                <option value="@label.Name">@label.Name</option>
+                                if (i == 1)
+                                {
+                                    <option selected value="@label.Name">@label.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@label.Name">@label.Name</option>
+                                }
 
                             }
                         </select>
-                        <label for="floatingSelect">Studienrichtung</label>
+                        <label for="floatingSelect">Filterkriterium</label>
+                    </div>
+                    <div id="loading" class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div id="ModulePlan">
+
                     </div>
                 }
-                @foreach (var sec in Model.Curriculum.Sections)
+                else
                 {
-                    <div class="row">
-                        <div class="col-2">
-                            @sec.Name
-                        </div>
-                        <div class="col-10">
-                            <div style="width: 100%">
-                                @foreach (var slot in sec.Slots)
-                                {
-                                    var w = (int) (slot.ECTS / 32 * 100);
-
-                                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
-                                    {
-                                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
-                                            <strong>@slot.Tag</strong> @slot.ModuleAccreditations.Count
-                                            @foreach (var label in slot.LabelSet.ItemLabels)
-                                            {
-                                                <span>@label.Name</span>
-                                            }
-                                            <br/>
-                                            <small>@slot.Name</small>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
-                                            <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
-                                            <br />
-                                            <small>@slot.Name</small>
-                                        </a>
-                                    }
-                                }
-                            </div>
-
-                        </div>
-                    </div>
+                    @Html.Partial("_ModulePlan", Model)
                 }
             </div>
         </div>
@@ -172,8 +153,38 @@
 @section scripts
 {
     <script>
+        $(function () {
+            $("#loading").hide();
+
+            var label = $("#labelSelect").val();
+            if (label != null)  {
+                onLabelSelected(label);
+            }
+        });
+
+
         function onLabelSelected(value) {
-            alert(value);
+
+            var currId = "@Model.Curriculum.Id";
+            var label = value;
+
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("LoadModulePlan")',
+                    data: {
+                        currId: currId,
+                        label: label
+                    },
+                    success: function (data, success, xhr) {
+                        $("#ModulePlan").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
         }
+    
     </script>
 }

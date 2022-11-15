@@ -3,6 +3,21 @@
 @model MyStik.TimeTable.Data.CurriculumSlot
 @{
     ViewBag.Title = "Slot";
+
+    var showFilter = false;
+    if (ViewBag.FilterLabels != null)
+    {
+        var numLabels = 0;
+        foreach (var label in ViewBag.FilterLabels)
+        {
+            numLabels++;
+        }
+        if (numLabels > 0)
+        {
+            showFilter = true;
+        }
+    }
+
 }
 
 <div class="row">
@@ -17,51 +32,77 @@
                     @Model.CurriculumSection.Name
                 </h5>
             </div>
-            <div class="list-group">
-                @foreach (var module in Model.ModuleAccreditations)
-                {
-                    <a class="list-group-item list-group-item-action"
-                       href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">
-                        <h5>
-                            Modul: @module.Module.Name (@module.Module.Tag)
-                        </h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                @foreach (var subject in module.Module.ModuleSubjects)
-                                {
-                                    <div class="ms-3">@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
-                                }
+            @if (showFilter)
+            {
+                var i = 0;
+                <div class="form-floating">
+                    <select id="labelSelect" class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
+                        @foreach (var label in ViewBag.FilterLabels)
+                        {
+                            i++;
+                            if (i == 1)
+                            {
+                                <option selected value="@label.Name">@label.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@label.Name">@label.Name</option>
+                            }
 
-                            </div>
-                            <div class="col-md-6">
-                                @foreach (var option in module.Module.ExaminationOptions)
-                                {
-                                    <div class="ms-3">
-                                        @option.Name:
-                                        @foreach (var fraction in option.Fractions)
-                                        {
-                                            if (fraction.MinDuration > 0)
-                                            {
-                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                                                @str
-                                            }
-                                            else
-                                            {
-                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                                                @str
-                                            }
-                                        }
+                        }
+                    </select>
+                    <label for="floatingSelect">Filterkriterium</label>
+                </div>
+                <div id="loading" class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div id="ModuleList">
 
-
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </a>
-
-                }
-            </div>
-           
+                </div>
+            }
+            else
+            {
+                @Html.Partial("_ModuleList", Model)
+            }
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    <script>
+        $(function () {
+            $("#loading").hide();
+
+            var label = $("#labelSelect").val();
+            if (labe != null) {
+                onLabelSelected(label);
+            }
+        });
+
+
+        function onLabelSelected(value) {
+
+            var slotId = "@Model.Id";
+            var label = value;
+
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("LoadModuleList")',
+                    data: {
+                        slotId: slotId,
+                        label: label
+                    },
+                    success: function (data, success, xhr) {
+                        $("#ModuleList").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+    </script>
+}

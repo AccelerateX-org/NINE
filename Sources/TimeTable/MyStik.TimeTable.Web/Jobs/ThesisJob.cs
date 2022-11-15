@@ -90,8 +90,15 @@ namespace MyStik.TimeTable.Web.Jobs
             };
 
 
-            // Rendern und senden
-            emailService.Send(emailTotal);
+            try
+            {
+                // Rendern und senden
+                emailService.Send(emailTotal);
+            }
+            catch (Exception ex)
+            {
+
+            }
 
         }
     }

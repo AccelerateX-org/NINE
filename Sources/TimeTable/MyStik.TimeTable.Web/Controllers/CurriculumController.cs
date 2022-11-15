@@ -20,51 +20,6 @@ namespace MyStik.TimeTable.Web.Controllers
     /// </summary>
     public class CurriculumController : BaseController
     {
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Index(Guid id)
-        {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
-
-            var model = new CurriculumViewModel();
-
-            model.Curriculum = curr;
-            model.Semester = SemesterService.GetLatestSemester(curr.Organiser);
-
-            var user = GetCurrentUser();
-
-            if (user.MemberState == MemberState.Staff)
-            {
-                model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
-                    s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)));
-            }
-            else
-            {
-                model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
-                    s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && g.IsAvailable)));
-            }
-
-
-            var assessments = Db.Assessments.Where(x => 
-                x.Curriculum.Id == curr.Id &&
-                x.Stages.Any(s => s.ClosingDateTime != null && s.ClosingDateTime.Value >= DateTime.Today)).ToList();
-
-            model.Assessments = assessments;
-
-
-
-            // hier muss überprüft werden, ob der aktuelle Benutzer
-            // der Fakultät des Studiengangs angehört oder nicht
-            ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
-
-            return View(model);
-        }
-
-
-
         public ActionResult Details(Guid id)
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
@@ -96,6 +51,28 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Assessments = assessments;
 
+            // die Labels sammlen
+            var labels = new List<ItemLabel>();
+            foreach (var section in curr.Sections)
+            {
+                foreach (var slot in section.Slots)
+                {
+                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    {
+                        foreach (var label in slot.LabelSet.ItemLabels)
+                        {
+                            if (!labels.Contains(label))
+                            {
+                                labels.Add(label);
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+            ViewBag.FilterLabels = labels.OrderBy(x => x.Name);
 
 
             // hier muss überprüft werden, ob der aktuelle Benutzer
@@ -105,6 +82,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public PartialViewResult LoadModulePlan(Guid currId, string label)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+
+            model.FilterLabel =  curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(label));
+
+
+            return PartialView("_ModulePlan", model);
+        }
 
 
 
@@ -1059,7 +1050,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index", new {id = cur.Id});
+            return RedirectToAction("Details", new {id = cur.Id});
         }
 
         public ActionResult Import(Guid id)
@@ -1276,16 +1267,64 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (module == null) continue;
 
+                // jetzt nich nach der Akkreditierung suchen
 
-                var moduleAccredition = new ModuleAccreditation
+                var moduleAccredition = Db.Accreditations
+                    .FirstOrDefault(x => x.Slot.Id == slot.Id &&
+                                         x.Module.Id == module.Id);
+
+                if (moduleAccredition == null)
                 {
-                    Slot = slot,
-                    Module = module,
-                    
-                };
+                    moduleAccredition = new ModuleAccreditation
+                    {
+                        Slot = slot,
+                        Module = module,
+                    };
+                    Db.Accreditations.Add(moduleAccredition);
+                }
 
-                Db.Accreditations.Add(moduleAccredition);
+                // jetzt  noch die Labels checken
+                if (moduleAccredition.LabelSet == null)
+                {
+                    var accrLabelSet = new ItemLabelSet();
+                    moduleAccredition.LabelSet = accrLabelSet;
+                    Db.ItemLabelSets.Add(accrLabelSet);
+                }
 
+                // das Label
+                if (!string.IsNullOrEmpty(accreditation.label))
+                {
+                    // Test, ob Studiengang schon Labelset hat
+                    var currLabelSet = curr.LabelSet;
+                    if (currLabelSet == null)
+                    {
+                        currLabelSet = new ItemLabelSet();
+                        curr.LabelSet = currLabelSet;
+                        Db.ItemLabelSets.Add(currLabelSet);
+                    }
+
+                    // gibt es das Label schon im Studiengang?
+                    var label = currLabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(accreditation.label));
+
+                    if (label == null)
+                    {
+                        label = new ItemLabel
+                        {
+                            Name = accreditation.label,
+                            HtmlColor = "#ff0000"
+                        };
+
+                        currLabelSet.ItemLabels.Add(label);
+
+                        Db.ItemLabels.Add(label);
+                    }
+
+                    // das Label der Akkreditierung zuordnen
+                    if (!moduleAccredition.LabelSet.ItemLabels.Any(x => x.Name.Equals(label.Name)))
+                    {
+                        moduleAccredition.LabelSet.ItemLabels.Add(label);
+                    }
+                }
             }
 
             Db.SaveChanges();
@@ -1620,8 +1659,64 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
+            // alle Labels finden
+            var labels = new List<ItemLabel>();
+            foreach (var accreditation in slot.ModuleAccreditations)
+            {
+                if (accreditation.LabelSet != null && accreditation.LabelSet.ItemLabels.Any())
+                {
+                    foreach (var label in accreditation.LabelSet.ItemLabels)
+                    {
+                        if (!labels.Contains(label))
+                        {
+                            labels.Add(label);
+                        }
+
+                    }
+                }
+            }
+
+            ViewBag.FilterLabels = labels.OrderBy(x => x.Name);
+
+
             return View(slot);
         }
 
+        [HttpPost]
+        public PartialViewResult LoadModuleList(Guid slotId, string label)
+        {
+            var slot = Db.CurriculumSlots.FirstOrDefault(x => x.Id == slotId);
+
+
+            var labels = new List<ItemLabel>();
+            foreach (var accreditation in slot.ModuleAccreditations)
+            {
+                if (accreditation.LabelSet != null && accreditation.LabelSet.ItemLabels.Any())
+                {
+                    foreach (var aclabel in accreditation.LabelSet.ItemLabels)
+                    {
+                        if (!labels.Contains(aclabel))
+                        {
+                            labels.Add(aclabel);
+                        }
+                    }
+                }
+            }
+
+
+            ViewBag.FilterLabel = labels.FirstOrDefault(x => x.Name.Equals(label));
+
+
+            return PartialView("_ModuleList", slot);
+        }
+
+
+
+        public ActionResult Labels(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            return View(curr);
+        }
     }
-}
+    }

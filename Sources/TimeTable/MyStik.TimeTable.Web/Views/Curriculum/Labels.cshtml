@@ -1,0 +1,65 @@
+﻿@model MyStik.TimeTable.Data.Curriculum
+
+@{
+    ViewBag.Title = Model.ShortName + " | Etiketten";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-10">
+
+                        <h4>Verwaltung Studiengang @Model.Name (@Model.ShortName)</h4>
+                        <h5 class="card-subtitle">
+                            <a href="@Url.Action("Index", "Curricula")">HM</a>
+                            |
+                            <a href="@Url.Action("Index", "Curricula", new { id = Model.Organiser.Id })">
+                                @Model.Organiser.Name (@Model.Organiser.ShortName)
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("Admin", new {id = Model.Id})" class="btn btn-outline-primary">
+                        <i class="bi-chevron-left"></i> Zurück
+                    </a>
+                    <a href="@Url.Action("AddLabel", new {id = Model.Id})" class="btn btn-outline-primary">
+                        <i class="bi-plus"></i> Neues Etikett
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Beschreibung</th>
+                            <th>Farbe</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var label in Model.LabelSet.ItemLabels)
+                    {
+                        <tr>
+                            <td>@label.Name</td>
+                            <td>@label.Description</td>
+                            <td>@label.HtmlColor</td>
+                            <td>
+                                <a href="@Url.Action("EditLabel", new {id=label.Id})" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                <a href="@Url.Action("DeleteLabel", new {id=label.Id})" class="btn btn-sm btn-outline-danger">Löschen</a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

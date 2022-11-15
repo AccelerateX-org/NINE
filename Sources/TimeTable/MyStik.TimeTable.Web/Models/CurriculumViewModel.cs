@@ -41,6 +41,8 @@ namespace MyStik.TimeTable.Web.Models
         public List<Semester> ActiveSemesters { get; set; }
 
         public List<Assessment> Assessments { get; set; }
+
+        public ItemLabel FilterLabel { get; set; }
     }
 
     /// <summary>

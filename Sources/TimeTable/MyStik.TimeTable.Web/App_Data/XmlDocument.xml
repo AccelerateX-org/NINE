@@ -6173,6 +6173,14 @@
             <param name="examtype"></param>
             <returns></returns>
         </member>
+        <member name="M:MyStik.TimeTable.Web.Controllers.ModuleDescriptionController.MoveCourse2Subject(System.Guid,System.Guid)">
+            <summary>
+            
+            </summary>
+            <param name="opportunityId"></param>
+            <param name="targetSubjectId"></param>
+            <returns></returns>
+        </member>
         <member name="T:MyStik.TimeTable.Web.Controllers.PersonController">
             <summary>
             
@@ -8592,12 +8600,6 @@
             <summary>
             
             </summary>
-        </member>
-        <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.Index(System.Guid)">
-            <summary>
-            
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:MyStik.TimeTable.Web.Controllers.CurriculumController.Structure(System.Guid)">
             <summary>

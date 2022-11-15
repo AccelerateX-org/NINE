@@ -10,8 +10,9 @@
     //var rooms = db.Rooms.Where(x => x.Number.StartsWith("R")).OrderBy(x => x.Number).ToList();
     var rooms = db.Rooms.OrderBy(x => x.Number).ToList();
 
+    // 15.11. - 14.02. => 83 Tage
     var from = DateTime.Today;
-    var until = from.AddDays(28);
+    var until = from.AddDays(83);
 
     var dates = new List<DateTime>();
     var d = from;

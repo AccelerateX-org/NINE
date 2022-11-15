@@ -1,0 +1,66 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+
+@foreach (var sec in Model.Curriculum.Sections)
+{
+    <div class="row">
+        <div class="col-2">
+            @sec.Name
+        </div>
+        <div class="col-10">
+            <div style="width: 100%">
+                @foreach (var slot in sec.Slots)
+                {
+                    var w = (int)(slot.ECTS / 32 * 100);
+
+                    if (slot.LabelSet != null && slot.LabelSet.ItemLabels.Any())
+                    {
+                        // dieser slot hat mindestens ein Label
+                        // gibt es einen Filter
+                        // wenn ja, dann hat der slot ein Label, das mit dem gleichen Typ beginnt
+                        // wenn ja, dann ist das Label identisch
+
+                        var showSlot = true;
+                        if (Model.FilterLabel != null && Model.FilterLabel.Name.Contains("::"))
+                        {
+                            var labelClass = Model.FilterLabel.Name.Split(':')[0] + "::";
+                            if (slot.LabelSet.ItemLabels.Any(x => x.Name.StartsWith(labelClass)))
+                            {
+                                if (slot.LabelSet.ItemLabels.Any(x => x.Name.Equals(Model.FilterLabel.Name)))
+                                {
+                                    showSlot = true;
+                                }
+                                else
+                                {
+                                    showSlot = false;
+                                }
+                            }
+                        }
+
+
+                        if (showSlot)
+                        {
+                            <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new { id = slot.Id })">
+                                <strong>@slot.Tag</strong> @slot.ModuleAccreditations.Count
+                                @foreach (var label in slot.LabelSet.ItemLabels)
+                                {
+                                    <span>@label.Name</span>
+                                }
+                                <br/>
+                                <small>@slot.Name</small>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
+                            <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
+                            <br />
+                            <small>@slot.Name</small>
+                        </a>
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+}

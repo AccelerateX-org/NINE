@@ -1,82 +1,118 @@
 ﻿@model MyStik.TimeTable.Data.Curriculum
 @{
-    ViewBag.Title = "Studienplan";
+    ViewBag.Title = "Studiengang";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Studienplan @Model.Name</h1>
-            </div>
-        </div>
-    </div>
-</div>
 
-@if (ViewBag.UserRight.IsOrgMember)
-{
-    <div class="panel panel-default panel-menu">
-        <div class="panel-body">
-            <div class="container-fluid">
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-inline">
-                            @if (ViewBag.UserRight.IsCurriculumAdmin)
-                            {
-                                <div class="form-group">
-                                    <a href="@Url.Action("Index", new {id = Model.Id})" class="btn btn-default">
-                                        <i class="fa fa-arrow-left"></i> Zurück
-                                    </a>
+                    <div class="col-md-10">
+
+                        <h4>Verwaltung Studiengang @Model.Name (@Model.ShortName)</h4>
+                        <h5 class="card-subtitle">
+                            <a href="@Url.Action("Index", "Curricula")">HM</a>
+                            |
+                            <a href="@Url.Action("Index", "Curricula", new { id = Model.Organiser.Id })">
+                                @Model.Organiser.Name (@Model.Organiser.ShortName)
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="col-md-2">
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <div class="d-md-flex justify-content-md-end">
+                                <a href="@Url.Action("Details", new {id = Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-window"></i> Ansicht
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Allgemeines</h5>
+                            </div>
+                            <a href="@Url.Action("Edit", "Curriculum", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Einstellungen</h5>
                                 </div>
-                                <div class="form-group">
-                                    <a href="@Url.Action("CreateModule", new {id = Model.Id})" class="btn btn-default">
-                                        <i class="fa fa-plus"></i> Modul anlegen
-                                    </a>
+                                <p class="mb-1">Bezeichnungen, Dauer Abschlussarbeit, Wird angeboten ja/nein</p>
+                            </a>
+                            <a href="@Url.Action("Labels", "Curriculum", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Etiketten</h5>
                                 </div>
-                            }
+                                <p class="mb-1">Aufkleber für Studiengruppen A, B, etc., Studienrichtungen, Sprache, Studienmodell usw.</p>
+                            </a>
+                            <a href="@Url.Action("Students", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Studierende</h5>
+                                </div>
+                                <p class="mb-1">Liste aller Studierender (inkl. Alumni)</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Aufbau (alt)</h5>
+                            </div>
+                            <a href="@Url.Action("GroupList", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Studien- und Kapazitätsgruppen</h5>
+                                </div>
+                                <p class="mb-1">Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.vsc" benötigt.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Aufbau (neu)</h5>
+                            </div>
+                            <a href="@Url.Action("Import", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Import Modulplan</h5>
+                                </div>
+                                <p class="mb-1">Entspricht der Anlage 1 einer SPO.</p>
+                            </a>
+                            <a href="@Url.Action("Accreditation", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Import Modulakkreditierungen</h5>
+                                </div>
+                                <p class="mb-1">Verknüpfung zwischen den Modulen der Modulkataloge und dem Modulplan.</p>
+                            </a>
+                            <a href="@Url.Action("Opportunities", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Import Lehrangebot eines Semesters</h5>
+                                </div>
+                                <p class="mb-1">Verknüpfung zwischen den importierten Lehrveranstaltungen und den Fächern eines Moduls.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Löschen</h5>
+                            </div>
+                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Modulplan löschen</h5>
+                                </div>
+                                <p class="mb-1">Löscht alle Akkreditierungen. Keine Auswirkungen auf Modulkatalog und Lehrveranstaltungen.</p>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-}
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Module - Ebene "Notenblatt"</h4>
-                </div>
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Gewicht</th>
-                        <th>Teilmodul(e)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var modul in Model.Modules)
-                        {
-                            <tr>
-                                <td><a href="@Url.Action("ModuleDetails", new {id=modul.Id})">@modul.Name</a></td>
-                                <td>@modul.Weight</td>
-                                <td>
-                                @foreach (var subject in modul.Subjects)
-                                {
-                                    <div><a href="@Url.Action("AdminSubject", new {id=subject.Id})"> @subject.Name (@subject.Ects ECTS)</a></div>
-                                }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 </div>
-
 

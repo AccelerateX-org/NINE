@@ -185,6 +185,8 @@ namespace MyStik.TimeTable.Web.Models
         public string slot { get; set; }
 
         public string module { get; set; }
+
+        public string label { get; set; }
     }
 
 
