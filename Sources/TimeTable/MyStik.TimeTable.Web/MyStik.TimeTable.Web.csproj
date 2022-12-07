@@ -4135,6 +4135,7 @@
     <Content Include="Views\Curriculum\Labels.cshtml" />
     <Content Include="Views\Curriculum\_ModulePlan.cshtml" />
     <Content Include="Views\Curriculum\_ModuleList.cshtml" />
+    <Content Include="Views\Rooms\Schedule.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

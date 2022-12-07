@@ -183,7 +183,7 @@
 
     mediaStyle = isOk ? "fa-check text-success" : "fa-exclamation-triangle text-danger";
 
-    var isSupervisor = Model.Supervisor.AcceptanceDate != null;
+    var isSupervisor = Model.Supervisor != null && Model.Supervisor.AcceptanceDate != null;
 }
 
 <div class="list-group-item">

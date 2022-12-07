@@ -1320,6 +1320,12 @@ namespace MyStik.TimeTable.Web.Controllers
                     end = x;
                 }
 
+                // Hier wieder den Zeitraum zurückrechnen
+                // Es wird der konkrete Zeitpunkt eingegeben
+                // Fallunterscheidung "unbeschränkt"
+                // activityDate.Occurrence.UntilIsRestricted
+                // activityDate.Occurrence.UntilTimeSpan
+
 
                 var nSlots = activityDate.Slots.Count;
                 if (nSlots == 0)

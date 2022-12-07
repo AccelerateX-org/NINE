@@ -92,8 +92,8 @@
                             <a href="@Url.Action("Import", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-primary">
                                 <i class="bi-upload"></i> Import
                             </a>
-                            <a href="@Url.Action("Delete", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Löschen
+                            <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Alle Löschen
                             </a>
                         }
                     </div>
@@ -102,82 +102,21 @@
             <table id="tabCatalogs" class="table">
                 <thead>
                     <tr>
-                        <th>Katalog Name</th>
-                        <th>Katalog ID</th>
-                        <th>Module Name</th>
-                        <th>Module ID</th>
-                        <th>Modulverantwortung</th>
-                        <th>Fächer</th>
-                        <th>Prüfungen</th>
+                        <th>Name</th>
+                        <th>ID</th>
+                        <th>Beschreibung</th>
+                        <th>Anzahl Module</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var cat in Model.Organiser.ModuleCatalogs)
                     {
-                        foreach (var module in cat.Modules)
-                        {
-                            var iExamOption = 0;
-                            <tr>
-                                <td>@cat.Name</td>
-                                <td>@cat.Tag</td>
-                                <td>
-                                    <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
-                                        @module.Name
-                                    </a>
-                                </td>
-                                <td>@module.Tag</td>
-                                @if (module.ModuleResponsibilities.Any())
-                                {
-                                    <td>
-                                        @foreach (var mv in module.ModuleResponsibilities)
-                                        {
-                                            <div>@mv.Member.FullName</div>
-                                        }
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>vakant</td>
-                                }
-                                <td>
-                                    @foreach (var subject in module.ModuleSubjects)
-                                    {
-                                        <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
-                                    }
-                                </td>
-                                <td>
-                                    @foreach (var exam in module.ExaminationOptions)
-                                    {
-                                        iExamOption++;
-                                        <div>
-                                            Option @iExamOption:
-                                            @foreach (var fraction in exam.Fractions)
-                                            {
-                                                if (fraction.Form != null)
-                                                {
-                                                    var str = string.Format(" {0} ({1:P})", fraction.Form.ShortName, fraction.Weight);
-                                                    if (fraction != exam.Fractions.Last())
-                                                    {
-                                                        str += " und";
-                                                    }
-                                                    @str
-                                                }
-                                                else
-                                                {
-                                                    var str = string.Format(" nix ({0:P})", fraction.Weight);
-                                                    if (fraction != exam.Fractions.Last())
-                                                    {
-                                                        str += " und";
-                                                    }
-                                                    @str
-                                                }
-                                            }
-                                        </div>
-                                    }
-                                </td>
-                            </tr>
-
-                        }
+                        <tr>
+                            <td><a href="@Url.Action("Details", new {id = cat.Id})">@cat.Name</a></td>
+                            <td>@cat.Tag</td>
+                            <td>@Html.Raw(cat.Description)</td>
+                            <td>@cat.Modules.Count</td>
+                        </tr>
                     }
                 </tbody>
             </table>

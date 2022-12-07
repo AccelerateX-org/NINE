@@ -136,6 +136,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Details(Guid id)
         {
+            var itsMe = GetCurrentUser();
             var org = GetMyOrganisation();
             var userRight = GetUserRight(org);
 
@@ -153,7 +154,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 User = user,
                 Student = student,
                 Thesis = thesis,
-                Supervisor = thesis.Supervisors.SingleOrDefault(x => x.Member.Id == member.Id)
+                Supervisor = thesis.Supervisors.SingleOrDefault(x => x.Member.UserId.Equals(itsMe.Id))
             };
 
             ViewBag.UserRight = userRight;

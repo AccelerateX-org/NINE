@@ -1,0 +1,123 @@
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
+
+@{
+    ViewBag.Title = "Raumverzeichnis";
+
+
+    var db = new TimeTableDbContext();
+    //var rooms = db.Rooms.Where(x => x.Number.StartsWith("R")).OrderBy(x => x.Number).ToList();
+    var rooms = db.Rooms.OrderBy(x => x.Number).ToList();
+
+    // 15.11. - 14.02. => 83 Tage
+    var from = DateTime.Today;
+    var until = from.AddDays(83);
+
+    var dates = new List<DateTime>();
+    var d = from;
+    while (d <= until)
+    {
+        dates.Add(d);
+        d = d.AddDays(1);
+    }
+
+    var userService = new UserInfoService();
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-university"></i> Raumbelegung | Anzahl Teilnehmende</h4>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Von</th>
+                        <th>Bis</th>
+                        <th>Raum</th>
+                        <th>Veranstaltung</th>
+                        <th>Ansprechpartner</th>
+                        <th>Teilnehmer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var room in rooms)
+                {
+                        foreach (var day in dates)
+                        {
+                            var thisDay = day;
+                            var nextDay = day.AddDays(1);
+
+                            var allActivities = db.ActivityDates
+                                .Where(x =>
+                                    x.Rooms.Any(r => r.Id == room.Id) &&
+                                    thisDay <= x.Begin && x.End < nextDay)
+                                .ToList();
+
+                            if (day.DayOfWeek == DayOfWeek.Saturday || day.DayOfWeek == DayOfWeek.Sunday)
+                            {
+                                // nimm alle
+                            }
+                            else
+                            {
+                                // nimm nur die, die nach 20:00 enden
+                                var spot = thisDay.AddHours(20);
+                                allActivities = allActivities.Where(x => x.End > spot).ToList();
+                            }
+
+
+                            var p = 0;
+                            foreach (var activityDate in allActivities)
+                            {
+                                var delta = 0;
+                                // Annahme: Eingetragende Teilnehmer
+                                if (activityDate.Activity.Occurrence != null)
+                                {
+                                    delta = activityDate.Activity.Occurrence.Subscriptions.Count;
+                                }
+
+                                // Wenn es eine Veranstaltung gibt, aber ohne Teilnehmer werden 10 als Annahme addiert
+                                if (delta == 0)
+                                {
+                                    delta = 10;
+                                }
+
+                                p += delta;
+
+                    <tr>
+                        <td>@activityDate.Begin.ToShortDateString()</td>
+                        <td>@activityDate.Begin.ToShortTimeString()</td>
+                        <td>@activityDate.End.ToShortTimeString()</td>
+                        <td>@room.Number</td>
+                        <td>@activityDate.Activity.Name (@activityDate.Activity.ShortName)</td>
+                        <td>
+                            @foreach (var lec in activityDate.Hosts)
+                            {
+                                var user = userService.GetUser(lec.UserId);
+
+                                if (user != null)
+                                {
+                                    <div>@lec.FullName (@user.Email)</div>
+                                }
+                                else
+                                {
+                                    <div>@lec.FullName (keine E-Mail Adresse vorhanden)</div>
+                                }
+                            }
+                        </td>
+                        <td>@p</td>
+                    </tr>
+                            }
+                        }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

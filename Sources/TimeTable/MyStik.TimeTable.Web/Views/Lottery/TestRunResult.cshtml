@@ -6,7 +6,77 @@
 @{
     ViewBag.Title = "Status " + Model.Lottery.Name;
     var userService = new UserInfoService();
+    var studentService = new StudentService();
 }
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Wahlverfahren @Model.Lottery.Name - Ergebnis der Ziehung nach Kursen</h4>
+            </div>
+            <table id="tabParticipient" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Kurs</th>
+                        <th>Kurzname</th>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        <th>SG</th>
+                        <th>Sem</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.Courses)
+                    {
+                        foreach (var subscription in course.Occurrence.Subscriptions)
+                        {
+                            var user = userService.GetUser(subscription.UserId);
+                            var student = studentService.GetCurrentStudent(subscription.UserId);
+
+
+                            <tr>
+                                <td>@course.Name</td>
+                                <td>@course.ShortName</td>
+                                @if (user != null)
+                                {
+                                    <td>@user.LastName</td>
+                                    <td>@user.FirstName</td>
+                                }
+                                else
+                                {
+                                    <td>unbekannt</td>
+                                    <td>kein Benutzerkonto vorhanden</td>
+                                }
+                                @if (student != null)
+                                {
+                                    <td>@student.Curriculum.ShortName</td>
+                                    <td>@student.FirstSemester.Name</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+                                @if (subscription.OnWaitingList)
+                                {
+                                    <td>WL</td>
+                                }
+                                else
+                                {
+                                    <td>TN</td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
 
 <div class="row">
     <div class="col-12">
@@ -105,16 +175,16 @@
 
                                     <div>
                                         @seat.Course.ShortName
-                                    <ul class="fa-ul">
-                                        <li><i class="fa fa-li fa-clock"></i>@seat.Subscription.TimeStamp</li>
-                                        <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
-                                        @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
-                                        {
-                                            <li><i class="fa fa-li fa-file"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
-                                        }
-                                    </ul>
-                                </div>
-                            }
+                                        <ul class="fa-ul">
+                                            <li><i class="fa fa-li fa-clock"></i>@seat.Subscription.TimeStamp</li>
+                                            <li><i class="fa fa-li fa-exclamation-circle"></i>Priorität: @seat.Priority</li>
+                                            @if (!string.IsNullOrEmpty(seat.Subscription.HostRemark))
+                                            {
+                                                <li><i class="fa fa-li fa-file"></i>@Html.Raw(seat.Subscription.HostRemark)</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
                             </td>
 
                             @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
@@ -138,21 +208,21 @@
                                     <td class="@txtClass">
                                         <div>
                                             @lot.Course.ShortName
-                                        <ul class="fa-ul">
-                                            <li><i class="fa fa-li fa-clock"></i>@lot.Subscription.TimeStamp</li>
-                                            @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
-                                            {
-                                                <li><i class="fa fa-li fa-file"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </td>
+                                            <ul class="fa-ul">
+                                                <li><i class="fa fa-li fa-clock"></i>@lot.Subscription.TimeStamp</li>
+                                                @if (!string.IsNullOrEmpty(lot.Subscription.HostRemark))
+                                                {
+                                                    <li><i class="fa fa-li fa-file"></i>@Html.Raw(lot.Subscription.HostRemark)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
                             }
-                            else
-                            {
-                                <td></td>
-                            }
-                        }
                         </tr>
                     }
                 </tbody>
@@ -162,4 +232,38 @@
 </div>
 
 
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+
+}
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript" "></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            $.fn.dataTable.moment('DD.MM.YYYY HH:mm:ss');
+            //$.fn.dataTable.moment('HH:mm');
+
+            var t = $('#tabParticipient').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'csv',
+                    'csvHtml5', 'copy', 'excel', 'pdf'
+                ],
+                language: {
+                    search: 'suchen'
+                },
+                paging: false,
+                order: [[0, 'asc']]
+            });
+        })
+    </script>
+}
 

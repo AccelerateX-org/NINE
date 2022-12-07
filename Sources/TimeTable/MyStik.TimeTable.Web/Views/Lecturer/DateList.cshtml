@@ -57,7 +57,15 @@
                                     {
                                         <li><i class="fa fa-li fa-users"></i>Offener Termin: @date.Subscriptions.Count von @date.Capacity Plätzen belegt</li>
                                     }
-                                    <li><i class="fa fa-li fa-clock-o"></i>Eintragung möglich bis @date.EndOfSubscriptionPeriod</li>
+                                    @if (date.EndOfSubscriptionPeriod == DateTime.MaxValue)
+                                    {
+                                        <li><i class="fa fa-li fa-clock-o"></i>Kurzfristige Eintragung bis Beginn des Termins möglich</li>
+                                        
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-li fa-clock-o"></i>Eintragung möglich bis @date.EndOfSubscriptionPeriod</li>
+                                    }
                                 </ul>
                             </div>
                         </a>

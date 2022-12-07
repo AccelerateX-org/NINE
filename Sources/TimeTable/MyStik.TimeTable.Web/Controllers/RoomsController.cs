@@ -41,5 +41,9 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             return View();
         }
+        public ActionResult Schedule()
+        {
+            return View();
+        }
     }
 }

@@ -6,158 +6,157 @@
 @{
     ViewBag.Title = "Sprechstundentermin";
     var userService = new UserInfoService();
+
+    Model.EndOfSubscriptionPeriod = DateTime.MaxValue;
+    if (Model.Date.Occurrence.UntilIsRestricted && Model.Date.Occurrence.UntilTimeSpan.HasValue)
+    {
+        Model.EndOfSubscriptionPeriod =
+            Model.Date.Begin.AddHours(-Model.Date.Occurrence.UntilTimeSpan.Value.Hours)
+                .AddMinutes(-Model.Date.Occurrence.UntilTimeSpan.Value.Minutes);
+    }
+
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.OfficeHour.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> zurück zur Terminliste
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8">
-            @if (!string.IsNullOrEmpty(Model.Date.Title))
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Sprechstundentermin @Html.TimeSpanWithDate(Model.Date)</h4>
+            @if (Model.EndOfSubscriptionPeriod == DateTime.MaxValue)
             {
-                <div class="alert alert-info">
-                    <strong><i class="fa fa-info-circle"></i> Infotext</strong>: @Model.Date.Title
-                </div>
+                <h5 class="card-subtitle">Kurzfristige Eintragung bis Beginn des Termins möglich</h5>
             }
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        Eintragungen
-                        @if (Model.Date.Occurrence.IsCanceled)
-                        {
-                            <span class="text-danger">Termin ist ABGESAGT</span>
-                        }
-                    </h4>
+            else
+            {
+                <h5 class="card-subtitle">Eintragung möglich bis @Model.EndOfSubscriptionPeriod</h5>
+            }
+        </div>
+
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("OfficeHour", "Lecturer", new {id = Model.OfficeHour.Id})"
+                       class="btn btn-outline-primary">
+                        <i class="bi-chevron-left"></i>zurück
+                    </a>
                 </div>
-                <div class="panel-body">
-                    @if (Model.Date.Slots.Any())
-                    {
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Zeitraum</th>
-                                    <th>Name</th>
-                                    <th>Eingetragen am</th>
-                                    <th>Anliegen</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var slot in Model.Date.Slots)
-                                {
-                                    if (slot.Occurrence.Subscriptions.Any())
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        @if (!string.IsNullOrEmpty(Model.Date.Title))
+                        {
+                            <div class="alert alert-info">
+                                <strong><i class="fa fa-info-circle"></i> Infotext</strong>: @Model.Date.Title
+                            </div>
+                        }
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>
+                                    Eintragungen
+                                    @if (Model.Date.Occurrence.IsCanceled)
                                     {
-                                        var sub = slot.Occurrence.Subscriptions.FirstOrDefault();
-                                        var name = userService.GetUserName(sub.UserId);
-                                        <tr id="@slot.Id">
-                                            <td>@Html.TimeSpan(slot)</td>
-                                            <td>
-                                                <a href="@Url.Action("Details", "Students", new {id = sub.UserId})">@name</a>
-                                            </td>
-                                            <td>@sub.TimeStamp</td>
-                                            <td>@sub.SubscriberRemark</td>
-                                            <td>
-                                                <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = slot.Occurrence.Id, userId = sub.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
+                                        <span class="text-danger">Termin ist ABGESAGT</span>
+                                    }
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                @if (Model.Date.Slots.Any())
+                                {
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Zeitraum</th>
+                                                <th>Name</th>
+                                                <th>Eingetragen am</th>
+                                                <th>Anliegen</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var slot in Model.Date.Slots)
+                                            {
+                                                if (slot.Occurrence.Subscriptions.Any())
+                                                {
+                                                    var sub = slot.Occurrence.Subscriptions.FirstOrDefault();
+                                                    var name = userService.GetUserName(sub.UserId);
+                                                    <tr id="@slot.Id">
+                                                        <td>@Html.TimeSpan(slot)</td>
+                                                        <td>
+                                                            <a href="@Url.Action("Details", "Students", new {id = sub.UserId})">@name</a>
+                                                        </td>
+                                                        <td>@sub.TimeStamp</td>
+                                                        <td>@sub.SubscriberRemark</td>
+                                                        <td>
+                                                            <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = slot.Occurrence.Id, userId = sub.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
 
 
-                                                @*
-                                                @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
-                                                    new {id = slot.Occurrence.Id, userId = sub.UserId},
-                                                    new AjaxOptions()
+                                                            @*
+                                                    @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
+                                                        new {id = slot.Occurrence.Id, userId = sub.UserId},
+                                                        new AjaxOptions()
+                                                        {
+                                                            HttpMethod = "Post",
+                                                            InsertionMode = InsertionMode.Replace,
+                                                            UpdateTargetId = slot.Id.ToString(),
+                                                        },
+                                                        new {@class = "btn btn-default btn-xs"})
+                                                            *@
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    if (slot.Occurrence.IsAvailable)
                                                     {
-                                                        HttpMethod = "Post",
-                                                        InsertionMode = InsertionMode.Replace,
-                                                        UpdateTargetId = slot.Id.ToString(),
-                                                    },
-                                                    new {@class = "btn btn-default btn-xs"})
-                                                    *@
-                                            </td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        if (slot.Occurrence.IsAvailable)
-                                        {
-                                            <tr id="@slot.Id">
-                                                <td>@Html.TimeSpan(slot)</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>@Html.Partial("_LockedSlot", slot)</td>
-                                            </tr>
-                                        }
-                                        else
-                                        {
-                                            <tr id="@slot.Id">
-                                                <td>@Html.TimeSpan(slot)</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>@Html.Partial("_LockedSlot", slot)</td>
-                                            </tr>
-                                        }
-                                    }
+                                                        <tr id="@slot.Id">
+                                                            <td>@Html.TimeSpan(slot)</td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td>@Html.Partial("_LockedSlot", slot)</td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr id="@slot.Id">
+                                                            <td>@Html.TimeSpan(slot)</td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td>@Html.Partial("_LockedSlot", slot)</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
                                 }
-                            </tbody>
-                        </table>
-
-                    }
-                    else
-                    {
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Eingetragen am</th>
-                                    <th>Nachricht / Anliegen</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var subscription in Model.Date.Occurrence.Subscriptions)
+                                else
                                 {
-                                    var name = userService.GetUserName(subscription.UserId);
-                                    <tr id="@subscription.Id">
-                                        <td>
-                                            <a href="@Url.Action("CoursePlan", "Students", new {id = subscription.UserId})">@name</a>
-                                        </td>
-                                        <td>@subscription.TimeStamp</td>
-                                        <td>@subscription.SubscriberRemark</td>
-                                        <td>
-                                            <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = Model.Date.Occurrence.Id, userId = subscription.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Eingetragen am</th>
+                                                <th>Nachricht / Anliegen</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var subscription in Model.Date.Occurrence.Subscriptions)
+                                            {
+                                                var name = userService.GetUserName(subscription.UserId);
+                                                <tr id="@subscription.Id">
+                                                    <td>
+                                                        <a href="@Url.Action("CoursePlan", "Students", new {id = subscription.UserId})">@name</a>
+                                                    </td>
+                                                    <td>@subscription.TimeStamp</td>
+                                                    <td>@subscription.SubscriberRemark</td>
+                                                    <td>
+                                                        <a href="@Url.Action("RemoveSubscription", "OfficeHour", new {id = Model.Date.Occurrence.Id, userId = subscription.UserId})" class="btn btn-outline-danger"><i class="bi-trash"></i> austragen</a>
 
-                                            @*
+                                                        @*
 
                                                 @Ajax.ActionButton("fa-eraser pull-left text-danger", "Austragen", "RemoveSubscription", "OfficeHour",
                                                     new {id = Model.Date.Occurrence.Id, userId = subscription.UserId},
@@ -168,67 +167,73 @@
                                                         UpdateTargetId = subscription.Id.ToString(),
                                                     },
                                                     new {@class = "btn btn-default btn-xs"})
-                                            *@
-                                        </td>
-                                    </tr>
+                                                        *@
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+
                                 }
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+                    </div>
 
-                    }
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Verwaltung</h4>
+                            </div>
+                            <div class="list-group">
+                                @if (Model.Date.Begin >= DateTime.Now)
+                                {
+                                    if (!Model.Subscriptions.Any())
+                                    {
+                                        <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
+                                            <i class="fa fa-trash-o"></i> löschen
+                                        </a>
+                                    }
+                                    if (Model.Date.Occurrence.IsCanceled)
+                                    {
+                                        <a href="@Url.Action("ReactivateDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
+                                            <i class="fa fa-recycle"></i> reaktivieren
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("CancelDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
+                                            <i class="fa fa-times"></i> absagen
+                                        </a>
+                                    }
+                                    <a href="@Url.Action("EditDate", "Lecturer", new {id = Model.Date.Id})" class="list-group-item">
+                                        <i class="fa fa-info-circle"></i> Infotext ändern
+                                    </a>
+                                    <a href="@Url.Action("MoveDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
+                                        <i class="fa fa-calendar"></i> verschieben
+                                    </a>
+                                }
+                                <a href="@Url.Action("SubscriptionDateList", "OfficeHour", new {id = Model.Date.Id})" class="list-group-item">
+                                    <i class="fa fa-list"></i> Teilnehmerliste
+                                </a>
+                                <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
+                                    <i class="fa fa-envelope"></i> E-Mail senden
+                                </a>
+                                <a href="@Url.Action("OfficeHourDate", "Print", new {id = Model.Date.Occurrence.Id})"
+                                   onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1');return false;"
+                                   class="list-group-item"><i class="fa fa-print"></i>drucken</a>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Verwaltung</h4>
-                </div>
-                <div class="list-group">
-                    @if (Model.Date.Begin >= DateTime.Now)
-                    {
-                        if (!Model.Subscriptions.Any())
-                        {
-                            <a href="@Url.Action("DeleteDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
-                                <i class="fa fa-trash-o"></i> löschen
-                            </a>
-                        }
-                        if (Model.Date.Occurrence.IsCanceled)
-                        {
-                            <a href="@Url.Action("ReactivateDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
-                                <i class="fa fa-recycle"></i> reaktivieren
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("CancelDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item list-group-item-danger">
-                                <i class="fa fa-times"></i> absagen
-                            </a>
-                        }
-                        <a href="@Url.Action("EditDate", "Lecturer", new {id = Model.Date.Id})" class="list-group-item">
-                            <i class="fa fa-info-circle"></i> Infotext ändern
-                        </a>
-                        <a href="@Url.Action("MoveDate", "OfficeHour", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
-                            <i class="fa fa-calendar"></i> verschieben
-                        </a>
-                    }
-                    <a href="@Url.Action("SubscriptionDateList", "OfficeHour", new {id = Model.Date.Id})" class="list-group-item">
-                        <i class="fa fa-list"></i> Teilnehmerliste
-                    </a>
-                    <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id = Model.Date.Occurrence.Id})" class="list-group-item">
-                        <i class="fa fa-envelope"></i> E-Mail senden
-                    </a>
-                    <a href="@Url.Action("OfficeHourDate", "Print", new {id = Model.Date.Occurrence.Id})"
-                       onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=500,height=500,toolbar=0,resizable=1');return false;"
-                       class="list-group-item"><i class="fa fa-print"></i>drucken</a>
-                </div>
-            </div>
-
         </div>
     </div>
-
 </div>
+
+
+
+
 
 
 

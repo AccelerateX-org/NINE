@@ -68,7 +68,8 @@ namespace MyStik.TimeTable.Web.Controllers
             using (StreamReader file = System.IO.File.OpenText(tempFile))
             {
                 var serializer = new JsonSerializer();
-                catalog = (CurriculumModuleCatalogImportModel)serializer.Deserialize(file, typeof(CurriculumModuleCatalogImportModel));
+                catalog = (CurriculumModuleCatalogImportModel)serializer.Deserialize(file,
+                    typeof(CurriculumModuleCatalogImportModel));
             }
 
             var org = Db.Organisers.SingleOrDefault(x => x.Id == model.Organiser.Id);
@@ -117,7 +118,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     if (member != null)
                     {
-                        var resp = new ModuleResponsibility {Member = member, Module = module};
+                        var resp = new ModuleResponsibility { Member = member, Module = module };
                         module.ModuleResponsibilities.Add(resp);
                         Db.ModuleResponsibilities.Add(resp);
                     }
@@ -216,83 +217,107 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Index");
         }
 
-
-        public ActionResult Delete()
+        public ActionResult DeleteAll(Guid id)
         {
-            var catalogs = Db.CurriculumModuleCatalogs.ToList();
+            var org = GetMyOrganisation();
 
-            foreach (var catalog in catalogs)
+            var org2 = GetOrganiser(id);
+
+            var userRight = GetUserRight(org);
+
+            if (org.Id != org2.Id || !userRight.IsCurriculumAdmin)
             {
-                foreach (var model in catalog.Modules.ToList())
-                {
-
-                    foreach (var mv in model.ModuleResponsibilities.ToList())
-                    {
-                        Db.ModuleResponsibilities.Remove(mv);
-                    }
-
-                    foreach (var subject in model.ModuleSubjects.ToList())
-                    {
-                        foreach (var opportunity in subject.Opportunities.ToList())
-                        {
-                            Db.SubjectOpportunities.Remove(opportunity);
-                        }
-                        Db.ModuleCourses.Remove(subject);
-                    }
-
-                    foreach (var option in model.ExaminationOptions.ToList())
-                    {
-                        foreach (var fraction in option.Fractions.ToList())
-                        {
-                            Db.ExaminationFractions.Remove(fraction);
-                        }
-
-                        Db.ExaminationOptions.Remove(option);
-                    }
-
-                    foreach (var moduleCourse in model.ModuleSubjects.ToList())
-                    {
-                        Db.ModuleCourses.Remove(moduleCourse);
-                    }
-
-                    foreach (var accreditation in model.Accreditations.ToList())
-                    {
-                        Db.Accreditations.Remove(accreditation);
-                    }
-
-                    foreach (var description in model.Descriptions.ToList())
-                    {
-                        foreach (var examinationUnit in description.ExaminationUnits.ToList())
-                        {
-                            foreach (var aid in examinationUnit.ExaminationAids.ToList())
-                            {
-                                Db.ExaminationAids.Remove(aid);
-                            }
-
-                            Db.ExaminationUnits.Remove(examinationUnit);
-                        }
-
-                        Db.ModuleDescriptions.Remove(description);
-                    }
-
-
-                    var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
-                    foreach (var mapping in mappings)
-                    {
-                        mapping.Module = null;
-                    }
-
-                    Db.CurriculumModules.Remove(model);
-                }
-
-                Db.CurriculumModuleCatalogs.Remove(catalog);
+                return RedirectToAction("Index");
             }
 
-            Db.SaveChanges();
+            foreach (var catalog in org.ModuleCatalogs.ToList())
+            {
+                _DeleteCatalog(catalog.Id);
+            }
 
 
             return RedirectToAction("Index");
         }
 
+        public ActionResult DeleteCatalog(Guid id)
+        {
+            _DeleteCatalog(id);
+            return RedirectToAction("Index");
+        }
+
+
+        private void _DeleteCatalog(Guid catId)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+            if (catalog == null)
+                return;
+
+            foreach (var model in catalog.Modules.ToList())
+            {
+
+                foreach (var mv in model.ModuleResponsibilities.ToList())
+                {
+                    Db.ModuleResponsibilities.Remove(mv);
+                }
+
+                foreach (var subject in model.ModuleSubjects.ToList())
+                {
+                    foreach (var opportunity in subject.Opportunities.ToList())
+                    {
+                        Db.SubjectOpportunities.Remove(opportunity);
+                    }
+
+                    Db.ModuleCourses.Remove(subject);
+                }
+
+                foreach (var option in model.ExaminationOptions.ToList())
+                {
+                    foreach (var fraction in option.Fractions.ToList())
+                    {
+                        Db.ExaminationFractions.Remove(fraction);
+                    }
+
+                    Db.ExaminationOptions.Remove(option);
+                }
+
+                foreach (var moduleCourse in model.ModuleSubjects.ToList())
+                {
+                    Db.ModuleCourses.Remove(moduleCourse);
+                }
+
+                foreach (var accreditation in model.Accreditations.ToList())
+                {
+                    Db.Accreditations.Remove(accreditation);
+                }
+
+                foreach (var description in model.Descriptions.ToList())
+                {
+                    foreach (var examinationUnit in description.ExaminationUnits.ToList())
+                    {
+                        foreach (var aid in examinationUnit.ExaminationAids.ToList())
+                        {
+                            Db.ExaminationAids.Remove(aid);
+                        }
+
+                        Db.ExaminationUnits.Remove(examinationUnit);
+                    }
+
+                    Db.ModuleDescriptions.Remove(description);
+                }
+
+
+                var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
+                foreach (var mapping in mappings)
+                {
+                    mapping.Module = null;
+                }
+
+                Db.CurriculumModules.Remove(model);
+            }
+
+            Db.CurriculumModuleCatalogs.Remove(catalog);
+
+            Db.SaveChanges();
+        }
     }
 }

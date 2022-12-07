@@ -113,7 +113,7 @@
     <script src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.min.js")"></script>
     @RenderSection("scripts", required: false)
 
-    <script type="text/javascript">
+<script type="text/javascript">
     $(function() {
         if (document.cookie.indexOf("cookieNotification") < 0) {
             $('#cookie-consent').slideDown('slow');
@@ -129,6 +129,7 @@
             });
     });
     </script>
+@*
     @if (!Request.IsLocal)
     {
         <!-- Matomo -->
@@ -147,6 +148,6 @@
         </script>
         <!-- End Matomo Code -->
     }
-
+    *@
 </body>
 </html>
