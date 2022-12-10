@@ -29,7 +29,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     public class LecturerController : ApiBaseController
     {
         [System.Web.Http.Route("search")]
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public IQueryable<LecturerDto> Search([FromBody] LecturerSearchRequest request)
         {
             var lecturer = Db.Members.Where(x => x.Organiser.ShortName.Equals(request.Organiser)).ToList();
@@ -129,6 +129,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="FacId">Id des Organisationsveranstalters, z.B. von FK09 oder andere</param>
         /// <returns>Liste aller Dozenten einer Fakultät</returns>
+        [System.Web.Http.Route("org")]
         public LecturersResponse GetFacLecturer(string FacId)
         {
             var lecturerService = new LecturerInfoService();
@@ -148,6 +149,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="StartsWith">Beliebiger String mit dem der Name anfangen soll</param>
         /// <returns>Liste aller Dozenten die mit dem übergebenen String anfangen</returns>
+        [System.Web.Http.Route("search")]
         public LecturersResponse GetLecturersStartswith(string StartsWith)
         {
             var lecturerService = new LecturerInfoService();
@@ -169,6 +171,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="LecturerId">Id des Dozenten</param>
         /// <returns>Liste aller Kurse, die ein Dozent hält</returns>
+        [System.Web.Http.Route("courses")]
+
         public LecturerCoursesResponse GetLectureCourses(string LecturerId)
         {
             var lecturerService = new LecturerInfoService();
@@ -192,6 +196,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="Until">Datum bis zu dem alle Sprechstunden aufgelistet werden sollen; Datum im Format dd.MM.yyyy </param>
         /// <returns>Liste aller verfügbaren Sprechstunden bis zum Datum</returns>
+        /*
         public LecturersOfficeHourResponse GetAllWeekOfficeHours(string Until)
         {
             var until =DateTime.Parse(Until);
@@ -261,6 +266,6 @@ namespace MyStik.TimeTable.Web.Api.Controller
         {
             return null;
         }
-
+        */
     }
 }

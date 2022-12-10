@@ -23,11 +23,37 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <summary>
         /// Suche nache Modulesn
         /// </summary>
-        [Route("")]
-        public IQueryable<NamedDto> GetModules()
+        [Route("{id}/summary")]
+        public ModuleDto GetModuleSummary(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            if (module == null)
+                return null;
+
+            var model = new ModuleDto
+            {
+                Name = module.Name,
+                ShortName = module.ShortName,
+                Ects = module.Accreditations.First().Slot.ECTS,
+            };
+
+            //module.ModuleResponsibilities
+
+            return model;
+        }
+
+        [Route("{id}/details/{semester}")]
+        public IQueryable<NamedDto> GetModuleDetails(Guid id)
         {
             return new List<NamedDto>().AsQueryable();
         }
+
+        [Route("{id}/courses/{semester}")]
+        public IQueryable<NamedDto> GetModuleCourses(Guid id)
+        {
+            return new List<NamedDto>().AsQueryable();
+        }
+
 
         /*
         [Route("{id}")]

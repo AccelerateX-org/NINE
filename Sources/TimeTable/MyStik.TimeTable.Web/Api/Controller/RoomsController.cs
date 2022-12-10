@@ -46,6 +46,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// 
         /// </summary>
         [System.Web.Http.Route("")]
+        //[System.Web.Http.HttpGet]
         public IQueryable<RoomSummaryDto> GetRooms()
         {
             var rooms = Db.Rooms.ToList();

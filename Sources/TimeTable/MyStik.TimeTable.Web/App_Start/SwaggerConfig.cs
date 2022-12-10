@@ -1,19 +1,20 @@
 using System.Web.Http;
+using System.Web.Http.Description;
 using WebActivatorEx;
 using MyStik.TimeTable.Web;
 using Swashbuckle.Application;
 
-[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
+//[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
 namespace MyStik.TimeTable.Web
 {
     public class SwaggerConfig
     {
-        public static void Register()
+        public static void Register(HttpConfiguration config)
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
 
-            GlobalConfiguration.Configuration
+            config
                 .EnableSwagger(c =>
                     {
                         // By default, the service root url is inferred from the request used to access the docs.
@@ -32,7 +33,7 @@ namespace MyStik.TimeTable.Web
                         // hold additional metadata for an API. Version and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
-                        c.SingleApiVersion("v1", "MyStik.TimeTable.Web.Api.Controller");
+                        c.SingleApiVersion("v2", "MyStik.TimeTable.Web.Api.Controller");
 
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
@@ -43,13 +44,15 @@ namespace MyStik.TimeTable.Web
                         // included in the docs for a given API version. Like "SingleApiVersion", each call to "Version"
                         // returns an "Info" builder so you can provide additional metadata per API version.
                         //
-                        //c.MultipleApiVersions(
-                        //    (apiDesc, targetApiVersion) => ResolveVersionSupportByRouteConstraint(apiDesc, targetApiVersion),
-                        //    (vc) =>
-                        //    {
-                        //        vc.Version("v2", "Swashbuckle Dummy API V2");
-                        //        vc.Version("v1", "Swashbuckle Dummy API V1");
-                        //    });
+                        /*
+                        c.MultipleApiVersions(
+                            (apiDesc, targetApiVersion) => ResolveVersionSupportByRouteConstraint(apiDesc, targetApiVersion),
+                            (vc) =>
+                            {
+                                vc.Version("v2", "Swashbuckle Dummy API V2");
+                                vc.Version("v1", "Swashbuckle Dummy API V1");
+                            });
+                        */
 
                         // You can use "BasicAuth", "ApiKey" or "OAuth2" options to describe security schemes for the API.
                         // See https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md for more details.
@@ -102,8 +105,8 @@ namespace MyStik.TimeTable.Web
                         // more Xml comment files.
                         //
                         //c.IncludeXmlComments(GetXmlCommentsPath());
-                        c.IncludeXmlComments(string.Format(@"{0}\App_Data\XmlDocument.xml",
-                            System.AppDomain.CurrentDomain.BaseDirectory));
+                        //c.IncludeXmlComments(string.Format(@"{0}\bin\XmlDocument.xml",
+                        //    System.AppDomain.CurrentDomain.BaseDirectory));
 
 
                         // Swashbuckle makes a best attempt at generating Swagger compliant JSON schemas for the various types
@@ -253,6 +256,18 @@ namespace MyStik.TimeTable.Web
                         //
                         //c.EnableApiKeySupport("apiKey", "header");
                     });
+        }
+
+
+        /// <summary>
+        /// Resolves the version support by route constraint.
+        /// </summary>
+        /// <param name="apiDesc">The API desc.</param>
+        /// <param name="targetApiVersion">The target API version.</param>
+        /// <returns></returns>
+        private static bool ResolveVersionSupportByRouteConstraint(ApiDescription apiDesc, string targetApiVersion)
+        {
+            return apiDesc.ActionDescriptor.ControllerDescriptor.ControllerType.FullName.Contains($"{targetApiVersion}.");
         }
     }
 }

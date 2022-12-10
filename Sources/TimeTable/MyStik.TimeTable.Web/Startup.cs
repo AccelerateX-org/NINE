@@ -36,8 +36,9 @@ namespace MyStik.TimeTable.Web
             ConfigureOAuth(app);
 
             HttpConfiguration = new HttpConfiguration();
-            WebApiConfig.Register(HttpConfiguration);
 
+            SwaggerConfig.Register(HttpConfiguration);
+            WebApiConfig.Register(HttpConfiguration);
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(HttpConfiguration);
 

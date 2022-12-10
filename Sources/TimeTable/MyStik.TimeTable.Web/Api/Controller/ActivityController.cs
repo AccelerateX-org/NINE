@@ -10,6 +10,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// <summary>
     /// 
     /// </summary>
+    [System.Web.Http.RoutePrefix("api/v2/activities")]
     public class ActivityController : ApiBaseController
     {
         //VorlesungsAPI
@@ -19,6 +20,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="UserId">Die UserId des Accounts in der Datenbank</param>
         /// <returns>Liste nach Wochentagen mit den persönlichen/gebuchten Kursterminen</returns>
+        [System.Web.Http.Route("")]
         public PersonalPlanResponse GetPersonalDates(string UserId)
         {
             //Da hier Abfrage der persönlichen Termine nur für kommende Woche, Festlegung der Variablen des Zeitraums
@@ -120,6 +122,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <param name="From">Anfangsdatum  des Zeitraums im Format dd.MM.yyyy</param>
         /// <param name="Until">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
         /// <returns>Persönlichen Termine für jeden Tag im gewählten Zeitraum</returns>
+        [System.Web.Http.Route("span")]
         public PersonalPlanResponse GetPersonalDatesSpan(string UserId, string From, string Until)
         {
             var From2=DateTime.ParseExact(From, "MM-dd-yyyy", null);
@@ -142,6 +145,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="DateId">Id des Termins</param>
         /// <returns>Informationen zu einem bestimmten Termin</returns>
+        [System.Web.Http.Route("date")]
         public DateInfoResponse GetDateById (string DateId)
         {
             var activityService = new ActivityInfoService();
@@ -162,6 +166,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// Abfrage aller kommenden Events
         /// </summary>
         /// <returns>Liste aller zukünftigen Events</returns>
+        /*
         public EventInfoResponse GetAllEvents()
         {
             var eventService = new EventInfoService();
@@ -175,12 +180,15 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return response;
         }
+        */
+
         //Ein spezielles Event abrufen
         /// <summary>
         /// Abfrage der speziellen Informationen eines Events
         /// </summary>
         /// <param name="EventId">EventId des Eventtermins</param>
         /// <returns>Informationen zum gewünschten Event</returns>
+        [System.Web.Http.Route("details")]
         public EventSingleResponse GetEvent(string EventId)
         {
             var eventService = new EventInfoService();

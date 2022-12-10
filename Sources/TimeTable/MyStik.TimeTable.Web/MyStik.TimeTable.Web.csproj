@@ -41,7 +41,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>App_Data/XmlDocument.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -382,21 +383,18 @@
     <Compile Include="Api\Contracts\LecturerContracts.cs" />
     <Compile Include="Api\Contracts\NotificationContracts.cs" />
     <Compile Include="Api\Contracts\RoomContracts.cs" />
-    <Compile Include="Api\Controller\AccountController.cs" />
-    <Compile Include="Api\Controller\ApiBaseController.cs" />
+    <Compile Include="Api\Controller\AgendaController.cs" />
     <Compile Include="Api\Controller\ActivityController.cs" />
+    <Compile Include="Api\Controller\ApiBaseController.cs" />
     <Compile Include="Api\Controller\AssessmentsController.cs" />
+    <Compile Include="Api\Controller\CalendarController.cs" />
     <Compile Include="Api\Controller\CampusController.cs" />
-    <Compile Include="Api\Controller\ConsultationsController.cs" />
-    <Compile Include="Api\Controller\EdBotController.cs" />
-    <Compile Include="Api\Controller\MvgController.cs" />
-    <Compile Include="Api\Controller\SuperHeroController.cs" />
-    <Compile Include="Api\Controller\TeachingController.cs" />
-    <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
     <Compile Include="Api\Controller\CieHomeController.cs" />
+    <Compile Include="Api\Controller\ConsultationsController.cs" />
     <Compile Include="Api\Controller\CoursesController.cs" />
     <Compile Include="Api\Controller\CurriculaController.cs" />
+    <Compile Include="Api\Controller\EdBotController.cs" />
     <Compile Include="Api\Controller\FacultyController.cs" />
     <Compile Include="Api\Controller\LecturerController.cs" />
     <Compile Include="Api\Controller\LoginController.cs" />
@@ -404,10 +402,11 @@
     <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
-    <Compile Include="Api\Controller\CalendarController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
     <Compile Include="Api\Controller\StudiesController.cs" />
+    <Compile Include="Api\Controller\TeachingController.cs" />
     <Compile Include="Api\Controller\TrialsController.cs" />
+    <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\DTOs\AccountDto.cs" />
     <Compile Include="Api\DTOs\ActionDto.cs" />
     <Compile Include="Api\DTOs\BaseDto.cs" />
@@ -538,7 +537,6 @@
     <Compile Include="Controllers\ModuleAccreditationController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Controllers\ModuleDescriptionController.cs" />
-    <Compile Include="Controllers\MoneyBanksController.cs" />
     <Compile Include="Controllers\NoticeBoardController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
@@ -3105,20 +3103,6 @@
     <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />

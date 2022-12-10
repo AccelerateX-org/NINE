@@ -62,52 +62,51 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return new List<NamedDto>().AsQueryable();
         }
 
-        /*
-        [Route("{name}/{version}/scheme")]
-        public IQueryable<CurriculumSchemeSemesterDto> GetCurriculumPlan(string name, string version)
+        [Route("{name}/{version}/modules/{semester}")]
+        public IQueryable<CurriculumSchemeSemesterDto> GetCurriculumPlan(string name, string version, string semester)
         {
             var list = new List<CurriculumSchemeSemesterDto>();
 
+            // semester und Version werden noch nicht ausgewertet
             var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.ToUpper().Equals(name.Trim().ToUpper()));
+            
 
             if (curr == null)
                 return list.AsQueryable();
 
-            var semesterSubjects = Db.CertificateSubjects.Where(x => x.CertificateModule.Curriculum.Id == curr.Id).GroupBy(x => x.Term).ToList();
+            var accreditions = 
+                Db.Accreditations.Where(x => x.Slot.CurriculumSection.Curriculum.Id == curr.Id)
+                    .Distinct()
+                    .OrderBy(x => x.Module.ShortName).ToList();
 
-            foreach (var semester in semesterSubjects)
+
+            foreach (var ac in accreditions)
             {
-                var semDto = new CurriculumSchemeSemesterDto()
+                var semDto = list.FirstOrDefault(x => x.Term == ac.Slot.CurriculumSection.Order);
+
+                if (semDto == null)
                 {
-                    Term = semester.Key
-                };
+                    semDto = new CurriculumSchemeSemesterDto
+                        {
+                            Term = ac.Slot.CurriculumSection.Order
+                        };
 
-                var modules = semester.GroupBy(x => x.CertificateModule);
-                foreach (var module in modules)
-                {
-                    var moduleDto = new CurriculumSchemeModuleDto()
-                    {
-                        Id = module.Key.Id,
-                        Name = module.Key.Name,
-                        Ects = 0,
-
-                    };
-
-                    foreach (var subject in module)
-                    {
-                        moduleDto.Ects += subject.Ects;
-                    }
-
-                    semDto.Modules.Add(moduleDto);
+                    list.Add(semDto);
                 }
 
-                list.Add(semDto);
-            }
 
+                var moduleDto = new CurriculumSchemeModuleDto()
+                    {
+                        Id = ac.Module.Id,
+                        Name = ac.Module.Name,
+                        Ects = ac.Slot.ECTS,
+                    };
+
+                    semDto.Modules.Add(moduleDto);
+            }
 
             return list.AsQueryable();
         }
-        */
     }
 }
 

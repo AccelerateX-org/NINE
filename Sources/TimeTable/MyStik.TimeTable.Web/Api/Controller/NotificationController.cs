@@ -9,6 +9,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// <summary>
     /// 
     /// </summary>
+    [System.Web.Http.RoutePrefix("api/v2/notification")]
     public class NotificationController : ApiController
     {
         /// <summary>
@@ -18,6 +19,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <param name="token"></param>
         /// <param name="deviceName"></param>
         /// <returns></returns>
+        [System.Web.Http.Route("register")]
         [System.Web.Http.HttpGet]
         public TokenRegistryResponse TokenRegistration(string userId, string token, string deviceName)
         {
@@ -37,6 +39,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// </summary>
         /// <param name="UserId"></param>
         /// <returns></returns>
+        [System.Web.Http.Route("")]
         [System.Web.Http.HttpGet]
         public PersonalNotificationResponse GetPersonalNotifications (string UserId)
         {

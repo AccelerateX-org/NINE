@@ -6,6 +6,7 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {
+    [AllowAnonymous]
     /// <summary>
     /// 
     /// </summary

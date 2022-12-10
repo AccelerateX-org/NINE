@@ -16,67 +16,16 @@ namespace MyStik.TimeTable.Web.Api.Controller
     /// <summary>
     /// 
     /// </summary>
-    public class AccountController : ApiBaseController
+    [System.Web.Http.RoutePrefix("api/v2/agenda")]
+    public class AgendaController : ApiBaseController
     {
 
 
         /// <summary>
         /// 
         /// </summary>
-        protected AccountController()
+        protected AgendaController()
         {
-        }
-
-
-
-        /// <summary>
-        /// Abfrage der UserId
-        /// </summary>
-        /// <param name="UserName">Username oder Email-Adresse</param>
-        /// <param name="Password">Das zum UserName dazugehörige Passwort</param>
-        /// <returns>Die zum Account dazugehörige UserId</returns>
-        public UserIdResponse GetUserId(string UserName, string Password)
-        {
-            // Hypothese: Login schlägt fehl - es kann keine UserId ermittelt werden
-            var userId = string.Empty;
-
-            var db = new ApplicationDbContext();
-
-            ApplicationUser user = null;
-            //Überprüfen ob Mail
-            if (UserName.Contains("@"))
-            {
-                //Suche ob Mail vorhanden
-                var tempUser = UserManager.FindByEmail(UserName);
-
-                if (tempUser != null)
-                {
-                    //wenn was gefunden wurde, Überprüfen ob PW stimmt
-                    user = UserManager.Find(tempUser.UserName, Password);
-                    //wenn pw vorhanden userID abfragen
-                    if (user != null)
-                        userId = user.Id;
-                }
-            }
-            //Übergebener string ist evtl Loginname
-            else
-            {
-                //Überprüfen ob vorhanden und PW stimmt
-                user = UserManager.Find(UserName, Password);
-
-                //wenn user vorhanden stimmt userID abfragen
-                if (user != null)
-                    userId = user.Id;
-            }
-
-            // jetzt steht in jedem Fall etwas sinnvolles in der userId drin!
-            // ein guter Zeitpunkt, um die "Response" zu erstellen
-            var response = new UserIdResponse
-            {
-                UserId = userId,
-            };
-
-            return response;
         }
 
 
@@ -88,6 +37,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <param name="From">Anfangsdatum  des Zeitraums im Format dd.MM.yyyy</param>
         /// <param name="Until">Enddatum des Zeitraums im Format dd.MM.yyyy</param>
         /// <returns>Persönlichen Termine für jeden Tag im gewählten Zeitraum</returns>
+        [System.Web.Http.Route("dates")]
         public PersonalPlanResponse GetPersonalDatesSpan(string UserId, string From, string Until)
         {
             var From2 = DateTime.ParseExact(From, "MM-dd-yyyy", null);
@@ -110,6 +60,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
         /// <param name="UserId"></param>
         /// <param name="Date"></param>
         /// <returns></returns>
+        [System.Web.Http.Route("agenda")]
         public List<CalendarEntry> GetCalendar(string UserId, string Date)
         {
             var day = DateTime.Parse(Date);
@@ -177,6 +128,5 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return model;
         }
-
     }
 }

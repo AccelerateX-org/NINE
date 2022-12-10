@@ -20,14 +20,13 @@ namespace MyStik.TimeTable.Web
 
             // Web API routes
             config.MapHttpAttributeRoutes();
-
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
+                name: "v1",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
             config.Routes.MapHttpRoute(
-                name: "RestApi",
+                name: "v2",
                 routeTemplate: "api/v2/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
