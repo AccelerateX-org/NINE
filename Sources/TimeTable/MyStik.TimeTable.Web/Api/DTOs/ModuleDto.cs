@@ -10,32 +10,18 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     /// </summary>
     public class ModuleDto : NamedDto
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public Guid Id { get; set; }
+        public List<SubjectDto> Subjects { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public CurriculumDto Curriculum { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double Ects { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double UsCredits { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double Sws { get; set; }
-
+        public List<ExamOptionDto> ExamOptions { get; set; }
     }
+
+    public class SubjectDto : NamedDto
+    {
+        public string TeachingFormat { get; set; }
+
+        public double SWS { get; set; }
+    }
+
 
     public class CertificateModuleDto : NamedDto
     {
@@ -82,13 +68,15 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string Category { get; set; }
     }
 
-    public class ExamDto
+    public class ExamOptionDto : NamedDto
     {
-        public string Category { get; set; }
+        public List<ExamDto> Exams { get; set; }
+    }
 
-        public double CalcFactor { get; set; }
 
-        public string Info { get; set; }
+    public class ExamDto : NamedDto
+    {
+        public double Weight { get; set; }
     }
 
     public class ExamAidDto

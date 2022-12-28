@@ -34,8 +34,44 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 Name = module.Name,
                 ShortName = module.ShortName,
-                Ects = module.Accreditations.First().Slot.ECTS,
+                Subjects = new List<SubjectDto>(),
+                ExamOptions = new List<ExamOptionDto>()
             };
+
+            foreach (var moduleSubject in module.ModuleSubjects)
+            {
+                var subject = new SubjectDto
+                {
+                    Name = moduleSubject.Name,
+                    SWS = moduleSubject.SWS,
+                    TeachingFormat = moduleSubject.TeachingFormat.Tag
+                };
+
+                model.Subjects.Add(subject);
+            }
+
+            foreach (var examinationOption in module.ExaminationOptions)
+            {
+                var option = new ExamOptionDto
+                {
+                    Name = examinationOption.Name,
+
+                    Exams = new List<ExamDto>()
+                };
+
+                model.ExamOptions.Add(option);
+
+                foreach (var fraction in examinationOption.Fractions)
+                {
+                    var exam = new ExamDto
+                    {
+                        Name = fraction.Form.ShortName,
+                        Weight = fraction.Weight
+                    };
+
+                    option.Exams.Add(exam);
+                }
+            }
 
             //module.ModuleResponsibilities
 
@@ -43,34 +79,39 @@ namespace MyStik.TimeTable.Web.Api.Controller
         }
 
         [Route("{id}/details/{semester}")]
-        public IQueryable<NamedDto> GetModuleDetails(Guid id)
+        public ModuleDto GetModuleDetails(Guid id, string semester)
         {
-            return new List<NamedDto>().AsQueryable();
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            if (module == null)
+                return null;
+
+            var model = new ModuleDto
+            {
+                Name = module.Name,
+                ShortName = module.ShortName,
+            };
+
+            //module.ModuleResponsibilities
+
+            return model;
         }
 
         [Route("{id}/courses/{semester}")]
-        public IQueryable<NamedDto> GetModuleCourses(Guid id)
+        public ModuleDto GetModuleCourses(Guid id, string semester)
         {
-            return new List<NamedDto>().AsQueryable();
-        }
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+            if (module == null)
+                return null;
 
-
-        /*
-        [Route("{id}")]
-        [ResponseType(typeof(AccreditatedModuleDto))]
-        public async Task<IHttpActionResult> GetModule(Guid id)
-        {
-            if (!(await Db.CertificateModules.FindAsync(id) is CertificateModule module))
+            var model = new ModuleDto
             {
-                return NotFound();
-            }
+                Name = module.Name,
+                ShortName = module.ShortName,
+            };
 
-            var converter = new ModuleConverter(Db);
-            var dto = converter.ConvertCertificateModule(id);
+            //module.ModuleResponsibilities
 
-            return Ok(dto);
+            return model;
         }
-        */
-
     }
 }
