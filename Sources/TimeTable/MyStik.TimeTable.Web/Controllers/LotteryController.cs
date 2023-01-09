@@ -658,6 +658,12 @@ namespace MyStik.TimeTable.Web.Controllers
                     sub.LapCount = 0;
                     sub.OnWaitingList = true;
                     sub.HostRemark = string.Empty;
+
+                    if (lottery.MaxConfirm == 0 && lottery.MaxExceptionConfirm == 0)
+                    {
+                        sub.Priority = 1;
+                    }
+
                 }
             }
 
@@ -2290,7 +2296,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // Alle Einstellungen überschreiben
             game.AcceptDefault = acceptAny;
-            game.CoursesWanted = confirm;
+            game.CoursesWanted = confirm;           // wird im Algorithmus MaxWinners ignoriert - andernfalls sollte hier die Anzahl an gewählten Kursen angegeben werden
             game.LastChange = DateTime.Now;
 
             // jetzt die Eintragungen
@@ -2307,13 +2313,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 }
             }
 
-            int[] points = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
-
             // Reihenfolge = Priorität
             // Vergabe der Punkte über den Lapcount - keine Budgets
             var logger = LogManager.GetLogger("SubscribeActivity");
 
-            var i = 0;
+            var i = 1;
             foreach (var courseId in courseIds)
             {
                 var course = courseService.GetCourseSummary(courseId);
@@ -2333,8 +2337,20 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 }
 
-                i++;
-                subscription.Priority = i;      // Punkteumrechnung kommt später
+                // Vergabe der Prioritäten entsprechend Einstellung
+                subscription.Priority = i;
+
+                if (lottery.MaxConfirm == 0 && lottery.MaxExceptionConfirm == 0)
+                {
+                    // Bei Maximierung der Anzahl bekommen alle Eintragungen Prio 1
+                }
+                else
+                {
+                    // sonst immer Prioritäten vergeben
+                    // Nach Reihenfolge der Nennungen
+                    i++;
+                }
+
 
                 logger.InfoFormat("{0} ({1}) by [{2}]: for lottery {3} with prio {4}",
                     course.Course.Name, course.Course.ShortName, User.Identity.Name, lottery.Name, subscription.Priority.Value);

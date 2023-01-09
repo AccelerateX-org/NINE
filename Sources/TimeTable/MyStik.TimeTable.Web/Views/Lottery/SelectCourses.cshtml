@@ -136,6 +136,12 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-shopping-cart"></i> Schritt 1: Vorauswahl der Lehrveranstaltungen</h4>
+                        <p class="mb-3">Bitte wählen Sie zwischen @Model.Lottery.MinSubscription und @Model.Lottery.MaxSubscription Lehrveranstaltungen aus.</p>
+                        <p>
+                            Sie haben aktuell <strong><span id="projektanzahl">4</span> Lehrveranstaltungen</strong> vorausgewählt.
+                            <span id="minProjekte">Sie müssen jedoch mindestens <span id="minProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
+                            <span id="maxProjekte">Sie können maximal <span id="maxProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
+                        </p>
                     </div>
                     <div class="list-group">
                         @foreach (var course in Model.Courses)
@@ -268,22 +274,17 @@
                     </div>
                 </div>
 
-                <p>
-                    Sie haben aktuell <strong><span id="projektanzahl">4</span> Lehrveranstaltungen</strong> vorausgewählt.
-                    <span id="minProjekte">Sie müssen jedoch mindestens <span id="minProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
-                    <span id="maxProjekte">Sie können maximal <span id="maxProjektanzahl">4</span> Lehrveranstaltungen vorauswählen!</span>
-                </p>
                 
                 <div id="btnBox1">
                     <a class="btn btn-primary btn-block disabled" id="hauptbutton">Weiter mit Schritt 2: Reihenfolge bzw. Priorisierung festlegen</a>
                 </div>
 
                 <div id="loading1" hidden>
-                    <h4>
-                        <i class="fa fa-spinner fa-spin text-muted"></i>
-                    </h4>
+                    <div class="d-flex align-items-center">
+                        <strong>Loading...</strong>
+                        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>

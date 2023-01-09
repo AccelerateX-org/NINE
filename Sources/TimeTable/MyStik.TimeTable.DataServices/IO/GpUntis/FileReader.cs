@@ -73,8 +73,18 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             if (File.Exists(path))
             {
                 var lines = File.ReadAllLines(Path.Combine(directory, gpuFile), Encoding.Default);
-                ctx.AddErrorMessage(gpuFile, string.Format("Anzahl Einträge: {0}", lines.Length), false);
-                return lines;
+                ctx.AddErrorMessage(gpuFile, string.Format("Anzahl Zeilen in {0}: {1}", gpuFile, lines.Length), false);
+                // Leerzeilen löschen
+                var linesWithContent = new List<string>();
+                foreach (var line in lines)
+                {
+                    if (string.IsNullOrEmpty(line.Trim()))
+                        continue;
+                    linesWithContent.Add(line);
+                }
+
+                ctx.AddErrorMessage(gpuFile, string.Format("Anzahl Zeilen mit Inhalt in {0}: {1}", gpuFile, linesWithContent.Count), false);
+                return linesWithContent.ToArray();
             }
 
             ctx.AddErrorMessage(gpuFile, string.Format("Datei {0} nicht vorhanden", gpuFile), true);

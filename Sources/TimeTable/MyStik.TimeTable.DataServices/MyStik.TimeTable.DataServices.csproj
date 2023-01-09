@@ -104,6 +104,8 @@
     <Compile Include="Lottery\Data\DrawingLotPot.cs" />
     <Compile Include="Lottery\Data\DrawingMessage.cs" />
     <Compile Include="Lottery\Data\DrawingSeat.cs" />
+    <Compile Include="Lottery\DrawingByMaxWinners.cs" />
+    <Compile Include="Lottery\DrawingByPriority.cs" />
     <Compile Include="Lottery\DrawingService.cs" />
     <Compile Include="EventDateSubscriptionTicket.cs" />
     <Compile Include="EventSubscriptionTicket.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="IO\Json\FileReader.cs" />
     <Compile Include="IO\Json\ImportContext.cs" />
     <Compile Include="IO\Json\SemesterImport.cs" />
+    <Compile Include="Lottery\IDrawingAlgorithm.cs" />
     <Compile Include="NewsletterSubscriptionTicket.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="OrganizerService.cs" />

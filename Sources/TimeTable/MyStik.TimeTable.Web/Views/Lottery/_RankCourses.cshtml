@@ -7,7 +7,18 @@
         <h4><i class="fa fa-sort"></i> Schritt 2: Reihenfolge bzw. Priorisierung festlegen</h4>
     </div>
     <div class="panel-body">
-        <h5><i class="fa fa-hand-paper-o text-success"></i> <strong>Schieben</strong> Sie die Lehrveranstaltung, die Sie ab liebsten wählen möchten, auf Platz 1, die 2. Wahl auf Platz 2 usw.</h5>
+        @if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
+        {
+        <div class="alert alert-info">
+            <h5>Hinweis</h5>
+            <p>In diesem Wahlverfahren werden keine Prioritäten berücksichtigt. Eine Veränderung der Reihenfolge hat keine Auswirkung auf die Platzvergabe.</p>
+        </div>
+            
+        }
+        else
+        {
+            <h5><i class="fa fa-hand-paper-o text-success"></i> <strong>Schieben</strong> Sie die Lehrveranstaltung, die Sie ab liebsten wählen möchten, auf Platz 1, die 2. Wahl auf Platz 2 usw.</h5>
+        }
 
         <ul class="projektliste" id="sortable">
             @foreach (var course in Model.Courses)
@@ -19,10 +30,14 @@
             }
         </ul>
 
+
         @if (Model.Lottery.MaxConfirm == Model.Lottery.MaxExceptionConfirm)
         {
-            <p><i class="fa fa-heartbeat"></i> Sie erhalten maximal in @Model.Lottery.MaxConfirm Lehrveranstaltungen einen Platz</p>
             <input hidden="" value="@Model.Lottery.MaxConfirm" id="confirm" />
+            if (Model.Lottery.MaxConfirm > 0)
+            {
+                <p><i class="fa fa-heartbeat"></i> Sie erhalten maximal in @Model.Lottery.MaxConfirm Lehrveranstaltungen einen Platz</p>
+            }
         }
 
         @if (Model.Lottery.MaxConfirm < Model.Lottery.MaxExceptionConfirm)
@@ -53,49 +68,58 @@
             </div>
         }
         <hr />
-        @if (!Model.Lottery.IsScheduled)
+        @if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
         {
-            <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
-            <div class="form form-horizontal">
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Ich möchte ...</label>
-                    <div class="col-md-10">
-                        <div class="radio-list">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="acceptAny" value="1" checked>
-                                das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
-                            </label>
-                            <label>
-                                <input type="radio" name="optionsRadios" id="acceptNope" value="0">
-                                nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <input type="radio" name="optionsRadios" id="acceptAny" value="1" hidden>
+            <input type="radio" name = "optionsRadios" id = "acceptNope" value = "0"  hidden>
+
         }
         else
         {
-            <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
-            <div class="form form-horizontal">
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Ich möchte ...</label>
-                    <div class="col-md-10">
-                        <div class="radio-list">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="acceptAny" value="1" disabled>
-                                das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
-                            </label>
-                            <label>
-                                <input type="radio" name="optionsRadios" id="acceptNope" value="0" checked>
-                                nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
-                            </label>
+
+            if (!Model.Lottery.IsScheduled)
+            {
+                <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Ich möchte ...</label>
+                        <div class="col-md-10">
+                            <div class="radio-list">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="acceptAny" value="1" checked>
+                                    das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
+                                </label>
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="acceptNope" value="0">
+                                    nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <h5><i class="fa fa-frown-o text-danger"></i> Bitte geben Sie Ihren Wunsch an, wenn Ihre Wahl nicht bzw. nicht vollständig erfüllt werden kann. </h5>
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Ich möchte ...</label>
+                        <div class="col-md-10">
+                            <div class="radio-list">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="acceptAny" value="1" disabled>
+                                    das Kontingent ausschöpfen und akzeptiere ein Platz in irgendeiner Lehrveranstaltung dieses Wahlverfahrens
+                                </label>
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="acceptNope" value="0" checked>
+                                    nur Plätze in Lehrveranstaltungen erhalten, die ich gewählt habe. Ich akzeptiere weniger Plätze zu erhalten, als ich oben angegeben habe.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         }
-
         @if (Model.Lottery.LoINeeded)
         {
             <h5><i class="fa fa-pencil"></i> Im Rahmen des Wahlverfahrens können Sie Bewerbungsschreiben einreichen. Dies können Sie nach dem Abschluss der Auswahl machen.</h5>
@@ -107,17 +131,17 @@
 <div class="col-md-12">
     <div id="btnBox2">
         <div class="btn-group-vertical btn-block">
-            <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-default btn-block">Vorauswahl ändern</a>
+            <a href="@Url.Action("SelectCourses", new {id = Model.Lottery.Id})" class="btn btn-outline-secondary btn-block">Vorauswahl ändern</a>
             <a class="btn btn-primary btn-block" id="hauptbutton2">Weiter mit Schritt 3: Kontrolle und Bestätigung</a>
         </div>
     </div>
     <div id="loading2" hidden>
-        <h4>
-            <i class="fa fa-spinner fa-spin text-muted"></i>
-        </h4>
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
-
 </div>
+
 
 
 

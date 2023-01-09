@@ -126,6 +126,14 @@
                                         <li><i class="fa fa-li fa-pencil"></i>HINWEIS: Lehrende können Eintragungen mit Priorität 1 vor der Durchführung der Verlosung übernehmen</li>
 
                                     }
+                                    if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
+                                    {
+                                        <li><i class="fa fa-li fa-edit"></i>Auswahl erfolgt ohne Priorisierung</li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="fa fa-li fa-edit"></i>Auswahl erfolgt mit Priorisierung (@Model.Lottery.MinSubscription bis @Model.Lottery.MaxSubscription)</li>
+                                    }
                                     if (IsAdmin)
                                     {
                                         if (Model.Lottery.IsScheduled)
