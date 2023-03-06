@@ -6,46 +6,31 @@
     var colhead = Model.Lottery.MaxSubscription + 1;
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren "@Model.Lottery.Name" - Status</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Wahlverfahren: "@Model.Lottery.Name" - Buchungslisten / Lostöpfe</h4>
+                @if (!Model.Lottery.IsActive)
+                {
+                    <div class="alert alert-danger">Für Studierende nicht sichtbar</div>
+                }
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+                <div class="list-group-item">
                     <h4>Legende / Symbole</h4>
-                </div>
-                <div class="panel-body">
                     <div class="row">
                         <div class="col-md-3">
                             <ul class="fa-ul">
@@ -70,54 +55,47 @@
                         </div>
                     </div>
                 </div>
+
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Liste der Buchungslisten (ggf. mehrere pro Lehrveranstaltung bei Platzvergabe nach Studiengängen)</h4>
-                </div>
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th colspan="2">Lehrveranstaltung</th>
-                            <th colspan="5">Buchungsliste</th>
-                            @if (Model.Lottery.IsFixed)
-                            {
-                                <th colspan="@(colhead + 1)">Aufschlüsselung Teilnehmerliste</th>
-                                <th colspan="@colhead">Aufschlüsselung Warteliste</th>
-                            }
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Bezeichnung</th>
-                            <th><i class="fa fa-bed"></i></th>
-                            <th><i class="fa fa-users"></i></th>
-                            <th><i class="fa fa-hourglass-half"></i></th>
-                            <th><i class="fa fa-percent text-warning"></i></th>
-                            
-                            @if (Model.Lottery.IsFixed)
-                            {
-                                <th><i class="fa fa-percent text-danger"></i></th>
-                                <th>Keine Prio</th>
-                                for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
-                                 {
-                                     <th>@i</th>
-                                 }
-                                <th>Keine Prio</th>
-                                for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
-                                 {
-                                     <th>@i</th>
-                                 }
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var lotPot in Model.LotPots.OrderByDescending(x => x.BookingRank).ThenByDescending(x => x.Lots.Count(y => y.Priority == 1)))
+            <table id="tabPots" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th colspan="2">Lehrveranstaltung</th>
+                        <th colspan="5">Buchungsliste</th>
+                        @if (Model.Lottery.IsFixed)
                         {
+                            <th colspan="@(colhead + 1)">Aufschlüsselung Teilnehmerliste</th>
+                            <th colspan="@colhead">Aufschlüsselung Warteliste</th>
+                        }
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Bezeichnung</th>
+                        <th><i class="fa fa-bed"></i></th>
+                        <th><i class="fa fa-users"></i></th>
+                        <th><i class="fa fa-hourglass-half"></i></th>
+                        <th><i class="fa fa-percent text-warning"></i></th>
+
+                        @if (Model.Lottery.IsFixed)
+                        {
+                            <th><i class="fa fa-percent text-danger"></i></th>
+                            <th>Keine Prio</th>
+                            for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                            {
+                                <th>@i</th>
+                            }
+                            <th>Keine Prio</th>
+                            for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
+                            {
+                                <th>@i</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var lotPot in Model.LotPots.OrderByDescending(x => x.BookingRank).ThenByDescending(x => x.Lots.Count(y => y.Priority == 1)))
+                    {
                         <tr>
                             <td>
                                 @if (lotPot.Course.Occurrence.IsCoterie)
@@ -161,34 +139,52 @@
                             {
 
                                 if (lotPot.Capacity == int.MaxValue)
-                                 {
-                                     <td></td>
-                                 }
-                                 else
-                                 {
-                                     <td>@lotPot.BookingRank.ToString("0%")</td>
-                                 }
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td>@lotPot.BookingRank.ToString("0%")</td>
+                                }
 
 
                                 <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == 0)</td>
                                 for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
-                                 {
-                                     <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == i)</td>
-                                 }
+                                {
+                                    <td>@lotPot.BookingList.Participients.Count(x => x.Subscription.Priority == i)</td>
+                                }
 
 
                                 <td>@lotPot.Lots.Count(x => x.Priority == 0)</td>
                                 for (var i = 1; i <= Model.Lottery.MaxSubscription; i++)
-                                 {
-                                     <td>@lotPot.Lots.Count(x => x.Priority == i)</td>
-                                 }
+                                {
+                                    <td>@lotPot.Lots.Count(x => x.Priority == i)</td>
+                                }
                             }
                         </tr>
-                        }
-                    </tbody>
-                </table>
-
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabPots').DataTable({
+                "paging": false,
+                "columnDefs": [{
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                }],
+            });
+
+        });
+    </script>
+}

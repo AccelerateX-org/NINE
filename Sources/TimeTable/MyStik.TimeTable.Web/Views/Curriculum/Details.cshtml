@@ -15,6 +15,14 @@
             showFilter = true;
         }
     }
+
+    var pk = Model.Curriculum.Organiser.Autonomy != null ?
+        Model.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK") &&
+                                                                                   x.Curriculum != null &&
+                                                                                   x.Curriculum.Id == Model.Curriculum.Id) : null;
+
+    var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
+
 }
 
 @section styles
@@ -35,10 +43,10 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
+            <div class="card-header">
                 <div class="row">
                     <div class="col-md-10">
-                        <h4 class="card-title">@Model.Curriculum.Name (@Model.Curriculum.ShortName)</h4>
+                        <h4 class="card-title">@Model.Curriculum.Name (@Model.Curriculum.ShortName | primuss-code: XXX)</h4>
                         <h5 class="card-subtitle">
                             <a href="@Url.Action("Index", "Curricula")">HM</a>
                             |
@@ -51,15 +59,16 @@
                     <div class="col-md-2">
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                        <div class="d-md-flex justify-content-md-end">
-                            <a href="@Url.Action("Admin", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Verwaltung
-                            </a>
-                        </div>
+                            <div class="d-md-flex justify-content-md-end">
+                                <a href="@Url.Action("Admin", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Verwaltung
+                                </a>
+                            </div>
                         }
                     </div>
                 </div>
-                <hr/>
+            </div>
+            <div class="card-body">
                 <h5>Allgemeine Informationen</h5>
                 <div class="row">
                     <div class="col-md-6">
@@ -82,33 +91,55 @@
                                 @Model.Curriculum.EctsTarget
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-4">
+                                Dokumente
+                            </div>
+                            <div class="col-8">
+                                <a href="#">SPO</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                Prüfungskommission
+                            </div>
+                            <div class="col-8">
+                                @if (pkv != null)
+                                {
+                                    @pkv.Member.FullName
+                                }
+                                else
+                                {
+                                    <div>N.N.</div>
+                                }
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="row">
                             <div class="col-12">
-                                <a href="#">Stundenplan @Model.Semester.Name</a> |
-                                @if (ViewBag.NextSemester != null)
-                                {
+                                <a href="#">Stundenplan @Model.Semester.Name</a>
+                            </div>
+                        </div>
+                        @if (ViewBag.NextSemester != null)
+                        {
+                            <div class="row">
+                                <div class="col-12">
                                     <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
-                                }
+                                </div>
+                            </div>
+                        }
+                            <div class="row">
+                                <div class="col-12">
+                                    @if (Model.Assessments.Any())
+                                    {
+                                        <a href="@Url.Action("Index", "Assessment")" class="">
+                                            Auswahlverfahren
+                                        </a>
+                                    }
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <a href="#">Ansprechpartner</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                @if (Model.Assessments.Any())
-                                {
-                                    <a href="@Url.Action("Index", "Assessment")" class="">
-                                        Auswahlverfahren
-                                    </a>
-                                }
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <hr/>
                 <h5>Aufbau</h5>

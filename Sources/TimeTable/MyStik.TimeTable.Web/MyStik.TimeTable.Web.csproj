@@ -779,6 +779,10 @@
     <Content Include="Assets\fillter\img\white.gif" />
     <Content Include="Assets\fillter\scripts\calendar.js" />
     <Content Include="Assets\fillter\scripts\datepicker.js" />
+    <Content Include="Assets\img\cap\HM_Logo_RGB.png" />
+    <Content Include="Assets\img\cap\noun-nine-oclock-218335.png" />
+    <Content Include="Assets\img\cap\noun-playground-3357920.png" />
+    <Content Include="Assets\img\cap\noun-schedule-4723039.png" />
     <Content Include="Assets\img\flags\ad.png" />
     <Content Include="Assets\img\flags\ae.png" />
     <Content Include="Assets\img\flags\af.png" />
@@ -4120,6 +4124,8 @@
     <Content Include="Views\Curriculum\_ModulePlan.cshtml" />
     <Content Include="Views\Curriculum\_ModuleList.cshtml" />
     <Content Include="Views\Rooms\Schedule.cshtml" />
+    <Content Include="Views\Home\Landing.cshtml" />
+    <Content Include="Views\Shared\_LayoutCAP.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

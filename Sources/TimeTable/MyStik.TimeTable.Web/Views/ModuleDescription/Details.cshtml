@@ -3,20 +3,32 @@
     ViewBag.Title = "Details";
 
     var subjects = Model.Module.ModuleSubjects.ToList();
+
+    var itsMe = false;
+    var userId = ViewBag.UserRight.User.Id;
+
+    foreach (var mv in Model.Module.ModuleResponsibilities)
+    {
+        if (mv.Member.UserId.Equals(userId))
+        {
+            itsMe = true;
+        }
+    }
+
 }
 
 
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
+            <div class="card-header">
                 <div class="row">
                     <div class="col-md-10">
-
                         <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
                         @if (Model.Module.Catalog != null)
                         {
-                            <h5 class="card-subtitle">Gehört zu Modulkatalog:
+                            <h5 class="card-subtitle">
+                                Gehört zu Modulkatalog:
                                 <a href="@Url.Action("Index", "Catalogs")">
                                     @Model.Module.Catalog.Name (@Model.Module.Catalog.Organiser.ShortName)
 
@@ -26,17 +38,21 @@
                         }
                     </div>
                     <div class="col-md-2">
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
-                        {
                         <div class="d-md-flex justify-content-md-end">
-                            <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                <i class="bi-pen"></i> Ändern
-                            </a>
-                            <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Module.Id})" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Löschen
-                            </a>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                            {
+                                <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-pen"></i> Ändern
+                                </a>
+                            }
+
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Module.Id})" class="btn btn-outline-danger">
+                                    <i class="bi-trash"></i> Löschen
+                                </a>
+                            }
                         </div>
-                        }
                     </div>
                 </div>
             </div>
@@ -122,23 +138,23 @@
                         <div class="col-8">
                             @foreach (var option in Model.Module.ExaminationOptions)
                             {
-                            <div>
-                                @option.Name:
-                                @foreach (var fraction in option.Fractions)
-                                {
-                                    if (fraction.MinDuration > 0)
+                                <div>
+                                    @option.Name:
+                                    @foreach (var fraction in option.Fractions)
                                     {
-                                        var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                                        @str
+                                        if (fraction.MinDuration > 0)
+                                        {
+                                            var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                            @str
+                                        }
+                                        else
+                                        {
+                                            var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                            @str
+                                        }
                                     }
-                                    else
-                                    {
-                                        var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                                        @str
-                                    }
-                                }
 
-                            </div>
+                                </div>
                             }
                         </div>
                     </div>
@@ -157,5 +173,7 @@
         </div>
     </div>
 </div>
+
+
 
 

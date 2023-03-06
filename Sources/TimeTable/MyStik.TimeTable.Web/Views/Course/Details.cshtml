@@ -55,20 +55,13 @@
                                 <a href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-book"></i> Semestergruppen</a>
                                 <a href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-tag"></i> Themengebiet ("Modul")</a>
                                 <a href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-exclamation-circle"></i> Zugangsbeschränkungen, Platzkontigente</a>
-                                if (Model.Summary.Lottery == null)
+                                if (Model.Summary.Course.Occurrence.IsAvailable)
                                 {
-                                    if (Model.Summary.Course.Occurrence.IsAvailable)
-                                    {
-                                        <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-lock"></i> Eintragung für Studierende sperren</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Eintragung für Studierende ermöglichen</a>
-                                    }
+                                    <a href="@Url.Action("Lock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-lock"></i> Eintragung für Studierende sperren</a>
                                 }
                                 else
                                 {
-                                    <a href="@Url.Action("Details", "Lottery", new {id = Model.Summary.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-123"></i> Zeitplan ist in Wahlverfahren geregelt</a>
+                                    <a href="@Url.Action("UnLock", new {id = Model.Summary.Course.Occurrence.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Eintragung für Studierende ermöglichen</a>
                                 }
                                 if (ViewBag.UserRight.IsCourseAdmin)
                                 {
@@ -78,7 +71,7 @@
                                     }
                                     else
                                     {
-                                        <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-unlock"></i> Änderungen durch Lehrende sperren</a>
+                                        <a href="@Url.Action("Freeze", new {id = Model.Summary.Course.Id})" class="btn btn-outline-primary"><i class="bi-lock"></i> Änderungen durch Lehrende sperren</a>
                                     }
                                 }
                             }

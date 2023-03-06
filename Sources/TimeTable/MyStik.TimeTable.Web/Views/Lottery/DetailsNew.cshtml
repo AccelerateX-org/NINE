@@ -21,7 +21,8 @@
                 <div class="list-group">
                     <div class="list-group-item">
                         <div class="btn-group" role="group">
-                            <a href="@Url.Action("Index", new {id = Model.Lottery.Semester.Id})" class="btn btn-outline-primary"><i class="fa fa-arrow-left"></i> zurück</a>
+                            <a href="@Url.Action("Index", new {id = Model.Lottery.Semester.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                            <a href="@Url.Action("Capacities", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-gavel"></i> Platzkontingente</a>
                         </div>
                     </div>
                     @if (IsAdmin)
@@ -42,7 +43,6 @@
                                 {
                                     <a href="@Url.Action("Show", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-unlock"></i> Sichtbar machen</a>
                                 }
-                                <a href="@Url.Action("Capacities", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-gavel"></i> Platzkontingente</a>
                                 <a href="@Url.Action("DrawingPots", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-users"></i> Teilnehmerlisten</a>
                                 <a href="@Url.Action("Students", new {id = Model.Lottery.Id})" class="btn btn-outline-primary"><i class="fa fa-user"></i> Studierende</a>
                             </div>
@@ -316,7 +316,8 @@
                                     else
                                     {
 
-                                        if (Model.Game != null && Model.CoursesSelected.Count(x => !x.Subscription.OnWaitingList) >= Model.Game.CoursesWanted)
+                                        if (Model.Game != null && Model.CoursesSelected.Count(x => !x.Subscription.OnWaitingList) >= Model.Game.CoursesWanted && 
+                                            Model.Lottery.MaxConfirm > 0 && Model.Lottery.MaxExceptionConfirm > 0)
                                         {
                                             <div class="list-group-item list-group-item-warning">
                                                 <h5 class="list-group-item-heading">Kontingent ausgeschöpft</h5>

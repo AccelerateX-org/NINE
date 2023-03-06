@@ -29,77 +29,54 @@
     </script>
 }
 
-
-
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren @Model.Lottery.Name  - Studierende</h1>
-                </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Wahlverfahren: "@Model.Lottery.Name" - Studierende</h4>
+                @if (!Model.Lottery.IsActive)
+                {
+                    <div class="alert alert-danger">Für Studierende nicht sichtbar</div>
+                }
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                            <a href="@Url.Action("RawData", new {id=Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-download"></i> Rohdaten
-                            </a>
-                        </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                        <a href="@Url.Action("RawData", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-download"></i> Rohdaten</a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Liste der Studierenden</h4>
+                <div class="list-group-item">
+                    <h4>Legende</h4>
+                    <p>Anzeige der Eintragungen</p>
                 </div>
 
-
-                <table id="tabStudents" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th rowspan="2">Name</th>
-                            <th rowspan="2"><i class="fa fa-book"></i></th>
-                            <th rowspan="2"><i class="fa fa-anchor"></i></th>
-                            <th rowspan="2"><i class="fa fa-calendar-plus-o"></i></th>
-                            <th rowspan="2"><i class="fa fa-bed text-primary"></i></th>
-                            <th rowspan="2"><i class="fa fa-frown-o text-primary"></i></th>
-                            <th rowspan="2">Vor Losdurchgang bereits vorhandene Plätze</th>
-                            <th colspan="@Model.Lottery.MaxSubscription">Lose des Losdurchgangs (nach Priorität)</th>
-                        </tr>
-                        <tr>
-                            @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
-                            {
-                                <th>@i</th>
-                            }
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                        @foreach (var student in Model.Games)
+            </div>
+            <table id="tabStudents" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Name</th>
+                        <th rowspan="2"><i class="fa fa-book"></i></th>
+                        <th rowspan="2"><i class="fa fa-anchor"></i></th>
+                        <th rowspan="2"><i class="fa fa-calendar-plus-o"></i></th>
+                        <th rowspan="2"><i class="fa fa-bed text-primary"></i></th>
+                        <th rowspan="2"><i class="fa fa-frown-o text-primary"></i></th>
+                        <th rowspan="2">Vor Losdurchgang bereits vorhandene Plätze</th>
+                        <th colspan="@Model.Lottery.MaxSubscription">Lose des Losdurchgangs (nach Priorität)</th>
+                    </tr>
+                    <tr>
+                        @for (var i = 0; i <= Model.Lottery.MaxSubscription; i++)
                         {
-                            var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
-                            var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
+                            <th>@i</th>
+                        }
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var student in Model.Games)
+                    {
+                        var seats = student.Seats.Count(x => !x.Subscription.OnWaitingList);
+                        var user = student.Student != null ? userService.GetUser(student.Student.UserId) : userService.GetUser(student.UserId);
 
                         <tr>
                             @if (student.Student == null)
@@ -208,14 +185,13 @@
                                         </div>
                                     }
                                 </td>
-                             }
+                            }
                         </tr>
-                        }
-                    </tbody>
-                </table>
-
-
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+

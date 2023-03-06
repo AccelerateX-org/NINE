@@ -103,9 +103,9 @@
                 var allConflicts = new List<ActivityDate>();
                 foreach (var room in date.Rooms)
                 {
-                    var roomConflicts = room.Dates.Where(d => (d.End > date.Begin && d.End < date.End ||
-                                                       d.Begin > date.Begin && d.Begin < date.End ||
-                                                       d.Begin < date.Begin && d.End > date.End) &&
+                    var roomConflicts = room.Dates.Where(d => (d.End > date.Begin && d.End <= date.End ||
+                                                       d.Begin >= date.Begin && d.Begin < date.End ||
+                                                       d.Begin <= date.Begin && d.End >= date.End) &&
                                                       d.Activity.Id != date.Activity.Id).ToList();
 
                     allConflicts.AddRange(roomConflicts);

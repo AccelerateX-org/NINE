@@ -27,6 +27,8 @@ namespace MyStik.TimeTable.DataServices.Lottery
 
         public List<DrawingMessage> Messages { get; }
 
+        public List<Curriculum> Curricula { get; }
+
 
         public DrawingService(TimeTableDbContext db, Guid id)
         {
@@ -42,6 +44,20 @@ namespace MyStik.TimeTable.DataServices.Lottery
                         occurrence => db.Activities.OfType<Course>().SingleOrDefault(
                             c => c.Occurrence.Id == occurrence.Id)).Where(course => course != null));
             }
+
+            Curricula = new List<Curriculum>();
+            foreach (var c in Courses)
+            {
+                foreach (var g in c.SemesterGroups)
+                {
+                    if (g.CapacityGroup != null && !Curricula.Contains(g.CapacityGroup.CurriculumGroup.Curriculum))
+                    {
+                        Curricula.Add(g.CapacityGroup.CurriculumGroup.Curriculum);
+                    }
+
+                }
+            }
+
 
             LotPots = new List<DrawingLotPot>();
 

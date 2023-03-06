@@ -25,7 +25,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index()
         {
             if (!Request.IsAuthenticated)
-                return View();
+                return View("Landing");
 
             if (User.IsInRole("SysAdmin"))
                 return RedirectToAction("Index", "Home", new {area = "Admin"});

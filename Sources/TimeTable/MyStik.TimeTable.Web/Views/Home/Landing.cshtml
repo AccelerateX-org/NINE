@@ -1,0 +1,145 @@
+﻿
+@{
+
+    ViewBag.Title = "Startseite";
+
+    var isReady = true;
+
+    if (isReady)
+    {
+        Layout = "~/Views/Shared/_LayoutCAP.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    }
+
+}
+
+@if (isReady)
+{
+    <div class="row justify-content-center">
+        <div class="col col-lg-6 col-md-8 col-sm-8 col-xs-10">
+            <div class="card mt-4">
+                <div class="card-body bg-dark text-white">
+                    <h5 class="card-title">Willkommen auf dem Campus Adventure Playground</h5>
+                    <p class="card-text mt-3">Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre. Entwickelt von und für Studierende.</p>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item  bg-light">
+                        <div class="row gx-2 gy-2">
+                            <div class="col">
+                                <a href="@Url.Content("/Apps/Buddy")" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><i class="bi-robot"></i> Buddy</h5>
+                                        <p><i class="bi-star-fill text-warning"></i><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
+                                    </div>
+                                    <p class="mb-1">Das ideale AW-Modul finden</p>
+                                    <small>weiter >></small>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="@Url.Content("/Apps/Fillter")" class="list-group-item list-group-item-action bg-white disabled" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><i class="bi-filter"></i> Fillter</h5>
+                                        <p><i class="bi-star-half text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i></p>
+                                    </div>
+                                    <p class="mb-1">Relevante Nachrichten erhalten</p>
+                                    <small>weiter >></small>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="@Url.Content("/Apps/Tickler")" class="list-group-item list-group-item-action bg-white disabled" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><i class="bi-book"></i> Gym</h5>
+                                        <p><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i></p>
+                                    </div>
+                                    <p class="mb-1">Lernen in der S-Bahn</p>
+                                    <small>weiter >></small>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="@Url.Content("/Apps/Jotter")" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><i class="bi-journal-check"></i> Jotter</h5>
+                                        <p><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
+                                    </div>
+                                    <p class="mb-1">Den Studienfortschritt planen</p>
+                                    <small>weiter >></small>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="@Url.Action("Login", "Account")" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><i class="bi-calendar-date"></i> NINE</h5>
+                                        <p><i class="bi-star-fill text-warning"></i><i class="bi-star-fill text-warning"></i><i class="bi-star-fill text-warning"></i><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i></p>
+                                    </div>
+                                    <p class="mb-1">Den Stundenplan zusammenstellen</p>
+                                    <small>weiter >></small>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="@Url.Content("/Apps/Tickler")" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><i class="bi-kanban"></i> Tickler</h5>
+                                        <p><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
+                                    </div>
+                                    <p class="mb-1">Den Kalender im Griff haben</p>
+                                    <small>weiter >></small>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a class="" href="https://lucx.wi.hm.edu" target="_blank">
+                                    Mehr zum Campus Adventure Playground
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <h6>Offizielle Systeme der Hochschule München</h6>
+                            </div>
+                        </div>
+                        <div class="row gx-1">
+                            <div class="col">
+                                <a href="https://conwiki.cc.hm.edu/confluence/pages/viewpage.action?pageId=250552983" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1"><i class="bi-box-arrow-up-right"></i> Systeme der zentralen IT</h6>
+                                    </div>
+                                    <p class="mb-1">primuss und mehr</p>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="https://www.hm.edu/elc/" class="list-group-item list-group-item-action" aria-current="true" target="_blank">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1"><i class="bi-box-arrow-up-right"></i> Systeme des E-Learning Centers</h6>
+                                    </div>
+                                    <p class="mb-1">moodle, mahara und mehr</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="list-group-item list-group-item-action bg-dark text-white" href="@Url.Action("Imprint", "Home")">
+                        Impressum
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="card mt-4">
+                <img src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top"/>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @Html.Partial("Index")
+}
+

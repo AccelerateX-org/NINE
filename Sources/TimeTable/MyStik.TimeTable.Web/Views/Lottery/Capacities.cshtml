@@ -1,188 +1,166 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Web.Models.LotteryLotPotModel
+﻿@using MyStik.TimeTable.Data;
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.DataServices.Lottery.DrawingService
+
 @{
     ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
+
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren "@Model.Lottery.Name" - Zusammensetzung</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id =Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
 
 
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="caption">
-                                <i class="fa fa-list"></i>
-                                Lehrveranstaltungen des Wahlverfahrens
-                            </h4>
-                            <div class="portlet-body">
-                                <div id="CourseTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                        <tr>
-                                            <th>Bezeichnung</th>
-                                            <th>Gruppen</th>
-                                            <th>Zugang</th>
-                                            <th>Kapazitäten</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="activityTable">
-                                        @foreach (var activity in Model.PotElements)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <a href="@Url.Action("Details", "Course", new {id=activity.ActivitySummary.Activity.Id})">@activity.ActivitySummary.Activity.Name (@activity.ActivitySummary.Activity.ShortName)</a>
-                                                </td>
-                                                <td>
-                                                    @Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-
-
-                                                @if (activity.CourseSummary.Course.Occurrence.IsCoterie)
-                                                {
-                                                    <td>nur für angegebene Studiengänge (alle anderen können nicht wählen)</td>
-                                                }
-                                                else
-                                                {
-                                                    if (activity.CourseSummary.Course.Occurrence.HasHomeBias)
-                                                    {
-                                                        <td>angebene Studiengänge werden bevorzugt</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>offen für alle</td>
-                                                    }
-                                                }
-
-                                                @if (activity.CourseSummary.Course.Occurrence.UseGroups)
-                                                {
-                                                    if (activity.CourseSummary.Course.Occurrence.UseExactFit)
-                                                    {
-                                                        <td>FEHLER</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Beschränkung pro Studiengang</td>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    if (activity.CourseSummary.Course.Occurrence.Capacity <= 0)
-                                                    {
-                                                        <td>Keine Platzbeschränkung</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Platzbeschränkung auf Kursebene: @activity.CourseSummary.Course.Occurrence.Capacity</td>
-                                                    }
-                                                }
-                                            </tr>
-                                        }
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-
-@section Scripts {
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
-        function deleteRow(id) {
-            $("#" + id).remove();
-        }
-
-        function saveLotPot() {
-            var groupList = new Array();
-
-            var list = $("#CourseTable > table > tbody > tr").get();
-            var n = list.length;
-            if (n > 0) {
-                for (var i = 0; i < n; i++) {
-                    groupList[i] = list[i].id;
-                }
-            }
-
-            $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("ChangeLotPot")',
-                data: {
-                    LotteryId: "@Model.LotteryId",
-                    CourseIds: groupList
-                },
-                success: function(data, success, xhr) {
-                    window.location.replace("@Url.Action("Details", new {id=Model.Lottery.Id})");
-                }
+        $(document).ready(function () {
+            var t = $('#tabPots').DataTable({
+                "paging": false,
             });
-
-        }
-
-        function search() {
-            var groupId = $('#searchText').val();
-
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: '@Url.Action("Search")',
-                    data: {
-                        searchText: groupId,
-                        semId: "@Model.Lottery.Semester.Id.ToString()"
-                    },
-                    success: function (data, success, xhr) {
-                        $('#activityTable').append(data);
-                    }
-                });
-
-        }
-
+        });
     </script>
 }
 
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Wahlverfahren: "@Model.Lottery.Name" - Platzkapazitäten</h4>
+                @if (!Model.Lottery.IsActive)
+                {
+                    <div class="alert alert-danger">Für Studierende nicht sichtbar</div>
+                }
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Details", new {id=Model.Lottery.Id})" class="btn btn-outline-primary"><i class="bi-chevron-left"></i> zurück</a>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <h4>Legende</h4>
+                    <p>Angaben bei den Studiengängen ist jeweils die Anzahl an noch verfügbaren Plätzen (positive Werte).</p>
+                </div>
+
+            </div>
+            <table id="tabPots" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th colspan="2">Lehrveranstaltung</th>
+                        <th colspan="@Model.Curricula.Count()">Freie Plätze nach Studiengängen</th>
+                        <th colspan="4">Auswertungen auf Ebene Lehrveranstaltung</th>
+                    </tr>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Kürzel</th>
+                        @foreach (var c in Model.Curricula)
+                        {
+                            <th>@c.ShortName</th>
+                        }
+                        <th>Kapazität</th>
+                        <th>Belegt</th>
+                        <th>Warteliste</th>
+                        <th>Auslastung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.Courses)
+                    {
+                        var cap = 0;
+                        var useGroups = course.Occurrence.UseGroups;
+                        var tn = course.Occurrence.Subscriptions.Count(x => !x.OnWaitingList);
+                        var wl = course.Occurrence.Subscriptions.Count(x => x.OnWaitingList);
+                        var total = tn + wl;
+
+                        if (!useGroups)
+                        {
+                            cap = course.Occurrence.Capacity;
+                        }
+
+
+                        if (useGroups)
+                        {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName</a>
+                        </td>
+                        @foreach (var c in Model.Curricula)
+                        {
+                            var pot = Model.LotPots.FirstOrDefault(x => x.Course.Id == course.Id && x.BookingList.Curricula.Contains(c));
+
+                            if (pot != null)
+                            {
+                                cap += pot.Capacity;
+                                var free = pot.SeatsAvailable - pot.Lots.Count;
+                                if (cap > 0)
+                                {
+                                    <td>@free</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        }
+                        <td>@cap</td>
+                        <td>@tn</td>
+                        <td>@wl</td>
+                        @if (cap != 0)
+                        {
+                            <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                        }
+                        else
+                        {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName</a>
+                        </td>
+                        @foreach (var c in Model.Curricula)
+                        {
+                            <td></td>
+                        }
+                        <td>@cap</td>
+                        <td>@tn</td>
+                        <td>@wl</td>
+                        @if (cap != 0)
+                        {
+                            <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 

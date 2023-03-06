@@ -3333,30 +3333,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Capacities(Guid id)
         {
-            var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
+            var org = GetMyOrganisation();
+            var model = new DrawingService(Db, id);
 
-            var model = new LotteryLotPotModel
-            {
-                Lottery = lottery,
-                LotteryId = lottery.Id,
-            };
-
-
-            var actService = new ActivityService(Db);
-            var courseService = new CourseService(Db);
-
-            foreach (var occurrence in lottery.Occurrences)
-            {
-                var actSummary = actService.GetSummary(occurrence);
-                var courseSummary = courseService.GetCourseSummary(actSummary.Activity as Course);
-
-                model.PotElements.Add(new LotteryLotPotCourseModel
-                {
-                    ActivitySummary = actSummary,
-                    CourseSummary = courseSummary
-                });
-            }
-
+            model.InitLotPots();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

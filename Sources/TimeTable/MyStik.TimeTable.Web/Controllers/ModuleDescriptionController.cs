@@ -35,8 +35,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            ViewBag.UserRight = GetUserRight(GetMyOrganisation());
-
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
             return View(desc);
         }
