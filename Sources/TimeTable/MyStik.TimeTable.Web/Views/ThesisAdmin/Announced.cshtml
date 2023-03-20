@@ -33,98 +33,98 @@
             </div>
             <table id="tabThesis" class="table table-condensed">
                 <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Vorname</th>
-                    <th>Matr.-Nr.</th>
-                    <th>SG</th>
-                    <th>Datum Anfrage</th>
-                    <th>Datum Antwort</th>
-                    <th>Status</th>
-                    <th>Bemerkung Prüfungsamt</th>
-                    <th>Status</th>
-                </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        <th>Matr.-Nr.</th>
+                        <th>SG</th>
+                        <th>Datum Anfrage</th>
+                        <th>Datum Antwort</th>
+                        <th>Status</th>
+                        <th>Bemerkung Prüfungsamt</th>
+                        <th>Status</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var thesis in Model)
-                {
+                    @foreach (var thesis in Model)
+                    {
 
-                    <tr id="@thesis.Thesis.Id">
-                        <td></td>
-                        @if (thesis.User != null)
-                        {
-                            <td>@thesis.User.LastName</td>
-                            <td>@thesis.User.FirstName</td>
-                        }
-                        else
-                        {
-                            <td>kein Benutzerkonto</td>
+                        <tr id="@thesis.Thesis.Id">
                             <td></td>
-                        }
-                        <td>@thesis.Student.Number</td>
-                        <td>@thesis.Student.Curriculum.ShortName</td>
-                        @if (thesis.Thesis.RequestDate != null)
-                        {
-                            <td>@thesis.Thesis.RequestDate.Value.ToShortDateString()</td>
-                        }
-                        else
-                        {
-                            <td>Fehler - kein Anfragedatum</td>
-                        }
-
-                        @if (thesis.Thesis.ResponseDate.HasValue)
-                        {
-                            <td>@thesis.Thesis.ResponseDate.Value.ToShortDateString()</td>
-                            if (thesis.Thesis.IsPassed.HasValue)
+                            @if (thesis.User != null)
                             {
-                                if (thesis.Thesis.IsPassed.Value)
+                                <td>@thesis.User.LastName</td>
+                                <td>@thesis.User.FirstName</td>
+                            }
+                            else
+                            {
+                                <td>kein Benutzerkonto</td>
+                                <td></td>
+                            }
+                            <td>@thesis.Student.Number</td>
+                            <td>@thesis.Student.Curriculum.ShortName</td>
+                            @if (thesis.Thesis.RequestDate != null)
+                            {
+                                <td>@thesis.Thesis.RequestDate.Value.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                                <td>Fehler - kein Anfragedatum</td>
+                            }
+
+                            @if (thesis.Thesis.ResponseDate.HasValue)
+                            {
+                                <td>@thesis.Thesis.ResponseDate.Value.ToShortDateString()</td>
+                                if (thesis.Thesis.IsPassed.HasValue)
                                 {
-                                    if (thesis.Thesis.RequestAuthority != null)
+                                    if (thesis.Thesis.IsPassed.Value)
                                     {
-                                        <td>Voraussetzungen erfüllt - geprüft von (@thesis.Thesis.RequestAuthority.FullName)</td>
-                                        <td></td>
+                                        if (thesis.Thesis.RequestAuthority != null)
+                                        {
+                                            <td>Voraussetzungen erfüllt - geprüft von (@thesis.Thesis.RequestAuthority.FullName)</td>
+                                            <td></td>
+                                        }
+                                        else
+                                        {
+                                            <td>Selbstauskunft - unbearbeitet</td>
+                                            <td></td>
+                                        }
                                     }
                                     else
                                     {
-                                        <td>Selbstauskunft - unbearbeitet</td>
-                                        <td></td>
+                                        <td>Voraussetzungen nicht erfüllt</td>
+                                        <td>@thesis.Thesis.RequestMessage</td>
                                     }
                                 }
                                 else
                                 {
-                                    <td>Voraussetzungen nicht erfüllt</td>
-                                    <td>@thesis.Thesis.RequestMessage</td>
+                                    <td>Altfall: Studierende wollte Voraussetzungen prüfen lassen</td>
+                                    <td></td>
                                 }
                             }
                             else
                             {
-                                <td>Altfall: Studierende wollte Voraussetzungen prüfen lassen</td>
+                                <td></td>
+                                <td>Fehler - kein Antwortdatum</td>
                                 <td></td>
                             }
-                        }
-                        else
-                        {
-                            <td></td>
-                            <td>Fehler - kein Antwortdatum</td>
-                            <td></td>
-                        }
 
-                        <td>
-                            <ul>
-                                @if (thesis.Thesis.IssueDate.HasValue)
-                                {
-                                    <li>Angemeldet: @thesis.Thesis.IssueDate.Value.ToShortDateString()</li>
-                                }
-                                @if (thesis.Thesis.AcceptanceDate.HasValue)
-                                {
-                                    <li>Betreuung angenommen: @thesis.Thesis.AcceptanceDate.Value.ToShortDateString()</li>
-                                }
-                            </ul>
-                        </td>
+                            <td>
+                                <ul>
+                                    @if (thesis.Thesis.IssueDate.HasValue)
+                                    {
+                                        <li>Angemeldet: @thesis.Thesis.IssueDate.Value.ToShortDateString()</li>
+                                    }
+                                    @if (thesis.Thesis.AcceptanceDate.HasValue)
+                                    {
+                                        <li>Betreuung angenommen: @thesis.Thesis.AcceptanceDate.Value.ToShortDateString()</li>
+                                    }
+                                </ul>
+                            </td>
 
-                    </tr>
-                }
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -139,19 +139,20 @@
 @section scripts
 {
     <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/moment/moment.min.js")" type="text/javascript" "></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/plugins/sorting/datetime-moment.js")" type="text/javascript"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+
+            $.fn.dataTable.moment('DD.MM.YYYY');
+
             var t = $('#tabThesis').DataTable({
                 "paging": false,
                 "columnDefs": [{
                         "searchable": false,
                         "orderable": false,
                         "targets": 0
-                    },
-                    {
-                        "type": "de_date",
-                        "targets": [5, 6]
                     }],
                 "order": [[1, 'asc']]
             });
