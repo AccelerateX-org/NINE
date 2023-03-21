@@ -23,10 +23,13 @@
                 <div class="list-group-item">
                     <div class="btn-group">
                         <a href="@Url.Action("Index", "Catalogs", new {id = Model.Organiser.Id} )" class="btn btn-outline-primary">
-                            <i class="bi-upload"></i> Import
+                            <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="bi-exclamation-diamond"></i> Beschluss
+                            </a>
 
                             <a href="@Url.Action("ImportCatalog", "Catalogs", new {id = Model.Id})" class="btn btn-outline-primary">
                                 <i class="bi-upload"></i> Import
@@ -46,6 +49,8 @@
                         <th>Modulverantwortung</th>
                         <th>Fächer</th>
                         <th>Prüfungen</th>
+                        <th>Letzte Änderung</th>
+                        <th>letzter Beschluss</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,6 +113,8 @@
                                         </div>
                                     }
                                 </td>
+                                <td></td>
+                                <td></td>
                             </tr>
 
                         }

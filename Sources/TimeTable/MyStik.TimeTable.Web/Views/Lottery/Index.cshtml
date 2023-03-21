@@ -133,6 +133,8 @@
                         var nWaiting = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => s.OnWaitingList));
                         var perc = nConfirmed / (double)lottery.Capacity;
 
+                        var lotteryName = string.IsNullOrEmpty(lottery.Lottery.Name) ? "(keine Bezeichnung)" : lottery.Lottery.Name;
+
                         var rowColor = "";
                         if (nConfirmed >= lottery.Capacity)
                         {
@@ -155,7 +157,7 @@
                                 {
                                     <td><i class="fa fa-ban text-danger"></i></td>
                                 }
-                                <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
+                                <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lotteryName</a></td>
                             }
                             else
                             {

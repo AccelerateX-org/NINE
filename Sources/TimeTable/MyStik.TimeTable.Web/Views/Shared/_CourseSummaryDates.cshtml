@@ -42,7 +42,13 @@
             }
             else
             {
-                <div class="list-group-item">
+                var isCanceled = date.Key.Occurrence.IsCanceled;
+                var txtListGroupItem = "";
+                if (isCanceled)
+                {
+                    txtListGroupItem = "list-group-item-danger";
+                }
+                <div class="list-group-item @txtListGroupItem">
                     <ul class="fa-ul">
                         <li><i class="fa fa-li fa-calendar"></i>@Html.TimeSpanWithDate(date.Key)</li>
                         <li><i class="fa fa-li fa-university"></i>@Html.RoomList(date.Key.Rooms, false, false)</li>
@@ -51,16 +57,23 @@
                             <li><i class="fa fa-li fa-tv"></i>@Html.RoomList(date.Key.VirtualRooms, true, false)</li>
                         }
                         <li><i class="fa fa-li fa-user-md"></i>@Html.LecturerList(date.Key.Hosts, false)</li>
-                        @if (!string.IsNullOrEmpty(date.Key.Title))
+                        @if (isCanceled)
                         {
-                            <li>
-                                <i class="fa fa-li fa-info-circle"></i><strong>@date.Key.Title</strong>
-                                @if (!string.IsNullOrEmpty(date.Key.Description))
-                                {
-                                    <br />
-                                    @Html.Raw(date.Key.Description)
-                                }
-                            </li>
+                            <li><i class="fa fa-li fa-info-circle"></i>A B G E S A G T</li>
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(date.Key.Title))
+                            {
+                                <li>
+                                    <i class="fa fa-li fa-info-circle"></i><strong>@date.Key.Title</strong>
+                                    @if (!string.IsNullOrEmpty(date.Key.Description))
+                                    {
+                                        <br />
+                                        @Html.Raw(date.Key.Description)
+                                    }
+                                </li>
+                            }
                         }
                     </ul>
                 </div>

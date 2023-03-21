@@ -344,7 +344,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// nur die Kurse
         /// </summary>
         /// <param name="dozId"></param>
         /// <param name="showPersonalDates"></param>
@@ -374,7 +374,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var date in allMyDates)
                 {
-                    dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.Offer);
+                    if (date.Activity is Course)
+                    {
+                        dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.Offer);
+                    }
                 }
 
                 // 2. die gebuchten
@@ -390,7 +393,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                     foreach (var date in dates)
                     {
-                        if (!dateMap.ContainsKey(date.Id))
+                        if (!dateMap.ContainsKey(date.Id) && date.Activity is Course)
                         {
                             dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.Subscription);
 
@@ -413,7 +416,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var date in allDates)
             {
-                if (!dateMap.ContainsKey(date.Id))
+                if (!dateMap.ContainsKey(date.Id) && date.Activity is Course)
                 {
                     dateMap[date.Id] = new ActivityDateSummary(date, ActivityDateType.SearchResult);
                 }

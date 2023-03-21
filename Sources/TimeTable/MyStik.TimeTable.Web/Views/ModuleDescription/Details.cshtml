@@ -39,13 +39,6 @@
                     </div>
                     <div class="col-md-2">
                         <div class="d-md-flex justify-content-md-end">
-                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                            {
-                                <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-pen"></i> Ändern
-                                </a>
-                            }
-
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Module.Id})" class="btn btn-outline-danger">
@@ -134,27 +127,59 @@
                     <div class="row">
                         <div class="col-4">
                             <div>Prüfungsformen / Prüfungen</div>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                            {
+                                <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-pen"></i> Ändern
+                                </a>
+                            }
                         </div>
                         <div class="col-8">
+                            @{
+                                var i = 0;
+                            }
                             @foreach (var option in Model.Module.ExaminationOptions)
                             {
-                                <div>
-                                    @option.Name:
-                                    @foreach (var fraction in option.Fractions)
-                                    {
-                                        if (fraction.MinDuration > 0)
-                                        {
-                                            var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                                            @str
-                                        }
-                                        else
-                                        {
-                                            var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                                            @str
-                                        }
-                                    }
+                                i++;
 
-                                </div>
+                                if (i == 1)
+                                {
+                                    <div><strong>
+                                        @option.Name:
+                                        @foreach (var fraction in option.Fractions)
+                                        {
+                                            if (fraction.MinDuration > 0)
+                                            {
+                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                                @str
+                                            }
+                                            else
+                                            {
+                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                                @str
+                                            }
+                                        }
+                                    </strong></div>
+                                }
+                                else
+                                {
+                                    <div><del>
+                                        @option.Name:
+                                        @foreach (var fraction in option.Fractions)
+                                        {
+                                            if (fraction.MinDuration > 0)
+                                            {
+                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                                @str
+                                            }
+                                            else
+                                            {
+                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                                @str
+                                            }
+                                        }
+                                    </del></div>
+                                }
                             }
                         </div>
                     </div>
@@ -163,6 +188,16 @@
                     <div class="row">
                         <div class="col-4">
                             <div>Inhalt / Lernziele</div>
+                            <ul>
+                                <li>zuletzt geändert von .... am ...</li>
+                                <li>beschlossen und publiziert von ... am ... <i>oder</i> kein Beschluss / nicht veröffentlicht</li>
+                            </ul>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                            {
+                                <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-pen"></i> Ändern
+                                </a>
+                            }
                         </div>
                         <div class="col-8">
                             <div>@Html.Raw(Model.Description)</div>
