@@ -1,6 +1,8 @@
 ﻿@model MyStik.TimeTable.Web.Models.OccurrenceMailingModel
 @{
     ViewBag.Title = "Mail Teilnehmerliste";
+
+    var onWaitingList = Model.Occurrence.Subscriptions.Count(x => x.OnWaitingList == true);
 }
 
 @section styles
@@ -50,8 +52,14 @@
                                 <div class="mb-3">
                                     @Html.CheckBoxFor(item => item.UseWaitingList, new { @class = "form-check-input" })
                                     <label class="form-check-label" for="UseWaitingList">
-                                        Status: Warteliste (@Model.Occurrence.Subscriptions.Count(x => x.OnWaitingList == true))
+                                        Status: Warteliste (@onWaitingList)
                                     </label>
+                                    @if (onWaitingList > 0 && !Model.UseWaitingList)
+                                    {
+                                        <div class="alert alert-danger">
+                                            <strong>Hinweis:</strong> Es sind Einträge auf der Warteliste vorhanden.
+                                        </div>
+                                    }
                                 </div>
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.Subject, new { @class = "col-md-2 form-label" })

@@ -58,7 +58,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ReceiverCount = subscribers.Count;
                 model.Occurrence = occ;
                 model.UseParticipients = true;
-                model.UseWaitingList = true;
+                model.UseWaitingList = false;
             }
 
             ViewBag.UserRight = GetUserRight();
