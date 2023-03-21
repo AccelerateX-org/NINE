@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{99D8D486-AB51-49CC-A272-AFCADCDBC680}"
 EndProject
@@ -18,10 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.DataServices", "TimeTable\MyStik.TimeTable.DataServices\MyStik.TimeTable.DataServices.csproj", "{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{E82D0CF4-A361-4455-8F3E-D75F7E42D244}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.Test", "TimeTable\MyStik.TimeTable.Test\MyStik.TimeTable.Test.csproj", "{B859E608-27F2-4536-A6EF-5323A20FC426}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStick.TimeTable.UaTest", "TimeTable\MyStick.TimeTable.UaTest\MyStick.TimeTable.UaTest.csproj", "{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,26 +68,6 @@ Global
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.SystemTest|Any CPU.ActiveCfg = SystemTest|Any CPU
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.SystemTest|Any CPU.Build.0 = SystemTest|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Lab|Any CPU.ActiveCfg = Lab|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Lab|Any CPU.Build.0 = Lab|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.SystemTest|Any CPU.ActiveCfg = Release|Any CPU
-		{B859E608-27F2-4536-A6EF-5323A20FC426}.SystemTest|Any CPU.Build.0 = Release|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Lab|Any CPU.ActiveCfg = Lab|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Lab|Any CPU.Build.0 = Lab|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.SystemTest|Any CPU.ActiveCfg = Release|Any CPU
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26}.SystemTest|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,13 +77,11 @@ Global
 		{99B4417B-B249-4521-996D-053C2145A842} = {1E2A99E3-3F4E-4B61-8909-6E83BB416392}
 		{11CB6560-B6FC-481A-BDAC-70326D835E64} = {7EF4CEA2-4B86-49FC-9C49-B5E502A422E4}
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E} = {7EF4CEA2-4B86-49FC-9C49-B5E502A422E4}
-		{B859E608-27F2-4536-A6EF-5323A20FC426} = {E82D0CF4-A361-4455-8F3E-D75F7E42D244}
-		{D185CEB2-1718-4089-BD7A-48FB2A7A3F26} = {E82D0CF4-A361-4455-8F3E-D75F7E42D244}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.Database.6.0.1304.0\lib\NET45
-		RESX_PrefixTranslations = False
-		RESX_SortFileContentOnSave = True
 		SolutionGuid = {A9FF6FCF-7CED-4C49-A9D8-A8E2FCA5DC83}
+		RESX_SortFileContentOnSave = True
+		RESX_PrefixTranslations = False
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.Database.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal
