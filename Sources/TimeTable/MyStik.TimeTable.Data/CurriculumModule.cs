@@ -100,14 +100,67 @@ namespace MyStik.TimeTable.Data
 
         public virtual Semester Semester { get; set; }
 
+        /// <summary>
+        /// Komplette Inhaltsangabe inkl. Literatur und allem drum und dran
+        /// </summary>
         public string Description { get; set; }
+
+        public virtual ChangeLog ChangeLog { get; set; }
 
         /// <summary>
         /// Die Prüfung in diesem Semester
+        /// deprecated - sollte raus
         /// </summary>
-        public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
+        // public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
 
     }
+
+    public class ExaminationDescription
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual CurriculumModule Module { get; set; }
+
+        public virtual Semester Semester { get; set; }
+
+        /// <summary>
+        /// Das ist die gewählte Prüfungsform
+        /// </summary>
+        public virtual ExaminationOption ExaminationOption { get; set; }
+
+        /// <summary>
+        /// Angabe von Details, wie der Dauer
+        /// </summary>
+        public int? Duration { get; set; }
+
+        public virtual ChangeLog ChangeLog { get; set; }
+
+
+        /// <summary>
+        /// Beschreibung inkl. der Hilfsmittel
+        /// </summary>
+        public string Description { get; set; }
+
+
+        /// <summary>
+        /// Erstprüfer - es kann nur einen geben
+        /// </summary>
+        public virtual OrganiserMember FirstExminer { get; set; }
+        
+        /// <summary>
+        /// Zweitprüfer
+        /// </summary>
+        public virtual OrganiserMember SecondExaminer { get; set; }
+
+        
+
+    }
+
+
+
+
 
     public class ModuleResponsibility
     {

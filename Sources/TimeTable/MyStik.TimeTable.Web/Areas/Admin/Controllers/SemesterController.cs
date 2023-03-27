@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Controllers;
@@ -55,6 +56,9 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
                 model.StartCourses = date.Date.ToShortDateString();
                 model.EndCourses = date.AddDays(100).Date.ToShortDateString();
             }
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
             return View(model);
         }

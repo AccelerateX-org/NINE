@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyStik.TimeTable.Data
 {
+    /*
     public class ExaminationUnit
     {
         public ExaminationUnit()
@@ -49,6 +50,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ExaminationAid> ExaminationAids { get; set; }
     }
+    */
 
 
     public class ExaminationOption

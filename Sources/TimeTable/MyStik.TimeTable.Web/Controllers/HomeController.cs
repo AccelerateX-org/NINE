@@ -34,8 +34,11 @@ namespace MyStik.TimeTable.Web.Controllers
             if (Session["SemesterName"] == null)
             {
                 var sem = SemesterService.GetSemester(DateTime.Today);
-                Session["SemesterName"] = sem.Name;
-                Session["SemesterId"] = sem.Id;
+                if (sem != null)
+                {
+                    Session["SemesterName"] = sem.Name;
+                    Session["SemesterId"] = sem.Id;
+                }
             }
 
 

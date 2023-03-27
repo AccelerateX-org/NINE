@@ -69,6 +69,16 @@
                     <div class="row">
                         <div class="col-4">
                             <div>Beschreibung</div>
+                            <div class="alert alert-info">
+                                <ul>
+                                    <li>Der Editor rechts verfügt über undo/redo Funktionen</li>
+                                    <li>Übertragen von formatiertem Text kann im Detail fehleranfällig sein und wird daher nicht empfohlen</li>
+                                    <li>Einfügen über rechte Maustaste "Einfügen ohne Formatierung"</li>
+                                    <li>Text zuerst in einen neutralen Editor kopieren, z.B. Notepad</li>
+                                    <li>Im Zweifel auf Abbrechen gehen und erneut versuchen</li>
+                                </ul>
+                                
+                            </div>
                         </div>
                         <div class="col-8">
                             @using (Html.BeginForm(null, null, FormMethod.Post))
@@ -77,7 +87,8 @@
                                 <div class="mb-3">
                                     @Html.TextAreaFor(m => m.DescriptionText, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
+                                <a class="btn btn-outline-secondary" href="@Url.Action("ContentChange", new {id=Model.ModuleDescription.Module.Id})"><i class="bi-x"></i> Abbrechen</a>
                             }
                         </div>
                     </div>

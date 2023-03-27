@@ -292,6 +292,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 foreach (var description in model.Descriptions.ToList())
                 {
+                    /*
                     foreach (var examinationUnit in description.ExaminationUnits.ToList())
                     {
                         foreach (var aid in examinationUnit.ExaminationAids.ToList())
@@ -301,6 +302,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                         Db.ExaminationUnits.Remove(examinationUnit);
                     }
+                    */
 
                     Db.ModuleDescriptions.Remove(description);
                 }

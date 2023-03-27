@@ -80,6 +80,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveTheses.Add(tm);
             }
 
+            model.Modules = Db.CurriculumModules
+                .Where(x => x.ModuleResponsibilities.Any(m =>
+                    !string.IsNullOrEmpty(m.Member.UserId) && m.Member.UserId.Equals(user.Id)))
+                .ToList();
 
             return View(model);
         }

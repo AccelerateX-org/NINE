@@ -13,11 +13,56 @@ namespace MyStik.TimeTable.Web.Controllers
         {
 
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-            var semester = GetSemesterFromFilter();
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
+            var prevSemester = SemesterService.GetPreviousSemester(semester);
+
+
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
+
+            var semesterList = new List<SelectListItem>();
+
+            SelectListItem semItem = null;
+            if (nextSemester != null)
+            {
+                semItem = new SelectListItem
+                {
+                    Text = $"Nächstes: {nextSemester.Name}",
+                    Value = nextSemester.Id.ToString(),
+                    Selected = false
+                };
+                semesterList.Add(semItem);
+            }
+
+            semItem = new SelectListItem
+            {
+                Text = $"Aktuell: {semester.Name}",
+                Value = semester.Id.ToString(),
+                Selected = true
+            };
+            semesterList.Add(semItem);
+
+            semItem = new SelectListItem
+            {
+                Text = $"Letztes: {prevSemester.Name}",
+                Value = prevSemester.Id.ToString(),
+                Selected = false
+            };
+            semesterList.Add(semItem);
+
+            ViewBag.SemesterList = semesterList;
+            
+
+            return View(module);
+        }
+
+        [HttpPost]
+        public PartialViewResult Description(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
 
             var desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
-
-
 
             // Default => lege eine Beschreibung an
             // TODO: automatisch auf dem Vorsemester, falls vorhanden
@@ -38,8 +83,21 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
+            return PartialView("_Semester", desc);
+        }
+
+
+
+        public ActionResult ContentChange(Guid id)
+        {
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(desc.Module.Catalog.Organiser);
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+
             return View(desc);
         }
+
 
         public ActionResult Edit(Guid id)
         {
@@ -57,12 +115,65 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult Edit(ModuleDescriptionEditModel model)
         {
+            var user = GetCurrentUser();
             var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == model.ModuleDescription.Id);
 
             desc.Description = model.DescriptionText;
+
+            var changeLog = desc.ChangeLog;
+
+            if (changeLog == null)
+            {
+                changeLog = new ChangeLog
+                {
+                    Created = DateTime.Now
+                };
+                desc.ChangeLog = changeLog;
+                Db.ChangeLogs.Add(changeLog);
+            }
+
+            changeLog.LastEdited = DateTime.Now;
+            changeLog.UserIdAmendment = user.Id;
+
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new {id = model.ModuleDescription.Id});
+            return RedirectToAction("Details", new {id = desc.Module.Id});
+        }
+
+        public ActionResult Copy(Guid id)
+        {
+            var user = GetCurrentUser();
+
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            var sem = desc.Semester;
+            var prevSem = SemesterService.GetPreviousSemester(sem);
+
+            var prevDesc = desc.Module.Descriptions.FirstOrDefault(x => x.Semester.Id == prevSem.Id);
+
+            if (prevDesc != null)
+            {
+                desc.Description = prevDesc.Description;
+
+                var changeLog = desc.ChangeLog;
+
+                if (changeLog == null)
+                {
+                    changeLog = new ChangeLog
+                    {
+                        Created = DateTime.Now
+                    };
+                    desc.ChangeLog = changeLog;
+                    Db.ChangeLogs.Add(changeLog);
+                }
+
+                changeLog.LastEdited = DateTime.Now;
+                changeLog.UserIdAmendment = user.Id;
+
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("ContentChange", new { id = desc.Id });
         }
 
 

@@ -1,15 +1,15 @@
-﻿@model MyStik.TimeTable.Data.ModuleDescription
+﻿@model MyStik.TimeTable.Data.CurriculumModule
 @{
     ViewBag.Title = "Details";
 
-    var subjects = Model.Module.ModuleSubjects.ToList();
+    var subjects = Model.ModuleSubjects.ToList();
 
     var itsMe = false;
     var userId = ViewBag.UserRight.User.Id;
 
-    foreach (var mv in Model.Module.ModuleResponsibilities)
+    foreach (var mv in Model.ModuleResponsibilities)
     {
-        if (mv.Member.UserId.Equals(userId))
+        if (!string.IsNullOrEmpty(mv.Member.UserId) && mv.Member.UserId.Equals(userId))
         {
             itsMe = true;
         }
@@ -24,13 +24,20 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-10">
-                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <h4 class="card-title">Modul @Model.Tag: @Model.Name</h4>
+                        <div class="alert alert-info">
+                            <strong>Hinweis:</strong>
+                            <p>Derzeit wird das Informationsangebot aufgebaut sowie die Funktionsfähigkeit der Software in diesem Bereich erprobt. 
+                                Von daher haben die hier dargestellten Inhalte zum jetzigen Zeitpunkt keinerlei Relevanz. 
+                                Rückfragen an <a href="mailto:hinz+nine@hm.edu">Prof. Dr.-Ing. Olav Hinz</a></p>
+
+                        </div>
                         <div class="row">
                             <div class="col-4">
                                 <div>Zugehörigkeit zu Curriculum</div>
                             </div>
                             <div class="col-8">
-                                @foreach (var acc in Model.Module.Accreditations)
+                                @foreach (var acc in Model.Accreditations)
                                 {
                                     <div>
                                         <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">
@@ -44,13 +51,22 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
+                                <div>Modulverantwortung</div>
+                            </div>
+                            <div class="col-8">
+                                @foreach (var mv in Model.ModuleResponsibilities)
+                                {
+                                    <div>@mv.Member.FullName</div>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
                                 <div>Fächer</div>
                             </div>
                             <div class="col-8">
                                 @foreach (var subject in subjects)
                                 {
-                                    var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-
                                     if (subject.TeachingFormat != null)
                                     {
                                         <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
@@ -68,12 +84,7 @@
                                 <div>Stand</div>
                             </div>
                             <div class="col-8">
-                                <select class="form-select" aria-label="Default select example">
-                                    <option value="1">Nächstes</option>
-                                    <option selected>Aktuell: @Model.Semester.Name</option>
-                                    <option value="2">Letztes</option>
-                                    <option value="3">Historie</option>
-                                </select>
+                                @Html.DropDownList("Semester", (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-select", onchange = "onSemesterChanged()" })
                             </div>
                         </div>
                     </div>
@@ -81,174 +92,58 @@
                         <div class="d-md-flex justify-content-md-end">
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
-                                <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Module.Id})" class="btn btn-outline-danger">
+                                <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-danger">
                                     <i class="bi-trash"></i> Löschen
                                 </a>
                             }
+                            <div id="loading" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="list-group">
-                            <div class="list-group-item">
-                                <div>@Html.Raw(Model.Description)</div>
-                                <ul>
-                                    <li>zuletzt geändert von .... am ...</li>
-                                    <li>beschlossen und publiziert von ... am ... <i>oder</i> kein Beschluss / nicht veröffentlicht</li>
-                                </ul>
-                                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                {
-                                    <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-pen"></i> Ändern
-                                    </a>
-                                }
-                            </div>
-                            @foreach (var subject in subjects)
-                            {
-                                var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-
-                                <div class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            @subject.Name (@subject.Tag)
-                                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                            {
-                                                <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                                    <i class="bi-pen"></i> Ändern
-                                                </a>
-                                            }
-                                        </div>
-                                        <div class="col-8">
-                                            @foreach (var opportunity in opportunities)
-                                            {
-                                                <div>
-                                                    <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
-                                                        @opportunity.Course.Name (@opportunity.Course.ShortName)
-                                                    </a>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-
-                        </div>
-
-                    </div>
-                    <div class="col-6">
-                        <div class="list-group">
-                            <div class="list-group-item">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div>Prüfer:innen</div>
-                                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                        {
-                                            <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                                <i class="bi-pen"></i> Ändern
-                                            </a>
-                                        }
-                                    </div>
-                                    <div class="col-8">
-                                        @foreach (var mv in Model.Module.ModuleResponsibilities)
-                                        {
-                                            <div>@mv.Member.FullName</div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div>Prüfungsformen / Prüfungen</div>
-                                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                        {
-                                            <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                                <i class="bi-pen"></i> Ändern
-                                            </a>
-                                        }
-                                    </div>
-                                    <div class="col-8">
-                                        @{
-                                            var i = 0;
-                                        }
-                                        @foreach (var option in Model.Module.ExaminationOptions)
-                                        {
-                                            i++;
-
-                                            if (i == 1)
-                                            {
-                                                <div>
-                                                    <strong>
-                                                        @option.Name:
-                                                        @foreach (var fraction in option.Fractions)
-                                                        {
-                                                            if (fraction.MinDuration > 0)
-                                                            {
-                                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                                                                @str
-                                                            }
-                                                            else
-                                                            {
-                                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                                                                @str
-                                                            }
-                                                        }
-                                                    </strong>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div>
-                                                    <del>
-                                                        @option.Name:
-                                                        @foreach (var fraction in option.Fractions)
-                                                        {
-                                                            if (fraction.MinDuration > 0)
-                                                            {
-                                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                                                                @str
-                                                            }
-                                                            else
-                                                            {
-                                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                                                                @str
-                                                            }
-                                                        }
-                                                    </del>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div>Hilfsmittel</div>
-                                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                        {
-                                            <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                                <i class="bi-pen"></i> Ändern
-                                            </a>
-                                        }
-                                    </div>
-                                    <div class="col-8">
-                                        Alles erlaubt
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                <div id="moduleDesc"></div>
             </div>
         </div>
     </div>
 </div>
 
 
+@section scripts {
+    <script>
+
+        $(document).ready(function() {
+            $('#loading').hide();
+            onSemesterChanged();
+        });
+
+
+        function onSemesterChanged() {
+            var semId = $('#Semester option:selected').val();
+
+            $('#moduleDesc').html('');
+            $('#loading').show();
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '@Url.Action("Description")',
+                    data: {
+                        moduleId: '@Model.Id',
+                        semId: semId
+                    },
+                    success: function(data, success, xhr) {
+                        $('#moduleDesc').html(data);
+                        $('#loading').hide();
+                    },
+                    error: function(data, type, ex) {
+                        alert("Fehler beim laden der Daten." + ex);
+                        $('#loading').hide();
+                    }
+                });
+        }
+    </script>
+}
 
 

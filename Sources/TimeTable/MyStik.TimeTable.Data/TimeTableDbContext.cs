@@ -5,6 +5,8 @@ namespace MyStik.TimeTable.Data
 {
     public class TimeTableDbContext : DbContext
     {
+        public DbSet<ChangeLog> ChangeLogs { get; set; }
+
         public DbSet<BinaryStorage> Storages { get; set; }
         
         public DbSet<Room> Rooms { get; set; }
@@ -154,8 +156,8 @@ namespace MyStik.TimeTable.Data
         public DbSet<ExaminationFraction> ExaminationFractions { get; set; }
 
         public DbSet<ExaminationForm> ExaminationForms { get; set; }
-        public DbSet<ExaminationUnit> ExaminationUnits { get; set; }
-        public DbSet<ExaminationAid> ExaminationAids { get; set; }
+        //public DbSet<ExaminationUnit> ExaminationUnits { get; set; }
+        //public DbSet<ExaminationAid> ExaminationAids { get; set; }
 
         public DbSet<Organisation> Organisations { get; set; }
         public DbSet<Department> Departments { get; set; }

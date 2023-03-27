@@ -215,10 +215,18 @@
             <a href="@Url.Action("Cleared", "ThesisSupervision")" class="btn btn-outline-secondary btn-sm text-left"><i class="fas fa-archive"></i> Abgerechnete</a>
         </div>
     </div>
+
+    <div class="list-group-item  list-group-item-secondary">Module</div>
+    @foreach (var module in Model.Modules)
+    {
+        <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})" class="list-group-item list-group-item-action">@module.Name (@module.ShortName, @module.ModuleId)</a>
+    }
+
 </div>
 </div>
 </div>
 </div>
+
 
 
 

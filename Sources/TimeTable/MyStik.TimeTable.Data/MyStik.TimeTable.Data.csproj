@@ -141,6 +141,7 @@
     <Compile Include="Building.cs" />
     <Compile Include="Candidature.cs" />
     <Compile Include="CapacityGroup.cs" />
+    <Compile Include="ChangeLog.cs" />
     <Compile Include="Committee.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="ContentChannel.cs" />
@@ -506,6 +507,10 @@
     <Compile Include="Migrations\202208180830247_LabelSetV2.designer.cs">
       <DependentUpon>202208180830247_LabelSetV2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202303271226315_ModuleDescV1.cs" />
+    <Compile Include="Migrations\202303271226315_ModuleDescV1.designer.cs">
+      <DependentUpon>202303271226315_ModuleDescV1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -800,6 +805,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202208180830247_LabelSetV2.resx">
       <DependentUpon>202208180830247_LabelSetV2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202303271226315_ModuleDescV1.resx">
+      <DependentUpon>202303271226315_ModuleDescV1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
