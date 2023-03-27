@@ -4126,6 +4126,7 @@
     <Content Include="Views\Rooms\Schedule.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
     <Content Include="Views\Shared\_LayoutCAP.cshtml" />
+    <Content Include="Views\ModuleDescription\DescriptionChange.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
