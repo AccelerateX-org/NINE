@@ -48,15 +48,15 @@
                         <th>Module ID</th>
                         <th>Modulverantwortung</th>
                         <th>Fächer</th>
-                        <th>Prüfungen</th>
-                        <th>Letzte Änderung</th>
-                        <th>letzter Beschluss</th>
+                        <th>Modulbeschreibungen</th>
                     </tr>
                 </thead>
                 <tbody>
                         @foreach (var module in Model.Modules)
                         {
                             var iExamOption = 0;
+                            var sem = module.Descriptions.GroupBy(x => x.Semester);
+
                             <tr>
                                 <td>
                                     <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
@@ -84,39 +84,21 @@
                                     }
                                 </td>
                                 <td>
-                                    @foreach (var exam in module.ExaminationOptions)
+                                    @foreach (var s in sem)
                                     {
-                                        iExamOption++;
-                                        <div>
-                                            Option @iExamOption:
-                                            @foreach (var fraction in exam.Fractions)
-                                            {
-                                                if (fraction.Form != null)
-                                                {
-                                                    var str = string.Format(" {0} ({1:P})", fraction.Form.ShortName, fraction.Weight);
-                                                    if (fraction != exam.Fractions.Last())
-                                                    {
-                                                        str += " und";
-                                                    }
-                                                    @str
-                                                }
-                                                else
-                                                {
-                                                    var str = string.Format(" nix ({0:P})", fraction.Weight);
-                                                    if (fraction != exam.Fractions.Last())
-                                                    {
-                                                        str += " und";
-                                                    }
-                                                    @str
-                                                }
-                                            }
-                                        </div>
+                                       <div>@s.Key.Name</div>
+                                       <ul>
+                                           @foreach (var d in s)
+                                           {
+                                               if (!string.IsNullOrEmpty(d.Description))
+                                               {
+                                                    <li>@d.Description.Count() Zeichen (@d.ChangeLog.LastEdited)</li>
+                                               }
+                                           }
+                                       </ul>
                                     }
                                 </td>
-                                <td></td>
-                                <td></td>
                             </tr>
-
                         }
                 </tbody>
             </table>

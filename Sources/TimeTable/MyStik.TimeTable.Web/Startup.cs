@@ -7,6 +7,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Hangfire;
 using Microsoft.Owin;
+using MyStik.Gym.Data;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Migrations;
@@ -49,7 +50,8 @@ namespace MyStik.TimeTable.Web
 
 
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Configuration>());
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<TimeTableDbContext, Data.Migrations.Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<TimeTableDbContext, MyStik.TimeTable.Data.Migrations.Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<GymDbContext, MyStik.Gym.Data.Migrations.Configuration>());
 
             log4net.Config.XmlConfigurator.Configure();
 

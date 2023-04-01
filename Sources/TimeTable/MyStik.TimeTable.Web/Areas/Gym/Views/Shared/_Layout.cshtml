@@ -1,0 +1,80 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gym | @ViewBag.Title</title>
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/jquery/jquery-ui.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/bootstrap-icons.css")" />
+    @RenderSection("styles", required: false)
+    <link rel="shortcut icon" type="image/ico" href="@Url.Content("~/Assets/fillter/img/favicon.ico")" />
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            @Html.ActionLink("CAP", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="@Url.Action("Index", "Home")"><i class="bi-house"></i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Kataloge
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Questions")">Fragen</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Quizzes")">Quizzes</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Spiele</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Auswertungen</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid body-content">
+        @RenderBody()
+    </div>
+
+    <div class="container-fluid">
+        <hr />
+        <div class="d-flex flex-row bd-highlight mb-3">
+            <a class="p-2" href="https://acceleratex.org/">nine @Html.AssemblyVersion()</a>
+            <a class="p-2" href="@Url.Action("TermsOfUse", "Home", new {@area=""})">@Resources.TermsOfUse</a>
+            <a class="p-2" href="@Url.Action("Imprint", "Home", new {@area=""})">@Resources.ImprintLink</a>
+
+            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {@area="", culture = "de"})">
+                <img src="~/Assets/img/flags/de.png" />
+            </a>
+            <a class="p-2" href="@Url.Action("SetCulture", "Home", new {@area="", culture = "en"})">
+                <img src="~/Assets/img/flags/gb.png" />
+            </a>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/jquery/jquery.min.js")"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/jquery/jquery-ui.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap/js/bootstrap.bundle.min.js")"></script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

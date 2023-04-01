@@ -401,6 +401,7 @@
     <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
+    <Compile Include="Api\Controller\QuizzesController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
     <Compile Include="Api\Controller\StudiesController.cs" />
@@ -412,6 +413,7 @@
     <Compile Include="Api\DTOs\BaseDto.cs" />
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\MvgDto.cs" />
+    <Compile Include="Api\DTOs\QuizDto.cs" />
     <Compile Include="Api\DTOs\ScheduleDto.cs" />
     <Compile Include="Api\DTOs\ZpCourseDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
@@ -437,6 +439,7 @@
     <Compile Include="Api\Services\ModuleConverter.cs" />
     <Compile Include="Api\Services\NotificationService.cs" />
     <Compile Include="Api\Services\RoomInfoService.cs" />
+    <Compile Include="Api\Transformers\QuizTransformer.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\HangFireAuthFilter.cs" />
@@ -466,6 +469,12 @@
     <Compile Include="Areas\Admin\Models\OrganiserModels.cs" />
     <Compile Include="Areas\Fillter\Controllers\HomeController.cs" />
     <Compile Include="Areas\Fillter\FillterAreaRegistration.cs" />
+    <Compile Include="Areas\Gym\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuestionsController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuizzesController.cs" />
+    <Compile Include="Areas\Gym\GymAreaRegistration.cs" />
+    <Compile Include="Areas\Gym\Models\QuestionIOModels.cs" />
+    <Compile Include="Areas\Gym\Models\QuizIOModels.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
     <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
@@ -3108,6 +3117,22 @@
     <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="Areas\Gym\Views\web.config" />
+    <Content Include="Areas\Gym\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Gym\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Create.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Delete.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Details.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Edit.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Index.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Upload.cshtml" />
+    <Content Include="Areas\Gym\Views\Quizzes\Create.cshtml" />
+    <Content Include="Areas\Gym\Views\Quizzes\Delete.cshtml" />
+    <Content Include="Areas\Gym\Views\Quizzes\Details.cshtml" />
+    <Content Include="Areas\Gym\Views\Quizzes\Edit.cshtml" />
+    <Content Include="Areas\Gym\Views\Quizzes\Index.cshtml" />
+    <Content Include="Areas\Gym\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Gym\Views\Quizzes\Upload.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -4138,6 +4163,7 @@
     <Folder Include="Areas\Admin\Views\Curriculum\" />
     <Folder Include="Areas\Admin\Views\Notification\" />
     <Folder Include="Areas\Fillter\Models\" />
+    <Folder Include="Areas\Gym\Data\" />
     <Folder Include="Areas\Lab\Models\" />
     <Folder Include="Content\pages\" />
     <Folder Include="NavigationRoutes\" />
@@ -4155,6 +4181,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Gym\MyStik.Gym.Data\MyStik.Gym.Data.csproj">
+      <Project>{f4913b5e-d8bb-4210-9023-565f7cfd6bcb}</Project>
+      <Name>MyStik.Gym.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MyStik.TimeTable.Contracts\MyStik.TimeTable.Contracts.csproj">
       <Project>{11cb6560-b6fc-481a-bdac-70326d835e64}</Project>
       <Name>MyStik.TimeTable.Contracts</Name>

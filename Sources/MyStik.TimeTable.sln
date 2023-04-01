@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.TimeTable.DataServic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{E82D0CF4-A361-4455-8F3E-D75F7E42D244}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStik.Gym.Data", "Gym\MyStik.Gym.Data\MyStik.Gym.Data.csproj", "{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,16 @@ Global
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.SystemTest|Any CPU.ActiveCfg = SystemTest|Any CPU
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E}.SystemTest|Any CPU.Build.0 = SystemTest|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Lab|Any CPU.ActiveCfg = Lab|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Lab|Any CPU.Build.0 = Lab|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.SystemTest|Any CPU.ActiveCfg = SystemTest|Any CPU
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB}.SystemTest|Any CPU.Build.0 = SystemTest|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,11 +89,12 @@ Global
 		{99B4417B-B249-4521-996D-053C2145A842} = {1E2A99E3-3F4E-4B61-8909-6E83BB416392}
 		{11CB6560-B6FC-481A-BDAC-70326D835E64} = {7EF4CEA2-4B86-49FC-9C49-B5E502A422E4}
 		{38BD20FF-9419-4A38-AB44-F13CB74BDE0E} = {7EF4CEA2-4B86-49FC-9C49-B5E502A422E4}
+		{F4913B5E-D8BB-4210-9023-565F7CFD6BCB} = {99D8D486-AB51-49CC-A272-AFCADCDBC680}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A9FF6FCF-7CED-4C49-A9D8-A8E2FCA5DC83}
-		RESX_SortFileContentOnSave = True
-		RESX_PrefixTranslations = False
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.Database.6.0.1304.0\lib\NET45
+		RESX_PrefixTranslations = False
+		RESX_SortFileContentOnSave = True
+		SolutionGuid = {A9FF6FCF-7CED-4C49-A9D8-A8E2FCA5DC83}
 	EndGlobalSection
 EndGlobal
