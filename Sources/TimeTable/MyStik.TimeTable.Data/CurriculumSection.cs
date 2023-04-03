@@ -52,6 +52,15 @@ namespace MyStik.TimeTable.Data
         public int Position { get; set; }
 
         /// <summary>
+        /// Maskiert, je nach Weg - mal sehen, ob das im LINQ klappt
+        /// </summary>
+        public int Semester
+        {
+            get => Position;
+            set => Position = value;
+        }
+
+        /// <summary>
         /// Ettikett, innherlab eines Curriculums eindeutig
         /// </summary>
         public string Tag { get; set; }
@@ -69,8 +78,15 @@ namespace MyStik.TimeTable.Data
         public virtual ItemLabelSet LabelSet { get; set; }
 
 
+        /// <summary>
+        /// der eine Weg
+        /// </summary>
         public virtual CurriculumSection CurriculumSection { get; set; }
 
+        /// <summary>
+        /// der andere Weg
+        /// </summary>
+        public virtual AreaOption AreaOption { get; set; }
 
 
         public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }

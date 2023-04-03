@@ -65,7 +65,10 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<SemesterTopic> SemesterTopics { get; set; }
 
-        //public DbSet<ModuleExam> ModuleExams { get; set; }
+        public DbSet<CurriculumArea> CurriculumAreas { get; set; }
+
+        public DbSet<AreaOption> AreaOptions { get; set; }
+
 
         public DbSet<SemesterGroup> SemesterGroups { get; set; }
 
@@ -217,6 +220,8 @@ namespace MyStik.TimeTable.Data
         public DbSet<StudentChannel> StudentChannels { get; set; }
 
         public DbSet<CurriculumModuleCatalog> CurriculumModuleCatalogs { get; set; }
+
+        public DbSet<CatalogResponsibility> CatalogResponsibilities { get; set; }
 
         public DbSet<SubjectOpportunity> SubjectOpportunities { get; set; }
 

@@ -111,7 +111,25 @@ namespace MyStik.TimeTable.Web.Models
 
 
         public ICollection<CurriculumModulePlanSection> sections { get; set; }
+
+        public ICollection<CurriculumModulePlanArea> areas { get; set; }
     }
+
+    public class CurriculumModulePlanArea
+    {
+        public string tag { get; set; }
+        public string name { get; set; }
+        public ICollection<CurriculumModulePlanOption> options { get; set; }
+    }
+
+    public class CurriculumModulePlanOption
+    {
+        public string tag { get; set; }
+
+        public ICollection<CurriculumModulePlanSlot> slots { get; set; }
+    }
+
+
 
     public class CurriculumModulePlanSection
     {
@@ -125,6 +143,8 @@ namespace MyStik.TimeTable.Web.Models
     public class CurriculumModulePlanSlot
     {
         public int position { get; set; }
+
+        public int semester { get; set; }
 
         public string tag { get; set; }
         public double ects { get; set; }

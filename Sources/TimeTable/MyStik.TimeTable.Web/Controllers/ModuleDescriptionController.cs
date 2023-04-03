@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -51,7 +52,7 @@ namespace MyStik.TimeTable.Web.Controllers
             semesterList.Add(semItem);
 
             ViewBag.SemesterList = semesterList;
-            
+
 
             return View(module);
         }
@@ -137,7 +138,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new {id = desc.Module.Id});
+            return RedirectToAction("Details", new { id = desc.Module.Id });
         }
 
         public ActionResult Copy(Guid id)
@@ -205,10 +206,31 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = module.Id });
         }
 
+        public ActionResult CreateExamination(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
 
+
+            var model = new ExaminationEditModel();
+
+            model.moduleId = module.Id;
+            model.semesteId = semester.Id;
+
+            model.Module = module;
+            model.Semester = semester;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateExamination(ExaminationEditModel model)
+        {
+            return RedirectToAction("Details", new { id = model.moduleId, });
+        }
     }
 
-        public class ModuleDescriptionEditModel
+    public class ModuleDescriptionEditModel
     {
         public ModuleDescription ModuleDescription { get; set; }
 

@@ -92,8 +92,8 @@
                         <div class="d-md-flex justify-content-md-end">
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
-                                <a href="@Url.Action("Delete","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Löschen
+                                <a href="@Url.Action("Admin","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Verwalten
                                 </a>
                             }
                             <div id="loading" class="spinner-border" role="status">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using Newtonsoft.Json;
 using RazorEngine.Compilation.ImpromptuInterface.InvokeExt;
+using static System.Collections.Specialized.BitVector32;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -1053,7 +1055,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new {id = cur.Id});
         }
 
-        public ActionResult Import(Guid id)
+        public ActionResult ImportSections(Guid id)
         {
             var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
@@ -1066,7 +1068,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Import(CurriculumImportModel model)
+        public ActionResult ImportSections(CurriculumImportModel model)
         {
             string tempFile = Path.GetTempFileName();
 
@@ -1181,6 +1183,118 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Details", new {id = model.Curriculum.Id});
         }
+
+
+
+        public ActionResult ImportAreas(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Curriculum = cur
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ImportAreas(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            CurriculumModulePlan plan = null;
+
+            using (var file = System.IO.File.OpenText(tempFile))
+            {
+                var serializer = new JsonSerializer();
+                plan = (CurriculumModulePlan)serializer.Deserialize(file, typeof(CurriculumModulePlan));
+            }
+
+
+            if (plan == null)
+                return View();
+
+            // Im Augenblick ist es ein Import für einen existierenden Studiengang
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            // check: keinen Plan zweimal importieren
+            if (curr.Areas.Any())
+                return View();
+
+            // Ergänzung von Tags
+            curr.Tag = plan.tag;
+            curr.Version = plan.version;
+            curr.Organiser.Tag = plan.institution;
+            curr.EctsTarget = plan.ectsTarget;
+
+            if (curr.Degree == null)
+            {
+                var deg = Db.Degrees.FirstOrDefault(x => x.Name.Equals(plan.level));
+
+                if (deg == null)
+                {
+                    deg = new Degree
+                    {
+                        Name = plan.level
+                    };
+
+                    Db.Degrees.Add(deg);
+                }
+
+                curr.Degree = deg;
+            }
+
+
+
+            foreach (var area in plan.areas)
+            {
+                var currArea = new CurriculumArea()
+                {
+                    Name = area.name,
+                    Tag = area.tag,
+                    Curriculum = curr
+                };
+
+                foreach (var option in area.options)
+                {
+                    var currOption = new AreaOption()
+                    {
+                        Tag = option.tag,
+                        Area = currArea
+                    };
+
+                    foreach (var slot in option.slots)
+                    {
+                        var currSlot = new CurriculumSlot
+                        {
+                            ECTS = slot.ects,
+                            Semester = slot.semester,
+                            Tag = slot.tag,
+                            Name = slot.name,
+                            AreaOption = currOption
+                        };
+
+                        Db.CurriculumSlots.Add(currSlot);
+                    }
+
+                    Db.AreaOptions.Add(currOption);
+                }
+
+                Db.CurriculumAreas.Add(currArea);
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
+        }
+
+
+
+
 
         public ActionResult DeleteModulePlan(Guid id)
         {

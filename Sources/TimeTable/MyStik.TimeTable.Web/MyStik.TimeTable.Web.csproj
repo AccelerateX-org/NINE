@@ -676,6 +676,7 @@
     <Compile Include="Models\MailingModels.cs" />
     <Compile Include="Models\MailModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ModuleDescriptionModels.cs" />
     <Compile Include="Models\ModuleModels.cs" />
     <Compile Include="Models\NewsletterModels.cs" />
     <Compile Include="Models\NoticeBoardModels.cs" />
@@ -3671,7 +3672,7 @@
     <Content Include="Views\CurriculumRequirement\Details.cshtml" />
     <Content Include="Views\CurriculumRequirement\Edit.cshtml" />
     <Content Include="Views\CurriculumRequirement\Index.cshtml" />
-    <Content Include="Views\Curriculum\Import.cshtml" />
+    <Content Include="Views\Curriculum\ImportSections.cshtml" />
     <Content Include="Views\Curriculum\Milestones.cshtml" />
     <Content Include="Views\Curriculum\Modules.cshtml" />
     <Content Include="Views\Curriculum\Requirement.cshtml" />
@@ -4153,6 +4154,8 @@
     <Content Include="Views\Shared\_LayoutCAP.cshtml" />
     <Content Include="Views\ModuleDescription\ContentChange.cshtml" />
     <Content Include="Views\ModuleDescription\_Semester.cshtml" />
+    <Content Include="Views\Curriculum\ImportAreas.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateExamination.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

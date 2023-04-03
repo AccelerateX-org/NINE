@@ -15,7 +15,7 @@ namespace MyStik.TimeTable.Data
             Chapters = new HashSet<CurriculumChapter>();
             Sections = new HashSet<CurriculumSection>();
             Opportunities = new HashSet<CurriculumOpportunity>();
-            
+            Areas = new List<CurriculumArea>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -121,6 +121,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<CurriculumOpportunity> Opportunities { get; set; }
 
+        public virtual ICollection<CurriculumArea> Areas { get; set; }
+
     }
 
     public class CurriculumOpportunity
@@ -134,5 +136,59 @@ namespace MyStik.TimeTable.Data
         public virtual Semester Semester { get; set; }
 
         public bool IsPublished { get; set; }
+    }
+
+    public class CurriculumArea
+    {
+        public CurriculumArea()
+        {
+            Options = new List<AreaOption>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        /// <summary>
+        /// der technische Kurzname
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
+        /// Beschreibung
+        /// </summary>
+        public string Description { get; set; }
+
+        public virtual Curriculum Curriculum { get; set; }
+
+        public virtual ICollection<AreaOption> Options { get; set; }
+    }
+
+    public class AreaOption
+    {
+        public AreaOption()
+        {
+            Slots = new List<CurriculumSlot>();
+        }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        /// <summary>
+        /// der technische Kurzname
+        /// </summary>
+        public string Tag { get; set; }
+
+        /// <summary>
+        /// Beschreibung
+        /// </summary>
+        public string Description { get; set; }
+
+        public virtual CurriculumArea Area { get; set; }
+
+        public virtual ICollection<CurriculumSlot> Slots { get; set; }
     }
 }

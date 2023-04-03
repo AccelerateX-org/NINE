@@ -1,0 +1,87 @@
+﻿@model MyStik.TimeTable.Web.Models.ExaminationEditModel
+@{
+    ViewBag.Title = "CreateExamination";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neues Prüfungsangebot</h4>
+                <p>weitere Details zum zugehörigen Modul</p>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.moduleId)
+                    @Html.HiddenFor(m => m.semesteId)
+                    <div class="row">
+                        <div class="col-4">Semester</div>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="@Model.Semester.Name" aria-label="Semester" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Bezug zu Curriculum</div>
+                        <div class="col-8">
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Erstprüfer:in</div>
+                        <div class="col-8">
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Zweitprüfer:in</div>
+                        <div class="col-8">
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Prüfungsform</div>
+                        <div class="col-8">
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Rahmenbedingungen</div>
+                        <div class="col-8">
+                            @Html.TextAreaFor(m => m.Conditions, new { @class = "form-control", placeholder = "Beschreibung", rows = "3" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Hilfsmittel</div>
+                        <div class="col-8">
+                            @Html.TextAreaFor(m => m.Utilities, new { @class = "form-control", placeholder = "Beschreibung", rows = "3" })
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Details", new {id=Model.moduleId})"><i class="bi-x"></i> Abbrechen</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

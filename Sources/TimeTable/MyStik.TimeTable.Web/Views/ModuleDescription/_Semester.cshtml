@@ -21,46 +21,53 @@
 }
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="list-group">
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        Inhalt / Lernziele / Literatur
-                        @if (Model.ChangeLog != null)
-                        {
-                            var user = userService.GetUser(Model.ChangeLog.UserIdAmendment);
-                            var userName = "unbekannt";
-                            if (user != null)
-                            {
-                                userName = user.FullName;
-                            }
-                            if (Model.ChangeLog.Approved != null)
-                            {
-                                <div>
-                                    <small>zuletzt geändert am @Model.ChangeLog.LastEdited von @userName - veröffentlicht am @Model.ChangeLog.Approved</small>
-                                </div>
-                            }
-                            else
-                            {
-                                <div>
-                                    <small>zuletzt geändert am @Model.ChangeLog.LastEdited von @userName - unveröffentlicht</small>
-                                </div>
-                            }
-                        }
-                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                        {
-                            <a href="@Url.Action("ContentChange", null, new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-pen"></i> Ändern
-                            </a>
-                        }
-                    </div>
-                    <div class="col-8">
-                        <div>@Html.Raw(Model.Description.Trim())</div>
-                    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Inhalt / Lernziele / Literatur</h5>
+                @if (Model.ChangeLog != null)
+                {
+                    var user = userService.GetUser(Model.ChangeLog.UserIdAmendment);
+                    var userName = "unbekannt";
+                    if (user != null)
+                    {
+                        userName = user.FullName;
+                    }
+                    if (Model.ChangeLog.Approved != null)
+                    {
+                        <h6 class="card-subtitle">
+                            zuletzt geändert am @Model.ChangeLog.LastEdited von @userName - veröffentlicht am @Model.ChangeLog.Approved
+                        </h6>
+                    }
+                    else
+                    {
+                        <h6 class="card-subtitle">
+                            zuletzt geändert am @Model.ChangeLog.LastEdited von @userName - unveröffentlicht
+                        </h6>
+                    }
+                }
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    @Html.Raw(Model.Description.Trim())
                 </div>
             </div>
+            <div class="card-body">
+                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                {
+                    <a href="@Url.Action("ContentChange", null, new { id = Model.Id })" class="btn btn-outline-primary">
+                        <i class="bi-keyboard"></i> Ändern
+                    </a>
+                }
+            </div>
 
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lehrangebote</h5>
+            </div>
 
             @foreach (var subject in subjects)
             {
@@ -92,84 +99,98 @@
                     </div>
                 </div>
             }
+            <div class="card-body">
+                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                {
+                    <a href="@Url.Action("ContentChange", null, new { id = Model.Id })" class="btn btn-outline-primary">
+                        <i class="bi-pen"></i> Ändern
+                    </a>
+                    <a href="@Url.Action("ContentChange", null, new { id = Model.Id })" class="btn btn-outline-primary">
+                        <i class="bi-pen"></i> Neues Angebot hinzufügen
+                    </a>
+                }
 
+            </div>
         </div>
-
     </div>
-    <div class="col-md-6">
-        <div class="list-group">
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        <div>Erstprüfer:in</div>
-                    </div>
-                    <div class="col-8">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Prüfungsangebote</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Erstprüfer:in</div>
+                        </div>
+                        <div class="col-8">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        <div>Zweitprüfer:in</div>
-                    </div>
-                    <div class="col-8">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Zweitprüfer:in</div>
+                        </div>
+                        <div class="col-8">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        <div>Prüfungsform</div>
-                    </div>
-                    <div class="col-8">
-                        @{
-                            var i = 0;
-                        }
-                        @foreach (var option in Model.Module.ExaminationOptions)
-                        {
-                            i++;
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Prüfungsform</div>
+                        </div>
+                        <div class="col-8">
+                            @{
+                                var i = 0;
+                            }
+                            @foreach (var option in Model.Module.ExaminationOptions)
+                            {
+                                i++;
 
-                            if (i == 1)
-                            {
-                                <div>
-                                    @option.Name:
-                                    @foreach (var fraction in option.Fractions)
-                                    {
-                                        if (fraction.MinDuration > 0)
+                                if (i == 1)
+                                {
+                                    <div>
+                                        @option.Name:
+                                        @foreach (var fraction in option.Fractions)
                                         {
-                                            var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                                            @str
+                                            if (fraction.MinDuration > 0)
+                                            {
+                                                var str = string.Format("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                                                @str
+                                            }
+                                            else
+                                            {
+                                                var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                                                @str
+                                            }
                                         }
-                                        else
-                                        {
-                                            var str = string.Format("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                                            @str
-                                        }
-                                    }
-                                </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                }
                             }
-                            else
-                            {
-                            }
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        <div>Details zur Prüfung</div>
-                    </div>
-                    <div class="col-8">
-                        z.B. genaue Anzahl an Minuten, geforderte Seitenzahl
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Details zur Prüfung</div>
+                        </div>
+                        <div class="col-8">
+                            z.B. genaue Anzahl an Minuten, geforderte Seitenzahl
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        <div>Hilfsmittel</div>
-                    @*
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <div>Hilfsmittel</div>
+                            @*
                         @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                         {
                             <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
@@ -177,11 +198,24 @@
                             </a>
                         }
                         *@
-                    </div>
-                    <div class="col-8">
-                        Alles erlaubt
+                        </div>
+                        <div class="col-8">
+                            Alles erlaubt
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                {
+                    <a href="@Url.Action("ContentChange", null, new { id = Model.Id })" class="btn btn-outline-primary">
+                        <i class="bi-pen"></i> Ändern
+                    </a>
+                    <a href="@Url.Action("CreateExamination", null, new { moduleId = Model.Module.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                        <i class="bi-plus"></i> Neues Angebot hinzufügen
+                    </a>
+                }
+
             </div>
         </div>
     </div>

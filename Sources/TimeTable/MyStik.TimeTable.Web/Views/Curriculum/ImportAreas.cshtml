@@ -1,0 +1,41 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumImportModel
+@{
+    ViewBag.Title = "Upload";
+}
+
+
+
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="bi-trophy"></i> Studiengang @Model.Curriculum.Name (@Model.Curriculum.ShortName)
+                </h4>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("ImportAreas", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <fieldset>
+                        @Html.HiddenFor(m => m.Curriculum.Id)
+                        <div class="mb-3 row">
+                            <label for="formFile" class="col-sm-2 col-form-label">Datei</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="file" id="formFile" name="AttachmentStructure">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi-upload"></i> Import</button>
+                        </div>
+                    </fieldset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

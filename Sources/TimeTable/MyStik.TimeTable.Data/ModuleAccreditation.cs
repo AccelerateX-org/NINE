@@ -43,11 +43,15 @@ namespace MyStik.TimeTable.Data
         /// Aspekt "Prüfung"
         /// VERALTET
         /// </summary>
-        public virtual CurriculumCriteria Criteria { get; set; }
+        public virtual CurriculumCriteria Criteria { get; set; } 
 
         public virtual ItemLabelSet LabelSet { get; set; }
 
 
         public virtual CurriculumSlot Slot { get; set; }
+
+        public List<ExaminationDescription> ExaminationDescriptions { get; set; } = new List<ExaminationDescription>();
+
+        public List<TeachingDescription> TeachingDescriptions { get; set; } = new List<TeachingDescription>();
     }
 }

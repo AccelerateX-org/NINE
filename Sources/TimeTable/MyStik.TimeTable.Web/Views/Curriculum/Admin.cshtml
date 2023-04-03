@@ -79,9 +79,15 @@
                             </div>
                             <a href="@Url.Action("Import", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Import Modulplan</h5>
+                                    <h5 class="mb-1">Import Modulplan nach Semestern</h5>
                                 </div>
-                                <p class="mb-1">Entspricht der Anlage 1 einer SPO.</p>
+                                <p class="mb-1">Version 1 - Die Slots sind nach Semestern organisiert.</p>
+                            </a>
+                            <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Import Modulplan nach Themengebieten</h5>
+                                </div>
+                                <p class="mb-1">Version 2 - Die Slots sind nach Themengebieten organisiert.</p>
                             </a>
                             <a href="@Url.Action("Accreditation", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">

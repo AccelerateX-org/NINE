@@ -45,7 +45,7 @@
                 <thead>
                     <tr>
                         <th>Module Name</th>
-                        <th>Module ID</th>
+                        <th>Tag</th>
                         <th>Modulverantwortung</th>
                         <th>Fächer</th>
                         <th>Modulbeschreibungen</th>
@@ -63,7 +63,7 @@
                                         @module.Name
                                     </a>
                                 </td>
-                                <td>@module.Tag</td>
+                                <td>@module.Catalog.Organiser.Tag::@module.Catalog.Tag::@module.Tag</td>
                                 @if (module.ModuleResponsibilities.Any())
                                 {
                                     <td>

@@ -103,7 +103,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>ID</th>
+                        <th>Tag</th>
                         <th>Beschreibung</th>
                         <th># Module</th>
                         <th># Modulbeschreibungen</th>
@@ -114,7 +114,7 @@
                     {
                         <tr>
                             <td><a href="@Url.Action("Details", new {id = cat.Id})">@cat.Name</a></td>
-                            <td>@cat.Tag</td>
+                            <td>@cat.Organiser.Tag::@cat.Tag</td>
                             <td>@Html.Raw(cat.Description)</td>
                             <td>@cat.Modules.Count</td>
                             <td>@cat.Modules.Sum(x => x.Descriptions.Count(d => d.Description != null && d.Description.Count() > 0))</td>

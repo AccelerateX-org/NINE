@@ -1,4 +1,6 @@
-﻿@model MyStik.TimeTable.Web.Models.CurriculumViewModel
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.DataServices
+@model MyStik.TimeTable.Web.Models.CurriculumViewModel
 
 @{
     ViewBag.Title = "Modulplan";
@@ -129,17 +131,17 @@
                                 </div>
                             </div>
                         }
-                            <div class="row">
-                                <div class="col-12">
-                                    @if (Model.Assessments.Any())
-                                    {
-                                        <a href="@Url.Action("Index", "Assessment")" class="">
-                                            Auswahlverfahren
-                                        </a>
-                                    }
-                                </div>
+                        <div class="row">
+                            <div class="col-12">
+                                @if (Model.Assessments.Any())
+                                {
+                                    <a href="@Url.Action("Index", "Assessment")" class="">
+                                        Auswahlverfahren
+                                    </a>
+                                }
                             </div>
                         </div>
+                    </div>
                 </div>
                 <hr/>
                 <h5>Aufbau</h5>
@@ -175,6 +177,75 @@
                 {
                     @Html.Partial("_ModulePlan", Model)
                 }
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Nach Themengebieten</h4>
+                <ul>
+                    @{
+                        var db = new TimeTableDbContext();
+                        var allSlots = db.CurriculumSlots.Where(x =>
+                            x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
+
+                        var minSem = allSlots.Min(x => x.Semester);
+                        var maxSem = allSlots.Max(x => x.Semester);
+
+                        var allOptions = db.AreaOptions.Where(x => x.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
+
+                        var allOptionTags = allOptions.Select(x => x.Tag).Distinct().ToList();
+
+                        var allAreasWithOptions = Model.Curriculum.Areas.Where(x => x.Options.Count > 1).ToList();
+
+                        var optionsSelected = new List<AreaOption>();
+                        foreach (var area in allAreasWithOptions)
+                        {
+                            var optList = area.Options.ToList();
+                            optList.Shuffle();
+                            optionsSelected.Add(optList.First());
+                        }
+
+
+                        <h5>Alle Optionen</h5>
+                        <ul>
+                            @foreach (var opt in optionsSelected)
+                            {
+                                <li>@opt.Area.Tag::@opt.Tag</li>
+                            }
+                        </ul>
+
+                        for (var s=minSem;s<=maxSem;s++)
+                        {
+                            var semSlots = allSlots.Where(x => x.Semester == s).ToList();
+                            <div>
+                                <h5>Semester @s</h5>
+                                <ul>
+                                    @foreach (var slot in semSlots)
+                                    {
+                                        var inOptionArea = allAreasWithOptions.Count(x => x.Id == slot.AreaOption.Area.Id);
+
+                                        if (inOptionArea == 0)
+                                        {
+                                            <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (gilt für alle)</li>
+                                        }
+                                        else
+                                        {
+                                            var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
+                                            if (inSelectedOption > 0)
+                                            {
+                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (selektiert)</li>
+                                            }
+                                            else
+                                            {
+                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (nicht selektiert)</li>
+                                            }
+                                        }
+
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    }
+                    
+                </ul>
             </div>
         </div>
     </div>

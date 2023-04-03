@@ -9,6 +9,7 @@ namespace MyStik.TimeTable.Data
         public CurriculumModuleCatalog()
         {
             Modules = new HashSet<CurriculumModule>();
+            CatalogResponsibilities = new List<CatalogResponsibility>();
         }
 
 
@@ -24,6 +25,8 @@ namespace MyStik.TimeTable.Data
         public virtual ActivityOrganiser Organiser { get; set; }
 
         public virtual ICollection<CurriculumModule> Modules { get; set; }
+
+        public virtual ICollection<CatalogResponsibility> CatalogResponsibilities { get; set; }
 
     }
 
@@ -78,7 +81,9 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<ModuleSubject> ModuleSubjects { get; set; }
 
-
+        /// <summary>
+        /// Die sollten zum Slot verschoben werden
+        /// </summary>
         public virtual ICollection<ExaminationOption> ExaminationOptions { get; set; }
 
         /// <summary>
@@ -121,7 +126,7 @@ namespace MyStik.TimeTable.Data
         public Guid Id { get; set; }
 
 
-        public virtual CurriculumModule Module { get; set; }
+        //public virtual CurriculumModule Module { get; set; }
 
         public virtual Semester Semester { get; set; }
 
@@ -143,6 +148,16 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Rahmenbedingungen
+        /// </summary>
+        public string Conditions { get; set; }
+
+        /// <summary>
+        /// Hilfsmittel
+        /// </summary>
+        public string Utilities { get; set; }
+
 
         /// <summary>
         /// Erstprüfer - es kann nur einen geben
@@ -150,12 +165,32 @@ namespace MyStik.TimeTable.Data
         public virtual OrganiserMember FirstExminer { get; set; }
         
         /// <summary>
-        /// Zweitprüfer
+        /// Zweitprüfer - es kann nur einen geben
         /// </summary>
         public virtual OrganiserMember SecondExaminer { get; set; }
 
         
+        public virtual ModuleAccreditation Accreditation { get; set; }
+    }
 
+    /// <summary>
+    /// Das Lehrangebot
+    /// </summary>
+    public class TeachingDescription
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual Semester Semester { get; set; }
+
+        public virtual ModuleSubject Subject { get; set; }
+
+
+        public virtual Course Course { get; set; }
+
+
+        public virtual ModuleAccreditation Accreditation { get; set; }
     }
 
 
@@ -176,4 +211,20 @@ namespace MyStik.TimeTable.Data
         public virtual OrganiserMember Member { get; set; }
 
     }
+
+    public class CatalogResponsibility
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+
+        public virtual CurriculumModuleCatalog Catalog { get; set; }
+
+        /// <summary>
+        /// Fachverantwortlicher
+        /// </summary>
+        public virtual OrganiserMember Member { get; set; }
+
+    }
+
 }
