@@ -1,4 +1,4 @@
-﻿/// <reference path="jquery-3.6.0.js" />
+﻿/// <reference path="jquery-3.6.4.js" />
 /// <autosync enabled="true" />
 /// <reference path="../assets/admin/layout/scripts/demo.js" />
 /// <reference path="../assets/admin/layout/scripts/layout.js" />

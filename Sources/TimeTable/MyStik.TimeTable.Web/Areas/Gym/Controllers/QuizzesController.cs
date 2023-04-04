@@ -14,7 +14,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
 {
-    public class QuizzesController : Controller
+    public class QuizzesController : GymBaseController
     {
         private GymDbContext db = new GymDbContext();
 
@@ -54,7 +54,22 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = GetCurrentUser();
+
                 quiz.Id = Guid.NewGuid();
+
+                var author = db.Authors.SingleOrDefault(x => x.UserId.Equals(user.Id));
+                if (author == null)
+                {
+                    author = new Author
+                    {
+                        UserId = user.Id
+                    };
+                    db.Authors.Add(author);
+                }
+
+                quiz.Author = author;
+
                 db.Quizzes.Add(quiz);
                 db.SaveChanges();
                 return RedirectToAction("Index");

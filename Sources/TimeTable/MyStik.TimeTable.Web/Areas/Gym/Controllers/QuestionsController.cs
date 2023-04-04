@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
 {
-    public class QuestionsController : Controller
+    public class QuestionsController : GymBaseController
     {
         private GymDbContext db = new GymDbContext();
 
@@ -54,7 +54,22 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = GetCurrentUser();
+
                 question.Id = Guid.NewGuid();
+
+                var author = db.Authors.SingleOrDefault(x => x.UserId.Equals(user.Id));
+                if (author == null)
+                {
+                    author = new Author
+                    {
+                        UserId = user.Id
+                    };
+                    db.Authors.Add(author);
+                }
+
+                question.Author = author;
+
                 db.Questions.Add(question);
                 db.SaveChanges();
                 return RedirectToAction("Index");
