@@ -57,18 +57,11 @@
                                 </div>
                                 <p class="mb-1">Liste aller Studierender (inkl. Alumni)</p>
                             </a>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="list-group">
-                            <div class="list-group-item list-group-item-dark">
-                                <h5>Aufbau (alt)</h5>
-                            </div>
-                            <a href="@Url.Action("GroupList", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                            <a href="@Url.Action("GroupList", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action list-group-item-warning" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Studien- und Kapazitätsgruppen</h5>
                                 </div>
-                                <p class="mb-1">Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.vsc" benötigt.</p>
+                                <p class="mb-1">VERALTET: Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.vsc" benötigt.</p>
                             </a>
                         </div>
                     </div>
@@ -100,6 +93,19 @@
                                     <h5 class="mb-1">Import Lehrangebot eines Semesters</h5>
                                 </div>
                                 <p class="mb-1">Verknüpfung zwischen den importierten Lehrveranstaltungen und den Fächern eines Moduls.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Listen</h5>
+                            </div>
+                            <a href="@Url.Action("ExaminationList", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action disabled" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Prüfungsliste</h5>
+                                </div>
+                                <p class="mb-1">Liste für ein Semester alle Prüfungsangebote aller in diesem Studiengang akkreditierten Module auf.</p>
                             </a>
                         </div>
                     </div>

@@ -1,22 +1,8 @@
-﻿@model MyStik.TimeTable.Data.CurriculumModule
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.CurriculumModule
 @{
     ViewBag.Title = "Details";
-
-    var subjects = Model.ModuleSubjects.ToList();
-
-    var itsMe = false;
-    var userId = ViewBag.UserRight.User.Id;
-
-    foreach (var mv in Model.ModuleResponsibilities)
-    {
-        if (!string.IsNullOrEmpty(mv.Member.UserId) && mv.Member.UserId.Equals(userId))
-        {
-            itsMe = true;
-        }
-    }
-
 }
-
 
 <div class="row">
     <div class="col-12">
@@ -51,9 +37,14 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
-                                <div>Modulverantwortung</div>
+                                <div>Katalog-/Modulverantwortung</div>
                             </div>
                             <div class="col-8">
+                                @foreach (var mv in Model.Catalog.CatalogResponsibilities)
+                                {
+                                    <div>@mv.Member.FullName</div>
+                                }
+                                <hr/>
                                 @foreach (var mv in Model.ModuleResponsibilities)
                                 {
                                     <div>@mv.Member.FullName</div>
@@ -62,10 +53,21 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
+                                <div>Prüfungsformen</div>
+                            </div>
+                            <div class="col-8">
+                                @foreach (var option in Model.ExaminationOptions)
+                                {
+                                    <div>@option.FullName</div>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
                                 <div>Fächer</div>
                             </div>
                             <div class="col-8">
-                                @foreach (var subject in subjects)
+                                @foreach (var subject in Model.ModuleSubjects)
                                 {
                                     if (subject.TeachingFormat != null)
                                     {

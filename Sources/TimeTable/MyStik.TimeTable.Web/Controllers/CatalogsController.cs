@@ -321,5 +321,128 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
         }
+
+        public ActionResult CreateCatalog()
+        {
+            var org = GetMyOrganisation();
+
+            var model = new CatalogCreateModel
+            {
+                orgId = org.Id,
+
+                Organiser = org
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateCatalog(CatalogCreateModel model)
+        {
+            var org = GetOrganiser(model.orgId);
+
+            var isDuplicate = org.ModuleCatalogs.Any(x => x.Tag.ToUpper().Equals(model.Tag.ToUpper()));
+
+            if (!isDuplicate)
+            {
+                var cat = new CurriculumModuleCatalog
+                {
+                    Organiser = org,
+                    Tag = model.Tag,
+                    Name = model.Name,
+                    Description = model.Description
+                };
+
+                Db.CurriculumModuleCatalogs.Add(cat);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult EditGeneral(Guid id)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumModuleCreateModel();
+            model.catalogId = catalog.Id;
+            model.Name = catalog.Name;
+            model.Tag = catalog.Tag;
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult EditGeneral(CurriculumModuleCreateModel model)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == model.catalogId);
+
+            var org = catalog.Organiser;
+            var isDuplicate = org.ModuleCatalogs.Any(x => x.Tag.Equals(model.Tag) && x.Id != model.catalogId);
+
+            if (!isDuplicate)
+            {
+                catalog.Tag = model.Tag;
+                catalog.Name = model.Name;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Details", new { id = model.catalogId });
+        }
+
+        public ActionResult EditResponsibilities(Guid id)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == id);
+
+            return View(catalog);
+        }
+
+        [HttpPost]
+        public ActionResult SaveResponsibilities(Guid catalogId, ICollection<Guid> DozIds)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catalogId);
+
+            var resp2delete = new List<CatalogResponsibility>();
+            foreach (var responsibility in catalog.CatalogResponsibilities)
+            {
+                if (!DozIds.Contains(responsibility.Member.Id))
+                {
+                    resp2delete.Add(responsibility);
+                }
+            }
+
+            foreach (var responsibility in resp2delete)
+            {
+                catalog.CatalogResponsibilities.Remove(responsibility);
+                Db.CatalogResponsibilities.Remove(responsibility);
+            }
+            
+            var doz2create = new List<Guid>();
+            foreach (var dozId in DozIds)
+            {
+                var isHere = catalog.CatalogResponsibilities.Any(x => x.Member.Id == dozId);
+
+                if (!isHere)
+                {
+                    doz2create.Add(dozId);
+                }
+            }
+
+            foreach (var dozId in doz2create)
+            {
+                var member = Db.Members.SingleOrDefault(x => x.Id == dozId);
+                var resp = new CatalogResponsibility
+                {
+                    Catalog = catalog,
+                    Member = member
+                };
+                Db.CatalogResponsibilities.Add(resp);
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
     }
 }

@@ -4005,12 +4005,8 @@
     <Content Include="Views\Courses\CopyDay.cshtml" />
     <Content Include="Views\Courses\CopyDayReport.cshtml" />
     <Content Include="Views\CurriculumModule\Index.cshtml" />
-    <Content Include="Views\CurriculumModule\_ViewStart.cshtml" />
     <Content Include="Views\CurriculumModule\Create.cshtml" />
-    <Content Include="Views\CurriculumModule\Details.cshtml" />
     <Content Include="Views\CurriculumModule\Admin.cshtml" />
-    <Content Include="Views\CurriculumModule\Courses.cshtml" />
-    <Content Include="Views\CurriculumModule\Selection.cshtml" />
     <Content Include="Views\Dashboard\FirstVisit.cshtml" />
     <Content Include="Views\Shared\_LayoutFirstVisit.cshtml" />
     <Content Include="Views\Curricula\_ViewStart.cshtml" />
@@ -4024,8 +4020,6 @@
     <Content Include="Views\VirtualRoom\Edit.cshtml" />
     <Content Include="Views\VirtualRoom\Details.cshtml" />
     <Content Include="Views\Calendar\_ViewStart.cshtml" />
-    <Content Include="Views\CurriculumModule\_CourseTable.cshtml" />
-    <Content Include="Views\CurriculumModule\Participants.cshtml" />
     <Content Include="Views\Mailing\CurriculumModule.cshtml" />
     <Content Include="Views\Assessment\Admin.cshtml" />
     <Content Include="Views\Assessment\Create.cshtml" />
@@ -4156,6 +4150,12 @@
     <Content Include="Views\ModuleDescription\CreateExamination.cshtml" />
     <Content Include="Scripts\jquery-3.6.4.slim.min.map" />
     <Content Include="Scripts\jquery-3.6.4.min.map" />
+    <Content Include="Views\ModuleDescription\EditExamination.cshtml" />
+    <Content Include="Views\Catalogs\CreateCatalog.cshtml" />
+    <Content Include="Views\CurriculumModule\EditGeneral.cshtml" />
+    <Content Include="Views\Catalogs\EditGeneral.cshtml" />
+    <Content Include="Views\Catalogs\EditResponsibilities.cshtml" />
+    <Content Include="Views\CurriculumModule\EditResponsibilities.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

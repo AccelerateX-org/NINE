@@ -77,24 +77,24 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Modulkataloge @Model.Organiser.ShortName</h4>
-                <ul>
-                    <li>Prüfungsformen: @db.ExaminationForms.Count()</li>
-                    <li>Lehrformate: @db.TeachingFormats.Count()</li>
-                </ul>
+                <h4>Modulkataloge @Model.Organiser.Name (@Model.Organiser.ShortName)</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-
+                            <a href="@Url.Action("CreateCatalog","Catalogs")" class="btn btn-outline-primary">
+                                <i class="bi-plus"></i> Neuen Katalog anlegen
+                            </a>
                             <a href="@Url.Action("Import", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-primary">
                                 <i class="bi-upload"></i> Import
                             </a>
-                            <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Alle Löschen
-                            </a>
+                            @*
+            <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
+                <i class="bi-trash"></i> Alle Löschen
+            </a>
+                            *@
                         }
                     </div>
                 </div>

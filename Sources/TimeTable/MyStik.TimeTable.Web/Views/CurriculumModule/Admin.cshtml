@@ -5,45 +5,96 @@
 }
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-12">
         <div class="card">
             <div class="card-header">
-                Modulverwaltung
+                <div class="row">
+                    <div class="col-md-10">
+
+                        <h4>Verwaltung des Moduls @Model.Name</h4>
+                        <h5 class="card-subtitle">
+                            Zuordnung Modulkatalog:
+                            <a href="@Url.Action("Index", "Catalogs")">@Model.Catalog.Organiser.Tag</a>
+                            |
+                            <a href="@Url.Action("Details", "Catalogs", new { id = Model.Catalog.Id })">
+                                @Model.Catalog.Tag
+                            </a>
+                            |
+                            <span>
+                                @Model.Tag
+                            </span>
+                        </h5>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Details", "ModuleDescription",new {id = Model.Id})" class="btn btn-outline-primary">
+                                <i class="bi-window"></i> Modulbeschreibung
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <ul class="nav bg-light text-dark">
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Details", new {id=Model.Id})"><i class="fas fa-chevron-left fa-fw"></i><br />zurück</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-cogs fa-fw"></i><br />Allgemeines</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Lehrformate</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Lehrangebote</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("EditGeneral", new {id=Model.Id})"><i class="fas fa-calendar fa-fw"></i><br />Akkreditierungen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-center" href="@Url.Action("Delete", new {id=Model.Id})"><i class="fas fa-trash fa-fw"></i><br />Löschen</a>
-                </li>
-            </ul>
             <div class="card-body">
-                <h5 class="card-title">Allgemeine Angaben</h5>
-                <ul>
-                    <li>Nummer / ID: @Model.ModuleId</li>
-                    <li>Bezeichnung: @Model.Name</li>
-                    <li>Stundenplankürzel: @Model.ShortName</li>
-                </ul>
-                <h5 class="card-title">Lehrformate</h5>
-                <ul>
-                    @foreach (var c in Model.ModuleCourses)
-                    {
-                        <li>@c.Name</li>
-                    }
-                </ul>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Allgemeines</h5>
+                            </div>
+                            <a href="@Url.Action("EditGeneral",  new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Einstellungen</h5>
+                                </div>
+                                <p class="mb-1">Bezeichnungen</p>
+                            </a>
+                            <a href="@Url.Action("EditResponsibilities", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Modulverantwortliche</h5>
+                                </div>
+                                <p class="mb-1">Lehrende, die die dieses Modul verwalten dürfen. Unabhängig von Katalogverantwortung</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Lehrveranstaltungen</h5>
+                            </div>
+                            <a href="@Url.Action("EditTeachingForms", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Lehrveranstaltungsarten</h5>
+                                </div>
+                                <p class="mb-1">Lehrformen und SWS</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Prüfungen</h5>
+                            </div>
+                            <a href="@Url.Action("EditExaminationForms", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Prüfungsformen</h5>
+                                </div>
+                                <p class="mb-1">Varianten mit Prüfungsart und Gewichtung.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-dark">
+                                <h5>Löschen</h5>
+                            </div>
+                            <a href="#" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Historie löschen</h5>
+                                </div>
+                                <p class="mb-1">Keine Funktion hinterlegt - nur Platzhalter.</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

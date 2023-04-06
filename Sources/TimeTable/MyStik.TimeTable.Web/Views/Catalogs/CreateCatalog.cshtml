@@ -1,0 +1,47 @@
+﻿@model MyStik.TimeTable.Web.Models.CatalogCreateModel
+@{
+    ViewBag.Title = "AddCatalog";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neuer Modulkatalog</h4>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.orgId)
+                    <div class="row">
+                        <div class="col-4">Zugehörigkeit</div>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="@Model.Organiser.Name" aria-label="Organiser" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Name</div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Name" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Kurzbezeichnung (Tag)</div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Tag, new { @class = "form-control", placeholder = "Name" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Beschreibung</div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control", placeholder = "Name" })
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Index")"><i class="bi-x"></i> Abbrechen</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

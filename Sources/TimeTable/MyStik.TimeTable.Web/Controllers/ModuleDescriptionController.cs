@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -84,7 +87,15 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
-            return PartialView("_Semester", desc);
+            var model = new ModuleSemesterView
+            {
+                CurriculumModule = module,
+                Semester = semester,
+                ModuleDescription = desc
+            };
+
+
+            return PartialView("_Semester", model);
         }
 
 
@@ -215,10 +226,27 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new ExaminationEditModel();
 
             model.moduleId = module.Id;
-            model.semesteId = semester.Id;
+            model.semesterId = semester.Id;
+            if (module.Accreditations.Any())
+            {
+                var accr = module.Accreditations.First();
+                model.accredidationId = accr.Id;
+                model.orgId = accr.Slot.CurriculumSection.Curriculum.Organiser.Id;
+
+                model.Accreditation = accr;
+            }
 
             model.Module = module;
             model.Semester = semester;
+
+            ViewBag.ExamOptions = module.ExaminationOptions
+                .Select(x => new SelectListItem
+                {
+                    Text = x.FullName,
+                    Value = x.Id.ToString()
+
+                });
+
 
             return View(model);
         }
@@ -226,11 +254,139 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult CreateExamination(ExaminationEditModel model)
         {
+            var user = GetCurrentUser();
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
+            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.semesterId);
+            var examOption = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.examOptId);
+            var firstMember = Db.Members.SingleOrDefault(x => x.Id == model.firstMemberId);
+            var secondMember = Db.Members.SingleOrDefault(x => x.Id == model.secondMemberId);
+
+
+            var changeLog = new ChangeLog
+            {
+                Created = DateTime.Now
+            };
+            changeLog.LastEdited = DateTime.Now;
+            changeLog.UserIdAmendment = user.Id;
+            Db.ChangeLogs.Add(changeLog);
+
+            var examDesc = new ExaminationDescription
+            {
+                Semester = semester,
+                Accreditation = accr,
+                ChangeLog = changeLog,
+                ExaminationOption = examOption,
+                FirstExminer = firstMember,
+                SecondExaminer = secondMember,
+                Conditions = model.Conditions,
+                Utilities = model.Utilities
+            };
+
+            accr.ExaminationDescriptions.Add(examDesc);
+
+            Db.ExaminationDescriptions.Add(examDesc);
+            Db.SaveChanges();
+
+
             return RedirectToAction("Details", new { id = model.moduleId, });
+        }
+
+        public ActionResult EditExamination(Guid id)
+        {
+            var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
+            var semester = examDesc.Semester;
+            var module = examDesc.Accreditation.Module;
+            var accr = examDesc.Accreditation;
+
+            var model = new ExaminationEditModel();
+
+            model.examinationId = examDesc.Id;
+            model.moduleId = module.Id;
+            model.semesterId = examDesc.Semester.Id;
+            model.accredidationId = examDesc.Accreditation.Id;
+            model.orgId = examDesc.Accreditation.Slot.CurriculumSection.Curriculum.Organiser.Id;
+            model.firstMemberId = examDesc.FirstExminer.Id;
+            model.secondMemberId = examDesc.SecondExaminer.Id;
+            model.Conditions = examDesc.Conditions;
+            model.Utilities = examDesc.Utilities;
+
+            model.Accreditation = accr;
+            model.Module = module;
+            model.Semester = semester;
+            model.FirstMember = examDesc.FirstExminer;
+            model.SecondMember = examDesc.SecondExaminer;
+
+
+            ViewBag.ExamOptions = module.ExaminationOptions
+                .Select(x => new SelectListItem
+                {
+                    Text = x.FullName,
+                    Value = x.Id.ToString()
+
+                });
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditExamination(ExaminationEditModel model)
+        {
+            var user = GetCurrentUser();
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
+            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.semesterId);
+            var examOption = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.examOptId);
+            var firstMember = Db.Members.SingleOrDefault(x => x.Id == model.firstMemberId);
+            var secondMember = Db.Members.SingleOrDefault(x => x.Id == model.secondMemberId);
+
+            var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == model.examinationId);
+
+            var changeLog = examDesc.ChangeLog;
+
+            if (changeLog == null)
+            {
+                changeLog = new ChangeLog
+                {
+                    Created = DateTime.Now
+                };
+                Db.ChangeLogs.Add(changeLog);
+                examDesc.ChangeLog = changeLog;
+            }
+
+            changeLog.LastEdited = DateTime.Now;
+            changeLog.UserIdAmendment = user.Id;
+
+            examDesc.ExaminationOption = examOption;
+            examDesc.FirstExminer = firstMember;
+            examDesc.SecondExaminer = secondMember;
+            examDesc.Conditions = model.Conditions;
+            examDesc.Utilities = model.Utilities;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = model.moduleId, });
+        }
+
+        public ActionResult DeleteExamination(Guid id)
+        {
+            var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
+
+            var module = examDesc.Accreditation.Module;
+
+            if (examDesc.ChangeLog != null)
+            {
+                Db.ChangeLogs.Remove(examDesc.ChangeLog);
+            }
+            Db.ExaminationDescriptions.Remove(examDesc);
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = module.Id, });
         }
     }
 
-    public class ModuleDescriptionEditModel
+        public class ModuleDescriptionEditModel
     {
         public ModuleDescription ModuleDescription { get; set; }
 

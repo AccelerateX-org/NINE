@@ -50,8 +50,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual CurriculumSlot Slot { get; set; }
 
-        public List<ExaminationDescription> ExaminationDescriptions { get; set; } = new List<ExaminationDescription>();
+        public virtual ICollection<ExaminationDescription> ExaminationDescriptions { get; set; } = new List<ExaminationDescription>();
 
-        public List<TeachingDescription> TeachingDescriptions { get; set; } = new List<TeachingDescription>();
+        public virtual ICollection<TeachingDescription> TeachingDescriptions { get; set; } = new List<TeachingDescription>();
     }
 }

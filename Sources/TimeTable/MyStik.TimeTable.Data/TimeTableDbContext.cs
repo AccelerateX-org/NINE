@@ -130,6 +130,9 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<ModuleAccreditation> Accreditations { get; set; }
 
+        public DbSet<ExaminationDescription> ExaminationDescriptions { get; set; }
+
+        public DbSet<TeachingDescription> TeachingDescriptions { get; set; }
 
         public DbSet<ThesisAnnouncement> ThesisAnnouncements { get; set; }
 

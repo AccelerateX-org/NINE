@@ -15,7 +15,10 @@ namespace MyStik.TimeTable.Web.Controllers
 {
     public class CurriculumModuleController : BaseController
     {
-        // GET: CurriculumModule
+        /// <summary>
+        /// Liste aller Module des aktuellen Benutzers
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             var member = GetMyMembership();
@@ -25,19 +28,25 @@ namespace MyStik.TimeTable.Web.Controllers
                 x.ModuleResponsibilities.Any(m =>
                     m.Member.Id == member.Id)).ToList();
 
+            return View(model);
+        }
+
+        public ActionResult Admin(Guid id)
+        {
+            var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
 
             return View(model);
         }
 
 
-        public ActionResult Create()
+        public ActionResult Create(Guid catalogId)
         {
             var org = GetMyOrganisation();
 
 
             var model = new CurriculumModuleCreateModel();
-
+            model.catalogId = catalogId;
 
             return View(model);
         }
@@ -48,56 +57,120 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var member = GetMyMembership();
 
-            // TODO: eine Art "Auto-Akkreditierung???
-            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == model.CurriculumId);
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == model.catalogId);
 
-            var module = new CurriculumModule
+            var isDuplicate = catalog.Modules.Any(x => x.Tag.Equals(model.Tag) && x.Id != model.moduleId);
+
+            if (!isDuplicate)
             {
-                
-                Name = model.Name,
-                ShortName = model.ShortName,
-                ModuleId = model.ModuleId,
-            };
+                var module = new CurriculumModule
+                {
+                    Name = model.Name,
+                    Tag = model.Tag,
+                    Catalog = catalog
+                };
 
-            var resp = new ModuleResponsibility {Member = member, Module = module};
+                var resp = new ModuleResponsibility { Member = member, Module = module };
 
-            module.ModuleResponsibilities.Add(resp);
+                module.ModuleResponsibilities.Add(resp);
+
+                Db.ModuleResponsibilities.Add(resp);
+                Db.CurriculumModules.Add(module);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Details", "Catalogs",new {id = model.catalogId});
+        }
+
+        public ActionResult EditGeneral(Guid id)
+        {
+            var org = GetMyOrganisation();
+
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumModuleCreateModel();
+            model.moduleId = module.Id;
+            model.catalogId = module.Catalog.Id;
+            model.Name = module.Name;
+            model.Tag = module.Tag;
+
+            return View(model);
+        }
 
 
+        [HttpPost]
+        public ActionResult EditGeneral(CurriculumModuleCreateModel model)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
 
-            Db.ModuleResponsibilities.Add(resp);
-            Db.CurriculumModules.Add(module);
+            var catalog = module.Catalog;
+            var isDuplicate = catalog.Modules.Any(x => x.Tag.Equals(model.Tag) && x.Id != model.moduleId);
+
+            if (!isDuplicate)
+            {
+                module.Tag = model.Tag;
+                module.Name = model.Name;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Admin", new { id = model.moduleId });
+        }
+
+        public ActionResult EditResponsibilities(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            return View(module);
+        }
+
+        [HttpPost]
+        public ActionResult SaveResponsibilities(Guid moduleId, ICollection<Guid> DozIds)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+
+            var resp2delete = new List<ModuleResponsibility>();
+            foreach (var responsibility in module.ModuleResponsibilities)
+            {
+                if (!DozIds.Contains(responsibility.Member.Id))
+                {
+                    resp2delete.Add(responsibility);
+                }
+            }
+
+            foreach (var responsibility in resp2delete)
+            {
+                module.ModuleResponsibilities.Remove(responsibility);
+                Db.ModuleResponsibilities.Remove(responsibility);
+            }
+
+            var doz2create = new List<Guid>();
+            foreach (var dozId in DozIds)
+            {
+                var isHere = module.ModuleResponsibilities.Any(x => x.Member.Id == dozId);
+
+                if (!isHere)
+                {
+                    doz2create.Add(dozId);
+                }
+            }
+
+            foreach (var dozId in doz2create)
+            {
+                var member = Db.Members.SingleOrDefault(x => x.Id == dozId);
+                var resp = new ModuleResponsibility
+                {
+                    Module = module,
+                    Member = member
+                };
+                Db.ModuleResponsibilities.Add(resp);
+            }
+
             Db.SaveChanges();
 
-
-            return RedirectToAction("Details", new {id = module.Id});
+            return null;
         }
 
 
-        public ActionResult Details(Guid id)
-        {
-            var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-
-            var sem = SemesterService.GetSemester(DateTime.Today);
-
-            var nextSem = SemesterService.GetNextSemester(sem);
-
-
-            ViewBag.SemesterList = new List<Semester>();
-            ViewBag.SemesterList.Add(sem);
-            ViewBag.SemesterList.Add(nextSem);
-
-            return View(model);
-        }
-
-
-        public ActionResult Admin(Guid id)
-        {
-            var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
-
-
-            return View(model);
-        }
 
 
         public ActionResult Delete(Guid id)
@@ -164,422 +237,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return RedirectToAction("Index");
-        }
-
-        public ActionResult Courses(Guid moduleId, Guid? semId)
-        {
-            if (semId == null)
-            {
-                semId = SemesterService.GetSemester(DateTime.Today).Id;
-            }
-
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-            var semester = SemesterService.GetSemester(semId);
-
-            var courseSummaryService = new CourseService(Db);
-
-            var model = new ModuleSemesterCoursesModel
-            {
-                Module = module,
-                Semester = semester
-            };
-
-            /*
-            foreach (var moduleCourse in module.ModuleCourses)
-            {
-                var courses =
-                    moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == semId))
-                        .Select(x => x.Course).Distinct().ToList();
-
-                foreach (var course in courses)
-                {
-                    var summary = courseSummaryService.GetCourseSummary(course);
-
-                    var semCourse = new ModuleSemesterCourseModel()
-                    {
-                        ModuleCourse = moduleCourse,
-                        CourseSummary = summary
-                    };
-
-                    model.Courses.Add(semCourse);
-                }
-            }
-            */
-
-            return View(model);
-        }
-
-        public ActionResult Selection(Guid moduleId, Guid semId)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-            var semester = SemesterService.GetSemester(semId);
-
-            var courseSummaryService = new CourseService(Db);
-
-            var model = new ModuleSemesterCoursesModel
-            {
-                Module = module,
-                Semester = semester
-            };
-
-            /*
-            foreach (var moduleCourse in module.ModuleCourses)
-            {
-                var courses =
-                    moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == semId))
-                        .Select(x => x.Course).Distinct().ToList();
-
-
-                foreach (var course in courses)
-                {
-                    var summary = courseSummaryService.GetCourseSummary(course);
-
-                    var semCourse = new ModuleSemesterCourseModel()
-                    {
-                        ModuleCourse = moduleCourse,
-                        CourseSummary = summary
-                    };
-
-                    model.Courses.Add(semCourse);
-                }
-            }
-            */
-
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public PartialViewResult Search(string searchText, Guid moduleCourseId, Guid semId)
-        {
-            var sem = SemesterService.GetSemester(semId);
-            var org = GetMyOrganisation();
-
-            var courses = Db.Activities.OfType<Course>().Where(a =>
-                    (a.Name.Contains(searchText) || a.ShortName.Contains(searchText)) &&
-                    a.SemesterGroups.Any(s =>
-                        s.Semester.Id == sem.Id && s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
-                .ToList();
-
-            var courseSummaryService = new CourseService(Db);
-            var moduleCourse = Db.ModuleCourses.SingleOrDefault(x => x.Id == moduleCourseId);
-            var module = moduleCourse.Module;
-
-            var model = new List<ModuleSemesterCourseModel>();
-            /*
-            foreach (var course in courses)
-            {
-                // suchen, ob schon im Modul vorhanden, egal unter welchem Lehrformat
-                var exist = Db.CourseNexus.Any(x => x.Course.Id == course.Id && x.ModuleCourse.Module.Id == module.Id);
-
-                if (!exist)
-                {
-                    var summary = courseSummaryService.GetCourseSummary(course);
-
-                    var semCourse = new ModuleSemesterCourseModel()
-                    {
-                        ModuleCourse = moduleCourse,
-                        CourseSummary = summary
-                    };
-
-                    model.Add(semCourse);
-                }
-            }
-            */
-
-
-
-            return PartialView("_CourseTable", model);
-        }
-
-        [HttpPost]
-        public PartialViewResult SaveCourseList(Guid moduleId, string[] courseIds)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-
-            if (courseIds == null)
-                return null;
-
-
-            // die bestehende Liste aller Nexi
-            /*
-            var oldNexusList = new List<CourseModuleNexus>();
-            foreach (var moduleCourse in module.ModuleCourses)
-            {
-                foreach (var courseNexus in moduleCourse.Nexus)
-                {
-                    oldNexusList.Add(courseNexus);
-                }
-            }
-            */
-
-            foreach (var tempId in courseIds)
-            {
-                var n = tempId.IndexOf("--");
-
-
-                var courseId = Guid.Parse(tempId.Substring(0, n));
-                var moduleCourseId = Guid.Parse(tempId.Substring(n + 2));
-
-                //var nexus = oldNexusList.FirstOrDefault(x =>
-                //    x.ModuleCourse.Id == moduleCourseId && x.Course.Id == courseId);
-
-
-                // schon drin => aus der Liste löschen
-                /*
-                if (nexus != null)
-                {
-                    //oldNexusList.Remove(nexus);
-                }
-                else
-                {
-                    // das ist neu => hinzufügen
-                    var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
-                    var moduleCourse = Db.ModuleCourses.SingleOrDefault(x => x.Id == moduleCourseId);
-
-                    nexus = new CourseModuleNexus
-                    {
-                        Course = course,
-                        ModuleCourse = moduleCourse
-                    };
-
-                    Db.CourseNexus.Add(nexus);
-                }
-                */
-            }
-
-            // die in der oldList verbliebenen Einträge kommen raus
-            /*
-            foreach (var oldNexus in oldNexusList)
-            {
-                Db.CourseNexus.Remove(oldNexus);
-            }
-            */
-
-            Db.SaveChanges();
-
-            return null;
-        }
-
-        public ActionResult Participants(Guid moduleId, Guid semId)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-            var semester = SemesterService.GetSemester(semId);
-
-            var courseSummaryService = new CourseService(Db);
-
-            var model = new ModuleSemesterCoursesModel
-            {
-                Module = module,
-                Semester = semester
-            };
-
-
-            /*
-            foreach (var moduleCourse in module.ModuleCourses)
-            {
-                var courses =
-                    moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == semId))
-                        .Select(x => x.Course).Distinct().ToList();
-
-
-                foreach (var course in courses)
-                {
-                    var summary = courseSummaryService.GetCourseSummary(course);
-
-                    var semCourse = new ModuleSemesterCourseModel()
-                    {
-                        ModuleCourse = moduleCourse,
-                        CourseSummary = summary
-                    };
-
-                    model.Courses.Add(semCourse);
-
-
-
-                    foreach (var subscription in course.Occurrence.Subscriptions)
-                    {
-                        var participant = model.Participants.SingleOrDefault(x => x.UserId.Equals(subscription.UserId));
-
-                        if (participant == null)
-                        {
-                            participant = new ModuleParticipantModel
-                            {
-                                UserId = subscription.UserId
-                            };
-                            model.Participants.Add(participant);
-                        }
-
-                        participant.Courses.Add(new ModuleParticipantSubscriptionModel {
-                            Course = course,
-                            Subscription = subscription
-                            });
-                    }
-                }
-
-            }
-            */
-
-            // die user und students ergänzen
-            foreach (var participant in model.Participants)
-            {
-                var user = UserManager.FindById(participant.UserId);
-                var student = user != null ? StudentService.GetCurrentStudent(user) : null;
-
-                participant.User = user;
-                participant.Student = student;
-
-            }
-
-            return View(model);
-        }
-
-
-
-        public FileResult Download(Guid moduleId, Guid semId)
-        {
-            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
-            var semester = SemesterService.GetSemester(semId);
-
-            var courseSummaryService = new CourseService(Db);
-
-            var model = new ModuleSemesterCoursesModel
-            {
-                Module = module,
-                Semester = semester
-            };
-
-            /*
-            foreach (var moduleCourse in module.ModuleCourses)
-            {
-                var courses =
-                    moduleCourse.Nexus.Where(x => x.Course.SemesterGroups.Any(g => g.Semester.Id == semId))
-                        .Select(x => x.Course).Distinct().ToList();
-
-
-                foreach (var course in courses)
-                {
-                    var summary = courseSummaryService.GetCourseSummary(course);
-
-                    var semCourse = new ModuleSemesterCourseModel()
-                    {
-                        ModuleCourse = moduleCourse,
-                        CourseSummary = summary
-                    };
-
-                    model.Courses.Add(semCourse);
-
-
-
-                    foreach (var subscription in course.Occurrence.Subscriptions)
-                    {
-                        var participant = model.Participants.SingleOrDefault(x => x.UserId.Equals(subscription.UserId));
-
-                        if (participant == null)
-                        {
-                            participant = new ModuleParticipantModel
-                            {
-                                UserId = subscription.UserId
-                            };
-                            model.Participants.Add(participant);
-                        }
-
-                        participant.Courses.Add(new ModuleParticipantSubscriptionModel
-                        {
-                            Course = course,
-                            Subscription = subscription
-                        });
-                    }
-                }
-
-            }
-            */
-
-            // die user und students ergänzen
-            foreach (var participant in model.Participants)
-            {
-                var user = UserManager.FindById(participant.UserId);
-                var student = user != null ? StudentService.GetCurrentStudent(user) : null;
-
-                participant.User = user;
-                participant.Student = student;
-
-            }
-
-
-            var ms = new MemoryStream();
-            var writer = new StreamWriter(ms, Encoding.Default);
-
-            writer.Write(
-                "Name;Vorname;Studiengang;Semester;E-Mail");
-
-            foreach (var modelCourse in model.Courses)
-            {
-                writer.Write(";{0}", modelCourse.CourseSummary.Course.ShortName);
-            }
-
-            writer.Write(Environment.NewLine);
-
-            foreach (var participant in model.Participants)
-            {
-                if (participant.User != null)
-                {
-                    var student = participant.Student;
-                    var group = "";
-                    var sem = "";
-
-                    if (student != null)
-                    {
-                        group = student.Curriculum.ShortName;
-                        sem = student.FirstSemester.Name;
-                    }
-
-
-                    writer.Write("{0};{1};{2};{3};{4}",
-                        participant.User.LastName, participant.User.FirstName,
-                        group, sem,
-                        participant.User.Email);
-
-                    foreach (var modelCourse in model.Courses)
-                    {
-                        var pc = participant.Courses.FirstOrDefault(x => x.Course.Id == modelCourse.CourseSummary.Course.Id);
-
-                        if (pc == null)
-                        {
-                            writer.Write(";");
-                        }
-                        else
-                        {
-                            if (pc.Subscription.OnWaitingList)
-                            {
-                                writer.Write(";WL");
-                            }
-                            else
-                            {
-                                writer.Write(";TN");
-                            }
-                        }
-                    }
-
-                    writer.Write(Environment.NewLine);
-                }
-            }
-
-            writer.Flush();
-            writer.Dispose();
-
-
-
-            var sb = new StringBuilder();
-            sb.Append("Eintragungen");
-            sb.Append(module.ShortName);
-            sb.Append("_");
-            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
-            sb.Append(".csv");
-
-            return File(ms.GetBuffer(), "text/csv", sb.ToString());
-
-
         }
 
     }

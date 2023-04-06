@@ -68,6 +68,29 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<ExaminationFraction> Fractions { get; set; }
 
         public virtual CurriculumModule Module { get; set; }
+
+        public string FullName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                sb.AppendFormat("{0}: ", Name);
+                
+                foreach(var fraction in Fractions)
+                {
+                    if (fraction.MinDuration > 0)
+                    {
+                        sb.AppendFormat("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                    }
+                }
+
+                return sb.ToString();
+            }
+        }
     }
 
     public class ExaminationFraction

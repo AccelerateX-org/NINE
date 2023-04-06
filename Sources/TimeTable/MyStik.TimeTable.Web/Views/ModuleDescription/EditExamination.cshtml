@@ -13,6 +13,7 @@
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
                 {
+                    @Html.HiddenFor(m => m.examinationId)
                     @Html.HiddenFor(m => m.moduleId)
                     @Html.HiddenFor(m => m.semesterId)
                     @Html.HiddenFor(m => m.accredidationId)
@@ -33,13 +34,13 @@
                     <div class="row">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">
-                            <input class="form-control" id="dozId1" name="dozId1" type="text" />
+                            <input class="form-control" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">Zweitprüfer:in</div>
                         <div class="col-8">
-                            <input class="form-control" id="dozId2" name="dozId2" type="text" />
+                            <input class="form-control" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName"/>
                         </div>
                     </div>
                     <div class="row">

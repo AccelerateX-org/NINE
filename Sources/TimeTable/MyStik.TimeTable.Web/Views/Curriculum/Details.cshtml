@@ -70,114 +70,116 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <h5>Allgemeine Informationen</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        @if (Model.Curriculum.Degree != null)
-                        {
-                            <div class="row">
-                                <div class="col-4">
-                                    Abschluss
-                                </div>
-                                <div class="col-8">
-                                    @Model.Curriculum.Degree.Name
-                                </div>
-                            </div>
-                        }
+        <div class="card-body">
+            <h5>Allgemeine Informationen</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    @if (Model.Curriculum.Degree != null)
+                    {
                         <div class="row">
                             <div class="col-4">
-                                ECTS
+                                Abschluss
                             </div>
                             <div class="col-8">
-                                @Model.Curriculum.EctsTarget
+                                @Model.Curriculum.Degree.Name
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Dokumente
-                            </div>
-                            <div class="col-8">
-                                <a href="#">SPO</a>
-                            </div>
+                    }
+                    <div class="row">
+                        <div class="col-4">
+                            ECTS
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Prüfungskommission
-                            </div>
-                            <div class="col-8">
-                                @if (pkv != null)
-                                {
-                                    @pkv.Member.FullName
-                                }
-                                else
-                                {
-                                    <div>N.N.</div>
-                                }
-                            </div>
+                        <div class="col-8">
+                            @Model.Curriculum.EctsTarget
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-12">
-                                <a href="#">Stundenplan @Model.Semester.Name</a>
-                            </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Dokumente
                         </div>
-                        @if (ViewBag.NextSemester != null)
-                        {
-                            <div class="row">
-                                <div class="col-12">
-                                    <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
-                                </div>
-                            </div>
-                        }
-                        <div class="row">
-                            <div class="col-12">
-                                @if (Model.Assessments.Any())
-                                {
-                                    <a href="@Url.Action("Index", "Assessment")" class="">
-                                        Auswahlverfahren
-                                    </a>
-                                }
-                            </div>
+                        <div class="col-8">
+                            <a href="#">SPO</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Prüfungskommission
+                        </div>
+                        <div class="col-8">
+                            @if (pkv != null)
+                            {
+                                @pkv.Member.FullName
+                            }
+                            else
+                            {
+                                <div>N.N.</div>
+                            }
                         </div>
                     </div>
                 </div>
-                <hr/>
-                <h5>Aufbau</h5>
-                @if (showFilter)
-                {
-                    var i = 0;
-                    <div class="form-floating">
-                        <select id="labelSelect" class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
-                            @foreach (var label in ViewBag.FilterLabels)
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="#">Stundenplan @Model.Semester.Name</a>
+                        </div>
+                    </div>
+                    @if (ViewBag.NextSemester != null)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
+                            </div>
+                        </div>
+                    }
+                    <div class="row">
+                        <div class="col-12">
+                            @if (Model.Assessments.Any())
                             {
-                                i++;
-                                if (i == 1)
-                                {
-                                    <option selected value="@label.Name">@label.Name</option>
-                                }
-                                else
-                                {
-                                    <option value="@label.Name">@label.Name</option>
-                                }
-
+                                <a href="@Url.Action("Index", "Assessment")" class="">
+                                    Auswahlverfahren
+                                </a>
                             }
-                        </select>
-                        <label for="floatingSelect">Filterkriterium</label>
+                        </div>
                     </div>
-                    <div id="loading" class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div id="ModulePlan">
-
-                    </div>
-                }
-                else
-                {
-                    @Html.Partial("_ModulePlan", Model)
-                }
+                </div>
             </div>
+            <hr/>
+            <h5>Aufbau</h5>
+            @if (showFilter)
+            {
+                var i = 0;
+                <div class="form-floating">
+                    <select id="labelSelect" class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
+                        @foreach (var label in ViewBag.FilterLabels)
+                        {
+                            i++;
+                            if (i == 1)
+                            {
+                                <option selected value="@label.Name">@label.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@label.Name">@label.Name</option>
+                            }
+
+                        }
+                    </select>
+                    <label for="floatingSelect">Filterkriterium</label>
+                </div>
+                <div id="loading" class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div id="ModulePlan">
+
+                </div>
+            }
+            else
+            {
+                @Html.Partial("_ModulePlan", Model)
+            }
+        </div>
+        @if (Model.Curriculum.Areas.Any())
+        {
             <div class="card-body">
                 <h4 class="card-title">Nach Themengebieten</h4>
                 <ul>
@@ -212,7 +214,7 @@
                             }
                         </ul>
 
-                        for (var s=minSem;s<=maxSem;s++)
+                        for (var s = minSem; s <= maxSem; s++)
                         {
                             var semSlots = allSlots.Where(x => x.Semester == s).ToList();
                             <div>
@@ -244,9 +246,10 @@
                             </div>
                         }
                     }
-                    
+
                 </ul>
             </div>
+        }
         </div>
     </div>
 </div>

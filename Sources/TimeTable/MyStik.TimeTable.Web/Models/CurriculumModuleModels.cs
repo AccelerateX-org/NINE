@@ -13,14 +13,15 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CurriculumModuleCreateModel
     {
-        public Guid CurriculumId { get; set; }
+        public Guid catalogId { get; set; }
+        public Guid moduleId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
 
         [Display(Name = "Fachlicher Schlüssel")]
-        public string ModuleId { get; set; }
+        public string Tag { get; set; }
 
         /// <summary>
         /// 
@@ -34,12 +35,6 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Stundenplankürzel")]
         public string ShortName { get; set; }
 
-
-        public int LectureType { get; set; }
-
-        public bool HasPractice { get; set; }
-        public bool HasTutorium { get; set; }
-        public bool HasLaboratory { get; set; }
     }
 
 
@@ -248,5 +243,17 @@ namespace MyStik.TimeTable.Web.Models
     public class ModuleResponsibleImportModel
        {
         public string tag { get; set; }
+    }
+
+    public class CatalogCreateModel
+    {
+        public Guid catalogId { get; set; }
+        public Guid orgId { get; set; }
+
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Tag { get; set; }
+
+        public ActivityOrganiser Organiser { get; set; }
     }
 }
