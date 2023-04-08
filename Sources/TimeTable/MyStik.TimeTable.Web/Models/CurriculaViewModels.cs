@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models

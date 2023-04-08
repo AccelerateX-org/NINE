@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.Mvc;
-using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers

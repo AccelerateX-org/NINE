@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using MyStik.TimeTable.Data;
 using System;
@@ -10,7 +9,6 @@ using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
-using MyStik.TimeTable.Web.Services;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using Pitchfork.QRGenerator;

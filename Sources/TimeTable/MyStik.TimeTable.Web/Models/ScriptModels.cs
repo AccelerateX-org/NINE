@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using Microsoft.Owin.Security;
 using MyStik.TimeTable.Data;
-using RazorEngine.Compilation.ImpromptuInterface.Build;
 
 namespace MyStik.TimeTable.Web.Models
 {

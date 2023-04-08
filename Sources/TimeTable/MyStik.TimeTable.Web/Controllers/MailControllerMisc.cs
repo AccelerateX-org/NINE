@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
-using System.Net.Configuration;
 using ActionMailer.Net.Mvc;
-using log4net;
 using MyStik.TimeTable.Web.Models;
 using System.Net.Mail;
-using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Controllers
 {

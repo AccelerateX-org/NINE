@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -10,7 +9,6 @@ using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;

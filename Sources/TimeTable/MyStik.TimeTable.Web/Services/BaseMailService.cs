@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Net.Configuration;
-using System.Web;
+﻿using System.IO;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using log4net;
-using MyStik.TimeTable.DataServices.Lottery;
 using Postal;
 
 namespace MyStik.TimeTable.Web.Services

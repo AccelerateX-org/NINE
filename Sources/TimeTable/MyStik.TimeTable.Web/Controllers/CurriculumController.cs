@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
-using System.Windows.Forms;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using Newtonsoft.Json;
-using RazorEngine.Compilation.ImpromptuInterface.InvokeExt;
-using static System.Collections.Specialized.BitVector32;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -1832,5 +1827,48 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(curr);
         }
+
+        /* Noch etwas aufheben
+        public ActionResult HackBABW(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var org = curr.Organiser;
+
+            if (org.Tag.Equals("10") && curr.ShortName.Equals("BABW"))
+            {
+                // alle die mit BABW starten aber nicht BABW sind
+                var allBABWSubCatalogs = org.ModuleCatalogs.Where(x => x.Tag.StartsWith("BABW") && !x.Tag.Equals("BABW")).ToList();
+
+                var babwMainCatalog = org.ModuleCatalogs.SingleOrDefault(x => x.Tag.Equals("BABW"));
+
+                if (babwMainCatalog == null)
+                {
+                    babwMainCatalog = new CurriculumModuleCatalog
+                    {
+                        Name = "BABW alle Module",
+                        Tag = "BABW",
+                        Organiser = org
+                    };
+                    Db.CurriculumModuleCatalogs.Add(babwMainCatalog);
+                }
+
+                foreach (var subCatalog in allBABWSubCatalogs.ToList())
+                {
+                    foreach (var module in subCatalog.Modules.ToList())
+                    {
+                        subCatalog.Modules.Remove(module);
+                        babwMainCatalog.Modules.Add(module);
+                    }
+
+                    org.ModuleCatalogs.Remove(subCatalog);
+                    Db.CurriculumModuleCatalogs.Remove(subCatalog);
+                }
+
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Admin", new { id = id });
+        }
+        */
     }
-    }
+}

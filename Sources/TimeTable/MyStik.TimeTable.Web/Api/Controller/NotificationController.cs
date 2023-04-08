@@ -1,8 +1,6 @@
 ﻿using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
 using System.Web.Http;
-using System.Web.Http.Results;
-using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {

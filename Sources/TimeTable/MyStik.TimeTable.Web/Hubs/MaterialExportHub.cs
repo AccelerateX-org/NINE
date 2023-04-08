@@ -1,11 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.IO.GpUntis;
 using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Hubs

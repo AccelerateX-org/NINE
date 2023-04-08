@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Hangfire;
 using log4net;
-using log4net.Core;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices.Lottery;
 using MyStik.TimeTable.Web.Services;

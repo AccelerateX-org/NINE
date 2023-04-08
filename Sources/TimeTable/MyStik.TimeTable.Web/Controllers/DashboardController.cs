@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
-using MyStik.TimeTable.Web.Helpers;
 
 namespace MyStik.TimeTable.Web.Controllers
 {

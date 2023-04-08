@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Services
 {

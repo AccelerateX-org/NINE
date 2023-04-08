@@ -1,7 +1,5 @@
 using System.Web.Http;
 using System.Web.Http.Description;
-using WebActivatorEx;
-using MyStik.TimeTable.Web;
 using Swashbuckle.Application;
 
 //[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]

@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
 using MyStik.TimeTable.Web.Controllers;
-using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 {

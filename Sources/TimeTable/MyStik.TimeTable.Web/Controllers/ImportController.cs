@@ -7,8 +7,6 @@ using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.IO;
-using MyStik.TimeTable.DataServices.IO.Cie;
-using MyStik.TimeTable.DataServices.IO.Json;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace MyStik.TimeTable.Data
+﻿namespace MyStik.TimeTable.Data
 {
     /*
     public enum ExamState

@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace MyStik.TimeTable.Data
+﻿namespace MyStik.TimeTable.Data
 {
     /*
     public class ExamPaper

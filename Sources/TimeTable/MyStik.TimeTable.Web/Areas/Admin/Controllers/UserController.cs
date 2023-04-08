@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Hangfire;
 using Microsoft.AspNet.Identity;
-using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Controllers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;

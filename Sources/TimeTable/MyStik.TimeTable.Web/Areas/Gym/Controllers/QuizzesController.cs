@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -10,7 +9,6 @@ using System.Web.Mvc;
 using MyStik.Gym.Data;
 using MyStik.TimeTable.Web.Areas.Gym.Models;
 using Newtonsoft.Json;
-using static System.Collections.Specialized.BitVector32;
 
 namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
 {

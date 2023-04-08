@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using MyStik.TimeTable.Data;
+﻿using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Services
 {

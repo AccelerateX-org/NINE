@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
-using System.Web;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using MyStik.TimeTable.Web.Utils;
 using PdfSharp;
-using PdfSharp.Pdf;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers

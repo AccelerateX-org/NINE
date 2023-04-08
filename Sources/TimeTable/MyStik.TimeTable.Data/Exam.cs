@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MyStik.TimeTable.Data
+﻿namespace MyStik.TimeTable.Data
 {
     /*
     public class Exam : Activity

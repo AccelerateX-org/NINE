@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
-using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Api.DTOs;
-using MyStik.TimeTable.Web.Api.Services;
 
 namespace MyStik.TimeTable.Web.Api.Controller
 {

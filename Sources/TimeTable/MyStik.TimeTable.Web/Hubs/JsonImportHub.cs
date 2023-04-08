@@ -6,8 +6,6 @@ using System.Text;
 using Microsoft.AspNet.SignalR;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
-using MyStik.TimeTable.DataServices.IO.Cie;
-using MyStik.TimeTable.DataServices.IO.Json;
 
 namespace MyStik.TimeTable.Web.Hubs
 {

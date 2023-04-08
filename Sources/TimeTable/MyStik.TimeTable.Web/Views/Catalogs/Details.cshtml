@@ -1,5 +1,4 @@
 ﻿@model MyStik.TimeTable.Data.CurriculumModuleCatalog
-@using MyStik.TimeTable.Data
 
 
 @{
@@ -112,7 +111,14 @@
                                            {
                                                if (!string.IsNullOrEmpty(d.Description))
                                                {
-                                                    <li>@d.Description.Count() Zeichen (@d.ChangeLog.LastEdited)</li>
+                                                   if (d.ChangeLog != null)
+                                                   {
+                                                       <li>@d.Description.Count() Zeichen (@d.ChangeLog.LastEdited)</li>
+                                                   }
+                                                   else
+                                                   {
+                                                       <li>@d.Description.Count() Zeichen (Kein ChangeLog)</li>
+                                                   }
                                                }
                                            }
                                        </ul>

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Web.Http;
-using System.Xml.Linq;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Api.Contracts;
 using MyStik.TimeTable.Web.Api.DTOs;
-using MyStik.TimeTable.Web.Api.Responses;
 using MyStik.TimeTable.Web.Api.Services;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;

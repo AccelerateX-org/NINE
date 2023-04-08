@@ -6,7 +6,6 @@ using System.Text;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.Identity;
-using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers

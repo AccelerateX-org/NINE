@@ -8,8 +8,6 @@ using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using MyStik.TimeTable.Data;
-using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers

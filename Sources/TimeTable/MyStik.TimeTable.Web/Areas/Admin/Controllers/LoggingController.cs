@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using MyStik.TimeTable.Web.Areas.Admin.Models;
-using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
 {

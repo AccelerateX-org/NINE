@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using MyStik.TimeTable.Web.Controllers;
 
 namespace MyStik.TimeTable.Web.Areas.Admin.Controllers

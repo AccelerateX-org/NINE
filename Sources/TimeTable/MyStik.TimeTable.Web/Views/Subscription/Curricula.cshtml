@@ -1,5 +1,4 @@
-﻿@using Org.BouncyCastle.Asn1
-@model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
+﻿@model ICollection<MyStik.TimeTable.Web.Models.AlumniViewModel>
 @{
     ViewBag.Title = "Studiengänge";
     var allStudents = Model.OrderBy(x => x.Student.FirstSemester.StartCourses).ToList();

@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Web.Http;
-using System.Web.Http.Results;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using MyStik.TimeTable.Web.Api.DTOs;
 using MyStik.TimeTable.Web.Models;
 

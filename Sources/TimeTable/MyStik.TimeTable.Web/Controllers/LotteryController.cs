@@ -2,21 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
-using Hangfire;
 using log4net;
-using log4net.Core;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.DataServices.Booking;
-using MyStik.TimeTable.DataServices.Booking.Data;
 using MyStik.TimeTable.DataServices.Lottery;
-using MyStik.TimeTable.Web.Jobs;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 

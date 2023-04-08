@@ -10,7 +10,6 @@ using Ical.Net.Serialization;
 using log4net;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
-using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Helpers;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
