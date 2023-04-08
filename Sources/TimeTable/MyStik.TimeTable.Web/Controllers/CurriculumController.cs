@@ -1216,9 +1216,6 @@ namespace MyStik.TimeTable.Web.Controllers
             // Im Augenblick ist es ein Import für einen existierenden Studiengang
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
 
-            // check: keinen Plan zweimal importieren
-            if (curr.Areas.Any())
-                return View();
 
             // Ergänzung von Tags
             curr.Tag = plan.tag;
@@ -1247,39 +1244,51 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var area in plan.areas)
             {
-                var currArea = new CurriculumArea()
+                var currArea = curr.Areas.FirstOrDefault(x => x.Tag.ToUpper().Equals(area.tag));
+
+                if (currArea == null)
                 {
-                    Name = area.name,
-                    Tag = area.tag,
-                    Curriculum = curr
-                };
+                    currArea = new CurriculumArea()
+                    {
+                        Name = area.name,
+                        Tag = area.tag,
+                        Curriculum = curr
+                    };
+                    Db.CurriculumAreas.Add(currArea);
+                }
 
                 foreach (var option in area.options)
                 {
-                    var currOption = new AreaOption()
+                    var currOption = currArea.Options.FirstOrDefault(x => x.Tag.ToUpper().Equals(option.tag.ToUpper()));
+
+                    if (currOption == null)
                     {
-                        Tag = option.tag,
-                        Area = currArea
-                    };
+                        currOption = new AreaOption()
+                        {
+                            Tag = option.tag,
+                            Area = currArea
+                        };
+                        Db.AreaOptions.Add(currOption);
+                    }
 
                     foreach (var slot in option.slots)
                     {
-                        var currSlot = new CurriculumSlot
+                        var currSlot = currOption.Slots.FirstOrDefault(x => x.Tag.ToUpper().Equals(slot.tag.ToUpper()));
+
+                        if (currSlot == null)
                         {
-                            ECTS = slot.ects,
-                            Semester = slot.semester,
-                            Tag = slot.tag,
-                            Name = slot.name,
-                            AreaOption = currOption
-                        };
-
-                        Db.CurriculumSlots.Add(currSlot);
+                            currSlot = new CurriculumSlot
+                            {
+                                ECTS = slot.ects,
+                                Semester = slot.semester,
+                                Tag = slot.tag,
+                                Name = slot.name,
+                                AreaOption = currOption
+                            };
+                            Db.CurriculumSlots.Add(currSlot);
+                        }
                     }
-
-                    Db.AreaOptions.Add(currOption);
                 }
-
-                Db.CurriculumAreas.Add(currArea);
             }
 
             Db.SaveChanges();
@@ -1288,7 +1297,82 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
+        
 
+        public ActionResult ImportMoveAccr(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Curriculum = cur
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ImportMoveAccr(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            AccreditationImportModel plan = null;
+
+            using (var file = System.IO.File.OpenText(tempFile))
+            {
+                var serializer = new JsonSerializer();
+                plan = (AccreditationImportModel)serializer.Deserialize(file, typeof(AccreditationImportModel));
+            }
+
+            if (plan == null)
+                return View();
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            var allSectionSlots = Db.CurriculumSlots
+                .Where(x => x.CurriculumSection != null && x.AreaOption == null &&
+                            x.CurriculumSection.Curriculum.Id == curr.Id).ToList();
+
+            var allAreaSlots = Db.CurriculumSlots
+                .Where(x => x.CurriculumSection == null && x.AreaOption != null &&
+                            x.AreaOption.Area.Curriculum.Id == curr.Id).ToList();
+
+
+            foreach (var accredition in plan.accreditions)
+            {
+                var sectionSlot = allSectionSlots.FirstOrDefault(x => x.FullTag.ToUpper().Equals(accredition.slot));
+                var areaSlot = allAreaSlots.FirstOrDefault(x => x.FullTag.ToUpper().Equals(accredition.areaslot));
+
+                if (sectionSlot != null && areaSlot != null)
+                {
+                    foreach (var moduleAccreditation in sectionSlot.ModuleAccreditations.ToList())
+                    {
+                        // finde die zugehörige
+                        if (moduleAccreditation.LabelSet != null && moduleAccreditation.LabelSet.ItemLabels.Any())
+                        {
+                            var hasLabel =
+                                moduleAccreditation.LabelSet.ItemLabels.Any(x => x.Name.ToUpper().Equals(accredition.label.ToUpper()));
+
+                            if (hasLabel)
+                            {
+                                moduleAccreditation.Slot = areaSlot;
+                            }
+                        }
+                        else
+                        {
+                            moduleAccreditation.Slot = areaSlot;
+                        }
+                    }
+                }
+            }
+            
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
+        }
 
 
         public ActionResult DeleteModulePlan(Guid id)
@@ -1318,7 +1402,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult Accreditation(Guid id)
+        public ActionResult ImportAccreditations(Guid id)
         {
             var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
@@ -1331,7 +1415,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Accreditation(CurriculumImportModel model)
+        public ActionResult ImportAccreditations(CurriculumImportModel model)
         {
             string tempFile = Path.GetTempFileName();
 
@@ -1352,12 +1436,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
 
+            var allAreaSlots = Db.CurriculumSlots
+                .Where(x => x.CurriculumSection == null && x.AreaOption != null &&
+                            x.AreaOption.Area.Curriculum.Id == curr.Id).ToList();
+
+
+
             foreach (var accreditation in plan.accreditions)
             {
-                var slot = Db.CurriculumSlots.FirstOrDefault(x =>
-                    x.Tag.Equals(accreditation.slot) &&
-                    x.CurriculumSection.Curriculum.Id == curr.Id
-                );
+                var slot = allAreaSlots.FirstOrDefault(x =>
+                    x.FullTag.Equals(accreditation.slot));
                 if (slot == null) continue;
 
                 var catWords = accreditation.module.Split(':');
@@ -1376,11 +1464,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (module == null) continue;
 
-                // jetzt nich nach der Akkreditierung suchen
-
-                var moduleAccredition = Db.Accreditations
-                    .FirstOrDefault(x => x.Slot.Id == slot.Id &&
-                                         x.Module.Id == module.Id);
+                var moduleAccredition = slot.ModuleAccreditations.FirstOrDefault(x => x.Module.Id == module.Id);
 
                 if (moduleAccredition == null)
                 {
@@ -1390,49 +1474,6 @@ namespace MyStik.TimeTable.Web.Controllers
                         Module = module,
                     };
                     Db.Accreditations.Add(moduleAccredition);
-                }
-
-                // jetzt  noch die Labels checken
-                if (moduleAccredition.LabelSet == null)
-                {
-                    var accrLabelSet = new ItemLabelSet();
-                    moduleAccredition.LabelSet = accrLabelSet;
-                    Db.ItemLabelSets.Add(accrLabelSet);
-                }
-
-                // das Label
-                if (!string.IsNullOrEmpty(accreditation.label))
-                {
-                    // Test, ob Studiengang schon Labelset hat
-                    var currLabelSet = curr.LabelSet;
-                    if (currLabelSet == null)
-                    {
-                        currLabelSet = new ItemLabelSet();
-                        curr.LabelSet = currLabelSet;
-                        Db.ItemLabelSets.Add(currLabelSet);
-                    }
-
-                    // gibt es das Label schon im Studiengang?
-                    var label = currLabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(accreditation.label));
-
-                    if (label == null)
-                    {
-                        label = new ItemLabel
-                        {
-                            Name = accreditation.label,
-                            HtmlColor = "#ff0000"
-                        };
-
-                        currLabelSet.ItemLabels.Add(label);
-
-                        Db.ItemLabels.Add(label);
-                    }
-
-                    // das Label der Akkreditierung zuordnen
-                    if (!moduleAccredition.LabelSet.ItemLabels.Any(x => x.Name.Equals(label.Name)))
-                    {
-                        moduleAccredition.LabelSet.ItemLabels.Add(label);
-                    }
                 }
             }
 
@@ -1828,6 +1869,15 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(curr);
         }
 
+        public ActionResult Areas(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(curr.Organiser);
+
+            return View(curr);
+        }
+
         /* Noch etwas aufheben
         public ActionResult HackBABW(Guid id)
         {
@@ -1870,5 +1920,5 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new { id = id });
         }
         */
+        }
     }
-}

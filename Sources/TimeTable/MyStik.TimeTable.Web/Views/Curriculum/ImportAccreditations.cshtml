@@ -16,7 +16,7 @@
                 </h4>
             </div>
             <div class="card-body">
-                @using (Html.BeginForm("Accreditation", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                @using (Html.BeginForm("ImportAccreditations", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
                     <fieldset>
                         @Html.HiddenFor(m => m.Curriculum.Id)

@@ -25,6 +25,8 @@
 
     var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
 
+    var db = new TimeTableDbContext();
+
 }
 
 @section styles
@@ -178,13 +180,13 @@
                 @Html.Partial("_ModulePlan", Model)
             }
         </div>
+        
         @if (Model.Curriculum.Areas.Any())
         {
             <div class="card-body">
                 <h4 class="card-title">Nach Themengebieten</h4>
                 <ul>
                     @{
-                        var db = new TimeTableDbContext();
                         var allSlots = db.CurriculumSlots.Where(x =>
                             x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
 
@@ -226,18 +228,18 @@
 
                                         if (inOptionArea == 0)
                                         {
-                                            <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (gilt für alle)</li>
+                                            <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (gilt für alle) - @slot.ModuleAccreditations.Count() Akkreditierungen</li>
                                         }
                                         else
                                         {
                                             var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
                                             if (inSelectedOption > 0)
                                             {
-                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (selektiert)</li>
+                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (selektiert) - @slot.ModuleAccreditations.Count() Akkreditierungen</li>
                                             }
                                             else
                                             {
-                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (nicht selektiert)</li>
+                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (nicht selektiert) - @slot.ModuleAccreditations.Count() Akkreditierungen</li>
                                             }
                                         }
 

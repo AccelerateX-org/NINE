@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace MyStik.TimeTable.Data
 {
@@ -88,5 +89,31 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ModuleAccreditation> ModuleAccreditations { get; set; }
 
+        public string FullTag
+        {
+            get
+            {
+                if (CurriculumSection == null && AreaOption != null)
+                {
+                    return $"{AreaOption.Area.Tag}::{AreaOption.Tag}::{Tag}";
+                }
+                else if (CurriculumSection != null && AreaOption == null)
+                {
+                    if (LabelSet != null && LabelSet.ItemLabels.Any())
+                    {
+                        var label = LabelSet.ItemLabels.First();
+                        return $"{label.Name}::{Tag}";
+                    }
+                    else
+                    {
+                        return Tag;
+                    }
+                }
+                else
+                {
+                    return "#INVALID#";
+                }
+            }
+        }
     }
 }

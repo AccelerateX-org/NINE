@@ -51,12 +51,6 @@
                                 </div>
                                 <p class="mb-1">Aufkleber für Studiengruppen A, B, etc., Studienrichtungen, Sprache, Studienmodell usw.</p>
                             </a>
-                            <a href="@Url.Action("Students", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Studierende</h5>
-                                </div>
-                                <p class="mb-1">Liste aller Studierender (inkl. Alumni)</p>
-                            </a>
                             <a href="@Url.Action("GroupList", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action list-group-item-warning" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Studien- und Kapazitätsgruppen</h5>
@@ -68,21 +62,27 @@
                     <div class="col-md-3">
                         <div class="list-group">
                             <div class="list-group-item list-group-item-dark">
-                                <h5>Aufbau (neu)</h5>
+                                <h5>Aufbau</h5>
                             </div>
-                            <a href="@Url.Action("Import", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                            <a href="@Url.Action("Areas", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Import Modulplan nach Semestern</h5>
+                                    <h5 class="mb-1">Struktur nach Themengebieten</h5>
                                 </div>
-                                <p class="mb-1">Version 1 - Die Slots sind nach Semestern organisiert.</p>
+                                <p class="mb-1">Themengebiete mit Alternativangeboten.</p>
+                            </a>
+                            <a href="@Url.Action("ImportMoveAccr", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">HACK: Move Slots</h5>
+                                </div>
+                                <p class="mb-1">Die Akkreditierungen von Section nach Area.</p>
                             </a>
                             <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Import Modulplan nach Themengebieten</h5>
                                 </div>
-                                <p class="mb-1">Version 2 - Die Slots sind nach Themengebieten organisiert.</p>
+                                <p class="mb-1">Die Slots sind nach Themengebieten organisiert.</p>
                             </a>
-                            <a href="@Url.Action("Accreditation", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                            <a href="@Url.Action("ImportAccreditations", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Import Modulakkreditierungen</h5>
                                 </div>
@@ -101,6 +101,12 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Listen</h5>
                             </div>
+                            <a href="@Url.Action("Students", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Studierende</h5>
+                                </div>
+                                <p class="mb-1">Liste aller Studierender (inkl. Alumni)</p>
+                            </a>
                             <a href="@Url.Action("ExaminationList", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action disabled" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Prüfungsliste</h5>
@@ -127,4 +133,11 @@
         </div>
     </div>
 </div>
+
+<ul>
+    @foreach (var area in Model.Areas)
+    {
+        <li>@area.Tag</li>
+    }
+</ul>
 

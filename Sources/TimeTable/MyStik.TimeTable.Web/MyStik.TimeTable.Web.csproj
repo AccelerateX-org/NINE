@@ -4125,7 +4125,7 @@
     <Content Include="Views\Studies\Apply.cshtml" />
     <Content Include="Views\ScriptPublishing\Details.cshtml" />
     <Content Include="Views\Catalogs\Import.cshtml" />
-    <Content Include="Views\Curriculum\Accreditation.cshtml" />
+    <Content Include="Views\Curriculum\ImportAccreditations.cshtml" />
     <Content Include="Views\Curriculum\SlotDetails.cshtml" />
     <Content Include="Views\Curriculum\Opportunities.cshtml" />
     <Content Include="Views\ModuleDescription\Details.cshtml" />
@@ -4156,6 +4156,8 @@
     <Content Include="Views\Catalogs\EditGeneral.cshtml" />
     <Content Include="Views\Catalogs\EditResponsibilities.cshtml" />
     <Content Include="Views\CurriculumModule\EditResponsibilities.cshtml" />
+    <Content Include="Views\Curriculum\Areas.cshtml" />
+    <Content Include="Views\Curriculum\ImportMoveAccr.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
