@@ -4158,6 +4158,7 @@
     <Content Include="Views\CurriculumModule\EditResponsibilities.cshtml" />
     <Content Include="Views\Curriculum\Areas.cshtml" />
     <Content Include="Views\Curriculum\ImportMoveAccr.cshtml" />
+    <Content Include="Views\Curriculum\_ModuleAreaPlan.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

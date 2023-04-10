@@ -71,6 +71,26 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.FilterLabels = labels.OrderBy(x => x.Name);
 
+            model.Areas = new List<AreaSelectViewModel>();
+
+            var allAreasWithOptions = curr.Areas.Where(x => x.Options.Count > 1).ToList();
+            foreach (var area in allAreasWithOptions)
+            {
+                var optList = area.Options.ToList();
+                optList.Shuffle();
+                var option = optList.First();
+
+                var selectOption = new AreaSelectViewModel
+                {
+                    Area = area,
+                    Option = option,
+                };
+
+                model.Areas.Add(selectOption);
+            }
+
+
+
 
             // hier muss überprüft werden, ob der aktuelle Benutzer
             // der Fakultät des Studiengangs angehört oder nicht
@@ -93,6 +113,36 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_ModulePlan", model);
         }
+
+
+        [HttpPost]
+        public PartialViewResult LoadModulePlanAreas(Guid currId, Guid[] optIds)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new CurriculumViewModel();
+
+            model.Curriculum = curr;
+
+            model.Areas = new List<AreaSelectViewModel>();
+
+            foreach (var optId in optIds)
+            {
+                var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optId);
+
+                var selectOption = new AreaSelectViewModel
+                {
+                    Area = option.Area,
+                    Option = option,
+                };
+
+                model.Areas.Add(selectOption);
+            }
+
+            return PartialView("_ModuleAreaPlan", model);
+        }
+
+        
 
 
 

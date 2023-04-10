@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Controllers;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -42,7 +44,17 @@ namespace MyStik.TimeTable.Web.Models
         public List<Assessment> Assessments { get; set; }
 
         public ItemLabel FilterLabel { get; set; }
+
+        public List<AreaSelectViewModel> Areas { get; set; }
     }
+
+    public class AreaSelectViewModel
+    {
+        public CurriculumArea Area { get; set; }
+
+        public AreaOption Option { get; set; }
+    }
+
 
     /// <summary>
     /// 
