@@ -24,13 +24,30 @@
                             <div class="col-8">
                                 @foreach (var acc in Model.Accreditations)
                                 {
-                                    <div>
-                                        <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">
-                                            @acc.Slot.CurriculumSection.Curriculum.Name
-                                        </a>
-                                        |
-                                        @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
-                                    </div>
+                                    if (acc.Slot.CurriculumSection != null)
+                                    {
+                                        <div>
+                                            <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">
+                                                @acc.Slot.CurriculumSection.Curriculum.Name
+                                            </a>
+                                            |
+                                            @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
+                                        </div>
+                                    }
+                                    else if (acc.Slot.AreaOption != null)
+                                    {
+                                        <div>
+                                            <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">
+                                                @acc.Slot.AreaOption.Area.Curriculum.Name
+                                            </a>
+                                            | @acc.Slot.AreaOption.Area.Tag | @acc.Slot.AreaOption.Tag <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-warning">Slot ohne Zuordnung</div>
+                                    }
+
                                 }
                             </div>
                         </div>

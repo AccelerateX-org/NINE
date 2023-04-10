@@ -23,12 +23,27 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">SPO-Slot @Model.Tag: @Model.Name <span class="badge bg-secondary">@Model.ECTS ECTS</span></h4>
-                <h5 class="card-subtitle">
-                    <a href="@Url.Action("Details", "Curriculum", new {id = Model.CurriculumSection.Curriculum.Id})">
-                        @Model.CurriculumSection.Curriculum.Name (@Model.CurriculumSection.Curriculum.ShortName)
-                    </a> |
-                    @Model.CurriculumSection.Name
-                </h5>
+                @if (Model.CurriculumSection != null)
+                {
+                    <h5 class="card-subtitle">
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.CurriculumSection.Curriculum.Id })">
+                            @Model.CurriculumSection.Curriculum.Name (@Model.CurriculumSection.Curriculum.ShortName)
+                        </a> |
+                        @Model.CurriculumSection.Name
+                    </h5>
+                }
+                else if (Model.AreaOption != null)
+                {
+                    <h5 class="card-subtitle">
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.AreaOption.Area.Curriculum.Id })">
+                            @Model.AreaOption.Area.Curriculum.Name (@Model.AreaOption.Area.Curriculum.ShortName)
+                        </a> | @Model.AreaOption.Area.Tag| @Model.AreaOption.Tag
+                    </h5>
+                }
+                else
+                {
+                    <div class="alert alert-warning">Slot ohne jede Zuordnung</div>
+                }
             </div>
             @if (showFilter)
             {

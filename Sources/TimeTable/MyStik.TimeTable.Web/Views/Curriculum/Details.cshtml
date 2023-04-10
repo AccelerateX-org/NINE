@@ -183,9 +183,24 @@
         
         @if (Model.Curriculum.Areas.Any())
         {
+            var allAreasWithOptions = Model.Curriculum.Areas.Where(x => x.Options.Count > 1).ToList();
+            var optionsSelected = new List<AreaOption>();
+            foreach (var area in allAreasWithOptions)
+            {
+                var optList = area.Options.ToList();
+                optList.Shuffle();
+                optionsSelected.Add(optList.First());
+            }
             <div class="card-body">
                 <h4 class="card-title">Nach Themengebieten</h4>
+                <h5>Alle Optionen</h5>
                 <ul>
+                    @foreach (var opt in optionsSelected)
+                    {
+                        <li>@opt.Area.Tag::@opt.Tag</li>
+                    }
+                </ul>
+                <div>
                     @{
                         var allSlots = db.CurriculumSlots.Where(x =>
                             x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
@@ -197,59 +212,49 @@
 
                         var allOptionTags = allOptions.Select(x => x.Tag).Distinct().ToList();
 
-                        var allAreasWithOptions = Model.Curriculum.Areas.Where(x => x.Options.Count > 1).ToList();
-
-                        var optionsSelected = new List<AreaOption>();
-                        foreach (var area in allAreasWithOptions)
-                        {
-                            var optList = area.Options.ToList();
-                            optList.Shuffle();
-                            optionsSelected.Add(optList.First());
-                        }
-
-
-                        <h5>Alle Optionen</h5>
-                        <ul>
-                            @foreach (var opt in optionsSelected)
-                            {
-                                <li>@opt.Area.Tag::@opt.Tag</li>
-                            }
-                        </ul>
 
                         for (var s = minSem; s <= maxSem; s++)
                         {
                             var semSlots = allSlots.Where(x => x.Semester == s).ToList();
-                            <div>
-                                <h5>Semester @s</h5>
-                                <ul>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <h5>Semester @s</h5>
+                                </div>
+                                <div class="col-md-10">
                                     @foreach (var slot in semSlots)
                                     {
+                                        var showSlot = false;
                                         var inOptionArea = allAreasWithOptions.Count(x => x.Id == slot.AreaOption.Area.Id);
 
                                         if (inOptionArea == 0)
                                         {
-                                            <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (gilt für alle) - @slot.ModuleAccreditations.Count() Akkreditierungen</li>
+                                            showSlot = true;
                                         }
                                         else
                                         {
                                             var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
                                             if (inSelectedOption > 0)
                                             {
-                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (selektiert) - @slot.ModuleAccreditations.Count() Akkreditierungen</li>
+                                                showSlot = true;
                                             }
-                                            else
-                                            {
-                                                <li>@slot.AreaOption.Area.Tag::@slot.AreaOption.Tag::@slot.Tag (nicht selektiert) - @slot.ModuleAccreditations.Count() Akkreditierungen</li>
-                                            }
+                                        }
+                                        if (showSlot)
+                                        {
+                                            var w = (int)(slot.ECTS / 30 * 100);
+                                            <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new { id = slot.Id })">
+                                                <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
+                                                <br/>
+                                                <small>@slot.Name</small>
+                                            </a>
                                         }
 
                                     }
-                                </ul>
+                                </div>
                             </div>
                         }
                     }
 
-                </ul>
+                </div>
             </div>
         }
         </div>
