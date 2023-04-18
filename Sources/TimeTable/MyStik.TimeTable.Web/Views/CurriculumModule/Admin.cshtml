@@ -41,12 +41,15 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Allgemeines</h5>
                             </div>
-                            <a href="@Url.Action("EditGeneral",  new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Einstellungen</h5>
-                                </div>
-                                <p class="mb-1">Bezeichnungen</p>
-                            </a>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <a href="@Url.Action("EditGeneral", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Einstellungen</h5>
+                                    </div>
+                                    <p class="mb-1">Bezeichnungen</p>
+                                </a>
+                            }
                             <a href="@Url.Action("EditResponsibilities", new {id = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Modulverantwortliche</h5>
@@ -60,7 +63,7 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Lehrveranstaltungen</h5>
                             </div>
-                            <a href="@Url.Action("EditTeachingForms", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                            <a href="@Url.Action("EditTeachingForms", new { id = Model.Id })" class="list-group-item list-group-item-action disabled" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Lehrveranstaltungsarten</h5>
                                 </div>
@@ -73,7 +76,7 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Prüfungen</h5>
                             </div>
-                            <a href="@Url.Action("EditExaminationForms", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                            <a href="@Url.Action("EditExaminationForms", new { id = Model.Id })" class="list-group-item list-group-item-action disabled" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Prüfungsformen</h5>
                                 </div>
@@ -86,7 +89,7 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Löschen</h5>
                             </div>
-                            <a href="#" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                            <a href="#" class="list-group-item list-group-item-primary list-group-item-action disabled" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Historie löschen</h5>
                                 </div>

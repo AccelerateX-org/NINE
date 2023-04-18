@@ -51,6 +51,10 @@
                                 <p>Diese Version wurde bisher noch nicht veröffentlicht und kann daher geändert werden.</p>
                             </div>
                         }
+                        <div class="row">
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Details", null, new { id = Model.Module.Id })">Abbrechen</a>
+                            <p>Änderungen werden nicht gespeichert.</p>
+                        </div>
                         @*
                         <div class="row">
                             <a class="btn btn-outline-primary" href="#">Neue Version anlegen</a>

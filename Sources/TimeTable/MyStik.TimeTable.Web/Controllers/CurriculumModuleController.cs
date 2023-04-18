@@ -29,6 +29,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
+            ViewBag.UserRight = GetUserRight(model.Catalog.Organiser);
 
             return View(model);
         }

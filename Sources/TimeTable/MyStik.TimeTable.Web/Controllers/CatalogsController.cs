@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -443,5 +444,79 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return null;
         }
+
+        public ActionResult MoveModules(Guid? id)
+        {
+            // Liste der Organisationen, in der der user aktiv ist
+
+            // Liste der Kataloge, zu dnen Zugang besteht
+            // weil Admin
+            // weil Katalogverantwortlicher
+
+            var user = GetCurrentUser();
+            var org = GetMyOrganisation();
+
+            var model = new MoveModuleModel
+            {
+                Organiser = org,
+                Organises = new List<ActivityOrganiser>()
+            };
+
+            model.Organises.Add(org);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public PartialViewResult GetCatalogs(Guid orgId)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            var currs = org.ModuleCatalogs.ToList();
+
+            var model = currs
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            return PartialView("_CatalogSelectList", model);
+        }
+
+        [HttpPost]
+        public PartialViewResult GetModules(Guid catId, string side)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+
+            var model = catalog.Modules
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            ViewBag.ListName = side + "ModuleList";
+
+            return PartialView("_ModuleListGroup", model);
+        }
+
+        [HttpPost]
+        public ActionResult MoveModulesSave(Guid catId, Guid[] moduleIds)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == catId);
+
+            foreach (var moduleId in moduleIds)
+            {
+                var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+
+                if (catalog == null || module == null) continue;
+                
+                if (catalog.Modules.All(x => x.Id != module.Id))
+                {
+                    module.Catalog = catalog;
+                }
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
     }
+
+
 }

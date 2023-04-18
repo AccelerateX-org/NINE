@@ -201,6 +201,11 @@ namespace MyStik.TimeTable.Web.Models
         public string label { get; set; }
 
         public string areaslot { get; set; }
+
+        public string sourceslot { get; set; }
+
+        public string targetslot { get; set; }
+
     }
 
 

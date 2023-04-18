@@ -653,6 +653,7 @@
     <Compile Include="Models\CandidatureModels.cs" />
     <Compile Include="Models\CantineModels.cs" />
     <Compile Include="Models\BuildingModels.cs" />
+    <Compile Include="Models\CatalogModules.cs" />
     <Compile Include="Models\CieModels.cs" />
     <Compile Include="Models\CourseModels.cs" />
     <Compile Include="Models\CoursePlanModels.cs" />
@@ -4159,6 +4160,9 @@
     <Content Include="Views\Curriculum\Areas.cshtml" />
     <Content Include="Views\Curriculum\ImportMoveAccr.cshtml" />
     <Content Include="Views\Curriculum\_ModuleAreaPlan.cshtml" />
+    <Content Include="Views\Catalogs\MoveModules.cshtml" />
+    <Content Include="Views\Catalogs\_CatalogSelectList.cshtml" />
+    <Content Include="Views\Catalogs\_ModuleListGroup.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

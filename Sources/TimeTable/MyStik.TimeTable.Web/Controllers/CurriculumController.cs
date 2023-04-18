@@ -1380,45 +1380,55 @@ namespace MyStik.TimeTable.Web.Controllers
             if (plan == null)
                 return View();
 
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
-
-            var allSectionSlots = Db.CurriculumSlots
-                .Where(x => x.CurriculumSection != null && x.AreaOption == null &&
-                            x.CurriculumSection.Curriculum.Id == curr.Id).ToList();
-
-            var allAreaSlots = Db.CurriculumSlots
-                .Where(x => x.CurriculumSection == null && x.AreaOption != null &&
-                            x.AreaOption.Area.Curriculum.Id == curr.Id).ToList();
 
 
             foreach (var accredition in plan.accreditions)
             {
-                var sectionSlot = allSectionSlots.FirstOrDefault(x => x.FullTag.ToUpper().Equals(accredition.slot));
-                var areaSlot = allAreaSlots.FirstOrDefault(x => x.FullTag.ToUpper().Equals(accredition.areaslot));
+                var catWordsSource = accredition.sourceslot.Split(':');
+                if (catWordsSource.Length != 9) continue;
 
-                if (sectionSlot != null && areaSlot != null)
+                var catWordsTarget = accredition.targetslot.Split(':');
+                if (catWordsTarget.Length != 9) continue;
+
+                var institutionNameSource = catWordsSource[0];
+                var currNameSource = catWordsSource[2];
+                var areaNameSource = catWordsSource[4];
+                var optionNameSource = catWordsSource[6];
+                var moduleNameSource = catWordsSource[8];
+
+                var institutionNameTarget = catWordsTarget[0];
+                var currNameTarget = catWordsTarget[2];
+                var areaNameTarget = catWordsTarget[4];
+                var optionNameTarget = catWordsTarget[6];
+                var moduleNameTarget = catWordsTarget[8];
+
+                var slotSource = Db.CurriculumSlots.SingleOrDefault(x =>
+                    x.AreaOption != null &&
+                    x.AreaOption.Area.Curriculum.Organiser.Tag.Equals(institutionNameSource) &&
+                    x.AreaOption.Area.Curriculum.Tag.Equals(currNameSource) &&
+                    x.AreaOption.Area.Tag.Equals(areaNameSource) &&
+                    x.AreaOption.Tag.Equals(optionNameSource) &&
+                    x.Tag.Equals(moduleNameSource));
+
+
+                var slotTarget = Db.CurriculumSlots.SingleOrDefault(x =>
+                    x.AreaOption != null &&
+                    x.AreaOption.Area.Curriculum.Organiser.Tag.Equals(institutionNameTarget) &&
+                    x.AreaOption.Area.Curriculum.Tag.Equals(currNameTarget) &&
+                    x.AreaOption.Area.Tag.Equals(areaNameTarget) &&
+                    x.AreaOption.Tag.Equals(optionNameTarget) &&
+                    x.Tag.Equals(moduleNameTarget));
+
+                if (slotSource != null && slotTarget != null)
                 {
-                    foreach (var moduleAccreditation in sectionSlot.ModuleAccreditations.ToList())
+                    foreach (var accreditation in slotSource.ModuleAccreditations.ToList())
                     {
-                        // finde die zugehörige
-                        if (moduleAccreditation.LabelSet != null && moduleAccreditation.LabelSet.ItemLabels.Any())
-                        {
-                            var hasLabel =
-                                moduleAccreditation.LabelSet.ItemLabels.Any(x => x.Name.ToUpper().Equals(accredition.label.ToUpper()));
-
-                            if (hasLabel)
-                            {
-                                moduleAccreditation.Slot = areaSlot;
-                            }
-                        }
-                        else
-                        {
-                            moduleAccreditation.Slot = areaSlot;
-                        }
+                        slotSource.ModuleAccreditations.Remove(accreditation);
+                        slotTarget.ModuleAccreditations.Add(accreditation);
                     }
                 }
             }
-            
+
             Db.SaveChanges();
 
             return RedirectToAction("Details", new { id = model.Curriculum.Id });

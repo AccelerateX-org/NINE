@@ -3,6 +3,18 @@
 
 @{
     ViewBag.Title = "Modulekatalog";
+
+    var itsMe = false;
+    var userId = ViewBag.UserRight.User.Id;
+
+    foreach (var kv in Model.CatalogResponsibilities)
+    {
+        if (!string.IsNullOrEmpty(kv.Member.UserId) && kv.Member.UserId.Equals(userId))
+        {
+            itsMe = true;
+        }
+    }
+
 }
 
 
@@ -33,7 +45,7 @@
                         <a href="@Url.Action("Index", "Catalogs", new {id = Model.Organiser.Id} )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                         {
                             <a href="@Url.Action("Create","CurriculumModule", new {catalogId=Model.Id})" class="btn btn-outline-primary">
                                 <i class="bi-plus"></i> Neues Modul anlegen
@@ -43,6 +55,9 @@
                             </a>
                             <a href="@Url.Action("EditResponsibilities", new {id=Model.Id})" class="btn btn-outline-primary">
                                 <i class="bi-people"></i> Katalogverantwortliche
+                            </a>
+                            <a href="@Url.Action("MoveModules", new {id=Model.Id})" class="btn btn-outline-primary">
+                                <i class="bi-list-check"></i> Zusammensetzung
                             </a>
                             if (Model.Modules.Any())
                             {
