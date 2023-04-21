@@ -113,7 +113,8 @@
                         <th>Tag</th>
                         <th>Beschreibung</th>
                         <th># Module</th>
-                        <th># Modulbeschreibungen</th>
+                        <th># Modulbeschreibung</th>
+                        <th># Prüfungsangebote</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,10 +122,11 @@
                     {
                         <tr>
                             <td><a href="@Url.Action("Details", new {id = cat.Id})">@cat.Name</a></td>
-                            <td>@cat.Organiser.Tag::@cat.Tag</td>
+                            <td>@cat.Organiser.Tag#@cat.Tag</td>
                             <td>@Html.Raw(cat.Description)</td>
                             <td>@cat.Modules.Count</td>
-                            <td>@cat.Modules.Sum(x => x.Descriptions.Count(d => d.Description != null && d.Description.Count() > 0))</td>
+                            <td>@cat.Modules.Sum(x => x.Descriptions.Count(d => d.Description != null && d.Description.Any()))</td>
+                            <td>@cat.Modules.Sum(x => x.Accreditations.Count(d => d.ExaminationDescriptions.Any()))</td>
                         </tr>
                     }
                 </tbody>

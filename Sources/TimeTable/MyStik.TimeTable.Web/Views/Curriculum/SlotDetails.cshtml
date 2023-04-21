@@ -37,10 +37,8 @@
                     <h5 class="card-subtitle">
                         <a href="@Url.Action("Details", "Curriculum", new { id = Model.AreaOption.Area.Curriculum.Id })">
                             @Model.AreaOption.Area.Curriculum.Name (@Model.AreaOption.Area.Curriculum.ShortName)
-                        </a> | @Model.AreaOption.Area.Tag| @Model.AreaOption.Tag
+                        </a> | @Model.FullTag
                     </h5>
-                    <p>@Model.FullTag</p>
-                    <p>@Model.AreaOption.Area.Curriculum.Organiser.Tag::@Model.AreaOption.Area.Curriculum.Tag::@Model.AreaOption.Area.Tag::@Model.AreaOption.Tag::@Model.Tag</p>
                 }
                 else
                 {

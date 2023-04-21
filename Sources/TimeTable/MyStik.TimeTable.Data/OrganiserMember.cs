@@ -144,5 +144,13 @@ namespace MyStik.TimeTable.Data
                 return sb.ToString();
             }
         }
+
+        public string FullTag => $"{Organiser.Tag}#{ShortName}";
+
+        public string Tag
+        {
+            get => ShortName;
+            set => ShortName = value;
+        }
     }
 }

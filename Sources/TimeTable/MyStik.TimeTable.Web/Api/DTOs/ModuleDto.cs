@@ -88,6 +88,69 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string tag { get; set; }
         public string name { get; set; }
 
+        public List<ModuleDescriptionRespDto> responsible { get; set; }
+
+        public List<ModuleDescriptionSlotDto> slots { get; set; }
+
+        public List<ModuleDescriptionInstanceDto> instances { get; set; }
+
+    }
+
+    public class ModuleDescriptionRespDto
+    {
+        public string tag { get; set; }
+    }
+
+    public class ModuleDescriptionSlotDto
+    {
+        public string tag { get; set; }
+    }
+
+    public class ModuleDescriptionInstanceDto
+    {
+        public string semster { get; set; }
+
         public string description { get; set; }
+
+        public List<ModuleDescriptionTeachingDto> teaching { get; set; }
+
+        public List<ModuleDescriptionExamDto> exams { get; set; }
+    }
+
+    public class ModuleDescriptionTeachingDto
+    {
+        public ModuleDescriptionSubjectDto subject { get; set; }
+
+        public List<ModuleDescriptionCourseDto> courses { get; set; }
+    }
+
+    public class ModuleDescriptionSubjectDto
+    {
+        public string tag { get; set; }
+        public string name { get; set; }
+        public double sws { get; set; }
+        public string type { get; set; }
+    }
+
+    public class ModuleDescriptionCourseDto
+    {
+        public string tag { get; set; }
+        public string url { get; set; }
+    }
+
+    public class ModuleDescriptionExamDto
+    {
+        public string first { get; set; }
+        public string second { get; set; }
+        public string conditions { get; set; }
+        public string utilities { get; set; }
+
+        public List<ModuleDescriptionExamFractionDto> fractions { get; set; }
+    }
+
+    public class ModuleDescriptionExamFractionDto
+    {
+        public string tag { get; set; }
+        public double weight { get; set; }
     }
 }

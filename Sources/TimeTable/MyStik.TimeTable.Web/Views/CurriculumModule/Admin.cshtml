@@ -89,12 +89,44 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Löschen</h5>
                             </div>
-                            <a href="#" class="list-group-item list-group-item-primary list-group-item-action disabled" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Historie löschen</h5>
-                                </div>
-                                <p class="mb-1">Keine Funktion hinterlegt - nur Platzhalter.</p>
-                            </a>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+
+                            if (!Model.Accreditations.Any())
+                            {
+                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Modul endgültig löschen</h5>
+                                    </div>
+                                    <p class="mb-1">Das Modul hat keinerlei Verbindungen zu einem Studiengang</p>
+                                </a>
+                            }
+                            else
+                            {
+                                if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
+                                {
+                                    <a href="@Url.Action("Delete", new { id = Model.Id })" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">Modulbeschreibungen löschen</h5>
+                                        </div>
+                                        <p class="mb-1">Löscht nur die Historie der Modulbeschreibunge. Lässt sonst alles unverändert.</p>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Delete", new { id = Model.Id })" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">Modul aus Studiengängen entfernen</h5>
+                                        </div>
+                                        <p class="mb-1">Löscht die Verbindung zu den Studiengängen.</p>
+                                    </a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="list-group-item">Das können im Augenblick nur Administratoren.</div>
+                        }
                         </div>
                     </div>
                 </div>

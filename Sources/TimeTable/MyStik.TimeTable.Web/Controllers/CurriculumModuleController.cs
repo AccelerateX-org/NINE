@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR.Hubs;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
@@ -172,6 +173,57 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
+            if (model.Accreditations.Any())
+            {
+                // so lange es noch Akkreditierungen hat die Struktur nicht löschen
+
+                if (model.Descriptions.Any() || model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
+                {
+                    // so lange es nich Hostorie gibt zuerst diese löschen
+                    foreach (var description in model.Descriptions.ToList())
+                    {
+                        if (description.ChangeLog != null)
+                            Db.ChangeLogs.Remove(description.ChangeLog);
+                        Db.ModuleDescriptions.Remove(description);
+                    }
+
+                    foreach (var accreditation in model.Accreditations.ToList())
+                    {
+                        foreach (var examinationDescription in accreditation.ExaminationDescriptions.ToList())
+                        {
+                            if (examinationDescription.ChangeLog != null)
+                                Db.ChangeLogs.Remove(examinationDescription.ChangeLog);
+
+                            Db.ExaminationDescriptions.Remove(examinationDescription);
+                        }
+
+                        foreach (var teachingDescription in accreditation.TeachingDescriptions.ToList())
+                        {
+                            Db.TeachingDescriptions.Remove(teachingDescription);
+                        }
+                    }
+
+                    Db.SaveChanges();
+                    return RedirectToAction("Admin", new { id = id });
+                }
+
+                foreach (var accreditation in model.Accreditations.ToList())
+                {
+                    Db.Accreditations.Remove(accreditation);
+                }
+
+                Db.SaveChanges();
+                return RedirectToAction("Admin", new { id = id });
+            }
+
+            // so lange es nich Hostorie gibt zuerst diese löschen
+            foreach (var description in model.Descriptions.ToList())
+            {
+                if (description.ChangeLog != null)
+                    Db.ChangeLogs.Remove(description.ChangeLog);
+                Db.ModuleDescriptions.Remove(description);
+            }
+
 
             foreach (var subject in model.ModuleSubjects.ToList())
             {
@@ -192,32 +244,15 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.ExaminationOptions.Remove(option);
             }
 
+            foreach (var moduleResponsibility in model.ModuleResponsibilities.ToList())
+            {
+                Db.ModuleResponsibilities.Remove(moduleResponsibility);
+            }
+
 
             foreach (var moduleCourse in model.ModuleSubjects.ToList())
             {
                 Db.ModuleCourses.Remove(moduleCourse);
-            }
-
-            foreach (var accreditation in model.Accreditations.ToList())
-            {
-                Db.Accreditations.Remove(accreditation);
-            }
-
-            foreach (var description in model.Descriptions.ToList())
-            {
-                /*
-                foreach (var examinationUnit in description.ExaminationUnits.ToList())
-                {
-                    foreach (var aid in examinationUnit.ExaminationAids.ToList())
-                    {
-                        Db.ExaminationAids.Remove(aid);
-                    }
-
-                    Db.ExaminationUnits.Remove(examinationUnit);
-                }
-                */
-
-                Db.ModuleDescriptions.Remove(description);
             }
 
 
@@ -226,6 +261,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 mapping.Module = null;
             }
+
 
             Db.CurriculumModules.Remove(model);
             Db.SaveChanges();
