@@ -45,34 +45,37 @@
                         <a href="@Url.Action("Index", "Catalogs", new {id = Model.Organiser.Id} )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <a href="@Url.Action("Create","CurriculumModule", new {catalogId=Model.Id})" class="btn btn-outline-primary">
+                            <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-plus"></i> Neues Modul anlegen
                             </a>
-                            <a href="@Url.Action("EditGeneral", new {id=Model.Id})" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Allgemeine Angaben
-                            </a>
-                            <a href="@Url.Action("EditResponsibilities", new {id=Model.Id})" class="btn btn-outline-primary">
-                                <i class="bi-people"></i> Katalogverantwortliche
-                            </a>
-                            <a href="@Url.Action("MoveModules", new {id=Model.Id})" class="btn btn-outline-primary">
-                                <i class="bi-list-check"></i> Zusammensetzung
-                            </a>
-                            if (Model.Modules.Any())
-                            {
-                                <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger disabled">
-                                    <i class="bi-trash"></i> Katalog Löschen
-                                </a>
-                            }
-                            else
-                            {
-                                <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Katalog Löschen
-                                </a>
-                            }
                         }
-                    </div>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                            {
+                                <a href="@Url.Action("EditGeneral", new {id=Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Allgemeine Angaben
+                                </a>
+                                <a href="@Url.Action("EditResponsibilities", new {id=Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-people"></i> Katalogverantwortliche
+                                </a>
+                                <a href="@Url.Action("MoveModules", new {id=Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-list-check"></i> Zusammensetzung
+                                </a>
+                                if (Model.Modules.Any())
+                                {
+                                    <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger disabled">
+                                        <i class="bi-trash"></i> Katalog Löschen
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger">
+                                        <i class="bi-trash"></i> Katalog Löschen
+                                    </a>
+                                }
+                            }
+                        </div>
                 </div>
             </div>
             <table id="tabCatalogs" class="table">
