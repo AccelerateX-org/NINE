@@ -238,8 +238,18 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     }
 
 
+    public class CurriculumSlotDto
+    {
+        public string tag { get; set; }
+        
+        public int semester { get; set; }
+
+        public string name { get; set; }
+        
+        public string description { get; set; }
+        
+        public double ects { get; set; }
+    }
+
     #endregion
-
-
-
 }

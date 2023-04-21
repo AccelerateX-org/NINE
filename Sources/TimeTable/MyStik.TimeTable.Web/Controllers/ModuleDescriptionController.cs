@@ -227,7 +227,15 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var accr = module.Accreditations.First();
                 model.accredidationId = accr.Id;
-                model.orgId = accr.Slot.CurriculumSection.Curriculum.Organiser.Id;
+
+                if (accr.Slot.CurriculumSection != null)
+                {
+                    model.orgId = accr.Slot.CurriculumSection.Curriculum.Organiser.Id;
+                }
+                else
+                {
+                    model.orgId = accr.Slot.AreaOption.Area.Curriculum.Organiser.Id;
+                }
 
                 model.Accreditation = accr;
             }
@@ -301,9 +309,18 @@ namespace MyStik.TimeTable.Web.Controllers
             model.moduleId = module.Id;
             model.semesterId = examDesc.Semester.Id;
             model.accredidationId = examDesc.Accreditation.Id;
-            model.orgId = examDesc.Accreditation.Slot.CurriculumSection.Curriculum.Organiser.Id;
-            model.firstMemberId = examDesc.FirstExminer.Id;
-            model.secondMemberId = examDesc.SecondExaminer.Id;
+
+            if (examDesc.Accreditation.Slot.CurriculumSection != null)
+            {
+                model.orgId = examDesc.Accreditation.Slot.CurriculumSection.Curriculum.Organiser.Id;
+            }
+            else
+            {
+                model.orgId = examDesc.Accreditation.Slot.AreaOption.Area.Curriculum.Organiser.Id;
+            }
+
+            model.firstMemberId = examDesc.FirstExminer?.Id ?? Guid.Empty;
+            model.secondMemberId = examDesc.SecondExaminer?.Id ?? Guid.Empty;
             model.Conditions = examDesc.Conditions;
             model.Utilities = examDesc.Utilities;
 

@@ -39,6 +39,20 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult AllModules()
+        {
+            var org = GetMyOrganisation();
+
+            var model = Db.CurriculumModules.Where(x => x.Catalog.Organiser.Id == org.Id).ToList();
+
+            ViewBag.Organiser = org;
+            ViewBag.UserRight = GetUserRight(org);
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+
+            return View(model);
+        }
+
+
 
         public ActionResult Import(Guid id)
         {

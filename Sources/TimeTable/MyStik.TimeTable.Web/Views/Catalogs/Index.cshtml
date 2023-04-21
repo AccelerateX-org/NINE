@@ -82,6 +82,9 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
+                        <a href="@Url.Action("AllModules","Catalogs")" class="btn btn-outline-primary">
+                            <i class="bi-list-columns"></i> Alle Module
+                        </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <a href="@Url.Action("CreateCatalog","Catalogs")" class="btn btn-outline-primary">

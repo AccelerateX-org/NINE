@@ -20,9 +20,9 @@
                         // wenn ja, dann ist das Label identisch
 
                         var showSlot = true;
-                        if (Model.FilterLabel != null && Model.FilterLabel.Name.Contains("::"))
+                        if (Model.FilterLabel != null && Model.FilterLabel.Name.Contains("#"))
                         {
-                            var labelClass = Model.FilterLabel.Name.Split(':')[0] + "::";
+                            var labelClass = Model.FilterLabel.Name.Split('#')[0] + "#";
                             if (slot.LabelSet.ItemLabels.Any(x => x.Name.StartsWith(labelClass)))
                             {
                                 if (slot.LabelSet.ItemLabels.Any(x => x.Name.Equals(Model.FilterLabel.Name)))

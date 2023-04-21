@@ -95,14 +95,14 @@ namespace MyStik.TimeTable.Data
             {
                 if (CurriculumSection == null && AreaOption != null)
                 {
-                    return $"{AreaOption.Area.Tag}::{AreaOption.Tag}::{Tag}";
+                    return $"{AreaOption.Area.Tag}#{AreaOption.Tag}#{Tag}";
                 }
                 else if (CurriculumSection != null && AreaOption == null)
                 {
                     if (LabelSet != null && LabelSet.ItemLabels.Any())
                     {
                         var label = LabelSet.ItemLabels.First();
-                        return $"{label.Name}::{Tag}";
+                        return $"{label.Name}#{Tag}";
                     }
                     else
                     {

@@ -83,4 +83,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string Info { get; set; }
     }
 
+    public class ModuleDescriptionDto
+    {
+        public string tag { get; set; }
+        public string name { get; set; }
+
+        public string description { get; set; }
+    }
 }

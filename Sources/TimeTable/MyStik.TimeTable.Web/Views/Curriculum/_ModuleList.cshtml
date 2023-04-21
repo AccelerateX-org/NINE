@@ -8,9 +8,9 @@
 
         if (module.LabelSet != null && module.LabelSet.ItemLabels.Any() && ViewBag.FilterLabel != null)
         {
-            if (ViewBag.FilterLabel != null && ViewBag.FilterLabel.Name.Contains("::"))
+            if (ViewBag.FilterLabel != null && ViewBag.FilterLabel.Name.Contains("#"))
             {
-                var labelClass = ViewBag.FilterLabel.Name.Split(':')[0] + "::";
+                var labelClass = ViewBag.FilterLabel.Name.Split('#')[0] + "#";
                 if (module.LabelSet.ItemLabels.Any(x => x.Name.StartsWith(labelClass)))
                 {
                     if (module.LabelSet.ItemLabels.Any(x => x.Name.Equals(ViewBag.FilterLabel.Name)))

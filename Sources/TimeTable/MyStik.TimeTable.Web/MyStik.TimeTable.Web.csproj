@@ -4163,6 +4163,7 @@
     <Content Include="Views\Catalogs\MoveModules.cshtml" />
     <Content Include="Views\Catalogs\_CatalogSelectList.cshtml" />
     <Content Include="Views\Catalogs\_ModuleListGroup.cshtml" />
+    <Content Include="Views\Catalogs\AllModules.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1384,23 +1384,23 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var accredition in plan.accreditions)
             {
-                var catWordsSource = accredition.sourceslot.Split(':');
-                if (catWordsSource.Length != 9) continue;
+                var catWordsSource = accredition.sourceslot.Split('#');
+                if (catWordsSource.Length != 5) continue;
 
-                var catWordsTarget = accredition.targetslot.Split(':');
-                if (catWordsTarget.Length != 9) continue;
+                var catWordsTarget = accredition.targetslot.Split('#');
+                if (catWordsTarget.Length != 5) continue;
 
                 var institutionNameSource = catWordsSource[0];
-                var currNameSource = catWordsSource[2];
-                var areaNameSource = catWordsSource[4];
-                var optionNameSource = catWordsSource[6];
-                var moduleNameSource = catWordsSource[8];
+                var currNameSource = catWordsSource[1];
+                var areaNameSource = catWordsSource[2];
+                var optionNameSource = catWordsSource[3];
+                var moduleNameSource = catWordsSource[4];
 
                 var institutionNameTarget = catWordsTarget[0];
-                var currNameTarget = catWordsTarget[2];
-                var areaNameTarget = catWordsTarget[4];
-                var optionNameTarget = catWordsTarget[6];
-                var moduleNameTarget = catWordsTarget[8];
+                var currNameTarget = catWordsTarget[1];
+                var areaNameTarget = catWordsTarget[2];
+                var optionNameTarget = catWordsTarget[3];
+                var moduleNameTarget = catWordsTarget[4];
 
                 var slotSource = Db.CurriculumSlots.SingleOrDefault(x =>
                     x.AreaOption != null &&
@@ -1508,12 +1508,12 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.FullTag.Equals(accreditation.slot));
                 if (slot == null) continue;
 
-                var catWords = accreditation.module.Split(':');
-                if (catWords.Length != 5) continue;
+                var catWords = accreditation.module.Split('#');
+                if (catWords.Length != 3) continue;
 
                 var institutionName = catWords[0];
-                var catalogName = catWords[2];
-                var moduleName = catWords[4];
+                var catalogName = catWords[1];
+                var moduleName = catWords[2];
 
 
                 var module = Db.CurriculumModules.FirstOrDefault(x => 
@@ -1580,13 +1580,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
             foreach (var accreditation in plan.opportunities)
             {
-                var catWords = accreditation.subject.Split(':');
-                if (catWords.Length != 7) continue;
+                var catWords = accreditation.subject.Split('#');
+                if (catWords.Length != 4) continue;
 
                 var orgName = catWords[0];
-                var catalogName = catWords[2];
-                var moduleName = catWords[4];
-                var subjectName = catWords[6];
+                var catalogName = catWords[1];
+                var moduleName = catWords[2];
+                var subjectName = catWords[3];
 
 
                 var module = Db.ModuleCourses.FirstOrDefault(x =>

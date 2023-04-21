@@ -41,13 +41,28 @@
                     <div class="row">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">
-                            <input class="form-control" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName" />
+
+                            @if (Model.FirstMember != null)
+                            {
+                                <input class="form-control" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName"/>
+                            }
+                            else
+                            {
+                                <input class="form-control" id="dozId1" name="dozId1" type="text" />
+                            }
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">Zweitprüfer:in</div>
                         <div class="col-8">
-                            <input class="form-control" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName"/>
+                            @if (Model.SecondMember != null)
+                            {
+                                <input class="form-control" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName" />
+                            }
+                            else
+                            {
+                                <input class="form-control" id="dozId2" name="dozId2" type="text" />
+                            }
                         </div>
                     </div>
                     <div class="row">
