@@ -73,6 +73,12 @@
                         <div class="row">
                             <div class="col-4">
                                 <div>Katalog-/Modulverantwortung</div>
+                                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                                {
+                                    <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-keyboard"></i> Ändern
+                                    </a>
+                                }
                             </div>
                             <div class="col-8">
                                 @foreach (var mv in Model.Catalog.CatalogResponsibilities)
@@ -127,7 +133,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="d-md-flex justify-content-md-end">
-                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <a href="@Url.Action("Admin","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
                                     <i class="bi-gear"></i> Verwalten

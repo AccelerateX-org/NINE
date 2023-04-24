@@ -49,10 +49,12 @@
                             var iExamOption = 0;
                             var sem = module.Descriptions.GroupBy(x => x.Semester);
 
+                            var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
+
                             <tr>
                                 <td>
                                     <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
-                                        @module.Name
+                                        @moduleName
                                     </a>
                                 </td>
                                 <td>@module.FullTag</td>
