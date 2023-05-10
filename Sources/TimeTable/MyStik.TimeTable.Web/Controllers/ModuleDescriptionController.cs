@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
@@ -347,14 +348,16 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult EditExamination(ExaminationEditModel model)
         {
             var user = GetCurrentUser();
+            var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == model.examinationId);
+
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
             var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.semesterId);
+            
             var examOption = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.examOptId);
             var firstMember = Db.Members.SingleOrDefault(x => x.Id == model.firstMemberId);
             var secondMember = Db.Members.SingleOrDefault(x => x.Id == model.secondMemberId);
 
-            var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == model.examinationId);
 
             var changeLog = examDesc.ChangeLog;
 
@@ -376,6 +379,8 @@ namespace MyStik.TimeTable.Web.Controllers
             examDesc.SecondExaminer = secondMember;
             examDesc.Conditions = model.Conditions;
             examDesc.Utilities = model.Utilities;
+
+            Db.Entry(examDesc).State = EntityState.Modified;
 
             Db.SaveChanges();
 

@@ -48,13 +48,13 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Title,Problem,Description")] Question question)
+        public ActionResult Create(QuestionCreateModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = GetCurrentUser();
 
-                question.Id = Guid.NewGuid();
+                var question = new Question();
 
                 var author = db.Authors.SingleOrDefault(x => x.UserId.Equals(user.Id));
                 if (author == null)
@@ -68,12 +68,13 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
 
                 question.Author = author;
 
+
                 db.Questions.Add(question);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(question);
+            return View(model);
         }
 
         // GET: Gym/Questions/Edit/5
@@ -88,6 +89,25 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
             {
                 return HttpNotFound();
             }
+
+            // den Autor ergänzen
+            if (question.Author == null)
+            {
+                var user = GetCurrentUser();
+                var author = db.Authors.SingleOrDefault(x => x.UserId.Equals(user.Id));
+                if (author == null)
+                {
+                    author = new Author
+                    {
+                        UserId = user.Id
+                    };
+                    db.Authors.Add(author);
+                }
+
+                question.Author = author;
+                db.SaveChanges();
+            }
+
             return View(question);
         }
 
@@ -102,6 +122,7 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
             {
                 db.Entry(question).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             return View(question);
@@ -191,5 +212,10 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
             return null;
         }
 
+        public ActionResult EditAnswer(Guid id)
+        {
+
+            return View();
+        }
     }
 }

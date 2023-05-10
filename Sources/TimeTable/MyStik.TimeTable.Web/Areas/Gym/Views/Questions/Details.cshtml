@@ -4,7 +4,21 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+
+<div class="row">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Frage</h4>
+        </div>
+        <div class="card-body">
+            <div class="input-group mb-3">
+                <label for="title" class="col-sm-4 col-form-label">Titel (interne Bezeichnung)</label>
+                <input id="title" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1" readonly="" value="@Model.Title">
+                <button class="btn btn-outline-primary" type="button" id="btn_title" data-bs-toggle="modal" data-bs-target="#titleModal"><i class="bi-pencil"></i> Ändern</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div>
     <h4>Question</h4>

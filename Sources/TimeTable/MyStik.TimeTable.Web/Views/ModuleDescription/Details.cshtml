@@ -31,11 +31,30 @@
                         <h4 class="card-title">Modul @Model.Tag: @Model.Name</h4>
                         <div class="alert alert-info">
                             <strong>Hinweis:</strong>
-                            <p>Derzeit wird das Informationsangebot aufgebaut sowie die Funktionsfähigkeit der Software in diesem Bereich erprobt. 
-                                Von daher haben die hier dargestellten Inhalte zum jetzigen Zeitpunkt keinerlei Relevanz. 
-                                Rückfragen an <a href="mailto:hinz+nine@hm.edu">Prof. Dr.-Ing. Olav Hinz</a></p>
+                            <p>
+                                Derzeit wird das Informationsangebot aufgebaut sowie die Funktionsfähigkeit der Software in diesem Bereich erprobt.
+                                Von daher haben die hier dargestellten Inhalte zum jetzigen Zeitpunkt keinerlei Relevanz.
+                                Rückfragen an <a href="mailto:hinz+nine@hm.edu">Prof. Dr.-Ing. Olav Hinz</a>
+                            </p>
 
                         </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="d-md-flex justify-content-md-end">
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <a href="@Url.Action("Admin","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Verwalten
+                                </a>
+                            }
+                            <div id="loading" class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
                         <div class="row">
                             <div class="col-4">
                                 <div>Zugehörigkeit zu Curriculum</div>
@@ -55,16 +74,19 @@
                                     }
                                     else if (acc.Slot.AreaOption != null)
                                     {
-                                        <div>
-                                            <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">
-                                                @acc.Slot.AreaOption.Area.Curriculum.Name
-                                            </a>
-                                            | @acc.Slot.AreaOption.Area.Tag | @acc.Slot.AreaOption.Tag <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
-                                        </div>
+                            <div>
+                                <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">
+                                    @acc.Slot.AreaOption.Area.Curriculum.Name
+                                </a> | 
+                                <a href="@Url.Action("SlotDetails", "Curriculum", new {id = acc.Slot.Id})">
+                                    @acc.Slot.Tag
+                                </a> | 
+                                <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
+                            </div>
                                     }
                                     else
                                     {
-                                        <div class="alert alert-warning">Slot ohne Zuordnung</div>
+                                        <div class="alert alert-warning">Modul ohne Zuordnung</div>
                                     }
 
                                 }
@@ -85,7 +107,6 @@
                                 {
                                     <div>@mv.Member.FullName</div>
                                 }
-                                <hr/>
                                 @foreach (var mv in Model.ModuleResponsibilities)
                                 {
                                     <div>@mv.Member.FullName</div>
@@ -105,7 +126,7 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
-                                <div>Fächer</div>
+                                <div>Lehr- und Lernformen</div>
                             </div>
                             <div class="col-8">
                                 @foreach (var subject in Model.ModuleSubjects)
@@ -122,31 +143,37 @@
 
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="row">
                             <div class="col-4">
-                                <div>Stand</div>
+                                <div>Voraussetzungen für die Teilnahme</div>
                             </div>
                             <div class="col-8">
-                                @Html.DropDownList("Semester", (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-select", onchange = "onSemesterChanged()" })
+                                <div class="alert alert-secondary">Hier kommt ein Freitextfeld hin</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="d-md-flex justify-content-md-end">
-                            @if (ViewBag.UserRight.IsCurriculumAdmin)
-                            {
-                                <a href="@Url.Action("Admin","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-gear"></i> Verwalten
-                                </a>
-                            }
-                            <div id="loading" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                        <div class="row">
+                            <div class="col-4">
+                                <div>Verwendbarkeit</div>
+                            </div>
+                            <div class="col-8">
+                                <div class="alert alert-secondary">Hier kommt eine Liste aller Module hin (gerichteter Graph)</div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <h5>Stand</h5>
+                    </div>
+                    <div class="col-8">
+                        @Html.DropDownList("Semester", (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-select", onchange = "onSemesterChanged()" })
+                    </div>
+                </div>
                 <div id="moduleDesc"></div>
             </div>
         </div>

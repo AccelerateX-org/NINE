@@ -109,9 +109,8 @@
             <table id="tabCatalogs" class="table">
                 <thead>
                     <tr>
-                        <th>Name</th>
                         <th>Tag</th>
-                        <th>Beschreibung</th>
+                        <th>Name</th>
                         <th># Module</th>
                         <th># Modulbeschreibung</th>
                         <th># Prüfungsangebote</th>
@@ -121,9 +120,8 @@
                     @foreach (var cat in Model.Organiser.ModuleCatalogs)
                     {
                         <tr>
+                            <td>@cat.Tag</td>
                             <td><a href="@Url.Action("Details", new {id = cat.Id})">@cat.Name</a></td>
-                            <td>@cat.Organiser.Tag#@cat.Tag</td>
-                            <td>@Html.Raw(cat.Description)</td>
                             <td>@cat.Modules.Count</td>
                             <td>@cat.Modules.Sum(x => x.Descriptions.Count(d => d.Description != null && d.Description.Any()))</td>
                             <td>@cat.Modules.Sum(x => x.Accreditations.Count(d => d.ExaminationDescriptions.Any()))</td>

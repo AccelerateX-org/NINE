@@ -552,7 +552,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 var shortName = model.ShortName.Trim().ToUpper();
 
-                if (member.Organiser.Members.Any(x => x.Id != member.Id && x.ShortName.ToUpper().Equals(shortName)))
+                if (member.Organiser.Members.Any(x => x.Id != member.Id && 
+                                                      !string.IsNullOrEmpty(x.ShortName) && 
+                                                      x.ShortName.ToUpper().Equals(shortName)))
                 {
                     ModelState.AddModelError("", "Diesen Kurznamen gibt es schon bei jemand anderem");
                     return View(model);

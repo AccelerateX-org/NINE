@@ -76,78 +76,86 @@
                 </div>
             </div>
             <div class="card-body">
-                <h5>Allgemeine Informationen</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        @if (Model.Curriculum.Degree != null)
-                        {
-                            <div class="row">
-                                <div class="col-4">
-                                    Abschluss
-                                </div>
-                                <div class="col-8">
-                                    @Model.Curriculum.Degree.Name
-                                </div>
-                            </div>
-                        }
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Allgemeine Informationen</h5>
+                    @if (Model.Curriculum.Degree != null)
+                    {
                         <div class="row">
                             <div class="col-4">
-                                ECTS
+                                Abschluss
                             </div>
                             <div class="col-8">
-                                @Model.Curriculum.EctsTarget
+                                @Model.Curriculum.Degree.Name
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Dokumente
-                            </div>
-                            <div class="col-8">
-                                <a href="#">SPO</a>
-                            </div>
+                    }
+                    <div class="row">
+                        <div class="col-4">
+                            ECTS
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Prüfungskommission
-                            </div>
-                            <div class="col-8">
-                                @if (pkv != null)
-                                {
-                                    @pkv.Member.FullName
-                                }
-                                else
-                                {
-                                    <div>N.N.</div>
-                                }
-                            </div>
+                        <div class="col-8">
+                            @Model.Curriculum.EctsTarget
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-12">
-                                <a href="#">Stundenplan @Model.Semester.Name</a>
-                            </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Dokumente
                         </div>
-                        @if (ViewBag.NextSemester != null)
-                        {
-                            <div class="row">
-                                <div class="col-12">
-                                    <a href="#">Stundenplan @ViewBag.NextSemester.Name</a>
-                                </div>
-                            </div>
-                        }
-                        <div class="row">
-                            <div class="col-12">
-                                @if (Model.Assessments.Any())
-                                {
-                                    <a href="@Url.Action("Index", "Assessment")" class="">
-                                        Auswahlverfahren
-                                    </a>
-                                }
-                            </div>
+                        <div class="col-8">
+                            <a href="#">SPO</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Prüfungskommission
+                        </div>
+                        <div class="col-8">
+                            @if (pkv != null)
+                            {
+                                @pkv.Member.FullName
+                            }
+                            else
+                            {
+                                <div>N.N.</div>
+                            }
                         </div>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <h5>@Model.Semester.Name</h5>
+                    <div class="row">
+                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan </a>
+                    </div>
+                    <div class="row">
+                        <a class="disabled" href="#">Stundenplan </a>
+                    </div>
+                    <div class="row">
+                        <a class="disabled" href="#">Prüfungsplan </a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h5>@Model.NextSemester.Name</h5>
+                    <div class="row">
+                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan </a>
+                    </div>
+                    <div class="row">
+                        <a class="disabled" href="#">Stundenplan </a>
+                    </div>
+                    <div class="row">
+                        <a class="disabled" href="#">Prüfungsplan </a>
+                    </div>
+                    @if (Model.Assessments.Any())
+                    {
+                        <div class="row">
+                            <a href="@Url.Action("Index", "Assessment")" class="">
+                                Auswahlverfahren
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
                 <hr />
                 @if (Model.Curriculum.Areas.Any())
                 {

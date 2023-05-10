@@ -1,51 +1,125 @@
-﻿@model MyStik.Gym.Data.Question
+﻿@model MyStik.TimeTable.Web.Areas.Gym.Models.QuestionCreateModel
 
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Question</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neue Frage anlegen</h4>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Problem, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Problem, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Problem, "", new { @class = "text-danger" })
+            <div class="list-group">
+                <div class="list-group-item">
+                    @Html.ActionLink("Back to List", "Index")
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            <div class="card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.CatalogId, htmlAttributes: new { @class = "col-form-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.CatalogId, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CatalogId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            Vergabe von Kennzeichnung nach persönlichen Vorlieben
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "col-form-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            Eigener Titel, wird in den Quizzes nicht angezeigt
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-form-label col-md-2">Fragestellung</label>
+                        <div class="col-md-6">
+                            @Html.TextAreaFor(model => model.Problem, new { htmlAttributes = new { @class = "form-control", rows = 10 } })
+                            @Html.ValidationMessageFor(model => model.Problem, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            Frage- oder Aufgabenstellung
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "col-form-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", rows = 10 } })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            Zusätzliche Beschreibung oder Erläuterung für Studierende.
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-2 form-label">Antworten</div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-2">Antwort ist korrekt</div>
+                                <div class="col-md-10">Antwortstext</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    @Html.CheckBoxFor(m => m.IsAnswerACorrect, new { @class="form-input-check" })
+                                </div>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                </div>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                </div>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                </div>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Create" class="btn btn-default" />
+                        </div>
+                    </div>
+                }
+
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+
+
+

@@ -81,26 +81,31 @@
             <table id="tabCatalogs" class="table">
                 <thead>
                     <tr>
-                        <th>Bezeichnung</th>
                         <th>Tag</th>
+                        <th>Bezeichnung</th>
                         <th>Modulverantwortung</th>
                         <th>Fächer</th>
-                        <th>Modulbeschreibungen</th>
+                        <th>@ViewBag.CurrentSemester.Name</th>
+                        <th>@ViewBag.NextSemester.Name</th>
                     </tr>
                 </thead>
                 <tbody>
                         @foreach (var module in Model.Modules)
                         {
-                            var iExamOption = 0;
-                            var sem = module.Descriptions.GroupBy(x => x.Semester);
+                            var hasCurrentDesc = module.Descriptions.Any(x => x.Semester.Id == ViewBag.CurrentSemester.Id) &&
+                                                 module.Accreditations.Any(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == ViewBag.CurrentSemester.Id));
+                            var hasNextDesc = module.Descriptions.Any(x => x.Semester.Id == ViewBag.NextSemester.Id) &&
+                                              module.Accreditations.Any(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == ViewBag.NextSemester.Id));
+
+                            var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
 
                             <tr>
+                                <td>@module.Tag</td>
                                 <td>
                                     <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
-                                        @module.Name
+                                        @moduleName
                                     </a>
                                 </td>
-                                <td>@module.FullTag</td>
                                 @if (module.ModuleResponsibilities.Any())
                                 {
                                     <td>
@@ -120,28 +125,22 @@
                                         <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
                                     }
                                 </td>
-                                <td>
-                                    @foreach (var s in sem)
-                                    {
-                                       <div>@s.Key.Name</div>
-                                       <ul>
-                                           @foreach (var d in s)
-                                           {
-                                               if (!string.IsNullOrEmpty(d.Description))
-                                               {
-                                                   if (d.ChangeLog != null)
-                                                   {
-                                                       <li>@d.Description.Count() Zeichen (@d.ChangeLog.LastEdited)</li>
-                                                   }
-                                                   else
-                                                   {
-                                                       <li>@d.Description.Count() Zeichen (Kein ChangeLog)</li>
-                                                   }
-                                               }
-                                           }
-                                       </ul>
-                                    }
-                                </td>
+                                @if (hasCurrentDesc)
+                                {
+                                    <td><i class="bi-check text-success"></i><span hidden="">1</span></td>
+                                }
+                                else
+                                {
+                                    <td><i class="bi-x text-danger"></i><span hidden="">0</span></td>
+                                }
+                                @if (hasNextDesc)
+                                {
+                                    <td><i class="bi-check text-success"></i><span hidden="">1</span></td>
+                                }
+                                else
+                                {
+                                    <td><i class="bi-x text-danger"></i><span hidden="">0</span></td>
+                                }
                             </tr>
                         }
                 </tbody>

@@ -471,11 +471,14 @@
     <Compile Include="Areas\Fillter\FillterAreaRegistration.cs" />
     <Compile Include="Areas\Gym\Controllers\GymBaseController.cs" />
     <Compile Include="Areas\Gym\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuestionCatalogsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuizzesController.cs" />
     <Compile Include="Areas\Gym\GymAreaRegistration.cs" />
     <Compile Include="Areas\Gym\Models\QuestionIOModels.cs" />
+    <Compile Include="Areas\Gym\Models\QuestionViewModels.cs" />
     <Compile Include="Areas\Gym\Models\QuizIOModels.cs" />
+    <Compile Include="Areas\Gym\Services\RoleService.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
     <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
@@ -561,6 +564,7 @@
     <Compile Include="Controllers\ScriptShopController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Controllers\StudiesController.cs" />
+    <Compile Include="Controllers\StudyPlanController.cs" />
     <Compile Include="Controllers\StudyRoomController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Controllers\ThesisAdminController.cs" />
@@ -695,6 +699,7 @@
     <Compile Include="Models\SemesterModels.cs" />
     <Compile Include="Models\StudentsModels.cs" />
     <Compile Include="Models\StudyBookModels.cs" />
+    <Compile Include="Models\StudyPlanModels.cs" />
     <Compile Include="Models\SubscriptionModels.cs" />
     <Compile Include="Models\SupervisionModels.cs" />
     <Compile Include="Models\TeachingModels.cs" />
@@ -4165,6 +4170,7 @@
     <Content Include="Views\Catalogs\_CatalogSelectList.cshtml" />
     <Content Include="Views\Catalogs\_ModuleListGroup.cshtml" />
     <Content Include="Views\Catalogs\AllModules.cshtml" />
+    <Content Include="Views\StudyPlan\Details.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4177,6 +4183,7 @@
     <Folder Include="Areas\Fillter\Models\" />
     <Folder Include="Areas\Gym\Data\" />
     <Folder Include="Areas\Gym\Views\GymBase\" />
+    <Folder Include="Areas\Gym\Views\QuestionCatalogs\" />
     <Folder Include="Areas\Lab\Models\" />
     <Folder Include="Content\pages\" />
     <Folder Include="NavigationRoutes\" />

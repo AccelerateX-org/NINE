@@ -147,10 +147,6 @@ namespace MyStik.TimeTable.Data
 
         public string FullTag => $"{Organiser.Tag}#{ShortName}";
 
-        public string Tag
-        {
-            get => ShortName;
-            set => ShortName = value;
-        }
+        public string Tag => ShortName;
     }
 }

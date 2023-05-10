@@ -24,6 +24,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = GetUserRight(org);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+            ViewBag.NextSemester = SemesterService.GetNextSemester(DateTime.Today);
 
             return View(model);
         }
@@ -35,6 +36,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = GetUserRight(model.Organiser);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+            ViewBag.NextSemester = SemesterService.GetNextSemester(DateTime.Today);
 
             return View(model);
         }
@@ -48,6 +50,7 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.Organiser = org;
             ViewBag.UserRight = GetUserRight(org);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+            ViewBag.NextSemester = SemesterService.GetNextSemester(DateTime.Today);
 
             return View(model);
         }

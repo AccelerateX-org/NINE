@@ -24,7 +24,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new CurriculumViewModel();
 
             model.Curriculum = curr;
-            model.Semester = GetSemesterFromFilter();
+            model.Semester = SemesterService.GetSemester(DateTime.Today);
+            model.NextSemester = SemesterService.GetNextSemester(DateTime.Today);
 
             ViewBag.NextSemester = SemesterService.GetNextSemester(model.Semester);
 
@@ -1454,6 +1455,27 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.CurriculumSections.Remove(section);
             }
+
+            foreach (var area in cur.Areas.ToList())
+            {
+                foreach (var option in area.Options.ToList())
+                {
+                    foreach (var slot in option.Slots.ToList())
+                    {
+                        foreach (var accreditation in slot.ModuleAccreditations.ToList())
+                        {
+                            Db.Accreditations.Remove(accreditation);
+                        }
+
+                        Db.CurriculumSlots.Remove(slot);
+                    }
+
+                    Db.AreaOptions.Remove(option);
+                }
+
+                Db.CurriculumAreas.Remove(area);
+            }
+
 
             Db.SaveChanges();
 

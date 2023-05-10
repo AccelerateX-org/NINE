@@ -39,6 +39,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public Semester Semester { get; set; }
 
+        public Semester NextSemester { get; set; }
+
         public List<Semester> ActiveSemesters { get; set; }
 
         public List<Assessment> Assessments { get; set; }

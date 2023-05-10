@@ -11,6 +11,7 @@ namespace MyStik.Gym.Data
 
         /// <summary>
         /// Ein fachlicher Schlüssel der Frage nach freier Vergabe durch den Autor
+        /// ist sozusagen ein privater Schlüssel, kann nur durch den Autor verändert werden
         /// </summary>
         public string CatalogId { get; set; }
 

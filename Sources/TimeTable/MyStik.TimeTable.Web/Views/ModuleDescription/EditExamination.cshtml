@@ -7,8 +7,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Neues Prüfungsangebot</h4>
-                <p>weitere Details zum zugehörigen Modul</p>
+                <h4>Prüfungsangebot ändern</h4>
             </div>
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
@@ -41,28 +40,13 @@
                     <div class="row">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">
-
-                            @if (Model.FirstMember != null)
-                            {
-                                <input class="form-control" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName"/>
-                            }
-                            else
-                            {
-                                <input class="form-control" id="dozId1" name="dozId1" type="text" />
-                            }
+                            <input class="form-control disabled" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName"/
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">Zweitprüfer:in</div>
                         <div class="col-8">
-                            @if (Model.SecondMember != null)
-                            {
-                                <input class="form-control" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName" />
-                            }
-                            else
-                            {
-                                <input class="form-control" id="dozId2" name="dozId2" type="text" />
-                            }
+                            <input class="form-control disabled" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName" />
                         </div>
                     </div>
                     <div class="row">
@@ -100,6 +84,7 @@
 
             $('#dozId1').autocomplete({
                 source: function(request, response) {
+
                     var org = '@Model.orgId';
 
                     $.ajax({
@@ -130,6 +115,13 @@
                 },
                 select: function (event, ui) {
                     $('#firstMemberId').val(ui.item.text);
+                },
+                change: function (event, ui) {
+                    console.log(ui);
+                    if (ui.item === null) {
+                        console.log("remove selection");
+                        $('#firstMemberId').val("");
+                    }
                 }
             });
 

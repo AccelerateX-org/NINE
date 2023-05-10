@@ -33,7 +33,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Inhalt / Lernziele / Literatur</h5>
+                <h5 class="card-title">Inhalte und Qualifikationsziele</h5>
                 @if (Model.ModuleDescription.ChangeLog != null)
                 {
                     var user = userService.GetUser(Model.ModuleDescription.ChangeLog.UserIdAmendment);
@@ -58,7 +58,14 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    @Html.Raw(Model.ModuleDescription.Description.Trim())
+                    @if (string.IsNullOrEmpty(Model.ModuleDescription.Description))
+                    {
+                        <div></div>
+                    }
+                    else
+                    {
+                        @Html.Raw(Model.ModuleDescription.Description.Trim())
+                    }
                 </div>
             </div>
             <div class="card-body">
@@ -129,9 +136,9 @@
                 <h5 class="card-title">Prüfungsangebote</h5>
             </div>
             <div class="list-group">
-                @foreach (var acc in Model.CurriculumModule.Accreditations)
+                @foreach (var acc in Model.CurriculumModule.Accreditations.ToList())
                 {
-                    foreach (var examinationDescription in acc.ExaminationDescriptions)
+                    foreach (var examinationDescription in acc.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList())
                     {
                         <div class="list-group-item">
                             <div class="row">

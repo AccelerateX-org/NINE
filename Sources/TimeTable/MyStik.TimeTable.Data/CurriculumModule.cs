@@ -70,6 +70,11 @@ namespace MyStik.TimeTable.Data
         public string Tag { get; set; }
 
 
+        /// <summary>
+        /// Voraussetzungen
+        /// </summary>
+        public string Prerequisites { get; set; }
+
 
         public virtual CurriculumModuleCatalog Catalog { get; set; }
 
@@ -93,6 +98,8 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<ModuleDescription> Descriptions { get; set; }
 
+        public virtual ICollection<ModuleApplicability> Applicabilities { get; set; }
+
         public string FullTag
         {
             get
@@ -101,6 +108,25 @@ namespace MyStik.TimeTable.Data
             }
         }
     }
+
+    public class ModuleApplicability
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public virtual CurriculumModule ProvidingModule { get; set; }
+
+        public virtual CurriculumModule ReceivingModule { get; set; }
+
+          /// <summary>
+          /// Ausgedrückt in %
+          /// </summary>
+        public int FitRate { get; set; }
+
+        public string Description { get; set; }
+
+    }
+
 
 
     public class ModuleDescription
@@ -130,6 +156,11 @@ namespace MyStik.TimeTable.Data
 
     public class ExaminationDescription
     {
+        public ExaminationDescription()
+        {
+            this.Examiners = new List<Examiner>();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
@@ -179,7 +210,12 @@ namespace MyStik.TimeTable.Data
 
         
         public virtual ModuleAccreditation Accreditation { get; set; }
+
+        public virtual ICollection<Examiner> Examiners { get; set; }
     }
+
+
+
 
     /// <summary>
     /// Das Lehrangebot

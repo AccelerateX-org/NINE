@@ -16,6 +16,11 @@
         }
     }
 
+    if (Model.AreaOption != null)
+    {
+        showFilter = false;
+    }
+
 }
 
 <div class="row">
@@ -37,7 +42,7 @@
                     <h5 class="card-subtitle">
                         <a href="@Url.Action("Details", "Curriculum", new { id = Model.AreaOption.Area.Curriculum.Id })">
                             @Model.AreaOption.Area.Curriculum.Name (@Model.AreaOption.Area.Curriculum.ShortName)
-                        </a> | @Model.FullTag
+                        </a>
                     </h5>
                 }
                 else
