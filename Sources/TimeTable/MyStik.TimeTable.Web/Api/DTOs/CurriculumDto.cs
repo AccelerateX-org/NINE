@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MyStik.TimeTable.Web.Api.DTOs
 {
@@ -240,6 +241,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
     public class CurriculumSlotDto
     {
+        public Guid id { get; set; }
+
         public string tag { get; set; }
         
         public int semester { get; set; }
@@ -249,6 +252,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string description { get; set; }
         
         public double ects { get; set; }
+
+        public List<ModuleDescriptionDto> modules { get; set; }
     }
 
     #endregion

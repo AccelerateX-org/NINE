@@ -136,11 +136,25 @@ namespace MyStik.TimeTable.Web.Api.Controller
             {
                 var slotDto = new CurriculumSlotDto
                 {
+                    id = slot.Id,
                     semester = slot.Semester,
                     ects = slot.ECTS,
                     name = slot.Name,
-                    tag = slot.FullTag
+                    tag = slot.FullTag,
+                    modules = new List<ModuleDescriptionDto>()
                 };
+
+                foreach (var accreditation in slot.ModuleAccreditations)
+                {
+                    var moduleDto = new ModuleDescriptionDto
+                    {
+                        id = accreditation.Module.Id,
+                        name = accreditation.Module.Name,
+                        tag = accreditation.Module.FullTag
+                    };
+
+                    slotDto.modules.Add(moduleDto);
+                }
 
                 list.Add(slotDto);
             }

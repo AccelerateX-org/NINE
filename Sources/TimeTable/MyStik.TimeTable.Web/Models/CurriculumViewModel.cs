@@ -151,4 +151,20 @@ namespace MyStik.TimeTable.Web.Models
         public List<Student> Students { get; set; }
     }
 
+
+    public class CurriculumAreaCreateModel
+    {
+        public Guid CurrId { get; set; }
+        public Guid AreaId { get; set; }
+        public Guid OptionId { get; set; }
+        public Guid SlotId { get; set; }
+
+        public string Tag { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Semester { get; set; }
+        public double Ects { get; set; }
+
+    }
+
 }

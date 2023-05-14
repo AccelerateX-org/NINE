@@ -1,0 +1,94 @@
+﻿@model MyStik.TimeTable.Data.CurriculumArea
+@{
+    ViewBag.Title = "Themengebiet";
+}
+
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    Themenbereich "@Model.Name"
+                </h4>
+                <h5 class="card-subtitle">
+                    <a href="@Url.Action("Details", new { id = Model.Curriculum.Id })">@Model.Curriculum.Tag</a> |
+                    <span>@Model.Tag</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Allgemeine Informationen</h5>
+                        <div class="row">
+                            <div class="col-4">
+                                ??
+                            </div>
+                            <div class="col-8">
+                                xx
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Beschreibung</h5>
+                        <div class="row">
+                            <div class="col-12">
+                                @Model.Description
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Areas", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Alle Themenbereiche @Model.Curriculum.Tag
+                        </a>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <a href="@Url.Action("EditArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-gear"></i> Ändern
+                            </a>
+                            <a href="@Url.Action("CreateOption", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-plus"></i> Neue Wahlmöglichkeit
+                            </a>
+                            <a href="@Url.Action("DeleteArea", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger disabled">
+                                <i class="bi-trash"></i> Themenbereich Löschen
+                            </a>
+                        }
+                    </div>
+                </div>
+                @foreach (var option in Model.Options)
+                {
+                    <a href="@Url.Action("Option", new {id = option.Id})" class="list-group-item list-group-item-action">
+                        <h5>@option.Name (@option.Tag)</h5>
+                        <p>@option.Description</p>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabCatalogs').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}

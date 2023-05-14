@@ -18,6 +18,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ShortName { get; set; }
 
+        public string Description { get; set; }
+
         /// <summary>
         /// Eine Art fachlicher Schlüssel im Modulkatalog des Studiengangs
         /// </summary>

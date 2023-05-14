@@ -1,33 +1,8 @@
 ﻿@model MyStik.TimeTable.Data.CurriculumSlot
 
 
-<div class="list-group">
     @foreach (var module in Model.ModuleAccreditations)
     {
-        var showModule = true;
-
-        if (module.LabelSet != null && module.LabelSet.ItemLabels.Any() && ViewBag.FilterLabel != null)
-        {
-            if (ViewBag.FilterLabel != null && ViewBag.FilterLabel.Name.Contains("#"))
-            {
-                var labelClass = ViewBag.FilterLabel.Name.Split('#')[0] + "#";
-                if (module.LabelSet.ItemLabels.Any(x => x.Name.StartsWith(labelClass)))
-                {
-                    if (module.LabelSet.ItemLabels.Any(x => x.Name.Equals(ViewBag.FilterLabel.Name)))
-                    {
-                        showModule = true;
-                    }
-                    else
-                    {
-                        showModule = false;
-                    }
-                }
-            }
-
-        }
-
-        if (showModule)
-        {
             <a class="list-group-item list-group-item-action"
                href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">
                 <h5>
@@ -66,6 +41,5 @@
                     </div>
                 </div>
             </a>
-        }
     }
-</div>
+

@@ -22,47 +22,6 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-5">
-                        <h5>An diesen Katalog soll angefügrt werden</h5>
-                        <div class="row">
-                            <div class="col-4">Organisation</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="targetOrg" onchange="onTargetOrgChanged(this.value)">
-                                    @foreach (var org in Model.Organises)
-                                    {
-                                        if (org.Id == Model.Organiser.Id)
-                                        {
-                                            <option selected value="@org.Id">@org.ShortName</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@org.Id">@org.ShortName</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Modulkatalog</div>
-                            <div class="col-8">
-                                <select class="form-select slot-option" id="targetCat" onchange="onTargetCatChanged(this.value)">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Module</div>
-                            <div class="col-8">
-                                <div id="targetModules"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <div class="list-group-item">
-                                <a id="btnMove" href="javascript:moveModules()" class="btn btn-outline-secondary"><< übertragen</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-5">
                         <h5>Aus diesem Katalog soll entfernt werden</h5>
                         <div class="row">
                             <div class="col-4">Organisation</div>
@@ -96,6 +55,48 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-2">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <a id="btnMove" href="javascript:moveModules()" class="btn btn-outline-secondary">>> übertragen</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <h5>An diesen Katalog soll angefügrt werden</h5>
+                        <div class="row">
+                            <div class="col-4">Organisation</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="targetOrg" onchange="onTargetOrgChanged(this.value)">
+                                    @foreach (var org in Model.Organises)
+                                    {
+                                        if (org.Id == Model.Organiser.Id)
+                                        {
+                                            <option selected value="@org.Id">@org.ShortName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@org.Id">@org.ShortName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Modulkatalog</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="targetCat" onchange="onTargetCatChanged(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Module</div>
+                            <div class="col-8">
+                                <div id="targetModules"></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

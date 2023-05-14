@@ -1,0 +1,101 @@
+﻿@model MyStik.TimeTable.Data.CurriculumSlot
+@{
+    ViewBag.Title = "Slot";
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                @if (Model.CurriculumSection != null)
+                {
+                    <h4 class="card-title">@Model.Tag: @Model.Name <span class="badge bg-secondary">@Model.ECTS ECTS</span></h4>
+                    <h5 class="card-subtitle">
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.CurriculumSection.Curriculum.Id })">
+                            @Model.CurriculumSection.Curriculum.Name (@Model.CurriculumSection.Curriculum.ShortName)
+                        </a> |
+                        @Model.CurriculumSection.Name
+                    </h5>
+                }
+                else if (Model.AreaOption != null)
+                {
+                    <h4 class="card-title">
+                        Modul-Slot "@Model.Name"
+                    </h4>
+                    <h5 class="card-subtitle">
+                        <a href="@Url.Action("Details", new { id = Model.AreaOption.Area.Curriculum.Id })">@Model.AreaOption.Area.Curriculum.Tag</a> |
+                        <a href="@Url.Action("Area", new { id = Model.AreaOption.Area.Id })">@Model.AreaOption.Area.Tag</a> |
+                        <a href="@Url.Action("Option", new { id = Model.AreaOption.Id })">@Model.AreaOption.Tag</a> |
+                        <span>@Model.Tag</span>
+                    </h5>
+                }
+                else
+                {
+                    <div class="alert alert-warning">Slot ohne jede Zuordnung</div>
+                }
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Allgemeine Informationen</h5>
+                        <div class="row">
+                            <div class="col-4">
+                                Fachsemester
+                            </div>
+                            <div class="col-8">
+                                @Model.Semester
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                ECTS
+                            </div>
+                            <div class="col-8">
+                                @Model.ECTS
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Beschreibung</h5>
+                        <div class="row">
+                            <div class="col-12">
+                                @Model.Description
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+            <div class="list-group">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a href="@Url.Action("Option", "Curriculum", new { id = Model.AreaOption.Id })" class="btn btn-outline-primary">
+                                <i class="bi-chevron-left"></i> Wahlmöglichkeit @Model.AreaOption.Tag
+                            </a>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <a href="@Url.Action("EditSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                    <i class="bi-gear"></i> Ändern
+                                </a>
+                                <a href="@Url.Action("AssignModules", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                    <i class="bi-list-columns"></i> Module akkreditieren
+                                </a>
+                                <a href="@Url.Action("DeleteSlot", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger disabled">
+                                    <i class="bi-trash"></i> Slot löschen
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    @Html.Partial("_ModuleList", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+}

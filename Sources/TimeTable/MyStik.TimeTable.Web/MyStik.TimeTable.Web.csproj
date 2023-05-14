@@ -4133,7 +4133,7 @@
     <Content Include="Views\ScriptPublishing\Details.cshtml" />
     <Content Include="Views\Catalogs\Import.cshtml" />
     <Content Include="Views\Curriculum\ImportAccreditations.cshtml" />
-    <Content Include="Views\Curriculum\SlotDetails.cshtml" />
+    <Content Include="Views\Curriculum\Slot.cshtml" />
     <Content Include="Views\Curriculum\Opportunities.cshtml" />
     <Content Include="Views\ModuleDescription\Details.cshtml" />
     <Content Include="Views\ModuleDescription\Edit.cshtml" />
@@ -4171,6 +4171,13 @@
     <Content Include="Views\Catalogs\_ModuleListGroup.cshtml" />
     <Content Include="Views\Catalogs\AllModules.cshtml" />
     <Content Include="Views\StudyPlan\Details.cshtml" />
+    <Content Include="Views\Curriculum\Area.cshtml" />
+    <Content Include="Views\Curriculum\EditArea.cshtml" />
+    <Content Include="Views\Curriculum\Option.cshtml" />
+    <Content Include="Views\Curriculum\EditOption.cshtml" />
+    <Content Include="Views\Curriculum\CreateArea.cshtml" />
+    <Content Include="Views\Curriculum\CreateOption.cshtml" />
+    <Content Include="Views\Curriculum\EditSlot.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
