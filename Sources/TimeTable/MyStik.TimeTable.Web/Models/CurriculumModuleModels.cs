@@ -32,6 +32,11 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Stundenplankürzel")]
         public string ShortName { get; set; }
 
+
+        public string Prequisites { get; set; }
+
+        public string Applicableness { get; set; }
+
     }
 
 

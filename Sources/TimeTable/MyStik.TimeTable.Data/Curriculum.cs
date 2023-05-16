@@ -28,6 +28,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ShortName { get; set; }
 
+        public string Description { get; set; }
+
         /// <summary>
         /// der technische Kurzname
         /// </summary>

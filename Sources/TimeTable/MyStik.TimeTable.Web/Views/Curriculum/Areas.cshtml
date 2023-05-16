@@ -24,7 +24,7 @@
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                            <a href="@Url.Action("MoveSlots", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-list-check"></i> Zusammensetzung
                             </a>
                             <a href="@Url.Action("CreateArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
@@ -33,7 +33,7 @@
                             <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-upload"></i> Import Struktur
                             </a>
-                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger disabled">
+                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger">
                                 <i class="bi-trash"></i> Struktur Löschen
                             </a>
                         }

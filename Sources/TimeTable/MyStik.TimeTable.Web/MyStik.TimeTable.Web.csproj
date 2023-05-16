@@ -3887,7 +3887,7 @@
     <Content Include="Views\Curriculum\ModuleDetails.cshtml" />
     <Content Include="Views\Curriculum\CreateSubject.cshtml" />
     <Content Include="Views\Curriculum\AdminContentModule.cshtml" />
-    <Content Include="Views\Curriculum\AssignModule.cshtml" />
+    <Content Include="Views\Curriculum\AssignModules.cshtml" />
     <Content Include="Views\Activity\PersonalPlanList.cshtml" />
     <Content Include="Views\Dictionary\Group.cshtml" />
     <Content Include="Views\Dictionary\GroupByTopic.cshtml" />
@@ -4178,6 +4178,10 @@
     <Content Include="Views\Curriculum\CreateArea.cshtml" />
     <Content Include="Views\Curriculum\CreateOption.cshtml" />
     <Content Include="Views\Curriculum\EditSlot.cshtml" />
+    <Content Include="Views\Curriculum\MoveSlots.cshtml" />
+    <Content Include="Views\Curriculum\_SlotListGroup.cshtml" />
+    <Content Include="Views\Curriculum\_OptionSelectList.cshtml" />
+    <Content Include="Views\Curriculum\DeleteModulePlan.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

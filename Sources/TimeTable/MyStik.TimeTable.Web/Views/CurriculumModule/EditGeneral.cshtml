@@ -27,6 +27,18 @@
                         </div>
                     </div>
                     <div class="row">
+                        <label for="Prequisites" class="col-sm-2 col-form-label">Voraussetzungen</label>
+                        <div class="col-sm-10">
+                            @Html.TextAreaFor(m => m.Prequisites, new { @class = "form-control", rows=5 })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Applicableness" class="col-sm-2 col-form-label">Anwendbarkeit</label>
+                        <div class="col-sm-10">
+                            @Html.TextAreaFor(m => m.Applicableness, new { @class = "form-control", rows = 5 })
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-10">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Speichern</button>
                             <a href="@Url.Action("Admin",  new{id=Model.moduleId})" class="btn btn-outline-secondary">Abbrechen</a>

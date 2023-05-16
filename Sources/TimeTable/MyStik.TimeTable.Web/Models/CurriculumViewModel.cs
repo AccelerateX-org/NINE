@@ -167,4 +167,36 @@ namespace MyStik.TimeTable.Web.Models
 
     }
 
+
+    public class MoveSlotModel
+    {
+        public Curriculum Curriculum { get; set; }
+    }
+
+    public class CurriculumDeleteModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Curriculum Curriculum { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool DeleteCancelled { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool DeleteHosting { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool KeepOwnership { get; set; }
+
+        public string Code { get; set; }
+    }
+
+
 }

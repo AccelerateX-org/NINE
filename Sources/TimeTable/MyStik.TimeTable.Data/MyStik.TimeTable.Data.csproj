@@ -526,6 +526,14 @@
     <Compile Include="Migrations\202305120654380_ModuleDescV4.designer.cs">
       <DependentUpon>202305120654380_ModuleDescV4.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202305151618081_ModuleDescV5.cs" />
+    <Compile Include="Migrations\202305151618081_ModuleDescV5.designer.cs">
+      <DependentUpon>202305151618081_ModuleDescV5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202305161630577_ModuleDescV6.cs" />
+    <Compile Include="Migrations\202305161630577_ModuleDescV6.designer.cs">
+      <DependentUpon>202305161630577_ModuleDescV6.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -832,6 +840,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202305120654380_ModuleDescV4.resx">
       <DependentUpon>202305120654380_ModuleDescV4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202305151618081_ModuleDescV5.resx">
+      <DependentUpon>202305151618081_ModuleDescV5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202305161630577_ModuleDescV6.resx">
+      <DependentUpon>202305161630577_ModuleDescV6.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

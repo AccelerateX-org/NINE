@@ -1089,8 +1089,10 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.Id);
 
+            cur.Tag = model.Tag;
             cur.Name = model.Name;
             cur.ShortName = model.ShortName;
+            cur.Description = model.Description;
             cur.Version = model.Version;
             cur.ThesisDuration = model.ThesisDuration;
 
@@ -1098,7 +1100,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new {id = cur.Id});
+            return RedirectToAction("Admin", new {id = cur.Id});
         }
 
         public ActionResult ImportSections(Guid id)
@@ -1435,10 +1437,80 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
+        public ActionResult DeleteSlot(Guid id)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
+            var option = slot.AreaOption;
+
+            foreach (var accreditation in slot.ModuleAccreditations.ToList())
+            {
+                foreach (var exam in accreditation.ExaminationDescriptions.ToList())
+                {
+                    Db.ExaminationDescriptions.Remove(exam);
+                }
+
+                foreach (var teaching in accreditation.TeachingDescriptions.ToList())
+                {
+                    Db.TeachingDescriptions.Remove(teaching);
+                }
+
+                Db.Accreditations.Remove(accreditation);
+            }
+
+
+            Db.CurriculumSlots.Remove(slot);
+            Db.SaveChanges();
+
+            return RedirectToAction("Option", new { id = option.Id });
+        }
+
+        public ActionResult DeleteOption(Guid id)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == id);
+            var area = option.Area;
+
+            Db.AreaOptions.Remove(option);
+            Db.SaveChanges();
+
+            return RedirectToAction("Area", new { id = area.Id });
+        }
+
+        public ActionResult DeleteArea(Guid id)
+        {
+            var area = Db.CurriculumAreas.SingleOrDefault(x => x.Id == id);
+            var curr = area.Curriculum;
+
+            Db.CurriculumAreas.Remove(area);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Areas", new {id = curr.Id});
+        }
+
 
         public ActionResult DeleteModulePlan(Guid id)
         {
-            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumDeleteModel
+            {
+                Curriculum = curr
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteModulePlan(CurriculumDeleteModel model)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            if (!cur.Tag.Equals(model.Code))
+            {
+                var model2 = new CurriculumDeleteModel { Curriculum = cur };
+
+                return View(model2);
+            }
 
 
             foreach (var section in cur.Sections.ToList())
@@ -1464,6 +1536,16 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         foreach (var accreditation in slot.ModuleAccreditations.ToList())
                         {
+                            foreach(var exam in accreditation.ExaminationDescriptions.ToList())
+                            {
+                                Db.ExaminationDescriptions.Remove(exam);
+                            }
+                            
+                            foreach(var teaching in accreditation.TeachingDescriptions.ToList())
+                            {
+                                Db.TeachingDescriptions.Remove(teaching);
+                            }
+                            
                             Db.Accreditations.Remove(accreditation);
                         }
 
@@ -1856,19 +1938,53 @@ namespace MyStik.TimeTable.Web.Controllers
         */
 
 
-        public ActionResult AssignModule(Guid id)
+        public ActionResult AssignModules(Guid id)
         {
-            var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
 
             var model = new ModuleAssignViewModel
             {
-                Accreditation = accreditation
+                Slot = slot,
+                Organisers = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList()
             };
-
-            //model.Modules = Db.TeachingBuildingBlocks.ToList();
 
             return View(model);
         }
+
+
+
+        [HttpPost]
+        public ActionResult AssignModulesSave(Guid slotId, Guid[] moduleIds)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
+
+            foreach (var moduleId in moduleIds)
+            {
+                var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+
+                if (slot == null || module == null) continue;
+
+                bool isModulePresent = slot.ModuleAccreditations.Any(x => x.Module.Id == module.Id);
+
+                if (isModulePresent) continue;
+
+                var accr = new ModuleAccreditation
+                {
+                    Module = module,
+                    Slot = slot
+
+                };
+
+                Db.Accreditations.Add(accr);
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+
+
 
 
         public ActionResult Students(Guid id)
@@ -2178,54 +2294,133 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult MoveSlots(Guid id)
         {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
+            var model = new MoveSlotModel
+            {
+                Curriculum = curr
+            };
 
-            return View();
+            return View(model);
         }
 
 
-
-        /* Noch etwas aufheben
-        public ActionResult HackBABW(Guid id)
+        [HttpPost]
+        public PartialViewResult GetOptions(Guid areaId)
         {
-            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
-            var org = curr.Organiser;
+            var org = Db.CurriculumAreas.SingleOrDefault(x => x.Id == areaId);
 
-            if (org.Tag.Equals("10") && curr.ShortName.Equals("BABW"))
+            var currs = org.Options.ToList();
+
+            var model = currs
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            return PartialView("_OptionSelectList", model);
+        }
+
+        [HttpPost]
+        public PartialViewResult GetSlots(Guid optionId, string side)
+        {
+            var catalog = Db.AreaOptions.SingleOrDefault(x => x.Id == optionId);
+
+            var model = catalog.Slots
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            ViewBag.ListName = side + "ModuleList";
+
+            return PartialView("_SlotListGroup", model);
+        }
+
+        [HttpPost]
+        public ActionResult MoveSlotsSave(Guid optionId, Guid[] slotIds)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optionId);
+
+            foreach (var slotId in slotIds)
             {
-                // alle die mit BABW starten aber nicht BABW sind
-                var allBABWSubCatalogs = org.ModuleCatalogs.Where(x => x.Tag.StartsWith("BABW") && !x.Tag.Equals("BABW")).ToList();
+                var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
 
-                var babwMainCatalog = org.ModuleCatalogs.SingleOrDefault(x => x.Tag.Equals("BABW"));
+                if (option == null || slot == null) continue;
 
-                if (babwMainCatalog == null)
+                if (option.Slots.All(x => x.Id != slot.Id))
                 {
-                    babwMainCatalog = new CurriculumModuleCatalog
-                    {
-                        Name = "BABW alle Module",
-                        Tag = "BABW",
-                        Organiser = org
-                    };
-                    Db.CurriculumModuleCatalogs.Add(babwMainCatalog);
+                    slot.AreaOption = option;
                 }
-
-                foreach (var subCatalog in allBABWSubCatalogs.ToList())
-                {
-                    foreach (var module in subCatalog.Modules.ToList())
-                    {
-                        subCatalog.Modules.Remove(module);
-                        babwMainCatalog.Modules.Add(module);
-                    }
-
-                    org.ModuleCatalogs.Remove(subCatalog);
-                    Db.CurriculumModuleCatalogs.Remove(subCatalog);
-                }
-
-                Db.SaveChanges();
             }
 
-            return RedirectToAction("Admin", new { id = id });
+            Db.SaveChanges();
+
+            return null;
         }
-        */
+
+        public ActionResult DeleteAccredition(Guid id)
+        {
+            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+
+            var slot = accr.Slot;
+
+            foreach (var exam in accr.ExaminationDescriptions.ToList())
+            {
+                Db.ExaminationDescriptions.Remove(exam);
+            }
+
+            foreach (var teaching in accr.TeachingDescriptions.ToList())
+            {
+                Db.TeachingDescriptions.Remove(teaching);
+            }
+
+            Db.Accreditations.Remove(accr);
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Slot", new {id=slot.Id});
+        }
+
+
+            /* Noch etwas aufheben
+            public ActionResult HackBABW(Guid id)
+            {
+                var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+                var org = curr.Organiser;
+
+                if (org.Tag.Equals("10") && curr.ShortName.Equals("BABW"))
+                {
+                    // alle die mit BABW starten aber nicht BABW sind
+                    var allBABWSubCatalogs = org.ModuleCatalogs.Where(x => x.Tag.StartsWith("BABW") && !x.Tag.Equals("BABW")).ToList();
+
+                    var babwMainCatalog = org.ModuleCatalogs.SingleOrDefault(x => x.Tag.Equals("BABW"));
+
+                    if (babwMainCatalog == null)
+                    {
+                        babwMainCatalog = new CurriculumModuleCatalog
+                        {
+                            Name = "BABW alle Module",
+                            Tag = "BABW",
+                            Organiser = org
+                        };
+                        Db.CurriculumModuleCatalogs.Add(babwMainCatalog);
+                    }
+
+                    foreach (var subCatalog in allBABWSubCatalogs.ToList())
+                    {
+                        foreach (var module in subCatalog.Modules.ToList())
+                        {
+                            subCatalog.Modules.Remove(module);
+                            babwMainCatalog.Modules.Add(module);
+                        }
+
+                        org.ModuleCatalogs.Remove(subCatalog);
+                        Db.CurriculumModuleCatalogs.Remove(subCatalog);
+                    }
+
+                    Db.SaveChanges();
+                }
+
+                return RedirectToAction("Admin", new { id = id });
+            }
+            */
+        }
     }
-}

@@ -63,6 +63,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     Name = model.Name,
                     Tag = model.Tag,
+                    Applicableness = model.Applicableness,
+                    Prerequisites = model.Prequisites,
                     Catalog = catalog
                 };
 
@@ -89,6 +91,8 @@ namespace MyStik.TimeTable.Web.Controllers
             model.catalogId = module.Catalog.Id;
             model.Name = module.Name;
             model.Tag = module.Tag;
+            model.Prequisites = module.Prerequisites;
+            model.Applicableness = module.Applicableness;
 
             return View(model);
         }
@@ -106,6 +110,9 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 module.Tag = model.Tag;
                 module.Name = model.Name;
+                module.Applicableness = model.Applicableness;
+                module.Prerequisites = model.Prequisites;
+
                 Db.SaveChanges();
             }
 

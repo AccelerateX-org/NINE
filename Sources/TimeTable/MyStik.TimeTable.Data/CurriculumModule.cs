@@ -75,6 +75,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Prerequisites { get; set; }
 
+        public string Applicableness { get; set; }
+
 
         public virtual CurriculumModuleCatalog Catalog { get; set; }
 
