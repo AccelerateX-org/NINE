@@ -4182,6 +4182,7 @@
     <Content Include="Views\Curriculum\_SlotListGroup.cshtml" />
     <Content Include="Views\Curriculum\_OptionSelectList.cshtml" />
     <Content Include="Views\Curriculum\DeleteModulePlan.cshtml" />
+    <Content Include="Views\Shared\_ModuleDescriptionPrintOut.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -167,10 +167,10 @@
                 </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-md-4">
                         <h5>Stand</h5>
                     </div>
-                    <div class="col-8">
+                    <div class="col-md-8">
                         @Html.DropDownList("Semester", (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-select", onchange = "onSemesterChanged()" })
                     </div>
                 </div>

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
+using MyStik.TimeTable.Web.Utils;
+using PdfSharp;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -401,6 +405,36 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Details", new { id = module.Id, });
+        }
+
+        public FileResult DownloadPdf(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
+
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
+
+            var model = new ModuleSemesterView
+            {
+                CurriculumModule = module,
+                Semester = semester,
+                ModuleDescription = desc
+            };
+
+
+
+            var stream = new MemoryStream();
+            var html = this.RenderViewToString("_ModuleDescriptionPrintOut", model);
+            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
+            pdf.Save(stream, false);
+
+            // Stream zurücksetzen
+            stream.Position = 0;
+
+            return File(stream.GetBuffer(), "application/pdf", "Modulbeschreibung.pdf");
         }
     }
 
