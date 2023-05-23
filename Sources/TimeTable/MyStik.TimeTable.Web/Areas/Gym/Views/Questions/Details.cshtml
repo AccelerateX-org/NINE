@@ -8,62 +8,77 @@
 <div class="row">
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">Frage</h4>
+            <h4 class="card-title">Frage @Model.CatalogId: @Model.Title</h4>
+        </div>
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="fc-button-group">
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                    @Html.ActionLink("Back to List", "Index")
+                </div>
+            </div>
         </div>
         <div class="card-body">
-            <div class="input-group mb-3">
-                <label for="title" class="col-sm-4 col-form-label">Titel (interne Bezeichnung)</label>
-                <input id="title" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1" readonly="" value="@Model.Title">
-                <button class="btn btn-outline-primary" type="button" id="btn_title" data-bs-toggle="modal" data-bs-target="#titleModal"><i class="bi-pencil"></i> Ändern</button>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Allgemeine Informationen</h5>
+                    <div class="row">
+                        <div class="col-4">
+                            Katalog ID
+                        </div>
+                        <div class="col-8">
+                            @Model.CatalogId
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Titel
+                        </div>
+                        <div class="col-8">
+                            @Model.Title
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Beschreibung
+                        </div>
+                        <div class="col-8">
+                            @Model.Description
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Fragestellung Studierende</h5>
+                    <div class="row">
+                        <div class="col-4">
+                            Problem
+                        </div>
+                        <div class="col-8">
+                            @Model.Problem
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            Antworten
+                        </div>
+                        <div class="col-8">
+                            <ul>
+                                @foreach (var answer in Model.Answers)
+                                {
+                                    if (answer.IsCorrect)
+                                    {
+                                        <li class="text-success">@answer.Solution</li>
+                                    }
+                                    else
+                                    {
+                                        <li class="text-danger">@answer.Solution</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<div>
-    <h4>Question</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Problem)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Problem)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
-    <ul>
-        @foreach (var answer in Model.Answers)
-        {
-            if (answer.IsCorrect)
-            {
-                <li class="text-success">@answer.Solution</li>
-            }
-            else
-            {
-                <li class="text-danger">@answer.Solution</li>
-            }
-        }
-    </ul>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

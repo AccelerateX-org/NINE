@@ -135,6 +135,10 @@
     <Compile Include="Migrations\202304011311528_InitialSetup.designer.cs">
       <DependentUpon>202304011311528_InitialSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202305190654572_QuizSetsV2.cs" />
+    <Compile Include="Migrations\202305190654572_QuizSetsV2.designer.cs">
+      <DependentUpon>202305190654572_QuizSetsV2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="$(SolutionDir)\SolutionInfo.cs" Condition="Exists('$(SolutionDir)\SolutionInfo.cs')">
@@ -155,6 +159,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202304011311528_InitialSetup.resx">
       <DependentUpon>202304011311528_InitialSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202305190654572_QuizSetsV2.resx">
+      <DependentUpon>202305190654572_QuizSetsV2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

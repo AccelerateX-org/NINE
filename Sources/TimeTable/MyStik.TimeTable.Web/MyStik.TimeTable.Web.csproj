@@ -473,6 +473,7 @@
     <Compile Include="Areas\Gym\Controllers\HomeController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionCatalogsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionsController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuestionSetsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuizzesController.cs" />
     <Compile Include="Areas\Gym\GymAreaRegistration.cs" />
     <Compile Include="Areas\Gym\Models\QuestionIOModels.cs" />
@@ -3133,7 +3134,7 @@
     <Content Include="Areas\Gym\Views\Questions\Details.cshtml" />
     <Content Include="Areas\Gym\Views\Questions\Edit.cshtml" />
     <Content Include="Areas\Gym\Views\Questions\Index.cshtml" />
-    <Content Include="Areas\Gym\Views\Questions\Upload.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Import.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Create.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Delete.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Details.cshtml" />
@@ -3141,6 +3142,12 @@
     <Content Include="Areas\Gym\Views\Quizzes\Index.cshtml" />
     <Content Include="Areas\Gym\Views\Home\Index.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Upload.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Create.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Delete.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Details.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Edit.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Index.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Import.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />

@@ -17,6 +17,8 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Models
         [Required]
         public string Problem { get; set; }
 
+        public string Description { get; set; }
+
         [Required]
         public string AnswerA { get; set; }
 

@@ -67,11 +67,62 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
                 }
 
                 question.Author = author;
+                question.CatalogId = model.CatalogId; 
+                question.Title = model.Title;
+                question.Description = model.Description;
+                question.Problem = model.Problem;
 
+                if (!string.IsNullOrEmpty(model.AnswerA))
+                {
+                    var answerA = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerACorrect,
+                        Solution = model.AnswerA,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerA);
+                }
+
+                if (!string.IsNullOrEmpty(model.AnswerB))
+                {
+                    var answerB = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerBCorrect,
+                        Solution = model.AnswerB,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerB);
+                }
+
+                if (!string.IsNullOrEmpty(model.AnswerC))
+                {
+                    var answerC = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerCCorrect,
+                        Solution = model.AnswerC,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerC);
+                }
+
+                if (!string.IsNullOrEmpty(model.AnswerD))
+                {
+                    var answerD = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerDCorrect,
+                        Solution = model.AnswerD,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerD);
+                }
 
                 db.Questions.Add(question);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new {id = question.Id});
             }
 
             return View(model);
@@ -163,7 +214,7 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult Upload()
+        public ActionResult Import()
         {
             return View();
         }

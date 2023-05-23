@@ -21,6 +21,7 @@ namespace MyStik.Gym.Data
 
         public DbSet<QuestionMapping> QuestionMappings { get; set; }
 
+        public DbSet<QuestionSetResponsibility> QuestionSetResponsibilities { get; set; }
 
 
         public DbSet<Quiz> Quizzes { get; set; }

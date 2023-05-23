@@ -1,0 +1,72 @@
+﻿@model IEnumerable<MyStik.Gym.Data.QuestionSet>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Alle Fragenkataloge</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Index","Questions")" class="btn btn-outline-primary">
+                            <i class="bi-list-columns"></i> Meine Fragensammlung
+                        </a>
+                        <a href="@Url.Action("Create")" class="btn btn-outline-primary">
+                            <i class="bi-plus"></i> Neuen Katalog anlegen
+                        </a>
+                        <a href="@Url.Action("Import")" class="btn btn-outline-primary">
+                            <i class="bi-upload"></i> Katalog importieren
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table id="tabCatalogs" class="table">
+                <thead>
+                    <tr>
+                        <th>Tag</th>
+                        <th>Name</th>
+                        <th># Fragen</th>
+                        <th>Ansprechpartner:innen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cat in Model)
+                    {
+                        <tr>
+                            <td>@cat.Tag</td>
+                            <td><a href="@Url.Action("Details", new {id = cat.Id})">@cat.Title</a></td>
+                            <td>@cat.Mappings.Count</td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabCatalogs').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}

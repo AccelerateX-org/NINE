@@ -19,5 +19,4 @@ namespace MyStik.Gym.Data
         public string UserId { get; set; }
     }
 
-
 }

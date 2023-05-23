@@ -1,0 +1,76 @@
+﻿@model MyStik.Gym.Data.QuestionSet
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Alle Fragenkataloge</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-primary">
+                            <i class="bi-chevron"></i> Alle Kataloge
+                        </a>
+                        <a href="@Url.Action("Edit", new {id = Model.Id})" class="btn btn-outline-primary">
+                            <i class="bi-gear"></i> Ändern
+                        </a>
+                        <a href="@Url.Action("AssignQuestions", new {id = Model.Id})" class="btn btn-outline-primary">
+                            <i class="bi-list-columns"></i> Zusammensetzung
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table id="tabCatalogs" class="table">
+                <thead>
+                    <tr>
+                        <th>Tag</th>
+                        <th>Name</th>
+                        <th>Frage</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cat in Model.Mappings)
+                    {
+                        <tr>
+                            <td>@cat.Question.CatalogId</td>
+                            <td><a href="@Url.Action("Details", "Questions", new {id = cat.Question.Id})">@cat.Question.Title</a></td>
+                            <td>@cat.Question.Problem</td>
+                            <td>
+                                <a href="@Url.Action("RemoveQuestion", new {id = cat.Id})" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi-x"></i> Entfernen
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabCatalogs').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}
