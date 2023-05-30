@@ -401,6 +401,7 @@
     <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
+    <Compile Include="Api\Controller\QuizGameController.cs" />
     <Compile Include="Api\Controller\QuizzesController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
@@ -414,6 +415,7 @@
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\MvgDto.cs" />
     <Compile Include="Api\DTOs\QuizDto.cs" />
+    <Compile Include="Api\DTOs\QuizGameDto.cs" />
     <Compile Include="Api\DTOs\ScheduleDto.cs" />
     <Compile Include="Api\DTOs\ZpCourseDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
@@ -474,6 +476,7 @@
     <Compile Include="Areas\Gym\Controllers\QuestionCatalogsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionSetsController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuizGamesController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuizzesController.cs" />
     <Compile Include="Areas\Gym\GymAreaRegistration.cs" />
     <Compile Include="Areas\Gym\Models\QuestionIOModels.cs" />
@@ -526,6 +529,7 @@
     <Compile Include="Controllers\AutonomyController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\BulletinBoardController.cs" />
+    <Compile Include="Controllers\BulletinBoardsController.cs" />
     <Compile Include="Controllers\CandidatureController.cs" />
     <Compile Include="Controllers\CatalogsController.cs" />
     <Compile Include="Controllers\CieController.cs" />
@@ -625,6 +629,7 @@
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
     <Compile Include="Jobs\LotteryJob.cs" />
+    <Compile Include="Jobs\PrintJobs.cs" />
     <Compile Include="Jobs\ThesisJob.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.Designer.cs">
@@ -3148,6 +3153,7 @@
     <Content Include="Areas\Gym\Views\QuestionSets\Edit.cshtml" />
     <Content Include="Areas\Gym\Views\QuestionSets\Index.cshtml" />
     <Content Include="Areas\Gym\Views\QuestionSets\Import.cshtml" />
+    <Content Include="Areas\Gym\Views\QuizGames\Index.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -4190,6 +4196,11 @@
     <Content Include="Views\Curriculum\_OptionSelectList.cshtml" />
     <Content Include="Views\Curriculum\DeleteModulePlan.cshtml" />
     <Content Include="Views\Shared\_ModuleDescriptionPrintOut.cshtml" />
+    <Content Include="Views\BulletinBoards\Index.cshtml" />
+    <Content Include="Views\BulletinBoards\Details.cshtml" />
+    <Content Include="Views\StudyPlan\Publish.cshtml" />
+    <Content Include="Views\Shared\_StudyPlanPrintOut.cshtml" />
+    <Content Include="Views\Shared\_StudyPlanPrintOutForeground.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4211,6 +4222,7 @@
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Mvg\" />
     <Folder Include="Views\Notification\" />
+    <Folder Include="Views\QuizGame\" />
     <Folder Include="Views\Site\" />
     <Folder Include="Views\Storage\" />
     <Folder Include="Views\Tag\" />

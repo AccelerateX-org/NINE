@@ -82,8 +82,6 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult EditGeneral(Guid id)
         {
-            var org = GetMyOrganisation();
-
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
 
             var model = new CurriculumModuleCreateModel();
@@ -93,6 +91,8 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Tag = module.Tag;
             model.Prequisites = module.Prerequisites;
             model.Applicableness = module.Applicableness;
+
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
 
             return View(model);
         }
@@ -116,7 +116,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Admin", new { id = model.moduleId });
+            return RedirectToAction("Details", "ModuleDescription", new { id = model.moduleId });
         }
 
         public ActionResult EditResponsibilities(Guid id)

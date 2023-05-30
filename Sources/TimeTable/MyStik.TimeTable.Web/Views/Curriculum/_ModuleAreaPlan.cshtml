@@ -20,13 +20,13 @@
 
     for (var s = minSem; s <= maxSem; s++)
     {
-        var semSlots = allSlots.Where(x => x.Semester == s).ToList();
+        var semSlots = allSlots.Where(x => x.Semester == s).OrderBy(x => x.Tag).ToList();
         <div class="row">
             <div class="col-md-2">
                 <h5>Semester @s</h5>
             </div>
             <div class="col-md-10">
-                @foreach (var slot in semSlots)
+                @foreach (var slot in semSlots.OrderBy(x => x.Tag))
                 {
                     var showSlot = false;
                     var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);

@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Details";
+    var userManager = new MyStik.TimeTable.Web.Services.UserInfoService();
 }
 
 @section styles
@@ -35,6 +36,7 @@
                 <thead>
                     <tr>
                         <th>Tag</th>
+                        <th>Autor</th>
                         <th>Name</th>
                         <th>Frage</th>
                         <th></th>
@@ -43,8 +45,10 @@
                 <tbody>
                     @foreach (var cat in Model.Mappings)
                     {
+                        var author = userManager.GetUser(cat.Question.Author.UserId);
                         <tr>
                             <td>@cat.Question.CatalogId</td>
+                            <td>@author.FullName</td>
                             <td><a href="@Url.Action("Details", "Questions", new {id = cat.Question.Id})">@cat.Question.Title</a></td>
                             <td>@cat.Question.Problem</td>
                             <td>

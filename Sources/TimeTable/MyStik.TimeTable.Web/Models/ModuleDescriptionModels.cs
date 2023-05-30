@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -38,11 +39,15 @@ namespace MyStik.TimeTable.Web.Models
 
     public class ModuleSemesterView
     {
+        public Curriculum Curriculum { get; set; }
+
         public CurriculumModule CurriculumModule { get; set; }
 
         public Semester Semester { get; set; }
 
         public ModuleDescription ModuleDescription { get; set; }
+
+        public List<CurriculumModule> Modules { get; set; }
         
     }
 }

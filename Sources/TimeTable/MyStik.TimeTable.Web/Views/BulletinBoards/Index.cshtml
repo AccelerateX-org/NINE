@@ -1,0 +1,42 @@
+﻿@model ICollection<MyStik.TimeTable.Data.BulletinBoard>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Liste von Schaukästen</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi-list-columns"></i> Alle Schaukästen
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table id="tabCatalogs" class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var board in Model)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Details", new { id = board.Id })">@board.Name</a></td>
+                            <td>@board.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

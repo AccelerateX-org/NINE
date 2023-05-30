@@ -107,6 +107,9 @@ namespace MyStik.TimeTable.Data
 
         public virtual ActivityOrganiser Organiser { get; set; }
 
+        public virtual BulletinBoard BulletinBoard { get; set; }
+
+
         public virtual ICollection<ActivityDate> Dates { get; set; }
 
         /// <summary>

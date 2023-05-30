@@ -1,0 +1,37 @@
+﻿@model MyStik.TimeTable.Web.Controllers.StudyPlanPublishingModel
+@{
+    ViewBag.Title = "Publish";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Studienplan veröffentlichen</h4>
+                <p>@Model.Curriculum.Name</p>
+                <p>@Model.Semester.Name</p>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.Curriculum.Id)
+                    @Html.HiddenFor(m => m.Semester.Id)
+                    <div class="row">
+                        <label for="Tag" class="col-sm-2 col-form-label">Tag (muss innerhalb der Organisation eindeutig sein)</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Speichern</button>
+                            <a href="@Url.Action("Details", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id})" class="btn btn-outline-secondary">Abbrechen</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

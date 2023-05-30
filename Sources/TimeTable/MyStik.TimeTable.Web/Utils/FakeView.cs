@@ -1,11 +1,29 @@
-﻿using System;
+﻿using RazorEngine;
+using System;
 using System.IO;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MyStik.TimeTable.Web.Utils
 {
     public static class FakeViewExtensions
     {
+        public static string MapPath(string filePath)
+        {
+            return HttpContext.Current != null ? HttpContext.Current.Server.MapPath(filePath) : string.Format("{0}{1}", AppDomain.CurrentDomain.BaseDirectory, filePath.Replace("~", string.Empty).TrimStart('/'));
+        }
+
+        public static string RenderPartialToString(string viewPath, object model)
+        {
+            string viewAbsolutePath = MapPath(viewPath);
+
+            var viewSource = File.ReadAllText(viewAbsolutePath);
+
+            string renderedText = Razor.Parse(viewSource, model);
+            return renderedText;
+        }
+
+
         /// <summary>Renders a view to string.</summary> 
         public static string RenderPartialToString(this HtmlHelper html, string viewName, object viewData)
         {

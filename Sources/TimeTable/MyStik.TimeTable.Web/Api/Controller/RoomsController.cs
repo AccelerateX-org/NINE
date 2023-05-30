@@ -305,6 +305,41 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return response;
         }
 
+        [System.Web.Http.Route("{number}/allocation")]
+        public RoomAllocationDto GetRoomAllocation(string number)
+        {
+            var result = new RoomAllocationDto
+            {
+                Number = number,
+                Events = new List<RoomEventDto>(),
+                From = DateTime.Today,
+                Until = DateTime.Today.AddDays(7).AddDays(1)
+            };
+
+
+            var room = Db.Rooms.FirstOrDefault(x => x.Number.ToLower().Equals(number.ToLower()));
+
+            if (room != null)
+            {
+                var dates = room.Dates.Where(x => x.Begin >= result.From && x.End <= result.Until).OrderBy(x => x.Begin);
+
+                foreach (var date in dates)
+                {
+                    var dto = new RoomEventDto
+                    {
+                        Title = date.Activity.Name,
+                        Begin = date.Begin,
+                        End = date.End
+                    };
+
+                    result.Events.Add(dto);
+                }
+            }
+
+            return result;
+        }
+
+
 
 
         private MemoryStream CopyFileToMemory(string path)

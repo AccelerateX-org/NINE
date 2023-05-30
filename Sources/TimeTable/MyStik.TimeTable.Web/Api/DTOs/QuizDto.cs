@@ -9,6 +9,10 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string title { get; set; }
         public string description { get; set; }
         public List<QuizSectionDto> sections { get; set; }
+
+        public int NumQuestions { get; set; }
+
+        public int NumGames { get; set; }
     }
 
     public class QuizSectionDto
@@ -21,6 +25,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
     public class QuizQuestionDto
     {
+        public Guid id { get; set; }
+
         public int position { get; set; }
 
         public string title { get; set; }
@@ -32,7 +38,9 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
     public class QuizQuestionAnswerDto
     {
-        public string text { get; set; }
+        public Guid id { get; set; }
+
+        public string answerText { get; set; }
 
         public bool isCorrect { get; set; }
     }

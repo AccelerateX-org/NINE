@@ -28,6 +28,7 @@
 
 }
 
+@*
 <div class="row">
     <div class="col-md-12">
         <div class="list-group">
@@ -41,6 +42,8 @@
         </div>
     </div>
 </div>
+*@
+
     <div class="row">
         <div class="col-md-4">
             <div class="card">
@@ -86,6 +89,21 @@
                         <a href="@Url.Action("ContentChange", null, new { id = Model.ModuleDescription.Id })" class="btn btn-outline-primary">
                             <i class="bi-keyboard"></i> Ändern
                         </a>
+                        if (Model.ModuleDescription.ChangeLog != null)
+                        {
+                            if (Model.ModuleDescription.ChangeLog.Approved == null)
+                            {
+                            <a href="@Url.Action("Publish", null, new { id = Model.ModuleDescription.Id })" class="btn btn-outline-primary">
+                                <i class="bi-printer"></i> Publizieren
+                            </a>
+                            }
+                            else
+                            {
+                            <a href="@Url.Action("UnPublish", null, new { id = Model.ModuleDescription.Id })" class="btn btn-outline-primary">
+                                <i class="bi-x"></i> Publikation zurückziehen
+                            </a>
+                            }
+                        }
                     }
                 </div>
 

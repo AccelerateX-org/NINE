@@ -21,6 +21,21 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
+            if (curr.BulletinBoard == null)
+            {
+                var board = new BulletinBoard
+                {
+                    Autonomy = curr.Autonomy,   // somit haben automatisch alle Gremien des Studiengangs auf den Schaukasten Zugang
+                    Name = curr.Name,
+                    Description = "Aushänge relevant für alle Studierende des Studiengangs"
+                };
+
+                curr.BulletinBoard = board;
+
+                Db.BulletinBoards.Add(board);
+                Db.SaveChanges();
+            }
+
             var model = new CurriculumViewModel();
 
             model.Curriculum = curr;

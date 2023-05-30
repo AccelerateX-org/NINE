@@ -128,6 +128,17 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
         public ActionResult DeleteConfirmed(Guid id)
         {
             Quiz quiz = db.Quizzes.Find(id);
+
+            foreach (var sec in quiz.Sections.ToList())
+            {
+                foreach (var q in sec.Questions.ToList()) 
+                {
+                    db.QuizQuestions.Remove(q);
+                }
+
+                db.QuizSections.Remove(sec);
+            }
+
             db.Quizzes.Remove(quiz);
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -174,6 +185,7 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
                         UserId = user.Id
                     };
                     db.Authors.Add(author);
+                    db.SaveChanges();
                 }
 
 

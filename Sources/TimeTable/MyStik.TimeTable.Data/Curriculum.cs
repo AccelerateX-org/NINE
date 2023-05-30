@@ -95,6 +95,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual Autonomy Autonomy { get; set; }
 
+        public virtual BulletinBoard BulletinBoard { get; set; }
+
         /// <summary>
         /// Studiengangleiter
         /// </summary>

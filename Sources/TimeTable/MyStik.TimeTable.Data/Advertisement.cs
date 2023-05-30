@@ -79,5 +79,36 @@ namespace MyStik.TimeTable.Data
 
         public bool ForCompetition { get; set; }
 
+        public virtual ICollection<BoardPosting> Postings { get; set; }
+    }
+
+    public class BulletinBoard
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+
+        /// <summary>
+        /// Regelt wer auf dem Board was aufhängen darf
+        /// </summary>
+        public virtual Autonomy Autonomy { get; set; }
+
+        public virtual ICollection<BoardPosting> Postings { get; set; }
+    }
+
+    public class BoardPosting
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public virtual Advertisement Advertisement { get; set; }
+
+        public virtual BulletinBoard BulletinBoard { get; set; }
+
+        public DateTime Published { get; set; }
     }
 }

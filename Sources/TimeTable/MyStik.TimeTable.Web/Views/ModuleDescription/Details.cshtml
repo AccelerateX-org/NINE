@@ -27,31 +27,45 @@
         <div class="card">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-12">
                         <h4 class="card-title">Modul @Model.Tag: @Model.Name</h4>
-                        <div class="alert alert-info">
-                            <strong>Hinweis:</strong>
-                            <p>
-                                Derzeit wird das Informationsangebot aufgebaut sowie die Funktionsfähigkeit der Software in diesem Bereich erprobt.
-                                Von daher haben die hier dargestellten Inhalte zum jetzigen Zeitpunkt keinerlei Relevanz.
-                                Rückfragen an <a href="mailto:hinz+nine@hm.edu">Prof. Dr.-Ing. Olav Hinz</a>
-                            </p>
-
+                        <div id="loading" class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="d-md-flex justify-content-md-end">
-                            @if (ViewBag.UserRight.IsCurriculumAdmin)
-                            {
-                                <a href="@Url.Action("Admin","CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-gear"></i> Verwalten
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <div class="button-group">
+                                <a href="@Url.Action("EditTeachingForms", new { id = Model.Id })" class="btn btn-outline-primary disabled" aria-current="true">
+                                        Lehrveranstaltungsarten
                                 </a>
-                            }
-                            <div id="loading" class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                                <a href="@Url.Action("EditExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary disabled" aria-current="true">
+                                        Prüfungsformen
+                                </a>
+                                @if (!Model.Accreditations.Any())
+                                {
+                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                        Modul endgültig löschen
+                                </a>
+                                }
+                                else
+                                {
+                                if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
+                                {
+                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                    Modulbeschreibungen löschen
+                                </a>
+                                }
+                                else
+                                {
+                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                    Modul aus allen Studiengängen entfernen
+                                </a>
+                                }
+                                }
+
                             </div>
+                        }
                         </div>
-                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -161,6 +175,17 @@
                                 @Model.Applicableness
                             </div>
                         </div>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                        {
+                            <div class="row">
+                                <div class="col-12">
+                                    <a href="@Url.Action("EditGeneral", "CurriculumModule",new {id = Model.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-keyboard"></i> Ändern
+                                    </a>
+                                </div>
+                            </div>
+                        }
+
                     </div>
                 </div>
 

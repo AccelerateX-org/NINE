@@ -18,6 +18,22 @@
                 <h4 class="card-title">Studienplan @Model.Curriculum.Name (@Model.Curriculum.ShortName)</h4>
                 <h5 class="card-subtitle">@Model.Semester.Name</h5>
             </div>
+            <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                                <i class="bi-chevron-left"></i> Studiengang
+                            </a>
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                    <i class="bi-printer"></i> veröffentlichen
+                                </a>
+                            }
+                        </div>
+                    </div>
+            </div>
+
             <table id="tabModules" class="table">
                 <thead>
                     <tr>

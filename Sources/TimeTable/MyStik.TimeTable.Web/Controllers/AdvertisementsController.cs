@@ -224,6 +224,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     }
                 }
 
+                foreach (var post in adv.Postings.ToList())
+                {
+                    Db.BoardPosts.Remove(post);
+                }
+
                 Db.Advertisements.Remove(adv);
                 Db.SaveChanges();
             }
