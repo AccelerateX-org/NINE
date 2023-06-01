@@ -4201,6 +4201,7 @@
     <Content Include="Views\StudyPlan\Publish.cshtml" />
     <Content Include="Views\Shared\_StudyPlanPrintOut.cshtml" />
     <Content Include="Views\Shared\_StudyPlanPrintOutForeground.cshtml" />
+    <Content Include="Views\ModuleDescription\Descriptions.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

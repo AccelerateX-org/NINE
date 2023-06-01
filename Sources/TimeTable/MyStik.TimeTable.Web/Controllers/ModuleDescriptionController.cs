@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Utils;
+using Newtonsoft.Json.Converters;
+using Org.BouncyCastle.Asn1.Crmf;
 using PdfSharp;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 
@@ -32,7 +34,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 semItem = new SelectListItem
                 {
-                    Text = $"Nächstes: {nextSemester.Name}",
+                    Text = nextSemester.Name,
                     Value = nextSemester.Id.ToString(),
                     Selected = false
                 };
@@ -41,7 +43,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             semItem = new SelectListItem
             {
-                Text = $"Aktuell: {semester.Name}",
+                Text = semester.Name,
                 Value = semester.Id.ToString(),
                 Selected = true
             };
@@ -49,7 +51,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             semItem = new SelectListItem
             {
-                Text = $"Letztes: {prevSemester.Name}",
+                Text = prevSemester.Name,
                 Value = prevSemester.Id.ToString(),
                 Selected = false
             };
@@ -67,11 +69,18 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
             var semester = SemesterService.GetSemester(semId);
 
-            var desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
+
+            // die aktuell veröffentlichte Fassung
+            var lastPublished = module.Descriptions
+                .Where(x => 
+                    x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                .OrderByDescending(x => x.ChangeLog.Approved)
+                .FirstOrDefault();
+
 
             // Default => lege eine Beschreibung an
             // TODO: automatisch auf dem Vorsemester, falls vorhanden
-
+            /*
             if (desc == null)
             {
                 desc = new ModuleDescription
@@ -83,7 +92,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 Db.ModuleDescriptions.Add(desc);
                 Db.SaveChanges();
-            }
+            }*/
 
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
@@ -92,7 +101,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 CurriculumModule = module,
                 Semester = semester,
-                ModuleDescription = desc
+                ModuleDescription = lastPublished
             };
 
 
@@ -150,7 +159,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { id = desc.Module.Id });
+            return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
         }
 
         public ActionResult Copy(Guid id)
@@ -407,6 +416,81 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = module.Id, });
         }
 
+        public ActionResult Descriptions(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var allDesc = module.Descriptions
+                .Where(x => x.Semester.Id == semId && x.ChangeLog != null)
+                .OrderByDescending(x => x.ChangeLog.LastEdited).ToList();
+
+            // check die erste
+            // publiziert => Button neue Fassung
+            // nicht publiziert => Buttons ändern | publizieren
+
+            var badDesc = module.Descriptions
+                .Where(x => x.Semester.Id == semId && x.ChangeLog == null).ToList();
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+                Semester = semester,
+                ModuleDescriptions = allDesc,
+                BadModuleDescriptions = badDesc
+            };
+
+            return View(model);
+        }
+
+        public ActionResult Publish(Guid id)
+        {
+            var user = GetCurrentUser();
+
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            if (desc.ChangeLog != null)
+            {
+                desc.ChangeLog.Approved = DateTime.Now;
+                desc.ChangeLog.UserIdApproval = user.Id;
+                Db.SaveChanges();
+            }
+            
+            return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
+        }
+
+        public ActionResult FollowUp(Guid id)
+        {
+            var user = GetCurrentUser();
+
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            var followUpDesc = new ModuleDescription
+            {
+                Description = desc.Description,
+                Module = desc.Module,
+                Semester = desc.Semester
+            };
+
+            var changeLog = new ChangeLog
+            {
+                Created = DateTime.Now,
+                LastEdited = DateTime.Now,
+                UserIdAmendment = user.Id,
+            };
+
+            followUpDesc.ChangeLog = changeLog;
+
+            Db.ChangeLogs.Add(changeLog);
+            Db.ModuleDescriptions.Add(followUpDesc);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
+        }
+
+
+
         public FileResult DownloadPdf(Guid moduleId, Guid semId)
         {
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
@@ -438,13 +522,12 @@ namespace MyStik.TimeTable.Web.Controllers
         }
     }
 
-        public class ModuleDescriptionEditModel
+    public class ModuleDescriptionEditModel
     {
         public ModuleDescription ModuleDescription { get; set; }
 
         [AllowHtml]
         public string DescriptionText { get; set; }
     }
-
 
 }

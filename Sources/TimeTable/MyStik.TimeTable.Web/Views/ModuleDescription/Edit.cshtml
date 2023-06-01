@@ -95,7 +95,7 @@
                                     @Html.TextAreaFor(m => m.DescriptionText, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
                                 </div>
                                 <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
-                                <a class="btn btn-outline-secondary" href="@Url.Action("ContentChange", new {id=Model.ModuleDescription.Module.Id})"><i class="bi-x"></i> Abbrechen</a>
+                                <a class="btn btn-outline-secondary" href="@Url.Action("Descriptions", new {moduleId=Model.ModuleDescription.Module.Id, semId=Model.ModuleDescription.Semester.Id})"><i class="bi-x"></i> Abbrechen</a>
                             }
                         </div>
                     </div>

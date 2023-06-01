@@ -49,61 +49,61 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Inhalte und Qualifikationsziele</h5>
-                    @if (Model.ModuleDescription.ChangeLog != null)
+                    @if (Model.ModuleDescription != null)
                     {
-                        var user = userService.GetUser(Model.ModuleDescription.ChangeLog.UserIdAmendment);
-                        var userName = "unbekannt";
-                        if (user != null)
+                        if (Model.ModuleDescription.ChangeLog != null)
                         {
-                            userName = user.FullName;
+                            var user = userService.GetUser(Model.ModuleDescription.ChangeLog.UserIdAmendment);
+                            var userName = "unbekannt";
+                            if (user != null)
+                            {
+                                userName = user.FullName;
+                            }
+                            if (Model.ModuleDescription.ChangeLog.Approved != null)
+                            {
+                                <h6 class="card-subtitle">
+                                    zuletzt geändert am @Model.ModuleDescription.ChangeLog.LastEdited von @userName - veröffentlicht am @Model.ModuleDescription.ChangeLog.Approved
+                                </h6>
+                            }
+                            else
+                            {
+                                <h6 class="card-subtitle">
+                                    zuletzt geändert am @Model.ModuleDescription.ChangeLog.LastEdited von @userName - unveröffentlicht
+                                </h6>
+                            }
                         }
-                        if (Model.ModuleDescription.ChangeLog.Approved != null)
-                        {
-                            <h6 class="card-subtitle">
-                                zuletzt geändert am @Model.ModuleDescription.ChangeLog.LastEdited von @userName - veröffentlicht am @Model.ModuleDescription.ChangeLog.Approved
-                            </h6>
-                        }
-                        else
-                        {
-                            <h6 class="card-subtitle">
-                                zuletzt geändert am @Model.ModuleDescription.ChangeLog.LastEdited von @userName - unveröffentlicht
-                            </h6>
-                        }
+                    }
+                    else
+                    {
+
                     }
                 </div>
                 <div class="list-group">
                     <div class="list-group-item">
-                        @if (string.IsNullOrEmpty(Model.ModuleDescription.Description))
+                        @if (Model.ModuleDescription != null)
                         {
-                            <div></div>
+
+                            if (string.IsNullOrEmpty(Model.ModuleDescription.Description))
+                            {
+                                <div></div>
+                            }
+                            else
+                            {
+                                @Html.Raw(Model.ModuleDescription.Description.Trim())
+                            }
                         }
                         else
                         {
-                            @Html.Raw(Model.ModuleDescription.Description.Trim())
+                            <div>Es liegt keine <strong>veröffentlichte Fassung</strong> der Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
                         }
                     </div>
                 </div>
                 <div class="card-body">
                     @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                     {
-                        <a href="@Url.Action("ContentChange", null, new { id = Model.ModuleDescription.Id })" class="btn btn-outline-primary">
+                        <a href="@Url.Action("Descriptions", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
                             <i class="bi-keyboard"></i> Ändern
                         </a>
-                        if (Model.ModuleDescription.ChangeLog != null)
-                        {
-                            if (Model.ModuleDescription.ChangeLog.Approved == null)
-                            {
-                            <a href="@Url.Action("Publish", null, new { id = Model.ModuleDescription.Id })" class="btn btn-outline-primary">
-                                <i class="bi-printer"></i> Publizieren
-                            </a>
-                            }
-                            else
-                            {
-                            <a href="@Url.Action("UnPublish", null, new { id = Model.ModuleDescription.Id })" class="btn btn-outline-primary">
-                                <i class="bi-x"></i> Publikation zurückziehen
-                            </a>
-                            }
-                        }
                     }
                 </div>
 

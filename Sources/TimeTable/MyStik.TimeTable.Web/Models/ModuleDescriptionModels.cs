@@ -50,4 +50,13 @@ namespace MyStik.TimeTable.Web.Models
         public List<CurriculumModule> Modules { get; set; }
         
     }
+
+    public class ModuleDescriptionsViewModel
+    {
+        public CurriculumModule Module { get; set; }
+        public Semester Semester { get; set; }
+        public List<ModuleDescription> ModuleDescriptions { get; set; }
+        public List<ModuleDescription> BadModuleDescriptions { get; set; }
+    }
+
 }

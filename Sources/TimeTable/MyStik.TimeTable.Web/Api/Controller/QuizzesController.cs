@@ -10,6 +10,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 {
     public class QuizSearchModel
     {
+        public Guid quizid { get; set; }
         public Guid courseid { get; set; }
         public Guid playerid { get; set; }
     }
@@ -43,6 +44,24 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return result.AsQueryable();
         }
+
+        [Route("infos")]
+        [HttpPost]
+        public QuizDto GetQuizInfo([FromBody] QuizSearchModel request)
+        {
+            var transformer = new QuizTransformer();
+
+            var quiz = _db.Quizzes.SingleOrDefault(x => x.Id == request.quizid);
+
+            var quizDto = transformer.GetStructure(quiz);
+
+            quizDto.NumGames = _db.QuizGames.Count(x =>
+                    x.Quiz.Id == quiz.Id &&
+                    x.Subscriptions.Any(s => s.Player.UserId.Equals(request.playerid.ToString())));
+
+            return quizDto;
+        }
+
 
 
         [Route("{quizId}/summary")]

@@ -1,0 +1,89 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Web.Services
+@{
+    ViewBag.Title = "Descriptions";
+    var i = 0;
+    var userService = new UserInfoService();
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <p>Liste aller Fassungen für Semester @Model.Semester.Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Angelegt</th>
+                        <th>Zuletzt geändert</th>
+                        <th>Bearbeitung</th>
+                        <th>Veröffentlicht</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var desc in Model.ModuleDescriptions)
+                    {
+                        i++;
+                        var user = userService.GetUser(desc.ChangeLog.UserIdAmendment);
+                        var userName = "unbekannt";
+                        if (user != null)
+                        {
+                            userName = user.FullName;
+                        }
+
+                        <tr>
+                            <td>@desc.ChangeLog.Created</td>
+                            <td>@desc.ChangeLog.LastEdited</td>
+                            <td>@userName</td>
+                            <td>@desc.ChangeLog.Approved</td>
+                            <td>
+                                @if (i == 1)
+                                {
+                                    if (desc.ChangeLog.Approved != null)
+                                    {
+                                        <a href="@Url.Action("FollowUp", new {id = desc.Id})" class="btn btn-outline-primary">neue Fassung erstellen</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Edit", new {id = desc.Id})" class="btn btn-outline-primary">Ändern</a>
+                                        <a href="@Url.Action("Publish", new {id = desc.Id})" class="btn btn-outline-primary">Veröffentlichen</a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var desc in Model.BadModuleDescriptions)
+                    {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a href="@Url.Action("DeleteDesciption")" class="btn btn-outline-danger">Löschen</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+                </div>
+            </div>
+
+
