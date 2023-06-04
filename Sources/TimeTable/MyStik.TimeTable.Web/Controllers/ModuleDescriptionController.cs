@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -72,27 +73,21 @@ namespace MyStik.TimeTable.Web.Controllers
 
             // die aktuell veröffentlichte Fassung
             var lastPublished = module.Descriptions
-                .Where(x => 
+                .Where(x =>
                     x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
                 .OrderByDescending(x => x.ChangeLog.Approved)
                 .FirstOrDefault();
 
+            // die aktuell veröffentlichten Prüfungsangebote
+            var exams = new List<ExaminationDescription>();
 
-            // Default => lege eine Beschreibung an
-            // TODO: automatisch auf dem Vorsemester, falls vorhanden
-            /*
-            if (desc == null)
+            foreach (var accr in module.Accreditations)
             {
-                desc = new ModuleDescription
-                {
-                    Description = "",
-                    Module = module,
-                    Semester = semester
-                };
-
-                Db.ModuleDescriptions.Add(desc);
-                Db.SaveChanges();
-            }*/
+                var subExams = accr.ExaminationDescriptions
+                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                    .ToList();
+                exams.AddRange(subExams);
+            }
 
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
@@ -101,7 +96,8 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 CurriculumModule = module,
                 Semester = semester,
-                ModuleDescription = lastPublished
+                ModuleDescription = lastPublished,
+                Exams = exams
             };
 
 
@@ -366,7 +362,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.moduleId);
             var accr = Db.Accreditations.SingleOrDefault(x => x.Id == model.accredidationId);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.semesterId);
-            
+
             var examOption = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.examOptId);
             var firstMember = Db.Members.SingleOrDefault(x => x.Id == model.firstMemberId);
             var secondMember = Db.Members.SingleOrDefault(x => x.Id == model.secondMemberId);
@@ -455,9 +451,26 @@ namespace MyStik.TimeTable.Web.Controllers
                 desc.ChangeLog.UserIdApproval = user.Id;
                 Db.SaveChanges();
             }
-            
+
             return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
         }
+
+        public ActionResult PublishExamination(Guid id)
+        {
+            var user = GetCurrentUser();
+
+            var desc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
+
+            if (desc.ChangeLog != null)
+            {
+                desc.ChangeLog.Approved = DateTime.Now;
+                desc.ChangeLog.UserIdApproval = user.Id;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Exams", new { moduleId = desc.Accreditation.Module.Id, semId = desc.Semester.Id });
+        }
+
 
         public ActionResult FollowUp(Guid id)
         {
@@ -489,6 +502,35 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
         }
 
+        public ActionResult Init(Guid moduleId, Guid semId)
+        {
+            var user = GetCurrentUser();
+
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var desc = new ModuleDescription
+            {
+                Description = string.Empty,
+                Module = module,
+                Semester = semester
+            };
+
+            var changeLog = new ChangeLog
+            {
+                Created = DateTime.Now,
+                LastEdited = DateTime.Now,
+                UserIdAmendment = user.Id,
+            };
+
+            desc.ChangeLog = changeLog;
+
+            Db.ChangeLogs.Add(changeLog);
+            Db.ModuleDescriptions.Add(desc);
+            Db.SaveChanges();
+
+            return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
+        }
 
 
         public FileResult DownloadPdf(Guid moduleId, Guid semId)
@@ -520,14 +562,182 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return File(stream.GetBuffer(), "application/pdf", "Modulbeschreibung.pdf");
         }
+
+        public ActionResult Exams(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+            // die aktuell veröffentlichten Prüfungsangebote
+            var exams = new List<ExaminationDescription>();
+
+            foreach (var accr in module.Accreditations)
+            {
+                var subExams = accr.ExaminationDescriptions
+                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null)
+                    .ToList();
+                exams.AddRange(subExams);
+            }
+
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+                Semester = semester,
+                Exams = exams
+            };
+
+            return View(model);
+        }
+
+
+        public ActionResult ExaminationForms(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+            };
+
+            return View(model);
+        }
+
+        public ActionResult CreateExaminationOption(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var exam = new ExaminationOption
+            {
+                Module = module
+            };
+
+            return View(exam);
+        }
+
+        [HttpPost]
+        public ActionResult CreateExaminationOption(ExaminationOption model)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.Module.Id);
+
+            var exam = new ExaminationOption
+            {
+                Module = module,
+                Name = model.Name,
+            };
+
+            Db.ExaminationOptions.Add(exam);
+            Db.SaveChanges();
+
+            return RedirectToAction("ExaminationForms", new { id = exam.Module.Id });
+        }
+
+
+        public ActionResult EditExaminationOption(Guid id)
+        {
+            var exam = Db.ExaminationOptions.SingleOrDefault(x => x.Id == id);
+
+            return View(exam);
+        }
+
+        [HttpPost]
+        public ActionResult EditExaminationOption(ExaminationOption model)
+        {
+            var exam = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.Id);
+
+            exam.Name = model.Name;
+            Db.SaveChanges();
+
+            return RedirectToAction("ExaminationForms", new { id = exam.Module.Id });
+        }
+
+        public ActionResult CreateExaminationFraction(Guid id)
+        {
+            var exam = Db.ExaminationOptions.SingleOrDefault(x => x.Id == id);
+
+            var model = new ExaminationFractionViewModel
+            {
+                Option = exam
+            };
+
+            var examinationForms =
+                Db.ExaminationForms.Select(x => new SelectListItem
+                {
+                    Text = x.ShortName,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.ExamOptions = examinationForms;
+
+            if (examinationForms.Any())
+            {
+                model.ExaminationTypeId = Guid.Parse(examinationForms.First().Value);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateExaminationFraction(ExaminationFractionViewModel model)
+        {
+            var exam = Db.ExaminationOptions.SingleOrDefault(x => x.Id == model.Option.Id);
+            var type = Db.ExaminationForms.SingleOrDefault(x => x.Id == model.ExaminationTypeId);
+
+            var fraction = new ExaminationFraction
+            {
+                ExaminationOption = exam,
+                Form = type,
+                Weight = model.Weight / (double) 100,
+                MinDuration = model.MinDuration,
+                MaxDuration = model.MaxDuration
+            };
+
+            Db.ExaminationFractions.Add(fraction);
+            Db.SaveChanges();
+
+            return RedirectToAction("ExaminationForms", new { id = exam.Module.Id });
+        }
+
+        public ActionResult EditExaminationFraction(Guid id)
+        {
+            var fraction = Db.ExaminationFractions.SingleOrDefault(x => x.Id == id);
+
+            var model = new ExaminationFractionViewModel
+            {
+                Option = fraction.ExaminationOption,
+                FractionId = fraction.Id,
+                ExaminationTypeId = fraction.Form.Id,
+                Weight = (int)(fraction.Weight * 100 + 0.0001),
+                MinDuration = (int)fraction.MinDuration,
+                MaxDuration= (int)fraction.MaxDuration
+            };
+
+            var examinationForms =
+                Db.ExaminationForms.Select(x => new SelectListItem
+                {
+                    Text = x.ShortName,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.ExamOptions = examinationForms;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditExaminationFraction(ExaminationFractionViewModel model)
+        {
+            var fraction = Db.ExaminationFractions.SingleOrDefault(x => x.Id == model.FractionId);
+            var type = Db.ExaminationForms.SingleOrDefault(x => x.Id == model.ExaminationTypeId);
+
+            fraction.Form = type;
+            fraction.Weight = model.Weight / (double)100;
+            fraction.MinDuration = model.MinDuration;
+            fraction.MaxDuration = model.MaxDuration;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("ExaminationForms", new { id = fraction.ExaminationOption.Module.Id });
+        }
     }
-
-    public class ModuleDescriptionEditModel
-    {
-        public ModuleDescription ModuleDescription { get; set; }
-
-        [AllowHtml]
-        public string DescriptionText { get; set; }
-    }
-
 }

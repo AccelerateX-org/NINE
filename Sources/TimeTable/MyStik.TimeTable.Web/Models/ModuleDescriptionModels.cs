@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -49,6 +50,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<CurriculumModule> Modules { get; set; }
         
+        public List<ExaminationDescription> Exams { get; set; }
     }
 
     public class ModuleDescriptionsViewModel
@@ -57,6 +59,32 @@ namespace MyStik.TimeTable.Web.Models
         public Semester Semester { get; set; }
         public List<ModuleDescription> ModuleDescriptions { get; set; }
         public List<ModuleDescription> BadModuleDescriptions { get; set; }
+
+        public List<ExaminationDescription> Exams { get; set; }
+    }
+
+
+    public class ModuleDescriptionEditModel
+    {
+        public ModuleDescription ModuleDescription { get; set; }
+
+        [AllowHtml]
+        public string DescriptionText { get; set; }
+    }
+
+    public class ExaminationFractionViewModel
+    {
+        public ExaminationOption Option { get; set; }
+
+        public Guid FractionId { get; set; }
+
+        public Guid ExaminationTypeId { get; set; }
+
+        public int Weight { get; set; }
+
+        public int MinDuration { get; set; }
+
+        public int MaxDuration { get; set; }
     }
 
 }

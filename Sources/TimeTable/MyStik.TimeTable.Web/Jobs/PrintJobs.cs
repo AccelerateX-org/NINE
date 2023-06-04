@@ -21,6 +21,8 @@ namespace MyStik.TimeTable.Web.Jobs
         public Guid SemesterId { get; set; }
 
         public Guid MemberId { get; set; }
+
+        public string Remark { get; set; }
     }
 
     public class StudyPlanPrintJob
@@ -40,7 +42,7 @@ namespace MyStik.TimeTable.Web.Jobs
                     c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
 
 
-            var model = new ModuleSemesterView
+            var model = new StudyPlanViewModel
             {
                 Curriculum = curr,
                 Semester = semester,

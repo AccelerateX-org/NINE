@@ -37,32 +37,31 @@
             <table id="tabModules" class="table">
                 <thead>
                     <tr>
-                        <th>Tag</th>
-                        <th>Titel</th>
-                        <th>Beschreibung</th>
-                        <th>Lehrangebote</th>
-                        <th>Prüfungsangebote</th>
+                        <th>Modul</th>
+                        <th>Modul-Slot</th>
+                        <th>Wahlmöglichkeit</th>
+                        <th>Themengebiet</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var module in Model.Modules)
+                    @foreach (var area in Model.Curriculum.Areas)
                     {
-                        var desc = module.Descriptions.FirstOrDefault(x => x.Semester.Id == Model.Semester.Id);
-                        <tr>
-                            <td>@module.FullTag</td>
-                            <td>@module.Name</td>
-                            @if (desc != null)
+                        foreach (var option in area.Options)
+                        {
+                            foreach (var slot in option.Slots)
                             {
-                                <td>1</td>
+                                foreach (var accr in slot.ModuleAccreditations)
+                                {
+                                    <tr>
+                                        <td><a href="@Url.Action("Details", "ModuleDescription", new {id = accr.Module.Id})">@accr.Module.Tag @accr.Module.Name</a></td>
+                                        <td><a href="@Url.Action("Slot", "Curriculum", new {id = slot.Id})">@slot.Tag</a></td>
+                                        <td><a href="@Url.Action("Option", "Curriculum", new {id = option.Id})">@option.Tag</a></td>
+                                        <td><a href="@Url.Action("Area", "Curriculum", new {id = area.Id})">@area.Tag</a></td>
+                                    </tr>
+                                }
                             }
-                            else
-                            {
-                                <td>0</td>
-                            }
-                            <td>@module.Accreditations.Count(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == Model.Semester.Id))</td>
-                            <td>@module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == Model.Semester.Id))</td>
-                        </tr>
-                    }
+                        }
+                     }
                 </tbody>
             </table>
         </div>

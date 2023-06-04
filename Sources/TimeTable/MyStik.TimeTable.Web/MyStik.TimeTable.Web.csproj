@@ -4202,6 +4202,12 @@
     <Content Include="Views\Shared\_StudyPlanPrintOut.cshtml" />
     <Content Include="Views\Shared\_StudyPlanPrintOutForeground.cshtml" />
     <Content Include="Views\ModuleDescription\Descriptions.cshtml" />
+    <Content Include="Views\ModuleDescription\Exams.cshtml" />
+    <Content Include="Views\ModuleDescription\ExaminationForms.cshtml" />
+    <Content Include="Views\ModuleDescription\EditExaminationOption.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateExaminationOption.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateExaminationFraction.cshtml" />
+    <Content Include="Views\ModuleDescription\EditExaminationFraction.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

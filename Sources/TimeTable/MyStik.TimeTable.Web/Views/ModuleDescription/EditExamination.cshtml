@@ -68,7 +68,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
-                    <a class="btn btn-outline-secondary" href="@Url.Action("Details", new {id=Model.moduleId})"><i class="bi-x"></i> Abbrechen</a>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Exams", new { moduleId = Model.moduleId, semId = Model.semesterId })"><i class="bi-x"></i> Abbrechen</a>
                 }
             </div>
         </div>

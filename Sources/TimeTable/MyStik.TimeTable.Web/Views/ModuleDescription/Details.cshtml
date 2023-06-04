@@ -35,10 +35,10 @@
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <div class="button-group">
-                                <a href="@Url.Action("EditTeachingForms", new { id = Model.Id })" class="btn btn-outline-primary disabled" aria-current="true">
-                                        Lehrveranstaltungsarten
+                                <a href="@Url.Action("TeachingForms", new { id = Model.Id })" class="btn btn-outline-primary disabled" aria-current="true">
+                                        Lehr- und Lernformen
                                 </a>
-                                <a href="@Url.Action("EditExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary disabled" aria-current="true">
+                                <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
                                         Prüfungsformen
                                 </a>
                                 @if (!Model.Accreditations.Any())

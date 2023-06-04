@@ -8,6 +8,10 @@ namespace MyStik.TimeTable.Web.Models
 {
     public class StudyPlanViewModel
     {
+        public DateTime TimeStamp { get; set; }
+
+        public string Remark { get; set; }
+
         public Curriculum Curriculum { get; set; }
 
         public Semester Semester { get; set; }

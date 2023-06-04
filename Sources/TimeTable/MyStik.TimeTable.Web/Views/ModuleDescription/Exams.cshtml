@@ -1,0 +1,112 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Web.Services
+@{
+    ViewBag.Title = "Descriptions";
+    var i = 0;
+    var userService = new UserInfoService();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <p>Liste aller Prüfungsangebote für Semester @Model.Semester.Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Erstprüfer:in</th>
+                        <th>Zweitprüfer:in</th>
+                        <th>Prüfungsform</th>
+                        <th>Angelegt</th>
+                        <th>Zuletzt geändert</th>
+                        <th>Bearbeitung</th>
+                        <th>Veröffentlicht</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            @if (Model.Module.Accreditations.Any())
+                            {
+                                <a href="@Url.Action("CreateExamination", null, new { moduleId = Model.Module.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                    <i class="bi-plus"></i> Neues Angebot hinzufügen
+                                </a>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger">
+                                    <p>Keine Prüfungsangebote möglich, da keine Zuordnung des Moduls zu einem Studiengang vorliegt.</p>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                    @foreach (var exam in Model.Exams)
+                    {
+                        i++;
+                        var user = userService.GetUser(exam.ChangeLog.UserIdAmendment);
+                        var userName = "unbekannt";
+                        if (user != null)
+                        {
+                            userName = user.FullName;
+                        }
+
+                        <tr>
+                            <td>@exam.FirstExminer.FullName</td>
+                            <td>@exam.SecondExaminer.FullName</td>
+                            <td>@exam.ExaminationOption.FullName</td>
+                            <td>@exam.ChangeLog.Created</td>
+                            <td>@exam.ChangeLog.LastEdited</td>
+                            <td>@userName</td>
+                            <td>@exam.ChangeLog.Approved</td>
+                            <td>
+                                @if (exam.ChangeLog.Approved == null)
+                                {
+                                    <a href="@Url.Action("EditExamination", null, new { id = exam.Id })" class="btn btn-outline-primary">
+                                        <i class="bi-keyboard"></i> Ändern
+                                    </a>
+                                    <a href="@Url.Action("PublishExamination", new {id = exam.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-printer"></i> Veröffentlichen
+                                    </a>
+                                    <a href="@Url.Action("DeleteExamination", null, new { id = exam.Id })" class="btn btn-outline-danger">
+                                        <i class="bi-trash"></i> Löschen
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

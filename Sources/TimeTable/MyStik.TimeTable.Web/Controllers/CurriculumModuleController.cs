@@ -92,6 +92,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.Prequisites = module.Prerequisites;
             model.Applicableness = module.Applicableness;
 
+
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
 
             return View(model);

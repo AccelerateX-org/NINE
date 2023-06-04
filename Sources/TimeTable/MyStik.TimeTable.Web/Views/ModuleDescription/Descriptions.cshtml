@@ -4,7 +4,6 @@
     ViewBag.Title = "Descriptions";
     var i = 0;
     var userService = new UserInfoService();
-
 }
 
 <div class="row">
@@ -37,6 +36,18 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if (!Model.ModuleDescriptions.Any())
+                    {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a href="@Url.Action("Init", new {moduleId = Model.Module.Id, semId = Model.Semester.Id})" class="btn btn-outline-primary">neue Beschreibung erstellen</a>
+                            </td>
+                        </tr>
+                    }
                     @foreach (var desc in Model.ModuleDescriptions)
                     {
                         i++;
