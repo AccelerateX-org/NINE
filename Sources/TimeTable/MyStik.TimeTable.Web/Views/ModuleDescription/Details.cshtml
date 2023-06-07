@@ -28,44 +28,50 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-12">
-                        <h4 class="card-title">Modul @Model.Tag: @Model.Name</h4>
+                        <h4 class="card-title">Modul @Model.Tag</h4>
+                        <h4 class="card-title">
+                            <img src="~/Assets/img/flags/de.png" /> @Model.Name
+                        </h4>
+                        <h4 class="card-title">
+                            <img src="~/Assets/img/flags/gb.png" /> @Model.NameEn
+                        </h4>
                         <div id="loading" class="spinner-border" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
                             <div class="button-group">
-                                <a href="@Url.Action("TeachingForms", new { id = Model.Id })" class="btn btn-outline-primary disabled" aria-current="true">
-                                        Lehr- und Lernformen
+                                <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                    Lehr- und Lernformen
                                 </a>
                                 <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                        Prüfungsformen
+                                    Prüfungsformen
                                 </a>
                                 @if (!Model.Accreditations.Any())
                                 {
-                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
                                         Modul endgültig löschen
-                                </a>
+                                    </a>
                                 }
                                 else
                                 {
-                                if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
-                                {
-                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                    Modulbeschreibungen löschen
-                                </a>
-                                }
-                                else
-                                {
-                                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                    Modul aus allen Studiengängen entfernen
-                                </a>
-                                }
+                                    if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
+                                    {
+                                        <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                            Modulbeschreibungen löschen
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                            Modul aus allen Studiengängen entfernen
+                                        </a>
+                                    }
                                 }
 
                             </div>
                         }
-                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">

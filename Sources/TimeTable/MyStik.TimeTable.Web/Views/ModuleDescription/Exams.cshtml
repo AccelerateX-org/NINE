@@ -73,8 +73,22 @@
                         }
 
                         <tr>
-                            <td>@exam.FirstExminer.FullName</td>
-                            <td>@exam.SecondExaminer.FullName</td>
+                            @if (exam.FirstExminer != null)
+                            {
+                                <td>@exam.FirstExminer.FullName</td>
+                            }
+                            else
+                            {
+                                <td><i>nicht festgelegt</i></td>
+                            }
+                            @if (exam.SecondExaminer != null)
+                            {
+                                <td>@exam.SecondExaminer.FullName</td>
+                            }
+                            else
+                            {
+                                <td><i>nicht festgelegt</i></td>
+                            }
                             <td>@exam.ExaminationOption.FullName</td>
                             <td>@exam.ChangeLog.Created</td>
                             <td>@exam.ChangeLog.LastEdited</td>

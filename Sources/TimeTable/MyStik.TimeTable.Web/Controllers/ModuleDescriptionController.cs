@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
@@ -124,7 +125,8 @@ namespace MyStik.TimeTable.Web.Controllers
             var model = new ModuleDescriptionEditModel()
             {
                 ModuleDescription = desc,
-                DescriptionText = desc.Description
+                DescriptionText = desc.Description,
+                DescriptionTextEn = desc.DescriptionEn
             };
 
             return View(model);
@@ -137,6 +139,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == model.ModuleDescription.Id);
 
             desc.Description = model.DescriptionText;
+            desc.DescriptionEn = model.DescriptionTextEn;
 
             var changeLog = desc.ChangeLog;
 
@@ -739,5 +742,109 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("ExaminationForms", new { id = fraction.ExaminationOption.Module.Id });
         }
+
+        public ActionResult Subjects(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+            };
+
+            return View(model);
+        }
+
+
+
+        public ActionResult CreateSubject(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var model = new SubjectViewModel
+            {
+                Module = module
+            };
+
+            var teachingForms =
+                Db.TeachingFormats.Select(x => new SelectListItem
+                {
+                    Text = x.Tag,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.TeachingOptions = teachingForms;
+
+            if (teachingForms.Any())
+            {
+                model.TeachingTypeId = Guid.Parse(teachingForms.First().Value);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateSubject(SubjectViewModel model)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == model.Module.Id);
+            var type = Db.TeachingFormats.SingleOrDefault(x => x.Id == model.TeachingTypeId);
+
+            var subject = new ModuleSubject
+            {
+                Module = module,
+                SWS = model.SWS,
+                Tag = model.Tag,
+                Name = model.Name,
+                TeachingFormat = type
+            };
+
+            Db.ModuleCourses.Add(subject);
+            Db.SaveChanges();
+
+            return RedirectToAction("Subjects", new { id = module.Id });
+        }
+
+        public ActionResult EditSubject(Guid id)
+        {
+            var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == id);
+
+            var model = new SubjectViewModel
+            {
+                Module = subject.Module,
+                SubjectId = subject.Id,
+                Tag = subject.Tag,
+                Name = subject.Name,
+                SWS= subject.SWS,
+                TeachingTypeId = subject.TeachingFormat.Id,
+            };
+
+            var teachingForms =
+                Db.TeachingFormats.Select(x => new SelectListItem
+                {
+                    Text = x.Tag,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.TeachingOptions = teachingForms;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditSubject(SubjectViewModel model)
+        {
+            var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == model.SubjectId);
+            var type = Db.TeachingFormats.SingleOrDefault(x => x.Id == model.TeachingTypeId);
+
+            subject.TeachingFormat = type;
+            subject.Tag = model.Tag;
+            subject.Name = model.Name;
+            subject.SWS = model.SWS;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Subjects", new { id = subject.Module.Id });
+        }
+
     }
 }

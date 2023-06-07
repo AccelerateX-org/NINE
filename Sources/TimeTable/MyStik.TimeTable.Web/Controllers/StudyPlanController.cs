@@ -76,33 +76,35 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.Semester.Id);
             var member = GetMyMembership();
 
-            if (model.RollForward)
+            var now = DateTime.Now;
+
+            // alle Module veröffentlichen
+            var nextSemester = SemesterService.GetNextSemester(semester);
+
+            var modules = Db.CurriculumModules.Where(x =>
+                x.Accreditations.Any(c =>
+                    c.Slot != null &&
+                    c.Slot.AreaOption != null &&
+                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
+
+            foreach (var module in modules)
             {
-                var now = DateTime.Now;
+                // aktuelle Beschreibung des Semesters
+                var currentDesc = module.Descriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
 
-                // alle Module veröffentlichen
-                var nextSemester = SemesterService.GetNextSemester(semester);
-
-                var modules = Db.CurriculumModules.Where(x =>
-                    x.Accreditations.Any(c =>
-                        c.Slot != null &&
-                        c.Slot.AreaOption != null &&
-                        c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
-
-                foreach (var module in modules)
+                if (currentDesc != null)
                 {
-                    // aktuelle Beschreibung des Semesters
-                    var currentDesc = module.Descriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
+                    // Modulbeschreibung veröffentlichen
+                    currentDesc.ChangeLog.Approved = now;
+                    currentDesc.ChangeLog.UserIdApproval = user.Id;
 
-                    if (currentDesc != null)
+                    // Fortschreibung
+                    // die aktuelle Beschreibung des Folgesemesters
+                    if (model.RollForward)
                     {
-                        // Modulbeschreibung veröffentlichen
-                        currentDesc.ChangeLog.Approved = now;
-                        currentDesc.ChangeLog.UserIdApproval = user.Id;
-
-                        // die aktuelle Beschreibung des Folgesemesters
                         var nextDesc = module.Descriptions.Where(x => x.Semester.Id == nextSemester.Id && x.ChangeLog != null).OrderByDescending(x => x.ChangeLog.LastEdited).FirstOrDefault();
 
+                        // neue Beschreibung anlegen
                         if (nextDesc == null)
                         {
                             nextDesc = new ModuleDescription
@@ -132,32 +134,33 @@ namespace MyStik.TimeTable.Web.Controllers
                             nextDesc.ChangeLog.LastEdited = now;
                         }
                     }
-
-
-                    foreach (var accr in module.Accreditations.Where(x => x.Slot.AreaOption.Area.Curriculum.Id == curr.Id).ToList())
+                }
+                foreach (var accr in module.Accreditations.Where(x => x.Slot.AreaOption.Area.Curriculum.Id == curr.Id).ToList())
+                {
+                    foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id).ToList())
                     {
-                        var hasNextExams = accr.ExaminationDescriptions.Any(x => x.Semester.Id == nextSemester.Id);
-
-                        foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id).ToList())
+                        if (exam.ChangeLog == null)
                         {
-                            if (exam.ChangeLog == null)
+                            var examChangeLog = new ChangeLog
                             {
-                                var examChangeLog = new ChangeLog
-                                {
-                                    Created = now,
-                                    LastEdited = now,
-                                    UserIdAmendment = currentDesc.ChangeLog.UserIdAmendment
-                                };
+                                Created = now,
+                                LastEdited = now,
+                                UserIdAmendment = currentDesc.ChangeLog.UserIdAmendment
+                            };
 
-                                exam.ChangeLog = examChangeLog;
-                                Db.ChangeLogs.Add(examChangeLog);
-                            }
+                            exam.ChangeLog = examChangeLog;
+                            Db.ChangeLogs.Add(examChangeLog);
+                        }
 
-                            exam.ChangeLog.Approved = now;
-                            exam.ChangeLog.UserIdApproval = user.Id;
+                        exam.ChangeLog.Approved = now;
+                        exam.ChangeLog.UserIdApproval = user.Id;
 
-                            // Fortschreibung der Prüfungsangebote
-                            // wenn schon welche vorhanden, dann nicht fortschreiben
+                        // Fortschreibung der Prüfungsangebote
+                        // wenn schon welche vorhanden, dann nicht fortschreiben
+                        if (model.RollForward)
+                        {
+                            var hasNextExams = accr.ExaminationDescriptions.Any(x => x.Semester.Id == nextSemester.Id);
+
                             if (!hasNextExams)
                             {
                                 var nextExam = new ExaminationDescription
@@ -187,9 +190,12 @@ namespace MyStik.TimeTable.Web.Controllers
                         }
                     }
                 }
-
-                Db.SaveChanges();
             }
+
+            Db.SaveChanges();
+
+
+
 
             bool useBackground = false;
 
@@ -207,12 +213,6 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             else
             {
-                var modules = Db.CurriculumModules.Where(x =>
-                    x.Accreditations.Any(c =>
-                        c.Slot != null &&
-                        c.Slot.AreaOption != null &&
-                        c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
-
                 var printModel = new StudyPlanViewModel
                 {
                     TimeStamp = DateTime.Now,

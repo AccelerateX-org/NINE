@@ -538,6 +538,10 @@
     <Compile Include="Migrations\202305260935168_BulletinBoardV1.designer.cs">
       <DependentUpon>202305260935168_BulletinBoardV1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202306070622575_ModuleDescV7.cs" />
+    <Compile Include="Migrations\202306070622575_ModuleDescV7.designer.cs">
+      <DependentUpon>202306070622575_ModuleDescV7.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -853,6 +857,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202305260935168_BulletinBoardV1.resx">
       <DependentUpon>202305260935168_BulletinBoardV1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306070622575_ModuleDescV7.resx">
+      <DependentUpon>202306070622575_ModuleDescV7.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

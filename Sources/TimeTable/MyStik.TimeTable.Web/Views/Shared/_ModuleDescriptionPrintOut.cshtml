@@ -241,7 +241,14 @@
                     </td>
                     <td>
                         <div class="vordruck">
-                            <div>@exam.FirstExminer.FullName</div>
+                            @if (exam.FirstExminer != null)
+                            {
+                                <div>@exam.FirstExminer.FullName</div>
+                            }
+                            else
+                            {
+                                <div>Nicht festgelegt</div>
+                            }
                         </div>
                     </td>
                 </tr>
@@ -253,7 +260,14 @@
                     </td>
                     <td>
                         <div class="vordruck">
-                            <div>@exam.SecondExaminer.FullName</div>
+                            @if (exam.SecondExaminer != null)
+                            {
+                                <div>@exam.SecondExaminer.FullName</div>
+                            }
+                            else
+                            {
+                                <div>Nicht festgelegt</div>
+                            }
                         </div>
                     </td>
                 </tr>

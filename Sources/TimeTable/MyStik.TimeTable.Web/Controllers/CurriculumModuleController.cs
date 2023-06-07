@@ -62,6 +62,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var module = new CurriculumModule
                 {
                     Name = model.Name,
+                    NameEn = model.NameEn,
                     Tag = model.Tag,
                     Applicableness = model.Applicableness,
                     Prerequisites = model.Prequisites,
@@ -88,6 +89,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.moduleId = module.Id;
             model.catalogId = module.Catalog.Id;
             model.Name = module.Name;
+            model.NameEn = module.NameEn;
             model.Tag = module.Tag;
             model.Prequisites = module.Prerequisites;
             model.Applicableness = module.Applicableness;
@@ -111,6 +113,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 module.Tag = model.Tag;
                 module.Name = model.Name;
+                module.NameEn = model.NameEn;
                 module.Applicableness = model.Applicableness;
                 module.Prerequisites = model.Prequisites;
 

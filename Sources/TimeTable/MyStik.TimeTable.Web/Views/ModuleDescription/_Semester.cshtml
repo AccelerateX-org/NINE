@@ -23,6 +23,8 @@
         }
     }
 
+    var dateOffset = DateTime.Today - Model.Semester.StartCourses;
+    var isEditable = dateOffset.Days < 28;
 
     var userService = new UserInfoService();
 
@@ -80,26 +82,58 @@
                 </div>
                 <div class="list-group">
                     <div class="list-group-item">
-                        @if (Model.ModuleDescription != null)
-                        {
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                                    <img src="~/Assets/img/flags/de.png" />
+                                </button>
+                                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+                                    <img src="~/Assets/img/flags/gb.png" />
+                                </button>
+                            </div>
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                                @if (Model.ModuleDescription != null)
+                                {
 
-                            if (string.IsNullOrEmpty(Model.ModuleDescription.Description))
-                            {
-                                <div></div>
-                            }
-                            else
-                            {
-                                @Html.Raw(Model.ModuleDescription.Description.Trim())
-                            }
-                        }
-                        else
-                        {
-                            <div>Es liegt keine <strong>veröffentlichte Fassung</strong> der Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
-                        }
+                                    if (string.IsNullOrEmpty(Model.ModuleDescription.Description))
+                                    {
+                                        <div></div>
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(Model.ModuleDescription.Description.Trim())
+                                    }
+                                }
+                                else
+                                {
+                                    <div>Es liegt keine <strong>veröffentlichte Fassung</strong> der Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                                }
+                            </div>
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                                @if (Model.ModuleDescription != null)
+                                {
+
+                                    if (string.IsNullOrEmpty(Model.ModuleDescription.DescriptionEn))
+                                    {
+                                        <div></div>
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(Model.ModuleDescription.DescriptionEn.Trim())
+                                    }
+                                }
+                                else
+                                {
+                                    <div>There is no <strong>published version</strong> of the module description availabke for <strong>semester @Model.Semester.Name</strong>.</div>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                    @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
                     {
                         <a href="@Url.Action("Descriptions", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
                             <i class="bi-keyboard"></i> Ändern
@@ -266,14 +300,14 @@
                         </div>
                     }
                 </div>
-                            <div class="card-body">
-                                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                {
-                                    <a href="@Url.Action("Exams", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                        <i class="bi-keyboard"></i> Ändern
-                                    </a>
-                                }
-                            </div>
+                <div class="card-body">
+                    @if (isEditable && (ViewBag.UserRight.IsCurriculumAdmin || itsMe))
+                    {
+                        <a href="@Url.Action("Exams", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                            <i class="bi-keyboard"></i> Ändern
+                        </a>
+                    }
+                </div>
                         </div>
                     </div>
     </div>

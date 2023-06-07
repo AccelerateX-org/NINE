@@ -11,9 +11,18 @@
         <div class="card">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
-                        <p>Liste aller Fassungen für Semester @Model.Semester.Name</p>
+                        <h5 class="card-subtitle">Liste aller Fassungen für Semester @Model.Semester.Name</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-info">
+                            <strong>Hinweise:</strong>
+                            <ul>
+                                <li>Studierenden können nur veröffentlichte Fassungen sehen. Entwurfsfassungen sind nur für Modul-/Katalogverantwortliche sowie mit zugehörigen administrativem Rechten sichtbar.</li>
+                                <li>Bei Bedarf kann ein Veröffentlichung der Modulbeschreibung direkt hier erfolgen. Standardvorgehen ist zentral für jeweils einen Studiengang.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,7 +71,14 @@
                             <td>@desc.ChangeLog.Created</td>
                             <td>@desc.ChangeLog.LastEdited</td>
                             <td>@userName</td>
-                            <td>@desc.ChangeLog.Approved</td>
+                            @if (desc.ChangeLog.Approved != null)
+                            {
+                                <td>@desc.ChangeLog.Approved</td>
+                            }
+                            else
+                            { 
+                                <td>Entwurfsfassung</td>
+                            }
                             <td>
                                 @if (i == 1)
                                 {

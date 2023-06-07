@@ -26,6 +26,8 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Modulbezeichnung")]
         public string Name { get; set; }
 
+        public string NameEn { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

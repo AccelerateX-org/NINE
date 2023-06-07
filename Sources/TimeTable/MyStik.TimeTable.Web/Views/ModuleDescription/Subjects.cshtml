@@ -1,0 +1,79 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Web.Services
+@{
+    ViewBag.Title = "Descriptions";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <p>Liste aller Lehr- und Lernformen</p>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tag (Fach)</th>
+                        <th>Bezeichnung (Fach)</th>
+                        <th>SWS</th>
+                        <th>Lehrform (ASPO)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a href="@Url.Action("CreateSubject", null, new { id = Model.Module.Id })" class="btn btn-outline-primary">
+                                <i class="bi-plus"></i> Neue Lehr-/Lernform hinzufügen
+                            </a>
+                        </td>
+                    </tr>
+                    @foreach (var subject in Model.Module.ModuleSubjects)
+                    {
+                        <tr>
+                            <td>@subject.Tag</td>
+                            <td>@subject.Name</td>
+                            <td>@subject.SWS</td>
+                            <td>@subject.TeachingFormat.Tag</td>
+                            <td>
+                                <a href="@Url.Action("EditSubject", new {id = subject.Id})" class="btn btn-outline-primary">
+                                    <i class="bi-keyboard"></i> ändern
+                                </a>
+                                <a href="@Url.Action("DeleteSubject", new {id = subject.Id})" class="btn btn-outline-danger">
+                                    <i class="bi-trash"></i> löschen
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

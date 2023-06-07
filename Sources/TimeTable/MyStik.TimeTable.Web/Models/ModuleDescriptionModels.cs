@@ -70,6 +70,9 @@ namespace MyStik.TimeTable.Web.Models
 
         [AllowHtml]
         public string DescriptionText { get; set; }
+
+        [AllowHtml]
+        public string DescriptionTextEn { get; set; }
     }
 
     public class ExaminationFractionViewModel
@@ -85,6 +88,21 @@ namespace MyStik.TimeTable.Web.Models
         public int MinDuration { get; set; }
 
         public int MaxDuration { get; set; }
+    }
+
+    public class SubjectViewModel
+    {
+        public CurriculumModule Module { get; set; }
+
+        public Guid SubjectId { get; set; }
+
+        public Guid TeachingTypeId { get; set; }
+
+        public string Tag { get; set; }
+
+        public string Name { get; set; }
+
+        public double SWS { get; set; }
     }
 
 }
