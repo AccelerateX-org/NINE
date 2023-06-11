@@ -1,0 +1,325 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@{
+    ViewBag.Title = "CreateTeaching";
+
+    var iAccr = 0;
+    var iSubject = 0;
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Neue lehrangebote anlegen</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi-save"></i>  Änderungen übernehmen
+                    </a>
+                    <a href="@Url.Action("Teachings", new {moduleId=Model.Module.Id, semId=Model.Semester.Id})" class="btn btn-outline-secondary">
+                        <i class="bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <h5>Diese Lehrveranstaltungen sollen angefügt werden</h5>
+                        <div class="row">
+                            <div class="col-4">Semester</div>
+                            <div class="col-8">
+                                <div>@Model.Semester.Name</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Organisation</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="sourceOrg" onchange="onSourceOrgChanged(this.value)">
+                                    @foreach (var org in Model.Organisers)
+                                    {
+                                        if (org.Id == Model.Organiser.Id)
+                                        {
+                                            <option selected value="@org.Id">@org.ShortName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@org.Id">@org.ShortName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Suchbegriff Lehrveranstaltung</div>
+                            <div class="col-8">
+                                <input id="txtSearch" class="form-control" placeholder="Teil aus Kurz- oder Langname" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"></div>
+                            <div class="col-8">
+                                <a href="javascript:searchCourses()" class="btn btn-outline-primary"><i class="bi-search"></i> Lehrvanstaltungen suchen</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Lehrveranstaltungen</div>
+                            <div class="col-8">
+                                <div id="sourceModules"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <a id="btnMove" href="javascript:moveModules()" class="btn btn-outline-secondary">>> übertragen</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <h5>Lehrveranstaltung soll dieser Lehrform zugeordnet werden</h5>
+                        <div class="row">
+                            <div class="col-4">Modul</div>
+                            <div class="col-8">
+                                <input class="form-control-plaintext" value="@Model.Module.Name" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Zuordnung zu Curriculum (Slot)</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="targetAccr" onchange="onTargetAccrChanged(this.value)">
+                                    @foreach (var accr in Model.Module.Accreditations)
+                                    {
+                                        iAccr++;
+                                        if (iAccr == 1)
+                                        {
+                                            <option selected value="@accr.Id">@accr.Slot.FullTag</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@accr.Id">@accr.Slot.FullTag</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Lehrformen des Moduls</div>
+                            <div class="col-8">
+                                <select class="form-select slot-option" id="targetSubject" onchange="onTargetSubjectChanged(this.value)">
+                                    @foreach (var subject in Model.Module.ModuleSubjects)
+                                    {
+                                        iSubject++;
+                                        if (iSubject == 1)
+                                        {
+                                            <option selected value="@subject.Id">@subject.TeachingFormat.Tag</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@subject.Id">@subject.TeachingFormat.Tag</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Lehrangebote</div>
+                            <div class="col-8">
+                                <div id="targetModules"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            var org = $("#targetOrg").val();
+            //onTargetOrgChanged(org);
+
+            org = $("#sourceOrg").val();
+            //onSourceOrgChanged(org);
+
+            updateTeachingList();
+        });
+
+        function searchCourses() {
+            var orgId = $('#sourceOrg').val();
+            var semId = '@Model.Semester.Id.ToString()';
+            var text = $('#txtSearch').val();
+
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("LoadCourses")',
+                    data: {
+                        orgId: orgId,
+                        semId: semId,
+                        text: text
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceModules").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+@*
+        function onSourceOrgChanged(value) {
+            var orgId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetCatalogs")',
+                    data: {
+                        orgId: orgId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceCat").html(data);
+                        $("#sourceCat").change();
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onSourceCatChanged(value) {
+
+            updateMoveState();
+            var catId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetModules")',
+                    data: {
+                        catId: catId,
+                        side: "source"
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceModules").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+        *@
+
+        function onTargetAccrChanged(value) {
+            updateTeachingList();
+        }
+
+        function onTargetSubjectChanged(value) {
+            updateTeachingList();
+        }
+
+        function updateTeachingList() {
+            var accrId = $('#targetAccr').val();
+            var subjectId = $('#targetSubject').val();
+            var semId = '@Model.Semester.Id.ToString()';
+
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("LoadTeachings")',
+                    data: {
+                        accrId: accrId,
+                        subjectId: subjectId,
+                        semId: semId,
+                    },
+                    success: function(data, success, xhr) {
+                        $("#targetModules").html(data);
+                        $("#loading").hide();
+                    }
+                });
+        }
+
+
+        function updateMoveState() {
+        }
+
+
+        function moveModules() {
+            //var list = $("#sourceModules > ul > li > input[type='checkbox'][checked='checked']").get();
+            var list = $("#sourceModuleList > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+
+                    var listElemId = '#' + list[i].id;
+                    //alert(listElemId);
+
+                    var listElem = $(listElemId).remove();
+
+                    listElem.addClass('disabled');
+
+                    $('#targetModuleList').append(listElem);
+                }
+
+            }
+        }
+
+        function saveChanges() {
+            var accrId = $('#targetAccr').val();
+            var subjectId = $('#targetSubject').val();
+            var semId2 = '@Model.Semester.Id.ToString()';
+
+            // Liste der hinzugekommemen Module
+            var list = $("#targetModuleList > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+                }
+
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("CreateTeachings")',
+                        data: {
+                            accrId: accrId,
+                            subjectId: subjectId,
+                            semId: semId2,
+                            courseIds: moduleIdList
+                        },
+                        success: function(data, success, xhr) {
+                            window.location.replace("@Url.Action("Teachings", new {moduleId = Model.Module.Id, semId = Model.Semester.Id})");
+                            $("#loading").hide();
+                        }
+                    });
+
+            }
+
+
+        }
+
+
+    </script>
+}
+

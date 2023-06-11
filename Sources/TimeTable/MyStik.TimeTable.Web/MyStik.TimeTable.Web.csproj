@@ -4211,6 +4211,10 @@
     <Content Include="Views\ModuleDescription\Subjects.cshtml" />
     <Content Include="Views\ModuleDescription\CreateSubject.cshtml" />
     <Content Include="Views\ModuleDescription\EditSubject.cshtml" />
+    <Content Include="Views\ModuleDescription\Teachings.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateTeaching.cshtml" />
+    <Content Include="Views\ModuleDescription\_CourseListGroup.cshtml" />
+    <Content Include="Views\ModuleDescription\_TeachingListGroup.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

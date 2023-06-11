@@ -123,7 +123,12 @@
                                 }
                                 else
                                 {
-                                    <td></td>
+                                    <td>
+                                        @foreach (var s in candidate.Stages)
+                                        {
+                                            <div>@s.Material.Count (*@s.Candidature.Assessment.Name)</div>
+                                        }
+                                    </td>
                                 }
                             }
                             @if (isAdmin)

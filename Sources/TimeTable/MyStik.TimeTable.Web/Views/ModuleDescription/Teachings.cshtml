@@ -1,0 +1,124 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Web.Services
+@using MyStik.TimeTable.Web.Helpers
+@{
+    ViewBag.Title = "Descriptions";
+
+    var Db = new MyStik.TimeTable.Data.TimeTableDbContext();
+    var courseService = new CourseService(Db);
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <h5 class="card-subtitle">Liste aller Lehrangebote im @Model.Semester.Name</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                        <a href="@Url.Action("CreateTeaching", null, new { moduleId = Model.Module.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary disabled">
+                            <i class="bi-plus"></i> Neues Lehrangebot hinzufügen
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Modul-Slot</th>
+                        <th>Lehrformat</th>
+                        <th>Kurzname</th>
+                        <th>Titel</th>
+                        <th>Gruppe(n)</th>
+                        <th>Raumangabe(n)</th>
+                        <th>Lehrende</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var accr in Model.Module.Accreditations)
+                    {
+                        foreach (var teaching in accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+                        {
+                            var summary = courseService.GetCourseSummary(teaching.Course);
+                            var linkName = summary.Course.ShortName ?? "Kein Kurzname";
+
+                            <tr>
+                                <td>@accr.Slot.FullTag</td>
+                                <td>@teaching.Subject.Name (@teaching.Subject.TeachingFormat.Tag)</td>
+                                <td>
+                                    @Html.ActionLink(linkName, "Index", "Course", new { id = summary.Course.Id }, null)
+                                </td>
+                                <td>
+                                    @summary.Course.Name
+                                </td>
+                                <td>
+                                    @Html.GroupList(summary.Course.SemesterGroups, true)
+                                </td>
+                                <td>
+                                    @Html.RoomList(summary.Rooms)
+                                </td>
+                                <td>
+                                    @Html.LecturerList(summary.Lecturers)
+                                </td>
+
+                                <td>
+                                    <a href="@Url.Action("DeleteTeaching", new {id = teaching.Id} )" class="btn btn-outline-danger disabled"><i class="bi-trash"></i> löschen</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    @foreach (var subject in Model.Module.ModuleSubjects)
+                    {
+                        foreach (var opp in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
+                        {
+                            var summary = courseService.GetCourseSummary(opp.Course);
+                            var linkName = summary.Course.ShortName ?? "Kein Kurzname";
+
+                            <tr>
+                                <td></td>
+                                <td>@opp.Subject.Name (@opp.Subject.TeachingFormat.Tag)</td>
+                                <td>
+                                    @Html.ActionLink(linkName, "Index", "Course", new { id = summary.Course.Id }, null)
+                                </td>
+                                <td>
+                                    @summary.Course.Name
+                                </td>
+                                <td>
+                                    @Html.GroupList(summary.Course.SemesterGroups, true)
+                                </td>
+                                <td>
+                                    @Html.RoomList(summary.Rooms)
+                                </td>
+                                <td>
+                                    @Html.LecturerList(summary.Lecturers)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("DeleteOpportunity", new {id = opp.Id} )" class="btn btn-outline-danger disabled"><i class="bi-trash"></i> löschen</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

@@ -55,12 +55,14 @@ namespace MyStik.TimeTable.Web.Models
 
     public class ModuleDescriptionsViewModel
     {
+        public ActivityOrganiser Organiser { get; set; }
         public CurriculumModule Module { get; set; }
         public Semester Semester { get; set; }
         public List<ModuleDescription> ModuleDescriptions { get; set; }
         public List<ModuleDescription> BadModuleDescriptions { get; set; }
 
         public List<ExaminationDescription> Exams { get; set; }
+        public List<ActivityOrganiser> Organisers { get; set; }
     }
 
 

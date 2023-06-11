@@ -147,7 +147,6 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Lehrangebote</h5>
-                    <p>Anbindung der Lehrveranstaltungen erfolgt im nächsten Schritt</p>
                 </div>
 
                 @foreach (var subject in subjects)
@@ -157,15 +156,14 @@
                     <div class="list-group-item">
                         <div class="row">
                             <div class="col-4">
-                                @subject.Name (@subject.Tag)
-                                @*
-                                    @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                    {
-                                        <a href="@Url.Action("Edit",null, new {id = Model.Id})" class="btn btn-outline-primary">
-                                            <i class="bi-pen"></i> Ändern
-                                        </a>
-                                    }
-                                *@
+                                @if (subjects.Count > 1)
+                                {
+                                    <div>@subject.Name (@subject.TeachingFormat.Tag)</div>
+                                }
+                                else
+                                {
+                                    <div>@subject.TeachingFormat.Tag</div>
+                                }
                             </div>
                             <div class="col-8">
                                 @foreach (var opportunity in opportunities)
@@ -183,11 +181,8 @@
                 <div class="card-body">
                     @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                     {
-                        <a href="@Url.Action("ContentChange", null, new { id = Model.CurriculumModule.Id })" class="btn btn-outline-primary disabled">
-                            <i class="bi-pen"></i> Ändern
-                        </a>
-                        <a href="@Url.Action("ContentChange", null, new { id = Model.CurriculumModule.Id })" class="btn btn-outline-primary disabled">
-                            <i class="bi-pen"></i> Neues Angebot hinzufügen
+                        <a href="@Url.Action("Teachings", null, new { moduleId = Model.CurriculumModule.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                            <i class="bi-keyboard"></i> Ändern
                         </a>
                     }
 

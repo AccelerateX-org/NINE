@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Web.Mvc;
@@ -409,6 +410,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 Db.ChangeLogs.Remove(examDesc.ChangeLog);
             }
+
             Db.ExaminationDescriptions.Remove(examDesc);
             Db.SaveChanges();
 
@@ -690,7 +692,7 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 ExaminationOption = exam,
                 Form = type,
-                Weight = model.Weight / (double) 100,
+                Weight = model.Weight / (double)100,
                 MinDuration = model.MinDuration,
                 MaxDuration = model.MaxDuration
             };
@@ -712,7 +714,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 ExaminationTypeId = fraction.Form.Id,
                 Weight = (int)(fraction.Weight * 100 + 0.0001),
                 MinDuration = (int)fraction.MinDuration,
-                MaxDuration= (int)fraction.MaxDuration
+                MaxDuration = (int)fraction.MaxDuration
             };
 
             var examinationForms =
@@ -814,7 +816,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 SubjectId = subject.Id,
                 Tag = subject.Tag,
                 Name = subject.Name,
-                SWS= subject.SWS,
+                SWS = subject.SWS,
                 TeachingTypeId = subject.TeachingFormat.Id,
             };
 
@@ -828,6 +830,31 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.TeachingOptions = teachingForms;
 
             return View(model);
+        }
+
+        public ActionResult DeleteSubject(Guid id)
+        {
+            var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == id);
+            var module = subject.Module;
+
+            foreach (var opp in subject.Opportunities.ToList())
+            {
+                Db.SubjectOpportunities.Remove(opp);
+            }
+
+            foreach (var accr in subject.Module.Accreditations.ToList())
+            {
+                foreach (var teaching in accr.TeachingDescriptions.ToList())
+                {
+                    Db.TeachingDescriptions.Remove(teaching);
+                }
+            }
+
+            Db.ModuleCourses.Remove(subject);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Subjects", new { id = module.Id });
         }
 
         [HttpPost]
@@ -846,5 +873,107 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Subjects", new { id = subject.Module.Id });
         }
 
+        public ActionResult Teachings(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+                Semester = semester
+            };
+
+            return View(model);
+        }
+
+        public ActionResult CreateTeaching(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+                Semester = semester,
+                Organiser = module.Catalog.Organiser,
+                Organisers = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public PartialViewResult LoadCourses(Guid orgId, Guid semId, string text)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+            var semester = SemesterService.GetSemester(semId);
+
+            var courses =
+                Db.Activities.OfType<Course>().Where(c =>
+                    c.SemesterGroups.Any(g =>
+                        g.Semester.Id == semester.Id &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) &&
+                    ((!string.IsNullOrEmpty(c.ShortName) && (c.ShortName.Contains(text)) ||
+                      (!string.IsNullOrEmpty(c.Name) && c.Name.Contains(text))))
+                ).OrderBy(c => c.ShortName).ToList();
+
+            ViewBag.ListName = "sourceModuleList";
+            return PartialView("_CourseListGroup", courses);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult LoadTeachings(Guid accrId, Guid subjectId, Guid semId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
+            var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == subjectId);
+
+            var teachings = Db.TeachingDescriptions.Where(x =>
+                x.Accreditation.Id == accr.Id &&
+                x.Semester.Id == semester.Id &&
+                x.Subject.Id == subject.Id).ToList();
+
+            ViewBag.ListName = "targetModuleList";
+            return PartialView("_TeachingListGroup", teachings);
+        }
+
+        [HttpPost]
+        public PartialViewResult CreateTeachings(Guid accrId, Guid subjectId, Guid semId, Guid[] courseIds)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == accrId);
+            var subject = Db.ModuleCourses.SingleOrDefault(x => x.Id == subjectId);
+
+            foreach (var courseId in courseIds)
+            {
+                var course = Db.Activities.OfType<Course>().SingleOrDefault(x => x.Id == courseId);
+
+                if (course == null) continue;
+
+                var teaching = Db.TeachingDescriptions.FirstOrDefault(x =>
+                    x.Accreditation.Id == accr.Id &&
+                    x.Semester.Id == semester.Id &&
+                    x.Subject.Id == subject.Id &&
+                    x.Course.Id == course.Id);
+
+                if (teaching != null) continue;
+                
+                teaching = new TeachingDescription
+                {
+                    Accreditation = accr,
+                    Semester = semester,
+                    Subject = subject,
+                    Course = course
+                };
+
+                Db.TeachingDescriptions.Add(teaching);
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
     }
 }
