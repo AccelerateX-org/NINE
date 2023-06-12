@@ -285,6 +285,9 @@
             var subjectId = $('#targetSubject').val();
             var semId2 = '@Model.Semester.Id.ToString()';
 
+            var url = "@Url.Action("Teachings", new {moduleId = Model.Module.Id})";
+            url = url + "&semId=" + semId2;
+
             // Liste der hinzugekommemen Module
             var list = $("#targetModuleList > li > input[type='checkbox']:checked").parent().get();
             var n = list.length;
@@ -308,8 +311,8 @@
                             semId: semId2,
                             courseIds: moduleIdList
                         },
-                        success: function(data, success, xhr) {
-                            window.location.replace("@Url.Action("Teachings", new {moduleId = Model.Module.Id, semId = Model.Semester.Id})");
+                        success: function (data, success, xhr) {
+                            window.location.replace(url);
                             $("#loading").hide();
                         }
                     });

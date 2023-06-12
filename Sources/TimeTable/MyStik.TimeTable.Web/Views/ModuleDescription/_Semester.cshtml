@@ -4,6 +4,7 @@
     ViewBag.Title = "Details";
 
     var subjects = Model.CurriculumModule.ModuleSubjects.ToList();
+    var accrs = Model.CurriculumModule.Accreditations.ToList();
 
     var itsMe = false;
     var userId = ViewBag.UserRight.User.Id;
@@ -177,6 +178,28 @@
                             </div>
                         </div>
                     </div>
+                }
+                @foreach (var accr in accrs)
+                {
+                    var opportunities = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+
+                    foreach (var opportunity in opportunities)
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>@opportunity.Subject.TeachingFormat.Tag</div>
+                                </div>
+                                <div class="col-8">
+                                    <div>
+                                        <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
+                                            @opportunity.Course.Name (@opportunity.Course.ShortName)
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
                 <div class="card-body">
                     @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)

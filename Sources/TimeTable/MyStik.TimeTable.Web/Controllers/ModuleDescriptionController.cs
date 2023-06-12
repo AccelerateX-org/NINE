@@ -975,5 +975,32 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return null;
         }
+
+        public ActionResult DeleteTeaching(Guid id)
+        {
+            var teaching = Db.TeachingDescriptions.SingleOrDefault(x => x.Id == id);
+
+            var module = teaching.Accreditation.Module;
+            var semester = teaching.Semester;
+
+            Db.TeachingDescriptions.Remove((teaching));
+            Db.SaveChanges();
+
+            return RedirectToAction("Teachings", new { moduleId = module.Id, semId = semester.Id });
+        }
+
+        public ActionResult DeleteOpportunity(Guid id)
+        {
+            var teaching = Db.SubjectOpportunities.SingleOrDefault(x => x.Id == id);
+
+            var module = teaching.Subject.Module;
+            var semester = teaching.Semester;
+
+            Db.SubjectOpportunities.Remove((teaching));
+            Db.SaveChanges();
+
+            return RedirectToAction("Teachings", new { moduleId = module.Id, semId = semester.Id });
+        }
+
     }
 }
