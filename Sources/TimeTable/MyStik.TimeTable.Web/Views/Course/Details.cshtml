@@ -36,6 +36,24 @@
                         }
                     </div>
                 }
+                @foreach (var teaching in Model.Summary.Course.Teachings)
+                {
+                    <div>
+                        Modul: <a href="@Url.Action("Details", "ModuleDescription", new {id = teaching.Subject.Module.Id})">@teaching.Subject.Module.Name</a>
+
+                        @foreach (var acc in teaching.Subject.Module.Accreditations)
+                        {
+                            if (acc.Slot.CurriculumSection != null)
+                            {
+                                <span> | <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
+                            }
+                            else
+                            {
+                                <span> | <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
+                            }
+                        }
+                    </div>
+                }
             </div>
             <div class="list-group">
                 @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)

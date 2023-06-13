@@ -45,12 +45,6 @@
                         <a href="@Url.Action("Index", "Catalogs", new {id = Model.Organiser.Id} )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
-                        {
-                            <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neues Modul anlegen
-                            </a>
-                        }
                             @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                             {
                                 <a href="@Url.Action("EditGeneral", new {id=Model.Id})" class="btn btn-outline-primary">
@@ -61,6 +55,12 @@
                                 </a>
                                 <a href="@Url.Action("MoveModules", new {id=Model.Id})" class="btn btn-outline-primary">
                                     <i class="bi-list-check"></i> Zusammensetzung
+                                </a>
+                            }
+                            @if (ViewBag.UserRight.IsCurriculumAdmin)
+                            {
+                                <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
+                                    <i class="bi-plus"></i> Neues Modul anlegen
                                 </a>
                                 if (Model.Modules.Any())
                                 {

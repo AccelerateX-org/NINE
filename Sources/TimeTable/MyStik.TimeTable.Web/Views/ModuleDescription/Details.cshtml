@@ -68,7 +68,6 @@
                                         </a>
                                     }
                                 }
-
                             </div>
                         }
                     </div>
@@ -94,15 +93,15 @@
                                     }
                                     else if (acc.Slot.AreaOption != null)
                                     {
-                            <div>
-                                <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">
-                                    @acc.Slot.AreaOption.Area.Curriculum.Name
-                                </a> | 
-                                <a href="@Url.Action("Slot", "Curriculum", new {id = acc.Slot.Id})">
-                                    @acc.Slot.Tag
-                                </a> | 
-                                <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
-                            </div>
+                                        <div>
+                                            <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">
+                                                @acc.Slot.AreaOption.Area.Curriculum.Name
+                                            </a> |
+                                            <a href="@Url.Action("Slot", "Curriculum", new {id = acc.Slot.Id})">
+                                                @acc.Slot.Tag
+                                            </a> |
+                                            <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
+                                        </div>
                                     }
                                     else
                                     {
@@ -112,9 +111,23 @@
                                 }
                             </div>
                         </div>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                        {
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Katalogverantwortung</div>
+                                </div>
+                                <div class="col-8">
+                                    @foreach (var mv in Model.Catalog.CatalogResponsibilities)
+                                    {
+                                        <div>@mv.Member.FullName</div>
+                                    }
+                                </div>
+                            </div>
+                        }
                         <div class="row">
                             <div class="col-4">
-                                <div>Katalog-/Modulverantwortung</div>
+                                <div>Modulverantwortung</div>
                                 @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                                 {
                                     <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
@@ -123,10 +136,6 @@
                                 }
                             </div>
                             <div class="col-8">
-                                @foreach (var mv in Model.Catalog.CatalogResponsibilities)
-                                {
-                                    <div>@mv.Member.FullName</div>
-                                }
                                 @foreach (var mv in Model.ModuleResponsibilities)
                                 {
                                     <div>@mv.Member.FullName</div>
