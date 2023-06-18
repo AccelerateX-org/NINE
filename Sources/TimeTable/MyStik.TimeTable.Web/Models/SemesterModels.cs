@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Web;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.Web.Controllers;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -261,6 +262,15 @@ namespace MyStik.TimeTable.Web.Models
         public BaseImportContext Context { get; set; }
 
         public string FormatId { get; set; }
+
+        public DateTime BeginImport { get; set; }
+
+        public DateTime EndImport { get; set; }
+
+        public string FirstDateYYYYMMDD { get; set; }
+
+        public string LastDateYYYYMMDD { get; set; }
+
 
     }
 

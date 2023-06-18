@@ -592,6 +592,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Exams = exams
             };
 
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
+
             return View(model);
         }
 

@@ -49,18 +49,12 @@
         <div class="list-group">
             <div class="list-group-item">
                 <div class="btn-group">
-                    <a class="btn btn-outline-primary text-center" href="@Url.Action("AdminGroups", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-list"></i><br />Semestergruppen</a>
                     <a class="btn btn-outline-primary text-center" href="@Url.Action("Organiser", "Dictionary", new {semId = Model.Semester.Id, orgId=Model.Organiser.Id})"> <i class="fas fa-pen"></i><br />Vorlesungsverzeichnis</a>
                     <a class="btn btn-outline-primary text-center" href="@Url.Action("Create", "Course")"><i class="bi-folder-plus fa-fw"></i><br />Lehrveranstaltung anlegen</a>
                     @if (ViewBag.UserRight.IsCourseAdmin)
                     {
-
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Index", "Import", new {id = Model.Semester.Id})"> <i class="fas fa-upload"></i><br />Datenimport</a>
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("Admin", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-bullhorn"></i><br />Freigaben</a>
                         <a class="btn btn-outline-primary text-center" href="@Url.Action("Reports", "Courses", new {id = Model.Semester.Id})"> <i class="fas fa-download"></i><br />Semesterberichte</a>
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateSemester", "Courses",new {id = Model.Semester.Id})"> <i class="fas fa-forward"></i><br />Das nächste Semester anlegen</a>
                     }
-
                 </div>
             </div>
         </div>

@@ -5,242 +5,116 @@
 
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Import von Stundenplandaten aus Untis</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Import von Stundenplandaten aus Untis für @Model.Organiser.ShortName und Semester @Model.Semester.Name (@Model.BeginImport.ToShortDateString() - @Model.EndImport.ToShortDateString())</h4>
+                <h5 class="card-title"><i class="bi-files"></i> Schritt 2 von 3: Auswahl Dateien</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        @using (Html.BeginForm("Upload", null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
+                        {
+                            <fieldset>
+                                @Html.HiddenFor(m => m.OrganiserId)
+                                @Html.HiddenFor(m => m.SemesterId)
+                                @Html.HiddenFor(m => m.FirstDate)
+                                @Html.HiddenFor(m => m.LastDate)
+                                @Html.HiddenFor(m => m.BeginImport)
+                                @Html.HiddenFor(m => m.EndImport)
+                                @Html.HiddenFor(m => m.FirstDateYYYYMMDD)
+                                @Html.HiddenFor(m => m.LastDateYYYYMMDD)
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Unterricht (GPU001.TXT)</label>
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <input class="form-control" type="file" name="Attachments" id="Attachment1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Unterricht (GPU002.TXT)</label>
+                                    <div class="col-md-8">
+                                        <input type="text" readonly class="form-control-plaintext" value="Muss nicht import werden">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Klassen (GPU003.TXT)</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="Attachments" id="Attachment2">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Dozenten (GPU004.TXT)</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="Attachments" id="Attachment3">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Räume (GPU005.TXT)</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="Attachments" id="Attachment4">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Fächer (GPU006.TXT)</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="Attachments" id="Attachment5">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Zeitwünsche der Elemente (GPU016.TXT)</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="Attachments" id="Attachment6">
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Zuordnung Tage</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="AttachmentDays" id="Attachment7">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Zuordnung Stunden</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="AttachmentHours" id="Attachment8">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4 form-label">Zuordnung Semestergruppen</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control" type="file" name="AttachmentGroups" id="Attachment9">
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="offset-4 col-md-8">
+                                        <button type="submit" class="btn btn-outline-primary"><i class="bi-chevron-right"></i> Weiter</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        }
+                            
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Hinweise</h4>
+                        <ul>
+                            <li>Die Untis-Dateien müssen exakt so heissen, sonst kommt es zu Fehlern</li>
+                            <li>Die Untis-Dateien müssen ";"-getrennt sein</li>
+                            <li>Die CSV-Dateien können beliebige Namen haben, werden beim Upload umbenannt.</li>
+                            <li>Die CSV-Dateien müssen ";"-getrennt sein</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Schritt 2 von 3: Auswahl der Untis-Dateien</span>
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            @using (Html.BeginForm("Upload", null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal"}))
-                            {
-                            <fieldset>
-                                @Html.HiddenFor(m => m.OrganiserId)
-                                @Html.HiddenFor(m => m.SemesterId)
-                                @Html.HiddenFor(m => m.FirstDate)
-                                @Html.HiddenFor(m => m.LastDate)
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Unterricht (GPU001.TXT)</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="Attachments" id="Attachment1">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Unterricht (GPU002.TXT)</label>
-                                    <div class="col-md-8">
-                                        <p class="form-control-static">Muss nicht import werden</p>
-                                    </div>
-                                </div>
 
 
-
-
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Klassen (GPU003.TXT)</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="Attachments" id="Attachment2">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Dozenten (GPU004.TXT)</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="Attachments" id="Attachment3">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Räume (GPU005.TXT)</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="Attachments" id="Attachment4">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Fächer (GPU006.TXT)</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="Attachments" id="Attachment5">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Zeitwünsche der Elemente (GPU016.TXT)</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="Attachments" id="Attachment6">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Zuordnung Tage</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="AttachmentDays" id="Attachment7">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Zuordnung Stunden</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="AttachmentHours" id="Attachment8">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Zuordnung Semestergruppen</label>
-                                    <div class="col-md-8">
-                                        <div class="fileinput fileinput-new" data-provides="fileinput">
-                                            <div class="input-group input-large">
-                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                    <span class="fileinput-filename"> </span>
-                                                </div>
-                                                <span class="input-group-addon btn default btn-file">
-                                                    <span class="fileinput-new"> Select file </span>
-                                                    <span class="fileinput-exists"> Change </span>
-                                                    <input type="file" name="AttachmentGroups" id="Attachment9">
-                                                </span>
-                                                <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <div class="col-md-offset-4 col-md-8">
-                                        <input type="submit" value="Weiter" class="btn btn-default" />
-                                    </div>
-                                </div>
-                            </fieldset>
-                            }
-                            
-                        </div>
-                        <div class="col-md-4">
-                            <h4>Hinweise</h4>
-                            <ul>
-                                <li>Die Untis-Dateien müssen exakt so heissen, sonst kommt es zu Fehlern</li>
-                                <li>Die Untis-Dateien müssen ";"-getrennt sein</li>
-                                <li>Die CSV-Dateien können beliebige Namen haben, werden beim Upload umbenannt.</li>
-                                <li>Die CSV-Dateien müssen ";"-getrennt sein</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 

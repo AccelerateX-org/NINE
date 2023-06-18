@@ -36,20 +36,12 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             DateTime date;
             if (!string.IsNullOrEmpty(firstDate))
             {
-                var isOK = DateTime.TryParse(firstDate, out date);
-                if (isOK)
-                {
-                    _firstDate = date;
-                }
+                _firstDate = DateTime.ParseExact(firstDate, "yyyyMMdd", null);
             }
 
             if (!string.IsNullOrEmpty(lastDate))
             {
-                var isOK = DateTime.TryParse(lastDate, out date);
-                if (isOK)
-                {
-                    _lastDate = date;
-                }
+                _lastDate = DateTime.ParseExact(lastDate, "yyyyMMdd", null);
             }
         }
 
@@ -83,6 +75,7 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             var db = new TimeTableDbContext();
 
             var organiser = db.Organisers.SingleOrDefault(s => s.Id == _orgId);
+            var semester = db.Semesters.SingleOrDefault(x => x.Id == _semId);
 
             long msStart = sw.ElapsedMilliseconds;
             var course = new Course
@@ -90,11 +83,13 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
                 ExternalSource = "GPUNTIS",
                 ExternalId = kurs.Id,
                 Organiser = organiser,
+                Semester = semester,
                 ShortName = kurs.Fach.FachID,
                 Name = kurs.Fach.Name,
                 Occurrence = CreateDefaultOccurrence(),
                 IsInternal = false,
             };
+
             // Kurs sofort speichern, damit die ID gesichert ist
             db.Activities.Add(course);
             db.SaveChanges();
@@ -103,8 +98,6 @@ namespace MyStik.TimeTable.DataServices.IO.GpUntis
             msStart = msEnd;
 
             // Alle Gruppen durchgehen, die im gpUntis zugeordnet wurden
-            var semester = db.Semesters.SingleOrDefault(s => s.Id == _semId);
-
             foreach (var g in kurs.Gruppen)
             {
                 // diesen Semestergruppen soll der Kurs zugeordnet werden

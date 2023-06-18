@@ -20,19 +20,20 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid id)
         {
             var organiser = GetMyOrganisation();
+            var semester = SemesterService.GetSemester(id);
             if (organiser == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var model = new OrganiserViewModel
             {
                 Organiser = organiser,
-                Semester = SemesterService.GetSemester(DateTime.Today)
+                Semester = semester
             };
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(organiser);
 
             return View(model);
         }
@@ -41,10 +42,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Select(string format)
+        public ActionResult Select(Guid id)
         {
             var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            var semester = SemesterService.GetSemester(id);
 
             var model = new SemesterImportModel
             {
@@ -52,8 +53,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Organiser = org,
                 SemesterId = semester.Id,
                 OrganiserId = org.Id,
-                Existing = GetCourseCount(org.Id, semester.Id, format),
-                FormatId = format
+                Existing = GetCourseCount(org.Id, semester.Id, "JSON"),
+                FormatId = "JSON"
             };
 
 
@@ -97,7 +98,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 c.ExternalSource.Equals(formatId) &&
                 !c.SemesterGroups.Any());
 
-            return nInSemester + nNoGroup;
+            return nInSemester; // + nNoGroup;
         }
 
         private string GetTempPath(Guid orgId, Guid semId)
@@ -133,6 +134,10 @@ namespace MyStik.TimeTable.Web.Controllers
             string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
 
             Directory.Delete(tempDir, true);
+
+            var org = GetMyOrganisation();
+            model.Organiser = org;
+            model.Semester = SemesterService.GetSemester(model.SemesterId);
 
             return View(model);
         }
