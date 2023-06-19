@@ -1,0 +1,96 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.StudyPlanViewModel
+
+@{
+    ViewBag.Title = "Studienplan";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Stundenplan @Model.Curriculum.Name (@Model.Curriculum.ShortName)</h4>
+                <h5 class="card-subtitle">@Model.Semester.Name</h5>
+            </div>
+            <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                                <i class="bi-chevron-left"></i> Studiengang
+                            </a>
+                        </div>
+                    </div>
+            </div>
+
+            <table id="tabModules" class="table">
+                <thead>
+                    <tr>
+                        <th>Modul</th>
+                        <th>Fach</th>
+                        <th>Lehrveranstaltung</th>
+                        <th>Tag Slot</th>
+                        <th>Tag LV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var module in Model.Modules)
+                    {
+                        foreach (var subject in module.ModuleSubjects)
+                        {
+                            foreach (var accr in module.Accreditations)
+                            {
+                                var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id && x.Subject.Id == subject.Id);
+
+                                if (teachings.Any())
+                                {
+                                    foreach (var teaching in teachings)
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
+                                            <td>@subject.Tag (@subject.TeachingFormat.Tag)</td>
+                                            <td><a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a></td>
+                                            <td>@accr.Slot.FullTag :: @module.FullTag</td>
+                                            <td>@module.FullTag#@subject.Tag :: @teaching.Course.ShortName</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
+                                        <td>@subject.Tag (@subject.TeachingFormat.Tag)</td>
+                                        <td>wird nicht angeboten</td>
+                                        <td>@accr.Slot.FullTag :: @module.FullTag</td>
+                                        <td>@module.FullTag#@subject.Tag :: #NA</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabModules').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}

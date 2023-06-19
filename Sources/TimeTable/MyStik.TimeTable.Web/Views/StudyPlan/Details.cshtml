@@ -1,15 +1,19 @@
-﻿@model MyStik.TimeTable.Web.Models.StudyPlanViewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.StudyPlanViewModel
 
 @{
     ViewBag.Title = "Studienplan";
+
+
+    var db = new TimeTableDbContext();
+
+
 }
 
 @section styles
 {
     <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
 }
-
-
 
 <div class="row">
     <div class="col-12">
@@ -19,28 +23,28 @@
                 <h5 class="card-subtitle">@Model.Semester.Name</h5>
             </div>
             <div class="list-group">
-                    <div class="list-group-item">
-                        <div class="btn-group">
-                            <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
-                                <i class="bi-chevron-left"></i> Studiengang
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Studiengang
+                        </a>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi-printer"></i> veröffentlichen
                             </a>
-                            @if (ViewBag.UserRight.IsCurriculumAdmin)
-                            {
-                                <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                    <i class="bi-printer"></i> veröffentlichen
-                                </a>
-                            }
-                        </div>
+                        }
                     </div>
+                </div>
             </div>
 
-            <table id="tabModules" class="table">
+            <table id="tabPlan" class="table">
                 <thead>
                     <tr>
+                        <th>Slot</th>
                         <th>Modul</th>
-                        <th>Modul-Slot</th>
-                        <th>Wahlmöglichkeit</th>
-                        <th>Themengebiet</th>
+                        <th>Modultitel</th>
+                        <th>Lehrveranstaltungen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,16 +56,49 @@
                             {
                                 foreach (var accr in slot.ModuleAccreditations)
                                 {
-                                    <tr>
-                                        <td><a href="@Url.Action("Details", "ModuleDescription", new {id = accr.Module.Id})">@accr.Module.Tag @accr.Module.Name</a></td>
-                                        <td><a href="@Url.Action("Slot", "Curriculum", new {id = slot.Id})">@slot.Tag</a></td>
-                                        <td><a href="@Url.Action("Option", "Curriculum", new {id = option.Id})">@option.Tag</a></td>
-                                        <td><a href="@Url.Action("Area", "Curriculum", new {id = area.Id})">@area.Tag</a></td>
-                                    </tr>
+                                    var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+                                    var nOpps = accr.Module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == Model.Semester.Id));
+
+                                    var courses = db.Activities.OfType<Course>().Where(x => x.Semester.Id == Model.Semester.Id && x.Organiser.Id == Model.Curriculum.Organiser.Id && x.ShortName.StartsWith(accr.Module.Tag)).ToList();
+
+                                    if (teachings.Any() || nOpps > 0 || courses.Any())
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                            <td>
+                                                @foreach (var subject in accr.Module.ModuleSubjects)
+                                                {
+                                                    foreach (var opportunity in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
+                                                    {
+                                                        <div><a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">@opportunity.Course.Name (@opportunity.Course.ShortName)</a></div>
+                                                    }
+                                                }
+                                                @foreach (var teaching in teachings)
+                                                {
+                                                    <div><a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a></div>
+                                                }
+                                                @foreach (var course in courses)
+                                                {
+                                                    <div>AUTOLINK <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name (@course.ShortName)</a></div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                            <td>wird nicht angeboten</td>
+                                        </tr>
+                                    }
                                 }
                             }
                         }
-                     }
+                    }
                 </tbody>
             </table>
         </div>
@@ -69,13 +106,107 @@
 </div>
 
 
+@*
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Studienplan @Model.Curriculum.Name (@Model.Curriculum.ShortName)</h4>
+                <h5 class="card-subtitle">@Model.Semester.Name</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Studiengang
+                        </a>
+                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                        {
+                            <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi-printer"></i> veröffentlichen
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <table id="tabModules" class="table">
+                <thead>
+                    <tr>
+                        <th>Slot</th>
+                        <th>Modul</th>
+                        <th>Modultitel</th>
+                        <th>Lehrveranstaltungen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var area in Model.Curriculum.Areas)
+                    {
+                        foreach (var option in area.Options)
+                        {
+                            foreach (var slot in option.Slots)
+                            {
+                                foreach (var accr in slot.ModuleAccreditations)
+                                {
+                                    var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+                                    var nOpps = accr.Module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == Model.Semester.Id));
+
+                                    if (teachings.Any() || nOpps > 0)
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                            <td>
+                                                @foreach (var subject in accr.Module.ModuleSubjects)
+                                                {
+                                                    foreach (var opportunity in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
+                                                    {
+                                                        <div><a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">@opportunity.Course.Name (@opportunity.Course.ShortName)</a></div>
+                                                    }
+                                                }
+                                                @foreach (var teaching in teachings)
+                                                {
+                                                    <div><a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a></div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                            <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                            <td>wird nicht angeboten</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    *@
+
 @section scripts
 {
     <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
+            /*
             var t = $('#tabModules').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+            */
+
+            var t = $('#tabPlan').DataTable({
                 "paging": false,
                 "order": [[0, 'asc']]
             });

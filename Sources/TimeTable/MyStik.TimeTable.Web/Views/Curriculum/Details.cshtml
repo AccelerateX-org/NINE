@@ -145,10 +145,7 @@
                             <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan </a>
                         </div>
                         <div class="row">
-                            <a class="disabled" href="#">Stundenplan </a>
-                        </div>
-                        <div class="row">
-                            <a class="disabled" href="#">Prüfungsplan </a>
+                            <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Prüfungsplan </a>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -157,10 +154,7 @@
                             <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan </a>
                         </div>
                         <div class="row">
-                            <a class="disabled" href="#">Stundenplan </a>
-                        </div>
-                        <div class="row">
-                            <a class="disabled" href="#">Prüfungsplan </a>
+                            <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan </a>
                         </div>
                         @if (Model.Assessments.Any())
                         {
