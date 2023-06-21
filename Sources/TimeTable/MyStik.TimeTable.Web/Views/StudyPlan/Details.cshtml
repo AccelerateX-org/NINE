@@ -30,6 +30,9 @@
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
+                            <a href="@Url.Action("AutoLink", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi-link"></i> AUTOLINKS verknüofen
+                            </a>
                             <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
                                 <i class="bi-printer"></i> veröffentlichen
                             </a>
@@ -72,11 +75,27 @@
                                                 {
                                                     foreach (var opportunity in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
                                                     {
+                                                        var linkedCourses = courses.Where(x => x.Id == opportunity.Course.Id).ToList();
+                                                        if (linkedCourses.Any())
+                                                        {
+                                                            foreach (var linkedCourse in linkedCourses)
+                                                            {
+                                                                courses.Remove(linkedCourse);
+                                                            }
+                                                        }
                                                         <div><a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">@opportunity.Course.Name (@opportunity.Course.ShortName)</a></div>
                                                     }
                                                 }
                                                 @foreach (var teaching in teachings)
                                                 {
+                                                    var linkedCourses = courses.Where(x => x.Id == teaching.Course.Id).ToList();
+                                                    if (linkedCourses.Any())
+                                                    {
+                                                        foreach (var linkedCourse in linkedCourses)
+                                                        {
+                                                            courses.Remove(linkedCourse);
+                                                        }
+                                                    }
                                                     <div><a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a></div>
                                                 }
                                                 @foreach (var course in courses)

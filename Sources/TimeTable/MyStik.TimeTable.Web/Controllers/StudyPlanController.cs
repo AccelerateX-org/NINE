@@ -30,14 +30,6 @@ namespace MyStik.TimeTable.Web.Controllers
         // GET: StudyPlan
         public ActionResult Details(Guid currId, Guid semId)
         {
-            /*
-            var modules = Db.CurriculumModules.Where(x =>
-                x.Accreditations.Any(c =>
-                    c.Slot != null &&
-                    c.Slot.AreaOption != null &&
-                    c.Slot.AreaOption.Area.Curriculum.Id == currId)).ToList();
-            */
-
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
             var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
@@ -55,6 +47,68 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
         }
+
+        public ActionResult AutoLink(Guid currId, Guid semId)
+        {
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            foreach(var area in curriculum.Areas)
+            {
+                foreach (var option in area.Options)
+                {
+                    foreach (var slot in option.Slots)
+                    {
+                        foreach (var accr in slot.ModuleAccreditations)
+                        {
+                            // es geht nur noch auf die Teachings
+                            var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == semester.Id).ToList();
+                            //var nOpps = accr.Module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == semester.Id));
+
+                            var courses = Db.Activities.OfType<Course>().Where(x => x.Semester.Id == semester.Id && x.Organiser.Id == curriculum.Organiser.Id && x.ShortName.StartsWith(accr.Module.Tag)).ToList();
+
+                            // gehe jeden gefunden Kurs durch und baue ein teaching, wenn es das noch nicht gibt
+                            foreach (var course in courses)
+                            {
+                                var teaching = teachings.FirstOrDefault(x => x.Course.Id == course.Id);
+
+                                if (teaching == null)
+                                {
+                                    // neues teaching bauen und das richtige Fach suchen
+                                    var subject = accr.Module?.ModuleSubjects?.FirstOrDefault(x => !string.IsNullOrEmpty(x.Tag) && x.Tag.Equals(course.ShortName));
+
+                                    if (subject == null)
+                                    {
+                                        subject = accr.Module.ModuleSubjects.FirstOrDefault();
+                                    }
+
+                                    // nur anlegen, wenn subject vorhanden ist
+                                    if (subject != null)
+                                    {
+                                        teaching = new TeachingDescription
+                                        {
+                                            Accreditation = accr,
+                                            Course = course,
+                                            Semester = semester,
+                                            Subject = subject,
+                                        };
+
+                                        Db.TeachingDescriptions.Add(teaching);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { currId = currId, semId = semId });
+        }
+
+
 
         public ActionResult Publish(Guid currId, Guid semId)
         {

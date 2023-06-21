@@ -1648,6 +1648,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Name = model.Name,
                 ShortName = string.IsNullOrEmpty(model.ShortName) ? model.Name : model.ShortName,
                 Organiser = org,
+                Semester = semester,
                 Occurrence = new Occurrence
                 {
                     Capacity = -1,
