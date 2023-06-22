@@ -1,4 +1,5 @@
-﻿@using MyStik.TimeTable.Web.Helpers
+﻿@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Helpers
 @model MyStik.TimeTable.Web.Models.OrganiserViewModel
 
 
@@ -20,24 +21,67 @@
                 <div class="card-header">
                     <h4>Alle manuell angelegten Lehrveranstaltungen mit Bezug zu @Model.Organiser.ShortName</h4>
                 </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a href="@Url.Action("Repair", "Courses", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
+                                <i class="bi-hammer"></i> Reparieren
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
 
                 <table id="tabLV" class="table">
                     <thead>
                         <tr>
                             <th>Angelegt von</th>
+                            <th>FK</th>
+                            <th>Semester</th>
                             <th># Termine</th>
                             <th>Erster</th>
                             <th>Letzter</th>
-                            <th># Gruppen</th>
+                            <th>Gruppen</th>
                             <th>Name</th>
                             <th>Kurzname</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var course in Model.Courses)
                         {
+                            var sem = course.Course.SemesterGroups.Select(x => x.Semester).Distinct().ToList();
+
                             <tr>
                                 <td>@course.Course.Owners.First().Member.FullName</td>
+                                @if (course.Course.Organiser != null)
+                                {
+                                    <td>@course.Course.Organiser.ShortName</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                @if (course.Course.Semester != null)
+                                {
+                                    <td>@course.Course.Semester.Name</td>
+                                }
+                                else
+                                {
+                                    if (sem.Any())
+                                    {
+                                        <td>
+                                            @foreach (var s in sem)
+                                            {
+                                                <div>(@s.Name)</div>
+                                            }
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
                                 <td>@course.Course.Dates.Count</td>
                                 @if (course.Course.Dates.Any())
                                 {
@@ -60,6 +104,12 @@
                                     <td><a href="@Url.Action("Details", "Course", new {id = course.Course.Id})">@course.Course.Name</a></td>
                                 }
                                 <td>@course.Course.ShortName</td>
+                                <td>
+                                    @if (course.Course.Semester == null && course.Course.Dates.Count == 0)
+                                    {
+                                        <a href="#" class="btn btn-outline-danger disabled"><i class="bi-trash"></i> Löschen</a>
+                                    }
+                                </td>
                             </tr>
                         }
 

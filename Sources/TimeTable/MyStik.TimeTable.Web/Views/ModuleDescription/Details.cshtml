@@ -1,4 +1,6 @@
-﻿@model MyStik.TimeTable.Data.CurriculumModule
+﻿@using System.Collections
+@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.CurriculumModule
 @{
     ViewBag.Title = "Details";
 
@@ -19,7 +21,6 @@
             itsMe = true;
         }
     }
-
 }
 
 <div class="row">
@@ -35,43 +36,58 @@
                         <h4 class="card-title">
                             <img src="~/Assets/img/flags/gb.png" /> @Model.NameEn
                         </h4>
-                        <div id="loading" class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
+                    </div>
+                </div>
+            </div>
+        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+        {
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
+                            <i class="bi-people"></i> Modulverantwortungen
+                        </a>
+
+                        <a href="@Url.Action("EditGeneral", "CurriculumModule",new {id = Model.Id})" class="btn btn-outline-primary">
+                            <i class="bi-gear"></i> Allgemeine Angaben
+                        </a>
+
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <div class="button-group">
-                                <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                    Lehr- und Lernformen
+                            <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                <i class="bi-person-video"></i> Lehr- und Lernformen
+                            </a>
+                            <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                                <i class="bi-exclamation-diamond"></i> Prüfungsformen
+                            </a>
+
+                            if (!Model.Accreditations.Any())
+                            {
+                                <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
+                                    <i class="bi-trash"></i> Modul endgültig löschen
                                 </a>
-                                <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                    Prüfungsformen
-                                </a>
-                                @if (!Model.Accreditations.Any())
+                            }
+                            else
+                            {
+                                if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
                                 {
-                                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                        Modul endgültig löschen
+                                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
+                                        <i class="bi-x"></i> Modulbeschreibungen löschen
                                     </a>
                                 }
                                 else
                                 {
-                                    if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
-                                    {
-                                        <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                            Modulbeschreibungen löschen
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                            Modul aus allen Studiengängen entfernen
-                                        </a>
-                                    }
+                                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
+                                        <i class="bi-x"></i> Modul aus allen Studiengängen entfernen
+                                    </a>
                                 }
-                            </div>
+                            }
                         }
                     </div>
                 </div>
+            </div>
+        }
+            <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="row">
@@ -128,12 +144,6 @@
                         <div class="row">
                             <div class="col-4">
                                 <div>Modulverantwortung</div>
-                                @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                {
-                                    <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new {id = Model.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-keyboard"></i> Ändern
-                                    </a>
-                                }
                             </div>
                             <div class="col-8">
                                 @foreach (var mv in Model.ModuleResponsibilities)
@@ -172,88 +182,85 @@
 
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
                         <div class="row">
                             <div class="col-4">
-                                <div>Voraussetzungen für die Teilnahme</div>
+                                <div>Modulbeschreibungen</div>
                             </div>
                             <div class="col-8">
-                                @Model.Prerequisites
+                                @foreach (var s in ViewBag.SemesterList)
+                                {
+                                    var desc = Model.Descriptions
+                                        .Where(x =>
+                                            x.Semester.Id == s.Id &&
+                                            (x.ChangeLog != null && x.ChangeLog.Approved != null))
+                                        .OrderByDescending(x => x.ChangeLog.Approved)
+                                        .FirstOrDefault();
+
+
+                                    if (desc != null && desc.ChangeLog != null)
+                                    {
+                                        if (desc.ChangeLog.Approved != null)
+                                        {
+                                            <div>
+                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@desc.Semester.Name (veröffentlicht @desc.ChangeLog.Approved.Value.ToShortDateString())</a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                                            {
+                                                <div>
+                                                    <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@s.Name</a>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>@s.Name (nicht verfügbar)</div>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                                        {
+                                            <div>
+                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@s.Name</a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>@s.Name (nicht verfügbar)</div>
+                                        }
+                                    }
+                                }
+                                <div><a href="@Url.Action("History", new {id = Model.Id})"> Komplette Historie</a></div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <div>Verwendbarkeit</div>
-                            </div>
-                            <div class="col-8">
-                                @Model.Applicableness
-                            </div>
+
                         </div>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                        {
+                        <div class="col-md-6">
                             <div class="row">
-                                <div class="col-12">
-                                    <a href="@Url.Action("EditGeneral", "CurriculumModule",new {id = Model.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-keyboard"></i> Ändern
-                                    </a>
+                                <div class="col-4">
+                                    <div>Voraussetzungen für die Teilnahme</div>
+                                </div>
+                                <div class="col-8">
+                                    @Model.Prerequisites
                                 </div>
                             </div>
-                        }
-
+                            <div class="row">
+                                <div class="col-4">
+                                    <div>Verwendbarkeit</div>
+                                </div>
+                                <div class="col-8">
+                                    @Model.Applicableness
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5>Gültig für Semester</h5>
-                    </div>
-                    <div class="col-md-8">
-                        @Html.DropDownList("Semester", (IEnumerable<SelectListItem>)ViewBag.SemesterList, new { @class = "form-select", onchange = "onSemesterChanged()" })
-                    </div>
-                </div>
-                <div id="moduleDesc"></div>
             </div>
         </div>
     </div>
 </div>
 
-
-@section scripts {
-    <script>
-
-        $(document).ready(function() {
-            $('#loading').hide();
-            onSemesterChanged();
-        });
-
-
-        function onSemesterChanged() {
-            var semId = $('#Semester option:selected').val();
-
-            $('#moduleDesc').html('');
-            $('#loading').show();
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: '@Url.Action("Description")',
-                    data: {
-                        moduleId: '@Model.Id',
-                        semId: semId
-                    },
-                    success: function(data, success, xhr) {
-                        $('#moduleDesc').html(data);
-                        $('#loading').hide();
-                    },
-                    error: function(data, type, ex) {
-                        alert("Fehler beim laden der Daten." + ex);
-                        $('#loading').hide();
-                    }
-                });
-        }
-    </script>
-}
 
 

@@ -309,8 +309,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return MemberService.GetOrganisation(user.Id);
         }
 
+         protected ActivityOrganiser GetOrganisation(Guid id)
+         {
+             return Db.Organisers.SingleOrDefault(x => x.Id == id);
+         }
 
-         protected OrganiserMember GetMyMembership()
+
+        protected OrganiserMember GetMyMembership()
          {
              var user = GetCurrentUser();
              var members = MemberService.GetMemberships(user.Id);

@@ -4160,7 +4160,6 @@
     <Content Include="Views\Rooms\Statistics.cshtml" />
     <Content Include="Views\Curriculum\Labels.cshtml" />
     <Content Include="Views\Curriculum\_ModulePlan.cshtml" />
-    <Content Include="Views\Curriculum\_ModuleList.cshtml" />
     <Content Include="Views\Rooms\Schedule.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
     <Content Include="Views\Shared\_LayoutCAP.cshtml" />
@@ -4217,6 +4216,8 @@
     <Content Include="Views\ModuleDescription\_TeachingListGroup.cshtml" />
     <Content Include="Views\Schedule\Details.cshtml" />
     <Content Include="Views\Exam\Details.cshtml" />
+    <Content Include="Views\ModuleDescription\Semester.cshtml" />
+    <Content Include="Views\ModuleDescription\History.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

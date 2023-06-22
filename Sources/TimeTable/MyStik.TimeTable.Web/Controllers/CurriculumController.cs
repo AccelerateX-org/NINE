@@ -40,9 +40,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Curriculum = curr;
             model.Semester = SemesterService.GetSemester(DateTime.Today);
-            model.NextSemester = SemesterService.GetNextSemester(DateTime.Today);
-
-            ViewBag.NextSemester = SemesterService.GetNextSemester(model.Semester);
+            model.NextSemester = SemesterService.GetNextSemester(model.Semester);
+            model.PreviousSemester = SemesterService.GetPreviousSemester(model.Semester);
 
             var user = GetCurrentUser();
 

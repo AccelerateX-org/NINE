@@ -30,35 +30,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
 
-            var semesterList = new List<SelectListItem>();
+            var semesterList = new System.Collections.Generic.List<Semester>();
 
-            SelectListItem semItem = null;
             if (nextSemester != null)
             {
-                semItem = new SelectListItem
-                {
-                    Text = nextSemester.Name,
-                    Value = nextSemester.Id.ToString(),
-                    Selected = false
-                };
-                semesterList.Add(semItem);
+                semesterList.Add(nextSemester);
             }
 
-            semItem = new SelectListItem
-            {
-                Text = semester.Name,
-                Value = semester.Id.ToString(),
-                Selected = true
-            };
-            semesterList.Add(semItem);
+            semesterList.Add(semester);
 
-            semItem = new SelectListItem
-            {
-                Text = prevSemester.Name,
-                Value = prevSemester.Id.ToString(),
-                Selected = false
-            };
-            semesterList.Add(semItem);
+            semesterList.Add(prevSemester);
 
             ViewBag.SemesterList = semesterList;
 
@@ -105,6 +86,47 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return PartialView("_Semester", model);
         }
+
+
+        public ActionResult Semester(Guid moduleId, Guid semId)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+            var semester = SemesterService.GetSemester(semId);
+
+
+            // die aktuell veröffentlichte Fassung
+            var lastPublished = module.Descriptions
+                .Where(x =>
+                    x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                .OrderByDescending(x => x.ChangeLog.Approved)
+                .FirstOrDefault();
+
+            // die aktuell veröffentlichten Prüfungsangebote
+            var exams = new List<ExaminationDescription>();
+
+            foreach (var accr in module.Accreditations)
+            {
+                var subExams = accr.ExaminationDescriptions
+                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                    .ToList();
+                exams.AddRange(subExams);
+            }
+
+            ViewBag.UserRight = GetUserRight(module.Catalog.Organiser);
+
+            var model = new ModuleSemesterView
+            {
+                CurriculumModule = module,
+                Semester = semester,
+                ModuleDescription = lastPublished,
+                Exams = exams
+            };
+
+
+            return View("Semester", model);
+        }
+
+
 
 
 
@@ -910,12 +932,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
             var semester = SemesterService.GetSemester(semId);
-
+            
+            // alte Welt über Semestergruppen
             var courses =
                 Db.Activities.OfType<Course>().Where(c =>
-                    c.SemesterGroups.Any(g =>
+                    ((c.Organiser != null && c.Organiser.Id == orgId && c.Semester != null && c.Semester.Id == semId) ||
+                    (c.SemesterGroups.Any(g =>
                         g.Semester.Id == semester.Id &&
-                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id) &&
+                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))) &&
                     ((!string.IsNullOrEmpty(c.ShortName) && (c.ShortName.Contains(text)) ||
                       (!string.IsNullOrEmpty(c.Name) && c.Name.Contains(text))))
                 ).OrderBy(c => c.ShortName).ToList();
@@ -1002,6 +1026,18 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return RedirectToAction("Teachings", new { moduleId = module.Id, semId = semester.Id });
+        }
+
+        public ActionResult History(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var model = new ModuleDescriptionsViewModel
+            {
+                Module = module,
+            };
+
+            return View(model);
         }
 
     }

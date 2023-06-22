@@ -1,0 +1,87 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Web.Services
+@using MyStik.TimeTable.Web.Helpers
+@{
+    ViewBag.Title = "Descriptions";
+
+    var Db = new MyStik.TimeTable.Data.TimeTableDbContext();
+    var courseService = new CourseService(Db);
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <h5 class="card-subtitle">Liste aller Modulbeschreibungen</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Angelegt</th>
+                        <th>Veröffentlicht</th>
+                        <th>Inhalt</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var desc in Model.Module.Descriptions)
+                    {
+                        <tr>
+                            <td>@desc.Semester.Name</td>
+                            @if (desc.ChangeLog != null)
+                            {
+                                <td>@desc.ChangeLog.Created.ToShortDateString()</td>
+                                if (desc.ChangeLog.Approved.HasValue)
+                                {
+                                    <td>@desc.ChangeLog.Approved.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td>unveröffentlicht</td>
+                                }
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+                            @if (string.IsNullOrEmpty(desc.Description))
+                            {
+                                <td>Kein Beschreibungstext</td>
+                            }
+                            else
+                            {
+                                <td>Beschreibungstext vorhanden</td>
+                            }
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
