@@ -3,53 +3,38 @@
     ViewBag.Title = "Import Stundenplandaten";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Import von Stundenplandaten aus JSON (@Model.Organiser.ShortName / @Model.Semester.Name)</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @Html.HiddenFor(m => m.OrganiserId)
 @Html.HiddenFor(m => m.SemesterId)
 @Html.HiddenFor(m => m.FormatId);
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Schritt 3 von 3: Konsistenzprüfung und Import</span>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Import von Stundenplandaten für @Model.Organiser.ShortName und Semester @Model.Semester.Name</h4>
+                <h5 class="card-title"><i class="bi-check"></i> Schritt 3 von 3: Konsistenzprüfung und Import</h5>
+            </div>
+            <div class="card-body">
+                <a href="#" id="btnImport" class="btn btn-danger"><i class="bi-upload"></i> Import starten</a>
+
+                <div id="importFileState"></div>
+                <div id="pogresslabel"></div>
+                <div class="progress">
+                    <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+                        0%
                     </div>
                 </div>
-                <div class="portlet-body">
-                    <a href="#" id="btnImport" class="btn btn-danger"><i class="fa fa-upload"></i> Import starten</a>
-
-                    <div id="importFileState"></div>
-                    <div id="pogresslabel"></div>
-                    <div class="progress">
-                        <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
-                            0%
-                        </div>
-                    </div>
-                    <a id="reportLink" href="@Url.Action("Reports", new {orgId=Model.OrganiserId, semId=Model.SemesterId})" class="btn btn-success"><i class="fa fa-file"></i> Importberichte</a>
-                    <hr/>                    
-                    <table class="table table-condensed">
-                        <thead>
+                <a id="reportLink" href="@Url.Action("Reports", new {orgId=Model.OrganiserId, semId=Model.SemesterId})" class="btn btn-success"><i class="fa fa-file"></i> Importberichte</a>
+                <hr />
+                <table class="table">
+                    <thead>
                         <tr>
                             <th>Datei</th>
                             <th>Meldungen</th>
                         </tr>
-                        </thead>
-                        <tbody id="tabMsg">
+                    </thead>
+                    <tbody id="tabMsg">
                         @foreach (var fileName in Model.Context.ErrorMessages)
                         {
                             <tr>
@@ -69,9 +54,8 @@
                                 </td>
                             </tr>
                         }
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

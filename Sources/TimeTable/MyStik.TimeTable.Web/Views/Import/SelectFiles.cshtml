@@ -7,64 +7,35 @@
 
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Import von Stundenplandaten über JSON</h1>
-                </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Import von Stundenplandaten für @Model.Organiser.ShortName und Semester @Model.Semester.Name</h4>
+                <h5 class="card-title"><i class="bi-files"></i> Schritt 2 von 3: Auswahl Dateien</h5>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Schritt 2 von 3: Auswahl der Datei</span>
-                    </div>
-                </div>
-                <div class="portlet-body">
-                    @using (Html.BeginForm("Upload", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
-                    {
-                        <fieldset>
-                            @Html.HiddenFor(m => m.OrganiserId)
-                            @Html.HiddenFor(m => m.SemesterId)
-                            @Html.HiddenFor(m => m.FormatId)
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">JSON-Datei</label>
-                                <div class="col-md-10">
-                                    <div class="fileinput fileinput-new" data-provides="fileinput">
-                                        <div class="input-group input-large">
-                                            <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
-                                                <i class="fa fa-file fileinput-exists"></i>&nbsp;
-                                                <span class="fileinput-filename"> </span>
-                                            </div>
-                                            <span class="input-group-addon btn default btn-file">
-                                                <span class="fileinput-new"> Select file </span>
-                                                <span class="fileinput-exists"> Change </span>
-                                                <input type="file" name="AttachmentDays" id="Attachment1">
-                                            </span>
-                                            <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="card-body">
+                @using (Html.BeginForm("Upload", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                {
+                    <fieldset>
+                        @Html.HiddenFor(m => m.OrganiserId)
+                        @Html.HiddenFor(m => m.SemesterId)
+                        @Html.HiddenFor(m => m.FormatId)
+                        
+                        <div class="row">
+                            <label class="col-md-4 form-label">JSON-Datei</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="file" name="AttachmentDays" id="Attachment1">
                             </div>
+                        </div>
 
-
-                            <div class="form-group">
-                                <div class="col-md-offset-2 col-md-10">
-                                    <input type="submit" value="Weiter" class="btn btn-default" />
-                                </div>
+                        <div class="row">
+                            <div class="offset-4 col-md-8">
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi-chevron-right"></i> Weiter</button>
                             </div>
-                        </fieldset>
-                    }
-                </div>
+                        </div>
+                    </fieldset>
+                }
             </div>
         </div>
     </div>

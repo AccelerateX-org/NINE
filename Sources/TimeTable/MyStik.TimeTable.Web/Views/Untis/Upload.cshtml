@@ -3,79 +3,69 @@
     ViewBag.Title = "Import Stundenplandaten";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Import von Stundenplandaten aus Untis</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @Html.HiddenFor(m => m.OrganiserId)
 @Html.HiddenFor(m => m.SemesterId)
 @Html.HiddenFor(m => m.FirstDate)
 @Html.HiddenFor(m => m.LastDate)
+@Html.HiddenFor(m => m.BeginImport)
+@Html.HiddenFor(m => m.EndImport)
+@Html.HiddenFor(m => m.FirstDateYYYYMMDD)
+@Html.HiddenFor(m => m.LastDateYYYYMMDD)
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-database"></i>
-                        <span class="caption-subject bold uppercase"> Schritt 3 von 3: Konsistenzprüfung und Import</span>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Import von Stundenplandaten aus Untis für @Model.Organiser.ShortName und Semester @Model.Semester.Name (@Model.BeginImport.ToShortDateString() - @Model.EndImport.ToShortDateString())</h4>
+                <h5 class="card-title"><i class="bi-check"></i> Schritt 3 von 3: Konsitenzprüfung und Import</h5>
+            </div>
+            <div class="card-body">
+                <a href="#" id="btnImport" class="btn btn-danger"><i class="fa fa-upload"></i> Import starten</a>
+
+                <div id="importFileState"></div>
+                <div id="pogresslabel"></div>
+                <div class="progress">
+                    <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+                        0%
                     </div>
                 </div>
-                <div class="portlet-body">
-                    <a href="#" id="btnImport" class="btn btn-danger"><i class="fa fa-upload"></i> Import starten</a>
-
-                    <div id="importFileState"></div>
-                    <div id="pogresslabel"></div>
-                    <div class="progress">
-                        <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
-                            0%
-                        </div>
-                    </div>
-                    <hr/>                    
-                    <table class="table table-condensed">
-                        <thead>
+                <hr />
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Datei</th>
+                        <th>Meldungen</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabMsg">
+                    @foreach (var fileName in Model.Context.ErrorMessages)
+                    {
                         <tr>
-                            <th>Datei</th>
-                            <th>Meldungen</th>
-                        </tr>
-                        </thead>
-                        <tbody id="tabMsg">
-                        @foreach (var fileName in Model.Context.ErrorMessages)
-                        {
-                            <tr>
-                                <td>@fileName.Key</td>
-                                <td>
-                                    @foreach (var msg in fileName.Value)
+                            <td>@fileName.Key</td>
+                            <td>
+                                @foreach (var msg in fileName.Value)
+                                {
+                                    if (msg.IsError)
                                     {
-                                        if (msg.IsError)
-                                        {
-                                            <div class="text-danger"><i class="fa fa-exclamation"></i> @msg.Message</div>
-                                        }
-                                        else
-                                        {
-                                            <div>@msg.Message</div>
-                                        }
+                                        <div class="text-danger"><i class="fa fa-exclamation"></i> @msg.Message</div>
                                     }
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
+                                    else
+                                    {
+                                        <div>@msg.Message</div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
@@ -111,8 +101,8 @@
             $("#btnImport").click(function () {
                 var semId = $("#SemesterId").val();
                 var orgId = $("#OrganiserId").val();
-                var firstDate = $("#FirstDate").val();
-                var lastDate = $("#LastDate").val();
+                var firstDate = $("#FirstDateYYYYMMDD").val();
+                var lastDate = $("#LastDateYYYYMMDD").val();
 
                 connection.server.importSemester(semId, orgId, firstDate, lastDate).done(function (result) {
                     //                    alert("habe fertig");

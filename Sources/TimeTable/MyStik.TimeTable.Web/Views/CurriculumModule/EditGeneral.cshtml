@@ -14,22 +14,70 @@
                 {
                     @Html.HiddenFor(m => m.moduleId)
                     @Html.HiddenFor(m => m.catalogId)
+                    if (!ViewBag.UserRight.IsCurriculumAdmin)
+                    {
+                        @Html.HiddenFor(m => m.Tag)
+                        @Html.HiddenFor(m => m.Name)
+                        @Html.HiddenFor(m => m.NameEn)
+                    }
+                    if (ViewBag.UserRight.IsCurriculumAdmin)
+                    {
+                        <div class="row">
+                            <label for="Tag" class="col-sm-2 col-form-label">Tag (muss innerhalb des Katalogs eindeutig sein)</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.Tag, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="Name" class="col-sm-2 col-form-label">Bezeichnung <img src="~/Assets/img/flags/de.png" /></label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="NameEn" class="col-sm-2 col-form-label">Bezeichnung (englisch) <img src="~/Assets/img/flags/gb.png" /></label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(m => m.NameEn, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <label for="Tag" class="col-sm-2 col-form-label">Tag (muss innerhalb des Katalogs eindeutig sein)</label>
+                            <div class="col-sm-10">
+                                @Model.Tag (kann nur mit Admin-Rechten verändert werden)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="Name" class="col-sm-2 col-form-label">Bezeichnung <img src="~/Assets/img/flags/de.png" /></label>
+                            <div class="col-sm-10">
+                                @Model.Name  (kann nur mit Admin-Rechten verändert werden)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="NameEn" class="col-sm-2 col-form-label">Bezeichnung (englisch) <img src="~/Assets/img/flags/gb.png" /></label>
+                            <div class="col-sm-10">
+                                @Model.NameEn  (kann nur mit Admin-Rechten verändert werden)
+                            </div>
+                        </div>
+                    }
                     <div class="row">
-                        <label for="Tag" class="col-sm-2 col-form-label">Tag (muss innerhalb des Katalogs eindeutig sein)</label>
+                        <label for="Prequisites" class="col-sm-2 col-form-label">Voraussetzungen</label>
                         <div class="col-sm-10">
-                            @Html.TextBoxFor(m => m.Tag, new { @class = "form-control" })
+                            @Html.TextAreaFor(m => m.Prequisites, new { @class = "form-control", rows = 5 })
                         </div>
                     </div>
                     <div class="row">
-                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
+                        <label for="Applicableness" class="col-sm-2 col-form-label">Anwendbarkeit</label>
                         <div class="col-sm-10">
-                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                            @Html.TextAreaFor(m => m.Applicableness, new { @class = "form-control", rows = 5 })
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-10">
                             <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Speichern</button>
-                            <a href="@Url.Action("Admin",  new{id=Model.moduleId})" class="btn btn-outline-secondary">Abbrechen</a>
+                            <a href="@Url.Action("Details", "ModuleDescription",  new{id=Model.moduleId})" class="btn btn-outline-secondary">Abbrechen</a>
                         </div>
                     </div>
                 }

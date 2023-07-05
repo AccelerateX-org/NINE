@@ -41,6 +41,9 @@ namespace MyStik.TimeTable.Web.Models
 
         public Semester NextSemester { get; set; }
 
+        public Semester PreviousSemester { get; set; }
+
+
         public List<Semester> ActiveSemesters { get; set; }
 
         public List<Assessment> Assessments { get; set; }
@@ -149,6 +152,77 @@ namespace MyStik.TimeTable.Web.Models
         public Curriculum Curriculum { get; set; }
 
         public List<Student> Students { get; set; }
+    }
+
+
+    public class CurriculumAreaCreateModel
+    {
+        public Guid CurrId { get; set; }
+        public Guid AreaId { get; set; }
+        public Guid OptionId { get; set; }
+        public Guid SlotId { get; set; }
+
+        public string Tag { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Semester { get; set; }
+        public double Ects { get; set; }
+
+    }
+
+
+    public class MoveSlotModel
+    {
+        public Curriculum Curriculum { get; set; }
+    }
+
+    public class CurriculumDeleteModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Curriculum Curriculum { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool DeleteCancelled { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool DeleteHosting { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool KeepOwnership { get; set; }
+
+        public string Code { get; set; }
+    }
+
+    public class CurriculumEditModel
+    {
+        public Guid CurriculumId { get; set; }
+
+        public string Tag { get; set; }
+
+        public string Name { get; set; }
+
+        public string ShortName { get; set; }
+
+        [AllowHtml]
+        public string Description { get; set; }
+
+        public string Version { get; set; }
+
+        public int ThesisDuration { get; set; }
+
+        public bool IsDeprecated { get; set; }
+
+        public Guid DegreeId { get; set; }
+
+        public int EctsTarget { get; set; }
     }
 
 }

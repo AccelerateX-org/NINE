@@ -20,9 +20,27 @@
                         </div>
                     </div>
                     <div class="row">
-                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
+                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung <img src="~/Assets/img/flags/de.png" /></label>
                         <div class="col-sm-10">
                             @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung (englisch) <img src="~/Assets/img/flags/gb.png" /></label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.NameEn, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Prequisites" class="col-sm-2 col-form-label">Voraussetzungen</label>
+                        <div class="col-sm-10">
+                            @Html.TextAreaFor(m => m.Prequisites, new { @class = "form-control", rows = 5 })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Applicableness" class="col-sm-2 col-form-label">Anwendbarkeit</label>
+                        <div class="col-sm-10">
+                            @Html.TextAreaFor(m => m.Applicableness, new { @class = "form-control", rows = 5 })
                         </div>
                     </div>
                     <div class="row">

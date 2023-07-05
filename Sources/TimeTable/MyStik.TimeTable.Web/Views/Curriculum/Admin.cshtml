@@ -55,7 +55,7 @@
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Studien- und Kapazitätsgruppen</h5>
                                 </div>
-                                <p class="mb-1">VERALTET: Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.vsc" benötigt.</p>
+                                <p class="mb-1">VERALTET: Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.csv" benötigt.</p>
                             </a>
                         </div>
                     </div>
@@ -64,26 +64,6 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Aufbau</h5>
                             </div>
-                            <a href="@Url.Action("Areas", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Struktur nach Themengebieten</h5>
-                                </div>
-                                <p class="mb-1">Themengebiete mit Alternativangeboten.</p>
-                            </a>
-                        @*
-                            <a href="@Url.Action("ImportMoveAccr", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">HACK: Move Slots</h5>
-                                </div>
-                                <p class="mb-1">Module von MABI nach MABW verschieben.</p>
-                            </a>
-                            *@
-                            <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Import Modulplan nach Themengebieten</h5>
-                                </div>
-                                <p class="mb-1">Die Slots sind nach Themengebieten organisiert.</p>
-                            </a>
                             <a href="@Url.Action("ImportAccreditations", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Import Modulakkreditierungen</h5>
@@ -118,17 +98,6 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="list-group">
-                            <div class="list-group-item list-group-item-dark">
-                                <h5>Löschen</h5>
-                            </div>
-                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Modulplan löschen</h5>
-                                </div>
-                                <p class="mb-1">Löscht alle Akkreditierungen. Keine Auswirkungen auf Modulkatalog und Lehrveranstaltungen.</p>
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -136,10 +105,4 @@
     </div>
 </div>
 
-<ul>
-    @foreach (var area in Model.Areas)
-    {
-        <li>@area.Tag</li>
-    }
-</ul>
 

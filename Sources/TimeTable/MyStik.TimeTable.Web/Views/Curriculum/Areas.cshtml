@@ -14,61 +14,43 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4>Slotplan @Model.Name (@Model.ShortName)</h4>
+                <h4>@Model.Name (@Model.ShortName) - Themenbereiche</h4>
             </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a href="@Url.Action("Admin", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                            <i class="bi-chevron-left"></i> zurück
+                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Übersicht @Model.Tag
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <a href="@Url.Action("CreateSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neuen Katalog anlegen
+                            <a href="@Url.Action("MoveSlots", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-list-check"></i> Zusammensetzung
+                            </a>
+                            <a href="@Url.Action("CreateArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-plus"></i> Neuer Themenbereich
                             </a>
                             <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-upload"></i> Import
+                                <i class="bi-upload"></i> Import Struktur
                             </a>
-                            @*
-                                <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Alle Löschen
-                                </a>
-                            *@
+                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Struktur Löschen
+                            </a>
                         }
                     </div>
                 </div>
-            </div>
-            <table id="tabCatalogs" class="table">
-                <thead>
-                    <tr>
-                        <th>Themengebiet</th>
-                        <th>Alternative</th>
-                        <th>Slot</th>
-                        <th>Semester</th>
-                        <th># Module</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var area in Model.Areas)
-                    {
-                        foreach (var areaOption in area.Options)
+                @foreach (var area in Model.Areas)
+                {
+                    <a href="@Url.Action("Area", new {id = area.Id})" class="list-group-item list-group-item-action">
+                        <h5>@area.Tag | @area.Name</h5>
+                        <p>@area.Description</p>
+                        @if (area.Options.Count() > 1)
                         {
-                            foreach (var slot in areaOption.Slots)
-                            {
-                                <tr>
-                                    <td>@area.Tag</td>
-                                    <td>@areaOption.Tag</td>
-                                    <td>@slot.Tag</td>
-                                    <td>@slot.Semester</td>
-                                    <td>@slot.ModuleAccreditations.Count</td>
-                                </tr>
-                              
-                            }
+                            <p>Anzahl Wahlmöglichlkeiten: @area.Options.Count()</p>
                         }
-                    }
-                </tbody>
-            </table>
+                    </a>
+                }
+            </div>
         </div>
     </div>
 </div>

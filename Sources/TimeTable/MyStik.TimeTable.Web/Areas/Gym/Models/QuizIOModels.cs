@@ -20,6 +20,6 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Models
 
     public class QuizQuestionIOModel
     {
-        public string id { get; set; }
+        public string tag { get; set; }
     }
 }

@@ -66,6 +66,8 @@ namespace MyStik.TimeTable.Data
 
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
 
         /// <summary>
         /// Das Volumen ausgedrückt in ECTS

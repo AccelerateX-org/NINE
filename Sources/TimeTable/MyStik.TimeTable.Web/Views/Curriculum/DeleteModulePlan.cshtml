@@ -1,0 +1,63 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumDeleteModel
+@{
+    ViewBag.Title = "Modulplan löschen";
+
+    var numAreasWithAccr = Model.Curriculum.Areas.Count(x => x.Options.Any(y => y.Slots.Any(z => z.ModuleAccreditations.Any())));
+}
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Modulplan @Model.Curriculum.Name löschen</h4>
+            </div>
+            <div class="panel-body">
+                @if (numAreasWithAccr > 1)
+                {
+                    <div class="alert alert-danger">
+                        <strong>Hinweise:</strong>
+                        <ul>
+                            <li>Es gibt insgesamt @numAreasWithAccr Themengebiete mit akkreditierten Modulen.</li>
+                            <li>Modulplan mit Akkreditierungen können nicht gelöscht werden.</li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger">
+                        <strong>Hinweise:</strong>
+                        <ul>
+                            <li>Das Löschen eines Modulplans kann nicht rückgängig gemacht werden</li>
+                            <li>Um sicherzugehen, dass Sie sich wirklich löschen möchten, müssen Sie einen Code eingeben</li>
+                        </ul>
+                    </div>
+                    <p>Bitte geben Sie den Code <strong>@Model.Curriculum.Tag</strong> ein.</p>
+                    using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }
+                        ))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(false)
+                        @Html.HiddenFor(m => m.Curriculum.Id)
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Code, new { @class = "col-md-4 control-label" })
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> Endgültig Löschen</button>
+                                <a href="@Url.Action("Areas", new {id = Model.Curriculum.Id})" class="btn btn-default">Abbrechen</a>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

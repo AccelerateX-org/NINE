@@ -1,0 +1,35 @@
+﻿@model MyStik.TimeTable.Web.Models.ExaminationFractionViewModel
+@{
+    ViewBag.Title = "CreateExamination";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Prüfungform ändern</h4>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.FractionId)
+                    <div class="row">
+                        <div class="col-4">Prüfungsform</div>
+                        <div class="col-8">
+                            @Html.DropDownListFor(model => model.ExaminationTypeId, (IEnumerable<SelectListItem>)ViewBag.ExamOptions, new { @class = "form-select" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">Gewichtung in %</div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Weight, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("ExaminationForms", new { id = Model.Option.Module.Id })"><i class="bi-x"></i> Abbrechen</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

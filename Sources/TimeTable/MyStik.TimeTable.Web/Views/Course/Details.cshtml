@@ -18,6 +18,50 @@
         <div class="card">
             <div class="card-header">
                 <h4>@Model.Summary.Course.Name (@Model.Summary.Course.ShortName)</h4>
+                @foreach (var opp in Model.Summary.Course.Opportunities)
+                {
+                    <div>
+                        Modul: <a href="@Url.Action("Details", "ModuleDescription", new {id = opp.Subject.Module.Id})">@opp.Subject.Module.Name</a>
+
+                        @foreach (var acc in opp.Subject.Module.Accreditations)
+                        {
+                            if (acc.Slot.CurriculumSection != null)
+                            {
+                                <span> | <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
+                            }
+                            else
+                            {
+                                <span> | <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
+                            }
+                        }
+                    </div>
+                }
+                @foreach (var teaching in Model.Summary.Course.Teachings)
+                {
+                    <div>
+                        Modul:
+                        @if (Model.Summary.Course.Semester != null)
+                        {
+                            <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = Model.Summary.Course.Semester.Id })">@teaching.Subject.Module.Name</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Details", "ModuleDescription", new { id = teaching.Subject.Module.Id })">@teaching.Subject.Module.Name</a>
+                        }
+
+                        @foreach (var acc in teaching.Subject.Module.Accreditations)
+                        {
+                            if (acc.Slot.CurriculumSection != null)
+                            {
+                                <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.CurriculumSection.Curriculum.Id })">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
+                            }
+                            else
+                            {
+                                <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.AreaOption.Area.Curriculum.Id })">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
+                            }
+                        }
+                    </div>
+                }
             </div>
             <div class="list-group">
                 @if (ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner || ViewBag.UserRight.IsCourseAdmin)

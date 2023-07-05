@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.DTOs;
 
 namespace MyStik.TimeTable.Web.Api.Controller
@@ -304,6 +305,54 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return response;
         }
+
+        /// <summary>
+        /// Abfrage der Belegungen eines Raums
+        /// </summary>
+        /// <param name="number">Raumnummer</param>
+        /// <param name="start">Beginn des Zeitraums. Format "dd-MM-yyyy"</param>
+        /// <param name="end">Ende des Zeitraums. Format "dd-MM-yyyy"</param>
+        /// <returns></returns>
+        [System.Web.Http.Route("{number}/allocation/{start}/{end}")]
+        public RoomAllocationDto GetRoomAllocation(string number, string start, string end)
+        {
+            var semester = new SemesterService().GetSemester(DateTime.Today);
+
+            var startDate = string.IsNullOrEmpty(start) ? semester != null ? semester.StartCourses : DateTime.Today : DateTime.ParseExact(start, "yyyy-MM-dd", null);
+            var endDate = string.IsNullOrEmpty(start) ? semester != null ? semester.EndCourses : DateTime.Today : DateTime.ParseExact(end, "yyyy-MM-dd", null);
+
+
+            var result = new RoomAllocationDto
+            {
+                Number = number,
+                Events = new List<RoomEventDto>(),
+                From = startDate,
+                Until = endDate.AddDays(1)
+            };
+
+
+            var room = Db.Rooms.FirstOrDefault(x => x.Number.ToLower().Equals(number.ToLower()));
+
+            if (room != null)
+            {
+                var dates = room.Dates.Where(x => x.Begin >= result.From && x.End <= result.Until).OrderBy(x => x.Begin);
+
+                foreach (var date in dates)
+                {
+                    var dto = new RoomEventDto
+                    {
+                        Title = date.Activity.Name,
+                        Begin = date.Begin,
+                        End = date.End
+                    };
+
+                    result.Events.Add(dto);
+                }
+            }
+
+            return result;
+        }
+
 
 
 

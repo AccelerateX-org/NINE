@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-md-10">
 
-                        <h4>Verwaltung Studiengang @Model.Name (@Model.ShortName)</h4>
+                        <h4>Ettiketten Studiengang @Model.Name (@Model.ShortName)</h4>
                         <h5 class="card-subtitle">
                             <a href="@Url.Action("Index", "Curricula")">HM</a>
                             |
@@ -24,12 +24,18 @@
                     </div>
                 </div>
             </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    Ettiketten dienen zur Kennzeichnung von Lehrveranstaltungen sowie zur Konkretisierung eines Studierendenprofils, also die Detailangabe zum Studiengang. 
+                    Beispiel: Studiengruppe oder gewählter Schwerpunkt. Hier werden die Ettiketten definiert, welche für den Studiengang gelten.
+                </div>
+            </div>
             <div class="list-group">
                 <div class="list-group-item">
                     <a href="@Url.Action("Admin", new {id = Model.Id})" class="btn btn-outline-primary">
                         <i class="bi-chevron-left"></i> Zurück
                     </a>
-                    <a href="@Url.Action("AddLabel", new {id = Model.Id})" class="btn btn-outline-primary">
+                    <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary">
                         <i class="bi-plus"></i> Neues Etikett
                     </a>
                 </div>
@@ -52,8 +58,8 @@
                             <td>@label.Description</td>
                             <td>@label.HtmlColor</td>
                             <td>
-                                <a href="@Url.Action("EditLabel", new {id=label.Id})" class="btn btn-sm btn-outline-primary">Ändern</a>
-                                <a href="@Url.Action("DeleteLabel", new {id=label.Id})" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                <a href="@Url.Action("EditLabel", new {currId = Model.Id, labelId = label.Id})" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                <a href="@Url.Action("DeleteLabel", new {currId = Model.Id, labelId = label.Id})" class="btn btn-sm btn-outline-danger">Löschen</a>
                             </td>
                         </tr>
                     }

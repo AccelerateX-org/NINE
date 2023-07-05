@@ -26,11 +26,18 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "Modulbezeichnung")]
         public string Name { get; set; }
 
+        public string NameEn { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         [Display(Name = "Stundenplankürzel")]
         public string ShortName { get; set; }
+
+
+        public string Prequisites { get; set; }
+
+        public string Applicableness { get; set; }
 
     }
 

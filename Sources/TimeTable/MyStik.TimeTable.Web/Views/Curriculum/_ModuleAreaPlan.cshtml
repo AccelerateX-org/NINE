@@ -20,13 +20,13 @@
 
     for (var s = minSem; s <= maxSem; s++)
     {
-        var semSlots = allSlots.Where(x => x.Semester == s).ToList();
+        var semSlots = allSlots.Where(x => x.Semester == s).OrderBy(x => x.Tag).ToList();
         <div class="row">
             <div class="col-md-2">
                 <h5>Semester @s</h5>
             </div>
             <div class="col-md-10">
-                @foreach (var slot in semSlots)
+                @foreach (var slot in semSlots.OrderBy(x => x.Tag))
                 {
                     var showSlot = false;
                     var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);
@@ -46,7 +46,7 @@
                     if (showSlot)
                     {
                         var w = (int)(slot.ECTS / 30 * 100);
-                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new { id = slot.Id })">
+                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
                             <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
                             <br />
                             @if (slot.AreaOption.Area.Options.Count() > 1)

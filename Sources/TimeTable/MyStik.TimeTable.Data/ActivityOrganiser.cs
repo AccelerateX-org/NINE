@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 
 namespace MyStik.TimeTable.Data
 {
@@ -47,6 +48,8 @@ namespace MyStik.TimeTable.Data
         /// Die Selbstverwaltung
         /// </summary>
         public virtual Autonomy Autonomy { get; set; }
+
+        public virtual BulletinBoard BulletinBoard { get; set; }
 
 
         public virtual ICollection<Curriculum> Curricula { get; set; }

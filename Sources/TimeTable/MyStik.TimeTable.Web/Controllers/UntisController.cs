@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices.IO.GpUntis;
@@ -17,10 +18,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid id)
         {
             var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(DateTime.Today);
+            var semester = SemesterService.GetSemester(id);
 
             var model = new SemesterImportModel
             {
@@ -33,6 +34,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Existing = GetCourseCount(org.Id, semester.Id)
             };
 
+            /*
             ViewBag.Semester = Db.Semesters
                 .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
                 .OrderBy(s => s.StartCourses)
@@ -41,6 +43,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     Text = c.Name,
                     Value = c.Id.ToString(),
                 });
+            */
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
 
             return View(model);
@@ -70,7 +76,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 c.ExternalSource.Equals("GPUNTIS") &&
                 !c.SemesterGroups.Any());
 
-            return nInSemester + nNoGroup;
+            return nInSemester; // + nNoGroup;
         }
 
         private string GetTempPath(Guid orgId, Guid semId)
@@ -106,6 +112,16 @@ namespace MyStik.TimeTable.Web.Controllers
             string tempDir = GetTempPath(model.OrganiserId, model.SemesterId);
 
             Directory.Delete(tempDir, true);
+
+            var org = GetMyOrganisation();
+            model.Organiser = org;
+            model.Semester = SemesterService.GetSemester(model.SemesterId);
+
+            model.BeginImport = DateTime.Parse(model.FirstDate);
+            model.EndImport = DateTime.Parse(model.LastDate);
+
+            model.FirstDateYYYYMMDD = model.BeginImport.ToString("yyyyMMdd");
+            model.LastDateYYYYMMDD = model.EndImport.ToString("yyyyMMdd");
 
             return View(model);
         }
@@ -163,6 +179,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             model.Context = reader.Context;
+            model.Organiser = GetMyOrganisation();
+            model.Semester = SemesterService.GetSemester(model.SemesterId);
+
 
             return View(model);
         }

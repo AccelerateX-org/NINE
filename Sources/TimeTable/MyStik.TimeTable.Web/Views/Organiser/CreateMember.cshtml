@@ -30,47 +30,86 @@
                         @Html.HiddenFor(item => item.OrganiserId)
                     </div>
 
-                    <div class="mb-3">
-                        @Html.LabelFor(item => item.Name, new { @class = "form-label" })
-                        @Html.TextBoxFor(item => item.Name, new { @class = "form-control" })
+                    <div class="row mb-1">
+                        <div class="col-4">
+                            @Html.LabelFor(item => item.ShortName, new { @class = "form-label" })
+                        </div>
+                        <div class="col-2">
+                            @Html.TextBoxFor(item => item.ShortName, new { @class = "form-control" })
+                        </div>
+                        <div class="col-6">
+                            Hinweis: muss eindeutig sein, sonst wird Lehrender nicht angelegt
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        @Html.LabelFor(item => item.FirstName, new { @class = "form-label" })
-                        @Html.TextBoxFor(item => item.FirstName, new { @class = "form-control" })
+                    <div class="row mb-1">
+                        <div class="col-4">
+                            @Html.LabelFor(item => item.Name, new { @class = "form-label" })
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(item => item.Name, new { @class = "form-control" })
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        @Html.LabelFor(item => item.Title, new { @class = "form-label" })
-                        @Html.TextBoxFor(item => item.Title, new { @class = "form-control" })
+                    <div class="row mb-1">
+                        <div class="col-4">
+                            @Html.LabelFor(item => item.FirstName, new { @class = "form-label" })
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(item => item.FirstName, new { @class = "form-control" })
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        @Html.LabelFor(item => item.ShortName, new { @class = "form-label" })
-                        @Html.TextBoxFor(item => item.ShortName, new { @class = "form-control" })
+                    <div class="row mb-1">
+                        <div class="col-4">
+                            @Html.LabelFor(item => item.Title, new { @class = "form-label" })
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(item => item.Title, new { @class = "form-control" })
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        @Html.LabelFor(item => item.UserName, new { @class = "form-label" })
-                        @Html.TextBoxFor(item => item.UserName, new { @class = "form-control" })
+<div class="row mb-1">
+                        <div class="col-4">
+                            @Html.LabelFor(item => item.UserName, new { @class = "form-label" })
+                        </div>
+                        <div class="col-4">
+                            @Html.TextBoxFor(item => item.UserName, new { @class = "form-control" })
+                        </div>
+                        <div class="col-4">
+                            <div>Kann leer bleiben und später ergänzt werden</div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        @Html.LabelFor(item => item.Role, new { @class = "form-label" })
-                        @Html.TextBoxFor(item => item.Role, new { @class = "form-control" })
+                    <div class="row mb-1">
+                        <div class="col-4">
+                            @Html.LabelFor(item => item.Role, new { @class = "form-label" })
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(item => item.Role, new { @class = "form-control" })
+                        </div>
                     </div>
-                    <div class="mb-3 form-check">
-                        @Html.CheckBoxFor(item => item.IsAssociated, new { @class = "form-check-input" })
-                        @Html.LabelFor(item => item.IsAssociated, new { @class = "form-check-label" })
+                    <div class="row mb-1">
+                        <div class="col-4">
+                        </div>
+                        <div class="col-8">
+                            @Html.CheckBoxFor(item => item.IsAssociated, new { @class = "form-check-input" })
+                            @Html.LabelFor(item => item.IsAssociated, new { @class = "form-check-label" })
+                        </div>
                     </div>
 
-                    <input type="submit" value="Speichern" class="btn btn-primary" />
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi-save"> Anlegen</i>
+                    </button>
+                    <a href="@Url.Action("Organiser", "Lecturer", new {id =ViewBag.Organiser.Id})" class="btn btn-outline-secondary">
+                        <i class="bi-x"> Abbrechen</i>
+                    </a>
                 }
             </div>
-        </div>
-    </div>
-</div>
+                    </div>
+                </div>
+                    </div>
 
 
 
-@section scripts
+                    @section scripts
 {
-    <script>
+                        <script>
         $(function () {
             $('#UserName').autocomplete({
                 source: function (request, response) {
@@ -101,6 +140,6 @@
                 select: function (event, ui) { }
             });
         });
-    </script>
-}
+                        </script>
+                    }
 

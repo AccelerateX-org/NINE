@@ -1,0 +1,315 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleSemesterView
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Notenmeldung Abschlussarbeit</title>
+	<style>
+		body {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 11px;
+			line-height: 1.4;
+		}
+
+		table, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+
+		td {
+			padding: 3px;
+		}
+
+		.vordruck {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 11px;
+			line-height: 1.0;
+		}
+
+		.vordruck2 {
+			font-family: Helvetica,Arial,Sans-Serif;
+			font-size: 9px;
+			line-height: 1.1;
+			margin-bottom: 5px;
+		}
+		
+
+
+	</style>
+</head>
+
+<body>
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <div class="vordruck">
+                    Name
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="vordruck">
+                    @Model.CurriculumModule.Name
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="vordruck">
+                    Katalog-Nummer
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="vordruck">
+                    @Model.CurriculumModule.FullTag
+                </div>
+            </td>
+        </tr>
+        @foreach (var accr in Model.CurriculumModule.Accreditations)
+        {
+            <tr>
+                <td rowspan="3">
+                    <div class="vordruck">
+                        Zgehörigkeit zu Curriculum
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="vordruck">
+                        <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="vordruck">
+                        Fachsemester
+                    </div>
+                </td>
+                <td>
+                    <div class="vordruck">
+                        <div>@accr.Slot.Semester</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="vordruck">
+                        Leistungspunkte
+                    </div>
+                </td>
+                <td>
+                    <div class="vordruck">
+                        <div>@accr.Slot.ECTS ECTS</div>
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var subject in Model.CurriculumModule.ModuleSubjects)
+        {
+            <tr>
+                <td rowspan="3">
+                    <div class="vordruck">
+                        Fach
+                    </div>
+                </td>
+                <td>
+                    <div class="vordruck">
+                        Name
+                    </div>
+                </td>
+                <td>
+                    <div class="vordruck">
+                        @subject.Name
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="vordruck">
+                        Aufwand
+                    </div>
+                </td>
+                <td>
+                    <div class="vordruck">
+                        @subject.SWS SWS
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="vordruck">
+                        Lehrform
+                    </div>
+                </td>
+                <td>
+                    <div class="vordruck">
+                        @subject.CourseType.ToString()
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var exam in Model.CurriculumModule.ExaminationOptions)
+        {
+            <tr>
+                <td>
+                    <div class="vordruck">
+                        Prüfungsform
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="vordruck">
+                        @exam.FullName
+                    </div>
+                </td>
+            </tr>
+        }
+        @foreach (var lecturer in Model.CurriculumModule.ModuleResponsibilities)
+        {
+            <tr>
+                <td>
+                    <div class="vordruck">
+                        Lehrende
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="vordruck">
+                        @lecturer.Member.FullName
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                <div class="vordruck">
+                    Voraussetzungen
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="vordruck">
+                    @Model.CurriculumModule.Prerequisites
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="vordruck">
+                    Verwendbarkeit
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="vordruck">
+                    @Model.CurriculumModule.Applicableness
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <div>Semester @Model.Semester.Name</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Inhalt / Lernziele
+            </td>
+            <td colspan="2">
+                <div>@Html.Raw(Model.ModuleDescription.Description.Trim())</div>
+            </td>
+        </tr>
+        @foreach (var accr in Model.CurriculumModule.Accreditations)
+        {
+            foreach (var exam in accr.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+            {
+                <tr>
+                    <td rowspan="6">
+                        <div class="vordruck">
+                            Prüfungsangebote
+                        </div>
+                    </td>
+                    <td colspan="2">
+                        <div class="vordruck">
+                            <div>@accr.Slot.AreaOption.Area.Curriculum.Name</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="vordruck">
+                            Erstprüfer:in
+                        </div>
+                    </td>
+                    <td>
+                        <div class="vordruck">
+                            @if (exam.FirstExminer != null)
+                            {
+                                <div>@exam.FirstExminer.FullName</div>
+                            }
+                            else
+                            {
+                                <div>Nicht festgelegt</div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="vordruck">
+                            Zweitprüfer:in
+                        </div>
+                    </td>
+                    <td>
+                        <div class="vordruck">
+                            @if (exam.SecondExaminer != null)
+                            {
+                                <div>@exam.SecondExaminer.FullName</div>
+                            }
+                            else
+                            {
+                                <div>Nicht festgelegt</div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="vordruck">
+                            Prüfungsform
+                        </div>
+                    </td>
+                    <td>
+                        <div class="vordruck">
+                            <div>@exam.ExaminationOption.FullName</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="vordruck">
+                            Details zur Prüfung
+                        </div>
+                    </td>
+                    <td>
+                        <div class="vordruck">
+                            <div>@exam.Conditions</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="vordruck">
+                            Hilfsmittel
+                        </div>
+                    </td>
+                    <td>
+                        <div class="vordruck">
+                            <div>@exam.Utilities</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+</body>
+</html>

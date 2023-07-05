@@ -50,6 +50,7 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<SubjectOpportunity> Opportunities { get; set; }
 
-
+        public virtual ICollection<TeachingDescription> Teachings { get; set; }
+       
     }
 }

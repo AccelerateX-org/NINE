@@ -28,6 +28,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string ShortName { get; set; }
 
+        public string Description { get; set; }
+
         /// <summary>
         /// der technische Kurzname
         /// </summary>
@@ -92,6 +94,8 @@ namespace MyStik.TimeTable.Data
         /// Die Selbstverwaltung
         /// </summary>
         public virtual Autonomy Autonomy { get; set; }
+
+        public virtual BulletinBoard BulletinBoard { get; set; }
 
         /// <summary>
         /// Studiengangleiter

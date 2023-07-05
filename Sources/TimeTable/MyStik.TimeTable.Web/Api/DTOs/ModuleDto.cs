@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MyStik.TimeTable.Web.Api.DTOs
 {
@@ -85,6 +86,8 @@ namespace MyStik.TimeTable.Web.Api.DTOs
 
     public class ModuleDescriptionDto
     {
+        public Guid id { get; set; }
+
         public string tag { get; set; }
         public string name { get; set; }
 

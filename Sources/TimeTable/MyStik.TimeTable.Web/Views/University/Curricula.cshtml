@@ -1,0 +1,98 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.ActivityOrganiser
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    ViewBag.Title = "Studiengangebote";
+
+    var db = new TimeTableDbContext();
+
+    var degr = db.Degrees.ToList();
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Studienangebote</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Index", "University")" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-secondary">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">
+                                    <i class="bi-book"></i><br />
+                                    Nach Abschluss
+                                </h5>
+                            </div>
+                            <div class="list-group">
+                                @foreach (var d in degr.OrderBy(x => x.Name))
+                                {
+                                    <a href="@Url.Action("Degree", new{id=d.Id})" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">@d.Name (@d.ShortName)</div>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">@d.Curricula.Count(x => x.Areas.Any())</span>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-secondary">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">
+                                    <i class="bi-book"></i><br />
+                                    Nach Rahmenbedingungen
+                                </h5>
+                            </div>
+                            <div class="list-group">
+                                <div class="list-group-item list-group-item-action">
+                                    Vollzeit (Bachelor, Master)
+                                </div>
+                                <div class="list-group-item list-group-item-action">
+                                    Weiterbildung (Master)
+                                </div>
+                                <div class="list-group-item list-group-item-action">
+                                    Berufsbegleitend (Bachelor)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card border-secondary">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">
+                                    <i class="bi-book"></i><br />
+                                    Weitere Angebote
+                                </h5>
+                            </div>
+                            <div class="list-group">
+                                <div class="list-group-item list-group-item-action">
+                                    Zertifikate
+                                </div>
+                                <div class="list-group-item list-group-item-action">
+                                    Courses in English
+                                </div>
+                                <div class="list-group-item list-group-item-action">
+                                    Summer Schools
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

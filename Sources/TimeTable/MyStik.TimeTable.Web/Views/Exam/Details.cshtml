@@ -1,0 +1,102 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.StudyPlanViewModel
+
+@{
+    ViewBag.Title = "Studienplan";
+}
+
+@section styles
+{
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Prüfungsplan @Model.Curriculum.Name (@Model.Curriculum.ShortName)</h4>
+                <h5 class="card-subtitle">@Model.Semester.Name</h5>
+                <div class="alert alert-danger"><strong>Wichtiger Hinweis:</strong> Diese Anzeige hier ist experimenteller Natur. Dies ist keine offizielle Liste.</div>
+            </div>
+            <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                            <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                                <i class="bi-chevron-left"></i> Studiengang
+                            </a>
+                        </div>
+                    </div>
+            </div>
+
+            <table id="tabModules" class="table">
+                <thead>
+                    <tr>
+                        <th>Modul</th>
+                        <th>Prüfungsform</th>
+                        <th>Erstprüfer:in</th>
+                        <th>Zweitprüfer:in</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var module in Model.Modules)
+                    {
+                        foreach (var accr in module.Accreditations)
+                        {
+                            var teaching = accr.ExaminationDescriptions.FirstOrDefault(x => x.Semester.Id == Model.Semester.Id);
+
+                            if (teaching != null)
+                            {
+                                <tr>
+                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
+                                    <td>@teaching.ExaminationOption.FullName</td>
+                                    @if (teaching.FirstExminer != null)
+                                    {
+                                        <td>@teaching.FirstExminer.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @if (teaching.SecondExaminer != null)
+                                    {
+                                        <td>@teaching.SecondExaminer.FullName</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
+                                    <td>keine Prüfungsangebote</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var t = $('#tabModules').DataTable({
+                "paging": false,
+                "order": [[0, 'asc']]
+            });
+        });
+    </script>
+}

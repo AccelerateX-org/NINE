@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Upload";
+}
+
+
+@section styles {
+    <link href="@Url.Content("~/Assets/libs/dropzone/dropzone.css")" rel="stylesheet" type="text/css" />
+
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Assets/libs/dropzone/dropzone.js")" type="text/javascript"></script>
+
+    <script>
+
+        Dropzone.options.formDrop = {
+            //acceptedFiles: '.png,.jpg,.gif,image/*',
+            acceptedFiles: '.json',
+            //capture: 'camera',
+            maxFiles: 10,
+            parallelUploads: 1,
+            dictDefaultMessage: 'Fragen hochladen'
+            /*,
+            init: function() {
+                this.on("complete", function(file) { alert("Added file." + file.name); });
+            }
+            */
+        };
+
+    </script>
+    }
+
+
+    <h2>Import Fragenkatalog</h2>
+    <a href="@Url.Action("Index")"><i class="chevron-left"></i> zurück</a>
+
+    <form id="formDrop" action="@Url.Action("UploadFile")" class="dropzone">
+    </form>

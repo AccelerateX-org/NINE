@@ -266,6 +266,105 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return list.AsQueryable();
         }
 
+        [Route("{id}/details")]
+        public ModuleDescriptionDto GetModuleDescriptions(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            // das Semester, um das es geht
+            var semesterService = new SemesterService(Db);
+
+            var semesterList = new List<Semester>();
+            var currentSemester = semesterService.GetSemester(DateTime.Today);
+            semesterList.Add(currentSemester);
+            semesterList.Add(semesterService.GetNextSemester(currentSemester));
+
+
+            var moduleDto = new ModuleDescriptionDto
+                {
+                    id = module.Id,
+                    tag = module.FullTag,
+                    name = module.Name,
+                    responsible = new List<ModuleDescriptionRespDto>(),
+                    slots = new List<ModuleDescriptionSlotDto>(),
+                    instances = new List<ModuleDescriptionInstanceDto>()
+                };
+
+                foreach (var responsibility in module.ModuleResponsibilities)
+                {
+                    var respDto = new ModuleDescriptionRespDto
+                    {
+                        tag = responsibility.Member.FullTag
+                    };
+
+                    moduleDto.responsible.Add(respDto);
+                }
+
+                foreach (var accreditation in module.Accreditations)
+                {
+                    var slotDto = new ModuleDescriptionSlotDto
+                    {
+                        tag = accreditation.Slot.FullTag,
+                    };
+
+                    moduleDto.slots.Add(slotDto);
+                }
+
+                foreach (var semester in semesterList)
+                {
+                    var instanceDto = new ModuleDescriptionInstanceDto
+                    {
+                        semster = semester.Name,
+                        description = "",
+                        exams = new List<ModuleDescriptionExamDto>(),
+                        teaching = new List<ModuleDescriptionTeachingDto>()
+                    };
+
+                    var description = module.Descriptions.FirstOrDefault(x => x.Semester.Id == semester.Id);
+
+                    if (description != null)
+                    {
+                        instanceDto.description = description.Description;
+                    }
+
+                    foreach (var moduleAccreditation in module.Accreditations)
+                    {
+                        var exam = moduleAccreditation.ExaminationDescriptions.FirstOrDefault(x =>
+                            x.Semester.Id == semester.Id);
+
+                        if (exam != null)
+                        {
+                            var examDto = new ModuleDescriptionExamDto
+                            {
+                                first = exam.FirstExminer != null ? exam.FirstExminer.FullTag : string.Empty,
+                                second = exam.SecondExaminer != null ? exam.SecondExaminer.FullTag : string.Empty,
+                                conditions = exam.Conditions,
+                                utilities = exam.Utilities,
+                                fractions = new List<ModuleDescriptionExamFractionDto>()
+                            };
+
+                            foreach (var examinationFraction in exam.ExaminationOption.Fractions)
+                            {
+                                var fractDto = new ModuleDescriptionExamFractionDto
+                                {
+                                    tag = examinationFraction.Form.ShortName,
+                                    weight = examinationFraction.Weight
+                                };
+
+                                examDto.fractions.Add(fractDto);
+                            }
+
+                            instanceDto.exams.Add(examDto);
+                        }
+                    }
+
+                    moduleDto.instances.Add(instanceDto);
+                }
+
+
+            return moduleDto;
+        }
+
 
     }
 }

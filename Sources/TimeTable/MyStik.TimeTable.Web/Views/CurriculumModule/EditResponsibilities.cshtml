@@ -51,7 +51,7 @@
                 <div class="row">
                     <div class="btn-group">
                         <a href="javascript:save()" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen übernehmen</a>
-                        <a href="@Url.Action("Admin", new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi-x"></i> Abbrechen</a>
+                        <a href="@Url.Action("Details", "ModuleDescription" , new { id = Model.Id })" class="btn btn-outline-secondary"><i class="bi-x"></i> Abbrechen</a>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                         DozIds: dozList
                     },
                     success: function(data, success, xhr) {
-                        window.location.replace("@Url.Action("Admin", new {id = Model.Id})");
+                        window.location.replace("@Url.Action("Details", "ModuleDescription", new {id = Model.Id})");
                     }
                 });
 

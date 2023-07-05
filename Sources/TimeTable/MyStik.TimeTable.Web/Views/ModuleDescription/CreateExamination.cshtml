@@ -3,6 +3,12 @@
     ViewBag.Title = "CreateExamination";
 }
 
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+}
+
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -23,7 +29,7 @@
                             <input class="form-control" type="text" value="@Model.Semester.Name" aria-label="Semester" readonly>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-4">Bezug zu Curriculum</div>
                         <div class="col-8">
                             @if (Model.Accreditation.Slot.CurriculumSection != null)
@@ -36,38 +42,40 @@
                             }
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">
+                            <div>Ersten Buchstaben des Nachnamens eingeben und dann Eintrag aus der angezeigten Liste auswählen</div>
                             <input class="form-control" id="dozId1" name="dozId1" type="text" />
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-4">Zweitprüfer:in</div>
                         <div class="col-8">
+                            <div>Ersten Buchstaben des Nachnamens eingeben und dann Eintrag aus der angezeigten Liste auswählen</div>
                             <input class="form-control" id="dozId2" name="dozId2" type="text" />
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-4">Prüfungsform</div>
                         <div class="col-8">
                             @Html.DropDownListFor(model => model.examOptId, (IEnumerable<SelectListItem>)ViewBag.ExamOptions, new { @class = "form-select" })
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-4">Rahmenbedingungen</div>
                         <div class="col-8">
                             @Html.TextAreaFor(m => m.Conditions, new { @class = "form-control", placeholder = "z.B. konkrete Prüfungsdauer, Anzahl Seiten Modularbeit oder Hinweis auf Lehrveranstaltung", rows = "3" })
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-4">Hilfsmittel</div>
                         <div class="col-8">
                             @Html.TextAreaFor(m => m.Utilities, new { @class = "form-control", placeholder = "Explizite Angabe erforderlich, auch 'keine', ggf. auch Angabe eines Links", rows = "3" })
                         </div>
                     </div>
                     <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
-                    <a class="btn btn-outline-secondary" href="@Url.Action("Details", new {id=Model.moduleId})"><i class="bi-x"></i> Abbrechen</a>
+                    <a class="btn btn-outline-secondary" href="@Url.Action("Exams", new { moduleId = Model.moduleId, semId = Model.semesterId })"><i class="bi-x"></i> Abbrechen</a>
                 }
             </div>
         </div>
@@ -76,10 +84,15 @@
 
 @section scripts
 {
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
     <script>
+
 
         $(document).ready(function() {
 
+            $("#Conditions").cleditor();
+            $("#Utilities").cleditor();
 
             $('#dozId1').autocomplete({
                 source: function(request, response) {

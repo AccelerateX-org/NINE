@@ -1,0 +1,55 @@
+﻿@model MyStik.TimeTable.Web.Controllers.StudyPlanPublishingModel
+@{
+    ViewBag.Title = "Publish";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Studienplan verabschieden</h4>
+                <p>@Model.Curriculum.Name</p>
+                <p>@Model.Semester.Name</p>
+                <div class="alert alert-danger">Hinweise: 
+                    <ul>
+                        <li>In diesem Prozess wird das pdf-Dokument erzeugt und im Schaukasten abgelegt.</li>
+                        <li>Dieser Prozess kann bis zu 1 min dauern. Geduld bewahren, Prozess nicht abbrechen.</li>
+                    </ul>
+                    </div>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.Curriculum.Id)
+                    @Html.HiddenFor(m => m.Semester.Id)
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="Remark" class="form-label">Bemerkung</label>
+                            <div>Text wird als "Vorwort" und im Beschreibungstext des Aushangs eingesetzt. Beispiel: "vorläufig"</div>
+                        </div>
+                        <div class="col-8">
+                            @Html.TextBoxFor(m => m.Remark, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-4">
+                            <label for="RollForward" class="form-label"><strong>Fortschreiben</strong></label>
+                            <div>Alle Modulbeschreibungen und Prüfungsangebote werden in das Folgesemester kopiert</div>
+                        </div>
+                        <div class="col-8">
+                            @Html.CheckBoxFor(item => item.RollForward)
+                        </div>
+                     </div>
+                        <div class="row mt-3">
+                            <div class="offset-4 col-8 ">
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi-printer"></i> Prozess starten</button>
+                                <a href="@Url.Action("Details", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id})" class="btn btn-outline-secondary">Abbrechen</a>
+                            </div>
+                        </div>
+                        }
+                    </div>
+        </div>
+    </div>
+</div>
+

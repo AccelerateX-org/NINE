@@ -162,6 +162,10 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<AdvertisementInfo> AdvertisementInfos { get; set; }
 
+        public DbSet<BulletinBoard> BulletinBoards { get; set; }
+
+        public DbSet<BoardPosting> BoardPosts { get; set; }
+
         public DbSet<Tag> Tags { get; set; }
 
         public DbSet<ExaminationOption> ExaminationOptions { get; set; }

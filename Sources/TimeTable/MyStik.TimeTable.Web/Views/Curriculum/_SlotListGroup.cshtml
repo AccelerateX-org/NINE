@@ -1,0 +1,11 @@
+﻿@model ICollection<MyStik.TimeTable.Data.CurriculumSlot>
+
+<ul id="@ViewBag.ListName" class="list-group">
+    @foreach (var module in Model)
+    {
+        <li id="@module.Id" class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" value="">
+            <label class="form-check-label" for="@module.Id">@module.Tag</label>
+        </li>
+    }
+</ul>

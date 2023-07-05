@@ -7,7 +7,6 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
-    [AllowAnonymous]
     public class ScheduleController : BaseController
     {
         // GET: Schedule
@@ -37,6 +36,32 @@ namespace MyStik.TimeTable.Web.Controllers
 
             ViewBag.AllSemester = allPublishedSemester;
 
+
+            return View(model);
+        }
+
+        public ActionResult Details(Guid currId, Guid semId)
+        {
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var modules = Db.CurriculumModules.Where(x =>
+                x.Accreditations.Any(c =>
+                    c.Slot != null &&
+                    c.Slot.AreaOption != null &&
+                    c.Slot.AreaOption.Area.Curriculum.Id == currId)).ToList();
+
+
+            var model = new StudyPlanViewModel
+            {
+                Curriculum = curriculum,
+                Semester = semester,
+                Modules = modules
+            };
+
+            // hier muss überprüft werden, ob der aktuelle Benutzer
+            // der Fakultät des Studiengangs angehört oder nicht
+            ViewBag.UserRight = GetUserRight(model.Curriculum.Organiser);
 
             return View(model);
         }

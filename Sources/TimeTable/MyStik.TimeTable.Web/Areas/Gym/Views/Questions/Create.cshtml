@@ -10,11 +10,6 @@
             <div class="card-header">
                 <h4>Neue Frage anlegen</h4>
             </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    @Html.ActionLink("Back to List", "Index")
-                </div>
-            </div>
 
             <div class="card-body">
                 @using (Html.BeginForm())
@@ -23,9 +18,9 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                     <div class="row mb-3">
-                        @Html.LabelFor(model => model.CatalogId, htmlAttributes: new { @class = "col-form-label col-md-2" })
+                        @Html.LabelFor(model => model.CatalogId, new { @class = "col-form-label col-md-2" })
                         <div class="col-md-6">
-                            @Html.EditorFor(model => model.CatalogId, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.TextBoxFor(model => model.CatalogId, new { @class = "form-control" } )
                             @Html.ValidationMessageFor(model => model.CatalogId, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-md-4">
@@ -34,9 +29,9 @@
                     </div>
 
                     <div class="row mb-3">
-                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "col-form-label col-md-2" })
+                        @Html.LabelFor(model => model.Title, new { @class = "col-form-label col-md-2" })
                         <div class="col-md-6">
-                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.TextBoxFor(model => model.Title, new { @class = "form-control" } )
                             @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-md-4">
@@ -47,7 +42,7 @@
                     <div class="row mb-3">
                         <label class="col-form-label col-md-2">Fragestellung</label>
                         <div class="col-md-6">
-                            @Html.TextAreaFor(model => model.Problem, new { htmlAttributes = new { @class = "form-control", rows = 10 } })
+                            @Html.TextAreaFor(model => model.Problem, new { @class = "form-control", rows = 5 } )
                             @Html.ValidationMessageFor(model => model.Problem, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-md-4">
@@ -56,9 +51,9 @@
                     </div>
 
                     <div class="row mb-3">
-                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "col-form-label col-md-2" })
+                        <label class="col-form-label col-md-2">Beschreibung</label>
                         <div class="col-md-6">
-                            @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", rows = 10 } })
+                            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 5 })
                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-md-4">
@@ -67,42 +62,43 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-2 form-label">Antworten</div>
+                        <div class="col-md-2 form-label">Antworten (Es müssen mindestens zwei Antworten angegeben werden)
+                        </div>
                         <div class="col-md-10">
                             <div class="row">
-                                <div class="col-md-2">Antwort ist korrekt</div>
-                                <div class="col-md-10">Antwortstext</div>
+                                <div class="col-md-1">Antwort ist korrekt</div>
+                                <div class="col-md-6">Antwortstext</div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2">
-                                    @Html.CheckBoxFor(m => m.IsAnswerACorrect, new { @class="form-input-check" })
+                                <div class="col-md-1">
+                                    @Html.CheckBoxFor(m => m.IsAnswerACorrect, new { @class = "form-control-check" })
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="text" placeholder="Antwortstext" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.AnswerA, new { @class = "form-control", placeholder = "Antwortstext" })
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <div class="col-md-1">
+                                    @Html.CheckBoxFor(m => m.IsAnswerBCorrect, new { @class = "form-control-check" })
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.AnswerB, new { @class = "form-control", placeholder = "Antwortstext" })
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <div class="col-md-1">
+                                    @Html.CheckBoxFor(m => m.IsAnswerCCorrect, new { @class = "form-control-check" })
                                 </div>
-                                <div class="col-md-8">
-                                    <input class="form-control" type="text" placeholder="Antwortstext" />
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.AnswerC, new { @class = "form-control", placeholder = "Antwortstext" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    @Html.CheckBoxFor(m => m.IsAnswerDCorrect, new { @class = "form-control-check" })
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.AnswerD, new { @class = "form-control", placeholder = "Antwortstext" })
                                 </div>
                             </div>
                         </div>
@@ -111,7 +107,8 @@
 
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Create" class="btn btn-default" />
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("Index")"><i class="bi-x"></i> Abbrechen</a>
                         </div>
                     </div>
                 }

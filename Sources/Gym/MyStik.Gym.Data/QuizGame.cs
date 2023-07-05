@@ -38,6 +38,16 @@ namespace MyStik.Gym.Data
 
         public virtual ICollection<GameAnswer> Answers { get; set; }
 
+        /// <summary>
+        /// Zeitstempel der Anzeige
+        /// </summary>
+        public DateTime Opened { get; set; }
+
+        /// <summary>
+        /// Zeitstempel der Beantwortung (aller Spieler)
+        /// </summary>
+        public DateTime? Closed { get; set; }
+
    }
 
     public class GameAnswer
@@ -51,6 +61,12 @@ namespace MyStik.Gym.Data
         public virtual QuestionAnswer Answer { get; set; }
 
         public virtual Player Player { get; set; }
+
+        /// <summary>
+        /// Zeitstempel der Antwort
+        /// </summary>
+        public DateTime Answered { get; set; }
+
 
     }
 

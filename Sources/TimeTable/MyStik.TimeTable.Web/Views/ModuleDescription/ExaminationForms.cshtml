@@ -1,0 +1,146 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Data
+@using MyStik.TimeTable.Web.Services
+@{
+    ViewBag.Title = "Descriptions";
+
+    var db = new TimeTableDbContext();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <p>Liste aller Prüfungsformen</p>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                        <a href="@Url.Action("CreateExaminationOption", null, new { id = Model.Module.Id })" class="btn btn-outline-primary">
+                            <i class="bi-plus"></i> Neue Prüfungsform hinzufügen
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Bezeichnung</th>
+                        <th>Prüfungsform</th>
+                        <th>Gewichtung</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exam in Model.Module.ExaminationOptions)
+                    {
+                        var nExamUses = db.ExaminationDescriptions.Count(x => x.ExaminationOption.Id == exam.Id);
+
+                        var n = exam.Fractions.Count;
+                        if (n == 0)
+                        {
+                            n++;
+                        }
+                        var i = 0;
+
+                        if (exam.Fractions.Count == 0)
+                        {
+                            <tr>
+                                <td rowspan="@n">
+                                    @exam.Name
+                                    <div>
+                                        <a href="@Url.Action("EditExaminationOption", new {id=exam.Id})" class="btn btn-outline-primary">
+                                            <i class="bi-keyboard"></i> ändern
+                                        </a>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+
+
+                    foreach (var fraction in exam.Fractions)
+                    {
+                        i++;
+                        if (i == 1)
+                        {
+                            <tr>
+                                <td rowspan="@n">
+                                    @exam.Name
+                                    <div>
+                                        <a href="@Url.Action("EditExaminationOption", new {id=exam.Id})" class="btn btn-outline-primary">
+                                            <i class="bi-keyboard"></i> ändern
+                                        </a>
+                                        @if (nExamUses == 0)
+                                        {
+                                            <a href="@Url.Action("DeleteExaminationOption", new {id=exam.Id})" class="btn btn-outline-danger">
+                                                <i class="bi-trash"></i> löschen
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <div class="btn btn-outline-secondary disabled">
+                                                <i class="bi-trash"></i> löschen (@nExamUses Prüfungsangebote vorhanden)
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                                <td>@fraction.Form.ShortName</td>
+                                <td>@fraction.Weight.ToString("P")</td>
+                                <td>
+                                    <a href="@Url.Action("EditExaminationFraction", new {id=fraction.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-keyboard"></i> ändern
+                                    </a>
+                                    <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>@fraction.Form.ShortName</td>
+                                <td>@fraction.Weight.ToString("P")</td>
+                                <td>
+                                    <a href="@Url.Action("EditExaminationFraction", new {id=fraction.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-keyboard"></i> ändern
+                                    </a>
+                                    <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
+                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

@@ -13,69 +13,83 @@
 }
 
 
-<h2>Fragensammmlung</h2>
-<p>Darstellung aller Fragen im System</p>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Meine Fragensammlung</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Index", "QuestionSets")" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Zurück zu Fragenkatalogen
+                        </a>
+                        <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Neue Frage</a>
+                        <a href="@Url.Action("Upload")" class="btn btn-outline-primary"><i class="bi-upload"></i> Import</a>
+                    </div>
+                </div>
+            </div>
 
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Neue Frage</a>
-    <a href="@Url.Action("Upload")" class="btn btn-outline-primary"><i class="bi-upload"></i> Import</a>
-</p>
-<table id="tabQuestions" class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Autor</th>
-            <th>
-                @Html.DisplayNameFor(model => model.CatalogId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                # Antworten
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td></td>
-                @if (item.Author != null)
-                {
-                    var user = userService.GetUser(item.Author.UserId);
-                    if (user != null)
+            <table id="tabQuestions" class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Autor</th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.CatalogId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Title)
+                        </th>
+                        <th>
+                            # Antworten
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
                     {
-                        <td>@user.FullName</td>
+                        <tr>
+                            <td></td>
+                            @if (item.Author != null)
+                            {
+                                var user = userService.GetUser(item.Author.UserId);
+                                if (user != null)
+                                {
+                                    <td>@user.FullName</td>
+                                }
+                                else
+                                {
+                                    <td>N.N.</td>
+                                }
+                            }
+                            else
+                            {
+                                <td>N.N.</td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CatalogId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                @item.Answers.Count()
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                            </td>
+                        </tr>
                     }
-                    else
-                    {
-                        <td>N.N.</td>
-                    }
-                }
-                else
-                {
-                    <td>N.N.</td>
-                }
-                <td>
-                    @Html.DisplayFor(modelItem => item.CatalogId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @item.Answers.Count()
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 
 @section scripts
@@ -92,10 +106,10 @@
             var t = $('#tabQuestions').DataTable({
                 "paging": false,
                 "columnDefs": [{
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 0
-                    }],
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                }],
                 "order": [[1, 'asc']]
             });
 

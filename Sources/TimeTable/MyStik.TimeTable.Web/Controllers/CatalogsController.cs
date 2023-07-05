@@ -13,9 +13,12 @@ namespace MyStik.TimeTable.Web.Controllers
     public class CatalogsController : BaseController
     {
         // GET: Catalogs
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var org = GetMyOrganisation();
+
+            if (id != null)
+                org = GetOrganiser(id.Value);
 
             var model = new OrganiserViewModel
             {
@@ -269,69 +272,12 @@ namespace MyStik.TimeTable.Web.Controllers
             if (catalog == null)
                 return;
 
-            foreach (var model in catalog.Modules.ToList())
+            if (catalog.Modules.Any())
+                return;
+
+            foreach (var resp in catalog.CatalogResponsibilities.ToList())
             {
-
-                foreach (var mv in model.ModuleResponsibilities.ToList())
-                {
-                    Db.ModuleResponsibilities.Remove(mv);
-                }
-
-                foreach (var subject in model.ModuleSubjects.ToList())
-                {
-                    foreach (var opportunity in subject.Opportunities.ToList())
-                    {
-                        Db.SubjectOpportunities.Remove(opportunity);
-                    }
-
-                    Db.ModuleCourses.Remove(subject);
-                }
-
-                foreach (var option in model.ExaminationOptions.ToList())
-                {
-                    foreach (var fraction in option.Fractions.ToList())
-                    {
-                        Db.ExaminationFractions.Remove(fraction);
-                    }
-
-                    Db.ExaminationOptions.Remove(option);
-                }
-
-                foreach (var moduleCourse in model.ModuleSubjects.ToList())
-                {
-                    Db.ModuleCourses.Remove(moduleCourse);
-                }
-
-                foreach (var accreditation in model.Accreditations.ToList())
-                {
-                    Db.Accreditations.Remove(accreditation);
-                }
-
-                foreach (var description in model.Descriptions.ToList())
-                {
-                    /*
-                    foreach (var examinationUnit in description.ExaminationUnits.ToList())
-                    {
-                        foreach (var aid in examinationUnit.ExaminationAids.ToList())
-                        {
-                            Db.ExaminationAids.Remove(aid);
-                        }
-
-                        Db.ExaminationUnits.Remove(examinationUnit);
-                    }
-                    */
-
-                    Db.ModuleDescriptions.Remove(description);
-                }
-
-
-                var mappings = Db.ModuleMappings.Where(x => x.Module.Id == model.Id).ToList();
-                foreach (var mapping in mappings)
-                {
-                    mapping.Module = null;
-                }
-
-                Db.CurriculumModules.Remove(model);
+                Db.CatalogResponsibilities.Remove(resp);
             }
 
             Db.CurriculumModuleCatalogs.Remove(catalog);

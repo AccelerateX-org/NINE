@@ -263,10 +263,6 @@ namespace MyStik.TimeTable.Web.Helpers
             foreach (var group in groups)
             {
                 var linkName = group.FullName;
-                if (showAvailability && !group.IsAvailable)
-                {
-                    linkName += "(!)";
-                }
                 if (showLink)
                 {
                     sb.Append(htmlHelper.ActionLink(linkName, "Group", "Dictionary", new {semId = group.Semester.Id, groupId = group.CapacityGroup.Id}, null));

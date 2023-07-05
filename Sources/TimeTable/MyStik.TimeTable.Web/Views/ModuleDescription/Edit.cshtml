@@ -1,4 +1,4 @@
-﻿@model MyStik.TimeTable.Web.Controllers.ModuleDescriptionEditModel
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionEditModel
 @{
     ViewBag.Title = "Details";
 }
@@ -73,32 +73,46 @@
                     </div>
                 </div>
                 <div class="list-group-item">
-                    <div class="row">
-                        <div class="col-4">
-                            <div>Beschreibung</div>
-                            <div class="alert alert-info">
-                                <ul>
-                                    <li>Der Editor rechts verfügt über undo/redo Funktionen</li>
-                                    <li>Übertragen von formatiertem Text kann im Detail fehleranfällig sein und wird daher nicht empfohlen</li>
-                                    <li>Einfügen über rechte Maustaste "Einfügen ohne Formatierung"</li>
-                                    <li>Text zuerst in einen neutralen Editor kopieren, z.B. Notepad</li>
-                                    <li>Im Zweifel auf Abbrechen gehen und erneut versuchen</li>
-                                </ul>
-                                
+                    @using (Html.BeginForm(null, null, FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.ModuleDescription.Id)
+                        <div class="row">
+                            <div class="col-4">
+                                <div>
+                                    Beschreibung <img src="~/Assets/img/flags/de.png" />
+                                </div>
+                                <div class="alert alert-info">
+                                    <ul>
+                                        <li>Der Editor rechts verfügt über undo/redo Funktionen</li>
+                                        <li>Übertragen von formatiertem Text kann im Detail fehleranfällig sein und wird daher nicht empfohlen</li>
+                                        <li>Einfügen über rechte Maustaste "Einfügen ohne Formatierung"</li>
+                                        <li>Text zuerst in einen neutralen Editor kopieren, z.B. Notepad</li>
+                                        <li>Im Zweifel auf Abbrechen gehen und erneut versuchen</li>
+                                    </ul>
+
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-8">
-                            @using (Html.BeginForm(null, null, FormMethod.Post))
-                            {
-                                @Html.HiddenFor(m => m.ModuleDescription.Id)
+                            <div class="col-8">
                                 <div class="mb-3">
                                     @Html.TextAreaFor(m => m.DescriptionText, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
                                 </div>
-                                <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
-                                <a class="btn btn-outline-secondary" href="@Url.Action("ContentChange", new {id=Model.ModuleDescription.Module.Id})"><i class="bi-x"></i> Abbrechen</a>
-                            }
+                            </div>
                         </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <div>
+                                    Beschreibung (englisch) <img src="~/Assets/img/flags/gb.png" />
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="mb-3">
+                                    @Html.TextAreaFor(m => m.DescriptionTextEn, new { @class = "form-control", placeholder = "Beschreibung", rows = "10" })
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
+                                <a class="btn btn-outline-secondary" href="@Url.Action("Descriptions", new {moduleId=Model.ModuleDescription.Module.Id, semId=Model.ModuleDescription.Semester.Id})"><i class="bi-x"></i> Abbrechen</a>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -115,6 +129,7 @@
         $(document).ready(function () {
 
             $("#DescriptionText").cleditor();
+            $("#DescriptionTextEn").cleditor();
         });
 
     </script>

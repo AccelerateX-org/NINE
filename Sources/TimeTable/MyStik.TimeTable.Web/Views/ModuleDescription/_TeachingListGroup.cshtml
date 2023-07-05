@@ -1,0 +1,21 @@
+﻿@model ICollection<MyStik.TimeTable.Data.TeachingDescription>
+
+@if (Model.Any())
+{
+
+    <ul id="@ViewBag.ListName" class="list-group">
+        @foreach (var module in Model)
+        {
+            <li id="@module.Id" class="list-group-item">
+                <input class="form-check-input me-1" type="checkbox" value="">
+                <label class="form-check-label" for="@module.Id">@module.Course.Name (@module.Course.ShortName)</label>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <ul id="@ViewBag.ListName" class="list-group">
+        <li class="list-group-item">Keine Lehrangebote gefunden</li>
+    </ul>
+}

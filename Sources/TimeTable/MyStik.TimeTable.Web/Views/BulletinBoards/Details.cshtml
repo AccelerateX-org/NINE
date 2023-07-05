@@ -1,0 +1,41 @@
+﻿@model MyStik.TimeTable.Data.BulletinBoard
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Schaukästen @Model.Name</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi-list-columns"></i> Alle Schaukästen
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <table id="tabCatalogs" class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var posting in Model.Postings)
+                    {
+                        <tr>
+                            <td><a href="@Url.Action("Details", "Advertisements", new { id = posting.Advertisement.Id })">@posting.Advertisement.Title</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

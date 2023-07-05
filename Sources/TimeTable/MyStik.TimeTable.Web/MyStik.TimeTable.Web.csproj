@@ -401,6 +401,7 @@
     <Compile Include="Api\Controller\ModulesController.cs" />
     <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
+    <Compile Include="Api\Controller\QuizGameController.cs" />
     <Compile Include="Api\Controller\QuizzesController.cs" />
     <Compile Include="Api\Controller\RoomsController.cs" />
     <Compile Include="Api\Controller\SemesterController.cs" />
@@ -414,6 +415,7 @@
     <Compile Include="Api\DTOs\CalendarDateDto.cs" />
     <Compile Include="Api\DTOs\MvgDto.cs" />
     <Compile Include="Api\DTOs\QuizDto.cs" />
+    <Compile Include="Api\DTOs\QuizGameDto.cs" />
     <Compile Include="Api\DTOs\ScheduleDto.cs" />
     <Compile Include="Api\DTOs\ZpCourseDto.cs" />
     <Compile Include="Api\DTOs\CourseDto.cs" />
@@ -473,6 +475,8 @@
     <Compile Include="Areas\Gym\Controllers\HomeController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionCatalogsController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuestionsController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuestionSetsController.cs" />
+    <Compile Include="Areas\Gym\Controllers\QuizGamesController.cs" />
     <Compile Include="Areas\Gym\Controllers\QuizzesController.cs" />
     <Compile Include="Areas\Gym\GymAreaRegistration.cs" />
     <Compile Include="Areas\Gym\Models\QuestionIOModels.cs" />
@@ -525,6 +529,7 @@
     <Compile Include="Controllers\AutonomyController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\BulletinBoardController.cs" />
+    <Compile Include="Controllers\BulletinBoardsController.cs" />
     <Compile Include="Controllers\CandidatureController.cs" />
     <Compile Include="Controllers\CatalogsController.cs" />
     <Compile Include="Controllers\CieController.cs" />
@@ -624,6 +629,7 @@
     <Compile Include="Hubs\GpUntisHub.cs" />
     <Compile Include="Hubs\JsonImportHub.cs" />
     <Compile Include="Jobs\LotteryJob.cs" />
+    <Compile Include="Jobs\PrintJobs.cs" />
     <Compile Include="Jobs\ThesisJob.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.cs" />
     <Compile Include="Migrations\201501310845153_UserProfile.Designer.cs">
@@ -675,6 +681,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ImportModels.cs" />
     <Compile Include="Models\InternshipModels.cs" />
+    <Compile Include="Models\LabelModels.cs" />
     <Compile Include="Models\LecturerModels.cs" />
     <Compile Include="Models\LevelModels.cs" />
     <Compile Include="Models\LotteryModels.cs" />
@@ -3133,7 +3140,7 @@
     <Content Include="Areas\Gym\Views\Questions\Details.cshtml" />
     <Content Include="Areas\Gym\Views\Questions\Edit.cshtml" />
     <Content Include="Areas\Gym\Views\Questions\Index.cshtml" />
-    <Content Include="Areas\Gym\Views\Questions\Upload.cshtml" />
+    <Content Include="Areas\Gym\Views\Questions\Import.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Create.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Delete.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Details.cshtml" />
@@ -3141,6 +3148,13 @@
     <Content Include="Areas\Gym\Views\Quizzes\Index.cshtml" />
     <Content Include="Areas\Gym\Views\Home\Index.cshtml" />
     <Content Include="Areas\Gym\Views\Quizzes\Upload.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Create.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Delete.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Details.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Edit.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Index.cshtml" />
+    <Content Include="Areas\Gym\Views\QuestionSets\Import.cshtml" />
+    <Content Include="Areas\Gym\Views\QuizGames\Index.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -3887,7 +3901,7 @@
     <Content Include="Views\Curriculum\ModuleDetails.cshtml" />
     <Content Include="Views\Curriculum\CreateSubject.cshtml" />
     <Content Include="Views\Curriculum\AdminContentModule.cshtml" />
-    <Content Include="Views\Curriculum\AssignModule.cshtml" />
+    <Content Include="Views\Curriculum\AssignModules.cshtml" />
     <Content Include="Views\Activity\PersonalPlanList.cshtml" />
     <Content Include="Views\Dictionary\Group.cshtml" />
     <Content Include="Views\Dictionary\GroupByTopic.cshtml" />
@@ -4065,7 +4079,6 @@
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Research\_ViewStart.cshtml" />
     <Content Include="Views\Research\Index.cshtml" />
-    <Content Include="Views\University\_ViewStart.cshtml" />
     <Content Include="Views\University\Index.cshtml" />
     <Content Include="Views\Administration\_ViewStart.cshtml" />
     <Content Include="Views\Administration\Index.cshtml" />
@@ -4133,7 +4146,7 @@
     <Content Include="Views\ScriptPublishing\Details.cshtml" />
     <Content Include="Views\Catalogs\Import.cshtml" />
     <Content Include="Views\Curriculum\ImportAccreditations.cshtml" />
-    <Content Include="Views\Curriculum\SlotDetails.cshtml" />
+    <Content Include="Views\Curriculum\Slot.cshtml" />
     <Content Include="Views\Curriculum\Opportunities.cshtml" />
     <Content Include="Views\ModuleDescription\Details.cshtml" />
     <Content Include="Views\ModuleDescription\Edit.cshtml" />
@@ -4147,7 +4160,6 @@
     <Content Include="Views\Rooms\Statistics.cshtml" />
     <Content Include="Views\Curriculum\Labels.cshtml" />
     <Content Include="Views\Curriculum\_ModulePlan.cshtml" />
-    <Content Include="Views\Curriculum\_ModuleList.cshtml" />
     <Content Include="Views\Rooms\Schedule.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
     <Content Include="Views\Shared\_LayoutCAP.cshtml" />
@@ -4171,6 +4183,47 @@
     <Content Include="Views\Catalogs\_ModuleListGroup.cshtml" />
     <Content Include="Views\Catalogs\AllModules.cshtml" />
     <Content Include="Views\StudyPlan\Details.cshtml" />
+    <Content Include="Views\Curriculum\Area.cshtml" />
+    <Content Include="Views\Curriculum\EditArea.cshtml" />
+    <Content Include="Views\Curriculum\Option.cshtml" />
+    <Content Include="Views\Curriculum\EditOption.cshtml" />
+    <Content Include="Views\Curriculum\CreateArea.cshtml" />
+    <Content Include="Views\Curriculum\CreateOption.cshtml" />
+    <Content Include="Views\Curriculum\EditSlot.cshtml" />
+    <Content Include="Views\Curriculum\MoveSlots.cshtml" />
+    <Content Include="Views\Curriculum\_SlotListGroup.cshtml" />
+    <Content Include="Views\Curriculum\_OptionSelectList.cshtml" />
+    <Content Include="Views\Curriculum\DeleteModulePlan.cshtml" />
+    <Content Include="Views\Shared\_ModuleDescriptionPrintOut.cshtml" />
+    <Content Include="Views\BulletinBoards\Index.cshtml" />
+    <Content Include="Views\BulletinBoards\Details.cshtml" />
+    <Content Include="Views\StudyPlan\Publish.cshtml" />
+    <Content Include="Views\Shared\_StudyPlanPrintOut.cshtml" />
+    <Content Include="Views\Shared\_StudyPlanPrintOutForeground.cshtml" />
+    <Content Include="Views\ModuleDescription\Descriptions.cshtml" />
+    <Content Include="Views\ModuleDescription\Exams.cshtml" />
+    <Content Include="Views\ModuleDescription\ExaminationForms.cshtml" />
+    <Content Include="Views\ModuleDescription\EditExaminationOption.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateExaminationOption.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateExaminationFraction.cshtml" />
+    <Content Include="Views\ModuleDescription\EditExaminationFraction.cshtml" />
+    <Content Include="Views\ModuleDescription\Subjects.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateSubject.cshtml" />
+    <Content Include="Views\ModuleDescription\EditSubject.cshtml" />
+    <Content Include="Views\ModuleDescription\Teachings.cshtml" />
+    <Content Include="Views\ModuleDescription\CreateTeaching.cshtml" />
+    <Content Include="Views\ModuleDescription\_CourseListGroup.cshtml" />
+    <Content Include="Views\ModuleDescription\_TeachingListGroup.cshtml" />
+    <Content Include="Views\Schedule\Details.cshtml" />
+    <Content Include="Views\Exam\Details.cshtml" />
+    <Content Include="Views\ModuleDescription\Semester.cshtml" />
+    <Content Include="Views\ModuleDescription\History.cshtml" />
+    <Content Include="Views\University\Faculty.cshtml" />
+    <Content Include="Views\University\Faculties.cshtml" />
+    <Content Include="Views\Curriculum\EditLabel.cshtml" />
+    <Content Include="Views\Curriculum\AddLabel.cshtml" />
+    <Content Include="Views\University\Curricula.cshtml" />
+    <Content Include="Views\University\Degree.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4192,6 +4245,7 @@
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Mvg\" />
     <Folder Include="Views\Notification\" />
+    <Folder Include="Views\QuizGame\" />
     <Folder Include="Views\Site\" />
     <Folder Include="Views\Storage\" />
     <Folder Include="Views\Tag\" />

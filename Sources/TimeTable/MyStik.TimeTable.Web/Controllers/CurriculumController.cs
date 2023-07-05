@@ -21,13 +21,27 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
+            if (curr.BulletinBoard == null)
+            {
+                var board = new BulletinBoard
+                {
+                    Autonomy = curr.Autonomy,   // somit haben automatisch alle Gremien des Studiengangs auf den Schaukasten Zugang
+                    Name = curr.Name,
+                    Description = "Aushänge relevant für alle Studierende des Studiengangs"
+                };
+
+                curr.BulletinBoard = board;
+
+                Db.BulletinBoards.Add(board);
+                Db.SaveChanges();
+            }
+
             var model = new CurriculumViewModel();
 
             model.Curriculum = curr;
             model.Semester = SemesterService.GetSemester(DateTime.Today);
-            model.NextSemester = SemesterService.GetNextSemester(DateTime.Today);
-
-            ViewBag.NextSemester = SemesterService.GetNextSemester(model.Semester);
+            model.NextSemester = SemesterService.GetNextSemester(model.Semester);
+            model.PreviousSemester = SemesterService.GetPreviousSemester(model.Semester);
 
             var user = GetCurrentUser();
 
@@ -1071,10 +1085,34 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Edit(Guid id)
         {
-            var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
-            // Achtung: vertauschen der Anzeige für "IsDeprecated"
-            model.IsDeprecated = !model.IsDeprecated;
+            var model = new CurriculumEditModel
+            {
+                CurriculumId = curr.Id,
+                Tag = curr.Tag,
+                Name = curr.Name,
+                ShortName = curr.ShortName,
+                Description = curr.Description,
+                Version = curr.Version,
+                ThesisDuration = curr.ThesisDuration,
+                IsDeprecated = !curr.IsDeprecated,
+            };
+
+            if (curr.Degree != null)
+            {
+                model.DegreeId = curr.Degree.Id;
+            }
+
+            var degrees =
+                Db.Degrees.Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.Degrees = degrees;
+
 
             return View(model);
         }
@@ -1085,20 +1123,26 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Edit(Curriculum model)
+        public ActionResult Edit(CurriculumEditModel model)
         {
-            var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.Id);
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.CurriculumId);
 
+            cur.Tag = model.Tag;
             cur.Name = model.Name;
             cur.ShortName = model.ShortName;
+            cur.Description = model.Description;
             cur.Version = model.Version;
             cur.ThesisDuration = model.ThesisDuration;
+            cur.EctsTarget = model.EctsTarget;
 
             cur.IsDeprecated = !model.IsDeprecated;
 
+            var degree = Db.Degrees.SingleOrDefault(x => x.Id == model.DegreeId);
+            cur.Degree = degree;
+
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new {id = cur.Id});
+            return RedirectToAction("Admin", new {id = cur.Id});
         }
 
         public ActionResult ImportSections(Guid id)
@@ -1435,10 +1479,80 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
+        public ActionResult DeleteSlot(Guid id)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
+            var option = slot.AreaOption;
+
+            foreach (var accreditation in slot.ModuleAccreditations.ToList())
+            {
+                foreach (var exam in accreditation.ExaminationDescriptions.ToList())
+                {
+                    Db.ExaminationDescriptions.Remove(exam);
+                }
+
+                foreach (var teaching in accreditation.TeachingDescriptions.ToList())
+                {
+                    Db.TeachingDescriptions.Remove(teaching);
+                }
+
+                Db.Accreditations.Remove(accreditation);
+            }
+
+
+            Db.CurriculumSlots.Remove(slot);
+            Db.SaveChanges();
+
+            return RedirectToAction("Option", new { id = option.Id });
+        }
+
+        public ActionResult DeleteOption(Guid id)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == id);
+            var area = option.Area;
+
+            Db.AreaOptions.Remove(option);
+            Db.SaveChanges();
+
+            return RedirectToAction("Area", new { id = area.Id });
+        }
+
+        public ActionResult DeleteArea(Guid id)
+        {
+            var area = Db.CurriculumAreas.SingleOrDefault(x => x.Id == id);
+            var curr = area.Curriculum;
+
+            Db.CurriculumAreas.Remove(area);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Areas", new {id = curr.Id});
+        }
+
 
         public ActionResult DeleteModulePlan(Guid id)
         {
-            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumDeleteModel
+            {
+                Curriculum = curr
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteModulePlan(CurriculumDeleteModel model)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            if (!cur.Tag.Equals(model.Code))
+            {
+                var model2 = new CurriculumDeleteModel { Curriculum = cur };
+
+                return View(model2);
+            }
 
 
             foreach (var section in cur.Sections.ToList())
@@ -1464,6 +1578,16 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         foreach (var accreditation in slot.ModuleAccreditations.ToList())
                         {
+                            foreach(var exam in accreditation.ExaminationDescriptions.ToList())
+                            {
+                                Db.ExaminationDescriptions.Remove(exam);
+                            }
+                            
+                            foreach(var teaching in accreditation.TeachingDescriptions.ToList())
+                            {
+                                Db.TeachingDescriptions.Remove(teaching);
+                            }
+                            
                             Db.Accreditations.Remove(accreditation);
                         }
 
@@ -1856,19 +1980,53 @@ namespace MyStik.TimeTable.Web.Controllers
         */
 
 
-        public ActionResult AssignModule(Guid id)
+        public ActionResult AssignModules(Guid id)
         {
-            var accreditation = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
 
             var model = new ModuleAssignViewModel
             {
-                Accreditation = accreditation
+                Slot = slot,
+                Organisers = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList()
             };
-
-            //model.Modules = Db.TeachingBuildingBlocks.ToList();
 
             return View(model);
         }
+
+
+
+        [HttpPost]
+        public ActionResult AssignModulesSave(Guid slotId, Guid[] moduleIds)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
+
+            foreach (var moduleId in moduleIds)
+            {
+                var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
+
+                if (slot == null || module == null) continue;
+
+                bool isModulePresent = slot.ModuleAccreditations.Any(x => x.Module.Id == module.Id);
+
+                if (isModulePresent) continue;
+
+                var accr = new ModuleAccreditation
+                {
+                    Module = module,
+                    Slot = slot
+
+                };
+
+                Db.Accreditations.Add(accr);
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+
+
 
 
         public ActionResult Students(Guid id)
@@ -1885,34 +2043,69 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult SlotDetails(Guid id)
+        public ActionResult Slot(Guid id)
         {
             var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
 
-            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
-
-            // alle Labels finden
-            var labels = new List<ItemLabel>();
-            foreach (var accreditation in slot.ModuleAccreditations)
+            if (slot.CurriculumSection != null)
             {
-                if (accreditation.LabelSet != null && accreditation.LabelSet.ItemLabels.Any())
-                {
-                    foreach (var label in accreditation.LabelSet.ItemLabels)
-                    {
-                        if (!labels.Contains(label))
-                        {
-                            labels.Add(label);
-                        }
-
-                    }
-                }
+                ViewBag.UserRight = GetUserRight(slot.CurriculumSection.Curriculum.Organiser);
             }
 
-            ViewBag.FilterLabels = labels.OrderBy(x => x.Name);
+            if (slot.AreaOption != null)
+            {
+                ViewBag.UserRight = GetUserRight(slot.AreaOption.Area.Curriculum.Organiser);
+            }
 
+            ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);
 
             return View(slot);
         }
+
+        public ActionResult EditSlot(Guid id)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(slot.AreaOption.Area.Curriculum.Organiser);
+
+            var model = new CurriculumAreaCreateModel
+            {
+                SlotId = slot.Id,
+                Description = slot.Description,
+                Name = slot.Name,
+                Tag = slot.Tag,
+                Semester = slot.Semester,
+                Ects = slot.ECTS
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditSlot(CurriculumAreaCreateModel model)
+        {
+            var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == model.SlotId);
+
+            if (string.IsNullOrEmpty(model.Tag))
+                return View(model);
+
+            var option = slot.AreaOption;
+            var doubleTag = option.Slots.FirstOrDefault(x => x.Id != slot.Id && x.Tag.Equals(model.Tag.ToUpper()));
+            if (doubleTag != null)
+                return View(model);
+
+            slot.Tag = model.Tag.ToUpper();
+            slot.Name = model.Name;
+            slot.Description = model.Description;
+            slot.Semester = model.Semester;
+            slot.ECTS = model.Ects;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Slot", new { id = slot.Id });
+        }
+
+
 
         [HttpPost]
         public PartialViewResult LoadModuleList(Guid slotId, string label)
@@ -1960,6 +2153,355 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(curr);
         }
 
+        public ActionResult Area(Guid id)
+        {
+            var curr = Db.CurriculumAreas.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(curr.Curriculum.Organiser);
+
+            return View(curr);
+        }
+
+        public ActionResult CreateArea(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(curr.Organiser);
+
+            var model = new CurriculumAreaCreateModel
+            {
+                CurrId = curr.Id,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateArea(CurriculumAreaCreateModel model)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.CurrId);
+
+            if (string.IsNullOrEmpty(model.Tag))
+                return View(model);
+
+            var doubleTag = curr.Areas.FirstOrDefault(x => x.Tag.Equals(model.Tag.ToUpper()));
+            if (doubleTag != null)
+                return View(model);
+
+            var area = new CurriculumArea
+            {
+                Curriculum = curr,
+                Tag = model.Tag.ToUpper(),
+                Name = model.Name,
+                Description = model.Description
+            };
+
+            Db.CurriculumAreas.Add(area);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Area", new { id = area.Id });
+        }
+
+
+        public ActionResult EditArea(Guid id)
+        {
+            var area = Db.CurriculumAreas.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(area.Curriculum.Organiser);
+
+            var model = new CurriculumAreaCreateModel
+            {
+                AreaId = area.Id,
+                Description = area.Description,
+                Name = area.Name,
+                Tag = area.Tag
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditArea(CurriculumAreaCreateModel model)
+        {
+            var area = Db.CurriculumAreas.SingleOrDefault(x => x.Id == model.AreaId);
+
+            if (string.IsNullOrEmpty(model.Tag))
+                return View(model);
+
+            var curr = area.Curriculum;
+            var doubleTag = curr.Areas.FirstOrDefault(x => x.Id != area.Id && x.Tag.Equals(model.Tag.ToUpper()));
+            if (doubleTag != null)
+                return View(model);
+
+            area.Tag = model.Tag.ToUpper();
+            area.Name = model.Name;
+            area.Description = model.Description;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Area", new {id = area.Id});
+        }
+
+        public ActionResult Option(Guid id)
+        {
+            var curr = Db.AreaOptions.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(curr.Area.Curriculum.Organiser);
+
+            return View(curr);
+        }
+
+        public ActionResult CreateOption(Guid id)
+        {
+            var area = Db.CurriculumAreas.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(area.Curriculum.Organiser);
+
+            var model = new CurriculumAreaCreateModel
+            {
+                AreaId = area.Id,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateOption(CurriculumAreaCreateModel model)
+        {
+            var area = Db.CurriculumAreas.SingleOrDefault(x => x.Id == model.AreaId);
+
+            if (string.IsNullOrEmpty(model.Tag))
+                return View(model);
+
+            var doubleTag = area.Options.FirstOrDefault(x => x.Tag.Equals(model.Tag.ToUpper()));
+            if (doubleTag != null)
+                return View(model);
+
+            var option = new AreaOption
+            {
+                Area = area,
+                Tag = model.Tag.ToUpper(),
+                Name = model.Name,
+                Description = model.Description
+            };
+
+            Db.AreaOptions.Add(option);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Option", new { id = option.Id });
+        }
+
+
+
+        public ActionResult EditOption(Guid id)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == id);
+
+            ViewBag.UserRight = GetUserRight(option.Area.Curriculum.Organiser);
+
+            var model = new CurriculumAreaCreateModel
+            {
+                OptionId = option.Id,
+                Description = option.Description,
+                Name = option.Name,
+                Tag = option.Tag
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditOption(CurriculumAreaCreateModel model)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == model.OptionId);
+
+            if (string.IsNullOrEmpty(model.Tag))
+                return View(model);
+
+            var area = option.Area;
+            var doubleTag = area.Options.FirstOrDefault(x => x.Id != option.Id && x.Tag.Equals(model.Tag.ToUpper()));
+            if (doubleTag != null)
+                return View(model);
+
+            option.Tag = model.Tag.ToUpper();
+            option.Name = model.Name;
+            option.Description = model.Description;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Option", new { id = option.Id });
+        }
+
+        public ActionResult MoveSlots(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new MoveSlotModel
+            {
+                Curriculum = curr
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult GetOptions(Guid areaId)
+        {
+            var org = Db.CurriculumAreas.SingleOrDefault(x => x.Id == areaId);
+
+            var currs = org.Options.ToList();
+
+            var model = currs
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            return PartialView("_OptionSelectList", model);
+        }
+
+        [HttpPost]
+        public PartialViewResult GetSlots(Guid optionId, string side)
+        {
+            var catalog = Db.AreaOptions.SingleOrDefault(x => x.Id == optionId);
+
+            var model = catalog.Slots
+                .OrderBy(g => g.Tag)
+                .ToList();
+
+            ViewBag.ListName = side + "ModuleList";
+
+            return PartialView("_SlotListGroup", model);
+        }
+
+        [HttpPost]
+        public ActionResult MoveSlotsSave(Guid optionId, Guid[] slotIds)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optionId);
+
+            foreach (var slotId in slotIds)
+            {
+                var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == slotId);
+
+                if (option == null || slot == null) continue;
+
+                if (option.Slots.All(x => x.Id != slot.Id))
+                {
+                    slot.AreaOption = option;
+                }
+            }
+
+            Db.SaveChanges();
+
+            return null;
+        }
+
+        public ActionResult DeleteAccredition(Guid id)
+        {
+            var accr = Db.Accreditations.SingleOrDefault(x => x.Id == id);
+
+            var slot = accr.Slot;
+
+            foreach (var exam in accr.ExaminationDescriptions.ToList())
+            {
+                Db.ExaminationDescriptions.Remove(exam);
+            }
+
+            foreach (var teaching in accr.TeachingDescriptions.ToList())
+            {
+                Db.TeachingDescriptions.Remove(teaching);
+            }
+
+            Db.Accreditations.Remove(accr);
+
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Slot", new {id=slot.Id});
+        }
+
+
+        public ActionResult AddLabel(Guid currId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new ItemLabelEditModel()
+            {
+                Curriculum = curr,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddLabel(ItemLabelEditModel model)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            var label = new ItemLabel();
+
+            label.Name = model.Name;
+            label.Description = model.Description;
+            label.HtmlColor = model.HtmlColor;
+            label.LabelSets.Add(curr.LabelSet);
+
+            curr.LabelSet.ItemLabels.Add(label);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Labels", new { id = curr.Id });
+        }
+
+
+
+        public ActionResult EditLabel(Guid currId, Guid labelId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            var model = new ItemLabelEditModel()
+            {
+                ItemLabel = label,
+                Curriculum = curr,
+                Name = label.Name,
+                Description = label.Description,
+                HtmlColor = label.HtmlColor
+
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditLabel(ItemLabelEditModel model)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == model.ItemLabel.Id);
+
+            label.Name = model.Name;
+            label.Description = model.Description;
+            label.HtmlColor = model.HtmlColor;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Labels", new { id = curr.Id });
+        }
+
+        public ActionResult DeleteLabel(Guid currId, Guid labelId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            Db.ItemLabels.Remove(label);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Labels", new { id = curr.Id });
+        }
+
+
+
         /* Noch etwas aufheben
         public ActionResult HackBABW(Guid id)
         {
@@ -2002,5 +2544,5 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new { id = id });
         }
         */
-        }
     }
+}

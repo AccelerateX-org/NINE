@@ -75,20 +75,29 @@ namespace MyStik.TimeTable.Data
                 sb.AppendFormat("{0}: ", Name);
                 
                 foreach(var fraction in Fractions)
-                {
-                    if (fraction.MinDuration > 0)
-                    {
-                        sb.AppendFormat("{0} {1} Minuten {2:P}. ", fraction.Form.ShortName, fraction.MinDuration, fraction.Weight);
-                    }
-                    else
-                    {
-                        sb.AppendFormat("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
-                    }
+                { 
+                    sb.AppendFormat("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
                 }
 
                 return sb.ToString();
             }
         }
+
+        public string OptionName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                foreach (var fraction in Fractions)
+                {
+                    sb.AppendFormat("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                }
+
+                return sb.ToString();
+            }
+        }
+
     }
 
     public class ExaminationFraction

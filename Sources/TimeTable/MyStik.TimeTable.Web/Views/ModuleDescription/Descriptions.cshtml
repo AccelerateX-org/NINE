@@ -1,0 +1,88 @@
+﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Web.Services
+@{
+    ViewBag.Title = "Descriptions";
+    var userService = new UserInfoService();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="card-title">Modul @Model.Module.Tag: @Model.Module.Name</h4>
+                        <h5 class="card-subtitle">Liste aller Fassungen für Semester @Model.Semester.Name</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-info">
+                            <strong>Hinweise:</strong>
+                            <ul>
+                                <li>Studierenden können nur veröffentlichte Fassungen sehen. Entwurfsfassungen sind nur für Modul-/Katalogverantwortliche sowie mit zugehörigen administrativem Rechten sichtbar.</li>
+                                <li>Bei Bedarf kann ein Veröffentlichung der Modulbeschreibung direkt hier erfolgen. Standardvorgehen ist zentral für jeweils einen Studiengang.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Semester", new {moduleId = Model.Module.Id, semId=Model.Semester.Id}  )" class="btn btn-outline-primary">
+                            <i class="bi-chevron-compact-left"></i> Zurück
+                        </a>
+                        <a href="@Url.Action("Init", new {moduleId = Model.Module.Id, semId = Model.Semester.Id})" class="btn btn-outline-primary">neue Beschreibung erstellen</a>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Angelegt</th>
+                    <th>Zuletzt geändert</th>
+                    <th>Bearbeitung</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var desc in Model.ModuleDescriptions)
+                {
+                    var user = userService.GetUser(desc.ChangeLog.UserIdAmendment);
+                    var userName = "unbekannt";
+                    if (user != null)
+                    {
+                        userName = user.FullName;
+                    }
+
+                    <tr>
+                        <td>@desc.ChangeLog.Created</td>
+                        <td>@desc.ChangeLog.LastEdited</td>
+                        <td>@userName</td>
+                        <td>
+                            @if (desc.ChangeLog.Approved != null)
+                            {
+                                <a href="@Url.Action("FollowUp", new {id = desc.Id})" class="btn btn-outline-primary">neue Fassung erstellen</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Edit", new {id = desc.Id})" class="btn btn-outline-primary">Ändern</a>
+                                if (desc.ChangeLog.IsVisible)
+                                {
+                                    <a href="@Url.Action("HideDescription", new {id = desc.Id})" class="btn btn-outline-primary">Verbergen</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("ShowDescription", new {id = desc.Id})" class="btn btn-outline-primary">Anzeigen</a>
+                                }
+                                <a href="@Url.Action("DeleteDescription", new {id = desc.Id})" class="btn btn-outline-danger">Löschen</a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+

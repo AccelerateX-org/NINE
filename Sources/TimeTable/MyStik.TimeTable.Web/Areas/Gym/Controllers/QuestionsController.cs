@@ -67,11 +67,62 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
                 }
 
                 question.Author = author;
+                question.CatalogId = model.CatalogId; 
+                question.Title = model.Title;
+                question.Description = model.Description;
+                question.Problem = model.Problem;
 
+                if (!string.IsNullOrEmpty(model.AnswerA))
+                {
+                    var answerA = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerACorrect,
+                        Solution = model.AnswerA,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerA);
+                }
+
+                if (!string.IsNullOrEmpty(model.AnswerB))
+                {
+                    var answerB = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerBCorrect,
+                        Solution = model.AnswerB,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerB);
+                }
+
+                if (!string.IsNullOrEmpty(model.AnswerC))
+                {
+                    var answerC = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerCCorrect,
+                        Solution = model.AnswerC,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerC);
+                }
+
+                if (!string.IsNullOrEmpty(model.AnswerD))
+                {
+                    var answerD = new QuestionAnswer
+                    {
+                        IsCorrect = model.IsAnswerDCorrect,
+                        Solution = model.AnswerD,
+                        Question = question
+                    };
+
+                    db.QuestionAnswers.Add(answerD);
+                }
 
                 db.Questions.Add(question);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new {id = question.Id});
             }
 
             return View(model);
@@ -163,7 +214,7 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult Upload()
+        public ActionResult Import()
         {
             return View();
         }
@@ -176,35 +227,55 @@ namespace MyStik.TimeTable.Web.Areas.Gym.Controllers
             // Speichern der Config-Dateien
             file.SaveAs(tempFile);
 
-            QuestionIOModel q = null;
+            QuestionCatalogIOModel cat = null;
 
             using (StreamReader f = System.IO.File.OpenText(tempFile))
             {
                 var serializer = new JsonSerializer();
-                q = (QuestionIOModel)serializer.Deserialize(f, typeof(QuestionIOModel));
+                cat = (QuestionCatalogIOModel)serializer.Deserialize(f, typeof(QuestionCatalogIOModel));
             }
 
-            if (q != null)
+            if (cat != null)
             {
-                var question = new Question
+                var questionSet = new QuestionSet
                 {
-                    CatalogId = q.id,
-                    Title = q.title,
-                    Problem = q.text,
-                    Answers = new List<QuestionAnswer>()
+                    Title = cat.name,
+                    Mappings = new List<QuestionMapping>()
                 };
-                db.Questions.Add(question);
 
-                foreach (var a in q.answers)
+                foreach (var q in cat.questions)
                 {
-                    var answer = new QuestionAnswer
+                    var question = new Question
                     {
-                        Solution = a.text,
-                        IsCorrect = a.iscorrect,
-                        Question = question
+                        CatalogId =  $"{cat.tag}#{q.tag}",
+                        Title = q.tag,
+                        Problem = q.problem,
+                        Answers = new List<QuestionAnswer>()
                     };
-                    db.QuestionAnswers.Add(answer);
+                    db.Questions.Add(question);
+
+                    foreach (var a in q.answers)
+                    {
+                        var answer = new QuestionAnswer
+                        {
+                            Solution = a.solution,
+                            IsCorrect = a.iscorrect,
+                            Question = question
+                        };
+                        db.QuestionAnswers.Add(answer);
+                    }
+
+                    var qMapping = new QuestionMapping
+                    {
+                        Question = question,
+                        QuestionSet = questionSet
+                    };
+
+                    db.QuestionMappings.Add(qMapping);
                 }
+
+                db.QuestionSets.Add(questionSet);
+
 
                 db.SaveChanges();
             }

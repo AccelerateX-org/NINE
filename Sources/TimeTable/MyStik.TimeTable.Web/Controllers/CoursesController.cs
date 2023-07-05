@@ -832,6 +832,51 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Repair(Guid id)
+        {
+            var org = GetOrganisation(id);
+            var userRight = GetUserRight(org);
+
+            if (userRight.IsCurriculumAdmin)
+            {
+                var model = new OrganiserViewModel
+                {
+                    Organiser = org,
+                };
+
+                var courseService = new CourseService(Db);
+
+                var courses = Db.Activities.OfType<Course>().Where(x => x.Owners.Any(y => y.Member.Organiser.Id == org.Id) &&
+                                                                        (!x.Dates.Any() || x.Dates.Any(d => d.End >= DateTime.Today))).ToList();
+
+                foreach (var course in courses)
+                {
+                    var summary = courseService.GetCourseSummary(course);
+                    model.Courses.Add(summary);
+                }
+
+
+                foreach (var course in model.Courses)
+                {
+                    if (course.Course.Semester != null)
+                        continue;
+
+                    var sem = course.Course.SemesterGroups.Select(x => x.Semester).Distinct().OrderByDescending(x => x.StartCourses).ToList();
+
+                    if (sem.Any())
+                    {
+                        course.Course.Semester = sem.First();
+                    }
+                }
+
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Analyse");
+        }
+
+
+
         public ActionResult AdminGroups(Guid id)
         {
             var organiser = GetMyOrganisation();

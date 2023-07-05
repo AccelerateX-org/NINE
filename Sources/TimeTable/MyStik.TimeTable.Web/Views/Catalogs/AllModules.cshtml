@@ -42,23 +42,31 @@
                         <th>Modulverantwortung</th>
                         <th>Fächer</th>
                         <th>Zuordnung SG</th>
-                        <th>@ViewBag.CurrentSemester.Name</th>
-                        <th>@ViewBag.NextSemester.Name</th>
                     </tr>
                 </thead>
                 <tbody>
                         @foreach (var module in Model)
                         {
-                            var hasCurrentDesc = module.Descriptions.Any(x => x.Semester.Id == ViewBag.CurrentSemester.Id) &&
-                                                 module.Accreditations.Any(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == ViewBag.CurrentSemester.Id));
-                            var hasNextDesc = module.Descriptions.Any(x => x.Semester.Id == ViewBag.NextSemester.Id) &&
-                                              module.Accreditations.Any(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == ViewBag.NextSemester.Id));
 
                             var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
 
-                            <tr>
+                            var numOldAccs = module.Accreditations.Count(x => x.Slot.CurriculumSection != null);
+                            var bg = string.Empty;
+                            if (numOldAccs > 0)
+                            {
+                                bg = "bg-warning";
+                            }
+
+                            <tr class="@bg">
                                 <td>@module.Catalog.Tag</td>
-                                <td>@module.Tag</td>
+                                @if (numOldAccs > 0)
+                                {
+                                    <td>@module.Tag</td>
+                                }
+                                else
+                                {
+                                    <td>@module.Tag</td>
+                                }
                                 <td>
                                     <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
                                         @moduleName
@@ -89,22 +97,6 @@
                                         <div>@accreditation.Slot.Tag</div>
                                     }
                                 </td>
-                                @if (hasCurrentDesc)
-                                {
-                                    <td><i class="bi-check text-success"></i><span hidden="">1</span></td>
-                                }
-                                else
-                                {
-                                    <td><i class="bi-x text-danger"></i><span hidden="">0</span></td>
-                                }
-                                @if (hasNextDesc)
-                                {
-                                    <td><i class="bi-check text-success"></i><span hidden="">1</span></td>
-                                }
-                                else
-                                {
-                                    <td><i class="bi-x text-danger"></i><span hidden="">0</span></td>
-                                }
                             </tr>
                         }
                 </tbody>

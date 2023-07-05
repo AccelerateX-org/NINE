@@ -1,100 +1,82 @@
-﻿@model MyStik.TimeTable.Data.Curriculum
+﻿@model MyStik.TimeTable.Web.Models.CurriculumEditModel
 @{
     ViewBag.Title = "Studiengang ändern";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Studiengang ändern</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>Allgemeine Einstellungen</h4>
-                </div>
-                <div class="panel-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form form-horizontal" }))
-                    {
-                    <fieldset>
-                        @Html.HiddenFor(model => model.Id)
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Name, new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ShortName" class="col-sm-3 control-label">Kurzbezeichnung</label>
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="Version" class="col-sm-3 control-label">Version</label>
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(m => m.Version, new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ThesisDuration" class="col-sm-3 control-label">Bearbeitungsdauer Abschlussarbeit</label>
-                            <div class="col-sm-6">
-                                @Html.TextBoxFor(m => m.ThesisDuration, new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-offset-3 col-md-9">
-                                @Html.CheckBoxFor(item => item.IsDeprecated)
-                                <label for="IsDeprecated" class="control-label">Studiengang wird angeboten</label>
-                            </div>
-                        </div>
 
-                        @*
-        <div class="form-group">
-            @Html.LabelFor(model => model.Degree, new { @class = "col-sm-3 control-label" })
-            <div class="col-sm-6">
-                @Html.DropDownListFor(m => m.Degree.Id, (IEnumerable<SelectListItem>)ViewBag.Degrees, new { @class = "form-control" })
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>@Model.Name (@Model.ShortName) - Grundeinstellungen</h4>
             </div>
-        </div>
-                        *@
-                        @*
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                @Html.CheckBoxFor(item => item.IsQualification)
-                @Html.LabelFor(item => item.IsQualification, new { @class = "control-label" })
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                @Html.CheckBoxFor(item => item.AsDual)
-                @Html.LabelFor(item => item.AsDual, new { @class = "control-label" })
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                @Html.CheckBoxFor(item => item.AsPartTime)
-                @Html.LabelFor(item => item.AsPartTime, new { @class = "control-label" })
-            </div>
-        </div>
-                        *@
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Speichern</button>
-                            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.CurriculumId)
+                    <div class="row">
+                        <label for="Tag" class="col-sm-2 col-form-label">Tag (Fachlicher Schlüssel)</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Tag, new { @class = "form-control" })
                         </div>
+                    </div>
+                    <div class="row">
+                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="ShortName" class="col-sm-2 col-form-label">Kurzbezeichnung (für Anzeigen)</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Description" class="col-sm-2 col-form-label">Beschreibung</label>
+                        <div class="col-sm-10">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Version" class="col-sm-2 col-form-label">Version</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Version, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="DegreeId" class="col-sm-2 col-form-label">Abschluss</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.Degrees, new { @class = "form-select" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="EctsTarget" class="col-sm-2 col-form-label">ECTS Ziel</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.EctsTarget, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="ThesisDuration" class="col-sm-2 col-form-label">Bearbeitungsdauer Abschlussarbeit</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.ThesisDuration, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="offset-2 col-sm-10">
+                            @Html.CheckBoxFor(item => item.IsDeprecated)
+                            <label for="IsDeprecated" class="control-label">Studiengang wird angeboten</label>
+                        </div>
+                    </div>
 
-                    </fieldset>
-                    }
-                </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Speichern</button>
+                            <a href="@Url.Action("Admin",  new{id=Model.CurriculumId})" class="btn btn-outline-secondary">Abbrechen</a>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

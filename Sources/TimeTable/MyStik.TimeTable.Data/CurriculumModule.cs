@@ -60,6 +60,11 @@ namespace MyStik.TimeTable.Data
         public string Name { get; set; }
 
         /// <summary>
+        /// Bezeichnung Englisch
+        /// </summary>
+        public string NameEn { get; set; }
+
+        /// <summary>
         /// Kurzname des Moduls
         /// </summary>
         public string ShortName { get; set; }
@@ -74,6 +79,16 @@ namespace MyStik.TimeTable.Data
         /// Voraussetzungen
         /// </summary>
         public string Prerequisites { get; set; }
+
+        /// <summary>
+        /// Voraussetzungen
+        /// </summary>
+        public string PrerequisitesEn { get; set; }
+
+
+        public string Applicableness { get; set; }
+        
+        public string ApplicablenessEn { get; set; }
 
 
         public virtual CurriculumModuleCatalog Catalog { get; set; }
@@ -144,14 +159,13 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public string Description { get; set; }
 
-        public virtual ChangeLog ChangeLog { get; set; }
-
         /// <summary>
-        /// Die Prüfung in diesem Semester
-        /// deprecated - sollte raus
+        /// Komplette Inhaltsangabe inkl. Literatur und allem drum und dran
         /// </summary>
-        // public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
+        public string DescriptionEn { get; set; }
 
+
+        public virtual ChangeLog ChangeLog { get; set; }
     }
 
     public class ExaminationDescription
@@ -225,6 +239,7 @@ namespace MyStik.TimeTable.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public string Description { get; set; }
 
         public virtual Semester Semester { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using MyStik.TimeTable.Data;
@@ -74,12 +75,12 @@ namespace MyStik.TimeTable.Web.Models
     {
         public ModuleAssignViewModel()
         {
-            //Modules = new List<TeachingBuildingBlock>();
         }
 
-        public ModuleAccreditation Accreditation { get; set; }
+        public CurriculumSlot Slot { get; set; }
 
-        //public List<TeachingBuildingBlock> Modules { get; set; }
+        public List<ActivityOrganiser> Organisers { get; set;}
+
     }
 
 }

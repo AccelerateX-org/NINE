@@ -4,7 +4,7 @@
 {
     <div class="row">
         <div class="col-2">
-            @sec.Name
+            @sec.Name (alt)
         </div>
         <div class="col-10">
             <div style="width: 100%">
@@ -39,7 +39,7 @@
 
                         if (showSlot)
                         {
-                            <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new { id = slot.Id })">
+                            <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
                                 <strong>@slot.Tag</strong> @slot.ModuleAccreditations.Count
                                 @foreach (var label in slot.LabelSet.ItemLabels)
                                 {
@@ -52,7 +52,7 @@
                     }
                     else
                     {
-                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("SlotDetails", new {id = slot.Id})">
+                        <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new {id = slot.Id})">
                             <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
                             <br />
                             <small>@slot.Name</small>

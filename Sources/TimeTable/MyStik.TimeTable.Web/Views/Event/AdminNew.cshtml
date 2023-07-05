@@ -25,26 +25,6 @@
                     <h4><i class="fa fa-film"></i> Aktuelles</h4>
                 </div>
                 <div class="list-group">
-                    <div class="list-group-item">
-                        <h5 class="list-group-item-heading">Termine diese Woche</h5>
-                        <ul>
-                            <li>Keine Termine</li>
-                        </ul>
-                    </div>
-                    <div class="list-group-item">
-                        <h5 class="list-group-item-heading">Nächste Woche</h5>
-                        <ul>
-                            <li>Dienstag 12.06.2018 - 09:00-10:30 in R 1.083</li>
-                        </ul>
-                    </div>
-                @*
-                    <a href="@Url.Action("Download", new {id=Model.Event.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading"><i class="fa fa-download"></i> Teilnehmerlisten</h5>
-                    </a>
-                    <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=Model.Event.Occurrence.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading"><i class="fa fa-envelope-o"></i> Mail senden</h5>
-                    </a>
-                    *@
                     <a href="@Url.Action("Details", null, new {id=Model.Event.Id})" class="list-group-item list-group-item-info">
                         <h5 class="list-group-item-heading"><i class="fa fa-rocket"></i> Studierendensicht</h5>
                     </a>

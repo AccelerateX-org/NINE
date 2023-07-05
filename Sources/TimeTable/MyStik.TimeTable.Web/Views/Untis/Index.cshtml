@@ -3,99 +3,127 @@
     ViewBag.Title = "Import Stundenplandaten";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Import von Stundenplandaten aus Untis für @Model.Organiser.ShortName</h1>
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-datepicker/css/bootstrap-datepicker3.min.css")" />
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Import von Stundenplandaten aus Untis für @Model.Organiser.ShortName und Semester @Model.Semester.Name</h4>
+                <h5 class="card-title"><i class="bi-calendar"></i> Schritt 1 von 3: Angabe Zeitraum</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        @using (Html.BeginForm("SelectFiles", null, FormMethod.Post, null))
+                        {
+                            <fieldset>
+                                @Html.HiddenFor(m => m.OrganiserId)
+                                @Html.HiddenFor(m => m.SemesterId)
+
+
+                                <div class="row">
+                                    <label class="col-sm-3 form-label">Erster Vorlesungstag</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.FirstDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <label class="col-sm-3 form-label">Letzter Vorlesungstag</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBoxFor(model => model.LastDate, new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+
+
+
+                                <div class="row">
+                                    <label class="col-sm-3 form-label">Anzahl vorhandene Kurse in Datenbank</label>
+                                    <div class="col-sm-3">
+                                        <p id="courseCount" class="form-text">@Model.Existing</p>
+                                    </div>
+                                    @*
+            <div class="col-sm-3">
+                <a href="#" id="btnDelete" class="btn btn-danger"><i class="bi-trash"></i> löschen</a>
+            </div>
+                                    *@
+                                </div>
+                                @*
+        <div class="row">
+            <label class="col-sm-3 form-label">Fortschritt</label>
+            <div class="col-sm-9">
+                <div id="pogresslabel"></div>
+                <div class="progress">
+                    <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
+                        0%
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="portlet light bordered">
-    <div class="portlet-title">
-        <div class="caption">
-            <i class="fa fa-database"></i>
-            <span class="caption-subject bold uppercase"> Schritt 1 von 3: Auswahl Semester</span>
-        </div>
-    </div>
-    <div class="portlet-body">
-        @using (Html.BeginForm("SelectFiles", null, FormMethod.Post, new { @class = "form form-horizontal" }))
-        {
-            <fieldset>
-                @Html.HiddenFor(m => m.OrganiserId)
-                
-                <div class="form-group">
-                    @Html.LabelFor(model => model.SemesterId, new {@class = "col-sm-3 control-label"})
-                    <div class="col-sm-6">
-                        @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>) ViewBag.Semester, new {@class = "form-control", onchange="onSemesterChanged()"})
+                                *@
+                                @if (Model.Existing == 0)
+                                {
+                                    <div class="row">
+                                        <div class="offset-3 col-sm-9">
+                                            <button type="submit" class="btn btn-outline-primary"><i class="bi-chevron-right"></i> Weiter</button>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="offset-3 col-sm-9">
+                                            <div class="alert alert-danger">Es wurden bereits Stundenplandaten importiert</div>
+                                        </div>
+                                    </div>
+                                }
+                            </fieldset>
+                        }
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    @Html.LabelFor(model => model.FirstDate, new { @class = "col-sm-3 control-label" })
-                    <div class="col-sm-6">
-                        @Html.TextBoxFor(model => model.FirstDate, new {@class="form-control input-sm datepicker"})
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    @Html.LabelFor(model => model.LastDate, new { @class = "col-sm-3 control-label" })
-                    <div class="col-sm-6">
-                        @Html.TextBoxFor(model => model.LastDate, new { @class = "form-control input-sm datepicker" })
-                    </div>
-                </div>
-                
-
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Anzahl vorhandene Kurse in Datenbank</label>
-                    <div class="col-sm-3">
-                        <p id="courseCount" class="form-control-static">@Model.Existing</p>
-                    </div>
-                    <div class="col-sm-3">
-                        <a href="#" id="btnDelete" class="btn btn-danger"><i class="fa fa-trash-o"></i> löschen</a>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Fortschritt</label>
-                    <div class="col-sm-9">
-                        <div id="pogresslabel"></div>
-                        <div class="progress">
-                            <div id="progressbar1" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0;">
-                                0%
-                            </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <h5>Vorlesgungsfreie Zeiten</h5>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Ergeignis</th>
+                                    <th>Von</th>
+                                    <th>Bis</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var d in Model.Semester.Dates)
+                                {
+                                    <tr>
+                                        <td>@d.Description</td>
+                                        <td>@d.From.ToShortDateString()</td>
+                                        <td>@d.To.ToShortDateString()</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <button type="submit" class="btn btn-default"><i class="fa fa-arrow-right"></i> Weiter</button>
-                    </div>
-                </div>
-
-            </fieldset>
-        }
-                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
 
 
 @section scripts {
-<script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/Assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/fillter/scripts/datepicker.js")"></script>
 
     @Scripts.Render("~/bundles/signalr")
 
@@ -108,14 +136,7 @@
     <script type="text/javascript">
 
         $(function() {
-            $('.datepicker').datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "dd.mm.yyyy",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "de"
-            });
+            initDatePicker("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
 
             var connection = $.connection.gpUntisHub;
 
