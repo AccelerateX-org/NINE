@@ -31,14 +31,13 @@
                 <div class="list-group-item">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group me-2">
-
                             <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Zurück</a>
-                            <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
-                                <i class="fa fa-plus-circle"></i> Termin anlegen
-                            </a>
                         </div>
                         @if (!Model.Summary.Course.IsInternal || ViewBag.UserRight.IsCourseAdmin)
                         {
+                            <a href="@Url.Action("CreateDate2", new {courseId = Model.Course.Id})" class="btn btn-outline-secondary">
+                                <i class="fa fa-plus-circle"></i> Termin anlegen
+                            </a>
                             <div id="dropDownMenu" class="btn-group me-2" role="group">
                                 <a id="cancelAll" href="#" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="absagen"><i class="bi-x"></i></a>
                                 <a id="refreshAll" href="#" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="reaktivieren"><i class="bi-recycle"></i> </a>
