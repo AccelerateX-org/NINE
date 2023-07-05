@@ -35,9 +35,15 @@ namespace MyStik.TimeTable.Data
         public DateTime LastEdited { get; set; }
 
         /// <summary>
-        /// Datum der Freigabe
+        /// Datum der Freigabe => Verabschiedung
         /// </summary>
         public DateTime? Approved { get; set; }
+
+        /// <summary>
+        /// Anzeigen / Verbergen => analogie moodle
+        /// </summary>
+        public bool IsVisible { get; set; }
+
 
     }
 }

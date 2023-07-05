@@ -4,66 +4,6 @@
 
 @{
     ViewBag.Title = "Modulekataloge";
-
-    var db = new TimeTableDbContext();
-
-    /*
-    foreach (var module in db.CurriculumModules.ToList())
-    {
-        foreach (var desc in module.Descriptions.ToList())
-        {
-            db.ModuleDescriptions.Remove(desc);
-        }
-
-        foreach (var option in module.ExaminationOptions.ToList())
-        {
-            foreach (var fraction in option.Fractions.ToList())
-            {
-                db.ExaminationFractions.Remove(fraction);
-            }
-
-            db.ExaminationOptions.Remove(option);
-        }
-
-        foreach (var subject in module.ModuleSubjects.ToList())
-        {
-            foreach (var opportunity in subject.Opportunities.ToList())
-            {
-                db.SubjectOpportunities.Remove(opportunity);
-            }
-
-            db.ModuleCourses.Remove(subject);
-        }
-
-        foreach (var accreditation in module.Accreditations.ToList())
-        {
-            db.Accreditations.Remove(accreditation);
-        }
-
-        var mappings = db.ModuleMappings.Where(x => x.Module.Id == module.Id).ToList();
-
-        foreach (var mapping in mappings)
-        {
-            db.ModuleMappings.Remove(mapping);
-        }
-
-
-        db.CurriculumModules.Remove(module);
-    }
-
-    foreach (var teachingFormat in db.TeachingFormats.ToList())
-    {
-        db.TeachingFormats.Remove(teachingFormat);
-    }
-
-    foreach (var examinationForm in db.ExaminationForms.ToList())
-    {
-        db.ExaminationForms.Remove(examinationForm);
-    }
-
-
-    db.SaveChanges();
-    */
 }
 
 
@@ -82,6 +22,9 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
+                        <a href="@Url.Action("Faculty","University", new {id = Model.Organiser.Id})" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Fakultät
+                        </a>
                         <a href="@Url.Action("AllModules","Catalogs")" class="btn btn-outline-primary">
                             <i class="bi-list-columns"></i> Alle Module
                         </a>
@@ -112,8 +55,6 @@
                         <th>Tag</th>
                         <th>Name</th>
                         <th># Module</th>
-                        <th># Modulbeschreibung</th>
-                        <th># Prüfungsangebote</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -123,8 +64,6 @@
                             <td>@cat.Tag</td>
                             <td><a href="@Url.Action("Details", new {id = cat.Id})">@cat.Name</a></td>
                             <td>@cat.Modules.Count</td>
-                            <td>@cat.Modules.Sum(x => x.Descriptions.Count(d => d.Description != null && d.Description.Any()))</td>
-                            <td>@cat.Modules.Sum(x => x.Accreditations.Count(d => d.ExaminationDescriptions.Any()))</td>
                         </tr>
                     }
                 </tbody>

@@ -166,13 +166,6 @@ namespace MyStik.TimeTable.Data
 
 
         public virtual ChangeLog ChangeLog { get; set; }
-
-        /// <summary>
-        /// Die Prüfung in diesem Semester
-        /// deprecated - sollte raus
-        /// </summary>
-        // public virtual ICollection<ExaminationUnit> ExaminationUnits { get; set; }
-
     }
 
     public class ExaminationDescription

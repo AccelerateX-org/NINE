@@ -85,17 +85,11 @@
                         <th>Bezeichnung</th>
                         <th>Modulverantwortung</th>
                         <th>Fächer</th>
-                        <th>@ViewBag.CurrentSemester.Name</th>
-                        <th>@ViewBag.NextSemester.Name</th>
                     </tr>
                 </thead>
                 <tbody>
                         @foreach (var module in Model.Modules)
                         {
-                            var hasCurrentDesc = module.Descriptions.Any(x => x.Semester.Id == ViewBag.CurrentSemester.Id) &&
-                                                 module.Accreditations.Any(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == ViewBag.CurrentSemester.Id));
-                            var hasNextDesc = module.Descriptions.Any(x => x.Semester.Id == ViewBag.NextSemester.Id) &&
-                                              module.Accreditations.Any(x => x.ExaminationDescriptions.Any(y => y.Semester.Id == ViewBag.NextSemester.Id));
 
                             var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
 
@@ -125,22 +119,6 @@
                                         <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
                                     }
                                 </td>
-                                @if (hasCurrentDesc)
-                                {
-                                    <td><i class="bi-check text-success"></i><span hidden="">1</span></td>
-                                }
-                                else
-                                {
-                                    <td><i class="bi-x text-danger"></i><span hidden="">0</span></td>
-                                }
-                                @if (hasNextDesc)
-                                {
-                                    <td><i class="bi-check text-success"></i><span hidden="">1</span></td>
-                                }
-                                else
-                                {
-                                    <td><i class="bi-x text-danger"></i><span hidden="">0</span></td>
-                                }
                             </tr>
                         }
                 </tbody>

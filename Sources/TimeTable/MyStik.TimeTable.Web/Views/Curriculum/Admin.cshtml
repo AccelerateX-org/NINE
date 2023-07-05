@@ -64,20 +64,6 @@
                             <div class="list-group-item list-group-item-dark">
                                 <h5>Aufbau</h5>
                             </div>
-                            <a href="@Url.Action("Areas", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Struktur nach Themengebieten</h5>
-                                </div>
-                                <p class="mb-1">Themengebiete mit Alternativangeboten.</p>
-                            </a>
-                        @*
-                            <a href="@Url.Action("ImportMoveAccr", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">HACK: Move Slots</h5>
-                                </div>
-                                <p class="mb-1">Module von MABI nach MABW verschieben.</p>
-                            </a>
-                            *@
                             <a href="@Url.Action("ImportAccreditations", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">Import Modulakkreditierungen</h5>

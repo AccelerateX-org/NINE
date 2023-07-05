@@ -1,0 +1,41 @@
+﻿@model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
+@{
+    ViewBag.Title = "Einrichtungen";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Hochschule München - alle Fakultäten</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("Index", "University")" class="btn btn-outline-primary">
+                            <i class="bi-chevron-left"></i> Zurück
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                @foreach (var org in Model)
+                {
+                    if (org.IsFaculty && !org.IsStudent)
+                    {
+                        <a href="@Url.Action("Faculty", new {id = org.Id})" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">@org.Name</div>
+                            </div>
+                            @if (org.Curricula.Any(x => x.Areas.Any()))
+                            {
+                                <span class="badge bg-primary rounded-pill">@org.Curricula.Count(x => x.Areas.Any())</span>
+                            }
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

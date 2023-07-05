@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -97,8 +98,8 @@ namespace MyStik.TimeTable.Web.Controllers
             // die aktuell veröffentlichte Fassung
             var lastPublished = module.Descriptions
                 .Where(x =>
-                    x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
-                .OrderByDescending(x => x.ChangeLog.Approved)
+                    x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.IsVisible)
+                .OrderByDescending(x => x.ChangeLog.Created)
                 .FirstOrDefault();
 
             // die aktuell veröffentlichten Prüfungsangebote
@@ -107,7 +108,7 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (var accr in module.Accreditations)
             {
                 var subExams = accr.ExaminationDescriptions
-                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                    .Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null && x.ChangeLog.IsVisible)
                     .ToList();
                 exams.AddRange(subExams);
             }
@@ -329,7 +330,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Details", new { id = model.moduleId, });
+            return RedirectToAction("Exams", new { moduleId = model.moduleId, semId=semester.Id});
         }
 
         public ActionResult EditExamination(Guid id)
@@ -419,7 +420,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { id = model.moduleId, });
+            return RedirectToAction("Exams", new { moduleId = model.moduleId, semId = semester.Id });
         }
 
         public ActionResult DeleteExamination(Guid id)
@@ -427,6 +428,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var examDesc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
 
             var module = examDesc.Accreditation.Module;
+            var semester = examDesc.Semester;
 
             if (examDesc.ChangeLog != null)
             {
@@ -436,7 +438,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.ExaminationDescriptions.Remove(examDesc);
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new { id = module.Id, });
+            return RedirectToAction("Exams", new { moduleId = module.Id, semId = semester.Id });
         }
 
         public ActionResult Descriptions(Guid moduleId, Guid semId)
@@ -482,6 +484,57 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
         }
 
+        public ActionResult ShowDescription(Guid id)
+        {
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            if (desc.ChangeLog != null)
+            {
+                desc.ChangeLog.IsVisible = true;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
+        }
+
+        public ActionResult HideDescription(Guid id)
+        {
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            if (desc.ChangeLog != null)
+            {
+                desc.ChangeLog.IsVisible = false;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Descriptions", new { moduleId = desc.Module.Id, semId = desc.Semester.Id });
+        }
+
+
+        public ActionResult DeleteDescription(Guid id)
+        {
+            var desc = Db.ModuleDescriptions.SingleOrDefault(x => x.Id == id);
+
+            var module = desc.Module;
+            var semester = desc.Semester;
+
+            if (desc.ChangeLog != null)
+            {
+                Db.ChangeLogs.Remove(desc.ChangeLog);
+            }
+
+            Db.ModuleDescriptions.Remove(desc);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Descriptions", new { moduleId = module.Id, semId = semester.Id });
+        }
+
+
+
+
+
+
         public ActionResult PublishExamination(Guid id)
         {
             var user = GetCurrentUser();
@@ -492,6 +545,34 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 desc.ChangeLog.Approved = DateTime.Now;
                 desc.ChangeLog.UserIdApproval = user.Id;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Exams", new { moduleId = desc.Accreditation.Module.Id, semId = desc.Semester.Id });
+        }
+
+
+        public ActionResult ShowExamination(Guid id)
+        {
+            var desc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
+
+            if (desc.ChangeLog != null)
+            {
+                desc.ChangeLog.IsVisible = true;
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Exams", new { moduleId = desc.Accreditation.Module.Id, semId = desc.Semester.Id });
+        }
+
+
+        public ActionResult HideExamination(Guid id)
+        {
+            var desc = Db.ExaminationDescriptions.SingleOrDefault(x => x.Id == id);
+
+            if (desc.ChangeLog != null)
+            {
+                desc.ChangeLog.IsVisible = false;
                 Db.SaveChanges();
             }
 
@@ -679,6 +760,31 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("ExaminationForms", new { id = exam.Module.Id });
         }
+
+        public ActionResult DeleteExaminationOption(Guid id)
+        {
+            var exam = Db.ExaminationOptions.SingleOrDefault(x => x.Id == id);
+
+            var nExamUses = Db.ExaminationDescriptions.Count(x => x.ExaminationOption.Id == exam.Id);
+
+            var module = exam.Module;
+
+            if (nExamUses == 0)
+            {
+                foreach (var fraction in exam.Fractions.ToList())
+                {
+                    Db.ExaminationFractions.Remove(fraction);
+                }
+
+                Db.ExaminationOptions.Remove(exam);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("ExaminationForms", new { id = module.Id });
+        }
+
+
+
 
         public ActionResult CreateExaminationFraction(Guid id)
         {
@@ -1040,5 +1146,29 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Repair(Guid id)
+        {
+            var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
+
+            var accsAreas = module.Accreditations.Where(x => x.Slot.AreaOption != null).ToList();
+
+            foreach (var accreditation in accsAreas)
+            {
+                foreach (var desc in accreditation.ExaminationDescriptions)
+                {
+                    if (desc.ChangeLog != null)
+                    {
+                        desc.ChangeLog.Approved = null;
+                        desc.ChangeLog.IsVisible = true;
+                    }
+
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
     }
-}
+    }

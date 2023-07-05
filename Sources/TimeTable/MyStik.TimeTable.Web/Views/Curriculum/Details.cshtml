@@ -4,19 +4,6 @@
 
 @{
     ViewBag.Title = "Modulplan";
-    var showFilter = false;
-    if (ViewBag.FilterLabels != null)
-    {
-        var numLabels = 0;
-        foreach (var label in ViewBag.FilterLabels)
-        {
-            numLabels++;
-        }
-        if (numLabels > 0)
-        {
-            showFilter = true;
-        }
-    }
 
     var pk = Model.Curriculum.Organiser.Autonomy != null ?
         Model.Curriculum.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK") &&
@@ -26,7 +13,6 @@
     var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
 
     var db = new TimeTableDbContext();
-
 }
 
 @section styles
@@ -53,11 +39,11 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-md-10">
-                        <h4 class="card-title">@Model.Curriculum.Name (@Model.Curriculum.ShortName | primuss-code: @Model.Curriculum.Tag)</h4>
+                        <h4 class="card-title">Studienangebot @Model.Curriculum.Name (@Model.Curriculum.ShortName | primuss-code: @Model.Curriculum.Tag)</h4>
                         <h5 class="card-subtitle">
-                            <a href="@Url.Action("Index", "Curricula")">HM</a>
+                            <a href="@Url.Action("Index", "University")">HM</a>
                             |
-                            <a href="@Url.Action("Index", "Curricula", new {id = Model.Curriculum.Organiser.Id})">
+                            <a href="@Url.Action("Faculty", "University", new {id = Model.Curriculum.Organiser.Id})">
                                 @Model.Curriculum.Organiser.Name (@Model.Curriculum.Organiser.ShortName)
                             </a>
                         </h5>
@@ -120,6 +106,7 @@
                             <div class="col-8">
                                 <div>
                                     <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
+                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
                                     <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
                                     @if (Model.Assessments.Any())
                                     {
@@ -139,6 +126,7 @@
                             <div class="col-8">
                                 <div>
                                     <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan</a> |
+                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Vorlesungsverzeichnis</a> |
                                     <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Prüfungsplan</a>
                                 </div>
                             </div>
@@ -150,6 +138,7 @@
                             <div class="col-8">
                                 <div>
                                     <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Studienplan</a> |
+                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Vorlesungsverzeichnis</a> |
                                     <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Prüfungsplan</a>
                                 </div>
                             </div>
@@ -254,44 +243,7 @@
                             }
                         </div>
                 }
-                else
-                        {
-                        if (showFilter)
-                        {
-                        var i = 0;
-                        <div class="form-floating">
-                            <select id="labelSelect" class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="onLabelSelected(this.value)">
-                                @foreach (var label in ViewBag.FilterLabels)
-                                {
-                                    i++;
-                                    if (i == 1)
-                                    {
-                                        <option selected value="@label.Name">@label.Name</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@label.Name">@label.Name</option>
-                                    }
-
-                                }
-                            </select>
-                            <label for="floatingSelect">Filterkriterium</label>
-                        </div>
-                        <div id="loading" class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div id="ModulePlan">
-
-                        </div>
-                        }
-                        else
-                        {
-                        @Html.Partial("_ModulePlan", Model)
-                        }
-
-                        }
-                    </div>
-        
+             </div>
         </div>
     </div>
 </div>

@@ -1,7 +1,10 @@
 ﻿@model MyStik.TimeTable.Web.Models.ModuleDescriptionsViewModel
+@using MyStik.TimeTable.Data
 @using MyStik.TimeTable.Web.Services
 @{
     ViewBag.Title = "Descriptions";
+
+    var db = new TimeTableDbContext();
 }
 
 <div class="row">
@@ -21,37 +24,26 @@
                         <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
+                        <a href="@Url.Action("CreateExaminationOption", null, new { id = Model.Module.Id })" class="btn btn-outline-primary">
+                            <i class="bi-plus"></i> Neue Prüfungsform hinzufügen
+                        </a>
                     </div>
                 </div>
             </div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Zusammenfassung</th>
                         <th>Bezeichnung</th>
                         <th>Prüfungsform</th>
                         <th>Gewichtung</th>
-                        <th>min Dauer</th>
-                        <th>max Dauer</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <a href="@Url.Action("CreateExaminationOption", null, new { id = Model.Module.Id })" class="btn btn-outline-primary">
-                                <i class="bi-plus"></i> Neue Prüfungsform hinzufügen
-                            </a>
-                        </td>
-                    </tr>
                     @foreach (var exam in Model.Module.ExaminationOptions)
                     {
+                        var nExamUses = db.ExaminationDescriptions.Count(x => x.ExaminationOption.Id == exam.Id);
+
                         var n = exam.Fractions.Count;
                         if (n == 0)
                         {
@@ -62,7 +54,6 @@
                         if (exam.Fractions.Count == 0)
                         {
                             <tr>
-                                <td rowspan="@n">@exam.FullName</td>
                                 <td rowspan="@n">
                                     @exam.Name
                                     <div>
@@ -71,8 +62,6 @@
                                         </a>
                                     </div>
                                 </td>
-                                <td></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td>
@@ -92,19 +81,28 @@
                         if (i == 1)
                         {
                             <tr>
-                                <td rowspan="@n">@exam.FullName</td>
                                 <td rowspan="@n">
                                     @exam.Name
                                     <div>
                                         <a href="@Url.Action("EditExaminationOption", new {id=exam.Id})" class="btn btn-outline-primary">
                                             <i class="bi-keyboard"></i> ändern
                                         </a>
+                                        @if (nExamUses == 0)
+                                        {
+                                            <a href="@Url.Action("DeleteExaminationOption", new {id=exam.Id})" class="btn btn-outline-danger">
+                                                <i class="bi-trash"></i> löschen
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <div class="btn btn-outline-secondary disabled">
+                                                <i class="bi-trash"></i> löschen (@nExamUses Prüfungsangebote vorhanden)
+                                            </div>
+                                        }
                                     </div>
                                 </td>
                                 <td>@fraction.Form.ShortName</td>
-                                <td>@fraction.Weight</td>
-                                <td>@fraction.MinDuration</td>
-                                <td>@fraction.MaxDuration</td>
+                                <td>@fraction.Weight.ToString("P")</td>
                                 <td>
                                     <a href="@Url.Action("EditExaminationFraction", new {id=fraction.Id})" class="btn btn-outline-primary">
                                         <i class="bi-keyboard"></i> ändern
@@ -119,15 +117,13 @@
                         {
                             <tr>
                                 <td>@fraction.Form.ShortName</td>
-                                <td>@fraction.Weight</td>
-                                <td>@fraction.MinDuration</td>
-                                <td>@fraction.MaxDuration</td>
+                                <td>@fraction.Weight.ToString("P")</td>
                                 <td>
                                     <a href="@Url.Action("EditExaminationFraction", new {id=fraction.Id})" class="btn btn-outline-primary">
                                         <i class="bi-keyboard"></i> ändern
                                     </a>
                                     <a href="@Url.Action("CreateExaminationFraction", new {id=exam.Id})" class="btn btn-outline-primary">
-                                       <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
+                                        <i class="bi-plus"></i> Neuen Prüfungsteil hinzufügen
                                     </a>
                                 </td>
                             </tr>

@@ -681,6 +681,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ImportModels.cs" />
     <Compile Include="Models\InternshipModels.cs" />
+    <Compile Include="Models\LabelModels.cs" />
     <Compile Include="Models\LecturerModels.cs" />
     <Compile Include="Models\LevelModels.cs" />
     <Compile Include="Models\LotteryModels.cs" />
@@ -4078,7 +4079,6 @@
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Research\_ViewStart.cshtml" />
     <Content Include="Views\Research\Index.cshtml" />
-    <Content Include="Views\University\_ViewStart.cshtml" />
     <Content Include="Views\University\Index.cshtml" />
     <Content Include="Views\Administration\_ViewStart.cshtml" />
     <Content Include="Views\Administration\Index.cshtml" />
@@ -4218,6 +4218,12 @@
     <Content Include="Views\Exam\Details.cshtml" />
     <Content Include="Views\ModuleDescription\Semester.cshtml" />
     <Content Include="Views\ModuleDescription\History.cshtml" />
+    <Content Include="Views\University\Faculty.cshtml" />
+    <Content Include="Views\University\Faculties.cshtml" />
+    <Content Include="Views\Curriculum\EditLabel.cshtml" />
+    <Content Include="Views\Curriculum\AddLabel.cshtml" />
+    <Content Include="Views\University\Curricula.cshtml" />
+    <Content Include="Views\University\Degree.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

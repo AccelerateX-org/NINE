@@ -25,18 +25,6 @@
                             @Html.TextBoxFor(m => m.Weight, new { @class = "form-control" })
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-4">Minimale Bearbeitungszeit in min (Angabe optional)</div>
-                        <div class="col-8">
-                            @Html.TextBoxFor(m => m.MinDuration, new { @class = "form-control" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">Minimale Bearbeitungszeit in min (Angabe optional)</div>
-                        <div class="col-8">
-                            @Html.TextBoxFor(m => m.MaxDuration, new { @class = "form-control" })
-                        </div>
-                    </div>
                     <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Änderungen speichern</button>
                     <a class="btn btn-outline-secondary" href="@Url.Action("ExaminationForms", new { id = Model.Option.Module.Id })"><i class="bi-x"></i> Abbrechen</a>
                 }

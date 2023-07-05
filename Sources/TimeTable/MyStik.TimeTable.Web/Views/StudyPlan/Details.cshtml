@@ -29,18 +29,19 @@
                         <a href="@Url.Action("Details", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
                             <i class="bi-chevron-left"></i> Studiengang
                         </a>
-                        
-                        <a href="@Url.Action("Curriculum", "BulletinBoards", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
-                            <i class="bi-file-pdf"></i> pdf-Fassung
-                        </a>
-
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
+                            <a href="@Url.Action("Curriculum", "BulletinBoards", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                                <i class="bi-file-pdf"></i> pdf-Fassung
+                            </a>
                             <a href="@Url.Action("AutoLink", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
                                 <i class="bi-link"></i> AUTOLINKS verknüofen
                             </a>
                             <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                <i class="bi-printer"></i> veröffentlichen
+                                <i class="bi-printer"></i> verabschieden
+                            </a>
+                            <a href="@Url.Action("UnPublish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-danger">
+                                <i class="bi-recycle"></i> Rücknahme
                             </a>
                         }
                     </div>

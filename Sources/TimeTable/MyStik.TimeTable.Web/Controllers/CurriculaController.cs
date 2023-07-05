@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -24,12 +25,24 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
-            var model = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(g => g.ShortName).ToList();
-            var userRight = GetUserRight();
-            ViewBag.UserRight = userRight;
-            return View(model);
+            if (id.HasValue)
+            {
+                var model = new List<ActivityOrganiser>();
+                var org = GetOrganiser(id.Value);
+                model.Add(org);
+                var userRight = GetUserRight(org);
+                ViewBag.UserRight = userRight;
+                return View(model);
+            }
+            else
+            {
+                var model = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(g => g.ShortName).ToList();
+                var userRight = GetUserRight(GetMyOrganisation());
+                ViewBag.UserRight = userRight;
+                return View(model);
+            }
         }
 
         public ActionResult Organiser(Guid id)

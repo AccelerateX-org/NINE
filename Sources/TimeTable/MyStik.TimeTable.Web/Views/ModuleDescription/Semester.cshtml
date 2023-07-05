@@ -69,22 +69,16 @@
                                 {
                                     if (Model.ModuleDescription.ChangeLog != null)
                                     {
-                                        var user = userService.GetUser(Model.ModuleDescription.ChangeLog.UserIdAmendment);
-                                        var userName = "unbekannt";
-                                        if (user != null)
-                                        {
-                                            userName = user.FullName;
-                                        }
-                                        if (Model.ModuleDescription.ChangeLog.Approved != null)
+                                        if (Model.ModuleDescription.ChangeLog.Approved.HasValue)
                                         {
                                             <h6 class="card-subtitle">
-                                                zuletzt geändert am @Model.ModuleDescription.ChangeLog.LastEdited von @userName - veröffentlicht am @Model.ModuleDescription.ChangeLog.Approved
+                                                verabschiedet am @Model.ModuleDescription.ChangeLog.Approved.Value.ToShortDateString()
                                             </h6>
                                         }
                                         else
                                         {
-                                            <h6 class="card-subtitle">
-                                                zuletzt geändert am @Model.ModuleDescription.ChangeLog.LastEdited von @userName - unveröffentlicht
+                                            <h6 class="card-subtitle text-danger">
+                                                Status: vorläufig - kann sich jederzeit noch ändern
                                             </h6>
                                         }
                                     }
@@ -110,7 +104,6 @@
                                         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
                                             @if (Model.ModuleDescription != null)
                                             {
-
                                                 if (string.IsNullOrEmpty(Model.ModuleDescription.Description))
                                                 {
                                                     <div></div>
@@ -122,7 +115,7 @@
                                             }
                                             else
                                             {
-                                                <div>Es liegt keine <strong>veröffentlichte Fassung</strong> der Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                                                <div>Es liegt keine Modulbeschreibung für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
                                             }
                                         </div>
                                         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
@@ -140,7 +133,7 @@
                                             }
                                             else
                                             {
-                                                <div>There is no <strong>published version</strong> of the module description available for <strong>semester @Model.Semester.Name</strong>.</div>
+                                                <div>There is no module description available for <strong>semester @Model.Semester.Name</strong>.</div>
                                             }
                                         </div>
                                     </div>
@@ -164,68 +157,81 @@
                                     <div class="card-body">
                                         <h5 class="card-title">Lehrangebote</h5>
                                     </div>
-
-                                    @foreach (var subject in subjects)
-                                    {
-                                        var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-
-                                        if (opportunities.Any())
-                                        {
-                                            <div class="list-group-item">
-                                                <div class="row">
-                                                    <div class="col-2">
-                                                        @if (subjects.Count > 1)
-                                                        {
-                                                            <div>@subject.Name (@subject.TeachingFormat.Tag)</div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div>@subject.TeachingFormat.Tag</div>
-                                                        }
-                                                    </div>
-                                                    <div class="col-10">
-                                                        @foreach (var opportunity in opportunities)
-                                                        {
-                                                            <div>
-                                                                <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
-                                                                    @opportunity.Course.Name (@opportunity.Course.ShortName)
-                                                                </a>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <div class="list-group">
+                                        @{
+                                            var nTeachings = 0;
                                         }
-                                    }
-                                    @foreach (var accr in accrs)
-                                    {
-                                        var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
-
-                                        var showGroups = teachings.Count > 1;
-                                        foreach (var teaching in teachings)
+                                        @foreach (var subject in subjects)
                                         {
-                                            <div class="list-group-item">
-                                                <div class="row">
-                                                    <div class="col-2">
-                                                        <div>@teaching.Subject.TeachingFormat.Tag</div>
-                                                    </div>
-                                                    <div class="col-10">
-                                                        <div>
-                                                            <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
-                                                                @teaching.Course.Name (@teaching.Course.ShortName)
-                                                            </a>
-                                                            @if (@showGroups)
+                                            var opportunities = subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+
+                                            if (opportunities.Any())
+                                            {
+                                                <div class="list-group-item">
+                                                    <div class="row">
+                                                        <div class="col-2">
+                                                            @if (subjects.Count > 1)
                                                             {
+                                                                <div>@subject.Name (@subject.TeachingFormat.Tag)</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div>@subject.TeachingFormat.Tag</div>
+                                                            }
+                                                        </div>
+                                                        <div class="col-10">
+                                                            @foreach (var opportunity in opportunities)
+                                                            {
+                                                                nTeachings++;
                                                                 <div>
-                                                                    @Html.GroupList(teaching.Course.SemesterGroups, false, false)
+                                                                    <a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">
+                                                                        @opportunity.Course.Name (@opportunity.Course.ShortName)
+                                                                    </a>
                                                                 </div>
                                                             }
                                                         </div>
                                                     </div>
                                                 </div>
+                                            }
+                                        }
+                                        @foreach (var accr in accrs)
+                                        {
+                                            var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+
+                                            var showGroups = teachings.Count > 1;
+                                            foreach (var teaching in teachings)
+                                            {
+                                                nTeachings++;
+                                                <div class="list-group-item">
+                                                    <div class="row">
+                                                        <div class="col-2">
+                                                            <div>@teaching.Subject.TeachingFormat.Tag</div>
+                                                        </div>
+                                                        <div class="col-10">
+                                                            <div>
+                                                                <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">
+                                                                    @teaching.Course.Name (@teaching.Course.ShortName)
+                                                                </a>
+                                                                @if (@showGroups)
+                                                                {
+                                                                    <div>
+                                                                        @Html.GroupList(teaching.Course.SemesterGroups, false, false)
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        @if (nTeachings == 0)
+                                        {
+                                            <div class="list-group-item">
+                                                <div>Es liegen keine Lehrangebote für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
                                             </div>
                                         }
-                                    }
+
+                                    </div>
                                     <div class="card-body">
                                         @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                                         {
@@ -243,12 +249,22 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">Prüfungsangebote</h5>
+                                        @{
+                                            var nApproved = Model.Exams.Count(x => x.ChangeLog.Approved != null);
+                                            var isPrelim = nApproved != Model.Exams.Count();
+                                        }
+                                        @if (Model.Exams.Any() && isPrelim)
+                                        {
+                                            <h6 class="card-subtitle text-danger">
+                                                Status: vorläufig - kann sich jederzeit noch ändern
+                                            </h6>
+                                        }
                                     </div>
                                     <div class="list-group">
                                         @if (!Model.Exams.Any())
                                         {
                                             <div class="list-group-item">
-                                                <div>Es liegt keine <strong>veröffentlichten</strong> Prüfungsangebote für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
+                                                <div>Es liegen keine Prüfungsangebote für das <strong>Semester @Model.Semester.Name</strong> vor.</div>
                                             </div>
                                         }
 
@@ -290,7 +306,7 @@
                                                         <div>Prüfungsform</div>
                                                     </div>
                                                     <div class="col-8">
-                                                        <div>@examinationDescription.ExaminationOption.FullName</div>
+                                                        <div>@examinationDescription.ExaminationOption.OptionName</div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -298,7 +314,7 @@
                                                         <div>Details zur Prüfung</div>
                                                     </div>
                                                     <div class="col-8">
-                                                        <div>@examinationDescription.Conditions</div>
+                                                        <div>@Html.Raw(examinationDescription.Conditions)</div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -306,42 +322,9 @@
                                                         <div>Hilfsmittel</div>
                                                     </div>
                                                     <div class="col-8">
-                                                        <div>@examinationDescription.Utilities</div>
+                                                        <div>@Html.Raw(examinationDescription.Utilities)</div>
                                                     </div>
                                                 </div>
-                                                @if (examinationDescription.ChangeLog != null)
-                                                {
-                                                    var user = userService.GetUser(examinationDescription.ChangeLog.UserIdAmendment);
-                                                    var userName = "unbekannt";
-                                                    if (user != null)
-                                                    {
-                                                        userName = user.FullName;
-                                                    }
-                                                    if (examinationDescription.ChangeLog.Approved != null)
-                                                    {
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                zuletzt geändert am @examinationDescription.ChangeLog.LastEdited von @userName - veröffentlicht am @examinationDescription.ChangeLog.Approved
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                zuletzt geändert am @examinationDescription.ChangeLog.LastEdited von @userName - unveröffentlicht
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <div class="row">
-                                                        <div class="col-12">
-                                                            Kein Change Log
-                                                        </div>
-                                                    </div>
-                                                }
                                             </div>
                                         }
                                     </div>

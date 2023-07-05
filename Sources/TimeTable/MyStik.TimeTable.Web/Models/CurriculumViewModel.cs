@@ -201,5 +201,28 @@ namespace MyStik.TimeTable.Web.Models
         public string Code { get; set; }
     }
 
+    public class CurriculumEditModel
+    {
+        public Guid CurriculumId { get; set; }
+
+        public string Tag { get; set; }
+
+        public string Name { get; set; }
+
+        public string ShortName { get; set; }
+
+        [AllowHtml]
+        public string Description { get; set; }
+
+        public string Version { get; set; }
+
+        public int ThesisDuration { get; set; }
+
+        public bool IsDeprecated { get; set; }
+
+        public Guid DegreeId { get; set; }
+
+        public int EctsTarget { get; set; }
+    }
 
 }

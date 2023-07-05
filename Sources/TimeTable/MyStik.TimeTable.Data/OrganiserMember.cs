@@ -126,6 +126,9 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<MemberSkill> Skills { get; set; }
 
+        public virtual ICollection<VirtualRoom> VirtualRooms { get; set; }
+
+
         public string FullName
         {
             get

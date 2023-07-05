@@ -1085,10 +1085,34 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Edit(Guid id)
         {
-            var model = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
-            // Achtung: vertauschen der Anzeige für "IsDeprecated"
-            model.IsDeprecated = !model.IsDeprecated;
+            var model = new CurriculumEditModel
+            {
+                CurriculumId = curr.Id,
+                Tag = curr.Tag,
+                Name = curr.Name,
+                ShortName = curr.ShortName,
+                Description = curr.Description,
+                Version = curr.Version,
+                ThesisDuration = curr.ThesisDuration,
+                IsDeprecated = !curr.IsDeprecated,
+            };
+
+            if (curr.Degree != null)
+            {
+                model.DegreeId = curr.Degree.Id;
+            }
+
+            var degrees =
+                Db.Degrees.Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                });
+
+            ViewBag.Degrees = degrees;
+
 
             return View(model);
         }
@@ -1099,9 +1123,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Edit(Curriculum model)
+        public ActionResult Edit(CurriculumEditModel model)
         {
-            var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.Id);
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == model.CurriculumId);
 
             cur.Tag = model.Tag;
             cur.Name = model.Name;
@@ -1109,8 +1133,12 @@ namespace MyStik.TimeTable.Web.Controllers
             cur.Description = model.Description;
             cur.Version = model.Version;
             cur.ThesisDuration = model.ThesisDuration;
+            cur.EctsTarget = model.EctsTarget;
 
             cur.IsDeprecated = !model.IsDeprecated;
+
+            var degree = Db.Degrees.SingleOrDefault(x => x.Id == model.DegreeId);
+            cur.Degree = degree;
 
             Db.SaveChanges();
 
@@ -2394,47 +2422,127 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-            /* Noch etwas aufheben
-            public ActionResult HackBABW(Guid id)
+        public ActionResult AddLabel(Guid currId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new ItemLabelEditModel()
             {
-                var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
-                var org = curr.Organiser;
+                Curriculum = curr,
+            };
 
-                if (org.Tag.Equals("10") && curr.ShortName.Equals("BABW"))
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddLabel(ItemLabelEditModel model)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+
+            var label = new ItemLabel();
+
+            label.Name = model.Name;
+            label.Description = model.Description;
+            label.HtmlColor = model.HtmlColor;
+            label.LabelSets.Add(curr.LabelSet);
+
+            curr.LabelSet.ItemLabels.Add(label);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Labels", new { id = curr.Id });
+        }
+
+
+
+        public ActionResult EditLabel(Guid currId, Guid labelId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            var model = new ItemLabelEditModel()
+            {
+                ItemLabel = label,
+                Curriculum = curr,
+                Name = label.Name,
+                Description = label.Description,
+                HtmlColor = label.HtmlColor
+
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditLabel(ItemLabelEditModel model)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == model.ItemLabel.Id);
+
+            label.Name = model.Name;
+            label.Description = model.Description;
+            label.HtmlColor = model.HtmlColor;
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Labels", new { id = curr.Id });
+        }
+
+        public ActionResult DeleteLabel(Guid currId, Guid labelId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+            Db.ItemLabels.Remove(label);
+            Db.SaveChanges();
+
+
+            return RedirectToAction("Labels", new { id = curr.Id });
+        }
+
+
+
+        /* Noch etwas aufheben
+        public ActionResult HackBABW(Guid id)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
+            var org = curr.Organiser;
+
+            if (org.Tag.Equals("10") && curr.ShortName.Equals("BABW"))
+            {
+                // alle die mit BABW starten aber nicht BABW sind
+                var allBABWSubCatalogs = org.ModuleCatalogs.Where(x => x.Tag.StartsWith("BABW") && !x.Tag.Equals("BABW")).ToList();
+
+                var babwMainCatalog = org.ModuleCatalogs.SingleOrDefault(x => x.Tag.Equals("BABW"));
+
+                if (babwMainCatalog == null)
                 {
-                    // alle die mit BABW starten aber nicht BABW sind
-                    var allBABWSubCatalogs = org.ModuleCatalogs.Where(x => x.Tag.StartsWith("BABW") && !x.Tag.Equals("BABW")).ToList();
-
-                    var babwMainCatalog = org.ModuleCatalogs.SingleOrDefault(x => x.Tag.Equals("BABW"));
-
-                    if (babwMainCatalog == null)
+                    babwMainCatalog = new CurriculumModuleCatalog
                     {
-                        babwMainCatalog = new CurriculumModuleCatalog
-                        {
-                            Name = "BABW alle Module",
-                            Tag = "BABW",
-                            Organiser = org
-                        };
-                        Db.CurriculumModuleCatalogs.Add(babwMainCatalog);
-                    }
-
-                    foreach (var subCatalog in allBABWSubCatalogs.ToList())
-                    {
-                        foreach (var module in subCatalog.Modules.ToList())
-                        {
-                            subCatalog.Modules.Remove(module);
-                            babwMainCatalog.Modules.Add(module);
-                        }
-
-                        org.ModuleCatalogs.Remove(subCatalog);
-                        Db.CurriculumModuleCatalogs.Remove(subCatalog);
-                    }
-
-                    Db.SaveChanges();
+                        Name = "BABW alle Module",
+                        Tag = "BABW",
+                        Organiser = org
+                    };
+                    Db.CurriculumModuleCatalogs.Add(babwMainCatalog);
                 }
 
-                return RedirectToAction("Admin", new { id = id });
+                foreach (var subCatalog in allBABWSubCatalogs.ToList())
+                {
+                    foreach (var module in subCatalog.Modules.ToList())
+                    {
+                        subCatalog.Modules.Remove(module);
+                        babwMainCatalog.Modules.Add(module);
+                    }
+
+                    org.ModuleCatalogs.Remove(subCatalog);
+                    Db.CurriculumModuleCatalogs.Remove(subCatalog);
+                }
+
+                Db.SaveChanges();
             }
-            */
+
+            return RedirectToAction("Admin", new { id = id });
         }
+        */
     }
+}

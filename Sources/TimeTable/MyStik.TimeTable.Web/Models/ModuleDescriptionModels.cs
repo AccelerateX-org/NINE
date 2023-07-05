@@ -23,8 +23,10 @@ namespace MyStik.TimeTable.Web.Models
 
         public Guid secondMemberId { get; set;}
 
+        [AllowHtml]
         public string Conditions { get; set; }
 
+        [AllowHtml]
         public string Utilities { get; set; }
 
         public Semester Semester { get; set; }

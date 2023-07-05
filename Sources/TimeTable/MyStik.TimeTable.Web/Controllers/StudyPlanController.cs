@@ -328,5 +328,47 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Curriculum", "BulletinBoards", new { id = model.Curriculum.Id });
         }
+
+        public ActionResult Unpublish(Guid currId, Guid semId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var semester = Db.Semesters.SingleOrDefault(x => x.Id == semId);
+
+            var modules = Db.CurriculumModules.Where(x =>
+                x.Accreditations.Any(c =>
+                    c.Slot != null &&
+                    c.Slot.AreaOption != null &&
+                    c.Slot.AreaOption.Area.Curriculum.Id == curr.Id)).ToList();
+
+            foreach (var module in modules)
+            {
+                // aktuelle Beschreibung des Semesters
+                var descs = module.Descriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null)
+                    .ToList();
+
+                foreach (var d in descs)
+                {
+                    d.ChangeLog.Approved = null;
+                    d.ChangeLog.IsVisible = true;
+                }
+
+                var accrs = module.Accreditations.Where(x => x.Slot.AreaOption.Area.Curriculum.Id == curr.Id)
+                    .ToList();
+
+                foreach (var accr in accrs)
+                {
+                    var exams = accr.ExaminationDescriptions.Where(x => x.Semester.Id == semester.Id && x.ChangeLog != null).ToList();
+                    foreach (var exam in exams)
+                    {
+                        exam.ChangeLog.Approved = null;
+                        exam.ChangeLog.IsVisible = true;
+                    }
+                }
+            }
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { currId = currId, semId = semId });
+        }
     }
 }

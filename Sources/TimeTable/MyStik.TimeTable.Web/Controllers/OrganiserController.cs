@@ -700,6 +700,15 @@ namespace MyStik.TimeTable.Web.Controllers
                     Db.Advertisements.Remove(adv);
                 }
 
+                foreach (var virtualRoom in member.VirtualRooms.ToList())
+                {
+                    foreach (var virtualRoomAccess in virtualRoom.Accesses.ToList())
+                    {
+                        Db.VirtualRoomAccesses.Remove(virtualRoomAccess);
+                    }
+
+                    Db.VirtualRooms.Remove(virtualRoom);
+                }
 
                 var org = member.Organiser;
 

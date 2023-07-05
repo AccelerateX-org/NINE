@@ -20,7 +20,7 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                        <a href="@Url.Action("Semester", new {moduleId = Model.Module.Id, semId=Model.Semester.Id}  )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
                         @if (Model.Module.Accreditations.Any())
@@ -49,7 +49,6 @@
                         <th>Angelegt</th>
                         <th>Zuletzt geändert</th>
                         <th>Bearbeitung</th>
-                        <th>Veröffentlicht</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,16 +83,25 @@
                             <td>@exam.ChangeLog.Created</td>
                             <td>@exam.ChangeLog.LastEdited</td>
                             <td>@userName</td>
-                            <td>@exam.ChangeLog.Approved</td>
                             <td>
                                 @if (exam.ChangeLog.Approved == null)
                                 {
                                     <a href="@Url.Action("EditExamination", null, new { id = exam.Id })" class="btn btn-outline-primary">
                                         <i class="bi-keyboard"></i> Ändern
                                     </a>
-                                    <a href="@Url.Action("PublishExamination", new {id = exam.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-printer"></i> Veröffentlichen
-                                    </a>
+                                    if (exam.ChangeLog.IsVisible)
+                                    {
+                                        <a href="@Url.Action("HideExamination", new {id = exam.Id})" class="btn btn-outline-primary">
+                                            <i class="bi-mask"></i> Verbergen
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("ShowExamination", new {id = exam.Id})" class="btn btn-outline-primary">
+                                            <i class="bi-display"></i> Anzeigen
+                                        </a>
+                                       
+                                    }
                                     <a href="@Url.Action("DeleteExamination", null, new { id = exam.Id })" class="btn btn-outline-danger">
                                         <i class="bi-trash"></i> Löschen
                                     </a>

@@ -2,7 +2,6 @@
 @using MyStik.TimeTable.Web.Services
 @{
     ViewBag.Title = "Descriptions";
-    var i = 0;
     var userService = new UserInfoService();
 }
 
@@ -29,88 +28,61 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a href="@Url.Action("Details", new {id = Model.Module.Id} )" class="btn btn-outline-primary">
+                        <a href="@Url.Action("Semester", new {moduleId = Model.Module.Id, semId=Model.Semester.Id}  )" class="btn btn-outline-primary">
                             <i class="bi-chevron-compact-left"></i> Zurück
                         </a>
+                        <a href="@Url.Action("Init", new {moduleId = Model.Module.Id, semId = Model.Semester.Id})" class="btn btn-outline-primary">neue Beschreibung erstellen</a>
                     </div>
                 </div>
             </div>
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>Angelegt</th>
-                        <th>Zuletzt geändert</th>
-                        <th>Bearbeitung</th>
-                        <th>Veröffentlicht</th>
-                    </tr>
+                <tr>
+                    <th>Angelegt</th>
+                    <th>Zuletzt geändert</th>
+                    <th>Bearbeitung</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @if (!Model.ModuleDescriptions.Any())
+                @foreach (var desc in Model.ModuleDescriptions)
+                {
+                    var user = userService.GetUser(desc.ChangeLog.UserIdAmendment);
+                    var userName = "unbekannt";
+                    if (user != null)
                     {
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <a href="@Url.Action("Init", new {moduleId = Model.Module.Id, semId = Model.Semester.Id})" class="btn btn-outline-primary">neue Beschreibung erstellen</a>
-                            </td>
-                        </tr>
+                        userName = user.FullName;
                     }
-                    @foreach (var desc in Model.ModuleDescriptions)
-                    {
-                        i++;
-                        var user = userService.GetUser(desc.ChangeLog.UserIdAmendment);
-                        var userName = "unbekannt";
-                        if (user != null)
-                        {
-                            userName = user.FullName;
-                        }
 
-                        <tr>
-                            <td>@desc.ChangeLog.Created</td>
-                            <td>@desc.ChangeLog.LastEdited</td>
-                            <td>@userName</td>
+                    <tr>
+                        <td>@desc.ChangeLog.Created</td>
+                        <td>@desc.ChangeLog.LastEdited</td>
+                        <td>@userName</td>
+                        <td>
                             @if (desc.ChangeLog.Approved != null)
                             {
-                                <td>@desc.ChangeLog.Approved</td>
+                                <a href="@Url.Action("FollowUp", new {id = desc.Id})" class="btn btn-outline-primary">neue Fassung erstellen</a>
                             }
                             else
-                            { 
-                                <td>Entwurfsfassung</td>
-                            }
-                            <td>
-                                @if (i == 1)
+                            {
+                                <a href="@Url.Action("Edit", new {id = desc.Id})" class="btn btn-outline-primary">Ändern</a>
+                                if (desc.ChangeLog.IsVisible)
                                 {
-                                    if (desc.ChangeLog.Approved != null)
-                                    {
-                                        <a href="@Url.Action("FollowUp", new {id = desc.Id})" class="btn btn-outline-primary">neue Fassung erstellen</a>
-                                    }
-                                    else
-                                    {
-                                        <a href="@Url.Action("Edit", new {id = desc.Id})" class="btn btn-outline-primary">Ändern</a>
-                                        <a href="@Url.Action("Publish", new {id = desc.Id})" class="btn btn-outline-primary">Veröffentlichen</a>
-                                    }
+                                    <a href="@Url.Action("HideDescription", new {id = desc.Id})" class="btn btn-outline-primary">Verbergen</a>
                                 }
-                            </td>
-                        </tr>
-                    }
-                    @foreach (var desc in Model.BadModuleDescriptions)
-                    {
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <a href="@Url.Action("DeleteDesciption")" class="btn btn-outline-danger">Löschen</a>
-                            </td>
-                        </tr>
-                    }
+                                else
+                                {
+                                    <a href="@Url.Action("ShowDescription", new {id = desc.Id})" class="btn btn-outline-primary">Anzeigen</a>
+                                }
+                                <a href="@Url.Action("DeleteDescription", new {id = desc.Id})" class="btn btn-outline-danger">Löschen</a>
+                            }
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
-                </div>
-            </div>
+    </div>
+</div>
+
 
 

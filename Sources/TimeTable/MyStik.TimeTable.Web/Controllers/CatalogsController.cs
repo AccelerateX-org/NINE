@@ -13,9 +13,12 @@ namespace MyStik.TimeTable.Web.Controllers
     public class CatalogsController : BaseController
     {
         // GET: Catalogs
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var org = GetMyOrganisation();
+
+            if (id != null)
+                org = GetOrganiser(id.Value);
 
             var model = new OrganiserViewModel
             {

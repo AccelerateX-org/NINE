@@ -3,6 +3,14 @@
     ViewBag.Title = "CreateExamination";
 }
 
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+}
+
+
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -27,26 +35,35 @@
                     <div class="row">
                         <div class="col-4">Bezug zu Curriculum</div>
                         <div class="col-8">
-                            @if (Model.Accreditation.Slot.CurriculumSection != null)
-                            {
-                                <input class="form-control" type="text" value="@Model.Accreditation.Slot.CurriculumSection.Curriculum.Name" aria-label="Semester" readonly>
-                            }
-                            else
-                            {
-                                <input class="form-control" type="text" value="@Model.Accreditation.Slot.AreaOption.Area.Name" aria-label="Semester" readonly>
-                            }
+                            <input class="form-control" type="text" value="@Model.Accreditation.Slot.AreaOption.Area.Name" aria-label="Semester" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">Erstprüfer:in</div>
                         <div class="col-8">
-                            <input class="form-control disabled" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName"/
+                            <div>Ersten Buchstaben des Nachnamens eingeben und dann Eintrag aus der angezeigten Liste auswählen</div>
+                            @if (Model.FirstMember != null)
+                            {
+                                <input class="form-control disabled" id="dozId1" name="dozId1" type="text" value="@Model.FirstMember.FullName" />
+                            }
+                            else
+                            {
+                                <input class="form-control disabled" id="dozId1" name="dozId1" type="text" value="" />
+                            }
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">Zweitprüfer:in</div>
                         <div class="col-8">
-                            <input class="form-control disabled" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName" />
+                            <div>Ersten Buchstaben des Nachnamens eingeben und dann Eintrag aus der angezeigten Liste auswählen</div>
+                            @if (Model.SecondMember != null)
+                            {
+                                <input class="form-control disabled" id="dozId2" name="dozId2" type="text" value="@Model.SecondMember.FullName" />
+                            }
+                            else
+                            {
+                                <input class="form-control disabled" id="dozId2" name="dozId2" type="text" value="" />
+                            }
                         </div>
                     </div>
                     <div class="row">
@@ -77,9 +94,15 @@
 
 @section scripts
 {
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+    
+
     <script>
 
         $(document).ready(function() {
+
+            $("#Conditions").cleditor();
+            $("#Utilities").cleditor();
 
 
             $('#dozId1').autocomplete({

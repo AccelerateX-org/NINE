@@ -135,7 +135,7 @@
                         DozIds: dozList
                     },
                     success: function(data, success, xhr) {
-                        window.location.replace("@Url.Action("Admin", new {id = Model.Id})");
+                        window.location.replace("@Url.Action("Details", "ModuleDescription", new {id = Model.Id})");
                     }
                 });
 

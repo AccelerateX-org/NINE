@@ -192,8 +192,8 @@
                                     var desc = Model.Descriptions
                                         .Where(x =>
                                             x.Semester.Id == s.Id &&
-                                            (x.ChangeLog != null && x.ChangeLog.Approved != null))
-                                        .OrderByDescending(x => x.ChangeLog.Approved)
+                                            (x.ChangeLog != null))
+                                        .OrderByDescending(x => x.ChangeLog.Created)
                                         .FirstOrDefault();
 
 
@@ -202,21 +202,14 @@
                                         if (desc.ChangeLog.Approved != null)
                                         {
                                             <div>
-                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@desc.Semester.Name (veröffentlicht @desc.ChangeLog.Approved.Value.ToShortDateString())</a>
+                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@desc.Semester.Name</a> <span>(verabschiedet @desc.ChangeLog.Approved.Value.ToShortDateString())</span>
                                             </div>
                                         }
                                         else
                                         {
-                                            if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                            {
-                                                <div>
-                                                    <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@s.Name</a>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div>@s.Name (nicht verfügbar)</div>
-                                            }
+                                            <div>
+                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@desc.Semester.Name</a> <span class="text-danger">(vorläufig)</span>
+                                            </div>
                                         }
                                     }
                                     else
@@ -224,7 +217,7 @@
                                         if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
                                         {
                                             <div>
-                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@s.Name</a>
+                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@s.Name</a> <span>(nicht verfügbar)</span>
                                             </div>
                                         }
                                         else
