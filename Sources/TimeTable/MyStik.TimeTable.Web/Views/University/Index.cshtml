@@ -4,6 +4,11 @@
 }
 
 <div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Campus</li>
+        </ol>
+    </nav>
     <div class="col-md-4">
         <div class="card border-secondary">
             <div class="card-header">
@@ -12,7 +17,7 @@
             <div class="list-group">
                 @foreach (var org in Model)
                 {
-                    <a href="@Url.Action("Faculty", new {id = org.Id})" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                    <a href="@Url.Action("Faculty", new { id = org.Id })" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
                         <div class="ms-2 me-auto">
                             <div class="fw-bold">@org.Name</div>
                         </div>

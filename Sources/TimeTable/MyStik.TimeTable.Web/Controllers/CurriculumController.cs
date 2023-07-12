@@ -2062,6 +2062,39 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(slot);
         }
 
+        public ActionResult CreateSlot(Guid id)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumAreaCreateModel
+            {
+                OptionId = option.Id,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CreateSlot(CurriculumAreaCreateModel model)
+        {
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == model.OptionId);
+
+            var slot = new CurriculumSlot();
+
+            slot.Tag = model.Tag.ToUpper();
+            slot.Name = model.Name;
+            slot.Description = model.Description;
+            slot.Semester = model.Semester;
+            slot.ECTS = model.Ects;
+            slot.AreaOption = option;
+
+            Db.CurriculumSlots.Add(slot);
+            Db.SaveChanges();
+
+            return RedirectToAction("Slot", new { id = slot.Id });
+        }
+
+
         public ActionResult EditSlot(Guid id)
         {
             var slot = Db.CurriculumSlots.SingleOrDefault(x => x.Id == id);

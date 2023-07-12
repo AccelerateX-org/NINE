@@ -24,235 +24,243 @@
 }
 
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h4 class="card-title">Modul @Model.Tag</h4>
-                        <h4 class="card-title">
-                            <img src="~/Assets/img/flags/de.png" /> @Model.Name
-                        </h4>
-                        <h4 class="card-title">
-                            <img src="~/Assets/img/flags/gb.png" /> @Model.NameEn
-                        </h4>
-                    </div>
-                </div>
-            </div>
-        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-        {
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
-                            <i class="bi-people"></i> Modulverantwortungen
+<div class="col-12">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Catalog.Organiser.Id})">@Model.Catalog.Organiser.ShortName</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.Catalog.Organiser.Id})">Modulkataloge</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.Catalog.Id})">@Model.Catalog.Tag</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Tag</li>
+    </ol>
+</nav>
+
+<div class="card">
+<div class="card-header">
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="card-title">
+                <img src="~/Assets/img/flags/de.png"/> @Model.Name
+            </h4>
+            <h4 class="card-title">
+                <img src="~/Assets/img/flags/gb.png"/> @Model.NameEn
+            </h4>
+        </div>
+    </div>
+</div>
+@if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+{
+    <div class="list-group">
+        <div class="list-group-item">
+            <div class="btn-group">
+                <a href="@Url.Action("EditResponsibilities", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
+                    <i class="bi-people"></i> Modulverantwortungen
+                </a>
+
+                <a href="@Url.Action("EditGeneral", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-primary">
+                    <i class="bi-gear"></i> Allgemeine Angaben
+                </a>
+
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
+                    <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                        <i class="bi-person-video"></i> Lehr- und Lernformen
+                    </a>
+                    <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
+                        <i class="bi-exclamation-diamond"></i> Prüfungsformen
+                    </a>
+
+                    if (!Model.Accreditations.Any())
+                    {
+                        <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
+                            <i class="bi-trash"></i> Modul endgültig löschen
                         </a>
-
-                        <a href="@Url.Action("EditGeneral", "CurriculumModule",new {id = Model.Id})" class="btn btn-outline-primary">
-                            <i class="bi-gear"></i> Allgemeine Angaben
-                        </a>
-
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                    }
+                    else
+                    {
+                        if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
                         {
-                            <a href="@Url.Action("Subjects", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                <i class="bi-person-video"></i> Lehr- und Lernformen
+                            <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
+                                <i class="bi-x"></i> Modulbeschreibungen löschen
                             </a>
-                            <a href="@Url.Action("ExaminationForms", new { id = Model.Id })" class="btn btn-outline-primary" aria-current="true">
-                                <i class="bi-exclamation-diamond"></i> Prüfungsformen
-                            </a>
-
-                            if (!Model.Accreditations.Any())
-                            {
-                                <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                    <i class="bi-trash"></i> Modul endgültig löschen
-                                </a>
-                            }
-                            else
-                            {
-                                if (Model.Descriptions.Any() || Model.Accreditations.Any(x => x.ExaminationDescriptions.Any()))
-                                {
-                                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                        <i class="bi-x"></i> Modulbeschreibungen löschen
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
-                                        <i class="bi-x"></i> Modul aus allen Studiengängen entfernen
-                                    </a>
-                                }
-                            }
                         }
-                    </div>
-                </div>
-            </div>
-        }
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-4">
-                                <div>Zugehörigkeit zu Curriculum</div>
-                            </div>
-                            <div class="col-8">
-                                @foreach (var acc in Model.Accreditations)
-                                {
-                                    if (acc.Slot.CurriculumSection != null)
-                                    {
-                                        <div>
-                                            <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.CurriculumSection.Curriculum.Id})">
-                                                @acc.Slot.CurriculumSection.Curriculum.Name
-                                            </a>
-                                            |
-                                            @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
-                                        </div>
-                                    }
-                                    else if (acc.Slot.AreaOption != null)
-                                    {
-                                        <div>
-                                            <a href="@Url.Action("Details", "Curriculum", new {id = acc.Slot.AreaOption.Area.Curriculum.Id})">
-                                                @acc.Slot.AreaOption.Area.Curriculum.Name
-                                            </a> |
-                                            <a href="@Url.Action("Slot", "Curriculum", new {id = acc.Slot.Id})">
-                                                @acc.Slot.Tag
-                                            </a> |
-                                            <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="alert alert-warning">Modul ohne Zuordnung</div>
-                                    }
-
-                                }
-                            </div>
-                        </div>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                        else
                         {
-                            <div class="row">
-                                <div class="col-4">
-                                    <div>Katalogverantwortung</div>
-                                </div>
-                                <div class="col-8">
-                                    @foreach (var mv in Model.Catalog.CatalogResponsibilities)
-                                    {
-                                        <div>@mv.Member.FullName</div>
-                                    }
-                                </div>
-                            </div>
+                            <a href="@Url.Action("Delete", "CurriculumModule", new { id = Model.Id })" class="btn btn-outline-danger" aria-current="true">
+                                <i class="bi-x"></i> Modul aus allen Studiengängen entfernen
+                            </a>
                         }
-                        <div class="row">
-                            <div class="col-4">
-                                <div>Modulverantwortung</div>
-                            </div>
-                            <div class="col-8">
-                                @foreach (var mv in Model.ModuleResponsibilities)
-                                {
-                                    <div>@mv.Member.FullName</div>
-                                }
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <div>Prüfungsformen</div>
-                            </div>
-                            <div class="col-8">
-                                @foreach (var option in Model.ExaminationOptions)
-                                {
-                                    <div>@option.FullName</div>
-                                }
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <div>Lehr- und Lernformen</div>
-                            </div>
-                            <div class="col-8">
-                                @foreach (var subject in Model.ModuleSubjects)
-                                {
-                                    if (subject.TeachingFormat != null)
-                                    {
-                                        <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
-                                    }
-                                    else
-                                    {
-                                        <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">N.N.</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
-                                    }
-                                }
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <div>Modulbeschreibungen</div>
-                            </div>
-                            <div class="col-8">
-                                @foreach (var s in ViewBag.SemesterList)
-                                {
-                                    var desc = Model.Descriptions
-                                        .Where(x =>
-                                            x.Semester.Id == s.Id &&
-                                            (x.ChangeLog != null))
-                                        .OrderByDescending(x => x.ChangeLog.Created)
-                                        .FirstOrDefault();
-
-
-                                    if (desc != null && desc.ChangeLog != null)
-                                    {
-                                        if (desc.ChangeLog.Approved != null)
-                                        {
-                                            <div>
-                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@desc.Semester.Name</a> <span>(verabschiedet @desc.ChangeLog.Approved.Value.ToShortDateString())</span>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>
-                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@desc.Semester.Name</a> <span class="text-danger">(vorläufig)</span>
-                                            </div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                                        {
-                                            <div>
-                                                <a href="@Url.Action("Semester", new {moduleId=Model.Id, semId = s.Id})">@s.Name</a> <span>(nicht verfügbar)</span>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div>@s.Name (nicht verfügbar)</div>
-                                        }
-                                    }
-                                }
-                                <div><a href="@Url.Action("History", new {id = Model.Id})"> Komplette Historie</a></div>
-                            </div>
-                        </div>
-
-                        </div>
-                        <div class="col-md-6">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div>Voraussetzungen für die Teilnahme</div>
-                                </div>
-                                <div class="col-8">
-                                    @Model.Prerequisites
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div>Verwendbarkeit</div>
-                                </div>
-                                <div class="col-8">
-                                    @Model.Applicableness
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                }
             </div>
         </div>
     </div>
+}
+<div class="card-body">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-4">
+                    <div>Zugehörigkeit zu Curriculum</div>
+                </div>
+                <div class="col-8">
+                    @foreach (var acc in Model.Accreditations)
+                    {
+                        if (acc.Slot.CurriculumSection != null)
+                        {
+                            <div>
+                                <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.CurriculumSection.Curriculum.Id })">
+                                    @acc.Slot.CurriculumSection.Curriculum.Name
+                                </a>
+                                |
+                                @acc.Slot.CurriculumSection.Name <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
+                            </div>
+                        }
+                        else if (acc.Slot.AreaOption != null)
+                        {
+                            <div>
+                                <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.AreaOption.Area.Curriculum.Id })">
+                                    @acc.Slot.AreaOption.Area.Curriculum.Name
+                                </a> |
+                                <a href="@Url.Action("Slot", "Curriculum", new { id = acc.Slot.Id })">
+                                    @acc.Slot.Tag
+                                </a> |
+                                <span class="badge bg-secondary">@acc.Slot.ECTS ECTS</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">Modul ohne Zuordnung</div>
+                        }
+
+                    }
+                </div>
+            </div>
+            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+            {
+                <div class="row">
+                    <div class="col-4">
+                        <div>Katalogverantwortung</div>
+                    </div>
+                    <div class="col-8">
+                        @foreach (var mv in Model.Catalog.CatalogResponsibilities)
+                        {
+                            <div>@mv.Member.FullName</div>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-4">
+                    <div>Modulverantwortung</div>
+                </div>
+                <div class="col-8">
+                    @foreach (var mv in Model.ModuleResponsibilities)
+                    {
+                        <div>@mv.Member.FullName</div>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div>Prüfungsformen</div>
+                </div>
+                <div class="col-8">
+                    @foreach (var option in Model.ExaminationOptions)
+                    {
+                        <div>@option.FullName</div>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div>Lehr- und Lernformen</div>
+                </div>
+                <div class="col-8">
+                    @foreach (var subject in Model.ModuleSubjects)
+                    {
+                        if (subject.TeachingFormat != null)
+                        {
+                            <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">@subject.TeachingFormat.Tag</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                        }
+                        else
+                        {
+                            <div>@subject.Name (@subject.Tag) <span class="badge bg-secondary">N.N.</span> <span class="badge bg-secondary">@subject.SWS SWS</span></div>
+                        }
+                    }
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div>Modulbeschreibungen</div>
+                </div>
+                <div class="col-8">
+                    @foreach (var s in ViewBag.SemesterList)
+                    {
+                        var desc = Model.Descriptions
+                            .Where(x =>
+                                x.Semester.Id == s.Id &&
+                                (x.ChangeLog != null))
+                            .OrderByDescending(x => x.ChangeLog.Created)
+                            .FirstOrDefault();
+
+
+                        if (desc != null && desc.ChangeLog != null)
+                        {
+                            if (desc.ChangeLog.Approved != null)
+                            {
+                                <div>
+                                    <a href="@Url.Action("Semester", new { moduleId = Model.Id, semId = s.Id })">@desc.Semester.Name</a> <span>(verabschiedet @desc.ChangeLog.Approved.Value.ToShortDateString())</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <a href="@Url.Action("Semester", new { moduleId = Model.Id, semId = s.Id })">@desc.Semester.Name</a> <span class="text-danger">(vorläufig)</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                            {
+                                <div>
+                                    <a href="@Url.Action("Semester", new { moduleId = Model.Id, semId = s.Id })">@s.Name</a> <span>(nicht verfügbar)</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>@s.Name (nicht verfügbar)</div>
+                            }
+                        }
+                    }
+                    <div><a href="@Url.Action("History", new { id = Model.Id })"> Komplette Historie</a></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-4">
+                    <div>Voraussetzungen für die Teilnahme</div>
+                </div>
+                <div class="col-8">
+                    @Model.Prerequisites
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div>Verwendbarkeit</div>
+                </div>
+                <div class="col-8">
+                    @Model.Applicableness
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
 </div>
 
 

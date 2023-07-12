@@ -36,6 +36,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(orgs);
         }
 
+
         public ActionResult Curricula()
         {
             return View();
@@ -43,6 +44,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Degree(Guid id)
         {
+            var degree = Db.Degrees.SingleOrDefault(x => x.Id == id);
             var model = Db.Curricula.Where(x => x.Degree != null && x.Degree.Id == id).ToList();
 
             if (Db.Degrees.Count() <= 2)
@@ -78,6 +80,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
+            ViewBag.Degree = degree;
 
             return View(model);
         }

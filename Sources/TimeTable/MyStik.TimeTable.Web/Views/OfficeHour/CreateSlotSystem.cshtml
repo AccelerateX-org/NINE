@@ -10,100 +10,90 @@
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css")" />
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Sprechstunde für @ViewBag.UserRight.User.UserName im @Model.Semester.Name anlegen</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-headphones"></i>
-                        <span class="caption-subject bold uppercase"> Einstellungen</span>
-                    </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Sprechstunde im Slot-System für @ViewBag.UserRight.User.UserName im @Model.Semester.Name anlegen</h4>
                 </div>
                 <div class="portlet-body">
-                    @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+                    @using (Html.BeginForm(null, null, FormMethod.Post, null))
                     {
                         <fieldset>
                             @Html.ValidationSummary()
                             @Html.HiddenFor(model => model.Type)
                             @Html.HiddenFor(model => model.Semester.Id)
                             @Html.HiddenFor(model => model.Member.Id)
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Bezeichnung</label>
+                            <div class="row mb-1">
+                                <label class="col-sm-4 form-label">Bezeichnung</label>
                                 <div class="col-sm-6">
                                     @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Wochentag</label>
+                            <div class="row mb-1">
+                                <label class="col-sm-4 form-label">Wochentag</label>
                                 <div class="col-sm-6">
                                     @Html.DropDownListFor(model => model.DayOfWeek, (IEnumerable<SelectListItem>)ViewBag.WeekDays, new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Beginn</label>
+                            <div class="row mb-1">
+                                <label class="col-sm-4 form-label">Beginn</label>
                                 <div class="col-sm-6">
                                     @Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker timepicker-24" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Ende</label>
+                            <div class="row mb-1">
+                                <label class="col-sm-4 form-label">Ende</label>
                                 <div class="col-sm-6">
                                     @Html.TextBoxFor(model => model.EndTime, new { @class = "form-control timepicker timepicker-24" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.NewDateEnd, new { @class = "col-sm-4 control-label" })
+                            <div class="row mb-1">
+                                @Html.LabelFor(model => model.NewDateBegin, new { @class = "col-sm-4 form-label" })
+                                <div class="col-sm-6">
+                                    @Html.TextBoxFor(model => model.NewDateBegin, new { @class = "form-control datepicker" })
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                @Html.LabelFor(model => model.NewDateEnd, new { @class = "col-sm-4 form-label" })
                                 <div class="col-sm-6">
                                     @Html.TextBoxFor(model => model.NewDateEnd, new { @class = "form-control datepicker" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.SlotDuration, new { @class = "col-sm-4 control-label" })
+                            <div class="row mb-1">
+                                @Html.LabelFor(model => model.SlotDuration, new { @class = "col-sm-4 form-label" })
                                 <div class="col-sm-6">
                                     @Html.DropDownListFor(model => model.SlotDuration, (IEnumerable<SelectListItem>)ViewBag.SlotDurations, new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.SpareSlots, new { @class = "col-sm-4 control-label" })
+                            <div class="row mb-1">
+                                @Html.LabelFor(model => model.SpareSlots, new { @class = "col-sm-4 form-label" })
                                 <div class="col-sm-6">
                                     @Html.DropDownListFor(model => model.SpareSlots, (IEnumerable<SelectListItem>)ViewBag.SpareSlots, new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Eintragung für Studierende bis</label>
+                            <div class="row mb-1">
+                                <label class="col-sm-4 form-label">Eintragung für Studierende bis</label>
                                 <div class="col-sm-6">
                                     @Html.DropDownListFor(model => model.SubscriptionLimit, (IEnumerable<SelectListItem>)ViewBag.Limits, new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Anzahl zukünftig buchbarer Slots</label>
+                            <div class="row mb-1">
+                                <label class="col-sm-4 form-label">Anzahl zukünftig buchbarer Slots</label>
                                 <div class="col-sm-6">
                                     @Html.DropDownListFor(model => model.MaxFutureSlots, (IEnumerable<SelectListItem>)ViewBag.FutureSlotLimits, new { @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 control-label" })
+                            <div class="row mb-1">
+                                @Html.LabelFor(m => m.Description, new { @class = "col-sm-4 form-label" })
                                 <div class="col-sm-6">
                                     @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Zusatztext, wird auf der Terminliste angezeigt", rows = "10" })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-4 col-md-6">
-                                    <input type="submit" value="Sprechstunde für Semester @Model.Semester.Name anlegen" class="btn btn-primary" />
+                            <div class="row mb-1">
+                                <div class="offset-4 col-md-6">
+                                    <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Sprechstunde für Semester @Model.Semester.Name anlegen</button>
                                 </div>
                             </div>
                         </fieldset>

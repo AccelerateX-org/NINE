@@ -1501,6 +1501,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 MaxFutureSlots = 1,
                 Semester = semester,
                 Member = member,
+                NewDateBegin = semester.StartCourses.ToShortDateString(),
                 NewDateEnd = semester.EndCourses.ToShortDateString()
             };
 
@@ -1531,6 +1532,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var start = TimeSpan.Parse(model.StartTime);
             var end = TimeSpan.Parse(model.EndTime);
 
+            var firstDate = DateTime.Parse(model.NewDateBegin);
             var lastDate = DateTime.Parse(model.NewDateEnd);
 
             var ohService = new OfficeHourService(Db);
@@ -1553,6 +1555,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Text = model.Description,
                 SlotsPerDate = 1,
                 FutureSlots = model.MaxFutureSlots,
+                FirstDate = firstDate,
                 LastDate = lastDate
             };
 

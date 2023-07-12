@@ -387,6 +387,12 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
+        [Display(Name = "Erstes Datum")]
+        public string NewDateBegin { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [Display(Name = "Letztes Datum")]
         public string NewDateEnd { get; set; }
 

@@ -710,6 +710,35 @@ namespace MyStik.TimeTable.Web.Controllers
                     Db.VirtualRooms.Remove(virtualRoom);
                 }
 
+                foreach (var moduleResponsibility in member.ModuleResponsibilities.ToList())
+                {
+                    Db.ModuleResponsibilities.Remove(moduleResponsibility);
+                }
+
+                foreach (var catalogResponsibility in member.CatalogResponsibilities.ToList())
+                {
+                    Db.CatalogResponsibilities.Remove(catalogResponsibility);
+                }
+
+                foreach (var committeeMember in member.CommitteeMembershios.ToList())
+                {
+                    Db.CommitteeMember.Remove(committeeMember);
+                }
+
+
+                var exams = Db.ExaminationDescriptions.Where(x => x.FirstExminer.Id == member.Id).ToList();
+                foreach (var exam in exams)
+                {
+                    exam.FirstExminer = null;
+                }
+
+                exams = Db.ExaminationDescriptions.Where(x => x.SecondExaminer.Id == member.Id).ToList();
+                foreach (var exam in exams)
+                {
+                    exam.SecondExaminer = null;
+                }
+
+
                 var org = member.Organiser;
 
                 org.Members.Remove(member);
@@ -1276,6 +1305,24 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_MemberRow", list);
         }
 
+        [HttpPost]
+        public PartialViewResult AddOrgAdminRight(string orgAdminName)
+        {
+            var org = GetMyOrganisation();
+            var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(orgAdminName));
+
+            if (member != null && !member.IsAdmin)
+            {
+                member.IsAdmin = true;
+                Db.SaveChanges();
+            }
+
+            var list = org.Members.Where(x => x.IsAdmin).ToList();
+            ViewBag.AdminRight = "Org";
+
+            return PartialView("_MemberRow", list);
+        }
+
 
         /// <summary>
         /// 
@@ -1291,6 +1338,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (member != null)
             {
+                if (right.Equals("Org") && member.IsAdmin)
+                {
+                    member.IsAdmin = false;
+                }
                 if (right.Equals("Course") && member.IsCourseAdmin)
                 {
                     member.IsCourseAdmin = false;

@@ -1,0 +1,56 @@
+﻿@model MyStik.TimeTable.Web.Models.CurriculumAreaCreateModel
+@{
+    ViewBag.Title = "Slot";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Slot anlegen</h4>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.OptionId)
+                    <div class="row">
+                        <label for="Tag" class="col-sm-2 col-form-label">Tag (muss innerhalb der Organisation eindeutig sein)</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Tag, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Name" class="col-sm-2 col-form-label">Bezeichnung</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Description" class="col-sm-2 col-form-label">Beschreibung</label>
+                        <div class="col-sm-10">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Name" class="col-sm-2 col-form-label">Fachsemester</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Semester, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label for="Name" class="col-sm-2 col-form-label">ECTS</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Ects, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> Speichern</button>
+                            <a href="@Url.Action("Option",  new{id=Model.OptionId})" class="btn btn-outline-secondary">Abbrechen</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

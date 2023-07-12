@@ -793,4 +793,11 @@ namespace MyStik.TimeTable.Web.Models
 
         public OccurrenceSubscription Subscription { get; set; }
     }
+
+    public class LotterySemesterSummaryModel
+    {
+        public Semester Semester { get; set; }
+
+        public List<Lottery> Lottery { get; set; }
+    }
 }

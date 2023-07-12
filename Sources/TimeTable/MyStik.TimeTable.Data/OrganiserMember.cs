@@ -128,6 +128,9 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<VirtualRoom> VirtualRooms { get; set; }
 
+        public virtual ICollection<CatalogResponsibility> CatalogResponsibilities { get; set; }
+
+        public virtual ICollection<CommitteeMember> CommitteeMembershios { get; set; }
 
         public string FullName
         {

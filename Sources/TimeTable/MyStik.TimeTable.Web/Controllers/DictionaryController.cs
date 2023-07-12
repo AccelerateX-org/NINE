@@ -12,9 +12,10 @@ namespace MyStik.TimeTable.Web.Controllers
 {
     public class DictionaryController : BaseController
     {
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
+            var org = id.HasValue ? GetOrganiser(id.Value) : GetMyOrganisation();
 
             var model = new HomeViewModel();
 
@@ -34,7 +35,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveSemester.Add(semModel);
             }
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

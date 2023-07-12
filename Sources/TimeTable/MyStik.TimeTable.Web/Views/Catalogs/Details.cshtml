@@ -26,9 +26,17 @@
 
 <div class="row">
     <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.Organiser.Id})">Modulkataloge</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Tag</li>
+            </ol>
+        </nav>
+
         <div class="card">
             <div class="card-header">
-                <h4>Modulkatalog @Model.Name</h4>
+                <h4>@Model.Name</h4>
                 <div class="row">
                     <div class="col-4">Katalogverantwortliche</div>
                     <div class="col-8">
@@ -39,24 +47,21 @@
                     </div>
                 </div>
             </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a href="@Url.Action("Index", "Catalogs", new {id = Model.Organiser.Id} )" class="btn btn-outline-primary">
-                            <i class="bi-chevron-compact-left"></i> Zurück
-                        </a>
-                            @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
-                            {
-                                <a href="@Url.Action("EditGeneral", new {id=Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-gear"></i> Allgemeine Angaben
-                                </a>
-                                <a href="@Url.Action("EditResponsibilities", new {id=Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-people"></i> Katalogverantwortliche
-                                </a>
-                                <a href="@Url.Action("MoveModules", new {id=Model.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-list-check"></i> Zusammensetzung
-                                </a>
-                            }
+                        @if (ViewBag.UserRight.IsCurriculumAdmin || itsMe)
+                        {
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="btn-group">
+
+                            <a href="@Url.Action("EditGeneral", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-gear"></i> Allgemeine Angaben
+                            </a>
+                            <a href="@Url.Action("EditResponsibilities", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-people"></i> Katalogverantwortliche
+                            </a>
+                            <a href="@Url.Action("MoveModules", new { id = Model.Id })" class="btn btn-outline-primary">
+                                <i class="bi-list-check"></i> Zusammensetzung
+                            </a>
                             @if (ViewBag.UserRight.IsCurriculumAdmin)
                             {
                                 <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
@@ -75,9 +80,10 @@
                                     </a>
                                 }
                             }
+                                </div>
+                            </div>
                         </div>
-                </div>
-            </div>
+                        }
             <table id="tabCatalogs" class="table">
                 <thead>
                     <tr>
@@ -88,39 +94,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                        @foreach (var module in Model.Modules)
-                        {
+                    @foreach (var module in Model.Modules)
+                    {
 
-                            var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
+                        var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
 
-                            <tr>
-                                <td>@module.Tag</td>
+                        <tr>
+                            <td>@module.Tag</td>
+                            <td>
+                                <a href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })">
+                                    @moduleName
+                                </a>
+                            </td>
+                            @if (module.ModuleResponsibilities.Any())
+                            {
                                 <td>
-                                    <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})">
-                                        @moduleName
-                                    </a>
-                                </td>
-                                @if (module.ModuleResponsibilities.Any())
-                                {
-                                    <td>
-                                        @foreach (var mv in module.ModuleResponsibilities)
-                                        {
-                                            <div>@mv.Member.FullName</div>
-                                        }
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>vakant</td>
-                                }
-                                <td>
-                                    @foreach (var subject in module.ModuleSubjects)
+                                    @foreach (var mv in module.ModuleResponsibilities)
                                     {
-                                        <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
+                                        <div>@mv.Member.FullName</div>
                                     }
                                 </td>
-                            </tr>
-                        }
+                            }
+                            else
+                            {
+                                <td>vakant</td>
+                            }
+                            <td>
+                                @foreach (var subject in module.ModuleSubjects)
+                                {
+                                    <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
+                                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

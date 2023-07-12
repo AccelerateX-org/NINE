@@ -109,7 +109,7 @@ namespace MyStik.TimeTable.Web.Services
             if (request.CreateDates)
             {
                 var semesterService = new SemesterService();
-                var dates = semesterService.GetDays(request.SemesterId, request.DayOfWeek, semester.StartCourses, request.LastDate);
+                var dates = semesterService.GetDays(request.SemesterId, request.DayOfWeek, request.FirstDate, request.LastDate);
 
                 foreach (var dateTime in dates)
                 {

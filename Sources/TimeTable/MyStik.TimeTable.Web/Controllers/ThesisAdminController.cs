@@ -18,33 +18,27 @@ namespace MyStik.TimeTable.Web.Controllers
         /// Der Status meiner Abschlussarbeit
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
-            // der aktuelle Benutzer
-            var org = GetMyOrganisation();
-            var userRight = GetUserRight(org);
-
-            if (!userRight.IsExamAdmin)
+            if (id.HasValue)
             {
-                return View("_NoAccess");
+                var org = GetOrganiser(id.Value);
+                var userRight = GetUserRight(org);
+
+                ViewBag.UserRight = userRight;
+
+                return View(org);
             }
+            else
+            {
+                // der aktuelle Benutzer
+                var org = GetMyOrganisation();
+                var userRight = GetUserRight(org);
 
-            ViewBag.UserRight = userRight;
-            ViewBag.Organiser = org;
+                ViewBag.UserRight = userRight;
 
-
-            var theses = Db.Theses.Where(x =>
-                    x.Student.Curriculum.Organiser.Id == org.Id && // Student zur Fakultät gehörend
-                    (x.IssueDate != null && x.ProlongRequestDate != null && x.RenewalDate == null) && // angemeldet, Verlängerung angefragt, aber noch kein Datum gesetzt
-                    x.DeliveryDate == null && // noch nich abgegeben
-                    x.IsCleared == null // noch nicht archiviert
-            ).ToList();
-
-            ViewBag.RequestCount = theses.Count;
-
-
-
-            return View("Index");
+                return View(org);
+            }
         }
 
 

@@ -16,7 +16,7 @@
             <tr id="@rowId">
                 <td>@member.ShortName</td>
                 <td>@member.Name</td>
-                <td>@Ajax.ActionButton("fa-trash-o", "Löschen", "DeleteAdminRight", null,
+                <td>@Ajax.ActionButton("bi-trash", "Löschen", "DeleteAdminRight", null,
                         new { id = member.Id, right = ViewBag.AdminRight },
                         new AjaxOptions
                         {
@@ -24,7 +24,7 @@
                             InsertionMode = InsertionMode.Replace,
                             UpdateTargetId = rowId
                         },
-                        new {@class="btn btn-default btn-xs"})
+                        new {@class="btn btn-outline-danger"})
                 </td>
             </tr>
         }

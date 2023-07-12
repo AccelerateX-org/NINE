@@ -9,27 +9,16 @@
 }
 
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-lecturer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Personen</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> Personen
-                    </div>
-                    <div class="actions">
-
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="bi-people"></i> Lehrende / Personen
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
                         @using (Ajax.BeginForm("AddMemberAdminRight", null, null,
                             new AjaxOptions
                             {
@@ -37,64 +26,73 @@
                                 InsertionMode = InsertionMode.Replace,
                                 UpdateTargetId = "tabMemberAdmin"
                             },
-                            new {@class = "form form-inline", role = "form"}))
+                            new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
-                            <div class="form-group">
-                                <label for="memberAdminName">Suche nach:</label>
-                                <input type="text" name="memberAdminName" id="memberAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="memberAdminName" id="memberAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                    <label for="memberAdminName">Kurzname Lehrende:r</label>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                            </div>
                         }
-
-
                     </div>
                 </div>
-                <div id="tabMemberAdmin" class="portlet-body">
+                <div id="tabMemberAdmin" class="card-body">
                     @{ ViewBag.AdminRight = "Member"; }
                     @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsMemberAdmin).ToList())
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-music"></i> Lehrveranstaltungen
-                    </div>
-                    <div class="actions">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="bi-activity"></i> Lehrveranstaltungen
+                    </h4>
+                    <div class="list-group">
+                        <div class="list-group-item">
 
-                        @using (Ajax.BeginForm("AddCourseAdminRight", null, null,
-                            new AjaxOptions
+                            @using (Ajax.BeginForm("AddCourseAdminRight", null, null,
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "Post",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "tabCourseAdmin"
+                                },
+                                new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                             {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "tabCourseAdmin"
-                            },
-                            new {@class = "form form-inline", role = "form"}))
-                        {
-                            <div class="form-group">
-                                <label for="courseAdminName">Suche nach:</label>
-                                <input type="text" name="courseAdminName" id="courseAdminName" placeholder="Kurzname eingeben" class="form-control"/>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
-                        }
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" name="courseAdminName" id="courseAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                        <label for="courseAdminName">Kurzname Lehrende:r</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                                </div>
 
-
+                            }
+                        </div>
                     </div>
-                </div>
-                <div id="tabCourseAdmin" class="portlet-body">
-                    @{ ViewBag.AdminRight = "Course"; }
-                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsCourseAdmin).ToList())
+                    <div id="tabCourseAdmin" class="card-body">
+                        @{ ViewBag.AdminRight = "Course"; }
+                        @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsCourseAdmin).ToList())
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-book"></i> Studiengänge
-                    </div>
-                    <div class="actions">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="bi-book"></i> Studiengänge
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
 
                         @using (Ajax.BeginForm("AddCurriculumAdminRight", null, null,
                             new AjaxOptions
@@ -103,31 +101,37 @@
                                 InsertionMode = InsertionMode.Replace,
                                 UpdateTargetId = "tabCurriculumAdmin"
                             },
-                            new {@class = "form form-inline", role = "form"}))
+                            new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
-                            <div class="form-group">
-                                <label for="curriculumAdminName">Suche nach:</label>
-                                <input type="text" name="curriculumAdminName" id="curriculumAdminName" placeholder="Kurzname eingeben" class="form-control"/>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="curriculumAdminName" id="curriculumAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                    <label for="curriculumAdminName">Kurzname Lehrende:r</label>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                            </div>
                         }
-
-
                     </div>
                 </div>
-                <div id="tabCurriculumAdmin" class="portlet-body">
+                <div id="tabCurriculumAdmin" class="card-body">
                     @{ ViewBag.AdminRight = "Curriculum"; }
                     @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsCurriculumAdmin).ToList())
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-university"></i> Räume
-                    </div>
-                    <div class="actions">
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="bi-building"></i> Räume
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
 
                         @using (Ajax.BeginForm("AddRoomAdminRight", null, null,
                             new AjaxOptions
@@ -136,67 +140,71 @@
                                 InsertionMode = InsertionMode.Replace,
                                 UpdateTargetId = "tabRoomAdmin"
                             },
-                            new { @class = "form form-inline", role = "form" }))
+                            new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
-                            <div class="form-group">
-                                <label for="roomAdminName">Suche nach:</label>
-                                <input type="text" name="roomAdminName" id="roomAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="roomAdminName" id="roomAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                    <label for="roomAdminName">Kurzname Lehrende:r</label>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                            </div>
                         }
-
-
                     </div>
                 </div>
-                <div id="tabRoomAdmin" class="portlet-body">
+                <div id="tabRoomAdmin" class="card-body">
                     @{ ViewBag.AdminRight = "Room"; }
                     @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsRoomAdmin).ToList())
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-globe"></i> Veranstaltungen
-                    </div>
-                    <div class="actions">
-
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="bi-egg"></i> Veranstaltungen
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
                         @using (Ajax.BeginForm("AddEventAdminRight", null, null,
-                new AjaxOptions
-                {
-                    HttpMethod = "Post",
-                    InsertionMode = InsertionMode.Replace,
-                    UpdateTargetId = "tabEventAdmin"
-                },
-                new { @class = "form form-inline", role = "form" }))
+                            new AjaxOptions
+                            {
+                                HttpMethod = "Post",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "tabEventAdmin"
+                            },
+                            new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
-                            <div class="form-group">
-                                <label for="eventAdminName">Suche nach:</label>
-                                <input type="text" name="eventAdminName" id="eventAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="eventAdminName" id="eventAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                    <label for="eventAdminName">Kurzname Lehrende:r</label>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                            </div>
                         }
-
-
                     </div>
                 </div>
-                <div id="tabEventAdmin" class="portlet-body">
+                <div id="tabEventAdmin" class="card-body">
                     @{ ViewBag.AdminRight = "Event"; }
                     @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsEventAdmin).ToList())
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-envelope-o"></i> Newsletter
-                    </div>
-                    <div class="actions">
-
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="bi-envelope"></i> Newsletter
+                    </h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
                         @using (Ajax.BeginForm("AddNewsletterAdminRight", null, null,
                             new AjaxOptions
                             {
@@ -204,95 +212,138 @@
                                 InsertionMode = InsertionMode.Replace,
                                 UpdateTargetId = "tabNewsletterAdmin"
                             },
-                            new { @class = "form form-inline", role = "form" }))
+                            new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
-                            <div class="form-group">
-                                <label for="newsletterAdminName">Suche nach:</label>
-                                <input type="text" name="newsletterAdminName" id="newsletterAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" name="newsletterAdminName" id="newsletterAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                    <label for="newsletterAdminName">Kurzname Lehrende:r</label>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                            </div>
                         }
-
-
                     </div>
                 </div>
-                <div id="tabNewsletterAdmin" class="portlet-body">
+                <div id="tabNewsletterAdmin" class="card-body">
                     @{ ViewBag.AdminRight = "Newsletter"; }
                     @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsNewsAdmin).ToList())
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-users"></i> Studierende
-                    </div>
-                    <div class="actions">
+    </div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <i class="bi-chat"></i> Studierende
+                </h4>
+            </div>
 
-                        @using (Ajax.BeginForm("AddStudentAdminRight", null, null,
-                            new AjaxOptions
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "tabStudentAdmin"
-                            },
-                            new { @class = "form form-inline", role = "form" }))
+            <div class="list-group">
+                <div class="list-group-item">
+                    @using (Ajax.BeginForm("AddStudentAdminRight", null, null,
+                        new AjaxOptions
                         {
-                            <div class="form-group">
-                                <label for="roomAdminName">Suche nach:</label>
-                                <input type="text" name="studentAdminName" id="studentAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "tabStudentAdmin"
+                        },
+                        new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
+                    {
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="roomAdminName" id="roomAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                <label for="roomAdminName">Kurzname Lehrende:r</label>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
-                        }
-
-
-                    </div>
-                </div>
-                <div id="tabStudentAdmin" class="portlet-body">
-                    @{ ViewBag.AdminRight = "Student"; }
-                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsStudentAdmin).ToList())
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                        </div>
+                    }
                 </div>
             </div>
+            <div id="tabStudentAdmin" class="card-body">
+                @{ ViewBag.AdminRight = "Student"; }
+                @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsStudentAdmin).ToList())
+            </div>
         </div>
-        <div class="col-lg-3">
-            <div class="portlet light bordered">
-                <div class="portlet-title">
-                    <div class="caption">
-                        <i class="fa fa-users"></i> Prüfungen
-                    </div>
-                    <div class="actions">
-
-                        @using (Ajax.BeginForm("AddExamAdminRight", null, null,
-                            new AjaxOptions
-                            {
-                                HttpMethod = "Post",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "tabExamAdmin"
-                            },
-                            new { @class = "form form-inline", role = "form" }))
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <i class="bi-exclamation-diamond"></i> Prüfungen
+                </h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    @using (Ajax.BeginForm("AddExamAdminRight", null, null,
+                        new AjaxOptions
                         {
-                            <div class="form-group">
-                                <label for="roomAdminName">Suche nach:</label>
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "tabExamAdmin"
+                        },
+                        new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
+                    {
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
                                 <input type="text" name="examAdminName" id="examAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                <label for="examAdminName">Kurzname Lehrende:r</label>
                             </div>
-                            <button type="submit" class="btn btn-primary">Hinzufügen</button>
-                        }
-
-
-                    </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                        </div>
+                    }
                 </div>
-                <div id="tabExamAdmin" class="portlet-body">
-                    @{ ViewBag.AdminRight = "Exam"; }
-                    @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsExamAdmin).ToList())
+            </div>
+            <div id="tabExamAdmin" class="card-body">
+                @{ ViewBag.AdminRight = "Exam"; }
+                @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsExamAdmin).ToList())
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <i class="bi-boombox"></i> Administratoren
+                </h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    @using (Ajax.BeginForm("AddOrgAdminRight", null, null,
+                        new AjaxOptions
+                        {
+                            HttpMethod = "Post",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "tabOrgAdmin"
+                        },
+                        new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
+                    {
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="orgAdminName" id="orgAdminName" placeholder="Kurzname eingeben" class="form-control" />
+                                <label for="orgAdminName">Kurzname Lehrende:r</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-outline-primary">Hinzufügen</button>
+                        </div>
+                    }
                 </div>
+            </div>
+            <div id="tabOrgAdmin" class="card-body">
+                @{ ViewBag.AdminRight = "Org"; }
+                @Html.Partial("_MemberRow", Model.Members.Where(x => x.IsAdmin).ToList())
             </div>
         </div>
     </div>
 </div>
-
-
-
 
 
 
@@ -506,6 +557,35 @@
         });
 
         $('#examAdminName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("MemberList2")',
+                    type: 'POST',
+                    //dataType: "json",
+
+                    data: {
+                        token: request.term
+                    },
+
+                    success: function (data, success, xhr) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.shortName,
+                                value: item.shortName
+                            };
+                        }));
+
+                    },
+
+                    error: function (data) { alert(data); },
+                });
+
+            },
+            select: function (event, ui) { }
+        });
+
+        $('#orgAdminName').autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: '@Url.Action("MemberList2")',

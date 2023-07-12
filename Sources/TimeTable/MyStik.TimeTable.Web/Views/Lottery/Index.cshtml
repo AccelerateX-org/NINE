@@ -1,254 +1,55 @@
 ﻿@using MyStik.TimeTable.Web.Models
-@model ICollection<LotterySummaryModel>
+@model ICollection <LotterySemesterSummaryModel>
 @{
     ViewBag.Title = "Wahlverfahren";
     var i = 0;
 }
 
 
-@section styles
-{
-    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
-}
-
 
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h4>
-                    @if (ViewBag.PreviousSemester != null)
-                    {
-                            <a href="@Url.Action("Index", new {id=ViewBag.PreviousSemester.Id})" class="btn btn-outline-secondary">
-                                <i class="fas fa-chevron-left"></i> @ViewBag.PreviousSemester.Name
-                            </a>
-                    }
-                    Wahlverfahren für @ViewBag.Organiser.ShortName im @ViewBag.Semester.Name
-                    @if (ViewBag.NextSemester != null)
-                    {
-                            <a href="@Url.Action("Index", new {id=ViewBag.NextSemester.Id})" class="btn btn-outline-secondary">
-                                <i class="fas fa-chevron-right"></i> @ViewBag.NextSemester.Name
-                            </a>
-                    }
-                </h4>
-            </div>
-            @if (ViewBag.UserRight.IsOrgMember)
-            {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = ViewBag.Organiser.Id})">@ViewBag.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Wahlverfahren</li>
+            </ol>
+        </nav>
 
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <div class="btn-group">
-                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary">
-                                <i class="fa fa-arrow-left"></i> zurück
-                            </a>
-                            @if (ViewBag.UserRight.IsCourseAdmin)
+        @foreach (var s in Model)
+        {
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>
+                                @s.Semester.Name
+                            </h4>
+                            @if (ViewBag.UserRight.IsOrgMember)
                             {
-                                <div class="form-group">
-                                    <a href="@Url.Action("Create", new {id = ViewBag.Semester.Id})" class="btn btn-outline-primary">
-                                        <i class="bi-folder-plus-circle"></i> Wahlverfahren anlegen
-                                    </a>
-                                </div>
-                                <div class="form-group">
-                                    <a href="@Url.Action("StatisticsOverall", new {id = ViewBag.Semester.Id})" class="btn btn-outline-primary">
-                                        <i class="fas fa-bar-chart"></i> Gesamtstatistik
-                                    </a>
-                                </div>
-                                if (Request.IsLocal)
+                                <a class="btn btn-outline-primary" href="@Url.Action("Index", new { id = s.Semester.Id })"><i class="bi-gear"></i> Verwaltung</a>
+                            }
+                        </div>
+                        <div class="list-group">
+                            @foreach (var l in s.Lottery)
+                            {
+                                if (l.IsActive)
                                 {
-                                    <div class="form-group">
-                                        <a href="@Url.Action("Check", new {id = ViewBag.Semester.Id})" class="btn btn-outline-primary">
-                                            <i class="fas fa-trash"></i> Konsitenzcheck (Local)
-                                        </a>
-                                    </div>
-                                    <div class="form-group">
-                                        <a href="@Url.Action("DeleteAll", new {id = ViewBag.Semester.Id})" class="btn btn-outline-danger">
-                                            <i class="fas fa-trash"></i> Alle löschen (Local)
-                                        </a>
-                                    </div>
+                                    <a class="list-group-item list-group-item-action" href="@Url.Action("Details", new { id = l.Id })">
+                                        <strong>@l.Name</strong>
+                                        <small>@l.IsActiveFrom.Value.ToShortDateString() - @l.IsActiveUntil.Value.ToShortDateString()</small>
+                                    </a>
                                 }
                             }
                         </div>
                     </div>
                 </div>
-            }
-            <div class="card-body">
-                <div class="alert alert-info">
-                    <h5>Legende / Symbole</h5>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-book"></i>Anzahl der Lehrveranstaltungen</li>
-                                <li><i class="fa-li fa fa-bed"></i>Anzahl der Plätze insgesamt (Kapazität)</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-user"></i>Anzahl der Studierenden mit Eintragungen</li>
-                                <li><i class="fa-li fa fa-edit"></i>Anzahl der Eintragungen insgesamt</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-users"></i>Anzahl Eintragungen mit Status Teilnehmer</li>
-                                <li><i class="fa-li fa fa-hourglass-half"></i>Anzahl Eintragungen mit Status Wartelisten</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3">
-                            <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-percent"></i>Buchungsstatus</li>
-                                <li><i class="fa-li fa fa-ban text-danger"></i>wird nicht angezeigt</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
-
-            <table class="table" id="tabLotteries">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th>Name</th>
-                        <th style="text-align: right"><i class="fa fa-book"></i></th>
-                        <th style="text-align: right"><i class="fa fa-bed"></i></th>
-                        <th style="text-align: right"><i class="fa fa-user"></i></th>
-                        <th style="text-align: right"><i class="fa fa-edit"></i></th>
-                        <th style="text-align: right"><i class="fa fa-users"></i></th>
-                        <th style="text-align: right"><i class="fa fa-hourglass-half"></i></th>
-                        <th style="text-align: right"><i class="fa fa-percent"></i></th>
-                        <th>Eintragung ab</th>
-                        <th>Eintragung bis</th>
-                        <th>Verlosung ab</th>
-                        <th>Verlosung bis</th>
-                        <th>Platzvergabe</th>
-                        <th>Ansprechpartner</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var lottery in Model.OrderBy(x => x.Lottery.FirstDrawing).ThenBy(x => x.Lottery.DrawingTime))
-                    {
-                        i++;
-                        var nConfirmed = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => !s.OnWaitingList));
-                        var nWaiting = lottery.Lottery.Occurrences.Sum(x => x.Subscriptions.Count(s => s.OnWaitingList));
-                        var perc = nConfirmed / (double)lottery.Capacity;
-
-                        var lotteryName = string.IsNullOrEmpty(lottery.Lottery.Name) ? "(keine Bezeichnung)" : lottery.Lottery.Name;
-
-                        var rowColor = "";
-                        if (nConfirmed >= lottery.Capacity)
-                        {
-                            rowColor = "danger";
-                        }
-                        else if (nConfirmed > 0.8 * lottery.Capacity && nConfirmed < lottery.Capacity)
-                        {
-                            rowColor = "warning";
-                        }
-
-                        <tr class="@rowColor">
-                            @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
-                            {
-                                <td></td>
-                                if (lottery.Lottery.IsActive)
-                                {
-                                    <td></td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-ban text-danger"></i></td>
-                                }
-                                <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lotteryName</a></td>
-                            }
-                            else
-                            {
-                                var hasSubscription = lottery.Lottery.Occurrences.Any(x => x.Subscriptions.Any(y => y.UserId.Equals(ViewBag.UserRight.User.Id)));
-                                if (hasSubscription)
-                                {
-                                    <td><i class="fa fa-pencil"></i></td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
-                                if (lottery.Lottery.IsActive)
-                                {
-                                    <td><i class="fa fa-unlock"></i></td>
-                                    <td><a href="@Url.Action("Details", new {id = lottery.Lottery.Id})">@lottery.Lottery.Name</a></td>
-                                }
-                                else
-                                {
-                                    <td><i class="fa fa-lock"></i></td>
-                                    <td>@lottery.Lottery.Name</td>
-                                }
-                            }
-                            <td style="text-align: right">@lottery.Lottery.Occurrences.Count</td>
-                            <td style="text-align: right">@lottery.Capacity</td>
-                            <td style="text-align: right">@lottery.TotalSubscriberCount</td>
-                            <td style="text-align: right">@lottery.TotalSubscriptionCount</td>
-                            <td style="text-align: right">@nConfirmed</td>
-                            <td style="text-align: right">@nWaiting</td>
-                            <td style="text-align: right">@perc.ToString("P")</td>
-
-                            @if (lottery.Lottery.IsActiveFrom.HasValue)
-                            {
-                                <td>@lottery.Lottery.IsActiveFrom.Value.ToShortDateString()</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                            @if (!lottery.Lottery.IsFixed)
-                            {
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Windhundverfahren</td>
-                            }
-                            else
-                            {
-                                <td>@lottery.Lottery.IsActiveUntil.Value.ToShortDateString()</td>
-                                <td>@lottery.Lottery.FirstDrawing.ToShortDateString()</td>
-                                <td>@lottery.Lottery.LastDrawing.ToShortDateString()</td>
-                                <td>Platzverlosung</td>
-                            }
-                            <td>@lottery.Lottery.Owner.FullName</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-        </div>
+        }
     </div>
 </div>
 
 
 
-@section scripts
-{
-    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
-    <script>
-        $(document).ready(function () {
-            var t = $('#tabLotteries').DataTable({
-                "paging": false,
-                "columnDefs": [{
-                    "searchable": false,
-                    "orderable": false,
-                    "targets": 0
-                },
-                {
-                    "type": "de_date",
-                    "targets": [10, 11, 12, 13]
-                }],
-                "order": [[2, 'asc']]
-            });
-
-            t.on('order.dt search.dt', function () {
-                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-                    cell.innerHTML = i + 1;
-                });
-            }).draw();
-
-        });
-    </script>
-}

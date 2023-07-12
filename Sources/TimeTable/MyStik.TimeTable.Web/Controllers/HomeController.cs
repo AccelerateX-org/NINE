@@ -62,7 +62,15 @@ namespace MyStik.TimeTable.Web.Controllers
                             d.Hosts.Any(h =>
                                 !string.IsNullOrEmpty(h.UserId) && h.UserId.Equals(user.Id)) && d.Begin >= DateTime.Now));
 
-                    return RedirectToAction("Index", isLecturer ? "Teaching" : "Administration");
+                    if (isLecturer)
+                    {
+                        return RedirectToAction("Index", "Teaching");
+                    }
+                    else
+                    {
+                        //return RedirectToAction("Faculty", "University", new {id = members.First().Organiser.Id});
+                        return RedirectToAction("Index", "Administration");
+                    }
                 }
                 else
                 {

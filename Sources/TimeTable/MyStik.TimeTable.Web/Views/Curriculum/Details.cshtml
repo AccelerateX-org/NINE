@@ -34,218 +34,220 @@
 }
 
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-md-10">
-                        <h4 class="card-title">Studienangebot @Model.Curriculum.Name (@Model.Curriculum.ShortName | primuss-code: @Model.Curriculum.Tag)</h4>
-                        <h5 class="card-subtitle">
-                            <a href="@Url.Action("Index", "University")">HM</a>
-                            |
-                            <a href="@Url.Action("Faculty", "University", new {id = Model.Curriculum.Organiser.Id})">
-                                @Model.Curriculum.Organiser.Name (@Model.Curriculum.Organiser.ShortName)
-                            </a>
-                        </h5>
+<div class="col-12">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">HM</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Curriculum.Organiser.Id})">@Model.Curriculum.Organiser.ShortName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Curriculum.ShortName</li>
+    </ol>
+</nav>
 
+<div class="card">
+<div class="card-header">
+    <div class="row">
+        <div class="col-md-10">
+            <h4 class="card-title">Studienangebot @Model.Curriculum.Name (@Model.Curriculum.ShortName | primuss-code: @Model.Curriculum.Tag)</h4>
+        </div>
+        <div class="col-md-2">
+            @if (ViewBag.UserRight.IsCurriculumAdmin)
+            {
+                <div class="d-md-flex justify-content-md-end">
+                    <a href="@Url.Action("Admin", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                        <i class="bi-gear"></i> Verwaltung
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="card-body">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Allgemeine Informationen</h5>
+            @if (Model.Curriculum.Degree != null)
+            {
+                <div class="row">
+                    <div class="col-4">
+                        Abschluss
                     </div>
-                    <div class="col-md-2">
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                    <div class="col-8">
+                        @Model.Curriculum.Degree.Name (<a href="https://hm.edu" target="_blank">SPO</a>)
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-4">
+                    ECTS
+                </div>
+                <div class="col-8">
+                    @Model.Curriculum.EctsTarget
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    Prüfungskommission
+                </div>
+                <div class="col-8">
+                    @if (pkv != null)
+                    {
+                        @pkv.Member.FullName
+                    }
+                    else
+                    {
+                        <div>N.N.</div>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    @Model.NextSemester.Name
+                </div>
+                <div class="col-8">
+                    <div>
+                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
+                        <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
+                        <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
+                        @if (Model.Assessments.Any())
                         {
-                            <div class="d-md-flex justify-content-md-end">
-                                <a href="@Url.Action("Admin", new {id = Model.Curriculum.Id})" class="btn btn-outline-primary">
-                                    <i class="bi-gear"></i> Verwaltung
+                            <div>
+                                <a href="@Url.Action("Index", "Assessment")">
+                                    Auswahlverfahren
                                 </a>
                             </div>
                         }
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Allgemeine Informationen</h5>
-                        @if (Model.Curriculum.Degree != null)
+            <div class="row">
+                <div class="col-4">
+                    @Model.Semester.Name
+                </div>
+                <div class="col-8">
+                    <div>
+                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan</a> |
+                        <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Vorlesungsverzeichnis</a> |
+                        <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Prüfungsplan</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    @Model.PreviousSemester.Name
+                </div>
+                <div class="col-8">
+                    <div>
+                        <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Studienplan</a> |
+                        <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Vorlesungsverzeichnis</a> |
+                        <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Prüfungsplan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h5>Beschreibung</h5>
+            <div class="row">
+                <div class="col-12">
+                    @Model.Curriculum.Description
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+    <h5>Aufbau (<a href="@Url.Action("Areas", new { id = Model.Curriculum.Id })">Themenbereiche</a>)</h5>
+
+    @if (Model.Curriculum.Areas.Any())
+    {
+        var optionsSelected = new List<AreaOption>();
+
+        foreach (var area in Model.Areas)
+        {
+            optionsSelected.Add(area.Option);
+            <div class="row">
+                <div class="col-2">
+                    @area.Area.Name
+                </div>
+                <div class="col-10">
+                    <select class="form-select slot-option" id="@area.Area.Id" onchange="onFilterChanged()">
+                        @foreach (var option in area.Area.Options)
                         {
-                            <div class="row">
-                                <div class="col-4">
-                                    Abschluss
-                                </div>
-                                <div class="col-8">
-                                    @Model.Curriculum.Degree.Name (<a href="https://hm.edu" target="_blank">SPO</a>)
-                                </div>
-                            </div>
+                            if (option.Id == area.Option.Id)
+                            {
+                                <option selected value="@option.Id">@option.Tag</option>
+                            }
+                            else
+                            {
+                                <option value="@option.Id">@option.Tag</option>
+                            }
                         }
-                        <div class="row">
-                            <div class="col-4">
-                                ECTS
-                            </div>
-                            <div class="col-8">
-                                @Model.Curriculum.EctsTarget
-                            </div>
+                    </select>
+                </div>
+            </div>
+        }
+        <div id="ModulePlan" class="card-body">
+            @{
+                var allSlots = db.CurriculumSlots.Where(x =>
+                    x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
+
+                var minSem = allSlots.Min(x => x.Semester);
+                var maxSem = allSlots.Max(x => x.Semester);
+
+                var allOptions = db.AreaOptions.Where(x => x.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
+
+                for (var s = minSem; s <= maxSem; s++)
+                {
+                    var semSlots = allSlots.Where(x => x.Semester == s).ToList();
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h5>Semester @s</h5>
                         </div>
-                        <div class="row">
-                            <div class="col-4">
-                                Prüfungskommission
-                            </div>
-                            <div class="col-8">
-                                @if (pkv != null)
+                        <div class="col-md-10">
+                            @foreach (var slot in semSlots)
+                            {
+                                var showSlot = false;
+                                var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);
+
+                                if (inOptionArea == 0)
                                 {
-                                    @pkv.Member.FullName
+                                    showSlot = true;
                                 }
                                 else
                                 {
-                                    <div>N.N.</div>
-                                }
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                @Model.NextSemester.Name
-                            </div>
-                            <div class="col-8">
-                                <div>
-                                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Studienplan</a> |
-                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Vorlesungsverzeichnis</a> |
-                                    <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.NextSemester.Id })">Prüfungsplan</a>
-                                    @if (Model.Assessments.Any())
+                                    var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
+                                    if (inSelectedOption > 0)
                                     {
-                                        <div>
-                                            <a href="@Url.Action("Index", "Assessment")">
-                                                Auswahlverfahren
-                                            </a>
-                                        </div>
+                                        showSlot = true;
                                     }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                @Model.Semester.Name
-                            </div>
-                            <div class="col-8">
-                                <div>
-                                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Studienplan</a> |
-                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Vorlesungsverzeichnis</a> |
-                                    <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id })">Prüfungsplan</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                @Model.PreviousSemester.Name
-                            </div>
-                            <div class="col-8">
-                                <div>
-                                    <a href="@Url.Action("Details", "StudyPlan", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Studienplan</a> |
-                                    <a href="@Url.Action("Curriculum", "Dictionary", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Vorlesungsverzeichnis</a> |
-                                    <a href="@Url.Action("Details", "Exam", new { currId = Model.Curriculum.Id, semId = Model.PreviousSemester.Id })">Prüfungsplan</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h5>Beschreibung</h5>
-                        <div class="row">
-                            <div class="col-12">
-                                @Model.Curriculum.Description
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <hr />
-                @if (Model.Curriculum.Areas.Any())
-                {
-                    <h5>Aufbau (<a href="@Url.Action("Areas", new { id = Model.Curriculum.Id })">Themenbereiche</a>)</h5>
-                        var optionsSelected = new List<AreaOption>();
-
-                        foreach (var area in Model.Areas)
-                        {
-                            optionsSelected.Add(area.Option);
-                            <div class="row">
-                                <div class="col-2">
-                                    @area.Area.Name
-                                </div>
-                                <div class="col-10">
-                                    <select class="form-select slot-option" id="@area.Area.Id" onchange="onFilterChanged()">
-                                        @foreach (var option in area.Area.Options)
-                                        {
-                                            if (option.Id == area.Option.Id)
-                                            {
-                                                <option selected value="@option.Id">@option.Tag</option>
-                                            }
-                                            else
-                                            {
-                                                <option value="@option.Id">@option.Tag</option>
-                                            }
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                        <div id="ModulePlan" class="card-body">
-                            @{
-                                var allSlots = db.CurriculumSlots.Where(x =>
-                                    x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
-
-                                var minSem = allSlots.Min(x => x.Semester);
-                                var maxSem = allSlots.Max(x => x.Semester);
-
-                                var allOptions = db.AreaOptions.Where(x => x.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
-
-                                for (var s = minSem; s <= maxSem; s++)
-                                {
-                                    var semSlots = allSlots.Where(x => x.Semester == s).ToList();
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <h5>Semester @s</h5>
-                                        </div>
-                                        <div class="col-md-10">
-                                            @foreach (var slot in semSlots)
-                                            {
-                                                var showSlot = false;
-                                                var inOptionArea = Model.Areas.Count(x => x.Area.Id == slot.AreaOption.Area.Id);
-
-                                                if (inOptionArea == 0)
-                                                {
-                                                    showSlot = true;
-                                                }
-                                                else
-                                                {
-                                                    var inSelectedOption = optionsSelected.Count(x => x.Id == slot.AreaOption.Id);
-                                                    if (inSelectedOption > 0)
-                                                    {
-                                                        showSlot = true;
-                                                    }
-                                                }
-                                                if (showSlot)
-                                                {
-                                                    var w = (int)(slot.ECTS / 30 * 100);
-                                                    <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
-                                                        <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
-                                                        <br />
-                                                        @if (slot.AreaOption.Area.Options.Count() > 1)
-                                                        {
-                                                            <small>@slot.Name (@slot.AreaOption.Tag)</small>
-                                                        }
-                                                        else
-                                                        {
-                                                            <small>@slot.Name</small>
-                                                        }
-                                                    </a>
-                                                }
-
-                                            }
-                                        </div>
-                                    </div>
                                 }
+                                if (showSlot)
+                                {
+                                    var w = (int)(slot.ECTS / 30 * 100);
+                                    <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
+                                        <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
+                                        <br/>
+                                        @if (slot.AreaOption.Area.Options.Count() > 1)
+                                        {
+                                            <small>@slot.Name (@slot.AreaOption.Tag)</small>
+                                        }
+                                        else
+                                        {
+                                            <small>@slot.Name</small>
+                                        }
+                                    </a>
+                                }
+
                             }
                         </div>
+                    </div>
                 }
-             </div>
+            }
         </div>
-    </div>
+    }
+</div>
+</div>
+</div>
 </div>
 
 

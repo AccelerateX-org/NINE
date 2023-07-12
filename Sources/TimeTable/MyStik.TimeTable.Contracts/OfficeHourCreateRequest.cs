@@ -36,6 +36,7 @@ namespace MyStik.TimeTable.Contracts
 
         public int FutureSlots { get; set; }
 
+        public DateTime FirstDate { get; set; }
         public DateTime LastDate { get; set; }
     }
 }

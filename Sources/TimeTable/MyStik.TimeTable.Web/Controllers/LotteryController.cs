@@ -23,12 +23,50 @@ namespace MyStik.TimeTable.Web.Controllers
         private ILog logger = LogManager.GetLogger("Lottery");
 
 
+        public ActionResult Organiser(Guid id)
+        {
+            var user = GetCurrentUser();
+            var org = GetOrganisation(id);
+
+            // aktuelles Semester
+            var semester = SemesterService.GetSemester(DateTime.Today);
+            var nextSemester = SemesterService.GetNextSemester(semester);
+
+            var allLotteries = Db.Lotteries.Where(x =>
+                x.Semester != null && x.Semester.Id == semester.Id &&
+                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
+
+            var allNextLotteries = Db.Lotteries.Where(x =>
+                x.Semester != null && x.Semester.Id == nextSemester.Id &&
+                x.Organiser != null && x.Organiser.Id == org.Id).ToList();
+
+            var model = new List<LotterySemesterSummaryModel>();
+
+            model.Add(new LotterySemesterSummaryModel
+            {
+                Semester = nextSemester,
+                Lottery = allNextLotteries
+            });
+
+            model.Add(new LotterySemesterSummaryModel
+            {
+                Semester = semester,
+                Lottery = allLotteries
+            });
+
+
+            ViewBag.Organiser = org;
+            ViewBag.userRight = GetUserRight(org);
+
+            return View("Index", model);
+        }
+
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult Index(Guid? id)
+            /// 
+            /// </summary>
+            /// <param name="id"></param>
+            /// <returns></returns>
+            public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
             var org = GetMyOrganisation();
@@ -116,7 +154,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Add(lm);
             }
 
-            return View(model);
+            return View("IndexOld", model);
         }
 
         /// <summary>
