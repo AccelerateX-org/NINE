@@ -1,57 +1,151 @@
 ﻿
 @{
-    Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+    Layout = "~/Views/Shared/_LayoutDashboardSidebar.cshtml";
     ViewBag.Title = "Startseite";
 }
 
-
-<div class="row justify-content-md-center" style="margin-bottom: 20px; margin-top: 20px">
-    <div class="col-md-12">
-        <h4 class="text-center">Informationen für...</h4>
-    </div>
-</div>
-
-<div class="row justify-content-md-center" style="margin-bottom: 20px">
-    <div class="col-sm-6 col-md-4">
-        <div class="card border-secondary">
-            <div class="card-body">
-                <h5 class="card-title text-center">
-                    <i class="fas fa-2x fa-user-astronaut"></i><br />
-                    Studieninteressierte
-                </h5>
-                <a href="@Url.Action("Index", "Assessment")" class="btn btn-outline-primary btn-block">
-                    An Aufnahmeverfahren teilnehmen
-                </a>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Agenda</h5>
             </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-md-4">
-        <div class="card border-secondary">
-            <div class="card-body">
-                <h5 class="card-title text-center">
-                    <i class="fas fa-2x fa-user-graduate"></i><br />
-                    Studierende
-                </h5>
-                <a href="@Url.Action("Curricula", "Subscription")" class="btn btn-outline-primary btn-block">
-                    Studiengang festlegen
-                </a>
-                <div class="alert alert-info mt-3">
-                    <h5>Hinweis:</h5>
-                    <p>Um sich in Lehrveranstaltungen eintragen zu können, ist zuerst die Angabe eines Studiengangs erforderlich.</p>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="#"><</a>
+                    <div>Datepicker</div>
+                    <a href="#">></a>
                 </div>
             </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Tageskalender</a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Wochenkalender</a>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-4">
-        <div class="card border-secondary">
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Lehrveranstaltungen</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                </div>
+            </div>
             <div class="card-body">
-                <h5 class="card-title text-center">
-                    <i class="fas fa-2x fa-chalkboard-teacher"></i><br />
-                    Lehrende
-                </h5>
-                <a href="@Url.Action("Apply", "Teaching")" class="btn btn-outline-primary btn-block">
-                    Bei Fakultät melden
-                </a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Senesrer zurück</a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Semester vor</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Prüfungen</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Senesrer zurück</a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Semester vor</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Mein Studium</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    Aktuell:
+                </div>
+                <div class="list-group-item">
+                    Abschlussarbeit
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Studienbuch</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Ansprechpartner:innen</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    Dozent:innen
+                </div>
+                <div class="list-group-item">
+                    Themenbereiche
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">FK09</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Module</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    Modul 1
+                </div>
+                <div class="list-group-item">
+                    Modul 2
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">LUFV</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Abschlussarbeiten</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    Aktuell:
+                </div>
+                <div class="list-group-item">
+                    Abschlussarbeit
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Laufende</a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Abgerechnete</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Meine Ressourcen</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    Virtuelle Räume
+                </div>
+                <div class="list-group-item">
+                    Schaukasten
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">FK09</a>
+                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">FK10</a>
             </div>
         </div>
     </div>

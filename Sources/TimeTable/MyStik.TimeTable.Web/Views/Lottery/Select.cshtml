@@ -4,86 +4,57 @@
     ViewBag.Title = "Platzverlosung für " + Model.Lottery.Name;
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Wahlverfahren "@Model.Lottery.Name" - Zusammensetzung</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="row">
+    <div class="col-md-12">
 
-<div class="panel panel-default panel-menu">
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <a href="@Url.Action("Details", new {id =Model.Lottery.Id})" class="btn btn-default">
-                                <i class="fa fa-arrow-left"></i> Zurück
-                            </a>
-                        </div>
-                        <div class="form-group">
-                            <input id="searchText" class="form-control" type="text"/>
-                        </div>
-                        <div class="form-group">
-                            <button class="form-control" onclick="search()">Suchen</button>
-                        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Lottery.Organiser.Id})">@Model.Lottery.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Lottery", new {id = Model.Lottery.Semester.Id})">Wahlverfahren</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Lottery", new {id = Model.Lottery.Id})">@Model.Lottery.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Zusammensetzung</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    Wahlverfahren "@Model.Lottery.Name" - Zusammensetzung
+                </h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div class="input-group mb-3">
+                        <input id="searchText" type="text" class="form-control" placeholder="Teil aus Name oder Kurzname der Lehrveranstaltung">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="search()"><i class="bi-search"></i> Suchen</button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="caption">
-                                <i class="fa fa-list"></i>
-                                Lehrveranstaltungen des Wahlverfahrens
-                            </h4>
-                            <div class="portlet-body">
-                                <div id="CourseTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                        <tr>
-                                            <th>Bezeichnung</th>
-                                            <th>Gruppen</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="activityTable">
-                                        @foreach (var activity in Model.PotElements)
-                                        {
-                                            <tr id="@activity.ActivitySummary.Activity.Occurrence.Id">
-                                                <td>@activity.ActivitySummary.Activity.Name (@activity.ActivitySummary.Activity.ShortName)</td>
-                                                <td>@Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)</td>
-                                                <td><button class="btn btn-danger btn-sm" onclick="deleteRow('@activity.ActivitySummary.Activity.Occurrence.Id');"><i class="fa fa-trash-o"></i></button></td>
-                                            </tr>
-                                        }
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                                <button class="btn btn-primary" onclick="saveLotPot()"><i class="fa fa-save"></i> speichern</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <div id="CourseTable">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Bezeichnung</th>
+                            <th>Gruppen</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityTable">
+                        @foreach (var activity in Model.PotElements)
+                        {
+                            <tr id="@activity.ActivitySummary.Activity.Occurrence.Id">
+                                <td>Bestand</td>
+                                <td>@activity.ActivitySummary.Activity.Name (@activity.ActivitySummary.Activity.ShortName)</td>
+                                <td>@Html.GroupList(activity.ActivitySummary.Activity.SemesterGroups)</td>
+                                <td><button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@activity.ActivitySummary.Activity.Occurrence.Id');"><i class="bi-trash"></i></button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary" onclick="saveLotPot()"><i class="fa fa-save"></i> speichern</button>
             </div>
         </div>
     </div>

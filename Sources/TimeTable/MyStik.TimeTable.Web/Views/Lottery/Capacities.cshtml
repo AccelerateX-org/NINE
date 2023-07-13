@@ -114,7 +114,14 @@
                                 <td></td>
                             }
                         }
-                        <td>@cap</td>
+                        @if (cap < 0)
+                        {
+                            <td><i class="bi-infinity"></i></td>
+                        }
+                        else
+                        {
+                            <td>@cap</td>
+                        }
                         <td>@tn</td>
                         <td>@wl</td>
                         @if (cap != 0)
@@ -129,29 +136,36 @@
                         }
                         else
                         {
-                    <tr>
-                        <td>
-                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName</a>
-                        </td>
-                        @foreach (var c in Model.Curricula)
-                        {
-                            <td></td>
-                        }
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.ShortName</a>
+                    </td>
+                    @foreach (var c in Model.Curricula)
+                    {
+                        <td></td>
+                    }
+                    @if (cap < 0)
+                    {
+                        <td><i class="bi-infinity"></i></td>
+                    }
+                    else
+                    {
                         <td>@cap</td>
-                        <td>@tn</td>
-                        <td>@wl</td>
-                        @if (cap != 0)
-                        {
-                            <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                    </tr>
+                    }
+                    <td>@tn</td>
+                    <td>@wl</td>
+                    @if (cap != 0)
+                    {
+                        <td>@string.Format("{0:0%}", (total / (double)(cap)))</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
 
                         }
                     }

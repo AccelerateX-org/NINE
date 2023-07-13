@@ -20,7 +20,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            return RedirectToAction("Index", "Home");
+            return View();
 
             /*
             var userRight = GetUserRight();

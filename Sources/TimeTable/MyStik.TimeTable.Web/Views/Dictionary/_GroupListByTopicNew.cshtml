@@ -40,38 +40,40 @@
                 }
             }
 
+            // var isInSemester = course.Course.Dates.Any(x => x.Begin >= Model.Semester.StartCourses && x.End <= Model.Semester.EndCourses);
 
-            <a href="@Url.Action("Details", "Course", new {id =course.Course.Id})" class="list-group-item @listGroupItemClass">
-                <h5 class="list-group-item-heading">
-                    @course.Course.Name (@course.Course.ShortName)
-                </h5>
-                <ul class="fa-ul">
-                    <li>
-                        <i class="fa-li fa fa-user-md"></i>
-                        @if (course.Lecturers.Any())
-                        {
-                            @Html.LecturerList(course.Lecturers, showLinks: false)
-                        }
-                        else
-                        {
-                            <i>Keine Angabe zu Lehrenden verfügbar</i>
-                        }
-                    </li>
-                    <li>
-                        @if (course.Dates.Count == 1)
-                        {
-                            <i class="fa-li fa fa-calendar"></i>
-                            <span>immer @Html.Date(course.Dates.First()) in [@Html.RoomList(course.Rooms, showLinks: false)]</span>
-                        }
-                        else
-                        {
-                            <i class="fa-li fa fa-calendar"></i>
-                            <span>insgesamt @course.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
-                        }
 
-                    </li>
-                </ul>
-            </a>
+                <a href="@Url.Action("Details", "Course", new { id = course.Course.Id })" class="list-group-item @listGroupItemClass">
+                    <h5 class="list-group-item-heading">
+                        @course.Course.Name (@course.Course.ShortName)
+                    </h5>
+                    <ul class="fa-ul">
+                        <li>
+                            <i class="fa-li fa fa-user-md"></i>
+                            @if (course.Lecturers.Any())
+                            {
+                                @Html.LecturerList(course.Lecturers, showLinks: false)
+                            }
+                            else
+                            {
+                                <i>Keine Angabe zu Lehrenden verfügbar</i>
+                            }
+                        </li>
+                        <li>
+                            @if (course.Dates.Count == 1)
+                            {
+                                <i class="fa-li fa fa-calendar"></i>
+                                <span>immer @Html.Date(course.Dates.First()) in [@Html.RoomList(course.Rooms, showLinks: false)]</span>
+                            }
+                            else
+                            {
+                                <i class="fa-li fa fa-calendar"></i>
+                                <span>insgesamt @course.Course.Dates.Count Termine zu verschiedenen Zeiten / Tagen</span>
+                            }
+
+                        </li>
+                    </ul>
+                </a>
         }
     
 }

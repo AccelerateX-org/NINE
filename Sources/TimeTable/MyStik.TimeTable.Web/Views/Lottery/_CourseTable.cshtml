@@ -4,8 +4,9 @@
 @foreach (var course in Model)
 {
     <tr id="@course.Occurrence.Id">
+        <td>Neu</td>
         <td>@course.Name (@course.ShortName)</td>
         <td>@Html.GroupList(course.SemesterGroups)</td>
-        <td><button class="btn btn-danger btn-sm" onclick="deleteRow('@course.Occurrence.Id');"><i class="fa fa-trash-o"></i></button></td>
+        <td><button class="btn btn-outline-danger btn-sm" onclick="deleteRow('@course.Occurrence.Id');"><i class="bi-trash"></i></button></td>
     </tr>
 }
