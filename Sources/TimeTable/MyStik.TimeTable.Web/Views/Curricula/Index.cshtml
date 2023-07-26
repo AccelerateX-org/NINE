@@ -29,16 +29,16 @@
                     <i class="bi-trophy"></i> Studiengänge / Studienangebote
                 </h4>
             </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
-                        {
-                            <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Studiengang anlegen</a>
-                        }
+            @if (ViewBag.UserRight.IsCurriculumAdmin)
+            {
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="btn-group">
+                                <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Studiengang anlegen</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
             <table id="tabCurricula" class="table">
                 <thead>
                     <tr>
@@ -67,6 +67,8 @@
                             {
                                 rowClass = "table-secondary";
                             }
+
+                            var hasAreas = curr.Areas.Any();
 
                             if (isMember || (!isMember && !curr.IsDeprecated))
                             {

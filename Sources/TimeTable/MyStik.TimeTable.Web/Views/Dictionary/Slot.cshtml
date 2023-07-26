@@ -1,0 +1,77 @@
+﻿@using MyStik.TimeTable.Web.Helpers
+@using MyStik.TimeTable.Web.Services
+@model MyStik.TimeTable.Web.Models.SlotSemesterModel
+@{
+    ViewBag.Title = "Vorlesungsverzeichnis";
+
+    var courseService = new CourseService();
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Semester", new { semId = Model.Semester.Id })">@Model.Semester.Name</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Organiser", new { semId = Model.Semester.Id, orgId = Model.Curriculum.Organiser.Id })">@Model.Curriculum.Organiser.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", new { semId = Model.Semester.Id, currId = Model.Curriculum.Id })">@Model.Curriculum.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Fachsemester @Model.NUmberSemester: Wahloption @Model.Option.Tag</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="list-group">
+            @*
+                <div class="list-group-item">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-success active"><i class="bi-people"></i> Teilnehmer</a>
+                        <a class="btn btn-warning active"><i class="bi-hourglass"></i> Warteliste</a>
+                    </div>
+                </div>
+                *@
+                @foreach (var slot in Model.Slots)
+                {
+                    <div class="list-group-item">
+                        @slot.Tag | @slot.Name
+                        <ul>
+                            @foreach (var module in slot.ModuleAccreditations)
+                            {
+                                foreach (var teaching in module.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id))
+                                {
+                                    var summary = courseService.GetCourseSummary(teaching.Course);
+
+
+                                    <li class="mb-1">
+                                        <div>
+                                            <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.ShortName: @teaching.Course.Name</a>
+                                            @if (teaching.Course.LabelSet != null)
+                                            {
+                                                foreach (var label in teaching.Course.LabelSet.ItemLabels)
+                                                {
+                                                    <span class="badge bg-secondary">@label.Name</span>
+                                                }
+                                            }
+                                        </div>
+                                        <div>
+                                            @if (summary.Dates.Count > 1)
+                                            {
+                                                <span>zu verschiedenen Wochentagen / Zeiten bzw. Blockveranstaltung</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Html.DateList(summary.Dates)</span>
+                                            }
+                                            <span> | @Html.LecturerList(summary.Lecturers)</span>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

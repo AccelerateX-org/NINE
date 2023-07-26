@@ -1,0 +1,147 @@
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+@{
+    var containerType = "container-fluid";
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
+        containerType = "container";
+    }
+
+
+    var db = new TimeTableDbContext();
+
+    ViewBag.Title = "Vorlesungsverzeichnis";
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <a href="@Url.Action("Index")">Vorlesungsverzeichnis</a> /
+                    <a href="@Url.Action("Semester", new { semId = Model.Semester.Id })">@Model.Semester.Name</a> /
+                    <a href="@Url.Action("Organiser", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })">@Model.Organiser.ShortName</a> /
+                    @Model.Curriculum.ShortName
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectSeemster" aria-label="Floating label select example" onchange="onSemesterChanged(value)">
+                                @foreach (var sem in ViewBag.ListSemester)
+                                {
+                                    <option value="@sem.Value">@sem.Text</option>
+                                }
+                            </select>
+                            <label for="selectSeemster">Fachsemester</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectOption" aria-label="Floating label select example" onchange="onOptionChanged(value)">
+                            </select>
+                            <label for="selectOption">Themenbereich</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="selectLabel" aria-label="Floating label select example" onchange="onLabelChanged(value)">
+                            </select>
+                            <label for="selectLabel">Label</label>
+                        </div>
+                    </div>
+                    <div class="col-md-8" id="courseList">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        var selectedSemNo = 0;
+        var selectedOptionId = null;
+
+
+        $(function () {
+            $("#selectSeemster").change();
+        });
+
+
+        function onSemesterChanged(value) {
+            var semNo = value;
+            //$("#loading").show();
+            selectedSemNo = semNo;
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetOptions")',
+                    data: {
+                        currId: "@Model.Curriculum.Id",
+                        semId: "@Model.Semester.Id",
+                        semNo: semNo
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectOption").html(data);
+                        $("#selectOption").change();
+                        //$("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onOptionChanged(value) {
+            var optionId = value;
+            selectedOptionId = optionId;
+            //$("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabels")',
+                    data: {
+                        currId: "@Model.Curriculum.Id",
+                        semId: "@Model.Semester.Id",
+                        optId: optionId,
+                        semNo: selectedSemNo
+                    },
+                    success: function(data, success, xhr) {
+                        $("#selectLabel").html(data);
+                        $("#selectLabel").change();
+                        //$("#loading").hide();
+                    }
+                });
+
+        }
+
+        function onLabelChanged(value) {
+            var labelId = value;
+            //$("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabeledCourses")',
+                    data: {
+                        currId: "@Model.Curriculum.Id",
+                        semId: "@Model.Semester.Id",
+                        optId: selectedOptionId,
+                        labelId: labelId,
+                        semNo: selectedSemNo
+                    },
+                    success: function(data, success, xhr) {
+                        $("#courseList").html(data);
+                        //$("#loading").hide();
+                    }
+                });
+
+        }
+
+    </script>
+}

@@ -36,6 +36,23 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var model = Db.CurriculumModuleCatalogs.FirstOrDefault(x => x.Id == id);
 
+            foreach (var module in model.Modules.ToList())
+            {
+                if (module.ModuleResponsibilities.Count() == 2)
+                {
+                    if (module.ModuleResponsibilities.First().Member.Id ==
+                        module.ModuleResponsibilities.Last().Member.Id)
+                    {
+                        var resp = module.ModuleResponsibilities.Last();
+
+                        Db.ModuleResponsibilities.Remove(resp);
+                    }
+                }
+
+            }
+
+            Db.SaveChanges();
+
 
             ViewBag.UserRight = GetUserRight(model.Organiser);
             ViewBag.CurrentSemester = SemesterService.GetSemester(DateTime.Today);

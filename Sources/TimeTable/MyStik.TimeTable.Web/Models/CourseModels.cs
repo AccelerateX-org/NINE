@@ -239,6 +239,21 @@ namespace MyStik.TimeTable.Web.Models
             }
         }
 
+        public bool IsHost(string userId)
+        {
+            return Lecturers.Any(x => !string.IsNullOrEmpty(x.UserId) && x.UserId.Equals(userId));
+        }
+
+        public bool IsSubscriber(string userId)
+        {
+            return Course.Occurrence.Subscriptions.Any(s => s.UserId.Equals(userId));
+        }
+
+        public OccurrenceSubscription GetSubscription(string userId)
+        {
+            return Course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(userId));
+        }
+
     }
 
     /// <summary>

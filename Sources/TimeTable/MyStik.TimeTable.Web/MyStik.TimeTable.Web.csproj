@@ -790,6 +790,7 @@
     <Content Include="Assets\fillter\fonts\icomoon.svg" />
     <Content Include="Assets\fillter\img\deselect.svg" />
     <Content Include="Assets\fillter\img\favicon.ico" />
+    <Content Include="Assets\fillter\img\HM_Logo_RGB.png" />
     <Content Include="Assets\fillter\img\logo-mvg.jpg" />
     <Content Include="Assets\fillter\img\logo.svg" />
     <Content Include="Assets\fillter\img\logoName.svg" />
@@ -3589,6 +3590,7 @@
     <Content Include="Assets\libs\bootstrap-icons\LICENSE" />
     <Content Include="Assets\libs\bootstrap-icons\package.json" />
     <Content Include="Assets\libs\bootstrap-icons\README.md" />
+    <Content Include="Areas\Admin\Views\Repair\MigrateCurricula.cshtml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion %28xcopy%29.pubxml" />
     <None Include="Properties\PublishProfiles\Produktion LRZ.pubxml" />
@@ -4663,6 +4665,15 @@
     <Content Include="Views\University\_ViewStart.cshtml" />
     <Content Include="Views\University\Persons.cshtml" />
     <Content Include="Views\Lottery\IndexOld.cshtml" />
+    <Content Include="Views\Dictionary\Slot.cshtml" />
+    <Content Include="Views\University\Campus.cshtml" />
+    <Content Include="Views\Dashboard\_Semester.cshtml" />
+    <Content Include="Views\Dashboard\Courses.cshtml" />
+    <Content Include="Views\Curriculum\ImportLabels.cshtml" />
+    <Content Include="Views\Dictionary\Planer.cshtml" />
+    <Content Include="Views\Dictionary\_OptionSelectList.cshtml" />
+    <Content Include="Views\Dictionary\_LabelSelectList.cshtml" />
+    <Content Include="Views\Dictionary\_CourseList.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

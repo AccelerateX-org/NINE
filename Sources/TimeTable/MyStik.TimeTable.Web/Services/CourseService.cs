@@ -13,6 +13,9 @@ namespace MyStik.TimeTable.Web.Services
     public class CourseService : BaseService
     {
 
+        public CourseService() : base()
+        {
+        }
 
         /// <summary>
         /// 

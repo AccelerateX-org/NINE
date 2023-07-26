@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Models
@@ -109,5 +110,17 @@ namespace MyStik.TimeTable.Web.Models
         public Course Course { get; set; }
     }
 
+    public class SlotSemesterModel
+    {
+        public Semester Semester { get; set; }
+
+        public Curriculum Curriculum { get; set; }
+
+        public AreaOption Option { get; set; }
+
+        public int NUmberSemester { get; set; }
+
+        public List<CurriculumSlot> Slots { get; set; }
+    }
 
 }

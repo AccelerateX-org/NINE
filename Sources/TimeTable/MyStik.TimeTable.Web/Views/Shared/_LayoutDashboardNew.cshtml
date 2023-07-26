@@ -60,10 +60,6 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 @if (Request.IsAuthenticated && ViewBag.IsGuest == null)
                 {
-                    <li class="nav-item">
-                        <a class="nav-link text-center text-white" 
-                           href="@Url.Action("SelectFilter", "Home", routeValues: new {@returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery})"><strong>@Session["SemesterName"]</strong></a>
-                    </li>
 
                     <li class="nav-item">
                         <a class="nav-link text-center text-white" href="@Url.Action("Index", "BulletinBoard")"><i class="fas fa-info-circle fa-fw"></i><br />@Resources.NavMainBlackBoard</a>
@@ -79,7 +75,7 @@
                         <a class="nav-link text-center text-white" href="@Url.Action("Index", "Research")"><i class="fas fa-flask fa-fw"></i><br />@Resources.NavMainMyResearch</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-center text-white" href="@Url.Action("Index", "University")"><i class="fas fa-university fa-fw"></i><br />@Resources.NavMainMyUniversity</a>
+                        <a class="nav-link text-center text-white" href="@Url.Action("Campus", "University")"><i class="fas fa-university fa-fw"></i><br />@Resources.NavMainMyUniversity</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-center text-white" href="@Url.Action("Index", "Administration")"><i class="fas fa-cogs fa-fw"></i><br />@Resources.NavMainMyAdministration</a>

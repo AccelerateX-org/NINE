@@ -222,6 +222,14 @@
                                                                     <div>
                                                                         @Html.GroupList(teaching.Course.SemesterGroups, false, false)
                                                                     </div>
+
+                                                                    if (teaching.Course.LabelSet != null)
+                                                                    {
+                                                                        foreach (var itemLabel in teaching.Course.LabelSet.ItemLabels)
+                                                                        {
+                                                                            <div>@itemLabel.Name</div>
+                                                                        }
+                                                                    }
                                                                 }
                                                             </div>
                                                         </div>

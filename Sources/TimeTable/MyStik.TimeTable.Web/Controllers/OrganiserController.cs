@@ -74,18 +74,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Admins(string id)
+        public ActionResult Admins(Guid? id)
         {
-            var organiser = GetMyOrganisation();
+            var organiser = id.HasValue ? GetOrganiser(id.Value) : GetMyOrganisation();
             if (organiser == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            /* sollte nicht mehr erforderlich sein
-            if (User.IsInRole("SysAdmin"))
-            {
-                organiser = Db.Organisers.SingleOrDefault(x => x.ShortName.Equals(id));
-            }
-            */
 
             var model = new OrganiserViewModel
             {
@@ -94,8 +87,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var memberPage = organiser.Members.OrderBy(m => m.Name);
 
-            var myUser = UserManager.FindByName(User.Identity.Name);
-
+            var myUser = GetCurrentUser();
 
             foreach (var member in memberPage)
             {
@@ -111,7 +103,7 @@ namespace MyStik.TimeTable.Web.Controllers
             }
 
             // Benutzerrechte
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, organiser.ShortName);
+            ViewBag.UserRight = GetUserRight(organiser);
 
             return View("Admins", model);
         }
@@ -1090,9 +1082,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult EditAdmins()
+        public ActionResult EditAdmins(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id.HasValue ? GetOrganiser(id.Value) : GetMyOrganisation();
+
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(org);
         }

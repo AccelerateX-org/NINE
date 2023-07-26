@@ -1,0 +1,16 @@
+﻿@model ICollection<MyStik.TimeTable.Data.Course>
+
+<ul>
+    @foreach (var group in Model)
+    {
+        <li>@group.Name (@group.ShortName)
+            @if (group.LabelSet != null)
+            {
+                foreach (var label in group.LabelSet.ItemLabels)
+                {
+                    <span class="badge bg-secondary">@label.Name</span>
+                }
+            }
+        </li>
+    }
+</ul>

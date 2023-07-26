@@ -5,14 +5,18 @@
 
 <div class="row">
     <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item active" aria-current="page">Meine Module</li>
+            </ol>
+        </nav>
+
         <div class="card">
-            <div class="card-header">
-                Meine Module
-            </div>
             <div class="list-group">
                 @foreach (var module in Model)
                 {
-                    <a href="@Url.Action("Details", "ModuleDescription", new {id = module.Id})" class="list-group-item list-group-item-action">@module.Name (@module.ShortName, @module.ModuleId)</a>
+                    <a href="@Url.Action("Details", "ModuleDescription", new { id = module.Id })" class="list-group-item list-group-item-action">@module.Name (@module.ShortName, @module.ModuleId)</a>
                 }
             </div>
         </div>

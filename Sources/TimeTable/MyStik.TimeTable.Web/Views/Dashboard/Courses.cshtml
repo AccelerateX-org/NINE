@@ -1,0 +1,98 @@
+﻿@model MyStik.TimeTable.Web.Models.TeachingSemesterSummaryModel
+@{
+    ViewBag.Title = "Courses";
+}
+
+<div class="row">
+    <div clas="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")">@Model.Semester.Name</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Meine Lehrveranstaltungen</li>
+            </ol>
+        </nav>
+        <div class="row">
+            @foreach (var summary in Model.Courses)
+            {
+                <div class="col-md-3">
+                    <div class="card mb-1">
+                        <div class="card-body">
+                            @if (summary.IsSubscriber(summary.User.Id))
+                            {
+                                var subscription = summary.GetSubscription(summary.User.Id);
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title">@summary.Course.Name</h5>
+                                    @if (subscription.OnWaitingList)
+                                    {
+                                        <span><i class="bi-hourglass"></i></span>
+                                    }
+                                    else
+                                    {
+                                        <span><i class="bi-people"></i></span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <h5 class="card-title">@summary.Course.Name</h5>
+                            }
+                            @if (summary.IsHost(summary.User.Id))
+                            {
+                                <a href="@Url.Action("CustomOccurrenceMail", "Mailing", new {id=summary.Course.Occurrence.Id})" class="card-link"><i class="bi-envelope"></i></a>
+                                <a href="@Url.Action("AdminNewParticipients", "Course", new {id = summary.Course.Id})" class="card-link"><i class="bi-people"></i></a>
+                            }
+                            @if (!string.IsNullOrEmpty(summary.Course.UrlMoodleCourse))
+                            {
+                                <a class="card-link" href="@summary.Course.UrlMoodleCourse" target="_blank"><i class="bi-moon"></i></a>
+                            }
+
+                            <a href="@Url.Action("Details", "Course", new { id = summary.Course.Id })" class="card-link">Details...</a>
+                            @*
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-4">
+                                        Modulzugehörigkeit
+                                    </div>
+                                    <div class="col-8">
+                                        @foreach (var teaching in summary.Course.Teachings)
+                                        {
+                                            <div>
+                                                @if (summary.Course.Semester != null)
+                                                {
+                                                    <a href="@Url.Action("Semester", "ModuleDescription", new { moduleId = teaching.Subject.Module.Id, semId = summary.Course.Semester.Id })">Modulbeschreibung</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Details", "ModuleDescription", new { id = teaching.Subject.Module.Id })">Modulbeschreibung</a>
+                                                }
+
+                                                @foreach (var acc in teaching.Subject.Module.Accreditations)
+                                                {
+                                                    if (acc.Slot.CurriculumSection != null)
+                                                    {
+                                                        <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.CurriculumSection.Curriculum.Id })">@acc.Slot.CurriculumSection.Curriculum.ShortName</a> </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span> | <a href="@Url.Action("Details", "Curriculum", new { id = acc.Slot.AreaOption.Area.Curriculum.Id })">@acc.Slot.AreaOption.Area.Curriculum.ShortName</a> </span>
+                                                    }
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+
+                            </div>
+                        </div>
+                        *@
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

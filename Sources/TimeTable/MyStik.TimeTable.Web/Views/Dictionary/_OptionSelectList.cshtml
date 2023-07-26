@@ -1,0 +1,6 @@
+﻿@model ICollection<MyStik.TimeTable.Data.AreaOption>
+
+@foreach (var group in Model)
+{
+    <option value="@group.Id">@group.Name (@group.Tag)</option>
+}

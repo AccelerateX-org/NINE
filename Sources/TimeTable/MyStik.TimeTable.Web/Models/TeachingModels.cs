@@ -33,6 +33,10 @@ namespace MyStik.TimeTable.Web.Models
 
         public List<CurriculumModule> Modules { get; set; }
 
+        public Student Student { get; set; }
+
+        public Thesis Thesis { get; set; }
+
     }
 
 

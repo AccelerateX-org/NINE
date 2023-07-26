@@ -6,6 +6,11 @@ namespace MyStik.TimeTable.Web.Services
     {
         private readonly TimeTableDbContext _db;
 
+        public BaseService()
+        {
+            _db = new TimeTableDbContext();
+        }
+
         public BaseService(TimeTableDbContext db)
         {
             _db = db;

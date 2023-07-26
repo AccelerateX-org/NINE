@@ -138,6 +138,7 @@ namespace MyStik.TimeTable.DataServices.IO.Json
                 ExternalSource = "JSON",
                 ExternalId = scheduleCourse.CourseId,
                 Organiser = organiser,
+                Semester = sem,
                 ShortName = scheduleCourse.ShortName,
                 Name = scheduleCourse.Name,
                 Description = scheduleCourse.Description,

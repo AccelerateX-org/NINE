@@ -1,6 +1,5 @@
-﻿@model ICollection<MyStik.TimeTable.Data.ActivityOrganiser>
-@{
-    ViewBag.Title = "Meine Hochschule";
+﻿@{
+    ViewBag.Title = "Campus";
 }
 
 <div class="row">
@@ -9,28 +8,34 @@
             <li class="breadcrumb-item active">Campus</li>
         </ol>
     </nav>
-    <div class="col-md-4">
-        <div class="card border-secondary">
-            <div class="card-header">
-                <h4 class="card-title text-center">Hochschule München (HM)</h4>
-            </div>
-            <div class="list-group">
-                @foreach (var org in Model)
-                {
-                    <a href="@Url.Action("Faculty", new { id = org.Id })" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class="fw-bold">@org.Name</div>
-                        </div>
-                        <span class="badge bg-primary rounded-pill">@org.Curricula.Count(x => x.Areas.Any())</span>
-                    </a>
-
-                }
-            </div>
+    <div class="col-md-3">
+        <div class="card">
+            <a href="https://hm.edu" target="_blank">
+                <img src="@Url.Content("~/Assets/fillter/img/HM_Logo_RGB.png")" class="card-img-top" alt="Hochschule München">
+            </a>
             <div class="card-body">
-                <a href="@Url.Action("Faculties")" class="card-link">Einrichtungen</a>
-                <a href="@Url.Action("Curricula")" class="card-link">Studienangebote</a>
-                <a href="@Url.Action("Persons")" class="card-link">Personen</a>
+                <h5 class="card-title">Hochschule München</h5>
+                <p class="card-text">Eine großartige Hochschule.</p>
+                <a href="@Url.Action("Campus")" class="btn btn-outline-primary">zum Campus</a>
             </div>
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="card" aria-hidden="true">
+            <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <title>Placeholder</title>
+                <rect width="100%" height="100%" fill="#868e96"></rect>
+            </svg>       
+            <div class="card-body">
+                <h5 class="card-title">
+                    <span class="placeholder col-6"></span>
+                </h5>
+                <p class="card-text">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                </p>
+                <a class="btn btn-primary disabled placeholder col-6"></a>
+            </div>
+        </div>
+     </div>
 </div>

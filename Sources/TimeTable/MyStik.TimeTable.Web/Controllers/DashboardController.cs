@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
@@ -18,9 +19,62 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
-            return View();
+            var user = GetCurrentUser();
+            var members = MemberService.GetFacultyMemberships(user.Id);
+            var student = GetCurrentStudent(user.Id);
+
+            Semester currentSemester = null;
+
+            // das aktuelle Semester bestimmen es gilt das neues aller Semester in alle
+            // Fakultäen
+            currentSemester = id == null ? SemesterService.GetSemester(DateTime.Today) : SemesterService.GetSemester(id);
+
+            var TeachingService = new TeachingService(Db);
+            var userService = new UserInfoService();
+
+
+            var model = new TeachingOverviewModel();
+
+            model.CurrentSemester = TeachingService.GetActivities(currentSemester, user, members);
+            model.PrevSemester = SemesterService.GetPreviousSemester(currentSemester);
+            model.NextSemester = SemesterService.GetNextSemester(currentSemester);
+            model.Members = members.ToList();
+            model.Student = student;
+
+            if (student != null)
+            {
+                model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
+            }
+
+            model.ActiveTheses = new List<ThesisStateModel>();
+
+            var theses = TeachingService.GetActiveTheses(user);
+
+            foreach (var thesis in theses)
+            {
+                var tm = new ThesisStateModel
+                {
+                    Thesis = thesis,
+                    Student = thesis.Student,
+                    User = userService.GetUser(thesis.Student.UserId)
+                };
+
+                model.ActiveTheses.Add(tm);
+            }
+
+            model.Modules = Db.CurriculumModules
+                .Where(x => x.ModuleResponsibilities.Any(m =>
+                    !string.IsNullOrEmpty(m.Member.UserId) && m.Member.UserId.Equals(user.Id)))
+                .ToList();
+
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+
+            return View(model);
 
             /*
             var userRight = GetUserRight();
@@ -77,6 +131,33 @@ namespace MyStik.TimeTable.Web.Controllers
             }
             */
         }
+
+        [HttpPost]
+        public PartialViewResult Semester(Guid semId)
+        {
+            var user = GetCurrentUser();
+            var members = MemberService.GetFacultyMemberships(user.Id);
+
+            Semester currentSemester = null;
+
+            // das aktuelle Semester bestimmen es gilt das neues aller Semester in alle
+            // Fakultäen
+            currentSemester = SemesterService.GetSemester(semId);
+
+            var teachingService = new TeachingService(Db);
+            var userService = new UserInfoService();
+
+
+            var model = new TeachingOverviewModel();
+
+            model.CurrentSemester = teachingService.GetActivities(currentSemester, user, members);
+            model.PrevSemester = SemesterService.GetPreviousSemester(currentSemester);
+            model.NextSemester = SemesterService.GetNextSemester(currentSemester);
+
+
+            return PartialView("_Semester", model);
+        }
+
 
         public ActionResult Schedule(Guid id)
         {
@@ -705,6 +786,36 @@ namespace MyStik.TimeTable.Web.Controllers
             ViewBag.UserId = userId;
 
             return PartialView("_NotificationList", data);
+        }
+
+        public ActionResult Courses(Guid id)
+        {
+            var user = GetCurrentUser();
+            var semester = SemesterService.GetSemester(id);
+
+            var courses = Db.Activities.OfType<Course>().Where(x => 
+                    x.Semester.Id == semester.Id &&
+                    (x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(user.Id))) || 
+                     x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))))
+                .ToList();
+
+            var model = new TeachingSemesterSummaryModel
+            {
+                Semester = semester,
+            };
+
+
+            var courseSummaryService = new CourseService(Db);
+
+            foreach (var course in courses)
+            {
+                var summary = courseSummaryService.GetCourseSummary(course);
+                summary.User = user;
+                model.Courses.Add(summary);
+            }
+
+
+            return View(model);
         }
 
     }

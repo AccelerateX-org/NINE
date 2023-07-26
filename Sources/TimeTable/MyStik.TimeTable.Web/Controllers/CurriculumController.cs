@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using log4net;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
+using MyStik.TimeTable.DataServices.IO.GpUntis.Data;
 using MyStik.TimeTable.Web.Models;
 using MyStik.TimeTable.Web.Services;
 using Newtonsoft.Json;
@@ -2532,6 +2534,99 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return RedirectToAction("Labels", new { id = curr.Id });
         }
+
+
+        public ActionResult ImportLabels(Guid id)
+        {
+            var cur = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var model = new CurriculumImportModel
+            {
+                Curriculum = cur
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ImportLabels(CurriculumImportModel model)
+        {
+            string tempFile = Path.GetTempFileName();
+
+            // Speichern der Config-Dateien
+            model.AttachmentStructure?.SaveAs(tempFile);
+
+            var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
+
+            foreach (var line in lines)
+            {
+                if (line == lines.First()) continue;
+
+                var words = line.Split(';');
+
+                var z = new Zuordnung()
+                {
+                    Studiengang = words[0].Replace("\"", ""),
+                    Studiengruppe = words[1].Replace("\"", ""),
+                    Kapazitätsgruppe = words[2].Replace("\"", ""),
+                    Alias = words[3].Replace("\"", ""),
+                };
+
+                var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.Equals(z.Studiengang));
+                if (curr.LabelSet == null)
+                {
+                    curr.LabelSet = new ItemLabelSet();
+
+                }
+                var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(z.Alias));
+
+                if (label == null)
+                {
+                    label = new ItemLabel
+                    {
+                        Name = z.Alias,
+                        HtmlColor = "0x000000"
+                    };
+                    label.LabelSets.Add(curr.LabelSet);
+
+                    Db.SaveChanges();
+                }
+
+
+                // Baue Studiengruppe
+                var capGroups = Db.CapacityGroups.Where(x =>
+                    x.CurriculumGroup.Curriculum.ShortName.Equals(z.Studiengang) &&
+                    x.CurriculumGroup.Name.Equals(z.Studiengruppe) &&
+                    x.Name.Equals(z.Kapazitätsgruppe)).ToList();
+
+                foreach (var capGroup in capGroups)
+                {
+                    foreach (var semesterGroup in capGroup.SemesterGroups)
+                    {
+                        foreach (var activity in semesterGroup.Activities)
+                        {
+                            if (activity.LabelSet == null)
+                            {
+                                activity.LabelSet = new ItemLabelSet();
+                            }
+
+                            var hasLabel = activity.LabelSet.ItemLabels.Any(x => x.Id == label.Id);
+
+                            if (hasLabel) continue;
+
+                            activity.LabelSet.ItemLabels.Add(label);
+                            label.LabelSets.Add(activity.LabelSet);
+                        }
+                    }
+                }
+
+                Db.SaveChanges();
+            }
+
+
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
+        }
+
 
 
 

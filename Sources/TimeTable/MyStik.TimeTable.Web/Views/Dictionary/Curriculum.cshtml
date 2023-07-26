@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @{
     var containerType = "container-fluid";
     if (!Request.IsAuthenticated)
@@ -6,6 +7,9 @@
         Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
         containerType = "container";
     }
+
+
+    var db = new TimeTableDbContext();
 
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
@@ -41,3 +45,42 @@
     </div>
 </div>
 
+@if (Model.Curriculum.Areas.Any())
+{
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="list-group">
+
+                    @{
+                        var allSlots = db.CurriculumSlots.Where(x =>
+                            x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
+
+                        var minSem = allSlots.Min(x => x.Semester);
+                        var maxSem = allSlots.Max(x => x.Semester);
+
+                        var allOptions = db.AreaOptions.Where(x => x.Area.Curriculum.Id == Model.Curriculum.Id).ToList();
+
+                        for (var s = minSem; s <= maxSem; s++)
+                        {
+                            var semSlots = allSlots.Where(x => x.Semester == s).ToList();
+
+                            var optionSet = semSlots.Select(x => x.AreaOption).Distinct().ToList();
+
+                            <div class="list-group-item list-group-item-action">
+                                <h5>Semester @s</h5>
+                                <div>
+                                    @foreach (var opt in optionSet)
+                                    {
+                                        <span><a href="@Url.Action("Slot", new { currId = Model.Curriculum.Id, semId = Model.Semester.Id, sem = s, optionId = opt.Id })">@opt.Area.Tag::@opt.Tag</a> |</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Planer", new {currId=Model.Curriculum.Id, semId=Model.Semester.Id})">Planer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using MyStik.TimeTable.Data;
@@ -168,16 +169,30 @@ namespace MyStik.TimeTable.Web.Controllers
         protected UserRight GetUserRight(ActivityOrganiser org)
         {
             var user = UserManager.FindByName(User.Identity.Name);
-            var member = org.Members.FirstOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
+            if (user != null)
+            {
+                var member =
+                    org.Members.FirstOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
+
+                return new UserRight
+                {
+                    IsSysAdmin = User.IsInRole("SysAdmin"),
+                    IsHost = false,
+                    IsSubscriber = false,
+                    User = user,
+                    Member = member
+                };
+            }
 
             return new UserRight
             {
-                IsSysAdmin = User.IsInRole("SysAdmin"),
+                IsSysAdmin = false,
                 IsHost = false,
                 IsSubscriber = false,
-                User = user,
-                Member = member
+                User = null,
+                Member = null
             };
+
         }
 
         /// <summary>

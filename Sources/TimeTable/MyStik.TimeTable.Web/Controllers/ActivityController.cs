@@ -529,15 +529,16 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult Agenda()
+        public PartialViewResult Agenda(string day)
         {
             var model = new AgendaViewModel();
 
             var user = UserManager.FindByName(User.Identity.Name);
 
+            var dateDay = DateTime.Parse(day);
 
-            var begin = DateTime.Today;
-            var end = DateTime.Today.AddDays(7);
+            var begin = dateDay;
+            var end = dateDay.AddDays(7);
 
             // Alle Dates bei denen der Benutzer als Dozent eingetragen ist
             var lectureDates =

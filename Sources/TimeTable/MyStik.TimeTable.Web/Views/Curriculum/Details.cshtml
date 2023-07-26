@@ -175,11 +175,11 @@
                         {
                             if (option.Id == area.Option.Id)
                             {
-                                <option selected value="@option.Id">@option.Tag</option>
+                                <option selected value="@option.Id">@option.Name (@option.Tag)</option>
                             }
                             else
                             {
-                                <option value="@option.Id">@option.Tag</option>
+                                <option value="@option.Id">@option.Name (@option.Tag)</option>
                             }
                         }
                     </select>
@@ -198,7 +198,7 @@
 
                 for (var s = minSem; s <= maxSem; s++)
                 {
-                    var semSlots = allSlots.Where(x => x.Semester == s).ToList();
+                    var semSlots = allSlots.Where(x => x.Semester == s).OrderBy(x => x.Tag).ToList();
                     <div class="row">
                         <div class="col-md-2">
                             <h5>Semester @s</h5>

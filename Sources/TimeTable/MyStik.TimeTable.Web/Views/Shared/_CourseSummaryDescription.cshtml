@@ -12,7 +12,7 @@
 <div class="list-group-item">
     @if (string.IsNullOrEmpty(Model.Course.Description))
     {
-        <h5><i>Keine Beschreibung vorhanden</i></h5>
+        <div><i>Keine Detailinformationen zur Lehrveranstaltung vorhanden</i></div>
     }
     else
     {
@@ -22,7 +22,7 @@
 <div class="list-group-item">
     @if (string.IsNullOrEmpty(Model.Course.UrlMoodleCourse) && string.IsNullOrEmpty(Model.Course.KeyMoodleCourse))
     {
-        <h5><i>Keine Informationen zu Moodle vorhanden</i></h5>
+        <div><i>Keine Informationen zu Moodle vorhanden</i></div>
     }
     else
     {

@@ -5,24 +5,29 @@ using MyStik.TimeTable.Data;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    [AllowAnonymous]
     public class UniversityController : BaseController
     {
         // GET: University
         public ActionResult Index()
         {
-            var orgsWithCurricula = Db.Organisers
-                .Where(x => x.Curricula.Any(c => c.Areas.Any()))
-                .OrderBy(x => x.Name)
-                .ToList();
-
-            return View(orgsWithCurricula);
+            return View();
         }
+
+        public ActionResult Campus()
+        {
+            return View();
+        }
+
 
         public ActionResult Faculty(Guid id)
         {
             var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
-
-            ViewBag.UserRight = GetUserRight(org);
+            var user = GetCurrentUser();
+            if (user != null)
+            {
+                ViewBag.UserRight = GetUserRight(org);
+            }
 
             return View(org);
         }

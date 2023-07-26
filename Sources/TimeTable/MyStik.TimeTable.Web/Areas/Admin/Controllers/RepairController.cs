@@ -14,6 +14,13 @@ namespace MyStik.TimeTable.Web.Areas.Admin.Controllers
     /// </summary>
     public class RepairController : BaseController
     {
+        public ActionResult MigrateCurricula()
+        {
+
+            return View();
+        }
+
+
         // GET: Admin/Repair
         /// <summary>
         /// 

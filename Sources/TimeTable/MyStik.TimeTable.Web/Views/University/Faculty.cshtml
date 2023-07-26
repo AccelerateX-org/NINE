@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Startseite";
 
-    var isStudent = ViewBag.UserRight.IsStudent;
+    var isStudent = ViewBag.UserRight == null ||  ViewBag.UserRight.IsStudent;
 }
 
 
@@ -11,7 +11,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.ShortName</li>
             </ol>
         </nav>

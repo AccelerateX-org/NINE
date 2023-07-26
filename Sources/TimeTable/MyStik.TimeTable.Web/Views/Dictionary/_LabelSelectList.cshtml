@@ -1,0 +1,8 @@
+﻿@model ICollection<MyStik.TimeTable.Data.ItemLabel>
+
+<option value="@Guid.Empty">Alle Labels</option>
+
+@foreach (var group in Model)
+{
+    <option value="@group.Id">@group.Name</option>
+}

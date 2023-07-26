@@ -10,20 +10,19 @@ using MyStik.TimeTable.Web.Services;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    [AllowAnonymous]
     public class DictionaryController : BaseController
     {
         public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
-            var org = id.HasValue ? GetOrganiser(id.Value) : GetMyOrganisation();
-
             var model = new HomeViewModel();
 
             // Alle Semester mit veröffentlichten Semestergruppen
             var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any()).OrderByDescending(s => s.EndCourses).Take(4).ToList();
             foreach (var semester in allPublishedSemester)
             {
-                var isStaff = user.MemberState == MemberState.Staff;
+                var isStaff = user != null && user.MemberState == MemberState.Staff;
                 var activeOrgs = SemesterService.GetActiveOrganiser(semester, !isStaff);
 
                 var semModel = new SemesterActiveViewModel
@@ -35,8 +34,6 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveSemester.Add(semModel);
             }
 
-            ViewBag.UserRight = GetUserRight(org);
-
             return View(model);
         }
 
@@ -45,7 +42,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semester = SemesterService.GetSemester(semId);
 
             var user = GetCurrentUser();
-            var isStaff = user.MemberState == MemberState.Staff;
+            var isStaff = user != null && user.MemberState == MemberState.Staff;
 
             var curricula = SemesterService.GetActiveCurricula(semester, !isStaff).ToList();
 
@@ -93,6 +90,131 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Planer(Guid semId, Guid currId)
+        {
+            var semester = SemesterService.GetSemester(semId);
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Organiser = curr.Organiser,
+                Curriculum = curr
+            };
+
+            var allSlots = Db.CurriculumSlots.Where(x =>
+                x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == curr.Id).ToList();
+
+            var minSem = allSlots.Min(x => x.Semester);
+            var maxSem = allSlots.Max(x => x.Semester);
+
+            var listSemester = new List<SelectListItem>();
+            for (var i = minSem; i <= maxSem; i++)
+            {
+                var selectSemester = new SelectListItem
+                {
+                    Value = i.ToString(),
+                    Text = $"Fachsemester {i}"
+                };
+
+                listSemester.Add(selectSemester);
+            }
+
+            ViewBag.ListSemester = listSemester;
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public PartialViewResult GetOptions(Guid currId, Guid semId, int semNo)
+        {
+            var allSlots = Db.CurriculumSlots.Where(x =>
+                x.AreaOption != null && x.AreaOption.Area.Curriculum.Id == currId).ToList();
+
+            var semSlots = allSlots.Where(x => x.Semester == semNo).ToList();
+
+            var optionSet = semSlots.Select(x => x.AreaOption).Distinct().ToList();
+
+            var model = optionSet
+                .OrderBy(g => g.Name)
+                .ToList();
+
+            return PartialView("_OptionSelectList", model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult GetLabels(Guid currId, Guid semId, Guid optId, int semNo)
+        {
+
+            // Alle LVs in dem Semester
+            var labels = Db.Activities.OfType<Course>().Where(x => x.Semester.Id == semId &&
+                                                                    x.Teachings.Any(t =>
+                                                                        t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
+                                                                        t.Accreditation.Slot.AreaOption.Id == optId &&
+                                                                        t.Accreditation.Slot.Semester == semNo)).Select(c => c.LabelSet).ToList();
+
+            var itemLabels = new List<ItemLabel>();
+
+            foreach (var labelSet in labels.Where(x => x!=null))
+            {
+                itemLabels.AddRange(labelSet.ItemLabels);
+            }
+
+            var selectLabels = itemLabels.Distinct();
+
+            
+            var model = selectLabels
+                .OrderBy(g => g.Name)
+                .ToList();
+
+            return PartialView("_LabelSelectList", model);
+        }
+
+
+        [HttpPost]
+        public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid optId, Guid labelId, int semNo)
+        {
+            // Alle LVs in dem Semester
+            var courses = Db.Activities.OfType<Course>().Where(x => x.Semester.Id == semId &&
+                                                                   x.Teachings.Any(t =>
+                                                                       t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
+                                                                       t.Accreditation.Slot.AreaOption.Id == optId &&
+                                                                       t.Accreditation.Slot.Semester == semNo)).ToList();
+
+            var labeledCourses = new List<Course>();
+
+            if (labelId == Guid.Empty)
+            {
+                labeledCourses.AddRange(courses);
+            }
+            else
+            {
+                foreach (var course in courses)
+                {
+                    if (course.LabelSet == null ||
+                        !course.LabelSet.ItemLabels.Any() ||
+                        course.LabelSet.ItemLabels.Any(x => x.Id == labelId))
+                    {
+                        labeledCourses.Add(course);
+                    }
+                }
+            }
+
+
+            var model = labeledCourses
+                .OrderBy(g => g.ShortName)
+                .ToList();
+
+            return PartialView("_CourseList", model);
+        }
+
+
+        
+
+
         public ActionResult Group(Guid semId, Guid groupId)
         {
             var user = GetCurrentUser();
@@ -103,7 +225,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SemesterGroups.FirstOrDefault(x =>
                     x.CapacityGroup.Id == capGroup.Id && x.Semester.Id == semester.Id);
 
-            if (user.MemberState != MemberState.Staff && !semGroup.IsAvailable)
+            if (user == null || (user.MemberState != MemberState.Staff && !semGroup.IsAvailable))
             {
                 return View("NotAvailable", semGroup);
             }
@@ -318,6 +440,29 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View("Group", model);
         }
+
+
+        public ActionResult Slot(Guid currId, Guid semId, Guid optionId, int sem)
+        {
+            var semester = SemesterService.GetSemester(semId);
+            var option = Db.AreaOptions.SingleOrDefault(x => x.Id == optionId);
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+
+            var slots = option.Slots.Where(x => x.Semester == sem).ToList();
+
+            var model = new SlotSemesterModel
+            {
+                Curriculum = curriculum,
+                Semester = semester,
+                Option = option,
+                NUmberSemester = sem,
+                Slots = slots
+            };
+
+
+            return View(model);
+        }
+
 
 
         [HttpPost]

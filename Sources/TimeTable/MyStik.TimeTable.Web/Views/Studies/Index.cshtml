@@ -48,46 +48,35 @@
                 <div class="list-group-item  list-group-item-light">Meine Eintragungen in Lehrveranstaltungen</div>
                 @foreach (var course in Model.Courses)
                 {
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = course.Course.Id })">
                         @course.Course.ShortName: @course.Course.Name (@Html.GroupList(course.Course.SemesterGroups, showAvailability: false, showLink: false))
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <a href="@Url.Action("Details", "Course", new { id = course.Course.Id })" class="btn btn-outline-secondary btn-sm" title="Termine">
-                                @if (course.CurrentDate != null)
-                                {
-                                    <i class="fas fa-calendar-day"></i>
-                                    <span class="badge bg-danger">@Html.TimeSpanWithDate(course.CurrentDate)</span>
-                                }
-                                else
-                                {
-                                    <i class="fas fa-calendar-check"></i>
-                                    <span class="badge bg-secondary"><i class="fas fa-check text-success"></i> keine weiteren Termine</span>
-                                }
-                            </a>
-                            <a href="@Url.Action("Details", "Course", new { id = course.Course.Id })" class="btn btn-outline-secondary btn-sm" title="Teilnehmende">
-                                <i class="fas fa-pen"></i>
-                                @if (course.Subscription != null)
-                                {
-                                    if (course.Subscription.OnWaitingList)
-                                    {
-                                        <span class="badge bg-secondary">
-
-                                            <i class="fas fa-user-clock text-danger"></i> Status: Warteliste
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-user-check text-success"></i> Status: Teilnehmer:in
-                                        </span>
-                                    }
-                                }
-                            </a>
-
-                            <a href="@Url.Action("Details", "Course", new { id = course.Course.Id })" class="btn btn-outline-secondary btn-sm" title="Informationen">
-                                <i class="fas fa-info-circle"></i>
-                            </a>
+                        <div>
+                            @if (course.CurrentDate != null)
+                            {
+                                <i class="bi-calendar-day"></i> @Html.TimeSpanWithDate(course.CurrentDate)
+                            }
+                            else
+                            {
+                                <i class="bi-calendar-check"></i><span>keine weiteren Termine</span>
+                            }
                         </div>
-                    </div>
+                        @if (course.Subscription != null)
+                        {
+                            if (course.Subscription.OnWaitingList)
+                            {
+                                <div>
+                                    Status: Warteliste
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div>
+                                    Status: Teilnehmer:in
+                                </div>
+                            }
+                        }
+                    </a>
                 }
 
                 <div class="list-group-item  list-group-item-light">Meine Lehrenden in diesem Semester</div>
@@ -223,6 +212,14 @@
                 <a href="@Url.Action("Curricula", "Subscription")">Studienbuch</a>
                 <a href="@Url.Action("Faculty", "University", new {id = Model.Student.Curriculum.Organiser.Id} )">@Model.Student.Curriculum.Organiser.ShortName</a>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-success">
+            <div>Zugang zum neuen <a href="@Url.Action("Index", "Dashboard")">Dashboard</a> (im Aufbau)</div>
         </div>
     </div>
 </div>

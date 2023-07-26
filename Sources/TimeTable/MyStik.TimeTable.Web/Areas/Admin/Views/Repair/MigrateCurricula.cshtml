@@ -1,0 +1,116 @@
+﻿@using ImageMagick
+@using MyStik.TimeTable.Data
+@using Org.BouncyCastle.Asn1
+
+@{
+    ViewBag.Title = "MigrateCurricula";
+
+    var db = new TimeTableDbContext();
+
+    var fk10 = db.Organisers.SingleOrDefault(x => x.ShortName.Equals("FK 10"));
+
+    var mabw = fk10.Curricula.SingleOrDefault(x => x.ShortName.Equals("MABW"));
+
+    /*
+    if (mabw != null)
+    {
+        var currs = new string[] { "Master DTM", "Master ABI", "Master DSPSM", "Master HRM", "Master DPSM alt", "Master FA", "Master MM", "Master DPSM" };
+
+        foreach (var curr in currs)
+        {
+            var curriculum = fk10.Curricula.SingleOrDefault(x => x.ShortName.Equals(curr));
+
+            if (curriculum != null)
+            {
+                var studs = db.Students.Where(x => x.Curriculum.Id == curriculum.Id).ToList();
+
+                foreach (var student in studs)
+                {
+                    student.Curriculum = mabw;
+                }
+            }
+
+        }
+        db.SaveChanges();
+    }
+    */
+
+    var nAll = db.Activities.OfType<Course>().Count();
+    var nNoOrg = db.Activities.OfType<Course>().Count(x => x.Organiser == null);
+    var nNoSem = db.Activities.OfType<Course>().Count(x => x.Semester == null);
+    var nNoSemNoGroup = db.Activities.OfType<Course>().Count(x => x.Semester == null && !x.SemesterGroups.Any());
+
+    var coursesNoDates = db.Activities.OfType<Course>().Where(x => x.Semester == null && !x.SemesterGroups.Any() && !x.Dates.Any()).ToList();
+
+
+
+    
+    
+    var coursesSemNoGroup = db.Activities.OfType<Course>().Where(x => x.Semester == null && !x.SemesterGroups.Any()).ToList();
+
+
+
+
+    /*
+    var courses = db.Activities.OfType<Course>().Where(x => x.Semester == null).ToList();
+
+    foreach (var course in courses)
+    {
+        if (course.SemesterGroups.Any())
+        {
+            var sems = course.SemesterGroups.Select(x => x.Semester).Distinct();
+
+            course.Semester = sems.First();
+        }
+    }
+
+    db.SaveChanges();
+    */
+}
+
+<h2>MigrateCurricula</h2>
+
+<ul>
+    <li>Anzahl LVs alle: @nAll</li>
+    <li>Anzahl LVs ohne Org: @nNoOrg</li>
+    <li>Anzahl LVs ohne Sem: @nNoSem</li>
+    <li>Anzahl LVs ohne Sem und Gruppe: @nNoSemNoGroup</li>
+</ul>
+
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Kurz</th>
+                <th>Name</th>
+                <th>erstes</th>
+                <th>letztes</th>
+                <th>#Sub</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var course in coursesNoDates)
+        {
+            var hasDates = course.Dates.Any();
+
+            <tr>
+                <td>@course.ShortName</td>
+                <td>@course.Name</td>
+                @if (hasDates)
+                {
+                    <td>@course.Dates.First().Begin.ToShortDateString()</td>
+                    <td>@course.Dates.Last().Begin.ToShortDateString()</td>
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                }
+                <td>@course.Occurrence.Subscriptions.Count()</td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+
+</div>

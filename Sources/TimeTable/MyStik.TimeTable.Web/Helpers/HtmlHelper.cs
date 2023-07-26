@@ -109,7 +109,7 @@ namespace MyStik.TimeTable.Web.Helpers
                     }
                     else
                     {
-                        sb.Append(htmlHelper.ActionLink(room.FullName, "Details", "Room", new { id = room.Id }, null));
+                        sb.Append(htmlHelper.ActionLink(room.Number, "Details", "Room", new { id = room.Id }, null));
                     }
                 }
                 else
