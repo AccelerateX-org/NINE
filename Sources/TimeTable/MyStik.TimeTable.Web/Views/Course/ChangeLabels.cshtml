@@ -1,0 +1,185 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseLabelViewModel
+@{
+    ViewBag.Title = "Labels auswählen";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Zuordnung Labels</h4>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a href="javascript:saveChanges()" class="btn btn-outline-primary">
+                        <i class="bi-save"></i>  Änderungen übernehmen
+                    </a>
+                    <a href="@Url.Action("AdminNewLabels", new {id=Model.Course.Id})" class="btn btn-outline-secondary">
+                        <i class="bi-x"></i> Abbrechen
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <h5>Aus diesem Katalogen kommen die Labels</h5>
+                        <div class="row">
+                            <div class="col-4">Ebene</div>
+                            <div class="col-8">
+                                <select id="selectLabelSet" class="form-select slot-option" id="sourceInst" onchange="onSourceLabelSetChanged(this.value)">
+                                    <option selected value="@Model.Course.Organiser.Institution.LabelSet.Id">Hochschulweit (@Model.Course.Organiser.Institution.Tag)</option>
+                                    <option value="@Model.Course.Organiser.LabelSet.Id">Fakultätsweit (@Model.Course.Organiser.ShortName)</option>
+                                    @foreach (var curr in Model.Curricula)
+                                    {
+                                        <option value="@curr.LabelSet.Id">Studiengang (@curr.ShortName)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Verfügbare Labels</div>
+                            <div class="col-8">
+                                <div id="sourceLabelList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <a id="btnMove" href="javascript:moveModules()" class="btn btn-outline-secondary">>> zuordnen</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <h5>Dieser Lehrveranstaltung zuordnen</h5>
+                        <div class="row">
+                            <div class="col-4">Name</div>
+                            <div class="col-8">@Model.Course.Name
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Module</div>
+                            <div class="col-8">
+                                <ul id="targetLabelList" class="list-group">
+                                    @foreach (var module in Model.Course.LabelSet.ItemLabels)
+                                    {
+                                        <li id="@module.Id" class="list-group-item">
+                                            <input class="form-check-input me-1" type="checkbox" value="">
+                                            <label class="form-check-label" for="@module.Id">@module.Name</label>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $("#loading").hide();
+            var org = $("#selectLabelSet").val();
+            onSourceLabelSetChanged(org);
+        });
+
+
+        function onSourceLabelSetChanged(value) {
+            var setId = value;
+            $("#loading").show();
+
+            $.ajax(
+                {
+                    type: "POST",
+                    url: '@Url.Action("GetLabelList", "LabelSet")',
+                    data: {
+                        setId: setId
+                    },
+                    success: function(data, success, xhr) {
+                        $("#sourceLabelList").html(data);
+                        $("#loading").hide();
+                    }
+                });
+
+        }
+        
+        function updateMoveState() {
+            var sourceCat = $('#sourceCat').val();
+            var targetCat = $('#targetCat').val();
+
+            if (targetCat === sourceCat) {
+                $('#btnMove').addClass("disabled");
+            } else {
+                $('#btnMove').removeClass("disabled");
+            }
+
+        }
+
+
+        function moveModules() {
+            //var list = $("#sourceModules > ul > li > input[type='checkbox'][checked='checked']").get();
+            var list = $("#sourceLabelList > ul > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+
+                    var listElemId = '#' + list[i].id;
+                    //alert(listElemId);
+
+                    var listElem = $(listElemId).remove();
+
+                    listElem.addClass('disabled');
+
+                    $('#targetLabelList').append(listElem);
+                }
+
+            }
+        }
+
+        function saveChanges() {
+            // Zielkatalog
+            var catId = "@Model.Course.Id.ToString()";
+
+            // Liste der hinzugekommemen Module
+            var list = $("#targetLabelList > li > input[type='checkbox']:checked").parent().get();
+            var n = list.length;
+            //alert(n);
+
+            if (n > 0) {
+                var moduleIdList = new Array();
+
+                for (var i = 0; i < n; i++) {
+                    moduleIdList[i] = list[i].id;
+                }
+
+
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("AssignCourseLabels")',
+                        data: {
+                            courseId: catId,
+                            labelIds: moduleIdList
+                        },
+                        success: function(data, success, xhr) {
+                            window.location.replace("@Url.Action("AdminNewLabels", new { id = Model.Course.Id })");
+                            $("#loading").hide();
+                        }
+                    });
+
+            }
+
+
+        }
+
+
+    </script>
+}

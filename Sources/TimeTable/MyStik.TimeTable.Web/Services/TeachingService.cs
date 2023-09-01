@@ -26,20 +26,23 @@ namespace MyStik.TimeTable.Web.Services
 
             var courses = 
                 _db.Activities.OfType<Course>()
-                    .Where(x => x.SemesterGroups.Any(g => 
-                         g.Semester.Id == semester.Id) &&
-                         x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(user.Id))))
+                    .Where(x => x.Semester.Id == semester.Id &&
+                         (x.Dates.Any(d => d.Hosts.Any(h => h.UserId.Equals(user.Id))) ||
+                         x.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))))
                 .ToList();
 
             foreach (var course in courses)
             {
                 var summary = courseSummaryService.GetCourseSummary(course);
+
+                summary.Subscription = course.Occurrence.Subscriptions.FirstOrDefault(s => s.UserId.Equals(user.Id));
+                
                 model.Courses.Add(summary);
             }
 
-
             var officeHours = _db.Activities.OfType<OfficeHour>().Where(x =>
-                x.Semester.Id == semester.Id && x.Owners.Any(y => y.Member.UserId.Equals(user.Id)))
+                x.Semester.Id == semester.Id && 
+                (x.Owners.Any(y => y.Member.UserId.Equals(user.Id))))
                 .ToList();
 
 
@@ -55,7 +58,6 @@ namespace MyStik.TimeTable.Web.Services
 
                 model.OfficeHours.Add(ohSummary);
             }
-
 
 
 

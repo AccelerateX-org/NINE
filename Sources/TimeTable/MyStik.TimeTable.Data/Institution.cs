@@ -26,6 +26,8 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual Autonomy Autonomy { get; set; }
 
+        public virtual ItemLabelSet LabelSet { get; set; }
+
 
         /// <summary>
         /// Liste aller Veranstalter der Institution

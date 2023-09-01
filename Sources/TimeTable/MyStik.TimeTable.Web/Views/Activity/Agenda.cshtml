@@ -12,8 +12,8 @@
             {
                 <div class="list-group-item">
                     <div class="row">
-                        <div class="col-2 text-center">@act.Begin.ToShortTimeString()<br>-<br>@act.End.ToShortTimeString()</div>
-                        <div class="col-8">
+                        <div class="col-2 text-center">@act.Begin.ToShortTimeString()<br>@act.End.ToShortTimeString()</div>
+                        <div class="col-6">
                             @if (act.Date.Activity is OfficeHour)
                             {
                                 <div>
@@ -25,6 +25,8 @@
                                 <a href="@Url.Action("Details", "Course", new {id = act.Date.Activity.Id})">
                                     @act.Date.Activity.Name
                                 </a>
+                                <div><strong>@act.Date.Title</strong></div>
+                                <div>@act.Date.Occurrence.Information</div>
                             }
                             else
                             {
@@ -33,7 +35,7 @@
                                 </div>
                             }
                         </div>
-                        <div class="col-2">
+                        <div class="col-4">
                             @if (act.Slot == null)
                             {
                                 @Html.RoomList(act.Date.Rooms)

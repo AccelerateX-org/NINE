@@ -507,6 +507,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     if (user != null)
                     {
                         model.UserName = user.UserName;
+                        model.User = user;
                     }
                 }
 
@@ -1097,9 +1098,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult MemberList2(string token)
+        public JsonResult MemberList2(string token, Guid orgId)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(orgId);
 
 
             var list = from l in org.Members
@@ -1108,7 +1109,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 new
                 {
                     memberId = l.Id,
-                    shortName = l.ShortName,
+                    shortName = l.ShortName
                 };
 
 
@@ -1121,9 +1122,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="memberAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddMemberAdminRight(string memberAdminName)
+        public PartialViewResult AddMemberAdminRight(string memberAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(memberAdminName));
 
             if (member != null && !member.IsMemberAdmin)
@@ -1144,9 +1145,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="courseAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddCourseAdminRight(string courseAdminName)
+        public PartialViewResult AddCourseAdminRight(string courseAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(courseAdminName));
 
             if (member != null && !member.IsCourseAdmin)
@@ -1167,9 +1168,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="curriculumAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddCurriculumAdminRight(string curriculumAdminName)
+        public PartialViewResult AddCurriculumAdminRight(string curriculumAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(curriculumAdminName));
 
             if (member != null && !member.IsCurriculumAdmin)
@@ -1190,9 +1191,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="roomAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddRoomAdminRight(string roomAdminName)
+        public PartialViewResult AddRoomAdminRight(string roomAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(roomAdminName));
 
             if (member != null && !member.IsRoomAdmin)
@@ -1213,9 +1214,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="eventAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddEventAdminRight(string eventAdminName)
+        public PartialViewResult AddEventAdminRight(string eventAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(eventAdminName));
 
             if (member != null && !member.IsEventAdmin)
@@ -1236,9 +1237,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="newsletterAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddNewsletterAdminRight(string newsletterAdminName)
+        public PartialViewResult AddNewsletterAdminRight(string newsletterAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(newsletterAdminName));
 
             if (member != null && !member.IsNewsAdmin)
@@ -1259,9 +1260,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="studentAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddStudentAdminRight(string studentAdminName)
+        public PartialViewResult AddStudentAdminRight(string studentAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(studentAdminName));
 
             if (member != null && !member.IsStudentAdmin)
@@ -1282,9 +1283,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="examAdminName"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult AddExamAdminRight(string examAdminName)
+        public PartialViewResult AddExamAdminRight(string examAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(examAdminName));
 
             if (member != null && !member.IsExamAdmin)
@@ -1300,9 +1301,9 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult AddOrgAdminRight(string orgAdminName)
+        public PartialViewResult AddOrgAdminRight(string orgAdminName, Guid id)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
             var member = org.Members.SingleOrDefault(x => x.ShortName.Equals(orgAdminName));
 
             if (member != null && !member.IsAdmin)
@@ -1327,8 +1328,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public PartialViewResult DeleteAdminRight(Guid id, string right)
         {
-            var org = GetMyOrganisation();
-            var member = org.Members.SingleOrDefault(x => x.Id == id);
+            var member = Db.Members.SingleOrDefault(x => x.Id == id);
 
             if (member != null)
             {

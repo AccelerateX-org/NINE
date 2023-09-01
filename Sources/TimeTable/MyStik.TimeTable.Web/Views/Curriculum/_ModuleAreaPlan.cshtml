@@ -47,7 +47,7 @@
                     {
                         var w = (int)(slot.ECTS / 30 * 100);
                         <a class="btn btn-outline-secondary slot text-truncate" style="width: @w%" href="@Url.Action("Slot", new { id = slot.Id })">
-                            <strong>@slot.Tag</strong> <span class="badge bg-secondary">@slot.ModuleAccreditations.Count</span>
+                            <strong>@slot.Tag</strong>
                             <br />
                             @if (slot.AreaOption.Area.Options.Count() > 1)
                             {

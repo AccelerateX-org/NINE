@@ -1,8 +1,21 @@
-﻿@model MyStik.TimeTable.Data.ActivityOrganiser
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.ActivityOrganiser
 @{
     ViewBag.Title = "Startseite";
 
     var isStudent = ViewBag.UserRight == null ||  ViewBag.UserRight.IsStudent;
+
+    var db = new TimeTableDbContext();
+    var org = db.Organisers.SingleOrDefault(x => x.Id == Model.Id);
+
+
+    if (org.LabelSet == null)
+    {
+        var ls = new ItemLabelSet();
+        org.LabelSet = ls;
+        db.ItemLabelSets.Add(ls);
+        db.SaveChanges();
+    }
 }
 
 
@@ -10,6 +23,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.ShortName</li>
@@ -20,7 +34,7 @@
                 <div class="card border-secondary">
                     <div class="card-body">
                         <h5 class="card-title text-center">
-                            <i class="bi-book"></i><br/>
+                            <i class="bi-book"></i><br />
                             Angebote
                         </h5>
                     </div>
@@ -30,14 +44,12 @@
                             <a href="@Url.Action("Index", "Catalogs", new { id = Model.Id })" class="list-group-item list-group-item-action">Modulkataloge</a>
                         }
                         <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
-                        <a href="@Url.Action("Index", "Dictionary", new {id = Model.Id})" class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
+                        <a href="@Url.Action("Organiser", "Dictionary", new { orgId=Model.Id})"  class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
+
                         @if (!isStudent)
                         {
-                            <a href="@Url.Action("Semester", "Courses", new {id = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltungen</a>
                             <a href="@Url.Action("Index", "Events", new {id = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungen</a>
                             <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action">Newsletter</a>
-                            <a href="@Url.Action("Index", "Advertisements", new {id = Model.Id})" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
-                            <a href="#" class="list-group-item list-group-item-action disabled">Infoscreens</a>
                         }
                     </div>
                 </div>
@@ -54,12 +66,13 @@
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("Index", "Reservation")" class="list-group-item list-group-item-action">Raumreservierungen</a>
-                            <a href="@Url.Action("Index", "Rooms")" class="list-group-item list-group-item-action">Räume</a>
+                            <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Räume</a>
                             <a href="@Url.Action("Today", "Activity")" class="list-group-item list-group-item-action">Tagesprogramm</a>
-                            <a href="@Url.Action("DailyRota", "Activity")" class="list-group-item list-group-item-action">Raumbelegungen</a>
+                            <a href="@Url.Action("DailyRota", "Activity", new {id=Model.Id})" class="list-group-item list-group-item-action">Raumbelegungen</a>
                             <a href="@Url.Action("Rooms", "Organiser")" class="list-group-item list-group-item-action">Raumsuche</a>
-                            <a href="@Url.Action("Statistics", "Rooms")" class="list-group-item list-group-item-action">Auswertungen</a>
                             <a href="@Url.Action("Schedule", "Rooms")" class="list-group-item list-group-item-action">Veranstaltungsliste</a>
+                            <a href="@Url.Action("Index", "Advertisements", new {id = Model.Id})" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
+                            <a href="#" class="list-group-item list-group-item-action disabled">Infoscreens</a>
                         }
                     </div>
                 </div>
@@ -96,6 +109,7 @@
                         <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action">Abschlussarbeiten</a>
                         @if (!isStudent)
                         {
+                            <a href="@Url.Action("CreateCourse", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
                             <a href="@Url.Action("Index", "InternshipAdmin")" class="list-group-item list-group-item-action disabled">Praxissemester</a>
                             <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
                             <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>

@@ -35,34 +35,74 @@
                     <a href="@Url.Action("Admin", new {id = Model.Id})" class="btn btn-outline-primary">
                         <i class="bi-chevron-left"></i> Zurück
                     </a>
+                    <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary disabled">
+                        <i class="bi-plus"></i> Neues Etikett (@Model.Organiser.Institution.Tag)
+                    </a>
+                    <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary disabled">
+                        <i class="bi-plus"></i> Neues Etikett (@Model.Organiser.ShortName)
+                    </a>
                     <a href="@Url.Action("AddLabel", new {currId = Model.Id})" class="btn btn-outline-primary">
-                        <i class="bi-plus"></i> Neues Etikett
+                        <i class="bi-plus"></i> Neues Etikett [@Model.ShortName]
                     </a>
                 </div>
             </div>
             <div class="card-body">
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Beschreibung</th>
-                            <th>Farbe</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Ebene</th>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                        <th>Farbe</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                    @foreach (var label in Model.LabelSet.ItemLabels)
-                    {
-                        <tr>
-                            <td>@label.Name</td>
-                            <td>@label.Description</td>
-                            <td>@label.HtmlColor</td>
-                            <td>
-                                <a href="@Url.Action("EditLabel", new {currId = Model.Id, labelId = label.Id})" class="btn btn-sm btn-outline-primary">Ändern</a>
-                                <a href="@Url.Action("DeleteLabel", new {currId = Model.Id, labelId = label.Id})" class="btn btn-sm btn-outline-danger">Löschen</a>
-                            </td>
-                        </tr>
-                    }
+                        @foreach (var label in Model.Organiser.Institution.LabelSet.ItemLabels)
+                        {
+                            <tr>
+                                <td>@Model.Organiser.Institution.Tag</td>
+                                <td>@label.Name</td>
+                                <td>@label.Description</td>
+                                <td>@label.HtmlColor</td>
+                                <td>
+                                    @if (ViewBag.UserRight.IsInstitutionAdmin)
+                                    {
+                                        <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                        <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var label in Model.Organiser.LabelSet.ItemLabels)
+                        {
+                            <tr>
+                                <td>@Model.Organiser.ShortName</td>
+                                <td>@label.Name</td>
+                                <td>@label.Description</td>
+                                <td>@label.HtmlColor</td>
+                                <td>
+                                    @if (ViewBag.UserRight.IsOrgAdmin)
+                                    {
+                                        <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                        <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var label in Model.LabelSet.ItemLabels)
+                        {
+                            <tr>
+                                <td>@Model.ShortName</td>
+                                <td>@label.Name</td>
+                                <td>@label.Description</td>
+                                <td>@label.HtmlColor</td>
+                                <td>
+                                    <a href="@Url.Action("EditLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-primary">Ändern</a>
+                                    <a href="@Url.Action("DeleteLabel", new { currId = Model.Id, labelId = label.Id })" class="btn btn-sm btn-outline-danger">Löschen</a>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

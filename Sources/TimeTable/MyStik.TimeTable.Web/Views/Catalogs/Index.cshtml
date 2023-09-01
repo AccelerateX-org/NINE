@@ -37,14 +37,17 @@
                             <a href="@Url.Action("Import", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
                                 <i class="bi-upload"></i> Import
                             </a>
+                            <a href="@Url.Action("Export", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
+                                <i class="bi-download"></i> Export
+                            </a>
                             <a href="@Url.Action("MoveModules")" class="btn btn-outline-primary">
                                 <i class="bi-list-check"></i> Zusammensetzung
                             </a>
 
                             @*
-                            <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
-                                <i class="bi-trash"></i> Alle Löschen
-                            </a>
+            <a href="@Url.Action("DeleteAll", "Catalogs", new {id = Model.Organiser.Id})" class="btn btn-outline-danger">
+                <i class="bi-trash"></i> Alle Löschen
+            </a>
                             *@
                         }
                     </div>

@@ -174,6 +174,7 @@
 <div class="col-md-12">
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
         @if (Model.Summary.Course.Organiser != null)
         {
             <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Summary.Course.Organiser.Id })">@Model.Summary.Course.Organiser.ShortName</a></li>
@@ -226,6 +227,9 @@
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})">
                     <i class="bi-tag"></i> Themengebiet ("Modul")
                 </a>
+                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
+                    <i class="bi-tags"></i> Labels
+                </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
                     <i class="bi-exclamation"></i> Zugangsbeschränkungen, Platzkontingente
                 </a>
@@ -255,7 +259,7 @@
                             <i class="bi-lock"></i> Änderung durch Lehrende sperren
                         </a>
                     }
-                    <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})" >
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Owners", new {id = Model.Summary.Course.Id})">
                         <i class="bi-person"></i> Besitzer
                     </a>
                     <a class="list-group-item list-group-item-action list-group-item-danger" href="@Url.Action("DeleteCourse", new {id = Model.Summary.Course.Id})">
@@ -290,8 +294,16 @@
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 mb-1">
                         <strong>@Model.Summary.Course.Name</strong>
+                        @if (Model.Summary.Course.LabelSet != null)
+                        {
+                            foreach (var label in Model.Summary.Course.LabelSet.ItemLabels)
+                            {
+                                <span class="badge bg-secondary">@label.Name</span>
+                            }
+                        }
+
                     </div>
                 </div>
                 <div class="row">
@@ -459,25 +471,47 @@
         <div id="cardDates" class="card mb-3">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 mb-1">
                         <strong>Alle Termine</strong>
                     </div>
                 </div>
-                @foreach (var date in Model.Summary.Course.Dates.OrderBy(x => x.Begin))
-                {
-                    <div class="row">
-                        <div class="col-4">
-                            @Html.TimeSpanWithDate(date)
-                        </div>
-                        <div class="col-8">
-                            <strong>@date.Title</strong>
-                            <div>@date.Description</div>
-                            <div>Raum: @Html.RoomList(date.Rooms) | Dozent:innen: @Html.LecturerList(date.Hosts)</div>
-                        </div>
+                <div class="row">
+                    <div class="col-5">
                     </div>
-                }
+                    <div class="col-3">
+                        <div><i class="bi-building-check"></i></div>
+                    </div>
+                    <div class="col-4">
+                        <div><i class="bi-person-gear"></i></div>
+                    </div>
+                </div>
+                <div class="list-group">
+
+                    @foreach (var date in Model.Summary.Course.Dates.OrderBy(x => x.Begin))
+                    {
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-5">
+                                    @Html.TimeSpanWithDate(date)
+                                </div>
+                                <div class="col-3">
+                                    <div>@Html.RoomList(date.Rooms)</div>
+                                </div>
+                                <div class="col-4">
+                                    <div>@Html.LecturerList(date.Hosts)</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="offset-2 col-md-10">
+                                    <strong>@date.Title</strong>
+                                    <div>@date.Description</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
+                </div>
     </div>
 </div>
 <div class="row">

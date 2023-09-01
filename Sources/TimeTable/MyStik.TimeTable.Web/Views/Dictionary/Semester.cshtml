@@ -1,34 +1,24 @@
 ﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @using MyStik.TimeTable.Web.Helpers
 @{
-    var containerType = "container-fluid";
-    if (!Request.IsAuthenticated)
-    {
-        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
-        containerType = "container";
-    }
-
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
 <div class="row">
-    <div class="col-md-12">
-        <h4>
-            <a href="@Url.Action("Index")">Vorlesungsverzeichnis</a> /
-            @Model.Semester.Name
-        </h4>
-        <hr />
-    </div>
-</div>
-
-<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Semester.Name</li>
+        </ol>
+    </nav>
     <div class="col-md-12">
         <div class="card">
             <div class="list-group">
                 @foreach (var org in Model.Organisers.OrderBy(x => x.ShortName))
                 {
-                    <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId=org.Id})" class="list-group-item">
-                        <h5 class="list-group-item-heading">@Html.FacultyLabel(org) @org.Name</h5>
+                    <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId=org.Id})" class="list-group-item list-group-item-action">
+                        <h5>@Html.FacultyLabel(org) @org.Name</h5>
                     </a>
                 }
             </div>

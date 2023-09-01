@@ -42,6 +42,13 @@ namespace MyStik.TimeTable.Web.Controllers
                 model = courseService.GetCourseSelectModel(id, user.Id);
             }
 
+            if (model.Summary.Course.LabelSet == null)
+            {
+                var labelSet = new ItemLabelSet();
+                Db.ItemLabelSets.Add(labelSet);
+                model.Summary.Course.LabelSet = labelSet;
+                Db.SaveChanges();
+            }
 
             var userRights = GetUserRight(User.Identity.Name, model.Summary.Course);
             ViewBag.UserRight = userRights;
@@ -1499,18 +1506,11 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.UserRight = GetUserRight();
-
-            var model = new OrganiserViewModel
-            {
-                Organiser = GetMyOrganisation()
-            };
-
-            var culture = Thread.CurrentThread.CurrentUICulture;
-            ViewBag.Culture = culture;
+            var user = GetCurrentUser();
+            var members = MemberService.GetFacultyMemberships(user.Id);
 
 
-            return View(model);
+            return View(members);
         }
 
 
@@ -1519,11 +1519,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id">SemesterId</param>
         /// <returns></returns>
-        public ActionResult CreateCourse(Guid? id)
+        public ActionResult CreateCourse(Guid orgId, Guid? semId)
         {
-            var sem = SemesterService.GetSemester(id);
+            var sem = SemesterService.GetSemester(semId);
 
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(orgId);
 
             CourseCreateModel2 model = new CourseCreateModel2();
 
@@ -1533,7 +1533,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.OrganiserId3 = org.Id;
 
             // Liste aller Fakultäten
-            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            ViewBag.Organiser = Db.Organisers.Where(x => x.Id == org.Id).OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
@@ -1547,86 +1547,17 @@ namespace MyStik.TimeTable.Web.Controllers
                 Value = c.Id.ToString(),
             });
 
-            // Alle Semester, die in Zukunft enden und Semestergruppen haben
+            // Alle Semester, die in Zukunft enden
             ViewBag.Semester = Db.Semesters
-                .Where(x => x.EndCourses >= DateTime.Today && x.Groups.Any())
+                .Where(x => x.EndCourses >= DateTime.Today)
                 .OrderBy(s => s.StartCourses)
+                .Take(3)
                 .Select(c => new SelectListItem
                 {
                     Text = c.Name,
                     Value = c.Id.ToString(),
                 });
             model.SemesterId = sem.Id;
-
-            ViewBag.Curricula = null;
-            ViewBag.Groups = null;
-            ViewBag.Chapters = null;
-            ViewBag.Topics = null;
-
-
-
-
-            // bei der ersten Anzeige wird kein onChange ausgelöst
-            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
-            var curr = currList.FirstOrDefault();
-            if (curr != null)
-            {
-                model.CurriculumId = curr.Id;
-                ViewBag.Curricula = currList.Select(c => new SelectListItem
-                {
-                    Text = c.ShortName,
-                    Value = c.Id.ToString(),
-                });
-
-
-                // alle Studiengruppen
-                var currGroups = curr.CurriculumGroups.ToList();
-                var group = currGroups.FirstOrDefault();
-                model.CurrGroupId = @group?.Id ?? Guid.Empty;
-                ViewBag.CurrGroups = currGroups.Select(c => new SelectListItem
-                {
-                    Text = c.Name,
-                    Value = c.Id.ToString(),
-                });
-
-                // alle Kapazitätsgruppen
-
-                if (group != null)
-                {
-                    var capGroups = group.CapacityGroups.ToList();
-                    var firstGroup = capGroups.FirstOrDefault();
-                    model.CapGroupId = firstGroup?.Id ?? Guid.Empty;
-
-                    ViewBag.CapGroups = capGroups.Select(c => new SelectListItem
-                    {
-                        Text = c.Name,
-                        Value = c.Id.ToString(),
-                    });
-                }
-
-
-                var chapters = curr.Chapters.ToList();
-                var chapter = chapters.FirstOrDefault();
-                model.ChapterId = chapter?.Id ?? Guid.Empty;
-                ViewBag.Chapters = chapters.Select(c => new SelectListItem
-                {
-                    Text = c.Name,
-                    Value = c.Id.ToString(),
-                });
-
-                if (chapter != null)
-                {
-                    var topics = chapter.Topics.ToList();
-                    var topic = topics.FirstOrDefault();
-                    model.TopicId = topic?.Id ?? Guid.Empty;
-
-                    ViewBag.Topics = topics.Select(c => new SelectListItem
-                    {
-                        Text = c.Name,
-                        Value = c.Id.ToString(),
-                    });
-                }
-            }
 
 
             return View(model);
@@ -1829,7 +1760,9 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.Activities.Add(course);
             Db.SaveChanges();
 
-            return PartialView("_CreateCourseSuccess", course);
+            var url = Url.Action("Details", "Course", new { id = course.Id });
+
+            return Content(url);
         }
 
         /// <summary>
@@ -3750,6 +3683,103 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
             return View(model);
+        }
+
+        public ActionResult AdminNewLabels(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+
+            return View(course);
+        }
+
+        public ActionResult EditLabel(Guid courseId, Guid labelId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var label = course.LabelSet.ItemLabels.FirstOrDefault(x => x.Id == labelId);
+
+            ViewBag.Course = course;
+
+            return View(label);
+        }
+
+        public ActionResult RemoveLabel(Guid courseId, Guid labelId)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+            var label = course.LabelSet.ItemLabels.FirstOrDefault(x => x.Id == labelId);
+
+            if (label != null)
+            {
+                course.LabelSet.ItemLabels.Remove(label);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("AdminNewLabels", new { id = course.Id });
+        }
+
+
+
+        public ActionResult ChangeLabels(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+            // ermittle alle Studiengänge zu dieser LV
+            var curricula = new List<Curriculum>();
+            var teachings = Db.TeachingDescriptions.Where(x => x.Course.Id == course.Id).ToList();
+            if (teachings.Any())
+            {
+                var modules = teachings.Select(x => x.Subject.Module).Distinct().ToList();
+                foreach (var module in modules)
+                {
+                    curricula.AddRange(module.Accreditations.Select(accreditation => accreditation.Slot.AreaOption.Area.Curriculum));
+                }
+
+                curricula = curricula.Distinct().ToList();
+            }
+            else
+            {
+                curricula.AddRange(course.Organiser.Curricula.ToList());
+            }
+
+            var anyChange = false;
+            foreach (var curriculum in curricula.Where(curriculum => curriculum.LabelSet == null))
+            {
+                curriculum.LabelSet = new ItemLabelSet();
+                anyChange = true;
+            }
+
+            if (anyChange)
+            {
+                Db.SaveChanges();
+            }
+
+            var model = new CourseLabelViewModel()
+            {
+                Course = course,
+                Curricula = curricula
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AssignCourseLabels(Guid courseId, Guid[]labelIds)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == courseId);
+
+            foreach (var labelId in labelIds)
+            {
+                var label = Db.ItemLabels.SingleOrDefault(x => x.Id == labelId);
+
+                if (label != null && !course.LabelSet.ItemLabels.Contains(label))
+                {
+                    course.LabelSet.ItemLabels.Add(label);
+                }
+            }
+
+            Db.SaveChanges();
+
+            return null;
         }
     }
 }

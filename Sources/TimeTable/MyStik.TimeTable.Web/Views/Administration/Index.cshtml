@@ -1,4 +1,4 @@
-﻿@using MyStik.TimeTable.Data
+﻿@model MyStik.TimeTable.Data.ActivityOrganiser
 
 @{
     Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
@@ -6,6 +6,13 @@
 }
 
 
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-success">
+            <div>Zugang zum neuen <a href="@Url.Action("Index", "Dashboard")">Dashboard</a></div>
+        </div>
+    </div>
+</div>
 
 <div class="row" style="margin-bottom: 20px">
     <div class="col-sm-6 col-md-3">
@@ -56,16 +63,16 @@
                 </h5>
             </div>
             <div class="list-group">
-                <a href="@Url.Action("Index", "Lecturer")" class="list-group-item list-group-item-action">Lehrende</a>
-                <a href="@Url.Action("Index", "Students")" class="list-group-item list-group-item-action">Studierende</a>
-                <a href="@Url.Action("Index", "Alumni")" class="list-group-item list-group-item-action">Alumni</a>
+                <a href="@Url.Action("Organiser", "Lecturer", new {id=Model.Id})" class="list-group-item list-group-item-action">Lehrende</a>
+                <a href="@Url.Action("Index", "Students", new {id=Model.Id}))" class="list-group-item list-group-item-action">Studierende</a>
+                <a href="@Url.Action("Index", "Alumni", new {id=Model.Id}))" class="list-group-item list-group-item-action">Alumni</a>
                 @*
                     <a href="@Url.Action("Admin", "Assessment")" class="list-group-item list-group-item-action">Externe Partner</a>
                 *@
-                <a href="@Url.Action("Index", "Autonomy")" class="list-group-item list-group-item-action">Gremien</a>
-                <a href="@Url.Action("Index", "Curricula")" class="list-group-item list-group-item-action">Studiengänge</a>
-                <a href="@Url.Action("Index", "Rooms")" class="list-group-item list-group-item-action">Räume</a>
-                <a href="@Url.Action("Index", "Catalogs")" class="list-group-item list-group-item-action">Modulkataloge</a>
+                <a href="@Url.Action("Index", "Autonomy", new {id=Model.Id})" class="list-group-item list-group-item-action">Gremien</a>
+                <a href="@Url.Action("Index", "Curricula", new {id=Model.Id})" class="list-group-item list-group-item-action">Studiengänge</a>
+                <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Räume</a>
+                <a href="@Url.Action("Index", "Catalogs", new {id=Model.Id})" class="list-group-item list-group-item-action">Modulkataloge</a>
             </div>
         </div>
     </div>
@@ -82,16 +89,9 @@
                 <a href="@Url.Action("Index", "Newsletter")#" class="list-group-item list-group-item-action">Newsletter</a>
                 <a href="@Url.Action("Index", "Advertisements")" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
                 <a href="#" class="list-group-item list-group-item-action">Infoscreens</a>
-                <a href="@Url.Action("Admins", "Organiser")" class="list-group-item list-group-item-action">Rechte & Rollen</a>
+                <a href="@Url.Action("Admins", "Organiser", new {id=Model.Id} )" class="list-group-item list-group-item-action">Rechte & Rollen</a>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="alert alert-success">
-            <div>Zugang zum neuen <a href="@Url.Action("Index", "Dashboard")">Dashboard</a> (im Aufbau)</div>
-        </div>
-    </div>
-</div>

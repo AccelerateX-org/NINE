@@ -1,0 +1,68 @@
+﻿@using MyStik.TimeTable.Data
+
+@{
+    ViewBag.Title = "Index";
+
+
+    var db = new TimeTableDbContext();
+
+    var hm = db.Institutions.SingleOrDefault(x => x.Tag.Equals("HM"));
+
+    if (hm == null)
+    {
+        hm = new Institution
+        {
+            Domain = "hm.edu",
+            Name = "Hochschule München",
+            Tag = "HM",
+            LabelSet = new ItemLabelSet(),
+            Organisers = db.Organisers.ToList(),
+            Autonomy = new Autonomy()
+        };
+
+
+        var labelCIE = db.ItemLabels.SingleOrDefault(x => x.Name.Equals("CIE"));
+
+        if (labelCIE == null)
+        {
+            labelCIE = new ItemLabel
+            {
+                Name = "CIE",
+                Description = "Courses in English",
+                HtmlColor = "00ff00"
+            };
+
+            db.ItemLabels.Add(labelCIE);
+        }
+
+        hm.LabelSet.ItemLabels.Add(labelCIE);
+        db.Institutions.Add(hm);
+
+        db.SaveChanges();
+    }
+
+}
+
+@if (hm == null)
+{
+    <h1>Keine Institution vorhanden</h1>
+}
+else
+{
+    <h2>Institution @hm.Tag</h2>
+    <h4>Einrichtungen</h4>
+    <ul>
+        @foreach (var org in hm.Organisers.ToList())
+        {
+            <li>@org.Name (@org.ShortName)</li>
+        }
+    </ul>
+    <h4>Labels</h4>
+    <ul>
+        @foreach (var label in hm.LabelSet.ItemLabels.ToList())
+        {
+            <li>@label.Name</li>
+        }
+    </ul>
+}
+

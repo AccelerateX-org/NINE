@@ -12,6 +12,12 @@
     ViewBag.Title = "Studiengänge";
 
     var isMember = ViewBag.UserRight.IsOrgMember;
+
+    var txtMenu = "alle Einrichtungen";
+    if (Model.Count() == 1)
+    {
+        txtMenu = Model.First().Name;
+    }
 }
 
 
@@ -23,18 +29,22 @@
 
 <div class="row">
     <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Curricula", "University")">Studienangebote</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@txtMenu</li>
+            </ol>
+        </nav>
+
+
         <div class="card">
-            <div class="card-header">
-                <h4>
-                    <i class="bi-trophy"></i> Studiengänge / Studienangebote
-                </h4>
-            </div>
             @if (ViewBag.UserRight.IsCurriculumAdmin)
             {
                 <div class="list-group">
                     <div class="list-group-item">
                         <div class="btn-group">
-                                <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Studiengang anlegen</a>
+                            <a href="@Url.Action("Create")" class="btn btn-outline-primary"><i class="bi-plus"></i> Studiengang anlegen</a>
                         </div>
                     </div>
                 </div>
@@ -42,8 +52,6 @@
             <table id="tabCurricula" class="table">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>Fakultät</th>
                         <th>Bezeichnung </th>
                         <th>Abschluss</th>
                         <th>PKV</th>
@@ -56,9 +64,9 @@
                         foreach (var curr in org.Curricula.OrderBy(x => x.Name))
                         {
                             var pk = curr.Organiser.Autonomy != null ?
-                                curr.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK")&&
-                                                                                                           x.Curriculum != null &&
-                                                                                                           x.Curriculum.Id == curr.Id) : null;
+                                curr.Organiser.Autonomy.Committees.FirstOrDefault(x => x.Name.Equals("PK") &&
+                                                                                       x.Curriculum != null &&
+                                                                                       x.Curriculum.Id == curr.Id) : null;
 
                             var pkv = pk != null ? pk.Members.FirstOrDefault(x => x.HasChair) : null;
 
@@ -73,10 +81,8 @@
                             if (isMember || (!isMember && !curr.IsDeprecated))
                             {
                                 <tr class="@rowClass">
-                                    <td>@Html.FacultyLabel(org)</td>
-                                    <td>@org.Name</td>
                                     <td>
-                                        <a href="@Url.Action("Details", "Curriculum", new {id = curr.Id})">
+                                        <a href="@Url.Action("Details", "Curriculum", new { id = curr.Id })">
                                             @curr.Name (@curr.ShortName)
                                         </a>
                                     </td>

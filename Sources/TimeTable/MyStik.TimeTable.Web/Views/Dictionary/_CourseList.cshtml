@@ -1,16 +1,18 @@
 ﻿@model ICollection<MyStik.TimeTable.Data.Course>
 
-<ul>
+<div class="list-group">
     @foreach (var group in Model)
     {
-        <li>@group.Name (@group.ShortName)
-            @if (group.LabelSet != null)
-            {
-                foreach (var label in group.LabelSet.ItemLabels)
+        <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = group.Id })">
+            <div class="card-title">@group.Name (@group.ShortName)
+                @if (group.LabelSet != null)
                 {
-                    <span class="badge bg-secondary">@label.Name</span>
+                    foreach (var label in group.LabelSet.ItemLabels)
+                    {
+                        <span class="badge bg-secondary">@label.Name</span>
+                    }
                 }
-            }
-        </li>
+            </div>
+        </a>
     }
-</ul>
+</div>

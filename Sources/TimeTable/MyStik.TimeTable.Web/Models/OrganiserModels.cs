@@ -188,6 +188,8 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class MemberUserViewModel
     {
+        public ApplicationUser User { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -231,11 +233,9 @@ namespace MyStik.TimeTable.Web.Models
         public string Name { get; set; }
 
         [Display(Name = "Vorname")]
-        [Required]
         public string FirstName { get; set; }
 
         [Display(Name = "Titel")]
-        [Required]
         public string Title { get; set; }
 
 
@@ -248,7 +248,7 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        [Display(Name = "LB, Gast, etc.")]
+        [Display(Name = "In der öffentlich zugänglichen Liste der Lehrenden anzeigen")]
         public bool IsAssociated { get; set; }
 
         /// <summary>
@@ -457,9 +457,10 @@ namespace MyStik.TimeTable.Web.Models
                 if (Member != null)
                     return Member.IsExamAdmin;
                 return IsSysAdmin;
-                ;
             }
         }
+
+        public bool IsInstitutionAdmin => Member?.IsAdmin ?? IsSysAdmin;
 
 
         /// <summary>

@@ -17,6 +17,7 @@ namespace MyStik.TimeTable.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [AllowAnonymous]
     public class CurriculumController : BaseController
     {
         public ActionResult Details(Guid id)
@@ -27,7 +28,8 @@ namespace MyStik.TimeTable.Web.Controllers
             {
                 var board = new BulletinBoard
                 {
-                    Autonomy = curr.Autonomy,   // somit haben automatisch alle Gremien des Studiengangs auf den Schaukasten Zugang
+                    Autonomy = curr
+                        .Autonomy, // somit haben automatisch alle Gremien des Studiengangs auf den Schaukasten Zugang
                     Name = curr.Name,
                     Description = "Aushänge relevant für alle Studierende des Studiengangs"
                 };
@@ -45,6 +47,7 @@ namespace MyStik.TimeTable.Web.Controllers
             model.NextSemester = SemesterService.GetNextSemester(model.Semester);
             model.PreviousSemester = SemesterService.GetPreviousSemester(model.Semester);
 
+            /*
             var user = GetCurrentUser();
 
             if (user.MemberState == MemberState.Staff)
@@ -57,7 +60,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveSemesters.AddRange(Db.Semesters.Where(s =>
                     s.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id && g.IsAvailable)));
             }
-
+            */
 
             var assessments = Db.Assessments.Where(x =>
                 x.Curriculum.Id == curr.Id &&
@@ -125,7 +128,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             model.Curriculum = curr;
 
-            model.FilterLabel =  curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(label));
+            model.FilterLabel = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(label));
 
 
             return PartialView("_ModulePlan", model);
@@ -159,7 +162,7 @@ namespace MyStik.TimeTable.Web.Controllers
             return PartialView("_ModuleAreaPlan", model);
         }
 
-        
+
 
 
 
@@ -700,8 +703,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     var list2 = org.Members.Where(l =>
                             (!string.IsNullOrEmpty(l.UserId)) && (
-                            (!string.IsNullOrEmpty(l.ShortName) && l.ShortName.StartsWith(name.ToUpper())) ||
-                            (!string.IsNullOrEmpty(l.Name) && l.Name.ToUpper().StartsWith(name.ToUpper()))))
+                                (!string.IsNullOrEmpty(l.ShortName) && l.ShortName.StartsWith(name.ToUpper())) ||
+                                (!string.IsNullOrEmpty(l.Name) && l.Name.ToUpper().StartsWith(name.ToUpper()))))
                         .OrderBy(l => l.Name)
                         .Select(l => new
                         {
@@ -902,7 +905,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (semester != null && day.HasValue && @from.HasValue && until.HasValue)
             {
-                var dayOfWeek = (DayOfWeek) day.Value;
+                var dayOfWeek = (DayOfWeek)day.Value;
 
                 roomList = new MyStik.TimeTable.Web.Services.RoomService().GetFreeRooms(dayOfWeek, from.Value,
                     until.Value, semester, isOrgAdmin, allRooms);
@@ -1144,7 +1147,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Admin", new {id = cur.Id});
+            return RedirectToAction("Admin", new { id = cur.Id });
         }
 
         public ActionResult ImportSections(Guid id)
@@ -1168,13 +1171,13 @@ namespace MyStik.TimeTable.Web.Controllers
             model.AttachmentStructure?.SaveAs(tempFile);
 
             CurriculumModulePlan plan = null;
-            
+
             using (StreamReader file = System.IO.File.OpenText(tempFile))
             {
                 var serializer = new JsonSerializer();
                 plan = (CurriculumModulePlan)serializer.Deserialize(file, typeof(CurriculumModulePlan));
             }
-            
+
 
             if (plan == null)
                 return View();
@@ -1273,7 +1276,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Details", new {id = model.Curriculum.Id});
+            return RedirectToAction("Details", new { id = model.Curriculum.Id });
         }
 
 
@@ -1394,7 +1397,7 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        
+
 
         public ActionResult ImportMoveAccr(Guid id)
         {
@@ -1528,7 +1531,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Areas", new {id = curr.Id});
+            return RedirectToAction("Areas", new { id = curr.Id });
         }
 
 
@@ -1580,16 +1583,16 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         foreach (var accreditation in slot.ModuleAccreditations.ToList())
                         {
-                            foreach(var exam in accreditation.ExaminationDescriptions.ToList())
+                            foreach (var exam in accreditation.ExaminationDescriptions.ToList())
                             {
                                 Db.ExaminationDescriptions.Remove(exam);
                             }
-                            
-                            foreach(var teaching in accreditation.TeachingDescriptions.ToList())
+
+                            foreach (var teaching in accreditation.TeachingDescriptions.ToList())
                             {
                                 Db.TeachingDescriptions.Remove(teaching);
                             }
-                            
+
                             Db.Accreditations.Remove(accreditation);
                         }
 
@@ -1664,11 +1667,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 var moduleName = catWords[2];
 
 
-                var module = Db.CurriculumModules.FirstOrDefault(x => 
+                var module = Db.CurriculumModules.FirstOrDefault(x =>
                     x.Tag.Equals(moduleName) &&
                     x.Catalog.Tag.Equals(catalogName) &&
                     x.Catalog.Organiser.Tag.Equals(institutionName)
-                    );
+                );
 
                 if (module == null) continue;
 
@@ -1742,22 +1745,22 @@ namespace MyStik.TimeTable.Web.Controllers
                     x.Module.Tag.Equals(moduleName) && x.Module.Catalog != null &&
                     x.Module.Catalog.Tag.Equals(catalogName) &&
                     x.Module.Catalog.Organiser.Tag.Equals(orgName)
-                    );
+                );
 
                 if (module == null) continue;
 
-                var courses = Db.Activities.OfType<Course>().Where(x => 
+                var courses = Db.Activities.OfType<Course>().Where(x =>
                     x.ShortName.Equals(accreditation.course) &&
-                    x.SemesterGroups.Any(g => 
+                    x.SemesterGroups.Any(g =>
                         g.Semester.Id == sem.Id &&
                         g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
-                    ).ToList();
+                ).ToList();
 
                 foreach (var course in courses)
                 {
                     var subjectOpportunity = module.Opportunities.FirstOrDefault(x =>
-                        x.Course.Id == course.Id && 
-                        x.Semester.Id == sem.Id && 
+                        x.Course.Id == course.Id &&
+                        x.Semester.Id == sem.Id &&
                         x.Subject.Id == module.Id);
 
                     if (subjectOpportunity == null)
@@ -1826,7 +1829,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Students", new {id = sourceCur.Id});
+            return RedirectToAction("Students", new { id = sourceCur.Id });
         }
 
 
@@ -1836,8 +1839,73 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
-            return View();
+            var org = curriculum.Organiser;
+
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(curriculum);
         }
+
+        public ActionResult DestroyConfirmed(Guid id)
+        {
+            var curriculum = Db.Curricula.SingleOrDefault(x => x.Id == id);
+
+            var org = curriculum.Organiser;
+
+            var userRight = GetUserRight(org);
+
+            if (userRight.IsCurriculumAdmin)
+            {
+                foreach (var curriculumGroup in curriculum.CurriculumGroups.ToList())
+                {
+                    foreach (var capacityGroup in curriculumGroup.CapacityGroups.ToList())
+                    {
+                        foreach (var semesterGroup in capacityGroup.SemesterGroups.ToList())
+                        {
+                            Db.SemesterGroups.Remove(semesterGroup);
+                        }
+
+                        Db.CapacityGroups.Remove(capacityGroup);
+                    }
+
+                    Db.CurriculumGroups.Remove(curriculumGroup);
+                }
+
+                if (curriculum.BulletinBoard != null)
+                {
+                    var board = curriculum.BulletinBoard;
+
+                    foreach (var boardPosting in board.Postings.ToList())
+                    {
+                        Db.BoardPosts.Remove(boardPosting);
+                    }
+
+                    if (board.Autonomy != null)
+                    {
+                        var aut = board.Autonomy;
+                        foreach (var committee in aut.Committees.ToList())
+                        {
+                            foreach (var committeeMember in committee.Members.ToList())
+                            {
+                                Db.CommitteeMember.Remove(committeeMember);
+                            }
+
+                            Db.Committees.Remove(committee);
+                        }
+                    }
+
+                    Db.BulletinBoards.Remove(board);
+                }
+
+
+
+                Db.Curricula.Remove(curriculum);
+                Db.SaveChanges();
+            }
+
+            return RedirectToAction("Index", "Curricula", new { id = org.Id });
+        }
+
 
         public ActionResult Admin(Guid id)
         {
@@ -2176,6 +2244,8 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == id);
 
+            ViewBag.UserRight = GetUserRight(curr.Organiser);
+
             return View(curr);
         }
 
@@ -2275,7 +2345,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Area", new {id = area.Id});
+            return RedirectToAction("Area", new { id = area.Id });
         }
 
         public ActionResult Option(Guid id)
@@ -2453,7 +2523,7 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return RedirectToAction("Slot", new {id=slot.Id});
+            return RedirectToAction("Slot", new { id = slot.Id });
         }
 
 
@@ -2553,10 +2623,18 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             string tempFile = Path.GetTempFileName();
 
+            var refCurr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
+            var org = refCurr.Organiser;
+
+            ViewBag.Curriculum = refCurr;
+            ViewBag.Organiser = org;
+
             // Speichern der Config-Dateien
             model.AttachmentStructure?.SaveAs(tempFile);
 
             var lines = System.IO.File.ReadAllLines(tempFile, Encoding.Default);
+
+            var newLabels = new List<ItemLabel>();
 
             foreach (var line in lines)
             {
@@ -2572,32 +2650,81 @@ namespace MyStik.TimeTable.Web.Controllers
                     Alias = words[3].Replace("\"", ""),
                 };
 
-                var curr = Db.Curricula.SingleOrDefault(x => x.ShortName.Equals(z.Studiengang));
+
+                // Suche den Studiengang
+                ItemLabelSet labelSet = null;
+                var curr = org.Curricula.SingleOrDefault(x => x.ShortName.Equals(z.Studiengang));
                 if (curr.LabelSet == null)
                 {
                     curr.LabelSet = new ItemLabelSet();
-
+                    Db.ItemLabelSets.Add(curr.LabelSet);
+                    Db.SaveChanges();
                 }
-                var label = curr.LabelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(z.Alias));
+
+                labelSet = curr.LabelSet;
+
+                // Identifiziere institutionsweites Label
+                if (z.Alias.StartsWith("@"))
+                {
+                    z.Alias = z.Alias.Substring(1);
+                    var labelSegements = z.Alias.Split(':');
+                    var labelLevel = labelSegements[0];
+
+                    if (curr.Organiser.ShortName.Equals(labelLevel))
+                    {
+                        if (curr.Organiser.LabelSet == null)
+                        {
+                            curr.Organiser.LabelSet = new ItemLabelSet();
+                            Db.ItemLabelSets.Add(curr.Organiser.LabelSet);
+                            Db.SaveChanges();
+                        }
+
+                        labelSet = curr.Organiser.LabelSet;
+                    }
+
+                    if (curr.Organiser.Institution.Tag.Equals(labelLevel))
+                    {
+                        labelSet = curr.Organiser.Institution.LabelSet;
+                    }
+
+                    z.Alias = labelSegements[2];
+                }
+
+
+                var label = labelSet.ItemLabels.FirstOrDefault(x => x.Name.Equals(z.Alias));
 
                 if (label == null)
                 {
                     label = new ItemLabel
                     {
                         Name = z.Alias,
-                        HtmlColor = "0x000000"
+                        HtmlColor = "#000000"
                     };
-                    label.LabelSets.Add(curr.LabelSet);
+                    label.LabelSets.Add(labelSet);
+                    labelSet.ItemLabels.Add(label);
+                    newLabels.Add(label);
 
                     Db.SaveChanges();
                 }
 
+                var capGroups = new List<CapacityGroup>();
+
+                if (string.IsNullOrEmpty(z.Kapazitätsgruppe))
+                {
+                    capGroups.AddRange(Db.CapacityGroups.Where(x =>
+                        x.CurriculumGroup.Curriculum.ShortName.Equals(z.Studiengang) &&
+                        x.CurriculumGroup.Name.Equals(z.Studiengruppe) &&
+                        string.IsNullOrEmpty(x.Name)).ToList());
+                }
+                else
+                {
+                    capGroups.AddRange(Db.CapacityGroups.Where(x =>
+                        x.CurriculumGroup.Curriculum.ShortName.Equals(z.Studiengang) &&
+                        x.CurriculumGroup.Name.Equals(z.Studiengruppe) &&
+                        x.Name.Equals(z.Kapazitätsgruppe)).ToList());
+                }
 
                 // Baue Studiengruppe
-                var capGroups = Db.CapacityGroups.Where(x =>
-                    x.CurriculumGroup.Curriculum.ShortName.Equals(z.Studiengang) &&
-                    x.CurriculumGroup.Name.Equals(z.Studiengruppe) &&
-                    x.Name.Equals(z.Kapazitätsgruppe)).ToList();
 
                 foreach (var capGroup in capGroups)
                 {
@@ -2623,8 +2750,8 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-
-            return RedirectToAction("Details", new { id = model.Curriculum.Id });
+            //return View("ImportLabelsSuccess", newLabels);
+            return RedirectToAction("Admin", new { id = model.Curriculum.Id });
         }
 
 
@@ -2672,5 +2799,34 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Admin", new { id = id });
         }
         */
+        public ActionResult AllLabels()
+        {
+            var model = Db.ItemLabels.ToList();
+
+            return View(model);
+        }
+
+        public ActionResult Rebook(Guid sourceId, Guid targetId)
+        {
+            var targetCurr = Db.Curricula.SingleOrDefault(x => x.Id == targetId);
+
+            var students = Db.Students.Where(x => x.Curriculum.Id == sourceId).ToList();
+            foreach (var student in students)
+            {
+                student.Curriculum = targetCurr;
+            }
+
+            var alumnae = Db.Alumnae.Where(x => x.Curriculum.Id == sourceId).ToList();
+            foreach (var alumnus in alumnae)
+            {
+                alumnus.Curriculum = targetCurr;
+            }
+
+
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Destroy", new { id = sourceId });
+        }
     }
 }

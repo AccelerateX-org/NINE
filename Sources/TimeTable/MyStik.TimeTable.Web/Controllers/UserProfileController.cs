@@ -40,12 +40,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var user = AppUser;
 
+            ViewBag.IsMember = Db.Members.Any(x => x.UserId.Equals(user.Id));
+
             model.Profile = new ProfileViewModel
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                Title = user.Title,
+                Email = user.Email
             };
 
+            /*
             var semester = SemesterService.GetSemester(DateTime.Today);
 
             var subscription = Db.Subscriptions.OfType<SemesterSubscription>().SingleOrDefault(x => 
@@ -73,13 +78,14 @@ namespace MyStik.TimeTable.Web.Controllers
                     Group = string.Empty
                 };
             }
+            */
 
             model.MsgProfile = new UserMsgProfileViewModel
             {
                 LikeEmailOnGlobalLevel = user.LikeEMails,
             };
 
-            model.MemberState = user.MemberState;
+            //model.MemberState = user.MemberState;
             //model.Semester = semester;
 
             //notification Section Daten abrufen
@@ -88,26 +94,11 @@ namespace MyStik.TimeTable.Web.Controllers
             foreach (UserDevice d in user.Devices){
                 UserDeviceViewModel userDevice = new UserDeviceViewModel{
                     DeviceName = d.DeviceName,
+                    DeviceId = d.DeviceId,
                     Activated = d.IsActive,
-                    Id = d.Id.ToString(),
+                    Id = d.Id,
                     UserId = d.User.Id.ToString()
                 };
-
-                switch (d.Platform)
-                {
-                    case DevicePlatform.Android:
-                        userDevice.DeviceName = "Android";
-                        break;
-                    case DevicePlatform.IOS:
-                        userDevice.DeviceName = "iOS";
-                        break;
-                    case DevicePlatform.WinPhone:
-                        userDevice.DeviceName = "Windows Phone";
-                        break;
-                    case DevicePlatform.PWA:
-                        userDevice.DeviceName = "PWA";
-                        break;
-                }
 
                 model.UserDevices.Add(userDevice);
             }
@@ -218,6 +209,8 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var user = _db.Users.SingleOrDefault(u => u.UserName.Equals(User.Identity.Name));
 
+            var members = Db.Members.Where(x => x.UserId.Equals(user.Id));
+
             if (user != null)
             {
                 if (!string.IsNullOrEmpty(model.Profile.FirstName))
@@ -225,6 +218,18 @@ namespace MyStik.TimeTable.Web.Controllers
 
                 if (!string.IsNullOrEmpty(model.Profile.LastName))
                     user.LastName = model.Profile.LastName;
+
+                if (members.Any())
+                {
+                    user.Title = model.Profile.Title;
+
+                    foreach (var member in members)
+                    {
+                        member.Title = model.Profile.Title;
+                    }
+
+                    Db.SaveChanges();
+                }
 
                 _db.SaveChanges();
             }
@@ -270,7 +275,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 {
                     DeviceName = d.DeviceName,
                     Activated = d.IsActive,
-                    Id = d.Id.ToString(),
+                    Id = d.Id,
                     UserId = d.User.Id.ToString()
                 };
                 model.UserDevices.Add(userDevice);

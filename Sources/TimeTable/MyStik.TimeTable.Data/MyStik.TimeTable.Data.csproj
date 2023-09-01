@@ -546,6 +546,10 @@
     <Compile Include="Migrations\202306261544050_ModuleDescV8.designer.cs">
       <DependentUpon>202306261544050_ModuleDescV8.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202308160912457_InstitutionV03.cs" />
+    <Compile Include="Migrations\202308160912457_InstitutionV03.designer.cs">
+      <DependentUpon>202308160912457_InstitutionV03.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleAccreditation.cs" />
     <Compile Include="ModuleSubject.cs" />
@@ -867,6 +871,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202306261544050_ModuleDescV8.resx">
       <DependentUpon>202306261544050_ModuleDescV8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308160912457_InstitutionV03.resx">
+      <DependentUpon>202308160912457_InstitutionV03.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

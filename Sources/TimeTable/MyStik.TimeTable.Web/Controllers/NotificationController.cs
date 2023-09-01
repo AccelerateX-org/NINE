@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-//using Lib.Net.Http.WebPush;
-//using Lib.Net.Http.WebPush.Authentication;
+using Lib.Net.Http.WebPush;
+using Lib.Net.Http.WebPush.Authentication;
 using MyStik.TimeTable.Web.Areas.Admin.Controllers;
 using MyStik.TimeTable.Web.Models;
+using Newtonsoft.Json;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
@@ -19,28 +20,17 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (device != null)
             {
-                //var subscription = JsonConvert.DeserializeObject<PushSubscription>(device.DeviceName);
+                var subscription = JsonConvert.DeserializeObject<PushSubscription>(device.DeviceName);
 
-                /*
-                    https://tools.reactpwa.com/vapid
-                    {
-                      "subject": "mailto:nine@hm.edu",
-                      "publicKey": "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA",
-                      "privateKey": "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c"
-                    }
-                 */
+                var publicKey = "BOfD3Lh4iV2e1t9PAv58O_sszZTAU72v1oPM7bIs6r1vA2eoIsu6zX5qxk--Zf8_G1dxKPkxckXcGKPWZOlODOQ";
+                var privateKey = "VRtnmeVDP3r1LjNS-2lhbgHDRznduYSNKFe0myIjeXc";
 
 
-                var publicKey = "BPI8YpVBlwF62LYEapQb6zEj8i75ZYPHp3ugnYn0Sc8GBBX0s-pZEL-POjEAbzeIBzMQHx1bcq1yhY982hMm7oA";
-                var privateKey = "yMXePWjZMvx_xwZczffh6nG1j-E6oW0fcUVHOYeXR0c";
-
-                /*
                 PushServiceClient pushClient = new PushServiceClient();
                 pushClient.DefaultAuthentication = new VapidAuthentication(publicKey, privateKey)
                 {
                     Subject = "mailto:nine@hm.edu"
                 };
-                */
 
                 var notification = new AngularPushNotification
                 {
@@ -55,13 +45,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 notification.Data["room"] = "R 2.089";
                 notification.Data["lecturer"] = "Hinz";
 
-                //var pushNMessage = notification.ToPushMessage();
+                var pushNMessage = notification.ToPushMessage();
 
 
-                //pushClient.RequestPushMessageDeliveryAsync(subscription, pushNMessage);
-
-
-
+                pushClient.RequestPushMessageDeliveryAsync(subscription, pushNMessage);
 
             }
 

@@ -628,11 +628,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult DailyRota()
+        public ActionResult DailyRota(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id.HasValue == false ? GetMyOrganisation() : GetOrganiser(id.Value);
 
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+            ViewBag.UserRight = GetUserRight(org);
 
             ViewBag.Organiser = org;
 

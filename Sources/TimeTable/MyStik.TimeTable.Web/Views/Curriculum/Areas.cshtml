@@ -12,18 +12,20 @@
 
 <div class="row">
     <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.Id})">@Model.ShortName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Themenbereiche</li>
+            </ol>
+        </nav>
+
         <div class="card">
-            <div class="card-header">
-                <h4>@Model.Name (@Model.ShortName) - Themenbereiche</h4>
-            </div>
             <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a href="@Url.Action("Details", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
-                            <i class="bi-chevron-left"></i> Übersicht @Model.Tag
-                        </a>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
-                        {
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
+
+                    <div class="list-group-item">
+                        <div class="btn-group">
                             <a href="@Url.Action("MoveSlots", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-list-check"></i> Zusammensetzung
                             </a>
@@ -33,15 +35,15 @@
                             <a href="@Url.Action("ImportAreas", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-upload"></i> Import Struktur
                             </a>
-                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger">
+                            <a href="@Url.Action("DeleteModulePlan", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
                                 <i class="bi-trash"></i> Struktur Löschen
                             </a>
-                        }
+                        </div>
                     </div>
-                </div>
+                }
                 @foreach (var area in Model.Areas)
                 {
-                    <a href="@Url.Action("Area", new {id = area.Id})" class="list-group-item list-group-item-action">
+                    <a href="@Url.Action("Area", new { id = area.Id })" class="list-group-item list-group-item-action">
                         <h5>@area.Tag | @area.Name</h5>
                         <p>@area.Description</p>
                         @if (area.Options.Count() > 1)

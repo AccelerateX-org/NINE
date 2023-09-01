@@ -773,6 +773,7 @@ namespace MyStik.TimeTable.Web.Models
 
         public ActivityOrganiser Organiser { get; set; }
 
+        public List<Institution> Institutions { get; set; }
 
         /// <summary>
         /// Die zugehörige Platzverlosung (falls vorhanden)
@@ -1146,4 +1147,10 @@ namespace MyStik.TimeTable.Web.Models
         public Guid GroupId { get; set; }
     }
 
+    public class CourseLabelViewModel
+    {
+        public Course Course { get; set; }
+
+        public List<Curriculum> Curricula { get; set;}
+    }
 }

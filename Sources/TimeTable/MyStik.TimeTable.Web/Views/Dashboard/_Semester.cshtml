@@ -1,4 +1,5 @@
-﻿@model MyStik.TimeTable.Web.Models.TeachingOverviewModel
+﻿@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.TeachingOverviewModel
 
 <div class="card mb-3">
     <div class="card-header">
@@ -12,28 +13,133 @@
                     <li><a class="dropdown-item" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.CurrentSemester.Semester.Id })">Wochenkalender</a></li>
                     <li><a class="dropdown-item" href="@Url.Action("Semester", "Dictionary", new { semId = Model.CurrentSemester.Semester.Id })">Vorlesungsverzeichnis</a></li>
                     <li><a class="dropdown-item" href="@Url.Action("Index", "Lottery", new { id = Model.CurrentSemester.Semester.Id })">Wahlverfahren</a></li>
-                    @*
-                        <li><a class="dropdown-item" href="#">Veranstaltungskalender</a></li>
-                        <li><a class="dropdown-item" href="#">Stundenplaner</a></li>
-                    *@
                 </ul>
             </div>
         </div>
     </div>
 
     <div class="list-group">
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Courses", new {id=Model.CurrentSemester.Semester.Id})">
-            Lehrveranstaltungen
+        @foreach (var summary in Model.CurrentSemester.Courses)
+        {
+            <a class="list-group-item list-group-item-action" href="@Url.Action("Details", "Course", new { id = summary.Course.Id })">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        @summary.Course.Name
+                    </div>
+                    <div>
+                        @if (summary.Subscription != null)
+                        {
+                            if (summary.Subscription.OnWaitingList)
+                            {
+                                <span><i class="bi-hourglass"></i></span>
+                            }
+                            else
+                            {
+                                <span><i class="bi-people"></i></span>
+                            }
+                        }
+                        @if (Model.Members.Any())
+                        {
+                            <span class="badge bg-secondary">
+                                <i class="bi-people"></i>
+                                @summary.Course.Occurrence.Subscriptions.Count
+                            </span>
+                            if (summary.CurrentDate != null)
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="bi-calendar"></i>
+                                    @summary.CurrentDate.Begin.ToShortDateString()
+                                </span>
+
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">
+                                    <i class="bi-check"></i>
+                                </span>
+                            }
+                        }
+                    </div>
+                </div>
+            </a>
+        }
+
+        @foreach (var oh in Model.CurrentSemester.OfficeHours)
+        {
+            if (oh.HasSubscription)
+            {
+                <a class="list-group-item list-group-item-action" href="@Url.Action("SubscriptionDetails", "OfficeHour", new { id = oh.Date.Id })">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="card-title">
+                            @oh.OfficeHour.Name
+                        </div>
+
+                        <div>
+                            @if (oh.Date != null)
+                            {
+                                <span class="badge bg-secondary">
+                                    <i class="bi-calendar"></i>
+                                    @Html.TimeSpanWithDate(oh.Date)
+                                </span>
+                            }
+                            else
+                            {
+                                if (oh.OfficeHour.ByAgreement)
+                                {
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi-check"></i>
+                                    </span>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </a>
+            }
+            else
+            {
+                <a class="list-group-item list-group-item-action" href="@Url.Action("OfficeHour", "Lecturer", new { id = oh.OfficeHour.Id })">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-title">
+                        @oh.OfficeHour.Name
+                    </div>
+
+                    <div>
+                        @if (oh.Date != null)
+                        {
+                            <span class="badge bg-secondary">
+                                <i class="bi-calendar"></i>
+                                @Html.TimeSpanWithDate(oh.Date)
+                            </span>
+                        }
+                        else
+                        {
+                            if (oh.OfficeHour.ByAgreement)
+                            {
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">
+                                    <i class="bi-check"></i>
+                                </span>
+                            }
+                        }
+
+                    </div>
+                </div>
+                </a>
+            }
+        }
+        <a class="list-group-item list-group-item-action" href="@Url.Action("Subscriptions", "OfficeHour")">
+            Gebuchte Sprechstundentermine
         </a>
-        <a class="list-group-item list-group-item-action disabled" href="#">
-            Sprechstunden
-        </a>
-        <a class="list-group-item list-group-item-action disabled" href="#">
-            Prüfungen
-        </a>
+
     </div>
     <div class="card-body">
-        <a href="javascript:onSemesterChanged('@Model.PrevSemester.Id')" class="card-link">@Model.PrevSemester.Name</a>
-        <a href="javascript:onSemesterChanged('@Model.NextSemester.Id')" class="card-link">@Model.NextSemester.Name</a>
+        <a href="javascript:onSemesterChanged('@Model.PrevSemester.Id')" class="card-link"><< @Model.PrevSemester.Name</a>
+        <a href="javascript:onSemesterChanged('@Model.NextSemester.Id')" class="card-link">@Model.NextSemester.Name >></a>
     </div>
 </div>

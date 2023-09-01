@@ -89,30 +89,36 @@ Content-Type: text/html; charset=utf-8
 
         
         @{
-            var nTotalReceived = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count;
-
-            <h4>Sie haben in @nTotalReceived von @Model.Game.CoursesWanted Lehrveranstaltungen einen Platz erhalten.</h4>
-
-            if (Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count < Model.Game.CoursesWanted)
+            if (Model.Lottery.MaxConfirm == 0 && Model.Lottery.MaxExceptionConfirm == 0)
             {
-                <p>Sie haben damit insgesamt weniger Plätze erhalten, als gewünscht.</p>
+            }
+            else
+            {
+                var nTotalReceived = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count;
 
-                if (Model.Game.AcceptDefault)
+                <h4>Sie haben in @nTotalReceived von @Model.Game.CoursesWanted Lehrveranstaltungen einen Platz erhalten.</h4>
+
+                if (Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList) + Model.Game.Seats.Count < Model.Game.CoursesWanted)
                 {
-                    var nExtra = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority == 0);
-                    if (nExtra == 0)
+                    <p>Sie haben damit insgesamt weniger Plätze erhalten, als gewünscht.</p>
+
+                    if (Model.Game.AcceptDefault)
                     {
-                        if (!string.IsNullOrEmpty(Model.Game.Message))
+                        var nExtra = Model.Game.Lots.Count(x => !x.Subscription.OnWaitingList && x.Priority == 0);
+                        if (nExtra == 0)
                         {
-                            <p>Bemerkung: @Model.Game.Message</p>
+                            if (!string.IsNullOrEmpty(Model.Game.Message))
+                            {
+                                <p>Bemerkung: @Model.Game.Message</p>
+                            }
                         }
                     }
-                }
-                else
-                {
-                    <p>Sie haben angegeben, keine Plätze in anderen Lehrveranstaltungen zu akzeptieren.</p>
-                }
+                    else
+                    {
+                        <p>Sie haben angegeben, keine Plätze in anderen Lehrveranstaltungen zu akzeptieren.</p>
+                    }
 
+                }
             }
         }
 

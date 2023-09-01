@@ -70,11 +70,12 @@
                         <a href="@Url.Action("Details", new {id = Model.Course.Id})" class="btn btn-outline-secondary">
                             <i class="fas fa-chevron-left"></i> Zurück
                         </a>
-                        @if ((!Model.Summary.Course.IsInternal && Model.Summary.Lottery == null) || ViewBag.UserRight.IsCourseAdmin)
+                        @if ((!Model.Summary.Course.IsInternal && Model.Summary.Lottery == null) || ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsHost || ViewBag.UserRight.IsOwner)
                         {
-                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-user"></i> Alle auf Teilnehmerliste setzen</a>
-                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-hourglass"></i> Alle auf Warteliste setzen</a>
-                            <a class="btn btn-outline-secondary" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="fa fa-times"></i> Alle austragen</a>
+                            <a class="btn btn-outline-primary" href="@Url.Action("Download", new {id = Model.Summary.Course.Id})" ><i class="bi-download"></i> Listen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnParticipiantList", new {id = Model.Course.Occurrence.Id})"><i class="bi-person"></i> Alle auf Teilnehmerliste setzen</a>
+                            <a class="btn btn-outline-secondary" href="@Url.Action("SetOnWaitingList", new {id = Model.Course.Occurrence.Id})"><i class="bi-hourglass"></i> Alle auf Warteliste setzen</a>
+                            <a class="btn btn-outline-danger" href="@Url.Action("RemoveSubscription", new {id = Model.Course.Occurrence.Id})"><i class="bi-x"></i> Alle austragen</a>
                         }
                         @if (ViewBag.UserRight.IsCourseAdmin)
                         {

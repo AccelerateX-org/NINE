@@ -3,11 +3,19 @@
     ViewBag.Title = "Slot";
 }
 
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+}
+
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4>Slot ändern</h4>
+                <h4>Modulslot ändern</h4>
             </div>
             <div class="card-body">
                 @using (Html.BeginForm(null, null, FormMethod.Post))
@@ -54,3 +62,18 @@
         </div>
     </div>
 </div>
+
+
+@section scripts
+{
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("#Description").cleditor();
+        });
+
+    </script>
+
+}

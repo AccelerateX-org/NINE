@@ -1,7 +1,58 @@
-﻿
+﻿@using MyStik.TimeTable.Data
+@model MyStik.TimeTable.Data.Curriculum
 @{
     ViewBag.Title = "Destroy";
+
+    var db = new TimeTableDbContext();
+
+    var students = db.Students.Count(x => x.Curriculum.Id == Model.Id);
+    var alumnae = db.Alumnae.Count(x => x.Curriculum.Id == Model.Id);
 }
 
-<h2>Destroy</h2>
+<h2>Studiengang @Model.Name (@Model.ShortName) löschen</h2>
+
+<h4>Infos</h4>
+
+<ul>
+    <li>Anzahl Studierende: @students</li>
+    <li>Anzahl Alumnae: @alumnae</li>
+    <li>Anzahl Studiengruppen: @Model.CurriculumGroups.Count()</li>
+    <li>Anzahl "Chapter": @Model.Chapters.Count()</li>
+    <li>Anzahl "Areas": @Model.Areas.Count()</li>
+    <li>Anzahl Opportunities: @Model.Opportunities.Count()</li>
+    <li>Anzahl Sektionen: @Model.Sections.Count()</li>
+    @if (Model.BulletinBoard != null)
+    {
+        <li>Eigener Schaukasten</li>
+    }
+    @if (Model.LabelSet != null)
+    {
+        <li>Eiegener Labelset</li>
+    }
+    @if (Model.Autonomy != null)
+    {
+        <li>Eigene Autonmie</li>
+    }
+
+</ul>
+
+@if (@students > 0 || alumnae > 0)
+{
+    var curr = Model.Organiser.Curricula.Where(x => x.Id != Model.Id).ToList();
+
+    <div>Studierende umtragen auf</div>
+    <ul>
+        @foreach (var c in curr)
+        {
+            <li><a href="@Url.Action("Rebook", new { sourceId = Model.Id, targetId = c.Id })">@c.ShortName</a></li>
+        }
+    </ul>
+
+}
+
+@if (ViewBag.UserRight.IsCurriculumAdmin && students == 0 && alumnae == 0)
+{
+    <a class="btn btn-danger" href="@Url.Action("DestroyConfirmed", new {id = Model.Id})">Endgültig zerstören</a>
+}
+
 

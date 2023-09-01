@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 using Newtonsoft.Json;
@@ -251,8 +253,46 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new {id = org.Id});
         }
+
+        public FileResult Export(Guid id)
+        {
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == id);
+
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms, Encoding.Default);
+
+            writer.Write(
+                "Catalog;Tag;Titel");
+
+            writer.Write(Environment.NewLine);
+
+            foreach (var catalog in org.ModuleCatalogs.OrderBy(x => x.Tag))
+            {
+                foreach (var module in catalog.Modules.OrderBy(x => x.Tag))
+                {
+                    writer.Write("{0};{1};{2}",
+                        catalog.Tag,
+                        module.Tag,
+                        module.Name);
+                    writer.Write(Environment.NewLine);
+                }
+            }
+
+            writer.Flush();
+            writer.Dispose();
+
+            var sb = new StringBuilder();
+            sb.Append("Module_");
+            sb.Append(org.ShortName);
+            sb.Append("_");
+            sb.Append(DateTime.Today.ToString("yyyyMMdd"));
+            sb.Append(".csv");
+
+            return File(ms.GetBuffer(), "text/csv", sb.ToString());
+        }
+
 
         public ActionResult DeleteAll(Guid id)
         {

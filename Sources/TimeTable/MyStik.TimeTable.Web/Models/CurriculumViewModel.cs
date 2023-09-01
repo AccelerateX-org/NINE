@@ -164,6 +164,8 @@ namespace MyStik.TimeTable.Web.Models
 
         public string Tag { get; set; }
         public string Name { get; set; }
+        
+        [AllowHtml]
         public string Description { get; set; }
         public int Semester { get; set; }
         public double Ects { get; set; }

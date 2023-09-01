@@ -6,6 +6,13 @@
     var member = Model.Members.FirstOrDefault();
 }
 
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-success">
+            <div>Zugang zum neuen <a href="@Url.Action("Index", "Dashboard")">Dashboard</a></div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-12">
@@ -30,7 +37,7 @@
                         <a class="btn btn-outline-secondary text-center" href="@Url.Action("PersonalPlanWeekly", "Activity", new {id=Model.CurrentSemester.Semester.Id})"><i class="fas fa-calendar-week fa-fw"></i><br />Wochenplan</a>
                         <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "Messaging")"><i class="fas fa-envelope fa-fw"></i><br />Mailverteiler</a>
                         <a class="btn btn-outline-secondary text-center" href="@Url.Action("OfficeHour", "Lecturer")"><i class="fas fa-user-md fa-fw"></i><br />Sprechstunden</a>
-                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Courses", "Lecturer")"><i class="fas fa-microphone fa-fw"></i><br />Lehrveranstaltungen</a>
+                        <a class="btn btn-outline-secondary text-center" href="@Url.Action("Create", "Course")"><i class="fas fa-microphone fa-fw"></i><br />Lehrveranstaltungen</a>
                         <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "CurriculumModule")"><i class="fas fa-cube fa-fw"></i><br />Module</a>
                         <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "ScriptPublishing")"><i class="fas fa-book fa-fw"></i><br />Skripte</a>
                         <a class="btn btn-outline-secondary text-center" href="@Url.Action("Index", "VirtualRoom")"><i class="fas fa-tv fa-fw"></i><br />virtuelle Räume</a>
@@ -228,10 +235,3 @@
     </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="alert alert-success">
-            <div>Zugang zum neuen <a href="@Url.Action("Index", "Dashboard")">Dashboard</a> (im Aufbau)</div>
-        </div>
-    </div>
-</div>

@@ -34,4 +34,6 @@ namespace MyStik.TimeTable.Data
         /// </summary>
         public virtual ICollection<BinaryStorage> Ressources { get; set; }
     }
+
+
 }

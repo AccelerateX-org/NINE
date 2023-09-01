@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -198,7 +199,27 @@ namespace MyStik.TimeTable.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public string FullName => $"{FirstName} {LastName}";
+        public string FullName
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                sb.Append(LastName);
+
+                if (!string.IsNullOrEmpty(FirstName))
+                {
+                    sb.AppendFormat(", {0} ", FirstName);
+                }
+
+                if (!string.IsNullOrEmpty(Title))
+                {
+                    sb.AppendFormat(" ({0})", Title);
+                }
+
+                return sb.ToString();
+            }
+        }
     }
 
     /// <summary>

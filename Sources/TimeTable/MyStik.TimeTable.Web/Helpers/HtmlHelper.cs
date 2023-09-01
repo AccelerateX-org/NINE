@@ -58,8 +58,8 @@ namespace MyStik.TimeTable.Web.Helpers
                 var lecName = string.IsNullOrEmpty(host.Name) ? "N.N." : host.Name;
                 if (showLinks)
                 {
-                    sb.Append(htmlHelper.ActionLink(lecName, "Member", "Organiser",
-                        new { id = host.Id}, null));
+                    sb.Append(htmlHelper.ActionLink(lecName, "Private", "Person",
+                        new { memberId = host.Id}, null));
                 }
                 else
                 {

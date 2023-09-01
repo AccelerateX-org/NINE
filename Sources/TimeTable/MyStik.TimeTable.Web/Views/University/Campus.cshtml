@@ -9,12 +9,13 @@
 <div class="row">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
             <li class="breadcrumb-item"><a href="@Url.Action("Index")">Campus</a></li>
             <li class="breadcrumb-item active">HM</li>
         </ol>
     </nav>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card mb-3">
             <div class="card-header">
                 @*<div class="row row-cols-lg-auto g-3 align-items-center">*@
@@ -24,15 +25,15 @@
             </div>
             <div class="list-group">
                 <a class="list-group-item list-group-item-action" href="@Url.Action("Faculties")">Fakultäten</a>
-                <div class="list-group-item">Labore</div>
-                <div class="list-group-item">Abteilungen</div>
+                <div class="list-group-item disabled">Labore</div>
+                <div class="list-group-item disabled">Abteilungen</div>
             </div>
             <div class="card-body">
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Alle</a>
+                <a href="@Url.Action("Index", "Organiser")" class="card-link">Alle</a>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card mb-3">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-start">
@@ -41,13 +42,13 @@
             </div>
 
             <div class="list-group">
-                <div class="list-group-item">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Curricula")">
                     Studiengänge
-                </div>
-                <div class="list-group-item">
+                </a>
+                <div class="list-group-item disabled">
                     Zertifikate
                 </div>
-                <div class="list-group-item">
+                <div class="list-group-item disabled">
                     Weiterbildung
                 </div>
             </div>
@@ -57,7 +58,30 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Personen</h5>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item disabled">
+                    Dozent:innen
+                </div>
+                <div class="list-group-item disabled">
+                    Ansprechpartner:innen
+                </div>
+                <div class="list-group-item disabled">
+                    Gremien
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Index", "Lecturer")" class="card-link">Suche</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
         <div class="card mb-3">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-start">
@@ -65,62 +89,22 @@
                 </div>
             </div>
             <div class="list-group">
-                <div class="list-group-item">
+                <div class="list-group-item disabled">
                     Standorte
                 </div>
-                <div class="list-group-item">
+                <div class="list-group-item disabled">
                     Schaukästen
                 </div>
-                <div class="list-group-item">
+                <div class="list-group-item disabled">
                     Newsletter
                 </div>
             </div>
             <div class="card-body">
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Pläne</a>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-3">
-        <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title">Personen</h5>
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    Dozent:innen
-                </div>
-                <div class="list-group-item">
-                    Ansprechpartner:innen
-                </div>
-                <div class="list-group-item">
-                    Gremien
-                </div>
-            </div>
-            <div class="card-body">
-                <a href="@Url.Action("PersonalPlan", "Activity")" class="card-link">Suche</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title">Systeme</h5>
-            </div>
-            <div class="list-group">
-                <div class="list-group-item">
-                    Lehre
-                </div>
-                <div class="list-group-item">
-                    Prüfung
-                </div>
-                <div class="list-group-item">
-                    Verwaltung
-                </div>
-            </div>
-            <div class="card-body">
-                <a href="https://hm.edu" target="_blank" class="card-link">Webseite</a>
+                <a href="@Url.Action("Index", "Rooms")" class="card-link">Pläne</a>
+                @if (ViewBag.UserRight != null && ViewBag.UserRight.IsInstitutionAdmin)
+                {
+                    <a href="@Url.Action("Index", "Institution")" class="card-link">Einstellungen</a>
+                }
             </div>
         </div>
     </div>

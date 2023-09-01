@@ -1,0 +1,12 @@
+﻿@model ICollection<MyStik.TimeTable.Data.ItemLabel>
+@{
+    ViewBag.Title = "ImportLabelsSuccess";
+}
+
+<h2>ImportLabelsSuccess</h2>
+<ul>
+    @foreach (var label in Model)
+    {
+        <li>@label.Name</li>
+    }
+</ul>

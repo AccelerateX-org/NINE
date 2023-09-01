@@ -21,14 +21,12 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid id)
         {
-            var semester = SemesterService.GetSemester(DateTime.Today);
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
             var model = new OrganiserViewModel
             {
-                Semester = semester,
                 Organiser = org,
             };
 
@@ -38,7 +36,7 @@ namespace MyStik.TimeTable.Web.Controllers
                     .Where(x => x.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
                     .ToList());
 
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
@@ -48,10 +46,17 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Semester(Guid? id)
+        [AllowAnonymous]
+        public ActionResult Semester(Guid? orgId, Guid? semId)
         {
-            var semester = SemesterService.GetSemester(id);
+            var semester = SemesterService.GetSemester(DateTime.Today);
             var org = GetMyOrganisation();
+
+            if (orgId.HasValue && semId.HasValue)
+            {
+                semester = SemesterService.GetSemester(semId.Value);
+                org = GetOrganiser(orgId.Value);
+            }
 
             var model = new OrganiserViewModel
             {
@@ -62,8 +67,6 @@ namespace MyStik.TimeTable.Web.Controllers
             model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
             model.NextSemester = SemesterService.GetNextSemester(semester);
 
-
-
             var lastEnd = DateTime.Today.AddDays(-90);
             var alLotteries = Db.Lotteries.Where(x =>
                 x.LastDrawing >= lastEnd && x.IsAvailable &&
@@ -73,10 +76,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var courses =
                 Db.Activities.OfType<Course>().Where(c =>
-                    c.SemesterGroups.Any(g =>
-                        g.Semester.Id == semester.Id &&
-                        g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id)
-                ).OrderBy(c => c.ShortName).ToList();
+                    c.Semester.Id == semester.Id &&
+                    c.Organiser.Id == org.Id)
+                .OrderBy(c => c.ShortName).ToList();
 
             var courseService = new CourseService(Db);
 
@@ -86,9 +88,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.Courses.Add(summary);
             }
 
-
-
-            ViewBag.UserRight = GetUserRight();
+            ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }

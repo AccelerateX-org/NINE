@@ -5,11 +5,23 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="@Url.Content("~/Assets/global/plugins/Jquery-ui/jquery-ui.min.css")" />
+    
 }
 
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Id})">@Model.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Admins", "Organiser", new {id=Model.Id})">Rechte & Rollen</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Admin-Rollen</li>
+            </ol>
+        </nav>
 
-    <div class="row">
+    </div>
+</div>
+
+<div class="row">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
@@ -28,6 +40,7 @@
                             },
                             new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
+                            @Html.HiddenFor(m => m.Id)
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" name="memberAdminName" id="memberAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -64,6 +77,7 @@
                                 },
                                 new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                             {
+                                @Html.HiddenFor(m => m.Id)
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
                                         <input type="text" name="courseAdminName" id="courseAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -103,6 +117,7 @@
                             },
                             new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
+                            @Html.HiddenFor(m => m.Id)
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" name="curriculumAdminName" id="curriculumAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -142,6 +157,7 @@
                             },
                             new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
+                            @Html.HiddenFor(m => m.Id)
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" name="roomAdminName" id="roomAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -178,6 +194,7 @@
                             },
                             new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
+                            @Html.HiddenFor(m => m.Id)
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" name="eventAdminName" id="eventAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -214,6 +231,7 @@
                             },
                             new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                         {
+                            @Html.HiddenFor(m => m.Id)
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" name="newsletterAdminName" id="newsletterAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -253,6 +271,7 @@
                         },
                         new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                     {
+                        @Html.HiddenFor(m => m.Id)
                         <div class="col-12">
                             <div class="form-floating mb-3">
                                 <input type="text" name="studentAdminName" id="studentAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -289,6 +308,7 @@
                         },
                         new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                     {
+                        @Html.HiddenFor(m => m.Id)
                         <div class="col-12">
                             <div class="form-floating mb-3">
                                 <input type="text" name="examAdminName" id="examAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -325,6 +345,7 @@
                         },
                         new { @class = "row row-cols-lg-auto g-3 align-items-center", role = "form" }))
                     {
+                        @Html.HiddenFor(m => m.Id)
                         <div class="col-12">
                             <div class="form-floating mb-3">
                                 <input type="text" name="orgAdminName" id="orgAdminName" placeholder="Kurzname eingeben" class="form-control" />
@@ -360,7 +381,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -389,7 +411,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -418,7 +441,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -447,7 +471,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -476,7 +501,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -505,7 +531,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -535,7 +562,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -564,7 +592,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {
@@ -593,7 +622,8 @@
                     //dataType: "json",
 
                     data: {
-                        token: request.term
+                        token: request.term,
+                        orgId: "@Model.Id"
                     },
 
                     success: function (data, success, xhr) {

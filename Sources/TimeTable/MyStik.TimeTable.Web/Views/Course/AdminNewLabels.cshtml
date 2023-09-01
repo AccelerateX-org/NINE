@@ -1,0 +1,40 @@
+﻿@model MyStik.TimeTable.Data.Course
+@{
+    ViewBag.Title = "Labels";
+}
+
+
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            @if (Model.Organiser != null)
+            {
+                <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new { id = Model.Organiser.Id })">@Model.Organiser.ShortName</a></li>
+            }
+            @if (Model.Semester != null)
+            {
+                <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })">@Model.Semester.Name</a></li>
+            }
+            <li class="breadcrumb-item"><a href="@Url.Action("Details", "Course", new { id = Model.Id })">@Model.ShortName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Labels</li>
+        </ol>
+    </nav>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a class="btn btn-outline-primary" href="@Url.Action("ChangeLabels", new { id = Model.Id })"><i class="bi-plus"></i> Labels hinzufügen</a>
+                </div>
+                @foreach (var label in Model.LabelSet.ItemLabels)
+                {
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("EditLabel", new { courseId = Model.Id, labelId = label.Id })">
+                        @label.Name
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

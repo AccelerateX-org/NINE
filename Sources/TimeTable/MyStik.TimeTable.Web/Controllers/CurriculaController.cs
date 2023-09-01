@@ -12,7 +12,8 @@ namespace MyStik.TimeTable.Web.Controllers
 {
     /// <summary>
     /// 
-    /// </summary>
+    /// </summary
+    [AllowAnonymous]
     public class CurriculaController : BaseController
     {
         public ActionResult Disclaimer()
@@ -39,7 +40,7 @@ namespace MyStik.TimeTable.Web.Controllers
             else
             {
                 var model = Db.Organisers.Where(x => x.Curricula.Any()).OrderBy(g => g.ShortName).ToList();
-                var userRight = GetUserRight(GetMyOrganisation());
+                var userRight = GetUserRight();
                 ViewBag.UserRight = userRight;
                 return View(model);
             }

@@ -1,0 +1,35 @@
+﻿@using MyStik.TimeTable.Data
+@model ICollection<MyStik.TimeTable.Data.ItemLabel>
+@{
+    ViewBag.Title = "AllLabels";
+
+    var db = new TimeTableDbContext();
+
+    var capGroups = db.CapacityGroups.Where(x =>
+        x.CurriculumGroup.Curriculum.ShortName.Equals("DE") &&
+        x.CurriculumGroup.Name.Equals("DE1") &&
+        string.IsNullOrEmpty(x.Name)
+        ).ToList();
+
+
+}
+
+<h2>Gruppen</h2>
+<ul>
+    @foreach (var group in capGroups)
+    {
+        <li>@group.Name</li>
+    }
+</ul>
+
+
+<h2>AllLabels</h2>
+
+<ul>
+    @foreach (var label in Model)
+    {
+        <li>@label.Name (@label.LabelSets.Count())</li>
+    }
+</ul>
+
+

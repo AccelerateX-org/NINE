@@ -12,27 +12,26 @@
 
 <div class="row">
     <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.Area.Curriculum.Id})">@Model.Area.Curriculum.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Areas", "Curriculum", new {id=Model.Area.Curriculum.Id})">Themenbereiche</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Area", "Curriculum", new {id=Model.Area.Id})">@Model.Area.Name (@Model.Area.Tag)</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Name (@Model.Tag)</li>
+            </ol>
+        </nav>
+
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">
-                    Wahlmöglichkeit "@Model.Name"
-                </h4>
-                <h5 class="card-subtitle">
-                    <a href="@Url.Action("Details", new { id = Model.Area.Curriculum.Id })">@Model.Area.Curriculum.Tag</a> |
-                    <a href="@Url.Action("Area", new { id = Model.Area.Id })">@Model.Area.Tag</a> |
-                    <span>@Model.Tag</span>
-                </h5>
-            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
                         <h5>Allgemeine Informationen</h5>
                         <div class="row">
                             <div class="col-4">
-                                ??
+                                Anzahl Modulslots
                             </div>
                             <div class="col-8">
-                               xx
+                                @Model.Slots.Count
                             </div>
                         </div>
                     </div>
@@ -40,7 +39,7 @@
                         <h5>Beschreibung</h5>
                         <div class="row">
                             <div class="col-12">
-                                @Model.Description
+                                @Html.Raw(Model.Description)
                             </div>
                         </div>
                     </div>
@@ -48,38 +47,36 @@
             </div>
 
             <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a href="@Url.Action("Area", "Curriculum", new { id = Model.Area.Id })" class="btn btn-outline-primary">
-                            <i class="bi-chevron-left"></i> Themenbereich @Model.Area.Tag
-                        </a>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
-                        {
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
+
+                    <div class="list-group-item">
+                        <div class="btn-group">
                             <a href="@Url.Action("EditOption", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-gear"></i> Ändern
                             </a>
                             <a href="@Url.Action("CreateSlot", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-plus"></i> Neuer Slot
                             </a>
-                            if (Model.Slots.Any())
+                            @if (Model.Slots.Any())
                             {
-                                <div class="btn btn-outline-danger disabled">
-                                    <i class="bi-trash"></i> Wahlmöglichkeit löschen
-                                </div>
+                            <div class="btn btn-outline-danger disabled">
+                                <i class="bi-trash"></i> Wahlmöglichkeit löschen
+                            </div>
                             }
                             else
                             {
-                                <a href="@Url.Action("DeleteOption", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Wahlmöglichkeit löschen
-                                </a>
+                            <a href="@Url.Action("DeleteOption", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Wahlmöglichkeit löschen
+                            </a>
 
                             }
-                        }
+                        </div>
                     </div>
-                </div>
+                }
                 @foreach (var slot in Model.Slots)
                 {
-                    <a href="@Url.Action("Slot", new {id = slot.Id})" class="list-group-item list-group-item-action">
+                    <a href="@Url.Action("Slot", new { id = slot.Id })" class="list-group-item list-group-item-action">
                         <h5>@slot.Name (@slot.Tag)</h5>
                         <p>@slot.Description</p>
                     </a>

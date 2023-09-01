@@ -3,6 +3,13 @@
     ViewBag.Title = "Wahlmöglichkeit";
 }
 
+
+@section styles
+{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.css")" />
+}
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -28,7 +35,7 @@
                     <div class="row">
                         <label for="Description" class="col-sm-2 col-form-label">Beschreibung</label>
                         <div class="col-sm-10">
-                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows=5 })
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
                         </div>
                     </div>
                     <div class="row">
@@ -42,3 +49,18 @@
         </div>
     </div>
 </div>
+
+
+@section scripts
+{
+    <script type="text/javascript" src="@Url.Content("~/Assets/libs/cleditor/jquery.cleditor.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("#Description").cleditor();
+        });
+
+    </script>
+
+}

@@ -75,13 +75,12 @@ namespace MyStik.TimeTable.Data
         public bool IsEventAdmin { get; set; }
         public bool IsNewsAdmin { get; set; }
         public bool IsExamAdmin { get; set; }
+        public bool IsInstitutionAdmin { get; set; }
 
         /// <summary>
-        /// Gäste, LBs etc sind nur "assoziiert"
-        /// Profs, MAs können nur in einer Fakultät "daheim" sein
-        /// LBs sind immer assoziiert
-        /// "importierte" Profs sind ebenfalls assoziiert
-        /// myOrg => die Org wo ich daheim bin
+        /// Neue Definition:
+        /// true: wird in Listen angezeigt
+        /// false: wird in Listen nicht angezeigt
         /// </summary>
         public bool IsAssociated { get; set; }
 

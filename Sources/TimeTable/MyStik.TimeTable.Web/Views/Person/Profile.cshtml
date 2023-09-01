@@ -1,16 +1,106 @@
-﻿@model MyStik.TimeTable.Data.OrganiserMember
+﻿@model MyStik.TimeTable.Web.Models.PersonViewModel
 @{
-    ViewBag.Title = "Profile";
-    Layout = "~/Views/Shared/_LayoutNewPublic.cshtml";
+    ViewBag.Title = "Profil";
 }
 
 <div class="row">
-    <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <i class="fa fa-user-circle fa-5x"></i>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "University")">Campus</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Campus", "University")">HM</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Lehrende</li>
+        </ol>
+    </nav>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @if (Model.User != null)
+                                {
+                                    if (Model.User.BinaryData == null || Model.User.BinaryData.Length == 0)
+                                    {
+                                        <div>
+                                            <i class="bi-person-bounding-box"></i>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Action("GetProfileImage", new { id = Model.User.Id })" class="card-img-top rounded" style="max-width: 200px"/>
+                                    }
+                                }
+                                else
+                                {
+                                    <div>
+                                        <i class="bi-person-exclamation"></i> Kein Benutzerkonto
+                                    </div>
+                                }
+                            </div>
+                            <h4>@Model.FullName</h4>
+                            @if (!string.IsNullOrEmpty(Model.UrlProfile))
+                            {
+                                <a href="@Model.UrlProfile" target="_blank">
+                                    <i class="bi-link-45deg"></i>
+                                </a>
+                            }
+
+                            <h5>Aktiv in</h5>
+                            @foreach (var member in Model.Members)
+                            {
+                                <div>@member.Organiser.ShortName: @member.FullName (@member.ShortName)</div>
+                            }
+
+                            @if (ViewBag.IsSelf == true)
+                            {
+                                <a class="btn btn-outline-primary" href="@Url.Action("Index", "UserProfile")">
+                                    <i class="bi-person-gear"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h5>Aktuelle Lehrveranstaltungen</h5>
+                        <ul>
+                            @foreach (var course in Model.Courses)
+                            {
+                                <li><a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name</a></li>
+                            }
+                        </ul>
+                        <h5>Aktuelle Sprechstunden</h5>
+                        <ul>
+                            @foreach (var course in Model.OfficeHours)
+                            {
+                                if (course.ByAgreement)
+                                {
+                                    <li>@course.Semester.Name: <a href="@Url.Action("Details", "OfficeHour", new { id = course.Id })">@course.Name</a> (<i>nach Vereinbarung</i>)</li>
+                                }
+                                else
+                                {
+                                    if (course.Dates.Any(x => x.End >= DateTime.Today))
+                                    {
+                                        <li>@course.Semester.Name: <a href="@Url.Action("Details", "OfficeHour", new { id = course.Id })">@course.Name</a></li>
+                                    }
+                                }
+                            }
+                        </ul>
+                        <h5>Module</h5>
+                        <ul>
+                            @foreach (var course in Model.Modules)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Details", "ModuleDescription", new { id = course.Id })">
+                                        @course.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-

@@ -1,31 +1,23 @@
 ﻿@model MyStik.TimeTable.Web.Models.SemesterActiveViewModel
 @{
-    var containerType = "container-fluid";
-    if (!Request.IsAuthenticated)
-    {
-        Layout = "~/Views/Shared/_LayoutDashboardNew.cshtml";
-        containerType = "container";
-    }
-
     ViewBag.Title = "Vorlesungsverzeichnis";
 }
 
-<div class="@containerType">
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dictionary")">Vorlesungsverzeichnis</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Semester", "Dictionary", new {semId=Model.Semester.Id})">@Model.Semester.Name</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Organiser", "Dictionary", new {semId=Model.Semester.Id, orgId=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Curriculum", "Dictionary", new {semId=Model.Semester.Id, currId=Model.Curriculum.Id})">@Model.Curriculum.ShortName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.CapacityGroup.FullName</li>
+        </ol>
+    </nav>
 
-    <div class="row" style="margin-top: 20px">
+    <div class="col-md-12">
         <div id="panelCalendar" class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="bi-book"></i>
-                        <a href="@Url.Action("Index", "Dictionary")">Start</a> /
-                        <a href="@Url.Action("Semester", new {semId = Model.Semester.Id})">@Model.Semester.Name</a> /
-                        <a href="@Url.Action("Organiser", new {semId = Model.Semester.Id, orgId = Model.Organiser.Id})">@Model.Organiser.ShortName</a> /
-                        <a href="@Url.Action("Curriculum", new {semId = Model.Semester.Id, currId = Model.Curriculum.Id})">@Model.Curriculum.ShortName</a> /
-                        @Model.CapacityGroup.FullName
-                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h4>
-                </div>
+            <div class="card">
                 <div class="list-group">
                     @if (Request.IsAuthenticated)
                     {
@@ -33,6 +25,7 @@
                             <div class="btn-group" role="group">
                                 <a class="btn btn-success active"><i class="fa fa-users"></i> Teilnehmer</a>
                                 <a class="btn btn-warning active"><i class="fa fa-hourglass-half"></i> Warteliste</a>
+                                <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                             </div>
                         </div>
                     }
@@ -42,8 +35,8 @@
         </div>
 
         <div id="panelDetails" class="col-md-4" hidden>
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
                 </div>
             </div>

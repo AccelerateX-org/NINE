@@ -6,159 +6,29 @@
     ViewBag.Title = "Semester  der " + Model.Organiser.ShortName;
 }
 
-<div class="col-md-12">
-    <div class="card">
-        <div class="card-header">
-            <h4>
-                Semester der @Model.Organiser.ShortName
-            </h4>
-        </div>
-        <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a class="btn btn-outline-primary text-center" href="@Url.Action("CreateSemester", "Courses")"> <i class="bi-folder-plus"></i><br />Das nächste Semester anlegen</a>
-                    </div>
-                </div>
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id = Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Lehrveranstaltungen</li>
+        </ol>
+    </nav>
 
-
-
-            @foreach (var sem in Model.ActiveSemesters.OrderByDescending(x => x.EndCourses))
-            {
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    @sem.Name
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="@Url.Action("Semester", "Courses", new {id = sem.Id})" class="btn btn-outline-secondary btn-sm" title="Termine">
-                            <i class="fas fa-calendar"></i>
-                        </a>
-                        <a href="@Url.Action("Semester", "Courses", new {id = sem.Id})" class="btn btn-outline-secondary btn-sm" title="Lehrveranstaltungen">
-                            <i class="fas fa-microphone"></i>
-                        </a>
-                        <a href="@Url.Action("StudentGroup", "Mailing")" class="btn btn-outline-secondary btn-sm" title="Mail senden">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                        <a href="@Url.Action("Details", "Semester", new {id = sem.Id})" class="btn btn-outline-secondary btn-sm" title="Einstellungen">
-                            <i class="fas fa-cogs"></i>
-                        </a>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</div>
-
-
-
-@*
-
-<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-book"></i> Studiengänge
-                    </h4>
-                </div>
-                <div class="list-group">
-                    @foreach (var curr in Model.Organiser.Curricula.OrderBy(x => x.IsDeprecated).ThenBy(x => x.Name))
-                    {
-                        if (curr.IsDeprecated)
-                        {
-                            <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item list-group-item-danger">
-                                <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName) - wird nicht mehr angeboten</h5>
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@Url.Action("Index", "Curriculum", new {id = curr.Id})" class="list-group-item">
-                                <h5 class="list-group-item-heading">@curr.Name (@curr.ShortName)</h5>
-                            </a>
-
-                        }
-                    }
-                </div>
-            </div>
-
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-            @if (ViewBag.UserRight.User.MemberState == MemberState.Staff)
-            {
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>
-                            <i class="fa fa-sitemap"></i> Lehrveranstaltung anlegen
-                        </h4>
-                    </div>
-                    <div class="list-group">
-                        <a href="@Url.Action("CreateCourseWizard", "Course")" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-magic"></i> Schnelleinstieg
-                            </h5>
-                            <div class="list-group-item-text">Angabe von Titel und Beschreibung, die weiteren Details dann über die Verwaltungsseite.</div>
-                        </a>
-                        <a href="@Url.Action("CreateCourse", "Course")" class="list-group-item">
-                            <h5 class="list-group-item-heading">
-                                <i class="fa fa-fw fa-hand-spock-o"></i> Generischer Dialog
-                            </h5>
-                            <div class="list-group-item-text">Größte Flexibilität, viele Einstellungen, komplexe Bedienung</div>
-                        </a>
-                    </div>
-                </div>
-
-                if (ViewBag.UserRight.IsCourseAdmin || ViewBag.UserRight.IsCurriculumAdmin)
+    <div class="col-md-12">
+        <div class="card">
+            <div class="list-group">
+                @foreach (var sem in Model.ActiveSemesters.OrderByDescending(x => x.EndCourses))
                 {
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4>
-                                <i class="fa fa-cogs"></i> Verwaltung
-                            </h4>
-                        </div>
-                        <div class="list-group">
-
-                            @if (ViewBag.UserRight.IsCourseAdmin)
-                            {
-                                <a href="@Url.Action("CreateSemester", "Courses")" class="list-group-item">
-                                    <h5 class="list-group-item-heading">
-                                        <i class="fa fa-calendar-plus-o"></i> Das nächste Semester anlegen
-                                    </h5>
-                                    <p class="list-group-item-text">Erzeugt bzw. ergänzt alle Semestergruppen für das nächste Semester (ausgehend vom aktuellen Tag). Auf den Start- und Übersichtsseiten der Lehrenden wird das aktuelle Vorsemester dann nicht mehr angezeigt. Für die Studierenden ändert sich dadurch nichts.</p>
-                                </a>
-                                <a href="@Url.Action("CreateCurrentSemester", "Courses")" class="list-group-item list-group-item-warning">
-                                    <h5 class="list-group-item-heading">
-                                        <i class="fa fa-calendar-plus-o"></i> Das aktuelle Semester anlegen
-                                    </h5>
-                                    <p class="list-group-item-text">Erzeugt bzw. ergänzt alle Semestergruppen für das tagesaktuelle Semester.</p>
-                                </a>
-                                <a href="@Url.Action("Index", "Import")" class="list-group-item">
-                                    <h5 class="list-group-item-heading">
-                                        <i class="fa fa-upload"></i> Import Stundenpläne
-                                    </h5>
-                                    <p class="list-group-item-text">Einlesen von Textdateien in verschiedenen Formaten (UNTIS, JSON)</p>
-                                </a>
-                                <a href="@Url.Action("Analyse", "Courses")" class="list-group-item">
-                                    <h5 class="list-group-item-heading">
-                                        <i class="fa fa-cog"></i> Administration
-                                    </h5>
-                                    <p class="list-group-item-text">Low-Level Suche nach "frei fliegenden" Lehrveranstaltungen</p>
-                                </a>
-                            }
-                            @if (ViewBag.UserRight.IsCurriculumAdmin)
-                            {
-                                <a href="@Url.Action("Create", "Curricula")" class="list-group-item">
-                                    <h5 class="list-group-item-heading">
-                                        <i class="fa fa-plus"></i> Studiengang anlegen
-                                    </h5>
-                                </a>
-                            }
-                        </div>
-                    </div>
+                    <a class="list-group-item list-group-item-action" href="@Url.Action("Semester", "Courses", new { orgId = Model.Organiser.Id, semId = sem.Id })">
+                        @sem.Name
+                    </a>
                 }
-            }
+            </div>
         </div>
     </div>
 </div>
 
-
-
-*@
 
 
 

@@ -9,33 +9,40 @@
     <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div id="panelCalendar" class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4>
-                        <i class="fa fa-calendar"></i>
-                        @Resources.MyCalendar
-                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h4>
-                </div>
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <div id="calendar"></div>
-                    </div>
-                </div>
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Resources.MyCalendar</li>
+        </ol>
+    </nav>
+
+
+    <div id="panelCalendar" class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <i class="bi-calendar"></i>
+                    @Resources.MyCalendar
+                    <span id="loading"><i class="spinner-border text-muted"></i></span>
+                </h4>
             </div>
-        </div>
-        <div id="panelDetails" class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="panelDetails" class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>Lade Details <span id="loading2"><i class="spinner-border text-muted"></i></span></h4>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 @section scripts
 {
@@ -50,6 +57,7 @@
 
 
         $(document).ready(function() {
+            $("#panelDetails").hide();
             showDayCalendar();
 
         });

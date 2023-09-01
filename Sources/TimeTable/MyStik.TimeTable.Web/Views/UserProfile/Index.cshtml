@@ -5,6 +5,13 @@
     var semesterActive = "";
 }
 
+
+@section styles {
+    <link href="@Url.Content("~/Assets/libs/dropzone/dropzone.css")" rel="stylesheet" type="text/css" />
+
+}
+
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -29,6 +36,15 @@
                         {
                             @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
+                            if (ViewBag.IsMember)
+                            {
+                                <div class="form-floating mb-3">
+                                    @Html.TextBoxFor(m => m.Profile.Title, new { @class = "form-control", placeholder = "akad. Titel" })
+                                    @Html.LabelFor(m => m.Profile.Title)
+                                    @Html.ValidationMessageFor(m => m.Profile.Title)
+                                </div>
+                            }
+
                             <div class="form-floating mb-3">
                                 @Html.TextBoxFor(m => m.Profile.FirstName, new { @class = "form-control", placeholder = Resources.RegisterFirstNamePlaceholder })
                                 @Html.LabelFor(m => m.Profile.FirstName)
@@ -47,17 +63,23 @@
                                 <button type="submit" class="btn btn-outline-primary"><i class="bi-save"></i> @Resources.SaveButton</button>
                             </div>
                         }
+                        <div>@Model.Profile.Email</div>
                     </div>
                     <div class="col-md-4">
                         @if (ViewBag.HasImage == true)
                         {
-                            <img src="@Url.Action("GetProfileImage")" class="card-img-top"/>
+                            <img src="@Url.Action("GetProfileImage")" class="card-img-top" />
                             <a href="@Url.Action("DeleteProfileImage")" class="btn btn-outline-primary"><i class="bi-trash"></i> Profilbild löschen</a>
                         }
                         else
                         {
-                            <p>Kein Profilbild vorhanden</p>
+                            <p>Profilbild hochladen</p>
+                            <form id="formDrop" action="@Url.Action("UploadProfileImage", "Candidature")" class="dropzone">
+                            </form>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-primary"><i class="fas fa-sync"></i> Seite aktualisieren / Hochgeladenes Bild anzeigen</a>
                         }
+
+
                     </div>
                 </div>
                 <div class="row">
@@ -83,7 +105,7 @@
                             </div>
 
                             <div class="mb-3">
-                                @Html.CheckBoxFor(m => m.MsgProfile.LikeEmailOnGlobalLevel, new {@class= "form-check-input" })
+                                @Html.CheckBoxFor(m => m.MsgProfile.LikeEmailOnGlobalLevel, new { @class = "form-check-input" })
                                 <label for="MsgProfile_LikeEmailOnGlobalLevel">@Resources.SetMailingSettingCheckbox</label>
                             </div>
                             <div class="mb-3">
@@ -91,13 +113,13 @@
                             </div>
                         }
 
-                    
-                        </div>
+
+                    </div>
                 </div>
 
 
                 <div class="row">
-                    <hr/>
+                    <hr />
                     <div class="col-12">
                         <h5>Persönlicher Kalender</h5>
                     </div>
@@ -115,7 +137,20 @@
                     </div>
                 </div>
             </div>
-
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="list-group">
+                        @foreach (var device in Model.UserDevices)
+                        {
+                            <div class="list-group-item">
+                                <div>@device.DeviceId</div>
+                                <div>@device.DeviceName</div>
+                                <a href="@Url.Action("DeleteDevice", new { id = device.Id })">Löschen</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -146,18 +181,18 @@
                 }
 
                 $.ajax(
-                {
-                    type: "POST",
-                    url: "@Url.Action("SaveUserDeviceData", "UserProfile")",
-                    data: {
-                        deviceList: userDeviceList
-                    },
-                    success: function (data) {
-                        $('#UserDevicesTable').html(data);
-                        $('#SavedDiv').html("<div class='note note-success'>Die Geräteeinstellungen wurden gespeichert!</div>")
+                    {
+                        type: "POST",
+                        url: "@Url.Action("SaveUserDeviceData", "UserProfile")",
+                        data: {
+                            deviceList: userDeviceList
+                        },
+                        success: function (data) {
+                            $('#UserDevicesTable').html(data);
+                            $('#SavedDiv').html("<div class='note note-success'>Die Geräteeinstellungen wurden gespeichert!</div>")
 
-                    }
-                });
+                        }
+                    });
             }
         };
 
@@ -172,4 +207,18 @@
 
 
     </script>
+
+    <script src="@Url.Content("~/Assets/libs/dropzone/dropzone.js")" type="text/javascript"></script>
+
+    <script>
+
+        Dropzone.options.formDrop = {
+            acceptedFiles: '.png,.jpg,image/*',
+            capture: 'camera',
+            maxFiles: 1,
+            parallelUploads: 1,
+            dictDefaultMessage: 'Ablagebereich für das Profilbild'
+        };
+    </script>
+
 }

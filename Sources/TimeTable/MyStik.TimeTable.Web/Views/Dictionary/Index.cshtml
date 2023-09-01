@@ -7,24 +7,27 @@
 }
 
 <div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Vorlesungsverzeichnis</li>
+        </ol>
+    </nav>
+
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-                <h4>Vorlesungsverzeichnis nach Semestern</h4>
-            </div>
             <div class="list-group">
                 @foreach (var sem in Model.ActiveSemester)
                 {
                     if (sem.Organisers.Any())
                     {
-                        <a href="@Url.Action("Semester", new {semId = sem.Semester.Id})" class="list-group-item list-group-item-action">
-                            <h5 class="list-group-item-heading"><strong>@sem.Semester.Name</strong></h5>
-                            <p class="list-group-item-text">
+                        <a href="@Url.Action("Semester", new { semId = sem.Semester.Id })" class="list-group-item list-group-item-action">
+                            <h5><strong>@sem.Semester.Name</strong></h5>
+                            <p>
                                 @foreach (var organiser in sem.Organisers.OrderBy(x => x.ShortName))
                                 {
                                     @Html.FacultyLabel(organiser)
                                 }
-
                             </p>
                         </a>
                     }

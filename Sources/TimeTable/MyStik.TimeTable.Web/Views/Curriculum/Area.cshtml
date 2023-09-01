@@ -12,26 +12,25 @@
 
 <div class="row">
     <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Details", "Curriculum", new {id=Model.Curriculum.Id})">@Model.Curriculum.ShortName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Areas", "Curriculum", new {id=Model.Curriculum.Id})">Themenbereiche</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Name (@Model.Tag)</li>
+            </ol>
+        </nav>
+
         <div class="card">
-            <div class="card-header">
-                <h4 class="card-title">
-                    Themenbereich "@Model.Name"
-                </h4>
-                <h5 class="card-subtitle">
-                    <a href="@Url.Action("Details", new { id = Model.Curriculum.Id })">@Model.Curriculum.Tag</a> |
-                    <span>@Model.Tag</span>
-                </h5>
-            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
                         <h5>Allgemeine Informationen</h5>
                         <div class="row">
                             <div class="col-4">
-                                ??
+                                Anzahl Wahlmöglichkeiten
                             </div>
                             <div class="col-8">
-                                xx
+                                @Model.Options.Count
                             </div>
                         </div>
                     </div>
@@ -39,7 +38,7 @@
                         <h5>Beschreibung</h5>
                         <div class="row">
                             <div class="col-12">
-                                @Model.Description
+                                @Html.Raw(Model.Description)
                             </div>
                         </div>
                     </div>
@@ -47,37 +46,34 @@
             </div>
 
             <div class="list-group">
-                <div class="list-group-item">
-                    <div class="btn-group">
-                        <a href="@Url.Action("Areas", "Curriculum", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
-                            <i class="bi-chevron-left"></i> Alle Themenbereiche @Model.Curriculum.Tag
-                        </a>
-                        @if (ViewBag.UserRight.IsCurriculumAdmin)
-                        {
+                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                {
+                    <div class="list-group-item">
+                        <div class="btn-group">
                             <a href="@Url.Action("EditArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-gear"></i> Ändern
                             </a>
                             <a href="@Url.Action("CreateOption", "Curriculum", new { id = Model.Id })" class="btn btn-outline-primary">
                                 <i class="bi-plus"></i> Neue Wahlmöglichkeit
                             </a>
-                            if (Model.Options.Any())
+                            @if (Model.Options.Any())
                             {
-                                <div class="btn btn-outline-danger disabled">
-                                    <i class="bi-trash"></i> Themenbereich löschen
-                                </div>
+                            <div class="btn btn-outline-danger disabled">
+                                <i class="bi-trash"></i> Themenbereich löschen
+                            </div>
                             }
                             else
                             {
-                                <a href="@Url.Action("DeleteArea", "Curriculum", new {id = Model.Id})" class="btn btn-outline-danger">
-                                    <i class="bi-trash"></i> Themenbereich löschen
-                                </a>
+                            <a href="@Url.Action("DeleteArea", "Curriculum", new { id = Model.Id })" class="btn btn-outline-danger">
+                                <i class="bi-trash"></i> Themenbereich löschen
+                            </a>
                             }
-                        }
+                        </div>
                     </div>
-                </div>
+                }
                 @foreach (var option in Model.Options)
                 {
-                    <a href="@Url.Action("Option", new {id = option.Id})" class="list-group-item list-group-item-action">
+                    <a href="@Url.Action("Option", new { id = option.Id })" class="list-group-item list-group-item-action">
                         <h5>@option.Name (@option.Tag)</h5>
                         <p>@option.Description</p>
                     </a>

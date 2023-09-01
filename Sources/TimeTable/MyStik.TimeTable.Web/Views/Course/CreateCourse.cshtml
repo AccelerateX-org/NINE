@@ -34,105 +34,36 @@
                                     <label for="OrganiserId">Fakultät auswählen</label>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                @if (ViewBag.Curricula != null)
-                                {
-                                    <div class="form-floating mb-3">
-                                        @Html.DropDownListFor(m => m.CurriculumId, (IEnumerable<SelectListItem>)ViewBag.Curricula, new { @class = "form-select", onchange = "onCurriculumChanged()" })
-                                        <label for="CurriculumId">Studiengang</label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <p>Keine Stundenplandaten</p>
-                                }
-                            </div>
-                            <div class="col-md-6">
-                                <div id="GroupTable">
-                                    <table class="table table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th>Studiengruppe</th>
-                                                <th>Kapazitätsgruppe</th>
-                                                <th></th>
-                                            </tr>
-                                            <tr>
-                                                <th>
-                                                    @if (ViewBag.CurrGroups != null)
-                                                    {
-                                                        @Html.DropDownListFor(m => m.CurrGroupId, (IEnumerable<SelectListItem>)ViewBag.CurrGroups, new { @class = "form-control  input-sm", onchange = "onCurriculumGroupChanged()" })
-                                                    }
-                                                </th>
-                                                <th>
-                                                    @if (ViewBag.CapGroups != null)
-                                                    {
-                                                        @Html.DropDownListFor(m => m.CapGroupId, (IEnumerable<SelectListItem>)ViewBag.CapGroups, new { @class = "form-control  input-sm" })
-                                                    }
-                                                </th>
-                                                <th>
-                                                    <button class="btn btn-primary btn-sm" onclick="addGroup()"><i class="fa fa-plus-circle"></i></button>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="groupList"></tbody>
-                                    </table>
+                            <div class="col-md-8">
+                                <div class="alert alert-info">
+                                    <h5>Änderung in der Zuordnung einer Lehrveranstaltung zu Studienangebot</h5>
+                                    <div>Die Zuordnung erfolgt über Label (ersetzt die "Semestergruppen") und/oder den Studienplan. Die Lehrveranstaltung ist über das Vorlesungsverzeichnis ("komplettes Lehrangebot") zugänglich und auffindbar, auch ohne Labels und Zuordnung zum Studienplan.</div>
                                 </div>
-                                @if (ViewBag.Chapters != null && ViewBag.Topics != null)
-                                {
-                                    <div id="TopicTable">
-                                        <table class="table table-condensed">
-                                            <thead>
-                                                <tr>
-                                                    <th>Kapitel</th>
-                                                    <th>Thema</th>
-                                                    <th></th>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        @if (ViewBag.Chapters != null)
-                                                        {
-                                                            @Html.DropDownListFor(m => m.ChapterId, (IEnumerable<SelectListItem>)ViewBag.Chapters, new { @class = "form-control  input-sm", onchange = "onCurriculumChapterChanged()" })
-                                                        }
-                                                    </th>
-                                                    <th>
-                                                        @if (ViewBag.Topics != null)
-                                                        {
-                                                            @Html.DropDownListFor(m => m.TopicId, (IEnumerable<SelectListItem>)ViewBag.Topics, new { @class = "form-control  input-sm" })
-                                                        }
-                                                    </th>
-                                                    <th>
-                                                        <button class="btn btn-primary btn-sm" onclick="addTopic()"><i class="fa fa-plus-circle"></i></button>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="topicList"></tbody>
-                                        </table>
-                                    </div>
-                                }
                             </div>
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <h5>Bezeichnung</h5>
                         <div class="row">
-
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="Name" name="name" placeholder="Bezeichnung der Lehrveranstaltung" />
                                     <label for="Name">Name</label>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="ShortName" name="shortName" placeholder="Kurzbezeichnung" />
                                     <label for="ShortName">Kurzname</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <h5>Dozent(en)</h5>
                                 <div id="DozTable">
                                     <table class="table">
@@ -158,16 +89,43 @@
                                         <tbody id="dozList"></tbody>
                                     </table>
                                 </div>
-
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>Raum/Räume</h5>
+                                <div id="RoomTable">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Fakultät</th>
+                                            <th>Raumnummer</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
+                                            </th>
+                                            <th>
+                                                <input type="text" class="form-control  input-sm" id="RoomId">
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="roomList"></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <h5>Termin(e)</h5>
                         <div id="DateTable">
-                            <table class="table table-condensed">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Datum / Erster Termin</th>
@@ -202,7 +160,7 @@
                                             </select>
                                         </th>
                                         <th>
-                                            <button class="btn btn-primary btn-sm" onclick="addDate()"><i class="fa fa-plus-circle"></i></button>
+                                            <button class="btn btn-outline-primary" onclick="addDate()"><i class="bi-plus-circle"></i> Terminserie hinzufügen</button>
                                         </th>
                                     </tr>
                                 </thead>
@@ -210,40 +168,16 @@
                             </table>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <h5>Raum/Räume</h5>
-                        <div id="RoomTable">
-                            <table class="table table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>Fakultät</th>
-                                        <th>Raumnummer</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            @Html.DropDownListFor(m => m.OrganiserId3, (IEnumerable<SelectListItem>)ViewBag.RoomOrganiser, new { @class = "form-control  input-sm" })
-                                        </th>
-                                        <th>
-                                            <input type="text" class="form-control  input-sm" id="RoomId">
-                                        </th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="roomList"></tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
                 <div class="row">
+                    @*
                     <div class="col-md-6">
                         <div class="form-check">
                             <input id="cbKeepLists" class="form-check-input" type="checkbox">
                             <label class="form-check-label" for="cbKeepLists">Auswahl für nächste Lehrveranstaltung beibehalten</label>
                         </div>
                     </div>
+                    *@
 
                     <div class="col-md-6">
                         <label class="col-sm-3 form-label" for="ConflictTable">Konflikte</label>
@@ -263,28 +197,6 @@
     </div>
 
 </div>
-
-
-<div class="row mt-3">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h4>
-                    Zuletzt von mir angelegte Lehrveranstaltungen
-                </h4>
-            </div>
-            <div class="card-body">
-                <div id="CourseTable">
-                    <div>
-                        <i class="fa fa-spinner fa-spin text-muted"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 
 
 
@@ -567,17 +479,6 @@
                     checkRoomState(ui.item.text);
                 }
             });
-
-
-            $.ajax(
-            {
-                type: "POST",
-                url: '@Url.Action("GetMyCourseList")',
-                success: function (data, success, xhr) {
-                    $("#CourseTable").html(data);
-                }
-            });
-
         });
 
         function deleteRow(id) {
@@ -689,6 +590,7 @@
             var roomList = new Array();
             var dateList = new Array();
 
+            /*
             var list = $("#GroupTable > table > tbody > tr").get();
             var n = list.length;
             if (n > 0) {
@@ -704,9 +606,9 @@
                     topicList[i] = list[i].id;
                 }
             }
+            */
 
-
-            list = $("#DozTable > table > tbody > tr").get();
+            var list = $("#DozTable > table > tbody > tr").get();
             n = list.length;
             if (n > 0) {
                 for (var i = 0; i < n; i++) {
@@ -752,22 +654,9 @@
                     RoomIds: roomList,
                     Dates: dateList
                 },
-                success: function(data, success, xhr) {
-                    $("#CourseList").append(data);
-                    $("#loading").hide();
-
-                    $("#Name").val("");
-                    $("#ShortName").val("");
-
-                    // jetzt noch Eingaben löschen oder nicht
-                    var keepLists = $("#cbKeepLists").is(':checked');
-                    if (keepLists === false) {
-                        $("#groupList").html("");
-                        $("#topicList").html("");
-                        $("#dozList").html("");
-                        $("#dateList").html("");
-                        $("#roomList").html("");
-                    }
+                    success: function (data, success, xhr) {
+                        $("#loading").show();
+                        window.location.replace(data);
                 }
             });
         }

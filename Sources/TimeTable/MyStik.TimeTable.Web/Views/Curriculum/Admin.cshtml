@@ -57,6 +57,9 @@
                                 </div>
                                 <p class="mb-1">VERALTET: Erstellung, Löschen. Sind die Grundlagen für die Semestergruppen. Die Daten werden beim Import der Datei "curriculum.csv" benötigt.</p>
                             </a>
+                            
+                            <a href="@Url.Action("AllLabels")">Alle Labels</a>
+
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -104,6 +107,17 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-danger">
+                                <h5>Danger Zone</h5>
+                            </div>
+                            <a href="@Url.Action("Destroy", "Curriculum", new { id = Model.Id })" class="list-group-item list-group-item-action" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Zerstören und Löschen</h5>
+                                </div>
+                                <p class="mb-1">Auf der folgenden Seite kann der Studiengang gelöscht werden.</p>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

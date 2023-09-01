@@ -5,20 +5,24 @@
     ViewBag.Title = "Details";
 
     var itsMe = false;
-    var userId = ViewBag.UserRight.User.Id;
 
-    foreach (var mv in Model.ModuleResponsibilities)
+    if (ViewBag.UserRight.User != null)
     {
-        if (!string.IsNullOrEmpty(mv.Member.UserId) && mv.Member.UserId.Equals(userId))
+        var userId = ViewBag.UserRight.User.Id;
+
+        foreach (var mv in Model.ModuleResponsibilities)
         {
-            itsMe = true;
+            if (!string.IsNullOrEmpty(mv.Member.UserId) && mv.Member.UserId.Equals(userId))
+            {
+                itsMe = true;
+            }
         }
-    }
-    foreach (var kv in Model.Catalog.CatalogResponsibilities)
-    {
-        if (!string.IsNullOrEmpty(kv.Member.UserId) && kv.Member.UserId.Equals(userId))
+        foreach (var kv in Model.Catalog.CatalogResponsibilities)
         {
-            itsMe = true;
+            if (!string.IsNullOrEmpty(kv.Member.UserId) && kv.Member.UserId.Equals(userId))
+            {
+                itsMe = true;
+            }
         }
     }
 }
@@ -27,6 +31,7 @@
 <div class="col-12">
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Catalog.Organiser.Id})">@Model.Catalog.Organiser.ShortName</a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.Catalog.Organiser.Id})">Modulkataloge</a></li>
         <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.Catalog.Id})">@Model.Catalog.Tag</a></li>
@@ -38,12 +43,18 @@
 <div class="card-header">
     <div class="row">
         <div class="col-md-12">
-            <h4 class="card-title">
-                <img src="~/Assets/img/flags/de.png"/> @Model.Name
-            </h4>
-            <h4 class="card-title">
-                <img src="~/Assets/img/flags/gb.png"/> @Model.NameEn
-            </h4>
+            @if (!string.IsNullOrEmpty(Model.Name))
+            {
+                <h4 class="card-title">
+                    <img src="~/Assets/img/flags/de.png" alt="de"/> @Model.Name
+                </h4>
+            }
+            @if (!string.IsNullOrEmpty(Model.NameEn))
+            {
+                <h4 class="card-title">
+                    <img src="~/Assets/img/flags/gb.png" alt="en"/> @Model.NameEn
+                </h4>
+            }
         </div>
     </div>
 </div>

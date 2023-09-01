@@ -57,9 +57,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Organiser(Guid semId, Guid orgId)
+        public ActionResult Organiser(Guid? semId, Guid orgId)
         {
-            var semester = SemesterService.GetSemester(semId);
+            var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
 
             var organiser = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
 
@@ -146,73 +146,153 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
         [HttpPost]
-        public PartialViewResult GetLabels(Guid currId, Guid semId, Guid optId, int semNo)
+        public PartialViewResult GetLabels(Guid currId, Guid semId, Guid? optId, int semNo)
         {
-
-            // Alle LVs in dem Semester
-            var labels = Db.Activities.OfType<Course>().Where(x => x.Semester.Id == semId &&
-                                                                    x.Teachings.Any(t =>
-                                                                        t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
-                                                                        t.Accreditation.Slot.AreaOption.Id == optId &&
-                                                                        t.Accreditation.Slot.Semester == semNo)).Select(c => c.LabelSet).ToList();
-
-            var itemLabels = new List<ItemLabel>();
-
-            foreach (var labelSet in labels.Where(x => x!=null))
+            if (optId.HasValue && semNo > 0)
             {
-                itemLabels.AddRange(labelSet.ItemLabels);
+
+                // Alle LVs in dem Semester
+                var labels = Db.Activities.OfType<Course>().Where(x => 
+                        x.Semester.Id == semId && 
+                        x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
+                                                                           t.Accreditation.Slot.AreaOption.Id == optId &&
+                                                                           t.Accreditation.Slot.Semester == semNo))
+                    .Select(c => c.LabelSet).ToList();
+
+                var itemLabels = new List<ItemLabel>();
+
+                foreach (var labelSet in labels.Where(x => x != null))
+                {
+                    itemLabels.AddRange(labelSet.ItemLabels);
+                }
+
+                var selectLabels = itemLabels.Distinct();
+
+
+                var model = selectLabels
+                    .OrderBy(g => g.Name)
+                    .ToList();
+
+                return PartialView("_LabelSelectList", model);
             }
 
-            var selectLabels = itemLabels.Distinct();
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
-            
-            var model = selectLabels
+            var allItemLabels = new List<ItemLabel>();
+            allItemLabels.AddRange(curr.Organiser.Institution.LabelSet.ItemLabels);
+            allItemLabels.AddRange(curr.Organiser.LabelSet.ItemLabels);
+            allItemLabels.AddRange(curr.LabelSet.ItemLabels);
+
+            var allSelectLabels = allItemLabels.Distinct();
+
+            var allModel = allSelectLabels
                 .OrderBy(g => g.Name)
                 .ToList();
 
-            return PartialView("_LabelSelectList", model);
+            return PartialView("_LabelSelectList", allModel);
+
         }
 
 
         [HttpPost]
-        public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid optId, Guid labelId, int semNo)
+        public PartialViewResult GetLabeledCourses(Guid currId, Guid semId, Guid? optId, Guid labelId, int semNo)
         {
-            // Alle LVs in dem Semester
-            var courses = Db.Activities.OfType<Course>().Where(x => x.Semester.Id == semId &&
-                                                                   x.Teachings.Any(t =>
-                                                                       t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
-                                                                       t.Accreditation.Slot.AreaOption.Id == optId &&
-                                                                       t.Accreditation.Slot.Semester == semNo)).ToList();
+            if (optId.HasValue && semNo > 0)
+            {
+                // Alle LVs in dem Semester
+                var courses = Db.Activities.OfType<Course>().Where(x => 
+                        x.Semester.Id == semId &&
+                        x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId &&
+                                             t.Accreditation.Slot.AreaOption.Id == optId &&
+                                             t.Accreditation.Slot.Semester == semNo))
+                    .ToList();
 
-            var labeledCourses = new List<Course>();
+                var labeledCourses = new List<Course>();
+
+                if (labelId == Guid.Empty)
+                {
+                    // alle ohne Label
+                    var allCourses = courses.Where(x =>
+                        ((x.LabelSet == null) ||
+                         (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
+                    ).ToList();
+
+                    labeledCourses.AddRange(allCourses);
+                }
+                else
+                {
+                    foreach (var course in courses)
+                    {
+                        if (course.LabelSet == null ||
+                            !course.LabelSet.ItemLabels.Any() ||
+                            course.LabelSet.ItemLabels.Any(x => x.Id == labelId))
+                        {
+                            labeledCourses.Add(course);
+                        }
+                    }
+                }
+
+
+                var model = labeledCourses
+                    .OrderBy(g => g.ShortName)
+                    .ToList();
+
+                return PartialView("_CourseList", model);
+            }
+
+
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
 
             if (labelId == Guid.Empty)
             {
-                labeledCourses.AddRange(courses);
+                // alle Kurse zu diesem Studiengang
+                var courses = Db.Activities.OfType<Course>().Where(x =>
+                        x.Semester.Id == semId &&
+                        x.Teachings.Any(t => t.Accreditation.Slot.AreaOption.Area.Curriculum.Id == currId))
+                    .ToList();
+
+                if (courses.Any())
+                {
+                    // wen es welche gibt, dann
+                    // aus denen dann die ohne Labels filtern
+
+                    // alle ohne ein Label
+                    var allCourses = courses.Where(x =>
+                        ((x.LabelSet == null) ||
+                         (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
+                    ).ToList();
+
+                    return PartialView("_CourseList", allCourses);
+                }
+                else
+                {
+                    // sonst: nimm alles was zum Org gehört => es gibt keine Zuordnung zu einem Studiengang, weder über Labelm noch Module
+
+                    var allCourses = Db.Activities.OfType<Course>().Where(x =>
+                        x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id &&
+                        ((x.LabelSet == null) ||
+                         (x.LabelSet != null && !x.LabelSet.ItemLabels.Any()))
+                    ).ToList();
+
+
+                    return PartialView("_CourseList", allCourses);
+                }
+
             }
             else
             {
-                foreach (var course in courses)
-                {
-                    if (course.LabelSet == null ||
-                        !course.LabelSet.ItemLabels.Any() ||
-                        course.LabelSet.ItemLabels.Any(x => x.Id == labelId))
-                    {
-                        labeledCourses.Add(course);
-                    }
-                }
+                var allCourses = Db.Activities.OfType<Course>().Where(x =>
+                    x.Semester.Id == semId && x.Organiser.Id == curr.Organiser.Id &&
+                    x.LabelSet != null &&
+                    x.LabelSet.ItemLabels.Any(l => l.Id == labelId)).ToList();
+
+                return PartialView("_CourseList", allCourses);
             }
 
-
-            var model = labeledCourses
-                .OrderBy(g => g.ShortName)
-                .ToList();
-
-            return PartialView("_CourseList", model);
         }
 
 
-        
+
 
 
         public ActionResult Group(Guid semId, Guid groupId)

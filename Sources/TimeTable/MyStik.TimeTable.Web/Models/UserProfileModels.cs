@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MyStik.TimeTable.Data;
+using MyStik.TimeTable.Web.Controllers;
 
 namespace MyStik.TimeTable.Web.Models
 {
@@ -91,6 +93,11 @@ namespace MyStik.TimeTable.Web.Models
         [Display(Name = "RegisterLastNameField", ResourceType =typeof(Resources))]
         public string LastName { get; set; }
 
+
+        [Display(Name = "Akademischer Titel")]
+        public string Title { get; set; }
+
+        public string Email { get; set; }
     }
 
     /// <summary>
@@ -98,6 +105,8 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class UserDeviceViewModel
     {
+        public Guid Id { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -117,7 +126,7 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         [Required]
         [Display(Name = "DeviceId", ResourceType =typeof(Resources))]
-        public string Id { get; set; }
+        public string DeviceId { get; set; }
 
         /// <summary>
         /// 

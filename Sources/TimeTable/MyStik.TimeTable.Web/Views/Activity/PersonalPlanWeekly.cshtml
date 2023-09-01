@@ -9,32 +9,38 @@
     <link href="~/Assets/libs/fullcalendar/main.min.css" rel="stylesheet" />
 }
 
-<div class="container-fluid">
-    <div class="row" style="margin-top: 20px">
-        <div id="panelCalendar" class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <i class="bi-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
-                        <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
-                    </h4>
-                </div>
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <div id="calendar"></div>
-                    </div>
-                </div>
+<div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mein Wochenplan @Model.Semester.Name</li>
+        </ol>
+    </nav>
+
+    <div id="panelCalendar" class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    <i class="bi-calendar"></i> Mein Stundenplan im <strong>@Model.Semester.Name</strong>
+                    <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
+                </h4>
             </div>
-        </div>
-        <div id="panelDetails" class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="panelDetails" class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>Lade Details <span id="loading2"><i class="fa fa-spinner fa-spin text-muted"></i></span></h4>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 
     @section scripts

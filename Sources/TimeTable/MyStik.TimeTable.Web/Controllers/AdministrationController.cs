@@ -14,7 +14,9 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!meberships.Any())
                 return RedirectToAction("Apply");
 
-            return View();
+            var org = GetMyOrganisation();
+
+            return View(org);
         }
 
         public ActionResult Apply()

@@ -1,0 +1,14 @@
+﻿@model MyStik.TimeTable.Data.ItemLabel
+@{
+    ViewBag.Title = "EditLabel";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="list-group">
+            <div class="list-group-item">
+                <a class="btn btn-outline-danger" href="@Url.Action("RemoveLabel", new {courseId=ViewBag.Course.Id, labelId=Model.Id})"><i class="bi-x"></i> Entfernen</a>
+            </div>
+        </div>
+    </div>
+</div>

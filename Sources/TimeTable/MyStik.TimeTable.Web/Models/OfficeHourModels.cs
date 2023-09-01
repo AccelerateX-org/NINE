@@ -74,6 +74,8 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public ActivityDate Date { get; set; }
+
+        public bool HasSubscription { get; set; }
     }
 
     /// <summary>

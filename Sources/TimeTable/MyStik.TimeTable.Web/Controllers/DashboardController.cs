@@ -22,35 +22,50 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Index(Guid? id)
         {
             var user = GetCurrentUser();
+
+            /*
+            Semester currentSemester = null;
+
+            if (id == null)
+            {
+                // Smart Senester
+                var courseInTheFuture = Db.ActivityDates
+                    .Where(x => 
+                        x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
+                        x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                    .OrderByDescending(x => x.Begin)
+                    .Select(x => x.Activity).FirstOrDefault();
+
+                if (courseInTheFuture != null)
+                {
+                    currentSemester = courseInTheFuture.Semester ?? SemesterService.GetSemester(DateTime.Today);
+                }
+                else
+                {
+                    currentSemester = SemesterService.GetSemester(DateTime.Today);
+                }
+            }
+            else
+            {
+                currentSemester = SemesterService.GetSemester(id);
+            }
+
+            var model = GetSemesterModel(currentSemester, user);
+            */
+            var userService = new UserInfoService();
+            var teachingService = new TeachingService(Db);
+
+            var model = new TeachingOverviewModel();
             var members = MemberService.GetFacultyMemberships(user.Id);
             var student = GetCurrentStudent(user.Id);
 
-            Semester currentSemester = null;
-
-            // das aktuelle Semester bestimmen es gilt das neues aller Semester in alle
-            // Fakultäen
-            currentSemester = id == null ? SemesterService.GetSemester(DateTime.Today) : SemesterService.GetSemester(id);
-
-            var TeachingService = new TeachingService(Db);
-            var userService = new UserInfoService();
-
-
-            var model = new TeachingOverviewModel();
-
-            model.CurrentSemester = TeachingService.GetActivities(currentSemester, user, members);
-            model.PrevSemester = SemesterService.GetPreviousSemester(currentSemester);
-            model.NextSemester = SemesterService.GetNextSemester(currentSemester);
             model.Members = members.ToList();
             model.Student = student;
 
-            if (student != null)
-            {
-                model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == student.Id);
-            }
 
             model.ActiveTheses = new List<ThesisStateModel>();
 
-            var theses = TeachingService.GetActiveTheses(user);
+            var theses = teachingService.GetActiveTheses(user);
 
             foreach (var thesis in theses)
             {
@@ -64,11 +79,10 @@ namespace MyStik.TimeTable.Web.Controllers
                 model.ActiveTheses.Add(tm);
             }
 
-            model.Modules = Db.CurriculumModules
-                .Where(x => x.ModuleResponsibilities.Any(m =>
-                    !string.IsNullOrEmpty(m.Member.UserId) && m.Member.UserId.Equals(user.Id)))
-                .ToList();
-
+            if (model.Student != null)
+            {
+                model.Thesis = Db.Theses.FirstOrDefault(x => x.Student.Id == model.Student.Id);
+            }
 
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;
@@ -76,86 +90,60 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View(model);
 
-            /*
-            var userRight = GetUserRight();
-            ViewBag.UserRight = userRight;
-
-            if (User.IsInRole("SysAdmin"))
-            {
-                if (Session["OrgAdminId"] == null)
-                {
-                    return View("DashboardSysAdmin");
-                }
-
-                return View("DashboardOrgMember", CreateDashboardModelOrgMember(userRight));
-            }
-
-            var user = GetCurrentUser();
-            var meberships = MemberService.GetFacultyMemberships(user.Id);
-            var student = StudentService.GetCurrentStudent(userRight.User.Id);
-            var alumni = GetMyAlumni();
-
-            // wenn alles nix, dann erster Besuch
-            if (!meberships.Any() && student == null && !alumni.Any())
-            {
-                // Falls es Bewerbungen gibt, dann zur Startseite
-                var cand = Db.Candidatures.Where(x => x.UserId.Equals(userRight.User.Id)).ToList();
-
-                if (cand.Any())
-                    return RedirectToAction("Index", "Candidature");
-
-                ViewBag.IsGuest = true;
-                return View();
-            }
-
-            // alle anderen Fälle
-            // wer  member ist ist Dozent => Check mit Fachschaft
-            // wer nur student ist Student
-            // aber auch: nochmal check auf "eine Sicht für alle"
-
-
-
-
-
-            switch (userRight.User.MemberState)
-            {
-                case MemberState.Student:
-                {
-                    return View("DashboardStudentNew", CreateDashboardModelStudentNew(userRight));
-                }
-
-                case MemberState.Staff:
-                    return View("DashboardOrgMemberNew", CreateDashboardModelOrgMemberNew(userRight));
-                default:
-                    return View("DashboardDefault", CreateDashboardModelDefault(userRight));
-            }
-            */
         }
 
         [HttpPost]
-        public PartialViewResult Semester(Guid semId)
+        public PartialViewResult Semester(Guid? semId)
         {
             var user = GetCurrentUser();
-            var members = MemberService.GetFacultyMemberships(user.Id);
 
             Semester currentSemester = null;
 
-            // das aktuelle Semester bestimmen es gilt das neues aller Semester in alle
-            // Fakultäen
-            currentSemester = SemesterService.GetSemester(semId);
+            if (semId == null)
+            {
+                // Smart Senester
+                var courseInTheFuture = Db.ActivityDates
+                    .Where(x =>
+                        x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
+                        x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
+                    .OrderByDescending(x => x.Begin)
+                    .Select(x => x.Activity).FirstOrDefault();
 
+                if (courseInTheFuture != null)
+                {
+                    currentSemester = courseInTheFuture.Semester ?? SemesterService.GetSemester(DateTime.Today);
+                }
+                else
+                {
+                    currentSemester = SemesterService.GetSemester(DateTime.Today);
+                }
+            }
+            else
+            {
+                currentSemester = SemesterService.GetSemester(semId);
+            }
+
+            var model = GetSemesterModel(currentSemester, user);
+
+            return PartialView("_Semester", model);
+        }
+
+        private TeachingOverviewModel GetSemesterModel(Semester currentSemester, ApplicationUser user)
+        {
             var teachingService = new TeachingService(Db);
-            var userService = new UserInfoService();
-
 
             var model = new TeachingOverviewModel();
+
+            var members = MemberService.GetFacultyMemberships(user.Id);
+            var student = GetCurrentStudent(user.Id);
 
             model.CurrentSemester = teachingService.GetActivities(currentSemester, user, members);
             model.PrevSemester = SemesterService.GetPreviousSemester(currentSemester);
             model.NextSemester = SemesterService.GetNextSemester(currentSemester);
+            model.Members = members.ToList();
+            model.Student = student;
 
-
-            return PartialView("_Semester", model);
+            return model;
         }
 
 

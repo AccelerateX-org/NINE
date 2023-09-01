@@ -16,6 +16,16 @@ namespace MyStik.TimeTable.Web.Controllers
 
         public ActionResult Campus()
         {
+            var user = GetCurrentUser();
+            if (user != null)
+            {
+                var org = Db.Organisers.FirstOrDefault(x => x.Members.Any(m => m.UserId.Equals(user.Id) && m.IsAdmin == true));
+                if (org != null)
+                {
+                    ViewBag.UserRight = GetUserRight(org);
+                }
+            }
+
             return View();
         }
 
@@ -96,6 +106,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return View();
         }
+
 
     }
 }

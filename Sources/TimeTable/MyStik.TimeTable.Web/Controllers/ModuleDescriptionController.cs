@@ -18,6 +18,7 @@ using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    [AllowAnonymous]
     public class ModuleDescriptionController : BaseController
     {
         public ActionResult Details(Guid id)
