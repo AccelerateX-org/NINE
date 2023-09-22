@@ -286,7 +286,11 @@ namespace MyStik.TimeTable.Web.Models
         /// 
         /// </summary>
         public Semester Semester { get; set; }
-        
+     
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid SemesterId { get; set; }
     }
 
     /// <summary>
@@ -1007,6 +1011,8 @@ namespace MyStik.TimeTable.Web.Models
     /// </summary>
     public class CourseCreateModelExtended
     {
+        public bool showDetails { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

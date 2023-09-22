@@ -305,7 +305,6 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-start">
                         <h5 class="card-title">Campus</h5>
-                        @*
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi-dash"></i>
@@ -314,7 +313,6 @@
                                 <li><a class="dropdown-item" href="@Url.Action("Campus", "University")">HM</a></li>
                             </ul>
                         </div>
-                            *@
                     </div>
                 </div>
                 <div class="list-group">
@@ -399,19 +397,11 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', function () {
-            @*
-            document.getElementsByClassName("datepicker").datepicker({
-                orientation: "left",
-                autoclose: true,
-                format: "@ViewBag.Culture.DateTimeFormat.ShortDatePattern",
-                weekStart: 1,
-                calendarWeeks: true,
-                language: "@ViewBag.Culture.Name"
-            });
-            *@
-
             initDatePickerTopLeft("datepicker", "@ViewBag.Culture.DateTimeFormat.ShortDatePattern", "@ViewBag.Culture.Name");
             onDateChanged("@DateTime.Today.ToString(ViewBag.Culture.DateTimeFormat.ShortDatePattern)");
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
             onSemesterChanged(null);
         });
 

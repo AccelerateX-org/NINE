@@ -62,14 +62,15 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
         /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="id"></param>
-            /// <returns></returns>
-            public ActionResult Index(Guid? id)
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
+        public ActionResult Index(Guid? id, Guid? orgId)
         {
             var user = GetCurrentUser();
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
 
             var semester = SemesterService.GetSemester(id);
 
@@ -902,10 +903,14 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var lottery = Db.Lotteries.SingleOrDefault(l => l.Id == id);
 
+            var semester = lottery.Semester;
+
             var model = new LotteryLotPotModel
             {
                 Lottery = lottery,
                 LotteryId = lottery.Id,
+                SemesterId = semester.Id,
+                OrganiserId = lottery.Organiser.Id,
             };
 
 
@@ -922,20 +927,24 @@ namespace MyStik.TimeTable.Web.Controllers
                 });
             }
 
-            var org = GetMyOrganisation();
-            var semester = SemesterService.GetSemester(DateTime.Today);
-
-            var allGroups = Db.SemesterGroups.Where(x =>
-                x.Semester.Id == semester.Id &&
-                x.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id).ToList();
-
-
-            ViewBag.GroupList = allGroups.Select(f => new SelectListItem
+            // Liste aller Fakultäten mit Lehrveranstaltungen in dem Semester
+            ViewBag.Organiser = Db.Activities.OfType<Course>()
+                .Where(x => x.Semester != null && x.Organiser != null && x.Semester.Id == semester.Id)
+                .Select(x => x.Organiser)
+                .Distinct()
+                .OrderBy(x => x.ShortName).Select(c => new SelectListItem
             {
-                Text = f.GroupName,
-                Value = f.Id.ToString(),
+                Text = c.ShortName,
+                Value = c.Id.ToString(),
             });
-            ;
+
+            ViewBag.Semester = Db.Semesters
+                .Where(x => x.Id == semester.Id)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                });
 
 
             return View(model);
@@ -948,14 +957,15 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="semId"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult Search(string searchText, Guid semId)
+        public PartialViewResult Search(string searchText, Guid semId, Guid orgId)
         {
             var sem = SemesterService.GetSemester(semId);
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(orgId);
 
             var courses = Db.Activities.OfType<Course>().Where(a =>
                     (a.Name.Contains(searchText) || a.ShortName.Contains(searchText)) &&
-                    a.SemesterGroups.Any(s => s.Semester.Id == sem.Id && s.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
+                    a.Semester != null && a.Organiser != null && 
+                    a.Semester.Id == semId && a.Organiser.Id == orgId)
                 .ToList();
 
             return PartialView("_CourseTable", courses);

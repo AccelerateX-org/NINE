@@ -4691,6 +4691,8 @@
     <Content Include="Views\Course\EditLabel.cshtml" />
     <Content Include="Views\Curriculum\ImportLabelsSuccess.cshtml" />
     <Content Include="Views\Curriculum\AllLabels.cshtml" />
+    <Content Include="Views\Subscription\ChangeLabel.cshtml" />
+    <Content Include="Views\Course\AdminNewDictionary.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

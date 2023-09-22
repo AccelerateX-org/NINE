@@ -18,8 +18,13 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
             var model = new HomeViewModel();
 
+            var allPublishedSemester =
+                Db.Activities.OfType<Course>().Where(x => x.Semester != null).Select(x => x.Semester).Distinct()
+                    .OrderByDescending(s => s.EndCourses).Take(4).ToList();
+
             // Alle Semester mit veröffentlichten Semestergruppen
-            var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any()).OrderByDescending(s => s.EndCourses).Take(4).ToList();
+            //var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any()).OrderByDescending(s => s.EndCourses).Take(4).ToList();
+
             foreach (var semester in allPublishedSemester)
             {
                 var isStaff = user != null && user.MemberState == MemberState.Staff;
@@ -44,14 +49,12 @@ namespace MyStik.TimeTable.Web.Controllers
             var user = GetCurrentUser();
             var isStaff = user != null && user.MemberState == MemberState.Staff;
 
-            var curricula = SemesterService.GetActiveCurricula(semester, !isStaff).ToList();
-
-            var orgs = curricula.GroupBy(x => x.Organiser).Select(x => x.Key).OrderBy(x => x.ShortName).ToList();
+            var activeOrgs = SemesterService.GetActiveOrganiser(semester, !isStaff);
 
             var model = new SemesterActiveViewModel
             {
                 Semester = semester,
-                Organisers = orgs
+                Organisers = activeOrgs
             };
 
             return View(model);

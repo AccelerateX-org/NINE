@@ -48,9 +48,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
         /// </summary>
         /// <returns></returns>
-        public ActionResult Announced()
+        public ActionResult Announced(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -95,9 +96,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// oder draufgesehen hat, aber die Voraussetzungen nicht erfüllt sind
         /// </summary>
         /// <returns></returns>
-        public ActionResult Approved()
+        public ActionResult Approved(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -139,9 +140,9 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult Plannend()
+        public ActionResult Plannend(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -179,9 +180,10 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Issued()
+        public ActionResult Issued(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -227,9 +229,9 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult ProlongRequests()
+        public ActionResult ProlongRequests(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -276,9 +278,9 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult ProlongConfirmation()
+        public ActionResult ProlongConfirmation(Guid? orgId)    
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -334,9 +336,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// Absolventen, sind alle mit abegebener Arbeit
         /// </summary>
         /// <returns></returns>
-        public ActionResult Done()
+        public ActionResult Done(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -379,9 +381,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// Absolventen, sind alle mit gemeldeter Note
         /// </summary>
         /// <returns></returns>
-        public ActionResult Graduates()
+        public ActionResult Graduates(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -420,9 +422,10 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult Archived()
+        public ActionResult Archived(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -458,9 +461,10 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult All()
+        public ActionResult All(Guid? orgId)
         {
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+
             var userRight = GetUserRight(org);
 
             if (!userRight.IsExamAdmin)
@@ -496,8 +500,16 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Statistics()
+        public ActionResult Statistics(Guid? orgId)
         {
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
+            var userRight = GetUserRight(org);
+
+            if (!userRight.IsExamAdmin)
+            {
+                return View("_NoAccess");
+            }
+
             var semesterList = new List<Semester>();
 
             // das aktuelle Semester
@@ -511,8 +523,6 @@ namespace MyStik.TimeTable.Web.Controllers
             // Vorvorsemester
             pSem = SemesterService.GetPreviousSemester(pSem);
             semesterList.Add(pSem);
-
-            var org = GetMyOrganisation();
 
             var matrix = new Dictionary<Semester, Dictionary<Curriculum, int>>();
 

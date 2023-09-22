@@ -107,16 +107,20 @@
                     </div>
                     <div class="list-group">
                         <a href="@Url.Action("Index", "ThesisAdmin", new {id = Model.Id})" class="list-group-item list-group-item-action">Abschlussarbeiten</a>
+                        <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("CreateCourse", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
                             <a href="@Url.Action("Index", "InternshipAdmin")" class="list-group-item list-group-item-action disabled">Praxissemester</a>
-                            <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Id})" class="list-group-item list-group-item-action">Wahlverfahren</a>
                             <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>
                             <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
-                            <a href="@Url.Action("Index", "ScriptOrders", new {id = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>
+                            <a href="@Url.Action("Index", "ScriptOrders", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>
                             <a href="@Url.Action("Index", "Messaging", new {id = Model.Id})#" class="list-group-item list-group-item-action">Mailverteiler</a>
                             <a href="@Url.Action("Admins", "Organiser", new {id = Model.Id})" class="list-group-item list-group-item-action">Rechte & Rollen</a>
+                        }
+                        else
+                        {
+
                         }
                     </div>
                 </div>

@@ -467,7 +467,13 @@ namespace MyStik.TimeTable.Web.Controllers
             return RedirectToAction("Curricula");
         }
 
+        public ActionResult ChangeLabel(Guid id)
+        {
+            var student = Db.Students.SingleOrDefault(x => x.Id == id);
 
+
+            return View(student);
+        }
 
     }
 }

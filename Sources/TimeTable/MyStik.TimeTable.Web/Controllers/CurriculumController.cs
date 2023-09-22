@@ -1862,6 +1862,11 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         foreach (var semesterGroup in capacityGroup.SemesterGroups.ToList())
                         {
+                            foreach (var semesterSubscription in semesterGroup.Subscriptions.ToList())
+                            {
+                                Db.Subscriptions.Remove(semesterSubscription);
+                            }
+
                             Db.SemesterGroups.Remove(semesterGroup);
                         }
 

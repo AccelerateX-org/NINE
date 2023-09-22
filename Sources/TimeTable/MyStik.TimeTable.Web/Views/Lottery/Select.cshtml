@@ -24,9 +24,28 @@
             </div>
             <div class="list-group">
                 <div class="list-group-item">
-                    <div class="input-group mb-3">
-                        <input id="searchText" type="text" class="form-control" placeholder="Teil aus Name oder Kurzname der Lehrveranstaltung">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="search()"><i class="bi-search"></i> Suchen</button>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-select" })
+                                <label for="SemesterId">Semester auswählen</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating mb-3">
+                                @Html.DropDownListFor(m => m.OrganiserId, (IEnumerable<SelectListItem>)ViewBag.Organiser, new { @class = "form-select", onchange = "onOrganiserChanged()" })
+                                <label for="OrganiserId">Fakultät auswählen</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating mb-3">
+                                <input name="searchText" id="searchText" type="text" class="form-control" placeholder="Teil aus Name oder Kurzname der Lehrveranstaltung">
+                                <label for="searchText">Suchbegriff (Teil aus Name oder Kurzname der Lehrveranstaltung)</label>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-outline-primary" type="button" id="button-addon2" onclick="search()"><i class="bi-search"></i> Suchen</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -96,6 +115,8 @@
 
         function search() {
             var groupId = $('#searchText').val();
+            var semId = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
 
             $.ajax(
                 {
@@ -103,7 +124,8 @@
                     url: '@Url.Action("Search")',
                     data: {
                         searchText: groupId,
-                        semId: "@Model.Lottery.Semester.Id.ToString()"
+                        semId: semId,
+                        orgId: orgId
                     },
                     success: function (data, success, xhr) {
                         $('#activityTable').append(data);

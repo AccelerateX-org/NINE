@@ -64,6 +64,16 @@
                     </div>
                 </div>
             </div>
+            @if (ViewBag.UserRight.IsCourseAdmin)
+            {
+                <div class="list-group">
+                <div class="list-group-item">
+                    <a href="@Url.Action("SemesterReport", new { semId = Model.Semester.Id, orgId = Model.Organiser.Id })" class="btn btn-outline-primary">
+                        <i class="bi-download"></i> Semesterbericht
+                    </a>
+                </div>
+                </div>
+            }
             <table id="tabCourses" class="table table-striped table-bordered table-condensed">
                 <thead>
                     <tr>

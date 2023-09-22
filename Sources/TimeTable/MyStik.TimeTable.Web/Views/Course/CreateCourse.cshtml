@@ -188,7 +188,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <button class="btn btn-primary" onclick="createCourse()"><i class="bi-save"></i> Lehrveranstaltung anlegen</button>
+                        <button class="btn btn-outline-primary" onclick="createCourse(true)"><i class="bi-save"></i> Lehrveranstaltung anlegen und zu den Details</button>
+                        <button class="btn btn-outline-primary" onclick="createCourse(false)"><i class="bi-save"></i> Lehrveranstaltung anlegen und zurück zu dieser Seite</button>
+                        <a href="@Url.Action("Faculty", "University", new {id=Model.OrganiserId})" class="btn btn-outline-secondary">Abbrechen</a>
                         <span id="loading"><i class="fa fa-spinner fa-spin text-muted"></i></span>
                     </div>
                 </div>
@@ -577,7 +579,7 @@
         }
 
 
-        function createCourse() {
+        function createCourse(bShowDetails) {
 
             $("#loading").show();
 
@@ -644,7 +646,8 @@
             {
                 type: "POST",
                 url: '@Url.Action("CreateCourse")',
-                data: {
+                    data: {
+                        showDetails: bShowDetails,
                     SemesterId: semId,
                     ShortName: courseShortName,
                     Name: courseName,

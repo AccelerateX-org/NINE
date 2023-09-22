@@ -14,6 +14,9 @@ namespace MyStik.TimeTable.Web.Controllers
             if (!meberships.Any())
                 return RedirectToAction("Apply");
 
+            if (meberships.Count > 1)
+                return RedirectToAction("Index", "Dashboard");
+
             var org = GetMyOrganisation();
 
             return View(org);

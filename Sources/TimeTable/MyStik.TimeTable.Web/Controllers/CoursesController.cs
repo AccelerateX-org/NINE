@@ -450,10 +450,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public FileResult SemesterReport(Guid? id)
+        public FileResult SemesterReport(Guid? semId, Guid? orgId)
         {
-            var semester = SemesterService.GetSemester(id);
-            var org = GetMyOrganisation();
+            var semester = SemesterService.GetSemester(semId);
+            var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
 
             var model = CreateSemesterReport(semester, org);
 

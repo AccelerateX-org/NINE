@@ -66,10 +66,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Create()
+        public ActionResult Create(Guid id)
         {
             var model = new CurriculaCreateModel();
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
             ViewBag.Organiser = org;
 
@@ -98,11 +98,11 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.Curricula.Add(curr);
                 Db.SaveChanges();
 
-                return RedirectToAction("Index", "Curriculum", new {id = curr.Id});
+                return RedirectToAction("Details", "Curriculum", new {id = curr.Id});
             }
 
 
-            return RedirectToAction("Index", "Curriculum");
+            return RedirectToAction("Details", "Curriculum");
         }
 
         /// <summary>

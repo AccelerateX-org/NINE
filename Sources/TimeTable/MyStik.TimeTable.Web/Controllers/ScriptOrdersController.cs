@@ -18,22 +18,21 @@ namespace MyStik.TimeTable.Web.Controllers
     public class ScriptOrdersController : BaseController
     {
         // GET: ScriptOrders
-        public ActionResult Index(Guid? id)
+        public ActionResult Index(Guid? orgId, Guid? semId)
         {
-            var org = GetMyOrganisation();
-            var sem = SemesterService.GetSemester(id);
+            var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
+            var sem = SemesterService.GetSemester(semId);
 
+            var model = new OrganiserViewModel
+            {
+                Organiser = org,
+                Semester = sem,
+                PreviousSemester = SemesterService.GetPreviousSemester(sem),
+                NextSemester = SemesterService.GetNextSemester(sem),
+                OrderPeriods = Db.OrderPeriods.Where(x => x.Organiser.Id == org.Id && x.Semester.Id == sem.Id)
+                    .OrderBy(x => x.Begin).ToList()
+            };
 
-            var model = new OrganiserViewModel();
-
-            model.Organiser = org;
-            model.Semester = sem;
-            model.PreviousSemester = SemesterService.GetPreviousSemester(sem);
-            model.NextSemester = SemesterService.GetNextSemester(sem);
-
-
-            model.OrderPeriods = Db.OrderPeriods.Where(x => x.Organiser.Id == org.Id && x.Semester.Id == sem.Id)
-                .OrderBy(x => x.Begin).ToList();
 
             return View(model);
         }
@@ -43,14 +42,15 @@ namespace MyStik.TimeTable.Web.Controllers
             var sem = SemesterService.GetSemester(semId);
 
 
-            var model = new OrderPeriodCreatetModel();
-
-            model.Semester = sem;
-            model.SemesterId = sem.Id;
-            model.Title = $"Skriptbestellung für {sem.Name}";
-            model.Description = String.Empty;
-            model.Begin = DateTime.Today.AddDays(1).ToShortDateString();
-            model.End = DateTime.Today.AddDays(15).ToShortDateString();
+            var model = new OrderPeriodCreatetModel
+            {
+                Semester = sem,
+                SemesterId = sem.Id,
+                Title = $"Skriptbestellung für {sem.Name}",
+                Description = String.Empty,
+                Begin = DateTime.Today.AddDays(1).ToShortDateString(),
+                End = DateTime.Today.AddDays(15).ToShortDateString()
+            };
 
 
             var culture = Thread.CurrentThread.CurrentUICulture;

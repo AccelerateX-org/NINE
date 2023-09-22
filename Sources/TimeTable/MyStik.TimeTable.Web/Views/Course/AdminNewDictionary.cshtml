@@ -1,0 +1,35 @@
+﻿@model MyStik.TimeTable.Web.Models.CourseHistoryModel
+
+@{
+    ViewBag.Title = "Zuordnung Vorlesungsverzeichnis";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Zuordnung Lehrveranstaltung im Vorlesungsverzeichnis</h5>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+
+                    @Html.HiddenFor(m => m.Course.Id)
+                    <div class="row mb-3">
+                        <label for="org" class="col-sm-2 col-form-label">Fakultät</label>
+                        <div class="col-sm-10">
+                            <input type="text" readonly class="form-control-plaintext" id="org" value="@Model.Course.Organiser.ShortName">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="SemesterId" class="col-sm-2 col-form-label">Semester</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(m => m.SemesterId, (IEnumerable<SelectListItem>)ViewBag.Semester, new { @class = "form-select" })
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -23,35 +23,6 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var user = GetCurrentUser();
 
-            /*
-            Semester currentSemester = null;
-
-            if (id == null)
-            {
-                // Smart Senester
-                var courseInTheFuture = Db.ActivityDates
-                    .Where(x => 
-                        x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
-                        x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
-                    .OrderByDescending(x => x.Begin)
-                    .Select(x => x.Activity).FirstOrDefault();
-
-                if (courseInTheFuture != null)
-                {
-                    currentSemester = courseInTheFuture.Semester ?? SemesterService.GetSemester(DateTime.Today);
-                }
-                else
-                {
-                    currentSemester = SemesterService.GetSemester(DateTime.Today);
-                }
-            }
-            else
-            {
-                currentSemester = SemesterService.GetSemester(id);
-            }
-
-            var model = GetSemesterModel(currentSemester, user);
-            */
             var userService = new UserInfoService();
             var teachingService = new TeachingService(Db);
 
@@ -101,21 +72,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
             if (semId == null)
             {
-                // Smart Senester
-                var courseInTheFuture = Db.ActivityDates
-                    .Where(x =>
-                        x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
-                        x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id)))
-                    .OrderByDescending(x => x.Begin)
-                    .Select(x => x.Activity).FirstOrDefault();
+                currentSemester = SemesterService.GetSemester(DateTime.Today);
+                var nextSemester = SemesterService.GetNextSemester(currentSemester);
 
-                if (courseInTheFuture != null)
+                // gibt es eine Aktivität im nächsten Semester, bei der ich TN oder Lecturer bin?
+                var courseInTheFuture = Db.ActivityDates
+                    .Any(x =>
+                        x.Activity.Semester != null && x.Activity.Semester.Id == nextSemester.Id &&
+                        (x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
+                        x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))));
+
+                if (courseInTheFuture)
                 {
-                    currentSemester = courseInTheFuture.Semester ?? SemesterService.GetSemester(DateTime.Today);
-                }
-                else
-                {
-                    currentSemester = SemesterService.GetSemester(DateTime.Today);
+                    currentSemester = nextSemester;
                 }
             }
             else

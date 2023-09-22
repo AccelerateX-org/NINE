@@ -750,9 +750,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult CreateMember()
+        public ActionResult CreateMember(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id==null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var model = new MemberUserViewModel
             {

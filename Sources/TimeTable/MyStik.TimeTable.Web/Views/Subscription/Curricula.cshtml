@@ -31,11 +31,11 @@
                                     </h5>
                                     @if (isActive)
                                     {
-                                        <h6 class="card-subtitle">seit @student.Student.FirstSemester.Name</h6>
+                                        <h6 class="card-subtitle">Beginn des Studiums im @student.Student.FirstSemester.Name</h6>
                                     }
                                     else
                                     {
-                                        <h6 class="card-subtitle">@student.Student.FirstSemester.Name bis @student.Student.LastSemester.Name</h6>
+                                        <h6 class="card-subtitle">Von @student.Student.FirstSemester.Name bis @student.Student.LastSemester.Name</h6>
 
                                     }
                                     <div class="row mb-3">
@@ -57,10 +57,29 @@
                                             <div class="col-6">Vollzeit</div>
                                         }
                                     </div>
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <div><i class="bi-tags"></i> Interessen:</div>
+                                        </div>
+                                        <div class="col-6">
+                                            @if (student.Student.LabelSet != null && student.Student.LabelSet.ItemLabels.Any())
+                                            {
+                                                foreach (var label in student.Student.LabelSet.ItemLabels)
+                                                {
+                                                    <div>@label.Name</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div>Keine Angaben</div>
+                                            }
+                                        </div>
+                                    </div>
 
                                     @if (isActive)
                                     {
                                         <a href="@Url.Action("ChangeNumber", new {id = student.Student.Id})" class="btn btn-outline-primary">Matrikelnummer ändern</a>
+                                        <a href="@Url.Action("ChangeLabel", new {id = student.Student.Id})" class="btn btn-outline-primary">Interessen ändern</a>
                                     }
                                     else
                                     {

@@ -17,10 +17,7 @@ namespace MyStik.TimeTable.Web.Controllers
         // GET: Catalogs
         public ActionResult Index(Guid? id)
         {
-            var org = GetMyOrganisation();
-
-            if (id != null)
-                org = GetOrganiser(id.Value);
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var model = new OrganiserViewModel
             {
@@ -63,9 +60,9 @@ namespace MyStik.TimeTable.Web.Controllers
             return View(model);
         }
 
-        public ActionResult AllModules()
+        public ActionResult AllModules(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var model = Db.CurriculumModules.Where(x => x.Catalog.Organiser.Id == org.Id).ToList();
 
@@ -342,9 +339,9 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
         }
 
-        public ActionResult CreateCatalog()
+        public ActionResult CreateCatalog(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var model = new CatalogCreateModel
             {

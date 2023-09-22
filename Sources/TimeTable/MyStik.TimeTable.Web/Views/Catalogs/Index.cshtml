@@ -26,12 +26,12 @@
             <div class="list-group">
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a href="@Url.Action("AllModules", "Catalogs")" class="btn btn-outline-primary">
+                        <a href="@Url.Action("AllModules", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
                             <i class="bi-list-columns"></i> Alle Module
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <a href="@Url.Action("CreateCatalog", "Catalogs")" class="btn btn-outline-primary">
+                            <a href="@Url.Action("CreateCatalog", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">
                                 <i class="bi-plus"></i> Neuen Katalog anlegen
                             </a>
                             <a href="@Url.Action("Import", "Catalogs", new { id = Model.Organiser.Id })" class="btn btn-outline-primary">

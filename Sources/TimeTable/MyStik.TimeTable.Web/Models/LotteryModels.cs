@@ -178,6 +178,10 @@ namespace MyStik.TimeTable.Web.Models
             PotElements = new List<LotteryLotPotCourseModel>();
         }
 
+        public Guid SemesterId { get; set; }
+
+        public Guid OrganiserId { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

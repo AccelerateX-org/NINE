@@ -221,14 +221,17 @@
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewInfos", new {id = Model.Summary.Course.Id})">
                     <i class="bi-gear"></i> Allgemeine Angaben
                 </a>
-                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-book"></i> Semestergruppen
-                </a>
-                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})">
-                    <i class="bi-tag"></i> Themengebiet ("Modul")
+                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewDictionary", new {id = Model.Summary.Course.Id})">
+                    <i class="bi-book"></i> Zuordnung Vorlesungsverzeichnis
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewLabels", new {id = Model.Summary.Course.Id})">
                     <i class="bi-tags"></i> Labels
+                </a>
+                <a class="list-group-item list-group-item-action @attrDisabled" href="@Url.Action("ChangeGroups", new {id = Model.Summary.Course.Id})">
+                    <i class="bi-book"></i> Semestergruppen (veraltet)
+                </a>
+                <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("ChangeTopics", new {id = Model.Summary.Course.Id})">
+                    <i class="bi-tag"></i> Themengebiet (veraltet)
                 </a>
                 <a class="list-group-item list-group-item-actionn @attrDisabled" href="@Url.Action("AdminNewRules", new {id = Model.Summary.Course.Id})">
                     <i class="bi-exclamation"></i> Zugangsbeschränkungen, Platzkontingente
@@ -284,6 +287,19 @@
                         importiert aus @Model.Summary.Course.ExternalSource (@Model.Summary.Course.ExternalId)
                     </div>
                 }
+                <div class="list-group-item">
+                    @if (Model.Summary.Course.Semester != null && Model.Summary.Course.Organiser != null)
+                    {
+                        <div>
+                            Zuordnung Vorlesungsverzeichnis:
+                            @Model.Summary.Course.Semester.Name | @Model.Summary.Course.Organiser.ShortName
+                        </div>
+                    }
+                    else
+                    {
+                        <div>Keine Zuordnung zum Vorlesungsverzeichnis</div>
+                    }
+                </div>
             </div>
         </div>
     </div>

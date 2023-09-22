@@ -21,13 +21,13 @@
                         <div class="list-group-item list-group-item-dark">
                             <h5>Workflowschritte Prüfungsamt</h5>
                         </div>
-                        <a href="@Url.Action("Announced")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Announced", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">angekündigt</h5>
                             </div>
                             <p class="mb-1">Studierende haben Arbeit angelegt und bitten um Überpfüung der Voraussetzungen</p>
                         </a>
-                        <a href="@Url.Action("Approved")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Approved", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">geprüft</h5>
                             </div>
@@ -40,25 +40,25 @@
                         <div class="list-group-item list-group-item-dark">
                             <h5>Workflowschritte Studierende</h5>
                         </div>
-                        <a href="@Url.Action("Plannend")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Plannend", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">geplant</h5>
                             </div>
                             <p class="mb-1">Studierende haben Betreuung angefragt, aber noch keine Bestätigung</p>
                         </a>
-                        <a href="@Url.Action("Issued")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Issued", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">angemeldet</h5>
                             </div>
                             <p class="mb-1">Arbeiten sind angemeldet</p>
                         </a>
-                        <a href="@Url.Action("ProlongRequests")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("ProlongRequests", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">Verlängerungsanträge</h5>
                             </div>
                             <p class="mb-1">Offene Anfragen an Betreuende</p>
                         </a>
-                        <a href="@Url.Action("ProlongConfirmation")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("ProlongConfirmation", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">Verlängerungsanträge</h5>
                             </div>
@@ -71,19 +71,19 @@
                         <div class="list-group-item list-group-item-dark">
                             <h5>Workflowschritte Prüfende</h5>
                         </div>
-                        <a href="@Url.Action("Done")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Done", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">abgegeben</h5>
                             </div>
                             <p class="mb-1">derzeit in Bewertung</p>
                         </a>
-                        <a href="@Url.Action("Graduates")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Graduates", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">gemeldet</h5>
                             </div>
                             <p class="mb-1">Noten wurden gemeldet</p>
                         </a>
-                        <a href="@Url.Action("Archived")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Archived", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">abgerechnet</h5>
                             </div>
@@ -96,13 +96,13 @@
                         <div class="list-group-item list-group-item-dark">
                             <h5>Workflowschritte Verwaltung</h5>
                         </div>
-                        <a href="@Url.Action("All")" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("All", new {orgId = Model.Id})" class="list-group-item list-group-item-primary list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">Gesamtheit</h5>
                             </div>
                             <p class="mb-1">Alle Arbeiten, egal welcher Status - zum vereinfachten Suchen</p>
                         </a>
-                        <a href="@Url.Action("Statistics")" class="list-group-item list-group-item-action" aria-current="true">
+                        <a href="@Url.Action("Statistics", new {orgId = Model.Id})" class="list-group-item list-group-item-action" aria-current="true">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">Auswertungen</h5>
                             </div>
@@ -110,7 +110,6 @@
                         </a>
                     </div>
                 </div>
-
             </div>
         }
     </div>

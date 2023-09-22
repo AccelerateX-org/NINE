@@ -51,7 +51,9 @@
                             <h5>Aktiv in</h5>
                             @foreach (var member in Model.Members)
                             {
-                                <div>@member.Organiser.ShortName: @member.FullName (@member.ShortName)</div>
+                                <div>@member.Organiser.ShortName: 
+                                    <a href="@Url.Action("Organiser", "Lecturer", new {id=member.Organiser.Id})">@member.FullName (@member.ShortName)</a>
+                                </div>
                             }
 
                             @if (ViewBag.IsSelf == true)

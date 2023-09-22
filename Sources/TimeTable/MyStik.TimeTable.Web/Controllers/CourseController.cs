@@ -1519,11 +1519,11 @@ namespace MyStik.TimeTable.Web.Controllers
         /// </summary>
         /// <param name="id">SemesterId</param>
         /// <returns></returns>
-        public ActionResult CreateCourse(Guid orgId, Guid? semId)
+        public ActionResult CreateCourse(Guid? orgId, Guid? semId)
         {
             var sem = SemesterService.GetSemester(semId);
 
-            var org = GetOrganisation(orgId);
+            var org =  orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
 
             CourseCreateModel2 model = new CourseCreateModel2();
 
@@ -1760,9 +1760,16 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.Activities.Add(course);
             Db.SaveChanges();
 
-            var url = Url.Action("Details", "Course", new { id = course.Id });
+            if (model.showDetails)
+            {
+                var url = Url.Action("Details", "Course", new { id = course.Id });
 
-            return Content(url);
+                return Content(url);
+            }
+
+            var url2 = Url.Action("CreateCourse", "Course", new { orgId = course.Organiser.Id });
+
+            return Content(url2);
         }
 
         /// <summary>
@@ -3780,6 +3787,44 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
             return null;
+        }
+
+        public ActionResult AdminNewDictionary(Guid id)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == id);
+
+            // Alle Semester, die in Zukunft enden
+            ViewBag.Semester = Db.Semesters
+                .Where(x => x.EndCourses >= DateTime.Today)
+                .OrderBy(s => s.StartCourses)
+                .Take(3)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                });
+
+            var model = new CourseHistoryModel()
+            {
+                Course = course,
+                Semester = course.Semester,
+                SemesterId = course.Semester.Id,
+            };
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AdminNewDictionary(CourseHistoryModel model)
+        {
+            var course = Db.Activities.OfType<Course>().SingleOrDefault(c => c.Id == model.Course.Id);
+            var semester = SemesterService.GetSemester(model.SemesterId);
+
+            course.Semester = semester;
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = course.Id });
         }
     }
 }

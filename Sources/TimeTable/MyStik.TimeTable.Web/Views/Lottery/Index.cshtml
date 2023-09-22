@@ -28,7 +28,7 @@
                             </h4>
                             @if (ViewBag.UserRight.IsOrgMember)
                             {
-                                <a class="btn btn-outline-primary" href="@Url.Action("Index", new { id = s.Semester.Id })"><i class="bi-gear"></i> Verwaltung</a>
+                                <a class="btn btn-outline-primary" href="@Url.Action("Index", new { id = s.Semester.Id, orgId = ViewBag.Organiser.Id })"><i class="bi-gear"></i> Verwaltung</a>
                             }
                         </div>
                         <div class="list-group">
