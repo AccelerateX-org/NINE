@@ -65,12 +65,12 @@
                     <div class="list-group">
                         @if (!isStudent)
                         {
-                            <a href="@Url.Action("Index", "Reservation")" class="list-group-item list-group-item-action">Raumreservierungen</a>
+                            <a href="@Url.Action("Index", "Reservation", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumreservierungen</a>
                             <a href="@Url.Action("Organiser", "Rooms", new {id=Model.Id})" class="list-group-item list-group-item-action">Räume</a>
-                            <a href="@Url.Action("Today", "Activity")" class="list-group-item list-group-item-action">Tagesprogramm</a>
+                            <a href="@Url.Action("Today", "Activity", new { id = Model.Id })" class="list-group-item list-group-item-action">Tagesprogramm</a>
                             <a href="@Url.Action("DailyRota", "Activity", new {id=Model.Id})" class="list-group-item list-group-item-action">Raumbelegungen</a>
-                            <a href="@Url.Action("Rooms", "Organiser")" class="list-group-item list-group-item-action">Raumsuche</a>
-                            <a href="@Url.Action("Schedule", "Rooms")" class="list-group-item list-group-item-action">Veranstaltungsliste</a>
+                            <a href="@Url.Action("Rooms", "Organiser", new { id = Model.Id })" class="list-group-item list-group-item-action">Raumsuche</a>
+                            <a href="@Url.Action("Schedule", "Rooms", new { id = Model.Id })" class="list-group-item list-group-item-action">Veranstaltungsliste</a>
                             <a href="@Url.Action("Index", "Advertisements", new {id = Model.Id})" class="list-group-item list-group-item-action">Aushänge / virtueller Schaukasten</a>
                             <a href="#" class="list-group-item list-group-item-action disabled">Infoscreens</a>
                         }
@@ -111,7 +111,7 @@
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("CreateCourse", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
-                            <a href="@Url.Action("Index", "InternshipAdmin")" class="list-group-item list-group-item-action disabled">Praxissemester</a>
+                            <a href="@Url.Action("Index", "InternshipAdmin", new { id = Model.Id })" class="list-group-item list-group-item-action disabled">Praxissemester</a>
                             <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>
                             <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>
                             <a href="@Url.Action("Index", "ScriptOrders", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Skriptbestellung</a>

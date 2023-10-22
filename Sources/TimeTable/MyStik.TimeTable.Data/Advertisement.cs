@@ -51,6 +51,12 @@ namespace MyStik.TimeTable.Data
         public virtual OrganiserMember Owner { get; set; }
 
         /// <summary>
+        /// Der user, kann alles sein
+        /// </summary>
+        public string UserId { get; set; }
+
+
+        /// <summary>
         /// Automatisch
         /// </summary>
         public DateTime Created { get; set; }
@@ -64,6 +70,12 @@ namespace MyStik.TimeTable.Data
         /// ok 1 pdf geht
         /// </summary>
         public virtual BinaryStorage Attachment { get; set; }
+
+        /// <summary>
+        /// für die Darstellung auf der Karte des Schaukastens
+        /// </summary>
+        public virtual BinaryStorage Thumbnail { get; set; }
+
 
         public bool ForInternship { get; set; }
 

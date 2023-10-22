@@ -23,6 +23,8 @@ namespace MyStik.TimeTable.Web.Models
         /// </summary>
         public Guid SemesterId { get; set; }
 
+        public Guid OragniserId { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

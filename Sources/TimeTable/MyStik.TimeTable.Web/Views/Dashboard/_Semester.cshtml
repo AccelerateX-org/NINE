@@ -137,7 +137,13 @@
 
     </div>
     <div class="card-body">
-        <a href="javascript:onSemesterChanged('@Model.PrevSemester.Id')" class="card-link"><< @Model.PrevSemester.Name</a>
-        <a href="javascript:onSemesterChanged('@Model.NextSemester.Id')" class="card-link">@Model.NextSemester.Name >></a>
+        @if (Model.PrevSemester != null)
+        {
+            <a href="javascript:onSemesterChanged('@Model.PrevSemester.Id')" class="card-link"><< @Model.PrevSemester.Name</a>
+        }
+        @if (Model.NextSemester != null)
+        {
+            <a href="javascript:onSemesterChanged('@Model.NextSemester.Id')" class="card-link">@Model.NextSemester.Name >></a>
+        }
     </div>
 </div>

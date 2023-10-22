@@ -343,6 +343,14 @@ namespace MyStik.TimeTable.Web.Models
             return false;
         }
 
+        public bool IsMember
+        {
+            get
+            {
+                return (Member != null) || IsSysAdmin;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

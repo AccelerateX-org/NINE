@@ -28,11 +28,14 @@
                     <div>
                         @Html.HiddenFor(item => item.MemberId)
                     </div>
-                    
-                    if (Model.User != null)
+
+                    if (Model.User != null && ViewBag.Members != null && ViewBag.Members.Count > 1)
                     {
                         <div class="mb-3">
                             Daten aus Benutzerkonto: @Model.User.FullName
+                            @Html.HiddenFor(item => item.Name)
+                            @Html.HiddenFor(item => item.FirstName)
+                            @Html.HiddenFor(item => item.Title)
                         </div>
                     }
                     else
@@ -70,9 +73,13 @@
                         @Html.LabelFor(item => item.Role, new { @class = "form-label" })
                         @Html.TextBoxFor(item => item.Role, new { @class = "form-control" })
                     </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(item => item.UrlProfile, new { @class = "form-label" })
+                        @Html.TextBoxFor(item => item.UrlProfile, new { @class = "form-control" })
+                    </div>
                     <div class="mb-3 form-check">
-                            @Html.CheckBoxFor(item => item.IsAssociated, new {@class="form-check-input"})
-                            @Html.LabelFor(item => item.IsAssociated, new { @class = "form-check-label" })
+                        @Html.CheckBoxFor(item => item.IsAssociated, new { @class = "form-check-input" })
+                        @Html.LabelFor(item => item.IsAssociated, new { @class = "form-check-label" })
                     </div>
 
                     <input type="submit" value="Speichern" class="btn btn-primary" />

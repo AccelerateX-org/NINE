@@ -39,8 +39,9 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             return View();
         }
-        public ActionResult Schedule()
+        public ActionResult Schedule(Guid? id)
         {
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
             return View();
         }
     }

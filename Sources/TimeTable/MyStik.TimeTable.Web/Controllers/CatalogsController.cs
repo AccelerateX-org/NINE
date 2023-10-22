@@ -250,7 +250,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             Db.SaveChanges();
 
-            return RedirectToAction("Index", new {id = org.Id});
+            return RedirectToAction("Index", new { id = org.Id });
         }
 
         public FileResult Export(Guid id)
@@ -374,7 +374,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 Db.SaveChanges();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = org.Id });
         }
 
         public ActionResult EditGeneral(Guid id)
@@ -434,7 +434,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 catalog.CatalogResponsibilities.Remove(responsibility);
                 Db.CatalogResponsibilities.Remove(responsibility);
             }
-            
+
             var doz2create = new List<Guid>();
             foreach (var dozId in DozIds)
             {
@@ -522,7 +522,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == moduleId);
 
                 if (catalog == null || module == null) continue;
-                
+
                 if (catalog.Modules.All(x => x.Id != module.Id))
                 {
                     module.Catalog = catalog;
@@ -533,7 +533,83 @@ namespace MyStik.TimeTable.Web.Controllers
 
             return null;
         }
-    }
 
+
+        public ActionResult PlanCatalog(Guid id)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == id);
+
+            var model = new CatalogPlanModel();
+
+            model.Semester = SemesterService.GetSemester(DateTime.Today);
+            model.Organiser = catalog.Organiser;
+            model.Catalog = catalog;
+
+            var currList = new List<Curriculum>();
+            foreach (var module in catalog.Modules)
+            {
+                var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
+
+                foreach (var curr in currs)
+                {
+                    if (!currList.Contains(curr))
+                    {
+                        currList.Add(curr);
+                    }
+                }
+
+            }
+
+            model.Curriculum = currList.FirstOrDefault();
+
+            var semesterList = new List<Semester>();
+            semesterList.Add(SemesterService.GetNextSemester(model.Semester));
+            semesterList.Add(model.Semester);
+
+            ViewBag.Semester = semesterList;
+            ViewBag.Curricula = currList;
+
+            return View(model);
+        }
+
+        public ActionResult PlanCourse(Guid id)
+        {
+            var catalog = Db.CurriculumModuleCatalogs.SingleOrDefault(x => x.Id == id);
+
+            var model = new CatalogPlanModel();
+
+            model.Semester = SemesterService.GetSemester(DateTime.Today);
+            model.Organiser = catalog.Organiser;
+            model.Catalog = catalog;
+
+            var currList = new List<Curriculum>();
+            foreach (var module in catalog.Modules)
+            {
+                var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
+
+                foreach (var curr in currs)
+                {
+                    if (!currList.Contains(curr))
+                    {
+                        currList.Add(curr);
+                    }
+                }
+
+            }
+
+            model.Curriculum = currList.FirstOrDefault();
+
+            var semesterList = new List<Semester>();
+            semesterList.Add(SemesterService.GetNextSemester(model.Semester));
+            semesterList.Add(model.Semester);
+
+            ViewBag.Semester = semesterList;
+            ViewBag.Curricula = currList;
+            ViewBag.Organisers = Db.Organisers.Where(x => x.ModuleCatalogs.Any()).ToList();
+
+            return View(model);
+        }
+
+    }
 
 }

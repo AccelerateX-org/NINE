@@ -45,6 +45,12 @@ namespace MyStik.TimeTable.Data
         public bool IsInternal { get; set; }
 
         /// <summary>
+        /// Status: ist geplant
+        /// default: false
+        /// </summary>
+        public bool IsProjected { get; set; }
+
+        /// <summary>
         /// Kommaseparierte Liste mit Länder / Sprachkürzeln
         /// z.B. de,en
         /// </summary>
@@ -78,6 +84,12 @@ namespace MyStik.TimeTable.Data
         /// Vermeintliche Doppelung zu den Semestergruppen
         /// </summary>
         public virtual Semester Semester { get; set; }
+
+        /// <summary>
+        /// Zuordnung zu einem Segment
+        /// Angabe des semesters damit redundent, aber wer wei0 wozu es gut ist
+        /// </summary>
+        public virtual SemesterDate Segment { get; set; }
 
 
         public virtual Occurrence Occurrence { get; set; }

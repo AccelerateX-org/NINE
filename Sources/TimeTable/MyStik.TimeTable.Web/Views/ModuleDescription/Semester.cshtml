@@ -42,6 +42,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">@Model.CurriculumModule.Catalog.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.CurriculumModule.Catalog.Organiser.Id})">Modulkataloge</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Details", "Catalogs", new {id=Model.CurriculumModule.Catalog.Id})">@Model.CurriculumModule.Catalog.Tag</a></li>

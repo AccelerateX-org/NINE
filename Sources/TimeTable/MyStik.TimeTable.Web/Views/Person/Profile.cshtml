@@ -30,7 +30,7 @@
                                     }
                                     else
                                     {
-                                        <img src="@Url.Action("GetProfileImage", new { id = Model.User.Id })" class="card-img-top rounded" style="max-width: 200px"/>
+                                        <img src="@Url.Action("GetProfileImage", new { id = Model.User.Id })" class="card-img-top rounded" style="max-width: 200px" />
                                     }
                                 }
                                 else
@@ -51,16 +51,51 @@
                             <h5>Aktiv in</h5>
                             @foreach (var member in Model.Members)
                             {
-                                <div>@member.Organiser.ShortName: 
-                                    <a href="@Url.Action("Organiser", "Lecturer", new {id=member.Organiser.Id})">@member.FullName (@member.ShortName)</a>
+                                <div>
+                                    <a href="@Url.Action("Organiser", "Lecturer", new {id=member.Organiser.Id})">@member.Organiser.ShortName</a>: 
+                                    @if (!string.IsNullOrEmpty(member.UrlProfile))
+                                    {
+                                        <span>
+                                            <a href="@member.UrlProfile" target="_blank">@member.FullName <i class="bi  bi-box-arrow-up-right"></i></a>
+                                            @if (ViewBag.UserRight.IsMember)
+                                            {
+                                                <span>
+                                                    |
+                                                    <a href="@Url.Action("Calendar", "Organiser", new { id = member.Id })">
+                                                        <i class="bi bi-calendar"></i>
+                                                    </a>
+                                                </span>
+                                            }
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            @member.FullName
+                                            @if (ViewBag.UserRight.IsMember)
+                                            {
+                                                <span>
+                                                    |
+                                                    <a href="@Url.Action("Calendar", "Organiser", new { id = member.Id })">
+                                                        <i class="bi bi-calendar"></i>
+                                                    </a>
+                                                </span>
+                                            }
+                                        </span>
+                                    }
                                 </div>
-                            }
+                        }
 
                             @if (ViewBag.IsSelf == true)
                             {
-                                <a class="btn btn-outline-primary" href="@Url.Action("Index", "UserProfile")">
-                                    <i class="bi-person-gear"></i>
-                                </a>
+                                <div class="btn-group">
+                                    <a class="btn btn-outline-primary" href="@Url.Action("Index", "UserProfile")">
+                                        <i class="bi-person-gear"></i>
+                                    </a>
+                                    <a class="btn btn-outline-primary" href="@Url.Action("Link", "Person")">
+                                        <i class="bi-link"></i>
+                                    </a>
+                                </div>
                             }
                         </div>
                     </div>

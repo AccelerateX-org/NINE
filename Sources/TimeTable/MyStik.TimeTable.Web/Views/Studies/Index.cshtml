@@ -50,7 +50,7 @@
                 <a href="@Url.Action("Index", "Dictionary")" class="list-group-item list-group-item-action">
                     Vorlesungsverzeichnis
                 </a>
-                <a href="@Url.Action("Index", "Lottery", new {id = Model.Semester.Id})" class="list-group-item list-group-item-action">
+                <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Student.Curriculum.Organiser.Id})" class="list-group-item list-group-item-action">
                     Wahlverfahren
                 </a>
                 <div class="list-group-item  list-group-item-light">Meine Eintragungen in Lehrveranstaltungen</div>

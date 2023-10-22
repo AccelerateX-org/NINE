@@ -4693,6 +4693,10 @@
     <Content Include="Views\Curriculum\AllLabels.cshtml" />
     <Content Include="Views\Subscription\ChangeLabel.cshtml" />
     <Content Include="Views\Course\AdminNewDictionary.cshtml" />
+    <Content Include="Views\Catalogs\PlanCatalog.cshtml" />
+    <Content Include="Views\Catalogs\PlanCourse.cshtml" />
+    <Content Include="Views\Person\Link.cshtml" />
+    <Content Include="Views\StudyPlan\Admin.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -10,9 +10,9 @@ namespace MyStik.TimeTable.Web.Controllers
     public class AutonomyController : BaseController
     {
         // GET: Autonomy
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var aut = org.Autonomy;
 

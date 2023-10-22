@@ -21,9 +21,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var reservationList = Db.Activities.OfType<Reservation>().Where(r => r.Organiser.Id == org.Id).ToList();
 

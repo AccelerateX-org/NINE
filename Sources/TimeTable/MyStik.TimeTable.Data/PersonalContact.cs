@@ -17,7 +17,15 @@ namespace MyStik.TimeTable.Data
 
         public virtual CorporateContact Corporate { get; set; }
 
+        /// <summary>
+        /// deprecated
+        /// </summary>
         public virtual OrganiserMember Owner { get; set; }
+
+        /// <summary>
+        /// Der einladende User
+        /// </summary>
+        public string HostUserId { get; set; }
 
         public DateTime Created { get; set; }
 

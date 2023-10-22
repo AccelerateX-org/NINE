@@ -2,5 +2,5 @@
 
 @foreach (var group in Model)
 {
-    <option value="@group.Id">@group.Name (@group.Tag)</option>
+    <option value="@group.Id">@group.Area.Name: @group.Name (@group.Tag)</option>
 }

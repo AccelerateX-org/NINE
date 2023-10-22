@@ -1,0 +1,33 @@
+﻿@model MyStik.TimeTable.Web.Models.PersonViewModel
+@{
+    ViewBag.Title = "Link";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Externer Link</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="alert alert-danger">
+                            <h5>Wichtiger Hinweis</h5>
+                            <p>Die Angabe hier erlaubt es, dass die Visitenkarte über einen Link dauerhaft und öffentlich zugänglich ist.</p>
+                            <p>Für die Sinnjaftigkeit des Eintrags ist der/die jeweilige Nutzer:in verantwortlich.</p>
+                            <p>Es wird lediglich überprüft, ob der Eintrag alphanumerisch ist.</p>
+                            <p>Sollte es zu Beschwerden kommen, dann kann der Eintrag jederzeit durch die Syytemadministration gelöscht werden.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @using (Html.BeginForm(null, null, FormMethod.Post, new { role = "form" }))
+                        {
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

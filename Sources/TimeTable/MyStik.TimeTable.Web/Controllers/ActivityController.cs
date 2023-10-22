@@ -940,9 +940,10 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public ActionResult Today()
+        public ActionResult Today(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
+
 
             var beginOfDay = DateTime.Today;
 

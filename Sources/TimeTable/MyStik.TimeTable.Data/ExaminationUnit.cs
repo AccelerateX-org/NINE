@@ -76,7 +76,7 @@ namespace MyStik.TimeTable.Data
                 
                 foreach(var fraction in Fractions)
                 { 
-                    sb.AppendFormat("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                    sb.AppendFormat("{0} {1:P0}. ", fraction.Form.ShortName, fraction.Weight);
                 }
 
                 return sb.ToString();
@@ -91,7 +91,7 @@ namespace MyStik.TimeTable.Data
 
                 foreach (var fraction in Fractions)
                 {
-                    sb.AppendFormat("{0} {1:P}. ", fraction.Form.ShortName, fraction.Weight);
+                    sb.AppendFormat("{0} {1:P0}. ", fraction.Form.ShortName, fraction.Weight);
                 }
 
                 return sb.ToString();

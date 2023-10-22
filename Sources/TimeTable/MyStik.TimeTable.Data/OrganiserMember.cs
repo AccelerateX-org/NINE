@@ -59,6 +59,12 @@ namespace MyStik.TimeTable.Data
         public string Description { get; set; }
         
         /// <summary>
+        /// Disziplinarische Zuordnung
+        /// </summary>
+        public bool IsDefault { get; set; }
+
+
+        /// <summary>
         /// Administrator des Organistors
         /// Vergibt weitere Rechte
         /// </summary>

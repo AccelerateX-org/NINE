@@ -1,73 +1,83 @@
-﻿@using MyStik.TimeTable.Web.Helpers
-@model MyStik.TimeTable.Data.Semester
+﻿
+@using MyStik.TimeTable.Web.Helpers
+@model MyStik.TimeTable.Web.Models.SemesterViewModel
 
 @{
     ViewBag.Title = "Zeitplan";
 }
 
-<div class="panel panel-default">
-    <div class="panel-body bg-fillter-study">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Detailinformationen zu Semester @Model.Name</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>
-                    Vorlesungszeit von @Model.StartCourses.Date.ToShortDateString() bis @Model.EndCourses.Date.ToShortDateString()
-                    @Html.ActionButton("fa-plus", "Neuer Termin", "CreateDate", "Semester", new {id = Model.Id}, new {@class = "btn btn-default"})
-                    
-                    @if (Model.BookingEnabled)
+<div class="row">
+<div class="col-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Semester", new {id=Model.Organiser.Id}))">Semesterplanung</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Semester.Name</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Semester @Model.Semester.Name für @Model.Organiser.ShortName</h4>
+            <p>@Model.Semester.StartCourses.ToShortDateString() - @Model.Semester.EndCourses.ToShortDateString()</p>
+        </div>
+        <div class="list-group">
+            @if (ViewBag.UserRight.IsOrgAdmin)
+            {
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a href="@Url.Action("CreateDate", new { orgId = Model.Organiser.Id, semId = Model.Semester.Id })" class="btn btn-outline-primary"><i class="bi-plus"></i> Abschnitt hinzufügen</a>
+                        <a href="#" class="btn btn-outline-primary"><i class="bi-upload"></i> Daten importieren</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Zeitraum</th>
+                    <th>Ebene</th>
+                    <th>Art</th>
+                    <th>Bezeichnung</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Semester.Dates.OrderBy(x => x.From))
+            {
+                <tr>
+                    <td>@Html.TimeSpan(item)</td>
+                    @if (item.Organiser == null)
                     {
-                        @Html.ActionButton("fa-power-off", "abschalten", "Switch", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
+                        <td>hochschulweit</td>
                     }
                     else
                     {
-                        @Html.ActionButton("fa-bullhorn", "freischalten", "Switch", "Semester", new { id = Model.Id }, new { @class = "btn btn-default" })
+                        <td>fakultätsweit</td>
                     }
-                </h4>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>Bezeichnung</th>
-                    <th>Zeitraum</th>
-                    <th>Bemerkung</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var item in Model.Dates.OrderBy(x=>x.From))
-                {
-                    <tr>
-                        <td>@item.Description</td>
-                        <td>@Html.TimeSpan(item)</td>
-
-                        @if (item.HasCourses == false)
-                        {
+                    @if (item.HasCourses == false)
+                    {
                         <td> <i>(Vorlesungsfrei)</i></td>
-                        }
-                        else
+                    }
+                    else
+                    {
+                        <td>mit Lehrveranstaltungen</td>
+                    }
+                    <td>@item.Description</td>
+
+                    <td>
+                        @if (item.Organiser != null && ViewBag.UserRight.IsOrgAdmin)
                         {
-                            <td> </td>
+                            <a href="@Url.Action("EditDate", new { id = item.Id })" class="btn btn-outline-primary"><i class="bi-gear"></i> bearbeiten</a>
+                            <a href="@Url.Action("DeleteDate", new { id = item.Id })" class="btn btn-outline-danger"><i class="bi-trash"></i> löschen</a>
                         }
-                        <td>
-                            @Html.ActionButton("fa-pencil text-danger", "bearbeiten", "EditDate", "Semester", new { id = item.Id }, new { @class = "btn btn-default btn-xs" })
-                            @Html.ActionButton("fa-trash-o text-danger", "löschen", "DeleteDate", "Semester", new {id = item.Id}, new { @class = "btn btn-default btn-xs text-danger"})
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </div>
 </div>
 

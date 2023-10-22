@@ -1571,7 +1571,7 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult CreateCourse(CourseCreateModelExtended model)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganiser(model.OrganiserId);
             var semester = SemesterService.GetSemester(model.SemesterId);
 
             var course = new Course

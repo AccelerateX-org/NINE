@@ -19,81 +19,120 @@
 @if (isReady)
 {
     <div class="row justify-content-center">
-        <div class="col col-lg-6 col-md-8 col-sm-8 col-xs-10">
+        <div class="col col-12">
             <div class="card mt-4">
                 <div class="card-body bg-dark text-white">
-                    <h5 class="card-title">Willkommen auf dem Campus Adventure Playground</h5>
-                    <p class="card-text mt-3">Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre. Entwickelt von und für Studierende.</p>
+                    <div class="row">
+                        <div class="col-2">
+                            <img src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top"/>
+                        </div>
+                        <div class="col-10">
+                            <h5 class="card-title">Willkommen auf dem Campus Adventure Playground</h5>
+                            <p class="card-text mt-3">Hier findest Du verschiedene Lösungen rund um die Organisation von Studium und Lehre.<br/>
+                                <small>powered by 
+                                    <a class="text-light" href="https://lucx.wi.hm.edu" target="_blank">
+                                        LUCX
+                                    </a>
+                                </small>
+                            @*|
+                                <small>enabled by 
+                                    <a class="text-light" href="https://acceleratex.org" target="_blank">
+                                        AX
+                                    </a>
+                                </small>
+                                *@
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div class="list-group">
-                    <div class="list-group-item  bg-light">
-                        <div class="row gx-2 gy-2">
-                            <div class="col">
-                                <a href="@Url.Content("/Apps/Buddy")" class="list-group-item list-group-item-action bg-white" aria-current="true">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1"><i class="bi-robot"></i> Buddy</h5>
-                                        <p><i class="bi-star-fill text-warning"></i><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
-                                    </div>
-                                    <p class="mb-1">Das ideale AW-Modul finden</p>
-                                    <small>weiter >></small>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="https://hm-cap.pages.gitlab.lrz.de/products/fillter/frontend" class="list-group-item list-group-item-action bg-white" aria-current="true" target="_blank">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1"><i class="bi-filter"></i> Fillter</h5>
-                                        <p><i class="bi-star-half text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i></p>
-                                    </div>
-                                    <p class="mb-1">Relevante Nachrichten erhalten</p>
-                                    <small>weiter >></small>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="@Url.Content("/Apps/Tickler")" class="list-group-item list-group-item-action bg-white disabled" aria-current="true">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1"><i class="bi-book"></i> Gym</h5>
-                                        <p><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i><i class="bi-star text-light"></i></p>
-                                    </div>
-                                    <p class="mb-1">Lernen in der S-Bahn</p>
-                                    <small>weiter >></small>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="@Url.Content("/Apps/Jotter")" class="list-group-item list-group-item-action bg-white" aria-current="true">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1"><i class="bi-journal-check"></i> Jotter</h5>
-                                        <p><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
-                                    </div>
-                                    <p class="mb-1">Den Studienfortschritt planen</p>
-                                    <small>weiter >></small>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="@Url.Action("Login", "Account")" class="list-group-item list-group-item-action bg-white" aria-current="true">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1"><i class="bi-calendar-date"></i> NINE</h5>
-                                        <p><i class="bi-star-fill text-warning"></i><i class="bi-star-fill text-warning"></i><i class="bi-star-fill text-warning"></i><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i></p>
-                                    </div>
-                                    <p class="mb-1">An <strong>Aufnahmeverfahren</strong> teilnehmen und den <strong>Stundenplan</strong> zusammenstellen</p>
-                                    <small>weiter >></small>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a href="@Url.Content("/Apps/Tickler")" class="list-group-item list-group-item-action bg-white" aria-current="true">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1"><i class="bi-kanban"></i> Tickler</h5>
-                                        <p><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
-                                    </div>
-                                    <p class="mb-1">Den Kalender im Griff haben</p>
-                                    <small>weiter >></small>
-                                </a>
-                            </div>
-                        </div>
+                    <div class="list-group-item bg-light">
                         <div class="row">
-                            <div class="col">
-                                <a class="" href="https://lucx.wi.hm.edu" target="_blank">
-                                    Mehr zum Campus Adventure Playground
-                                </a>
+                            <div class="col-sm-6 col-md-6 col-lg-4">
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="@Url.Action("Login", "Account")" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1"><i class="bi-calendar-date"></i> NINE</h5>
+                                                <p><i class="bi-star-fill text-warning"></i><i class="bi-star-fill text-warning"></i><i class="bi-star-fill text-warning"></i><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i></p>
+                                            </div>
+                                            <p class="mb-1">Alle wichtigen Information rund um Studium und Lehre:
+                                                <ul>
+                                                    <li>Studienpläne</li>
+                                                    <li>Vorlesungsverzeichnisse</li>
+                                                    <li>Aufnahmeverfahren</li>
+                                                    <li>Wahlverfahren</li>
+                                                    <li>Persönliche Stundenpläne</li>
+                                                    <li>Sprechstunden</li>
+                                                    <li>Abschlussarbeiten</li>
+                                                </ul>
+                                                </p>
+                                            <small>weiter >></small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-8">
+                                <div class="row gx-2 gy-2">
+                                    <div class="col-sm-6 col-lg-6">
+                                        <a href="https://hm-cap.pages.gitlab.lrz.de/products/fillter/fillter.frontend" target="_blank" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1" style="color: #c2185b"><i class="bi-filter"></i> Fillter</h5>
+                                                <p>
+                                                    <i class="bi-star-half text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                </p>
+                                            </div>
+                                            <p class="mb-1">Nur die wirklich relevanten Nachrichten erhalten. Die App mit den <strong>Push-Notifications</strong>.</p>
+                                            <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <a href="https://hm-cap.pages.gitlab.lrz.de/products/gym/gym.frontend/de/" target="_blank" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1" style="color: #3f51b5"><i class="bi-book"></i> Gym</h5>
+                                                <p>
+                                                    <i class="bi-star-fill text-warning"></i>
+                                                    <i class="bi-star-fill text-warning"></i>
+                                                    <i class="bi-star-half text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                </p>
+                                            </div>
+                                            <p class="mb-1">Lernen in der S-Bahn. Die <strong>Quiz-App</strong> für Dein Studium.</p>
+                                            <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <a href="https://hm-cap.pages.gitlab.lrz.de/products/jotter/jotter.frontend" target="_blank" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1" style="color: #673ab7"><i class="bi-journal-check"></i> Jotter</h5>
+                                                <p>
+                                                    <i class="bi-star-fill text-warning"></i>
+                                                    <i class="bi-star-fill text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                    <i class="bi-star text-warning"></i>
+                                                </p>
+                                            </div>
+                                            <p class="mb-1">Den Studienfortschritt planen und sich vom Chatbot <strong><i class="bi-robot"></i> Buddy</strong> beraten lassen.</p>
+                                            <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <a href="https://hm-cap.pages.gitlab.lrz.de/products/tickler/tickler.frontend" target="_blank" class="list-group-item list-group-item-action bg-white" aria-current="true">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1" style="color: #c2185b"><i class="bi-calendar-check"></i> Tickler</h5>
+                                                <p><i class="bi-star-half text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i><i class="bi-star text-warning"></i></p>
+                                            </div>
+                                            <p class="mb-1">Den Kalender im Griff haben. Vorlesungen, Übungen, <strong>Lerngruppen und private Termine</strong>.</p>
+                                            <small>weiter >> <i class="bi bi-box-arrow-up-right"></i></small>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -130,11 +169,6 @@
                         </div>
                     </div>
                 </div>
-        <div class="col-2">
-            <div class="card mt-4">
-                <img src="~/Assets/img/cap/HM_Logo_RGB.png" class="card-img-top"/>
-            </div>
-        </div>
     </div>
 }
 else

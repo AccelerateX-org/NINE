@@ -290,9 +290,9 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Rooms()
+        public ActionResult Rooms(Guid? id)
         {
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation() : GetOrganiser(id.Value);
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
             var rooms = roomService.GetRooms(org.Id, true);
@@ -499,7 +499,10 @@ namespace MyStik.TimeTable.Web.Controllers
                     Title = member.Title,
                     ShortName = member.ShortName,
                     IsAssociated = member.IsAssociated,
+                    UrlProfile = member.UrlProfile
                 };
+
+                ViewBag.Members = new List<OrganiserMember>();
 
                 if (!string.IsNullOrEmpty(member.UserId))
                 {
@@ -508,6 +511,24 @@ namespace MyStik.TimeTable.Web.Controllers
                     {
                         model.UserName = user.UserName;
                         model.User = user;
+
+                        ViewBag.Members = Db.Members.Where(x => x.UserId.Equals(user.Id)).ToList();
+
+                        if (string.IsNullOrEmpty(model.Name) && !string.IsNullOrEmpty(user.LastName))
+                        {
+                            model.Name = user.LastName;
+                        }
+
+                        if (string.IsNullOrEmpty(model.FirstName) && !string.IsNullOrEmpty(user.FirstName))
+                        {
+                            model.Name = user.FirstName;
+                        }
+
+                        if (string.IsNullOrEmpty(model.Title) && !string.IsNullOrEmpty(user.Title))
+                        {
+                            model.Name = user.Title;
+                        }
+
                     }
                 }
 
@@ -583,11 +604,19 @@ namespace MyStik.TimeTable.Web.Controllers
                     member.ShortName = model.ShortName;
                 }
 
+                if (!string.IsNullOrEmpty(model.Name))
+                {
+                    member.Name = model.Name;
+                }
 
-                member.Role = model.Role;
-                member.Name = model.Name;
-                member.FirstName = model.FirstName;
+                if (!string.IsNullOrEmpty(model.FirstName))
+                {
+                    member.FirstName = model.FirstName;
+                }
+
                 member.Title = model.Title;
+                member.Role = model.Role;
+                member.UrlProfile = model.UrlProfile;
 
                 Db.SaveChanges();
                 // Redirect zu den Members

@@ -28,6 +28,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Faculty", "University", new {id=Model.Organiser.Id})">@Model.Organiser.ShortName</a></li>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogs", new {id=Model.Organiser.Id})">Modulkataloge</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.Tag</li>
@@ -53,34 +54,41 @@
                                 <div class="list-group-item">
                                     <div class="btn-group">
 
-                            <a href="@Url.Action("EditGeneral", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Allgemeine Angaben
-                            </a>
-                            <a href="@Url.Action("EditResponsibilities", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-people"></i> Katalogverantwortliche
-                            </a>
-                            <a href="@Url.Action("MoveModules", new { id = Model.Id })" class="btn btn-outline-primary">
-                                <i class="bi-list-check"></i> Zusammensetzung
-                            </a>
-                            @if (ViewBag.UserRight.IsCurriculumAdmin)
-                            {
-                                <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
-                                    <i class="bi-plus"></i> Neues Modul anlegen
-                                </a>
-                                if (Model.Modules.Any())
-                                {
-                                    <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger disabled">
-                                        <i class="bi-trash"></i> Katalog Löschen
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger">
-                                        <i class="bi-trash"></i> Katalog Löschen
-                                    </a>
-                                }
-                            }
-                                </div>
+                                        <a href="@Url.Action("EditGeneral", new { id = Model.Id })" class="btn btn-outline-primary">
+                                            <i class="bi-gear"></i> Allgemeine Angaben
+                                        </a>
+                                        <a href="@Url.Action("EditResponsibilities", new { id = Model.Id })" class="btn btn-outline-primary">
+                                            <i class="bi-people"></i> Katalogverantwortliche
+                                        </a>
+                                        <a href="@Url.Action("MoveModules", new { id = Model.Id })" class="btn btn-outline-primary">
+                                            <i class="bi-list-check"></i> Zusammensetzung
+                                        </a>
+                                        <a href="@Url.Action("PlanCatalog", new { id = Model.Id })" class="btn btn-outline-primary">
+                                            <i class="bi-map"></i> Katalogplanung
+                                        </a>
+                                        <a href="@Url.Action("PlanCourse", new { id = Model.Id })" class="btn btn-outline-primary">
+                                            <i class="bi-binoculars"></i> Kursplanung
+                                        </a>
+
+                                        @if (ViewBag.UserRight.IsCurriculumAdmin)
+                                        {
+                                            <a href="@Url.Action("Create", "CurriculumModule", new { catalogId = Model.Id })" class="btn btn-outline-primary">
+                                                <i class="bi-plus"></i> Neues Modul anlegen
+                                            </a>
+                                            if (Model.Modules.Any())
+                                            {
+                                                <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger disabled">
+                                                    <i class="bi-trash"></i> Katalog Löschen
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("DeleteCatalog", "Catalogs", new { id = Model.Id })" class="btn btn-outline-danger">
+                                                    <i class="bi-trash"></i> Katalog Löschen
+                                                </a>
+                                            }
+                                        }
+                                    </div>
                             </div>
                         </div>
                         }
@@ -90,12 +98,14 @@
                         <th>Tag</th>
                         <th>Bezeichnung</th>
                         <th>Modulverantwortung</th>
-                        <th>Fächer</th>
+                        <th>Studiengänge</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var module in Model.Modules)
                     {
+                        var currs = module.Accreditations.Select(x => x.Slot.AreaOption.Area.Curriculum).Distinct().ToList();
+
 
                         var moduleName = string.IsNullOrEmpty(module.Name) ? "(keine Bezeichnung)" : module.Name;
 
@@ -119,12 +129,19 @@
                             {
                                 <td>vakant</td>
                             }
-                            <td>
-                                @foreach (var subject in module.ModuleSubjects)
-                                {
-                                    <div>@subject.Tag (@subject.TeachingFormat.Tag)</div>
-                                }
-                            </td>
+                            @if (currs.Any())
+                            {
+                                <td>
+                                    @foreach (var curr in currs)
+                                    {
+                                        <div>@curr.ShortName</div>
+                                    }
+                                </td>
+                            }
+                            else
+                            {
+                                <td>Keinem Studiengang zugeordnet</td>
+                            }
                         </tr>
                     }
                 </tbody>

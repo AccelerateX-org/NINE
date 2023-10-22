@@ -584,6 +584,7 @@
             $("#loading").show();
 
             var semId = $("#SemesterId option:selected").val();
+            var orgId = $("#OrganiserId option:selected").val();
             var courseName = $("#Name").val();
             var courseShortName = $("#ShortName").val();
             var groupList = new Array();
@@ -648,7 +649,8 @@
                 url: '@Url.Action("CreateCourse")',
                     data: {
                         showDetails: bShowDetails,
-                    SemesterId: semId,
+                        SemesterId: semId,
+                        OrganiserId: orgId,
                     ShortName: courseShortName,
                     Name: courseName,
                     GroupIds: groupList,

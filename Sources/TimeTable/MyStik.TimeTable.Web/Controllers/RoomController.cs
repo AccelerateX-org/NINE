@@ -1217,11 +1217,11 @@ namespace MyStik.TimeTable.Web.Controllers
         }
 
 
-        public ActionResult Labels(Guid? id)
+        public ActionResult Labels(Guid? semId, Guid? orgId)
         {
-            var semester = SemesterService.GetSemester(id);
+            var semester = SemesterService.GetSemester(semId);
             var nextSemester =  SemesterService.GetNextSemester(semester);
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
             var rooms = roomService.GetRooms(org.Id, true);

@@ -27,7 +27,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <h5>Allgemeine Informationen</h5>
+                        <h5>Modul-Slot: @Model.Tag @Model.Name</h5>
                         <div class="row">
                             <div class="col-4">
                                 Fachsemester
@@ -82,12 +82,15 @@
                         </div>
                     </div>
                 }
-
+                <div class="list-group-item">
+                    <h5>Akkreditierte Module</h5>
+                </div>
                     <table id="tabModules" class="table">
                         <thead>
                             <tr>
-                                <th>Tag</th>
-                                <th>Titel</th>
+                                <th>Katalog-ID</th>
+                                <th>Modul-ID</th>
+                                <th>Modul-Titel</th>
                                 @if (ViewBag.UserRight.IsCurriculumAdmin)
                                 {
                                     <th></th>
@@ -98,6 +101,7 @@
                             @foreach (var module in Model.ModuleAccreditations)
                             {
                                 <tr>
+                                    <td>@module.Module.Catalog.Tag</td>
                                     <td><a href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">@module.Module.Tag</a></td>
                                     <td><a href="@Url.Action("Details", "ModuleDescription", new { id = module.Module.Id })">@module.Module.Name</a></td>
                                     @if (ViewBag.UserRight.IsCurriculumAdmin)

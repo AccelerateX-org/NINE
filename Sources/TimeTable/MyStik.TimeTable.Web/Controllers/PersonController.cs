@@ -31,8 +31,24 @@ namespace MyStik.TimeTable.Web.Controllers
             FillModel(model);
 
             ViewBag.IsSelf = true;
+            ViewBag.UserRight = GetUserRight();
 
             return View("Profile", model);
+        }
+
+        public ActionResult Link()
+        {
+            var user = GetCurrentUser();
+
+            var model = new PersonViewModel
+            {
+                User = user,
+                Members = Db.Members.Where(x => x.UserId.Equals(user.Id)).ToList()
+            };
+
+            ViewBag.IsSelf = true;
+
+            return View(model);
         }
 
         private void FillModel(PersonViewModel model)
@@ -79,6 +95,7 @@ namespace MyStik.TimeTable.Web.Controllers
             FillModel(model);
 
             ViewBag.IsSelf = user.Id.Equals(member.UserId);
+            ViewBag.UserRight = GetUserRight();
 
             return View("Profile", model);
         }
@@ -91,6 +108,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
             ViewBag.IsSelf = false;
+            ViewBag.UserRight = GetUserRight();
 
             return View("Profile", model);
         }

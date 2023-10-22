@@ -33,51 +33,60 @@
             <table id="tabModules" class="table">
                 <thead>
                     <tr>
+                        <th>Slot</th>
                         <th>Modul</th>
+                        <th>Modultitel</th>
+                        <th>n LVs</th>
                         <th>Prüfungsform</th>
-                        <th>Erstprüfer:in</th>
-                        <th>Zweitprüfer:in</th>
+                        <th>Prüfer:innen</th>
+                        <th>Details</th>
+                        <th>Hilfsmittel</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var module in Model.Modules)
                     {
-                        foreach (var accr in module.Accreditations)
-                        {
-                            var teaching = accr.ExaminationDescriptions.FirstOrDefault(x => x.Semester.Id == Model.Semester.Id);
+                        var accr = module.Accreditations.FirstOrDefault(x => x.Slot.AreaOption.Area.Curriculum.Id == Model.Curriculum.Id);
+                        var exams = accr.ExaminationDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
+                        var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
 
-                            if (teaching != null)
+                        if (exams.Any())
+                        {
+                            foreach (var exam in exams)
                             {
                                 <tr>
-                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
-                                    <td>@teaching.ExaminationOption.FullName</td>
-                                    @if (teaching.FirstExminer != null)
-                                    {
-                                        <td>@teaching.FirstExminer.FullName</td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                    @if (teaching.SecondExaminer != null)
-                                    {
-                                        <td>@teaching.SecondExaminer.FullName</td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
+                                    <td><a href="@Url.Action("Slot", "Curriculum", new { id = accr.Slot.Id })">@accr.Slot.Tag</a></td>
+                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                                    <td>@teachings.Count</td>
+                                    <td>@exam.ExaminationOption.OptionName</td>
+                                    <td>
+                                        @if (exam.FirstExminer != null)
+                                        {
+                                            <div>@exam.FirstExminer.FullName</div>
+                                        }
+                                        @if (exam.SecondExaminer != null)
+                                        {
+                                            <div>@exam.SecondExaminer.FullName</div>
+                                        }
+                                    </td>
+                                    <td>@Html.Raw(exam.Conditions)</td>
+                                    <td>@Html.Raw(exam.Utilities)</td>
                                 </tr>
                             }
-                            else
-                            {
-                                <tr>
-                                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag @accr.Module.Name</a></td>
-                                    <td>keine Prüfungsangebote</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            }
+                        }
+                        else
+                        {
+                <tr>
+                    <td><a href="@Url.Action("Slot", "Curriculum", new { id = accr.Slot.Id })">@accr.Slot.Tag</a></td>
+                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Tag</a></td>
+                    <td><a href="@Url.Action("Details", "ModuleDescription", new { id = accr.Module.Id })">@accr.Module.Name</a></td>
+                    <td>@teachings.Count</td>
+                    <td>#NV</td>
+                    <td>#NV</td>
+                    <td></td>
+                    <td></td>
+                </tr>
                         }
                     }
                 </tbody>

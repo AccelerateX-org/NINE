@@ -71,7 +71,7 @@
                             Suche für einzelnen Tag, Einbeziehung von Wochentagen
                         </p>
                     </a>
-                    <a href="@Url.Action("Labels", "Room")" class="list-group-item">
+                    <a href="@Url.Action("Labels", "Room", new {orgId = @ViewBag.Organiser.Id})" class="list-group-item">
                         <h5 class="list-group-item-heading">
                             <i class="fa fa-fw fa-file-o"></i> Türschilder
                         </h5>

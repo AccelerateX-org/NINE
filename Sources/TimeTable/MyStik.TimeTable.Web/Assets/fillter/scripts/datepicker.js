@@ -1,6 +1,6 @@
 ﻿function initDatePicker(name, format, language) {
     $("." + name).datepicker({
-        orientation: "left",
+        orientation: "top",
         autoclose: true,
         format: format,
         weekStart: 1,

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization.Configuration;
+using System.Threading;
 using System.Web.Mvc;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
@@ -15,32 +18,148 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(Guid? id)
+        public ActionResult Index(Guid id)
         {
-            var semester = SemesterService.GetSemester(id);
-            var org = GetMyOrganisation();
+            var org = GetOrganisation(id);
 
-            var model = new SemesterViewModel
+            var semester = SemesterService.GetSemester(DateTime.Today);
+
+            var semesterList = Db.Semesters.Where(x => x.StartCourses > semester.StartCourses).OrderBy(x => x.StartCourses).Take(3).ToList();
+
+            semesterList.Add(semester);
+
+            semesterList.AddRange(
+                Db.Semesters.Where(x => x.StartCourses < semester.StartCourses).OrderByDescending(x => x.StartCourses)
+                    .Take(3).ToList());
+
+            ViewBag.Organiser = org;
+            ViewBag.UserRight = GetUserRight(org);
+
+            return View(semesterList);
+        }
+
+        public ActionResult Details(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterViewModel()
             {
-                Semester = semester,
                 Organiser = org,
+                Semester = sem
             };
 
-            model.PreviousSemester = SemesterService.GetPreviousSemester(semester);
-            model.NextSemester = SemesterService.GetNextSemester(semester);
 
+            return View(model);
+        }
+
+        public ActionResult CreateDate(Guid orgId, Guid semId)
+        {
+            var org = GetOrganiser(orgId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var model = new SemesterDateViewModel()
+            {
+                OragniserId = org.Id,
+                SemesterId = sem.Id
+            };
+
+            ViewBag.Semester = sem;
+            ViewBag.Organiser = org;
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
 
             ViewBag.UserRight = GetUserRight(org);
 
             return View(model);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="semGroupId"></param>
-        /// <returns></returns>
         [HttpPost]
+        public ActionResult CreateDate(SemesterDateViewModel model)
+        {
+            var org = GetOrganiser(model.OragniserId);
+            var sem = SemesterService.GetSemester(model.SemesterId);
+
+            var startDate = DateTime.Parse(model.Start);
+            var endEate = DateTime.Parse(model.End);
+
+            var segment = new SemesterDate
+            {
+                Semester = sem,
+                Description = model.Description,
+                From = startDate,
+                To = endEate,
+                HasCourses = true,
+                Organiser = org
+            };
+
+            Db.SemesterDates.Add(segment);
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { orgId = org.Id, semId = sem.Id });
+        }
+
+        public ActionResult EditDate(Guid id)
+        {
+            var date = Db.SemesterDates.SingleOrDefault(x => x.Id == id);
+
+            var model = new SemesterDateViewModel()
+            {
+                DateId = date.Id,
+                Description = date.Description,
+                Start = date.From.ToShortDateString(),
+                End = date.To.ToShortDateString(),
+            };
+
+            ViewBag.Semester = date.Semester;
+            ViewBag.Organiser = date.Organiser;
+
+
+            var culture = Thread.CurrentThread.CurrentUICulture;
+            ViewBag.Culture = culture;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EditDate(SemesterDateViewModel model)
+        {
+            var date = Db.SemesterDates.SingleOrDefault(x => x.Id == model.DateId);
+
+            date.Description = model.Description;
+            date.From = DateTime.Parse(model.Start);
+            date.To = DateTime.Parse(model.End);
+
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { orgId = date.Organiser.Id, semId = date.Semester.Id });
+        }
+
+        public ActionResult DeleteDate(Guid id)
+        {
+            var date = Db.SemesterDates.SingleOrDefault(x => x.Id == id);
+            var org = date.Organiser;
+            var sem = date.Semester;
+
+            var courses = Db.Activities.Where(x => x.Segment.Id == date.Id).ToList();
+            foreach (var course in courses)
+            {
+                course.Segment = null;
+            }
+
+            Db.SemesterDates.Remove(date);
+            Db.SaveChanges();
+
+            return RedirectToAction("Details", new { orgId = org.Id, semId = sem.Id });
+        }
+
+        /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="semGroupId"></param>
+            /// <returns></returns>
+            [HttpPost]
         public PartialViewResult DateList(string semGroupId)
         {
             var model = Db.Semesters.SingleOrDefault(s => s.Name.Equals(semGroupId));

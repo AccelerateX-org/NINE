@@ -31,8 +31,17 @@
                         </a>
                         @if (ViewBag.UserRight.IsCurriculumAdmin)
                         {
-                            <a href="@Url.Action("Admin", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
-                                <i class="bi-gear"></i> Administration
+                            <a href="@Url.Action("Curriculum", "BulletinBoards", new { id = Model.Curriculum.Id })" class="btn btn-outline-primary">
+                                <i class="bi-file-pdf"></i> pdf-Fassung
+                            </a>
+                            <a href="@Url.Action("AutoLink", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi-link"></i> AUTOLINKS verknüofen
+                            </a>
+                            <a href="@Url.Action("Publish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-primary">
+                                <i class="bi-printer"></i> verabschieden
+                            </a>
+                            <a href="@Url.Action("UnPublish", new { currId = Model.Curriculum.Id, semId=Model.Semester.Id })" class="btn btn-outline-danger">
+                                <i class="bi-recycle"></i> Rücknahme
                             </a>
                         }
                     </div>
@@ -60,7 +69,9 @@
                                     var teachings = accr.TeachingDescriptions.Where(x => x.Semester.Id == Model.Semester.Id).ToList();
                                     var nOpps = accr.Module.ModuleSubjects.Count(x => x.Opportunities.Any(y => y.Semester.Id == Model.Semester.Id));
 
-                                    if (teachings.Any() || nOpps > 0)
+                                    var courses = db.Activities.OfType<Course>().Where(x => x.Semester.Id == Model.Semester.Id && x.Organiser.Id == Model.Curriculum.Organiser.Id && x.ShortName.StartsWith(accr.Module.Tag)).ToList();
+
+                                    if (teachings.Any() || nOpps > 0 || courses.Any())
                                     {
                                         <tr>
                                             <td><a href="@Url.Action("Slot", "Curriculum", new { id = slot.Id })">@slot.Tag</a></td>
@@ -71,12 +82,28 @@
                                                 {
                                                     foreach (var opportunity in subject.Opportunities.Where(x => x.Semester.Id == Model.Semester.Id))
                                                     {
+                                                        var linkedCourses = courses.Where(x => x.Id == opportunity.Course.Id).ToList();
+                                                        if (linkedCourses.Any())
+                                                        {
+                                                            foreach (var linkedCourse in linkedCourses)
+                                                            {
+                                                                courses.Remove(linkedCourse);
+                                                            }
+                                                        }
                                                         <div><a href="@Url.Action("Details", "Course", new { id = opportunity.Course.Id })">@opportunity.Course.Name (@opportunity.Course.ShortName)</a></div>
                                                     }
                                                 }
                                                 @foreach (var teaching in teachings)
                                                 {
                                                     var showGroups = teachings.Count > 1;
+                                                    var linkedCourses = courses.Where(x => x.Id == teaching.Course.Id).ToList();
+                                                    if (linkedCourses.Any())
+                                                    {
+                                                        foreach (var linkedCourse in linkedCourses)
+                                                        {
+                                                            courses.Remove(linkedCourse);
+                                                        }
+                                                    }
                                                     <div>
                                                         <a href="@Url.Action("Details", "Course", new { id = teaching.Course.Id })">@teaching.Course.Name (@teaching.Course.ShortName)</a>
                                                         @if (showGroups)
@@ -84,6 +111,13 @@
                                                             @Html.GroupList(teaching.Course.SemesterGroups, false, false)
                                                         }
                                                     </div>
+                                                }
+                                                @if (ViewBag.UserRight.IsCurriculumAdmin)
+                                                {
+                                                    foreach (var course in courses)
+                                                    {
+                                                        <div>AUTOLINK <a href="@Url.Action("Details", "Course", new { id = course.Id })">@course.Name (@course.ShortName)</a></div>
+                                                    }
                                                 }
                                             </td>
                                         </tr>

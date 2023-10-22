@@ -76,15 +76,18 @@ namespace MyStik.TimeTable.Web.Controllers
                 var nextSemester = SemesterService.GetNextSemester(currentSemester);
 
                 // gibt es eine Aktivität im nächsten Semester, bei der ich TN oder Lecturer bin?
-                var courseInTheFuture = Db.ActivityDates
-                    .Any(x =>
-                        x.Activity.Semester != null && x.Activity.Semester.Id == nextSemester.Id &&
-                        (x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
-                        x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))));
-
-                if (courseInTheFuture)
+                if (nextSemester != null)
                 {
-                    currentSemester = nextSemester;
+                    var courseInTheFuture = Db.ActivityDates
+                        .Any(x =>
+                            x.Activity.Semester != null && x.Activity.Semester.Id == nextSemester.Id &&
+                            (x.Hosts.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id)) ||
+                             x.Activity.Occurrence.Subscriptions.Any(s => s.UserId.Equals(user.Id))));
+
+                    if (courseInTheFuture)
+                    {
+                        currentSemester = nextSemester;
+                    }
                 }
             }
             else

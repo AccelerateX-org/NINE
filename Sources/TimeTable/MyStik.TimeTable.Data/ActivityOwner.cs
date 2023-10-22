@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.SqlServer.Server;
 
 namespace MyStik.TimeTable.Data
 {
@@ -12,6 +13,8 @@ namespace MyStik.TimeTable.Data
         public virtual Activity Activity { get; set; }
 
         public virtual OrganiserMember Member { get; set; }
+
+        public string PlanningPreferences { get; set; }
 
         /// <summary>
         /// Ein Owner, der keine Änderungen vornehmen darf
