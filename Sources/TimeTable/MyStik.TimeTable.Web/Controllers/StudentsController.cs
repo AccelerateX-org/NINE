@@ -24,41 +24,27 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(Guid? id)
         {
             ViewBag.UserRight = GetUserRight();
 
             // Liste aller Fachschaften
-            var org = GetMyOrganisation();
+            var org = id == null ?  GetMyOrganisation() : GetOrganiser(id.Value);
 
             ViewBag.MyOrganisation = org;
-            ViewBag.Unions = Db.Organisers.Where(o => o.IsStudent).ToList();
 
 
             var model = new List<StudentStatisticsModel>();
-            /*
-            var list = Db.Students.GroupBy(x => new {x.Curriculum, x.FirstSemester});
-
-            foreach (var ding in list)
-            {
-                model.Add(new StudentStatisticsModel
-                {
-                    Curriculum = ding.Key.Curriculum,
-                    Semester = ding.Key.FirstSemester,
-                    Count = ding.Count()
-                });
-            }
-            */
 
             return View(model);
         }
 
 
-        public ActionResult StartGroups()
+        public ActionResult StartGroups(Guid? id)
         {
             ViewBag.UserRight = GetUserRight();
 
-            var org = GetMyOrganisation();
+            var org = id == null ? GetMyOrganisation(): GetOrganiser(id.Value);
 
 
             // Liste aller Studiengänge
@@ -173,9 +159,23 @@ namespace MyStik.TimeTable.Web.Controllers
             return File(ms.GetBuffer(), "text/csv", sb.ToString());
         }
 
+        public ActionResult CourseList(Guid currId, Guid semId)
+        {
+            var curr = Db.Curricula.SingleOrDefault(x => x.Id == currId);
+            var sem = SemesterService.GetSemester(semId);
+
+            var students = Db.Students.Where(x => x.Curriculum.Id == currId && x.FirstSemester.Id == semId).ToList();
+
+
+            ViewBag.Curriculum = curr;
+            ViewBag.Semester = sem;
+
+            return View(students);
+        }
+
+
         public ActionResult SemesterGroups()
         {
-            // alle LVs eines Semesters
 
 
 

@@ -94,7 +94,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var semSubService = new SemesterSubscriptionService(Db);
 
             // Alle Fakultäten, die aktive Semestergruppen haben
-            var acticeorgs = semService.GetActiveOrganiser(semester, true);
+            var acticeorgs = semService.GetActiveOrganiser(semester);
 
             ViewBag.Semesters = new List<SelectListItem>()
             {

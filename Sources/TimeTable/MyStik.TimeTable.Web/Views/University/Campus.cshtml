@@ -52,9 +52,26 @@
                     Weiterbildung
                 </div>
             </div>
-            <div class="card-body">
-                <a href="@Url.Action("Index", "Assessment")" class="card-link">Auswahlverfahren</a>
-                <a href="@Url.Action("Index", "Dictionary")" class="card-link">Vorlesungsverzeichnis</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title">Aktivitäten</h5>
+                </div>
+            </div>
+
+            <div class="list-group">
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Dictionary")">
+                    Vorlesungsverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Events")">
+                    Veranstaltungsverzeichnis
+                </a>
+                <a class="list-group-item list-group-item-action" href="@Url.Action("Index", "Assessment")">
+                    Auswahlverfahren
+                </a>
             </div>
         </div>
     </div>

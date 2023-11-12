@@ -73,13 +73,13 @@ namespace MyStik.TimeTable.Web.Controllers
 
 
 
-        public ActionResult CreateReservation()
+        public ActionResult CreateReservation(Guid? id)
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
 
-            var org = GetMyOrganisation();
+            var org = id != null ? GetOrganiser(id.Value) : GetMyOrganisation();
 
             var userRight = GetUserRight(User.Identity.Name, org.ShortName);
 
@@ -113,6 +113,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var culture = Thread.CurrentThread.CurrentUICulture;
             ViewBag.Culture = culture;
 
+            ViewBag.Organiser2 = org;
 
             return View(model);
         }

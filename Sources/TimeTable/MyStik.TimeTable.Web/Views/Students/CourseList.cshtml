@@ -1,0 +1,37 @@
+﻿@using MyStik.TimeTable.Data
+@model ICollection<MyStik.TimeTable.Data.Student>
+@{
+    ViewBag.Title = "CourseList";
+
+    var db = new TimeTableDbContext();
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h4>Studierende nach Studiengängen und Semester (@ViewBag.Curriculum.ShortName, @ViewBag.Semester.Name)</h4>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Subscriptions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var student in Model)
+                {
+                    <tr>
+                        <td>@student.Id</td>
+                        <td>@db.Subscriptions.Count(x => x.UserId.Equals(student.UserId))</td>
+                    </tr>
+                }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+

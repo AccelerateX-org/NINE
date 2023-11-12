@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using MyStik.TimeTable.Data;
 using MyStik.TimeTable.DataServices;
 using MyStik.TimeTable.Web.Api.DTOs;
 
@@ -49,14 +50,32 @@ namespace MyStik.TimeTable.Web.Api.Controller
         //[System.Web.Http.HttpGet]
         public IQueryable<RoomSummaryDto> GetRooms()
         {
-            var rooms = Db.Rooms.ToList();
-
             var result = new List<RoomSummaryDto>();
+
+            var rooms = Db.Rooms.ToList();
 
             foreach (var room in rooms)
             {
-                var r = new RoomSummaryDto {Number = room.Number, Name = room.Name};
+                var r = new RoomSummaryDto
+                {
+                    Id = room.Id,
+                    Number = room.Number, 
+                    Name = room.Name,
+                    Description = room.Description,
+                    Capactiy = room.Capacity,
+                    Assignees = new List<OrganiserDto>()
+                };
 
+                foreach (var roomAssignment in room.Assignments)
+                {
+                    r.Assignees.Add(new OrganiserDto
+                    {
+                        Id = roomAssignment.Organiser.Id,
+                        Name = roomAssignment.Organiser.Name,
+                        ShortName = roomAssignment.Organiser.ShortName,
+                        Color = roomAssignment.Organiser.HtmlColor
+                    });
+                }
 
                 result.Add(r);
             }
@@ -64,6 +83,46 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return result.AsQueryable();
         }
 
+        [System.Web.Http.Route("search")]
+        //[System.Web.Http.HttpGet]
+        public IQueryable<RoomSummaryDto> GetRoomsByNumber(string searchPattern)
+        {
+            var result = new List<RoomSummaryDto>();
+
+            var rooms = Db.Rooms.Where(x => x.Number.ToLower().StartsWith(searchPattern.ToLower())).ToList();
+
+            foreach (var room in rooms)
+            {
+                var r = new RoomSummaryDto
+                {
+                    Id = room.Id,
+                    Number = room.Number,
+                    Name = room.Name,
+                    Description = room.Description,
+                    Capactiy = room.Capacity,
+                    Assignees = new List<OrganiserDto>()
+                };
+
+                foreach (var roomAssignment in room.Assignments)
+                {
+                    r.Assignees.Add(new OrganiserDto
+                    {
+                        Id = roomAssignment.Organiser.Id,
+                        Name = roomAssignment.Organiser.Name,
+                        ShortName = roomAssignment.Organiser.ShortName,
+                        Color = roomAssignment.Organiser.HtmlColor
+                    });
+                }
+
+                result.Add(r);
+            }
+
+            return result.AsQueryable();
+        }
+
+
+
+        /*
         /// <summary>
         /// Suche nach Räumen
         /// </summary>
@@ -305,6 +364,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return response;
         }
+        */
 
         /// <summary>
         /// Abfrage der Belegungen eines Raums

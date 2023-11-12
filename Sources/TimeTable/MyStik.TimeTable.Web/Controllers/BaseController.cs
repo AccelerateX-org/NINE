@@ -330,9 +330,16 @@ namespace MyStik.TimeTable.Web.Controllers
          }
 
 
-        protected OrganiserMember GetMyMembership()
+        protected OrganiserMember GetMyMembership(Guid? orgId = null)
          {
              var user = GetCurrentUser();
+             if (orgId != null)
+             {
+                 var member = MemberService.GetMember(user.Id, orgId.Value);
+                 if (member != null)
+                     return member;
+             }
+
              var members = MemberService.GetMemberships(user.Id);
              return members.FirstOrDefault();
          }

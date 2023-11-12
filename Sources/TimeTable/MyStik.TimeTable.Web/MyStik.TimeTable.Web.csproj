@@ -394,18 +394,14 @@
     <Compile Include="Api\Controller\ApiBaseController.cs" />
     <Compile Include="Api\Controller\AssessmentsController.cs" />
     <Compile Include="Api\Controller\CalendarController.cs" />
-    <Compile Include="Api\Controller\CampusController.cs" />
     <Compile Include="Api\Controller\CieCourseController.cs" />
     <Compile Include="Api\Controller\CieHomeController.cs" />
     <Compile Include="Api\Controller\ConsultationsController.cs" />
     <Compile Include="Api\Controller\CoursesController.cs" />
     <Compile Include="Api\Controller\CurriculaController.cs" />
-    <Compile Include="Api\Controller\EdBotController.cs" />
-    <Compile Include="Api\Controller\FacultyController.cs" />
     <Compile Include="Api\Controller\LecturerController.cs" />
     <Compile Include="Api\Controller\LoginController.cs" />
     <Compile Include="Api\Controller\ModulesController.cs" />
-    <Compile Include="Api\Controller\NotificationController.cs" />
     <Compile Include="Api\Controller\PushSubscriptionController.cs" />
     <Compile Include="Api\Controller\QuizGameController.cs" />
     <Compile Include="Api\Controller\QuizzesController.cs" />
@@ -413,7 +409,6 @@
     <Compile Include="Api\Controller\SemesterController.cs" />
     <Compile Include="Api\Controller\StudiesController.cs" />
     <Compile Include="Api\Controller\TeachingController.cs" />
-    <Compile Include="Api\Controller\TrialsController.cs" />
     <Compile Include="Api\Controller\ZpaCourseController.cs" />
     <Compile Include="Api\DTOs\AccountDto.cs" />
     <Compile Include="Api\DTOs\ActionDto.cs" />
@@ -444,7 +439,6 @@
     <Compile Include="Api\Services\CurriculumInfoService.cs" />
     <Compile Include="Api\Services\EventInfoService.cs" />
     <Compile Include="Api\Services\LecturerInfoService.cs" />
-    <Compile Include="Api\Services\ModuleConverter.cs" />
     <Compile Include="Api\Services\NotificationService.cs" />
     <Compile Include="Api\Services\RoomInfoService.cs" />
     <Compile Include="Api\Transformers\QuizTransformer.cs" />
@@ -4697,6 +4691,8 @@
     <Content Include="Views\Catalogs\PlanCourse.cshtml" />
     <Content Include="Views\Person\Link.cshtml" />
     <Content Include="Views\StudyPlan\Admin.cshtml" />
+    <Content Include="Views\Students\CourseList.cshtml" />
+    <Content Include="Views\Events\Organiser.cshtml" />
     <None Include="Web.Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -74,10 +74,22 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <returns></returns>
         public ActionResult Details(Guid id)
         {
+            var user = GetCurrentUser();
+
             var model = Db.Rooms.SingleOrDefault(r => r.Id == id);
 
-            var org = GetMyOrganisation();
-            ViewBag.UserRight = GetUserRight(User.Identity.Name, org.ShortName);
+            var orgs = model.Assignments.Select(x => x.Organiser).Distinct().ToList();
+            var org = orgs.Where(x =>
+                    x.Members.Any(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id) && m.IsRoomAdmin))
+                .FirstOrDefault();
+
+            if (org == null)
+                org = orgs.FirstOrDefault();
+
+            if (org == null)
+                org = GetMyOrganisation();
+
+            ViewBag.UserRight = GetUserRight(org);
             ViewBag.Organiser = org;
 
             return View(model);
@@ -1081,7 +1093,7 @@ namespace MyStik.TimeTable.Web.Controllers
         /// <param name="end"></param>
         /// <returns></returns>
         [HttpPost]
-        public PartialViewResult GetAvailableRooms(string date, string begin, string end)
+        public PartialViewResult GetAvailableRooms(Guid? orgId, string date, string begin, string end)
         {
             var sDate = DateTime.Parse(date);
             var sBegin = TimeSpan.Parse(begin);
@@ -1092,7 +1104,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var roomService = new MyStik.TimeTable.Web.Services.RoomService();
 
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
 
             var userRight = GetUserRight(org);
 

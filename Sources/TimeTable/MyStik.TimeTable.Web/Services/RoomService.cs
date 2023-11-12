@@ -222,8 +222,7 @@ namespace MyStik.TimeTable.Web.Services
         {
             if (isOrgAdmin)
                 return _db.Rooms.Where(r =>
-                    r.Assignments.Any(a => a.Organiser.Id == orgId) ||
-                    !r.Assignments.Any()).ToList();
+                    r.Assignments.Any(a => a.Organiser.Id == orgId)).ToList();
 
             return _db.Rooms.Where(r =>
                 r.Assignments.Any(a => a.Organiser.Id == orgId && !a.InternalNeedConfirmation)).ToList();

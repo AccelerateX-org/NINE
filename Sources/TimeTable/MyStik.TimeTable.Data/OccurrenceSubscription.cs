@@ -28,6 +28,5 @@ namespace MyStik.TimeTable.Data
         public virtual Occurrence Occurrence { get; set; }
 
         public virtual ICollection<LotteryBet> Bets { get; set; }
-
     }
 }

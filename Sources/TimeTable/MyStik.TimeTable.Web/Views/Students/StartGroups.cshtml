@@ -20,7 +20,7 @@
                     </a>
                 </div>
             </div>
-            <table class="table table-condensed">
+            <table class="table">
                 <thead>
                 <tr>
                     <th colspan="1">Studiengang</th>
@@ -55,7 +55,9 @@
                         {
                             var nStud = @curr.Students.Count(x => x.LastSemester == null && x.FirstSemester.Id == sem.Id);
                             nActive += nStud;
-                            <td>@nStud</td>
+                            <td>
+                                <a href="@Url.Action("CourseList", new {currId=curr.Curriculum.Id, semId = sem.Id})">@nStud</a>
+                            </td>
                         }
                         @{
                             var nOld = nAll - nActive;

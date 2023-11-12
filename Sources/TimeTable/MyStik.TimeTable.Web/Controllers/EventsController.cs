@@ -6,48 +6,78 @@ using MyStik.TimeTable.Web.Models;
 
 namespace MyStik.TimeTable.Web.Controllers
 {
+    [AllowAnonymous]
+
     public class EventsController : BaseController
     {
         // GET: Events
         public ActionResult Index()
         {
-            var semester = SemesterService.GetSemester(DateTime.Today);
-            var org = GetMyOrganisation();
+            var model = new HomeViewModel();
 
-            var model = new OrganiserViewModel()
+            var allPublishedSemester =
+                Db.Activities.OfType<Course>().Where(x => x.Semester != null).Select(x => x.Semester).Distinct()
+                    .OrderByDescending(s => s.EndCourses).Take(4).ToList();
+
+            foreach (var semester in allPublishedSemester)
             {
-                Semester = semester,
-                Organiser = org,
-            };
+                var activeOrgs = SemesterService.GetActiveEventOrganiser(semester);
 
-            // alle Semester
-            model.ActiveSemesters.AddRange(
-                Db.Semesters
-                    .Where(x => x.Groups.Any(g => g.CapacityGroup.CurriculumGroup.Curriculum.Organiser.Id == org.Id))
-                    .ToList());
+                var semModel = new SemesterActiveViewModel
+                {
+                    Semester = semester,
+                    Organisers = activeOrgs.ToList()
+                };
 
-
-            ViewBag.UserRight = GetUserRight();
+                model.ActiveSemester.Add(semModel);
+            }
 
             return View(model);
         }
 
-        public ActionResult Semester(Guid id)
+        public ActionResult Semester(Guid semId)
         {
-            var semester = SemesterService.GetSemester(id);
+            var semester = SemesterService.GetSemester(semId);
 
-            var organiser = GetMyOrganisation();
+            var activeOrgs = SemesterService.GetActiveEventOrganiser(semester);
 
             var model = new SemesterActiveViewModel
             {
                 Semester = semester,
-                Events = organiser.Activities.OfType<Event>().Where(x => x.Dates.Any(d => semester.StartCourses <= d.Begin && d.Begin <= semester.EndCourses)).ToList(),
-                Organiser = organiser
+                Organisers = activeOrgs
             };
-
-            ViewBag.UserRight = GetUserRight();
 
             return View(model);
         }
+
+        public ActionResult Organiser(Guid? semId, Guid orgId)
+        {
+            var semester = semId.HasValue ? SemesterService.GetSemester(semId) : SemesterService.GetSemester(DateTime.Today);
+
+            var org = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
+
+            var ev1 = org.Activities.OfType<Event>().Where(e => e.Dates.Any(
+                d => semester.StartCourses <= d.Begin && d.Begin <= semester.EndCourses)).ToList();
+
+            var ev2 = Db.Activities.OfType<Event>().Where(c =>
+                    c.Semester.Id == semester.Id &&
+                    c.Organiser.Id == org.Id)
+                .OrderBy(c => c.ShortName).ToList();
+
+            var events = ev1;
+            events.AddRange(ev2);
+            events = events.Distinct().ToList();
+
+            var model = new SemesterActiveViewModel
+            {
+                Semester = semester,
+                Events = events,
+                Organiser = org
+            };
+
+            return View(model);
+        }
+
+
     }
 }

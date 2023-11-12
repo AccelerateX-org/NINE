@@ -31,7 +31,7 @@
                 <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action">
                     Sprechstundentermine
                 </a>
-                <a href="@Url.Action("Subscriptions", "OfficeHour")" class="list-group-item list-group-item-action disabled">
+                <a href="@Url.Action("Index", "Advertisements")" class="list-group-item list-group-item-action">
                     Aushänge
                 </a>
             </div>
@@ -49,6 +49,9 @@
                 </a>
                 <a href="@Url.Action("Index", "Dictionary")" class="list-group-item list-group-item-action">
                     Vorlesungsverzeichnis
+                </a>
+                <a href="@Url.Action("Index", "Events")" class="list-group-item list-group-item-action">
+                    Veranstaltungsverzeichnis
                 </a>
                 <a href="@Url.Action("Organiser", "Lottery", new {id = Model.Student.Curriculum.Organiser.Id})" class="list-group-item list-group-item-action">
                     Wahlverfahren

@@ -75,6 +75,55 @@ namespace MyStik.TimeTable.Data
 
         public virtual ICollection<RoomEquipment> Equipments { get; set; }
 
+        public virtual ICollection<RoomLayout> Layouts { get; set; }
+
+
         public string FullName => string.IsNullOrEmpty(Name) ? Number : $"{Number} ({Name})";
     }
+
+    public class RoomLayout
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public virtual Room Room { get; set; } 
+
+        public virtual ICollection<RoomDesk> Desks { get; set; }
+    }
+
+    public class RoomDesk
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public virtual RoomLayout Layout { get; set; }
+
+        public virtual ICollection<RoomSeat> Seats { get; set; }
+    }
+
+    public class RoomSeat
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public virtual RoomDesk Layout { get; set; }
+
+        public virtual ICollection<RoomSeatBooking> Bookings { get; set; }
+    }
+
+
+    public class RoomSeatBooking
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+
+        public virtual RoomSeat Seat { get; set; }
+    }
+
 }

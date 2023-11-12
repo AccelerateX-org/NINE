@@ -27,12 +27,27 @@ namespace MyStik.TimeTable.Web.Controllers
             var teachingService = new TeachingService(Db);
 
             var model = new TeachingOverviewModel();
-            var members = MemberService.GetFacultyMemberships(user.Id);
+            var members = MemberService.GetFacultyMemberships(user.Id).ToList();
             var student = GetCurrentStudent(user.Id);
 
-            model.Members = members.ToList();
-            model.Student = student;
+            model.Members = members;
+            model.Organisers = members.Select(x => x.Organiser).Distinct().ToList();
 
+            if (student != null)
+            {
+                if (model.Organisers.All(x => x.Id != student.Curriculum.Organiser.Id))
+                {
+                    model.Organisers.Add(student.Curriculum.Organiser);
+                }
+            }
+
+
+            model.Student = student;
+            model.CurrentSemester =
+                new TeachingSemesterSummaryModel
+                {
+                    Semester = SemesterService.GetSemester(DateTime.Today)
+                };
 
             model.ActiveTheses = new List<ThesisStateModel>();
 
@@ -454,12 +469,12 @@ namespace MyStik.TimeTable.Web.Controllers
             // keine Semestergruppe gewählt => aktive Pläne suchen
             if (model.SemesterGroup == null)
             {
-                model.ActiveOrgsSemester = SemesterService.GetActiveOrganiser(currentSemester, true);
+                model.ActiveOrgsSemester = SemesterService.GetActiveOrganiser(currentSemester);
             }
 
 
             // das nächste Semester nur anzeigen, wenn es einen veröffentlichsten Stundenplan für die letzte Fakultät gibt!
-            var nextSemesterOrgs = SemesterService.GetActiveOrganiser(nextSemester, true);
+            var nextSemesterOrgs = SemesterService.GetActiveOrganiser(nextSemester);
             if (nextSemesterOrgs.Any())
             {
                 model.NextSemester = nextSemester;

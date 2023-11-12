@@ -296,27 +296,23 @@ namespace MyStik.TimeTable.DataServices
         }
 
 
-        public ICollection<Data.ActivityOrganiser> GetActiveOrganiser(Semester semester, bool availableOnly)
+        public ICollection<Data.ActivityOrganiser> GetActiveOrganiser(Semester semester)
         {
-            return _db.Activities.OfType<Course>().Where(x => x.Organiser != null && x.Semester != null && x.Semester.Id == semester.Id).Select(x => x.Organiser)
+            return _db.Activities.OfType<Course>()
+                .Where(x => x.Organiser != null && x.Semester != null && x.Semester.Id == semester.Id)
+                .Select(x => x.Organiser)
                 .Distinct().ToList();
-
-            /*
-            if (availableOnly)
-            {
-                return
-                    _db.Organisers.Where(
-                        x => x.IsFaculty && x.Curricula.Any(c => c.CurriculumGroups.Any(d => d.CapacityGroups.Any(a => 
-                                 a.SemesterGroups.Any(s => s.Semester.Id == semester.Id && s.IsAvailable))))).ToList();
-            }
-            _db.Organisers.Where(
-                x => x.IsFaculty && x.Curricula.Any(c => c.CurriculumGroups.Any(d => d.CapacityGroups.Any(a =>
-                    a.SemesterGroups.Any(s => s.Semester.Id == semester.Id))))).ToList();
-            */
         }
 
         public ICollection<Data.ActivityOrganiser> GetActiveEventOrganiser(Semester semester)
         {
+            /*
+            return _db.Activities.OfType<Event>()
+                .Where(x => 
+                    x.Organiser != null && x.Semester != null && x.Semester.Id == semester.Id)
+                .Select(x => x.Organiser)
+                .Distinct().ToList();
+            */
             return
                 _db.Organisers.Where(
                     x => x.Activities.OfType<Event>().Any(

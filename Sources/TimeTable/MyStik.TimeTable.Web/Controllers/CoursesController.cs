@@ -50,7 +50,7 @@ namespace MyStik.TimeTable.Web.Controllers
         public ActionResult Semester(Guid? orgId, Guid? semId)
         {
             var semester = SemesterService.GetSemester(DateTime.Today);
-            var org = GetMyOrganisation();
+            var org = orgId == null ? GetMyOrganisation() : GetOrganiser(orgId.Value);
 
             if (orgId.HasValue && semId.HasValue)
             {

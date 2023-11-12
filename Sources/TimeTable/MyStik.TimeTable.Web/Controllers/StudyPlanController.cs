@@ -149,7 +149,7 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var curr = Db.Curricula.SingleOrDefault(x => x.Id == model.Curriculum.Id);
             var semester = Db.Semesters.SingleOrDefault(x => x.Id == model.Semester.Id);
-            var member = GetMyMembership();
+            var member = curr.Organiser.Members.SingleOrDefault(m => !string.IsNullOrEmpty(m.UserId) && m.UserId.Equals(user.Id));
 
             var now = DateTime.Now;
 

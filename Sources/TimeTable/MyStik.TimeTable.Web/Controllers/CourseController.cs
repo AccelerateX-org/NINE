@@ -83,12 +83,7 @@ namespace MyStik.TimeTable.Web.Controllers
             };
 
 
-            var acticeorgs = SemesterService.GetActiveOrganiser(sem, false);
-            /*
-                Db.Organisers.Where(
-                    x => x.IsFaculty && x.Activities.Any(a =>
-                             a.SemesterGroups.Any(s => s.Semester.EndCourses >= DateTime.Today))).ToList();
-                             */
+            var acticeorgs = SemesterService.GetActiveOrganiser(sem);
 
             ViewBag.Faculties = acticeorgs.Select(c => new SelectListItem
             {
@@ -1525,15 +1520,19 @@ namespace MyStik.TimeTable.Web.Controllers
 
             var org =  orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
 
-            CourseCreateModel2 model = new CourseCreateModel2();
-
-            model.SemesterId = sem.Id;
-            model.OrganiserId = org.Id;
-            model.OrganiserId2 = org.Id;
-            model.OrganiserId3 = org.Id;
+            var model = new CourseCreateModel2
+            {
+                SemesterId = sem.Id,
+                OrganiserId = org.Id,
+                OrganiserId2 = org.Id,
+                OrganiserId3 = org.Id
+            };
 
             // Liste aller Fakultäten
-            ViewBag.Organiser = Db.Organisers.Where(x => x.Id == org.Id).OrderBy(x => x.ShortName).Select(c => new SelectListItem
+            ViewBag.Organiser = Db.Organisers
+                .Where(x => x.Id == org.Id)
+                .OrderBy(x => x.ShortName)
+                .Select(c => new SelectListItem
             {
                 Text = c.ShortName,
                 Value = c.Id.ToString(),
@@ -1592,72 +1591,9 @@ namespace MyStik.TimeTable.Web.Controllers
                 },
             };
 
-            // da kommen Kapazitätsgruppen
-            // d.h. Semestergruppe suchen und ggf. anlegen
-            if (model.GroupIds != null)
-            {
-                foreach (var groupId in model.GroupIds)
-                {
-                    var capGroup = Db.CapacityGroups.SingleOrDefault(g => g.Id == groupId);
-
-                    var semGroup =
-                        Db.SemesterGroups.SingleOrDefault(
-                            g => g.Semester.Id == semester.Id && g.CapacityGroup.Id == groupId);
-
-                    // die Semestergruppe gibt es nicht => anlegen
-                    if (semGroup == null)
-                    {
-                        semGroup = new SemesterGroup
-                        {
-                            CapacityGroup = capGroup,
-                            Semester = semester,
-                            IsAvailable = false,
-                        };
-                        Db.SemesterGroups.Add(semGroup);
-                    }
-                    course.SemesterGroups.Add(semGroup);
-
-                    var occGroup = new OccurrenceGroup
-                    {
-                        Capacity = 0,
-                        FitToCurriculumOnly = true,
-                        Occurrence = course.Occurrence
-                    };
-                    occGroup.SemesterGroups.Add(semGroup);
-                    semGroup.OccurrenceGroups.Add(occGroup);
-                    course.Occurrence.Groups.Add(occGroup);
-                    Db.OccurrenceGroups.Add(occGroup);
-                }
-            }
-
-            // jetzt die Themenbereiche
-            if (model.TopicIds != null)
-            {
-                foreach (var topicId in model.TopicIds)
-                {
-                    var topic = Db.CurriculumTopics.SingleOrDefault(x => x.Id == topicId);
-
-                    var semTopic =
-                        Db.SemesterTopics.SingleOrDefault(
-                            x => x.Semester.Id == model.SemesterId && x.Topic.Id == topicId);
-
-                    if (semTopic == null)
-                    {
-                        semTopic = new SemesterTopic
-                        {
-                            Semester = semester,
-                            Topic = topic
-                        };
-                        Db.SemesterTopics.Add(semTopic);
-                    }
-
-                    course.SemesterTopics.Add(semTopic);
-                }
-            }
 
 
-
-            var member = GetMyMembership();
+            var member = GetMyMembership(org.Id);
 
             if (member != null)
             {

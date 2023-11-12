@@ -17,64 +17,148 @@ namespace MyStik.TimeTable.Web.Api.Controller
     [RoutePrefix("api/v2/modules")]
     public class ModulesController : ApiBaseController
     {
+        [System.Web.Http.Route("")]
+        public IQueryable<ModuleDto> GetModules()
+        {
+            var list = new List<ModuleDto>();
+
+            var modules = Db.CurriculumModules.Where(x => x.Catalog != null).ToList();
+
+            foreach (var curriculumModule in modules)
+            {
+                var dto = new ModuleDto
+                {
+                    Id = curriculumModule.Id,
+                    Name = curriculumModule.Name,
+                    Tag = curriculumModule.FullTag,
+                    Accreditions = new List<ModuleAccreditionDto>(),
+                    Subjects = new List<SubjectDto>(),
+                    ExamOptions = new List<ExamOptionDto>()
+                };
+
+                foreach (var moduleSubject in curriculumModule.ModuleSubjects)
+                {
+                    var subject = new SubjectDto
+                    {
+                        Name = moduleSubject.Name,
+                        SWS = moduleSubject.SWS,
+                        TeachingFormat = moduleSubject.TeachingFormat.Tag
+                    };
+
+                    dto.Subjects.Add(subject);
+                }
+
+                foreach (var examinationOption in curriculumModule.ExaminationOptions)
+                {
+                    var option = new ExamOptionDto
+                    {
+                        Name = examinationOption.Name,
+
+                        Exams = new List<ExamDto>()
+                    };
+
+                    dto.ExamOptions.Add(option);
+
+                    foreach (var fraction in examinationOption.Fractions)
+                    {
+                        var exam = new ExamDto
+                        {
+                            Name = fraction.Form.ShortName,
+                            Weight = fraction.Weight
+                        };
+
+                        option.Exams.Add(exam);
+                    }
+                }
+
+
+                foreach (var accreditation in curriculumModule.Accreditations)
+                {
+                    try
+                    {
+                        if (accreditation.Slot != null && accreditation.Slot.AreaOption != null &&
+                            accreditation.Slot.AreaOption.Area != null &&
+                            accreditation.Slot.AreaOption.Area.Curriculum != null &&
+                            accreditation.Slot.AreaOption.Area.Curriculum.Organiser != null)
+                        {
+                            var acc = new ModuleAccreditionDto
+                            {
+                                Curriculum = accreditation.Slot.AreaOption.Area.Curriculum.Name,
+                                Faculty = accreditation.Slot.AreaOption.Area.Curriculum.Organiser.ShortName,
+                                Slot = accreditation.Slot.FullTag,
+                                Ects = accreditation.Slot.ECTS
+                            };
+
+                            dto.Accreditions.Add(acc);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // ignored
+                    }
+                }
+
+                list.Add(dto);
+            }
+
+            return list.AsQueryable();
+        }
+
         /// <summary>
         /// Suche nache Modulesn
         /// </summary>
-        [Route("{id}/summary")]
-        public ModuleDto GetModuleSummary(Guid id)
+        [Route("{id}/description/{semester}")]
+        public ModuleDescriptionDto GetModuleDescription(Guid id, string semester)
         {
+            var model = new ModuleDescriptionDto();
+
+
             var module = Db.CurriculumModules.SingleOrDefault(x => x.Id == id);
             if (module == null)
-                return null;
-
-            var model = new ModuleDto
             {
-                Name = module.Name,
-                ShortName = module.ShortName,
-                Subjects = new List<SubjectDto>(),
-                ExamOptions = new List<ExamOptionDto>()
-            };
-
-            foreach (var moduleSubject in module.ModuleSubjects)
-            {
-                var subject = new SubjectDto
-                {
-                    Name = moduleSubject.Name,
-                    SWS = moduleSubject.SWS,
-                    TeachingFormat = moduleSubject.TeachingFormat.Tag
-                };
-
-                model.Subjects.Add(subject);
+                model.DescriptionDe = "Modul nicht gefunden";
+                return model;
             }
 
-            foreach (var examinationOption in module.ExaminationOptions)
+            var sem = Db.Semesters.SingleOrDefault(x => x.Name.ToLower().Equals(semester.ToLower()));
+            if (sem == null)
             {
-                var option = new ExamOptionDto
-                {
-                    Name = examinationOption.Name,
-
-                    Exams = new List<ExamDto>()
-                };
-
-                model.ExamOptions.Add(option);
-
-                foreach (var fraction in examinationOption.Fractions)
-                {
-                    var exam = new ExamDto
-                    {
-                        Name = fraction.Form.ShortName,
-                        Weight = fraction.Weight
-                    };
-
-                    option.Exams.Add(exam);
-                }
+                model.DescriptionDe = "Semester nicht gefunden";
+                return model;
             }
 
-            //module.ModuleResponsibilities
+            var desc = module.Descriptions
+                .Where(x => x.Semester.Id == sem.Id && x.ChangeLog != null && x.ChangeLog.Approved != null)
+                .OrderByDescending(x => x.ChangeLog.Approved.Value)
+                .FirstOrDefault();
+            if (desc == null)
+            {
+                model.DescriptionDe = "Beschreibung nicht gefunden";
+                return model;
+            }
+
+            model.Id = desc.Id;
+            model.DescriptionDe = desc.Description;
+            model.DescriptionEn = desc.DescriptionEn;
+
+            /*
+            foreach (var accreditation in module.Accreditations)
+            {
+                var exams = accreditation.ExaminationDescriptions
+                    .Where(x => x.Semester.Id == sem.Id && x.ChangeLog.Approved != null).ToList();
+
+
+            }
+            */
+            
+
+
+
 
             return model;
         }
 
+        /*
         [Route("{id}/details/{semester}")]
         public ModuleDto GetModuleDetails(Guid id, string semester)
         {
@@ -364,7 +448,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return moduleDto;
         }
-
+*/
 
     }
 }

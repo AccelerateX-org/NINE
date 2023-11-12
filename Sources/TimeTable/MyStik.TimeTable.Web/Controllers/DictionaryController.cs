@@ -13,22 +13,17 @@ namespace MyStik.TimeTable.Web.Controllers
     [AllowAnonymous]
     public class DictionaryController : BaseController
     {
-        public ActionResult Index(Guid? id)
+        public ActionResult Index()
         {
-            var user = GetCurrentUser();
             var model = new HomeViewModel();
 
             var allPublishedSemester =
                 Db.Activities.OfType<Course>().Where(x => x.Semester != null).Select(x => x.Semester).Distinct()
                     .OrderByDescending(s => s.EndCourses).Take(4).ToList();
 
-            // Alle Semester mit veröffentlichten Semestergruppen
-            //var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any()).OrderByDescending(s => s.EndCourses).Take(4).ToList();
-
             foreach (var semester in allPublishedSemester)
             {
-                var isStaff = user != null && user.MemberState == MemberState.Staff;
-                var activeOrgs = SemesterService.GetActiveOrganiser(semester, !isStaff);
+                var activeOrgs = SemesterService.GetActiveOrganiser(semester);
 
                 var semModel = new SemesterActiveViewModel
                 {
@@ -46,10 +41,7 @@ namespace MyStik.TimeTable.Web.Controllers
         {
             var semester = SemesterService.GetSemester(semId);
 
-            var user = GetCurrentUser();
-            var isStaff = user != null && user.MemberState == MemberState.Staff;
-
-            var activeOrgs = SemesterService.GetActiveOrganiser(semester, !isStaff);
+            var activeOrgs = SemesterService.GetActiveOrganiser(semester);
 
             var model = new SemesterActiveViewModel
             {

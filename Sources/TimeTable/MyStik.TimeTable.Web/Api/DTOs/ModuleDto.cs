@@ -8,6 +8,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
     /// </summary>
     public class ModuleDto : NamedDto
     {
+        public string Tag { get; set; }
+
+        public List<ModuleAccreditionDto> Accreditions { get; set; }
+
+
         public List<SubjectDto> Subjects { get; set; }
 
         public List<ExamOptionDto> ExamOptions { get; set; }
@@ -20,45 +25,16 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public double SWS { get; set; }
     }
 
-
-    public class CertificateModuleDto : NamedDto
+    
+    public class ModuleAccreditionDto : NamedDto
     {
-        public CertificateModuleDto()
-        {
-            Subjects = new List<AccreditatedModuleDto>();
-        }
+        public string Curriculum { get; set; }
 
-        public List<AccreditatedModuleDto> Subjects { get; set; }
-    }
+        public string Faculty { get; set; }
 
-    public class AccreditatedModuleDto : NamedDto
-    {
-        public AccreditatedModuleDto()
-        {
-            ModuleAccounts = new List<LecturerDto>();
-            Lecturers = new List<LecturerDto>();
-        }
+        public string Slot { get; set; }
 
         public double Ects { get; set; }
-
-        public int Term { get; set; }
-
-        public string Number { get; set; }
-
-        public bool isMandatory { get; set; }
-
-        public List<LecturerDto> ModuleAccounts { get; set; }
-
-        public List<LecturerDto> Lecturers { get; set; }
-
-        public string Language { get; set; }
-
-        public string Content { get; set; }
-
-        public List<TeachingDto> TeachingMethods { get; set; }
-        public List<ExamDto> Exams { get; set; }
-
-        public List<ExamAidDto> Resources { get; set; }
     }
 
     public class TeachingDto
@@ -84,41 +60,13 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         public string Info { get; set; }
     }
 
-    public class ModuleDescriptionDto
+    public class ModuleDescriptionDto : NamedDto
     {
-        public Guid id { get; set; }
-
-        public string tag { get; set; }
-        public string name { get; set; }
-
-        public List<ModuleDescriptionRespDto> responsible { get; set; }
-
-        public List<ModuleDescriptionSlotDto> slots { get; set; }
-
-        public List<ModuleDescriptionInstanceDto> instances { get; set; }
+        public string DescriptionDe { get; set; }
+        public string DescriptionEn { get; set; }
 
     }
 
-    public class ModuleDescriptionRespDto
-    {
-        public string tag { get; set; }
-    }
-
-    public class ModuleDescriptionSlotDto
-    {
-        public string tag { get; set; }
-    }
-
-    public class ModuleDescriptionInstanceDto
-    {
-        public string semster { get; set; }
-
-        public string description { get; set; }
-
-        public List<ModuleDescriptionTeachingDto> teaching { get; set; }
-
-        public List<ModuleDescriptionExamDto> exams { get; set; }
-    }
 
     public class ModuleDescriptionTeachingDto
     {

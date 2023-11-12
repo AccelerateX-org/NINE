@@ -45,10 +45,10 @@
                         }
                         <a href="@Url.Action("Index", "Curricula", new { id = Model.Id })" class="list-group-item list-group-item-action">Studiengänge</a>
                         <a href="@Url.Action("Organiser", "Dictionary", new { orgId=Model.Id})"  class="list-group-item list-group-item-action">Vorlesungsverzeichnis</a>
+                        <a href="@Url.Action("Organiser", "Events", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungsverzeichnis</a>
 
                         @if (!isStudent)
                         {
-                            <a href="@Url.Action("Index", "Events", new {id = Model.Id})" class="list-group-item list-group-item-action">Veranstaltungen</a>
                             <a href="@Url.Action("Index", "Newsletter", new {id = Model.Id})#" class="list-group-item list-group-item-action">Newsletter</a>
                         }
                     </div>
@@ -111,6 +111,7 @@
                         @if (!isStudent)
                         {
                             <a href="@Url.Action("CreateCourse", "Course", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Lehrveranstaltung anlegen</a>
+                            <a href="@Url.Action("CreateEvent", "Event", new {orgId = Model.Id})" class="list-group-item list-group-item-action">Veranstaltung anlegen</a>
                             <a href="@Url.Action("Index", "InternshipAdmin", new { id = Model.Id })" class="list-group-item list-group-item-action disabled">Praxissemester</a>
                             <a href="@Url.Action("Admin", "Assessment", new {id = Model.Id})" class="list-group-item list-group-item-action">Aufnahmeverfahren</a>
                             <a href="@Url.Action("Index", "Semester", new {id = Model.Id})" class="list-group-item list-group-item-action">Semesterplanung</a>

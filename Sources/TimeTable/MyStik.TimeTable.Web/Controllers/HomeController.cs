@@ -115,7 +115,7 @@ namespace MyStik.TimeTable.Web.Controllers
             var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any(g => g.IsAvailable)).OrderByDescending(s => s.EndCourses).Take(4).ToList();
             foreach (var semester in allPublishedSemester)
             {
-                var activeOrgs = SemesterService.GetActiveOrganiser(semester, true);
+                var activeOrgs = SemesterService.GetActiveOrganiser(semester);
 
                 var semModel = new SemesterActiveViewModel
                 {

@@ -43,40 +43,17 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// </summary>
         public CurriculumOptionDto()
         {
-            Modules = new List<CurriculumModuleDto>();
+            Modules = new List<ModuleDto>();
         }
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<CurriculumModuleDto> Modules { get; }
+        public ICollection<ModuleDto> Modules { get; }
 
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public class CurriculumModuleDto : NamedDto
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public CurriculumModuleDto()
-        {
-            Sections = new List<CurriculumModuleSectionDto>();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double Ects { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ICollection<CurriculumModuleSectionDto> Sections { get; }
-
-    }
-
+    
+    
     /// <summary>
     /// 
     /// </summary>
@@ -179,7 +156,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// <summary>
         /// 
         /// </summary>
-        public CurriculumModuleDto Module { get; set; }
+        public ModuleDto Module { get; set; }
 
         /// <summary>
         /// 
@@ -253,7 +230,7 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         
         public double ects { get; set; }
 
-        public List<ModuleDescriptionDto> modules { get; set; }
+        public List<ModuleDto> modules { get; set; }
     }
 
     #endregion

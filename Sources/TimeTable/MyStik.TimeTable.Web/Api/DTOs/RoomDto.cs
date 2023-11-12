@@ -17,6 +17,11 @@ namespace MyStik.TimeTable.Web.Api.DTOs
         /// 
         /// </summary>
         public string Name { get; set; }
+        public string Description { get; set; }
+
+        public int Capactiy { get; set; }
+
+        public List<OrganiserDto> Assignees { get; set; }
     }
 
 

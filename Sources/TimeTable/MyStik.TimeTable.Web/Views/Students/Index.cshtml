@@ -9,7 +9,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Studierende</h1>
+                    <h1>Studierende @ViewBag.MyOrganisation.ShortName</h1>
                 </div>
             </div>
         </div>
@@ -53,22 +53,11 @@
                         <h4><i class="fa fa-list"></i> Listen</h4>
                     </div>
                     <div class="list-group">
-                        <a class="list-group-item" href="@Url.Action("StartGroups")">
+                        <a class="list-group-item" href="@Url.Action("StartGroups", new {id = ViewBag.MyOrganisation.Id})">
                             <div class="list-group-item-heading">
                                 <h5><i class="fa fa-graduation-cap"></i> Studiengangslisten</h5>
                             </div>
                             <div class="list-group-item-text">Listen getrennt nach Studiengängen</div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("SemesterGroups")">
-                            <div class="list-group-item-heading">
-                                <h5><i class="fa fa-pencil"></i> Lehrveranstaltungslisten</h5>
-                            </div>
-                            <div class="list-group-item-text">Listen nach Belegung von Lehrveranstaltungen in einem Semester</div>
-                        </a>
-                        <a class="list-group-item" href="@Url.Action("Index", "Union")">
-                            <div class="list-group-item-heading">
-                                <h5>Fachschaft</h5>
-                            </div>
                         </a>
                     </div>
                 </div>

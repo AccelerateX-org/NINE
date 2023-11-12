@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NINE - @ViewBag.Title</title>
     @Styles.Render("~/Content/css")
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/libs/bootstrap-icons/font/bootstrap-icons.css")" />
     <link href="@Styles.Url("~/Content/print.css")" rel="stylesheet" type="text/css" media="print" />
 
     @RenderSection("styles", required: false)
-
-    @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
     <div class="container-fluid">

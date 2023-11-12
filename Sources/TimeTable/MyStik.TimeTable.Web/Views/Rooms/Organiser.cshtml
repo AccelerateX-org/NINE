@@ -8,13 +8,13 @@
 
 @section styles
 {
-    <link href="@Url.Content("~/Assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Assets/libs/datatables/dataTables.min.css")" rel="stylesheet" type="text/css" />
+
 }
 
 @section scripts
 {
-    <script src="@Url.Content("~/Assets/libs/datatables.net/js/jquery.dataTables.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Assets/libs/datatables/dataTables.min.js")" type="text/javascript"></script>
 
     <script>
         $(document).ready(function () {
@@ -22,10 +22,10 @@
                 {
                     "paging": false,
                     "columnDefs": [{
-                            "searchable": false,
-                            "orderable": false,
-                            "targets": 0
-                        }],
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    }],
                     "order": [[1, 'asc']]
                 }
             );
@@ -43,28 +43,29 @@
 
 
 <div class="row">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Dashboard")"><i class="bi-grid"></i></a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Rooms")">Raumverzeichnis</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Organiser.ShortName</li>
+        </ol>
+    </nav>
+
+
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-                <h5>
-                    <i class="fa fa-university"></i>
-                    <a href="@Url.Action("Index")">Raumverzeichnis</a> /
-                    @Model.Organiser.ShortName
-                </h5>
-            </div>
-                <table class="table table-sm" id="tabRooms">
-                    <thead>
+            <table class="table table-sm" id="tabRooms">
+                <thead>
                     <tr>
                         <th></th>
                         <th>Nummer</th>
                         <th>Bezeichnung</th>
-                        <th>Größe</th>
                         <th>Plätze</th>
                         <th>Beschreibung</th>
                         <th>Zuordnungen</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                </thead>
+                <tbody>
                     @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
                     {
                         <tr>
@@ -75,45 +76,44 @@
                                 </a>
                             </td>
                             <td>@room.Name</td>
-                            <td></td>
                             <td>@room.Capacity</td>
                             <td>@room.Description</td>
                             <td>
                                 @foreach (var assign in room.Assignments)
                                 {
-                                    <div>@Html.FacultyLabel(assign.Organiser)</div>
+                                    <div>@Html.FacultyLabel(assign.Organiser) (@assign.InternalNeedConfirmation | @assign.ExternalNeedConfirmation)</div>
                                 }
                             </td>
                         </tr>
                     }
 
-                    </tbody>
-                </table>
-        
+                </tbody>
+            </table>
 
 
-                @*
-            @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsRoomAdmin)
-            {
-                <div class="list-group-item">
-                    <div class="btn-group" role="group">
-                        <a href="@Url.Action("Labels", "Room")" class="btn btn-default"><i class="fa fa-file-o"></i> Türschilder</a>
-                    </div>
-                </div>
-            }
-                *@
-                @*
-            <div class="list-group">
-                @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
+
+            @*
+                @if (ViewBag.UserRights.User.MemberState == MemberState.Staff && ViewBag.UserRights.IsRoomAdmin)
                 {
-                    <a href="@Url.Action("Details", "Room", new {id = room.Id})" class="list-group-item list-group-item-action">
-                        @room.FullName
-                    </a>
+                    <div class="list-group-item">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Labels", "Room")" class="btn btn-default"><i class="fa fa-file-o"></i> Türschilder</a>
+                        </div>
+                    </div>
                 }
-            </div>
-                *@
-            </div>
+            *@
+            @*
+                <div class="list-group">
+                    @foreach (var room in Model.Rooms.OrderBy(x => x.Number))
+                    {
+                        <a href="@Url.Action("Details", "Room", new {id = room.Id})" class="list-group-item list-group-item-action">
+                            @room.FullName
+                        </a>
+                    }
+                </div>
+            *@
         </div>
+    </div>
 </div>
 
 

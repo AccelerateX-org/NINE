@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using MyStik.TimeTable.Web.Api.DTOs;
@@ -19,8 +20,8 @@ namespace MyStik.TimeTable.Web.Api.Controller
         {
             var curriculaWithPlan =
                 string.IsNullOrEmpty(org)
-                    ? Db.Curricula.ToList()
-                    : Db.Curricula.Where(x => x.Organiser.ShortName.ToLower().Equals(org.ToLower())).ToList();
+                    ? Db.Curricula.Where(x => x.Areas.Any()) .ToList()
+                    : Db.Curricula.Where(x => x.Areas.Any() && x.Organiser.ShortName.ToLower().Equals(org.ToLower())).ToList();
 
             var result = new List<CurriculumDto>();
 
@@ -31,11 +32,13 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     Id = curriculum.Id,
                     Name = curriculum.Name,
                     ShortName = curriculum.ShortName,
+                    
                     Organiser = new OrganiserDto
                     {
                         Name = curriculum.Organiser.Name,
                         ShortName = curriculum.Organiser.ShortName,
-                        Color = curriculum.Organiser.HtmlColor
+                        Color = curriculum.Organiser.HtmlColor,
+                        Id = curriculum.Organiser.Id
                     }
                 };
 
@@ -45,6 +48,7 @@ namespace MyStik.TimeTable.Web.Api.Controller
             return result.AsQueryable();
         }
 
+        /*
         [Route("{name}")]
         public NamedDto GetCurriculumInfo(string name)
         {
@@ -103,28 +107,15 @@ namespace MyStik.TimeTable.Web.Api.Controller
 
             return list.AsQueryable();
         }
+        */
 
-        [Route("{tag}/slots")]
-        public IQueryable<CurriculumSlotDto> GetCurriculumPlan(string tag)
+
+        [Route("{id}/slots")]
+        public IQueryable<CurriculumSlotDto> GetCurriculumPlan(Guid id)
         {
             var list = new List<CurriculumSlotDto>();
 
-            var catWords = tag.Split('#');
-            if (catWords.Length != 2 )
-                return list.AsQueryable();
-
-            var orgTag = catWords[0];
-            var currTag = catWords[1];
-
-            var org = Db.Organisers.FirstOrDefault(x =>
-                !string.IsNullOrEmpty(x.Tag) &&
-                    x.Tag.ToUpper().Equals(orgTag.ToUpper()));
-            if (org == null)
-                return list.AsQueryable();
-
-            var curr = org.Curricula.FirstOrDefault(x => 
-                !string.IsNullOrEmpty(x.Tag) && x.
-                    Tag.ToUpper().Equals(currTag.ToUpper()));
+            var curr = Db.Curricula.FirstOrDefault(x => x.Id == id);
             if (curr == null)
                 return list.AsQueryable();
 
@@ -141,16 +132,16 @@ namespace MyStik.TimeTable.Web.Api.Controller
                     ects = slot.ECTS,
                     name = slot.Name,
                     tag = slot.FullTag,
-                    modules = new List<ModuleDescriptionDto>()
+                    modules = new List<ModuleDto>()
                 };
 
                 foreach (var accreditation in slot.ModuleAccreditations)
                 {
-                    var moduleDto = new ModuleDescriptionDto
+                    var moduleDto = new ModuleDto
                     {
-                        id = accreditation.Module.Id,
-                        name = accreditation.Module.Name,
-                        tag = accreditation.Module.FullTag
+                        Id = accreditation.Module.Id,
+                        Name = accreditation.Module.Name,
+                        Tag = accreditation.Module.FullTag
                     };
 
                     slotDto.modules.Add(moduleDto);

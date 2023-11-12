@@ -13,6 +13,12 @@ namespace MyStik.TimeTable.Data
 
         public DbSet<RoomEquipment> RoomEquipments { get; set; }
 
+        public DbSet<RoomLayout> RoomLayouts { get; set; }
+        public DbSet<RoomDesk> RoomDesks { get; set; }
+        public DbSet<RoomSeat> RoomSeats { get; set; } 
+
+        public DbSet<RoomSeatBooking> RoomSeatBookings { get; set; }
+
         public DbSet<Occurrence> Occurrences { get; set; }
 
         public DbSet<OccurrenceGroup> OccurrenceGroups { get; set; }
@@ -40,6 +46,10 @@ namespace MyStik.TimeTable.Data
         public DbSet<ActivityDate> ActivityDates { get; set; }
         
         public DbSet<ActivitySlot> ActivitySlots { get; set; }
+
+        public DbSet<PublishingChannel> PublishingChannels { get; set; }
+
+        public DbSet<ActivityPublication> ActivitiesPublications { get; set; }
 
         public DbSet<Semester> Semesters { get; set; }
         

@@ -209,7 +209,11 @@
             */
 
             var t = $('#tabPlan').DataTable({
-                "paging": false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel'
+                ],
+                                "paging": false,
                 "order": [[0, 'asc']]
             });
         });

@@ -23,177 +23,29 @@ namespace MyStik.TimeTable.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult CreateEvent(Guid? orgId, Guid? semId)
         {
-            var model = new HomeViewModel();
+            var sem = SemesterService.GetSemester(semId);
 
+            var org = orgId == null ? GetMyOrganisation() : GetOrganisation(orgId.Value);
 
-            // Alle Semester mit Events
-            var allPublishedSemester = Db.Semesters.Where(x => x.Groups.Any(g => g.Activities.OfType<Event>().Any())).OrderByDescending(s => s.EndCourses).Take(4).ToList();
-            foreach (var semester in allPublishedSemester)
+            var model = new CourseCreateModel2
             {
-                var activeOrgs = SemesterService.GetActiveEventOrganiser(semester);
-
-                var semModel = new SemesterActiveViewModel
-                {
-                    Semester = semester,
-                    Organisers = activeOrgs.ToList()
-                };
-
-                model.ActiveSemester.Add(semModel);
-            }
-
-            return View(model);
-        }
-
-
-        public ActionResult Semester(Guid semId)
-        {
-            var semester = SemesterService.GetSemester(semId);
-
-            var orgs = SemesterService.GetActiveEventOrganiser(semester);
-
-            var model = new SemesterActiveViewModel
-            {
-                Semester = semester,
-                Organisers = orgs
+                SemesterId = sem.Id,
+                OrganiserId = org.Id,
+                OrganiserId2 = org.Id,
+                OrganiserId3 = org.Id
             };
-
-            return View(model);
-        }
-
-        public ActionResult Organiser(Guid semId, Guid orgId)
-        {
-            var semester = SemesterService.GetSemester(semId);
-
-            var organiser = Db.Organisers.SingleOrDefault(x => x.Id == orgId);
-
-            var model = new SemesterActiveViewModel
-            {
-                Semester = semester,
-                Events = organiser.Activities.OfType<Event>().Where(x => x.Dates.Any(d => semester.StartCourses <= d.Begin && d.Begin <= semester.EndCourses)).ToList(),
-                Organiser = organiser,
-                User = GetCurrentUser()
-            };
-
-            return View("EventList", model);
-        }
-
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="facultyId"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public PartialViewResult Faculty(Guid facultyId)
-        {
-            // Alle Events holen, die von der Fakultät organisiert werden
-            var events = Db.Activities.OfType<Event>()
-                .Where(x => x.Organiser.Id == facultyId).ToList();
-
-            // Jetzt wollen wir nur die Events, die Termine in der Zukunft haben
-            events = events.Where(ev => ev.Dates.Any() && ev.Dates.First().Begin >= DateTime.Today).OrderBy(ev => ev.Dates.First().Begin).ToList();
-
-            var modelList = new List<EventViewModel>();
-
-            foreach (var @event in events)
-            {
-                var eventModel = new EventViewModel
-                {
-                    Event = @event,
-                };
-
-                foreach (var date in @event.Dates.Where(x => x.Begin >= DateTime.Now))
-                {
-                    var dateModel = new EventDateStateViewModel
-                    {
-                        Date = date,
-                        State = ActivityService.GetActivityState(date.Occurrence, AppUser),
-                    };
-                    eventModel.Dates.Add(dateModel);
-                }
-
-                modelList.Add(eventModel);
-            }
-
-            ViewBag.UserRight = GetUserRight();
-
-            return PartialView("_FacultyEventList", modelList);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult IndexMobile()
-          {
-
-              var model = new EventMobileViewModel();
-
-              model.DatumFeiertage = new List<Milan>();
-
-              var semesters = Db.Semesters.ToList(); 
-
-            foreach (var semester in semesters)
-            {
-                var xyz = new Milan
-                {
-                    Datum = semester.StartCourses,
-                    Feiertage = "Vorlesungsbeginn"
-                };
-                model.DatumFeiertage.Add(xyz);
-
-                var xyz2 = new Milan
-                {
-                    Datum = semester.EndCourses,
-                    Feiertage = "Vorlesungsende"
-                };
-                model.DatumFeiertage.Add(xyz2);
-
-
-                foreach (var termin in semester.Dates)
-                {
-                    var abc = new Milan
-                    {
-                        Datum = termin.From,
-                        Feiertage = termin.Description
-                    };
-                    model.DatumFeiertage.Add(abc);
-                }
-            
-            
-            
-            }
-
-            return View(model);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult CreateEvent()
-        {
-            var sem = SemesterService.GetSemester(DateTime.Today);
-            var org = GetMyOrganisation();
-
-            CourseCreateModel2 model = new CourseCreateModel2();
-
-            model.SemesterId = sem.Id;
-            model.OrganiserId = org.Id;
-            model.OrganiserId2 = org.Id;
-            model.OrganiserId3 = org.Id;
 
             // Liste aller Fakultäten
-            ViewBag.Organiser = Db.Organisers.OrderBy(x => x.ShortName).Select(c => new SelectListItem
-            {
-                Text = c.ShortName,
-                Value = c.Id.ToString(),
-            });
+            ViewBag.Organiser = Db.Organisers
+                .Where(x => x.Id == org.Id)
+                .OrderBy(x => x.ShortName)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.ShortName,
+                    Value = c.Id.ToString(),
+                });
 
             // Liste aller Fakultäten, auf die Zugriff auf Räume bestehen
             // aktuell nur meine
@@ -204,44 +56,17 @@ namespace MyStik.TimeTable.Web.Controllers
             });
 
 
-            ViewBag.Semester = Db.Semesters.Where(x => x.EndCourses >= DateTime.Today).OrderBy(s => s.StartCourses).Take(5).Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString(),
-            });
+            // Alle Semester, die in Zukunft enden
+            ViewBag.Semester = Db.Semesters
+                .Where(x => x.EndCourses >= DateTime.Today)
+                .OrderBy(s => s.StartCourses)
+                .Take(3)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString(),
+                });
             model.SemesterId = sem.Id;
-
-            // bei der ersten Anzeige wird kein onChange ausgelöst
-            var currList = Db.Curricula.Where(c => c.Organiser.Id == org.Id).ToList();
-            var curr = currList.FirstOrDefault();
-            if (curr != null)
-            {
-                model.CurriculumId = curr.Id;
-                ViewBag.Curricula = currList.Select(c => new SelectListItem
-                {
-                    Text = c.ShortName,
-                    Value = c.Id.ToString(),
-                });
-
-                var semGroups = Db.SemesterGroups.Where(g => g.Semester.Id == sem.Id &&
-                                                             g.CapacityGroup.CurriculumGroup.Curriculum.Id == curr.Id)
-                    .ToList();
-
-                var group = semGroups.FirstOrDefault();
-                model.CurrGroupId = group != null ? group.Id : Guid.Empty;
-                ViewBag.Groups = semGroups.Select(c => new SelectListItem
-                {
-                    Text = c.GroupName,
-                    Value = c.Id.ToString(),
-                });
-            }
-            else
-            {
-                ViewBag.Curricula = null;
-                ViewBag.Groups = null;
-            }
-
-
 
             return View(model);
         }
@@ -357,13 +182,15 @@ namespace MyStik.TimeTable.Web.Controllers
         [HttpPost]
         public ActionResult CreateEvent(CourseCreateModelExtended model)
         {
-            var org = GetMyOrganisation();
+            var org = GetOrganiser(model.OrganiserId);
+            var semester = SemesterService.GetSemester(model.SemesterId);
 
             var @event = new Event
             {
                 Name = model.Name,
                 ShortName = model.ShortName,
                 Organiser = org,
+                Semester = semester,
                 Occurrence = new Occurrence
                 {
                     Capacity = -1,
@@ -376,31 +203,7 @@ namespace MyStik.TimeTable.Web.Controllers
                 },
             };
 
-            if (model.GroupIds != null)
-            {
-                foreach (var groupId in model.GroupIds)
-                {
-                    var semGroup = Db.SemesterGroups.SingleOrDefault(g => g.Id == groupId);
-
-                    if (semGroup != null)
-                    {
-                        @event.SemesterGroups.Add(semGroup);
-
-                        var occGroup = new OccurrenceGroup
-                        {
-                            Capacity = 0,
-                            FitToCurriculumOnly = true,
-                            Occurrence = @event.Occurrence
-                        };
-                        occGroup.SemesterGroups.Add(semGroup);
-                        semGroup.OccurrenceGroups.Add(occGroup);
-                        @event.Occurrence.Groups.Add(occGroup);
-                        Db.OccurrenceGroups.Add(occGroup);
-                    }
-                }
-            }
-
-            var member = GetMyMembership();
+            var member = GetMyMembership(org.Id);
 
             if (member != null)
             {
@@ -444,11 +247,13 @@ namespace MyStik.TimeTable.Web.Controllers
                     var isWdh = bool.Parse(elems[3]);
 
                     ICollection<DateTime> dayList;
-                    var semester = semesterService.GetSemester(day);
-
-                    if (isWdh && semester != null)
+                    // wenn Wiederholung, dann muss auch ein Enddatum angegeben sein
+                    // sonst nimm nur den Einzeltag
+                    if (isWdh && !string.IsNullOrEmpty(elems[4]))
                     {
-                        dayList = semesterService.GetDays(semester.Id, day);
+                        var lastDay = DateTime.Parse(elems[4]);
+                        var frequency = int.Parse(elems[5]);
+                        dayList = semesterService.GetDays(day, lastDay, frequency);
                     }
                     else
                     {
@@ -497,7 +302,16 @@ namespace MyStik.TimeTable.Web.Controllers
             Db.SaveChanges();
 
 
-            return PartialView("_CreateEventSuccess", @event);
+            if (model.showDetails)
+            {
+                var url = Url.Action("Details", "Event", new { id = @event.Id });
+
+                return Content(url);
+            }
+
+            var url2 = Url.Action("CreateEvent", "Event", new { orgId = @event.Organiser.Id });
+
+            return Content(url2);
         }
 
 

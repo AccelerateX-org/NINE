@@ -63,11 +63,12 @@
                                     <td>
                                         @if (exam.FirstExminer != null)
                                         {
-                                            <div>@exam.FirstExminer.FullName</div>
+                                            @Html.Raw(exam.FirstExminer.FullName)
                                         }
                                         @if (exam.SecondExaminer != null)
                                         {
-                                            <div>@exam.SecondExaminer.FullName</div>
+                                            @Html.Raw(", ")
+                                            @Html.Raw(exam.SecondExaminer.FullName)
                                         }
                                     </td>
                                     <td>@Html.Raw(exam.Conditions)</td>
@@ -103,6 +104,10 @@
     <script>
         $(document).ready(function () {
             var t = $('#tabModules').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel'
+                ],
                 "paging": false,
                 "order": [[0, 'asc']]
             });

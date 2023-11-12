@@ -14,6 +14,7 @@ namespace MyStik.TimeTable.Data
             this.SemesterGroups = new HashSet<SemesterGroup>();
             this.SemesterTopics = new HashSet<SemesterTopic>();
             this.Owners = new HashSet<ActivityOwner>();
+            this.Publications = new HashSet<ActivityPublication>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -106,6 +107,9 @@ namespace MyStik.TimeTable.Data
         public virtual ICollection<ActivityOwner> Owners { get; set; }
 
         public virtual ICollection<ContentChannel> Channels { get; set; }
+
+        public virtual ICollection<ActivityPublication> Publications { get; set; }
+
 
     }
 }

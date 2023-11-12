@@ -4,14 +4,22 @@
 <div class="card mb-3">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-start">
-            <h5 class="card-title">Semester @Model.CurrentSemester.Semester.Name</h5>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi-dash"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="@Url.Action("PersonalPlanWeekly", "Activity", new { id = Model.CurrentSemester.Semester.Id })">Wochenkalender</a></li>
-                </ul>
+            <h5 class="card-title">@Model.CurrentSemester.Semester.Name</h5>
+            <div class="btn-group">
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "Dictionary")" data-bs-title="Vorlesungsverzeichnis"><i class="bi-collection-play"></i></a>
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "ScriptShop")"><i class="bi-file-pdf"></i></a>
+                @*<a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "Lottery")"><i class="bi-ticket"></i></a>*@
+                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Subscriptions", "OfficeHour")"><i class="bi-question-octagon"></i></a>
+            </div>
+            <div class="btn-group">
+                @if (Model.PrevSemester != null)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.PrevSemester.Id')"><i class="bi-chevron-double-left"></i></a>
+                }
+                @if (Model.NextSemester != null)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" href="javascript:onSemesterChanged('@Model.NextSemester.Id')"><i class="bi-chevron-double-right"></i></a>
+                }
             </div>
         </div>
     </div>
@@ -131,19 +139,6 @@
                 </a>
             }
         }
-        <a class="list-group-item list-group-item-action" href="@Url.Action("Subscriptions", "OfficeHour")">
-            Gebuchte Sprechstundentermine
-        </a>
 
-    </div>
-    <div class="card-body">
-        @if (Model.PrevSemester != null)
-        {
-            <a href="javascript:onSemesterChanged('@Model.PrevSemester.Id')" class="card-link"><< @Model.PrevSemester.Name</a>
-        }
-        @if (Model.NextSemester != null)
-        {
-            <a href="javascript:onSemesterChanged('@Model.NextSemester.Id')" class="card-link">@Model.NextSemester.Name >></a>
-        }
     </div>
 </div>

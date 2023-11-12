@@ -521,6 +521,7 @@
     }
 
     function reloadFreeRooms() {
+        var org = $("#OrganiserId3 option:selected").val();
         var newDate = $("#NewDate").val();
         var newBegin = $("#NewBegin").val();
         var newEnd = $("#NewEnd").val();
@@ -529,10 +530,11 @@
         {
             type: "POST",
             url: '@Url.Action("GetAvailableRooms", "Room")',
-            data: {
-                date: newDate,
-                begin: newBegin,
-                end: newEnd
+                data: {
+                    orgId: org,
+                    date: newDate,
+                    begin: newBegin,
+                    end: newEnd
             },
             success: function (data, success, xhr) {
                 $("#roomTable").html(data);
